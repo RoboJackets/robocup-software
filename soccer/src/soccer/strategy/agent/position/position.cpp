@@ -6,6 +6,9 @@ namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
+Position::Position(int r_id, std::string position_name)
+    : robot_id_{r_id}, position_name_{std::move(position_name)} {};
+
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions) {
     // Point class variables to parameter references
@@ -32,6 +35,8 @@ void Position::set_time_left(double time_left) { time_left_ = time_left; }
 void Position::set_is_done() { is_done_ = true; }
 
 void Position::set_goal_canceled() { goal_canceled_ = true; }
+
+void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
 
 bool Position::check_is_done() {
     if (is_done_) {
@@ -69,7 +74,6 @@ void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
     }
 }
 
-
 bool Position::assert_world_state_valid() {
     if (last_world_state_ == nullptr) {
         SPDLOG_WARN("WorldState!");
@@ -94,19 +98,25 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
             // if the acknowledgement is from an incoming pass request -> pass the ball
             if (const communication::IncomingBallRequest* incoming_ball_request =
                     std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
+                // SPDLOG_INFO("Robot {} received incoming ball request", robot_id_);
                 pass_ball(response.received_robot_ids[i]);
             }
 
         } else if (const communication::PassResponse* pass_response =
                        std::get_if<communication::PassResponse>(&response.responses[i])) {
             // get the associated pass request for this response
+            // SPDLOG_INFO("Robot {} receives pass response", robot_id_);
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
-                if (sent_pass_request->direct) {
+                // SPDLOG_INFO(
+                // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
+                // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
+                // pass_response->direct_open);
+
+                if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
+                    // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
-                } else {
-                    // TODO: handle deciding on indirect passing
                 }
             }
         }
@@ -116,19 +126,27 @@ void Position::receive_communication_response(communication::AgentPosResponseWra
 communication::PosAgentResponseWrapper Position::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response{};
-    // if (const communication::PassRequest* pass_request =
-    //         std::get_if<communication::PassRequest>(&request.request)) {
-    //     communication::PassResponse pass_response = receive_pass_request(*pass_request);
-    //     comm_response.response = pass_response;
-    if (const communication::IncomingBallRequest* incoming_ball_request =
-            std::get_if<communication::IncomingBallRequest>(&request.request)) {
+    if (const communication::PassRequest* pass_request =
+            std::get_if<communication::PassRequest>(&request.request)) {
+        // Pass is needed. respond if open
+        communication::PassResponse pass_response = receive_pass_request(*pass_request);
+        pass_response.direct_open = false;
+        comm_response.response = pass_response;
+
+    } else if (const communication::IncomingBallRequest* incoming_ball_request =
+                   std::get_if<communication::IncomingBallRequest>(&request.request)) {
+        // I have been chosen. Offense: RECEVING_START (used to be called FACING)
         communication::Acknowledge incoming_pass_acknowledge =
             acknowledge_pass(*incoming_ball_request);
+        // SPDLOG_INFO("Robot {} acknowledges incoming ball request", robot_id_);
         comm_response.response = incoming_pass_acknowledge;
     } else if (const communication::BallInTransitRequest* ball_in_transit_request =
                    std::get_if<communication::BallInTransitRequest>(&request.request)) {
         communication::Acknowledge ball_in_transit_acknowledge =
+
+            // Pass has started. Offense: RECEIVING
             acknowledge_ball_in_transit(*ball_in_transit_request);
+        // SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
         comm_response.response = ball_in_transit_acknowledge;
     } else {
         communication::Acknowledge acknowledge{};
@@ -163,7 +181,7 @@ void Position::broadcast_direct_pass_request() {
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = pass_request;
-    communication_request.urgent = true;
+    communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_request_ = communication_request;
 }

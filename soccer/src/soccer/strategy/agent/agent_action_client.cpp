@@ -1,5 +1,9 @@
 #include "agent_action_client.hpp"
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <std_msgs/msg/string.hpp>
+
 #include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
 
@@ -21,6 +25,9 @@ AgentActionClient::AgentActionClient(int r_id)
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
+    current_state_publisher_ = create_publisher<AgentStateMsg>(
+        fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
+
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
@@ -40,6 +47,10 @@ AgentActionClient::AgentActionClient(int r_id)
     game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+
+    goalie_id_sub_ = create_subscription<rj_msgs::msg::Goalie>(
+        ::referee::topics::kGoalieTopic, 1,
+        [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
@@ -67,7 +78,6 @@ AgentActionClient::AgentActionClient(int r_id)
             get_communication();
             check_communication_timeout();
         });
-
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -103,6 +113,14 @@ void AgentActionClient::field_dimensions_callback(
     current_position_->update_field_dimensions(field_dimensions);
 }
 
+void AgentActionClient::goalie_id_callback(int goalie_id) {
+    if (current_position_) {
+        current_position_->set_goalie_id(goalie_id);
+    }
+
+    goalie_id_ = goalie_id;
+}
+
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
 }
@@ -113,8 +131,7 @@ void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings:
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
-        return std::find(alive_robots_.begin(), alive_robots_.end(), robot_id) !=
-               alive_robots_.end();
+        return alive_robots_.at(robot_id);
     } else {
         if (this->world_state()->get_robot(true, robot_id).visible) {
             rj_geometry::Point robot_position =
@@ -142,6 +159,9 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
+
+    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
+        rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -176,7 +196,6 @@ void AgentActionClient::send_new_goal() {
 
 void AgentActionClient::goal_response_callback(
     std::shared_future<GoalHandleRobotMove::SharedPtr> future) {
-
     auto goal_handle = future.get();
     if (!goal_handle) {
         current_position_->set_goal_canceled();
@@ -185,7 +204,6 @@ void AgentActionClient::goal_response_callback(
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-
     double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
     if (current_position_ == nullptr) {
         current_position_->set_time_left(time_left);
@@ -193,7 +211,6 @@ void AgentActionClient::feedback_callback(
 }
 
 void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult& result) {
-
     switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
             // TODO: handle other return codes
@@ -351,7 +368,6 @@ void AgentActionClient::receive_response_callback(
 }
 
 void AgentActionClient::check_communication_timeout() {
-
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
             current_position_->receive_communication_response(buffered_responses_[i]);
@@ -359,6 +375,5 @@ void AgentActionClient::check_communication_timeout() {
         }
     }
 }
-
 
 }  // namespace strategy

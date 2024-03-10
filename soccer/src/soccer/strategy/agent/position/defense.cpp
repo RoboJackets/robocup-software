@@ -2,11 +2,15 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id) { position_name_ = "Defense"; }
+Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
     return state_to_task(intent);
+}
+
+std::string Defense::get_current_state() {
+    return std::string{"Defense"} + std::to_string(static_cast<int>(current_state_));
 }
 
 Defense::State Defense::update_state() {
@@ -33,6 +37,14 @@ Defense::State Defense::update_state() {
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
+            // If a wall is already full,
+            // Remove the robot with the highest ID from a wall
+            // and make them a marker instead.
+            if (walling_robots_.size() > kMaxWallers &&
+                this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
+                send_leave_wall_request();
+                next_state = ENTERING_MARKING;
+            }
             break;
         case SEARCHING:
             break;
@@ -57,12 +69,28 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+        case MARKING:
+            if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
+                next_state = ENTERING_MARKING;
+            }
+            break;
+        case ENTERING_MARKING:
+            marker_.choose_target(world_state);
+            int target_id = marker_.get_target();
+            if (target_id == -1) {
+                next_state = ENTERING_MARKING;
+            } else {
+                next_state = MARKING;
+            }
     }
 
     return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
+    // if (robot_id_ == 2) {
+    //     SPDLOG_INFO("{} current state of 2", current_state_);
+    // }
     if (current_state_ == IDLING) {
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
@@ -109,7 +137,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             Waller waller{waller_id_, robot_id_, (int)walling_robots_.size(), walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
-    } else if (current_state_ = FACING) {
+    } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             last_world_state_->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
@@ -119,6 +147,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
+    } else if (current_state_ == ENTERING_MARKING) {
+        // Prepares a robot for marking. NOTE: May update to add move to center of field
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
+    } else if (current_state_ == MARKING) {
+        // Marker marker = Marker((u_int8_t) robot_id_);
+        return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 
     return std::nullopt;

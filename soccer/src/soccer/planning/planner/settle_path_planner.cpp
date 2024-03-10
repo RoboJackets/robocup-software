@@ -19,6 +19,12 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
+    const auto state = plan_request.play_state.state();
+    if (state == PlayState::Stop || state == PlayState::Halt) {
+        // This planner automatically fails if the robot is prohibited from touching the ball.
+        return Trajectory{};
+    }
+
     BallState ball = plan_request.world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;

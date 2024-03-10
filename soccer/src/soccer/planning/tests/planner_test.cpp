@@ -90,7 +90,7 @@ TEST(Planning, collect_basic) {
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -114,7 +114,7 @@ TEST(Planning, collect_obstructed) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -141,7 +141,7 @@ TEST(Planning, collect_pointless_obs) {
     obstacles.add(std::make_shared<Circle>(Point{3, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{-2, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{0, 5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -165,7 +165,7 @@ TEST(Planning, collect_moving_ball_quick) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -189,7 +189,7 @@ TEST(Planning, collect_moving_ball_slow) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-0.5, .5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -213,7 +213,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -249,7 +249,8 @@ TEST(Planning, collect_random) {
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 0.5, 1.5)},
                 .2));
         }
-        PlayState play_state = PlayState::halt();
+        PlayState play_state =
+            PlayState::playing();  // Some planners now return no trajectory in halt
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"collect"},
                             RobotConstraints{},
@@ -282,7 +283,7 @@ TEST(Planning, settle_basic) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -308,7 +309,7 @@ TEST(Planning, settle_pointless_obs) {
     world_state.ball.timestamp = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-1, 1.0}, .2));
-    PlayState play_state = PlayState::halt();
+    PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -345,7 +346,8 @@ TEST(Planning, settle_random) {
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)},
                 .2));
         }
-        PlayState play_state = PlayState::halt();
+        PlayState play_state =
+            PlayState::playing();  // Some planners now return no trajectory in halt
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"settle"},
                             RobotConstraints{},
