@@ -38,14 +38,63 @@ void RobotFactoryPosition::process_play_state() {
     // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED 
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
 
-    // Check if play states are ==, ignoring the ball placement position.
-    if (last_play_state_.same_as(current_play_state_)) {
-        // Nothing has changed. Continue as usual.
-        return;
-    }
+    if (last_play_state_.state() != current_play_state_.state()) {
+        switch (current_play_state_.state()) {
 
-    // The referee/GC has changed states.
-    last_play_state_ = current_play_state_;
+            case PlayState::State::Playing: {
+                // We just became regular playing.
+                set_default_position();
+                break;
+            }
+
+            case PlayState::State::Setup: {
+                // We just entered the setup phase of either Kickoff or Penalty Kick
+                handle_setup();
+                break;
+            } 
+
+            case PlayState::State::Ready: {
+                // We entered the ready (kicking) phase of either a kickoff, penalty kick, OR free kick
+                handle_ready();
+                break;
+            }
+
+            case PlayState::State::PenaltyPlaying: {
+                // We entered the penalty playing phase. Only the goalie and striker should be moving.
+
+                // TODO(https://app.clickup.com/t/86azm51j4) we should handle this at a lower level if possible
+                handle_penalty_playing();
+                break;
+            }
+            
+            case PlayState::State::Stop:
+            case PlayState::State::Halt: {
+                // The game has been stopped or halted. In this case, we typically want to keep 
+                // our current position. The rules for movement should be handled at a lower level.
+                break;
+            }
+
+        }
+    }
+}
+
+void RobotFactoryPosition::handle_setup() {
+    // Set up some restart
+    if (current_play_state_.our_restart()) {
+        // Set up our restart
+
+        if 
+    }
+}
+
+void RobotFactoryPosition::handle_ready() {
+    // Ready stage for a restart
+
+    
+}
+
+
+void RobotFactoryPosition::handle_new_restart() {
 
     if (current_play_state_.is_their_restart()) {
         // This is the other team's restart!
@@ -84,7 +133,7 @@ void RobotFactoryPosition::process_play_state() {
                 // as necessary
                 // TODO(https://app.clickup.com/t/86azm4y6z)
 
-                set_default_positions();
+                set_default_position();
                 break;
             }
 
@@ -130,13 +179,18 @@ void RobotFactoryPosition::process_play_state() {
 
             case PlayState::Restart::None: {
                 // There is no restart.
-                set_default_positions();
+                set_default_position();
                 break;
             }
         }
     }
 }
 
+void handle_new_state() {
+
+    if (current_play_st)
+
+}
 
 void RobotFactoryPosition::update_position() {
 
@@ -239,14 +293,14 @@ void RobotFactoryPosition::update_position() {
             // if (current_position_->get_name() != "Defense") {
             //     current_position_ = std::make_unique<Defense>(robot_id_);
             // }
-            set_default_positions(*last_world_state_, field_dimensions_);
+            set_default_position(*last_world_state_, field_dimensions_);
             SPDLOG_INFO("Robot {} Speed: {}", robot_id_,
                         last_world_state_->get_robot(true, robot_id_).velocity.linear().mag());
             break;
         }
 
         case PLAYING: {
-            set_default_positions(*last_world_state_, field_dimensions_);
+            set_default_position(*last_world_state_, field_dimensions_);
             break;
         }
     }
@@ -269,7 +323,7 @@ std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
                              });
 }
 
-void RobotFactoryPosition::set_default_positions() {
+void RobotFactoryPosition::set_default_position() {
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)

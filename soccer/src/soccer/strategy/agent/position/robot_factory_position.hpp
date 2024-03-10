@@ -109,9 +109,9 @@ private:
     static std::pair<int, double> get_closest_kicker(
         const std::unordered_map<int, double>& kicker_distances);
 
-    void set_default_positions();
+    void set_default_position();
 
-    PlayState last_play_state_;
+    PlayState last_play_state_ {PlayState::Halt, PlayState::None};
 
     void process_play_state();
 
