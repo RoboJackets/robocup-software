@@ -37,32 +37,9 @@
  * In networking terms, the referee packets' source address should match
  * kRefereeSourceAddress, and same thing for SharedVisionAddress.
  *
- * The physical interface we expect to receive these packets from is defined
- * below.
  */
 static const std::string kRefereeSourceAddress = "224.5.23.1";
 static const std::string kSharedVisionSourceAddress = "224.5.23.2";
-
-/*
- * UPDATE (4/9/2023): these are no longer necessary. Both VisionReceiver and
- * ExternalReferee now simply join the multicast group and listen for their
- * respective source addresses above.
- *
- * These IP addresses are the interfaces (e.g. Ethernet plugged into this
- * laptop) where we expect ref/vision data to come from. They are (likely)
- * physical Ethernet links to the network, so this address won't show up in
- * Wireshark.
- *
- * When running sim, this should be localhost = 127.0.0.1.
- *
- * Run ifconfig to see list of interfaces on this computer, and pick the right
- * one (or try them all in worst-case).
- */
-
-static const std::string kRefereeInterface = "192.168.20.119";
-/* static const std::string kRefereeInterface = "172.0.0.1"; */
-static const std::string kVisionInterface =
-    kRefereeInterface;  // In all but rare cirucmstances, this should match kRefereeInterface.
 
 // The network address of the base station
 static const std::string kBaseStationAddress = "10.42.0.248";
