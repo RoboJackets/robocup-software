@@ -24,9 +24,7 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
 
 void Seeker::reset_target() { target_valid_ = false; }
 
-rj_geometry::Point Seeker::get_target_point() {
-    return target_pt_;
-}
+rj_geometry::Point Seeker::get_target_point() { return target_pt_; }
 
 void Seeker::set_seeker_points(std::unordered_map<int, rj_geometry::Point> seeker_points) {
     seeker_points_ = seeker_points;
@@ -119,7 +117,8 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
 }
 
 double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                          const WorldState* world_state, const FieldDimensions& field_dimensions) const {
+                          const WorldState* world_state,
+                          const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
@@ -192,10 +191,10 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     }
 
     double min_seeker_dist = std::numeric_limits<double>::infinity();
-    for (const auto & [ key, value ] : seeker_points_) {
+    for (const auto& [key, value] : seeker_points_) {
         min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(value));
     }
-    const double seeker_dist_loss = 0.4 * 1/min_seeker_dist;
+    const double seeker_dist_loss = 0.4 * 1 / min_seeker_dist;
 
     // Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist +

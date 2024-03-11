@@ -3,7 +3,6 @@
 #include <cmath>
 #include <unordered_map>
 
-
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
@@ -50,9 +49,7 @@ public:
 
     rj_geometry::Point get_target_point();
 
-
     void set_seeker_points(std::unordered_map<int, rj_geometry::Point> seeker_points);
-
 
 private:
     // The seeker's id
@@ -112,10 +109,10 @@ private:
      * @return double The evaluation of that target point
      */
     [[nodiscard]] double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                             const WorldState* world_state,
-                             const FieldDimensions& field_dimensions) const;
+                                    const WorldState* world_state,
+                                    const FieldDimensions& field_dimensions) const;
 
-    std::unordered_map<int, rj_geometry::Point> seeker_points_ {};
+    std::unordered_map<int, rj_geometry::Point> seeker_points_{};
 };
 
 }  // namespace strategy
