@@ -233,8 +233,8 @@ struct FieldDimensions {
         their_left_goal_post_coordinate_ = rj_geometry::Point(-goal_width_ / 2, length_);
         their_right_goal_post_coordinate_ = rj_geometry::Point(goal_width_ / 2, length_);
 
-        our_goal_area_ = rj_geometry::Rect(our_left_goal_post_coordinate_, our_right_goal_post_coordinate_ + goal_depth_);
-        their_goal_area_ = rj_geometry::Rect(their_left_goal_post_coordinate_, their_right_goal_post_coordinate_ - goal_depth_);
+        our_goal_area_ = rj_geometry::Rect(our_left_goal_post_coordinate_, our_right_goal_post_coordinate_ - rj_geometry::Point(0, goal_depth_));
+        their_goal_area_ = rj_geometry::Rect(their_left_goal_post_coordinate_, their_right_goal_post_coordinate_ + rj_geometry::Point(0, goal_depth_));
 
         our_left_corner_ = rj_geometry::Point(field_x_left_coord_, 0.0);
         our_right_corner_ = rj_geometry::Point(field_x_right_coord_, 0.0);

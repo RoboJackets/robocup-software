@@ -85,6 +85,9 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     auto our_goal_area{
         std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_goal_area())};
 
+    auto their_goal_area{
+        std::make_shared<rj_geometry::Rect>(last_field_dimensions_.their_goal_area())};
+
     //  auto their_goal_area{
     //     std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_goal_area())};   
 
@@ -107,6 +110,8 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     def_area_obstacles.add(our_defense_area);
     def_area_obstacles.add(our_goal_area);
     def_area_obstacles.add(their_defense_area);
+    def_area_obstacles.add(their_goal_area);
+
 
     return def_area_obstacles;
 }
