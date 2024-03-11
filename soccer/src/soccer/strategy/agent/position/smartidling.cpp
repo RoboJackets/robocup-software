@@ -28,7 +28,7 @@ void SmartIdle::derived_pass_ball(){
 void SmartIdle::derived_acknowledge_ball_in_transit() {}
 
 std::optional<RobotIntent> SmartIdle::derived_get_task(RobotIntent intent) {
-	rj_geometry::Point ball_position = last_world_state_->ball.position;
+	auto our_position = last_world_state_->last_world_state_->get_robot(true, robot_id_).pose.position();
 	planning::LinearMotionInstant target{ball_position};
  	planning::MotionCommand prep_command{"escape_obstacles", target, planning::FaceBall{}};
 
