@@ -37,7 +37,7 @@ Offense::State Offense::next_state() {
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball()) {
+            if (can_steal_ball() && !ball_in_goal(last_world_state_)) {
                 return STEALING;
             }
 
@@ -102,6 +102,10 @@ Offense::State Offense::next_state() {
         }
 
         case STEALING: {
+            if (ball_in_goal(last_world_state_)) {
+                return SEEKING;
+            }
+
             // Go to possession if successful
             if (check_is_done()) {
                 return POSSESSION_START;
@@ -129,6 +133,10 @@ Offense::State Offense::next_state() {
             // If we got it, cool, we have it!
             if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
+            }
+
+            if (ball_in_goal(last_world_state_)) {
+                return SEEKING;
             }
 
             // If we failed to get it in time
@@ -499,6 +507,7 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
+    
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
@@ -558,5 +567,14 @@ rj_geometry::Point Offense::calculate_best_shot() const {
         curr_point = curr_point + increment;
     }
     return best_shot;
+}
+
+bool Offense::ball_in_goal(WorldState* last_world_state_) {
+    auto& ball_pos = last_world_state_->ball.position;
+    if ((ball_pos.x() >= -1 && ball_pos.x() <= 1)
+        && ((ball_pos.y() >= 8 && ball_pos.y() <= 9) || (ball_pos.y() >= 0 && ball_pos.y() <= 1))) {
+        return true;
+    }
+    return false;
 }
 }  // namespace strategy
