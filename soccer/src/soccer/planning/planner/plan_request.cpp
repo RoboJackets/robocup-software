@@ -68,8 +68,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     if (in.min_dist_from_ball > 0 || avoid_ball) {
         auto ball_obs =
             make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity,
-                                     kBallRadius + kAvoidBallDistance);
-        ball_obs.radius(ball_obs.radius() + in.min_dist_from_ball);
+                                     kBallRadius + kAvoidBallDistance + in.min_dist_from_ball);
 
         // Draw ball obstacle in simulator
         if (in.debug_drawer != nullptr) {
@@ -78,6 +77,34 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         }
 
         out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
+    }
+
+    if (in.play_state.is_placement()) {
+        SPDLOG_INFO("obstacle fill on stop");
+        auto ball_obs =
+            make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity,
+                                     kBallRadius + 0.5);
+
+        // Draw ball obstacle in simulator
+        if (in.debug_drawer != nullptr) {
+            QColor draw_color = Qt::red;
+            in.debug_drawer->draw_circle(ball_obs, draw_color);
+        }
+
+        out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
+
+        // ball placement point
+        auto ball_placement_obs =
+            make_inflated_static_obs(in.play_state.ball_placement_point().value(), in.world_state->ball.velocity,
+                                     kBallRadius + 0.5);
+
+        // Draw ball obstacle in simulator
+        if (in.debug_drawer != nullptr) {
+            QColor draw_color = Qt::red;
+            in.debug_drawer->draw_circle(ball_placement_obs, draw_color);
+        }
+
+        out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_placement_obs)));
     }
 }
 
