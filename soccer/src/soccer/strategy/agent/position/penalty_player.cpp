@@ -10,10 +10,10 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
 }
 
 PenaltyPlayer::State PenaltyPlayer::update_state() {
-    switch (latest_state) {
+    switch (latest_state_) {
         case LINE_UP: {
             // if penalty playing and restart penalty in playstate we switch to shooting
-            if (current_play_state_.is_penalty_playing() && current_play_state.is_penalty()) {
+            if (current_play_state_.is_penalty_playing() && current_play_state_.is_penalty()) {
                 return SHOOTING_START;
             }
             break;
@@ -38,17 +38,16 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
 }
 
 std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
-    World State* world_state = last_world_state_;
     switch (latest_state_) {
         case LINE_UP: {
-            rj_geometry::Point y_pos = world_state->ball.position.y();
+            double y_pos = last_world_state_->ball.position.y();
             // if ball is above goal, increase y_pos, else decrease
-            if (y_pos - field_dimensions.their_goal_loc() > 0) {
+            if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
                 y_pos += kRobotRadius - 0.15;
             } else {
                 y_pos -= kRobotRadius - 0.15;
             }
-            rj_geometry::Point target_pt{world_state->ball.position.x(), y_pos};
+            rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
             planning::PathTargetFaceOption face_option{planning::FaceBall{}};

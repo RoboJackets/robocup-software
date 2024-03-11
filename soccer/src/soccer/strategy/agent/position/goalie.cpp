@@ -195,11 +195,12 @@ void Goalie::derived_pass_ball() { latest_state_ = PASSING; }
 
 void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; }
 
-rj_geometry::Point penalty_location() {
+rj_geometry::Point Goalie::penalty_location() {
     // be dumb: center of baseline
     return this->field_dimensions_.our_goal_loc();
     // be smart
         // find robot on their team closest to ball
         // line up in line with them and the ball on the baseline
+}
 
 }  // namespace strategy
