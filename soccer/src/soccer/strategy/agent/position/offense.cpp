@@ -183,7 +183,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // Calculate a new seeking point
             seeker_.reset_target();
             seeker_.set_seeker_points(seeker_points_);
-            std::optional<RobotIntent> actual_intent = seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            std::optional<RobotIntent> actual_intent =
+                seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
             broadcast_seeker_request(seeker_.get_target_point(), true);
             return actual_intent;
         }
@@ -374,10 +375,10 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         comm_response.response = response;
         return comm_response;
     } else if (const communication::SeekerRequest* seeker_request =
-            std::get_if<communication::SeekerRequest>(&request.request)) {
+                   std::get_if<communication::SeekerRequest>(&request.request)) {
         if (seeker_request->adding) {
-            seeker_points_[seeker_request->robot_id]
-             = rj_geometry::Point{seeker_request->seeking_point_x, seeker_request->seeking_point_y};
+            seeker_points_[seeker_request->robot_id] = rj_geometry::Point{
+                seeker_request->seeking_point_x, seeker_request->seeking_point_y};
         } else {
             seeker_points_.erase(seeker_request->robot_id);
         }
@@ -579,8 +580,8 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication::generate_uid(seeker_request);
     seeker_request.robot_id = robot_id_;
     seeker_request.seeking_point_x = seeking_point.x();
-    seeker_request.seeking_point_y = seeking_point.y();   
-    seeker_request.adding = adding; 
+    seeker_request.seeking_point_y = seeking_point.y();
+    seeker_request.adding = adding;
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = seeker_request;
