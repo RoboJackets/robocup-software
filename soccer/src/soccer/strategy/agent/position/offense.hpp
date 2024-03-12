@@ -234,7 +234,7 @@ private:
 
     /**
      * @return whether the ball is in an area that non-goalies cannot reach.
-    */
+     */
     bool ball_in_red(WorldState* last_world_state_);
 };
 

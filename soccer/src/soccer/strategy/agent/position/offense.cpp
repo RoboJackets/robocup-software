@@ -506,7 +506,6 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
-    
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
@@ -570,8 +569,8 @@ rj_geometry::Point Offense::calculate_best_shot() const {
 
 bool Offense::ball_in_red(WorldState* last_world_state_) {
     auto& ball_pos = last_world_state_->ball.position;
-    if ((ball_pos.x() >= -1 && ball_pos.x() <= 1)
-        && ((ball_pos.y() >= 8 && ball_pos.y() <= 9) || (ball_pos.y() >= 0 && ball_pos.y() <= 1))) {
+    if ((ball_pos.x() >= -1 && ball_pos.x() <= 1) &&
+        ((ball_pos.y() >= 8 && ball_pos.y() <= 9) || (ball_pos.y() >= 0 && ball_pos.y() <= 1))) {
         return true;
     }
     return false;
