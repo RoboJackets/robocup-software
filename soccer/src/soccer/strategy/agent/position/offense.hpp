@@ -232,7 +232,10 @@ private:
      */
     rj_geometry::Point calculate_best_shot() const;
 
-    bool ball_in_goal(WorldState* last_world_state_);
+    /**
+     * @return whether the ball is in an area that non-goalies cannot reach.
+    */
+    bool ball_in_red(WorldState* last_world_state_);
 };
 
 }  // namespace strategy

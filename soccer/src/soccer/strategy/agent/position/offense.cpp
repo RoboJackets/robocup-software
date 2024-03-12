@@ -10,7 +10,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
     current_state_ = new_state;
@@ -37,7 +36,7 @@ Offense::State Offense::next_state() {
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball() && !ball_in_goal(last_world_state_)) {
+            if (can_steal_ball() && !ball_in_red(last_world_state_)) {
                 return STEALING;
             }
 
@@ -102,7 +101,7 @@ Offense::State Offense::next_state() {
         }
 
         case STEALING: {
-            if (ball_in_goal(last_world_state_)) {
+            if (ball_in_red(last_world_state_)) {
                 return SEEKING;
             }
 
@@ -135,7 +134,7 @@ Offense::State Offense::next_state() {
                 return POSSESSION_START;
             }
 
-            if (ball_in_goal(last_world_state_)) {
+            if (ball_in_red(last_world_state_)) {
                 return SEEKING;
             }
 
@@ -569,7 +568,7 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
-bool Offense::ball_in_goal(WorldState* last_world_state_) {
+bool Offense::ball_in_red(WorldState* last_world_state_) {
     auto& ball_pos = last_world_state_->ball.position;
     if ((ball_pos.x() >= -1 && ball_pos.x() <= 1)
         && ((ball_pos.y() >= 8 && ball_pos.y() <= 9) || (ball_pos.y() >= 0 && ball_pos.y() <= 1))) {

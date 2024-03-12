@@ -154,7 +154,6 @@ void CollectPathPlanner::check_solution_validity(BallState ball, RobotInstant st
 }
 
 void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
-    SPDLOG_INFO("Currently processing state transition.");
     // Do the transitions
     double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
     double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
@@ -163,14 +162,12 @@ void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant s
     // If we are in range to the slow dist
     if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
         current_state_ == CoarseApproach) {
-        SPDLOG_INFO("Switching to FineApproach");
         current_state_ = FineApproach;
     }
 
     // If the ball gets knocked far away, go back to CoarseApproach
     if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
         current_state_ == FineApproach) {
-        SPDLOG_INFO("Switching from FineApproach to CoarseApproach");
         current_state_ = CoarseApproach;
     }
 
@@ -179,7 +176,6 @@ void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant s
     // TODO(#1518): Check for ball sense?
     if (dist < collect::PARAM_dist_cutoff_to_control &&
         speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
-        SPDLOG_INFO("Switching from FineApproach to Control");
         current_state_ = Control;
     }
 }
@@ -188,7 +184,6 @@ Trajectory CollectPathPlanner::coarse_approach(
     const PlanRequest& plan_request, RobotInstant start,
     const rj_geometry::ShapeSet& static_obstacles,
     const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_INFO("In Coarse Approach");
     BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
@@ -237,7 +232,6 @@ Trajectory CollectPathPlanner::coarse_approach(
                                            start.linear_motion(), start.heading(), nullptr))));
     }
 
-    SPDLOG_INFO("Leaving coarse_approach");
     // Build a path from now to the slow point
     coarse_path.set_debug_text("coarse");
 
@@ -248,7 +242,6 @@ Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
     const rj_geometry::ShapeSet&  static_obstacles,
     const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_INFO("In Fine Approach");
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
@@ -315,7 +308,6 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
                                        const Trajectory& /* partial_path */,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_INFO("In Control Mode");
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints = plan_request.constraints;
     MotionConstraints& motion_constraints = robot_constraints.mot;
@@ -323,7 +315,6 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
     if (control_path_created_ && !previous_.empty()) {
-        SPDLOG_INFO("If statement at beginning of method");
         return previous_;
     }
 
@@ -342,10 +333,8 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
 
     double velocity_scale = collect::PARAM_velocity_control_scale;
 
-    SPDLOG_INFO("Outside 332 IF statement");
     // Moving at us
     if (average_ball_vel_.angle_between((ball.position - start.position())) > 3.14 / 2) {
-        SPDLOG_INFO("Line 332 IF statement");
         current_speed = collect::PARAM_touch_delta_speed;
         velocity_scale = 0;
     }
@@ -397,22 +386,18 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
 
     Trajectory path = Replanner::create_plan(params, previous_);
 
-    SPDLOG_INFO("Outside Line 376 IF statement");
     if (plan_request.debug_drawer != nullptr) {
-        SPDLOG_INFO("In Line 376 IF Statement");
         plan_request.debug_drawer->draw_segment(
             Segment(start.position(), start.position() + (target.position - start.position()) * 10),
             QColor(255, 255, 255));
     }
 
     if (path.empty()) {
-        SPDLOG_INFO("///////////// path.empty invoked 1/////////////");
         return Trajectory{};
     }
 
     path.set_debug_text("stopping");
 
-    SPDLOG_INFO("!!!!!!!!!CONTROL MODE ALMOST OVER BOIIIIII!!!!!!!!!");
     // Make sure that when the path ends, we don't end up spinning around
     // because we hit go past the ball position at the time of path creation
     Point face_pt = start.position() + 10 * (target.position - start.position()).norm();
@@ -420,14 +405,12 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
     plan_angles(&path, start, AngleFns::face_point(face_pt), robot_constraints.rot);
 
     if (plan_request.debug_drawer != nullptr) {
-        SPDLOG_INFO("Inside IF statement at end of Control");
         plan_request.debug_drawer->draw_segment(
             Segment(start.position(),
                     start.position() + Point::direction(AngleFns::face_point(face_pt)(
                                            start.linear_motion(), start.heading(), nullptr))));
     }
 
-    SPDLOG_INFO("!!!!!!!End of Control Mode!!!!!!");
     path.stamp(RJ::now());
     return path;
 }
@@ -435,7 +418,6 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
 Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    SPDLOG_INFO("In Invalid Mode");
     current_state_ = CoarseApproach;
 
     // Stop movement until next frame since it's the safest option
@@ -453,7 +435,6 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
 }
 
 void CollectPathPlanner::reset() {
-    SPDLOG_INFO("///////// Resetting everything //////////");
     previous_ = Trajectory();
     current_state_ = CollectPathPathPlannerStates::CoarseApproach;
     average_ball_vel_initialized_ = false;
