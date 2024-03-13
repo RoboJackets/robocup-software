@@ -572,7 +572,7 @@ bool Offense::ball_in_red(WorldState* last_world_state_) {
     auto& ball_pos = last_world_state_->ball.position;
     if (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
         field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-        !field_dimensions.field_rect().contains_point(ball_pos)) {
+        !field_dimensions_.field_rect().contains_point(ball_pos)) {
         return true;
     }
     return false;
