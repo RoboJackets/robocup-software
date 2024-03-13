@@ -37,6 +37,7 @@ void RobotFactoryPosition::process_play_state() {
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
 
     if (last_play_state_.state() != current_play_state_.state()) {
+        last_play_state_ = current_play_state_;
         switch (current_play_state_.state()) {
             case PlayState::State::Playing: {
                 // We just became regular playing.
@@ -128,8 +129,8 @@ void RobotFactoryPosition::update_position() {
 
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_our_restart()) {
-
                 if (have_all_kicker_responses()) {
+                    SPDLOG_INFO("robot {} has all responses", robot_id_);
                     if (am_closest_kicker()) {
                         // TODO BECOME KICKER
                         set_current_position<FreeKicker>();
@@ -155,19 +156,23 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::start_kicker_picker() {
+    SPDLOG_INFO("robot {} has cleared", robot_id_);
     kicker_distances_.clear();
     broadcast_kicker_request();
 }
 
 bool RobotFactoryPosition::have_all_kicker_responses() {
 
+
+
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
-    return kicker_distances_.size() == num_alive;
+    return kicker_distances_.size() == num_alive; // Don't expect the goalie to respond
 }
 
 
 bool RobotFactoryPosition::am_closest_kicker() {
+
     // Return the max, comparing by distances only
     auto closest = std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
                              [](const std::pair<int, double>& a, const std::pair<int, double>& b) {

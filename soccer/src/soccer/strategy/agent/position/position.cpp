@@ -2,6 +2,8 @@
 
 #include "game_state.hpp"
 
+#include <limits>
+
 namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
@@ -185,10 +187,16 @@ void Position::broadcast_kicker_request() {
     communication::KickerRequest kicker_request{};
     communication::generate_uid(kicker_request);
     kicker_request.robot_id = robot_id_;
-    SPDLOG_INFO("Robot {} made it here", robot_id_);
-    double distance = last_world_state_->ball.position.dist_to(
-        last_world_state_->get_robot(true, robot_id_).pose.position());
-    SPDLOG_INFO("Robot {} made it here2", robot_id_);
+
+    double distance;
+
+    if (!last_world_state_) {
+        distance = std::numeric_limits<double>::infinity();
+    } else {
+        distance = last_world_state_->ball.position.dist_to(
+            last_world_state_->get_robot(true, robot_id_).pose.position());
+    }
+
     kicker_distances_[robot_id_] = distance;
     kicker_request.distance = distance;
 
@@ -197,8 +205,6 @@ void Position::broadcast_kicker_request() {
     communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
-
-    SPDLOG_INFO("Robot {} added itself, count {}", robot_id_, kicker_distances_.count(robot_id_));
 }
 
 communication::PassResponse Position::receive_pass_request(
