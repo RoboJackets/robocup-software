@@ -16,8 +16,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
+    [maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -140,7 +140,6 @@ void RobotFactoryPosition::update_position() {
                 } else {
                     set_current_position<Idle>();
                 }
-
             }
 
             break;
@@ -162,25 +161,21 @@ void RobotFactoryPosition::start_kicker_picker() {
 }
 
 bool RobotFactoryPosition::have_all_kicker_responses() {
-
-
-
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
-    return kicker_distances_.size() == num_alive; // Don't expect the goalie to respond
+    return kicker_distances_.size() == num_alive;  // Don't expect the goalie to respond
 }
 
-
 bool RobotFactoryPosition::am_closest_kicker() {
-
     // Return the max, comparing by distances only
-    auto closest = std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
-                             [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                                 if (a.second == b.second) {
-                                     return a.first < b.first;
-                                 }
-                                 return a.second < b.second;
-                             });
+    auto closest =
+        std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
+                         [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                             if (a.second == b.second) {
+                                 return a.first < b.first;
+                             }
+                             return a.second < b.second;
+                         });
 
     // Closest is an iterator to the pair (robot_id, distance)
     return closest->first == robot_id_;

@@ -17,7 +17,7 @@ namespace strategy {
 class FreeKicker : public Position {
 public:
     FreeKicker(int r_id);
-    FreeKicker(const Position &);
+    FreeKicker(const Position&);
     ~FreeKicker() = default;
 
     /**

@@ -58,7 +58,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
             // Create Motion Command
             planning::LinearMotionInstant goal{target_pt, target_vel};
-            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             break;
         }
         case SHOOTING_START: {
@@ -93,7 +94,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
 std::string PenaltyPlayer::get_current_state() { return "PenaltyPlayer"; }
 
-double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail,
+                                                 rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 

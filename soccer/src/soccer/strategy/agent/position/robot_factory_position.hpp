@@ -110,7 +110,7 @@ private:
 
     void set_default_position();
 
-    PlayState last_play_state_ {PlayState::halt()};
+    PlayState last_play_state_{PlayState::halt()};
 
     void process_play_state();
 
