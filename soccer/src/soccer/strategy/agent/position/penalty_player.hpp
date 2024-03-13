@@ -39,14 +39,9 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State {
-        LINE_UP, 
-        SHOOTING_START,
-        SHOOTING
-    };
+    enum State { LINE_UP, SHOOTING_START, SHOOTING };
 
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
-
 
     State update_state();
 
@@ -55,7 +50,6 @@ private:
      */
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
-    
     double distance_to_ball() const {
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
