@@ -50,9 +50,9 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
     // rounding issues on midline)
     // Penalty mode
-    if (current_play_state_.is_ready() && current_play_state_.is_penalty() && current_play_state_.is_our_restart()) {
+    if (current_play_state_.is_ready() && current_play_state_.is_penalty()) {
         // first robot becomes penalty player
-        if (i == 0) {
+        if (i == 0 && current_play_state_.is_our_restart()) {
             current_position_= std::make_unique<PenaltyPlayer>(robot_id_);
         } else {
             // make everyone else a smart idle once that works
