@@ -21,6 +21,7 @@
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
+#include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/position.hpp"
 
 namespace strategy {

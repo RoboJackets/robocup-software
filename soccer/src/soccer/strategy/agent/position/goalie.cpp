@@ -1,4 +1,4 @@
-#include "goalie.hpp"
+ #include "goalie.hpp"
 
 #include <spdlog/spdlog.h>
 

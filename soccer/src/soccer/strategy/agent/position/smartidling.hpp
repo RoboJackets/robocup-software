@@ -12,9 +12,9 @@
 namespace strategy {
 class SmartIdle : public Position {
 public:
-    Idle(int r_id);
-    ~Idle() = default;
-    Idle(const Position& other);
+    SmartIdle(int r_id);
+    ~SmartIdle() = default;
+    SmartIdle(const Position& other);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -34,13 +34,20 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum {
+    double distance_to_ball() const {
+        return last_world_state_->ball.position.dist_to(
+            last_world_state_->get_robot(true, robot_id_).pose.position());
+    };
+    
+    enum State {
         GET_AWAY,
         IDLING
-    }
+    };
 
     State update_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    State latest_state_ = GET_AWAY;
 };
 }  // namespace strategy
