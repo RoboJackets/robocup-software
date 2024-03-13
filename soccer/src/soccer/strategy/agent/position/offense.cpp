@@ -102,7 +102,7 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             if (ball_in_red(last_world_state_)) {
-                return SEEKING;
+                return SEEKING_START;
             }
 
             // Go to possession if successful
@@ -135,7 +135,7 @@ Offense::State Offense::next_state() {
             }
 
             if (ball_in_red(last_world_state_)) {
-                return SEEKING;
+                return SEEKING_START;
             }
 
             // If we failed to get it in time
@@ -570,8 +570,9 @@ rj_geometry::Point Offense::calculate_best_shot() const {
 
 bool Offense::ball_in_red(WorldState* last_world_state_) {
     auto& ball_pos = last_world_state_->ball.position;
-    if ((ball_pos.x() >= -1 && ball_pos.x() <= 1)
-        && ((ball_pos.y() >= 8 && ball_pos.y() <= 9) || (ball_pos.y() >= 0 && ball_pos.y() <= 1))) {
+    if (field_dimensions_.their_defense_area().contains_point(ball_pos)
+        || field_dimensions_.our_defense_area().contains_point(ball_pos)
+        || !field_dimensions_.field_rect().contains_point(ball_pos)) {
         return true;
     }
     return false;
