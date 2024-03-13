@@ -24,6 +24,7 @@ class Goalie : public Position {
 public:
     Goalie(int r_id);
     ~Goalie() override = default;
+    Goalie(const Position& other);
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -51,6 +52,7 @@ private:
         RECEIVING,       // physically intercepting the ball from a pass
         PASSING,         // physically kicking the ball at another robot
         FACING,          // turning to face the passing robot
+        PENALTY,         // stay on baseline for penalty kick
     };
 
     /*
@@ -83,6 +85,8 @@ private:
 
     // current state of Goalie (state machine)
     State latest_state_ = IDLING;
+
+    rj_geometry::Point penalty_location();
 };
 
 }  // namespace strategy

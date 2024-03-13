@@ -76,7 +76,7 @@ run-our-stack:
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
+	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
 
 run-sim-ex: run-sim-external
 

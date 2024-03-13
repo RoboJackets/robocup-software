@@ -68,9 +68,6 @@ static inline std::string trajectory_topic(int robot_id) {
 
 }  // namespace planning::topics
 
-namespace strategy::topics {
-}  // namespace strategy::topics
-
 namespace control {
 
 namespace topics {
@@ -101,6 +98,8 @@ constexpr auto kMotionControlParamModule = "motion_control";
 }  // namespace control
 
 namespace radio::topics {
+
+constexpr auto kAliveRobotsTopic{"radio/alive_robots"};
 
 static inline std::string robot_status_topic(int robot_id) {
     return "radio/robot_status/robot_" + std::to_string(robot_id);
