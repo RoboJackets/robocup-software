@@ -14,7 +14,6 @@ using namespace rj_geometry;
 namespace planning {
 
 Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
-
     const auto state = plan_request.play_state.state();
     if (state == PlayState::Stop || state == PlayState::Halt) {
         // This planner automatically fails if the robot is prohibited from touching the ball.
@@ -111,7 +110,8 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
 
-    if (static_obstacles.hit(ball.position) || static_obstacles.hit(start_instant.pose.position())) {
+    if (static_obstacles.hit(ball.position) ||
+        static_obstacles.hit(start_instant.pose.position())) {
         return Trajectory{};
     }
 
@@ -240,7 +240,7 @@ Trajectory CollectPathPlanner::coarse_approach(
 
 Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
-    const rj_geometry::ShapeSet&  static_obstacles,
+    const rj_geometry::ShapeSet& static_obstacles,
     const std::vector<DynamicObstacle>& dynamic_obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
@@ -277,15 +277,16 @@ Trajectory CollectPathPlanner::fine_approach(
 
     // Trajectory path_hit = CreatePath::simple(start_instant.linear_motion(), target_hit,
     //                                          plan_request.constraints.mot, start_instant.stamp);
-    //Trajectory path_hit = CreatePath::rrt(start_instant.linear_motion(), target_hit, plan_request.constraints.mot,
+    // Trajectory path_hit = CreatePath::rrt(start_instant.linear_motion(), target_hit,
+    // plan_request.constraints.mot,
     //                                  start_instant.stamp, static_obstacles, dynamic_obstacles);
 
     Replanner::PlanParams params{start_instant,
-                                target_hit,
-                                static_obstacles,
-                                dynamic_obstacles,
-                                plan_request.constraints,
-                                AngleFns::face_point(ball.position)};
+                                 target_hit,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(ball.position)};
     Trajectory path_hit = Replanner::create_plan(params, previous_);
 
     path_hit.set_debug_text("fine");
