@@ -1,5 +1,9 @@
 #include "agent_action_client.hpp"
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <std_msgs/msg/string.hpp>
+
 #include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
 
@@ -21,6 +25,9 @@ AgentActionClient::AgentActionClient(int r_id)
       robot_id_{r_id} {
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
+
+    current_state_publisher_ = create_publisher<AgentStateMsg>(
+        fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
@@ -153,6 +160,9 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
+
+    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
+        rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
 
 void AgentActionClient::send_new_goal() {
