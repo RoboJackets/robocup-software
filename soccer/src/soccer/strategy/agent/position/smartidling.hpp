@@ -38,11 +38,8 @@ private:
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
-    
-    enum State {
-        GET_AWAY,
-        IDLING
-    };
+
+    enum State { GET_AWAY, IDLING };
 
     State update_state();
 

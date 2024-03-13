@@ -1,4 +1,4 @@
- #include "goalie.hpp"
+#include "goalie.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -19,7 +19,8 @@ Goalie::State Goalie::update_state() {
 
     // if PlayState is in state Ready and Restart is Penalty go to penalty state
     // call is_our_restart and if that is false we go into this state
-    if (current_play_state_.is_ready() && current_play_state_.is_penalty() && !current_play_state_.is_our_restart()) {
+    if (current_play_state_.is_ready() && current_play_state_.is_penalty() &&
+        !current_play_state_.is_our_restart()) {
         return PENALTY;
     }
 
@@ -151,7 +152,8 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         rj_geometry::Point target_pt = penalty_location();
         rj_geometry::Point target_vel{0.0, 0.0};
 
-        planning::PathTargetFaceOption face_option = planning::FacePoint{rj_geometry::Point{0.0, 4.5}};
+        planning::PathTargetFaceOption face_option =
+            planning::FacePoint{rj_geometry::Point{0.0, 4.5}};
 
         // ball not found
         bool ignore_ball = true;
@@ -199,8 +201,8 @@ rj_geometry::Point Goalie::penalty_location() {
     // be dumb: center of baseline
     return this->field_dimensions_.our_goal_loc();
     // be smart
-        // find robot on their team closest to ball
-        // line up in line with them and the ball on the baseline
+    // find robot on their team closest to ball
+    // line up in line with them and the ball on the baseline
 }
 
 }  // namespace strategy
