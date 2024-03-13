@@ -231,6 +231,11 @@ private:
      * @return the target (within the goal) that would be the most clear shot
      */
     rj_geometry::Point calculate_best_shot() const;
+
+    /**
+     * @return whether the ball is in an area that non-goalies cannot reach.
+     */
+    bool ball_in_red(WorldState* last_world_state_);
 };
 
 }  // namespace strategy

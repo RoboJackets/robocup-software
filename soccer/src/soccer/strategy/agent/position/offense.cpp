@@ -10,7 +10,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
-        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
     current_state_ = new_state;
@@ -37,7 +36,7 @@ Offense::State Offense::next_state() {
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball()) {
+            if (can_steal_ball() && !ball_in_red(last_world_state_)) {
                 return STEALING;
             }
 
@@ -102,6 +101,10 @@ Offense::State Offense::next_state() {
         }
 
         case STEALING: {
+            if (ball_in_red(last_world_state_)) {
+                return SEEKING_START;
+            }
+
             // Go to possession if successful
             if (check_is_done()) {
                 return POSSESSION_START;
@@ -129,6 +132,10 @@ Offense::State Offense::next_state() {
             // If we got it, cool, we have it!
             if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
+            }
+
+            if (ball_in_red(last_world_state_)) {
+                return SEEKING_START;
             }
 
             // If we failed to get it in time
@@ -558,5 +565,16 @@ rj_geometry::Point Offense::calculate_best_shot() const {
         curr_point = curr_point + increment;
     }
     return best_shot;
+}
+
+// Checks whether ball is out of range for stealing/receiving
+bool Offense::ball_in_red(WorldState* last_world_state_) {
+    auto& ball_pos = last_world_state_->ball.position;
+    if (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
+        field_dimensions_.their_defense_area().contains_point(ball_pos) ||
+        !field_dimensions_.field_rect().contains_point(ball_pos)) {
+        return true;
+    }
+    return false;
 }
 }  // namespace strategy
