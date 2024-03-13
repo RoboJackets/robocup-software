@@ -106,18 +106,25 @@ private:
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    static std::pair<int, double> get_closest_kicker(
-        const std::unordered_map<int, double>& kicker_distances);
+    bool am_closest_kicker();
 
     void set_default_position();
 
-    PlayState last_play_state_ {PlayState::Halt, PlayState::None};
+    PlayState last_play_state_ {PlayState::halt()};
 
     void process_play_state();
 
     void update_position();
 
-    void choose_kicker();
+    void start_kicker_picker();
+
+    bool have_all_kicker_responses();
+
+    void handle_ready();
+
+    void handle_setup();
+
+    void handle_penalty_playing() {}
 
     /**
      * @brief Sets the current position to the parameterized type.

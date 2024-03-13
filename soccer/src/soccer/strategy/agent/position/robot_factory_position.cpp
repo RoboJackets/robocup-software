@@ -18,7 +18,6 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     [[maybe_unused]] RobotIntent intent) {
-
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -34,13 +33,11 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
 }
 
 void RobotFactoryPosition::process_play_state() {
-
-    // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED 
+    // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
 
     if (last_play_state_.state() != current_play_state_.state()) {
         switch (current_play_state_.state()) {
-
             case PlayState::State::Playing: {
                 // We just became regular playing.
                 set_default_position();
@@ -51,276 +48,137 @@ void RobotFactoryPosition::process_play_state() {
                 // We just entered the setup phase of either Kickoff or Penalty Kick
                 handle_setup();
                 break;
-            } 
+            }
 
             case PlayState::State::Ready: {
-                // We entered the ready (kicking) phase of either a kickoff, penalty kick, OR free kick
+                // We entered the ready (kicking) phase of either a kickoff, penalty kick, OR free
+                // kick
                 handle_ready();
                 break;
             }
 
             case PlayState::State::PenaltyPlaying: {
-                // We entered the penalty playing phase. Only the goalie and striker should be moving.
+                // We entered the penalty playing phase. Only the goalie and striker should be
+                // moving.
 
-                // TODO(https://app.clickup.com/t/86azm51j4) we should handle this at a lower level if possible
+                // TODO(https://app.clickup.com/t/86azm51j4) we should handle this at a lower level
+                // if possible
                 handle_penalty_playing();
                 break;
             }
-            
+
             case PlayState::State::Stop:
             case PlayState::State::Halt: {
-                // The game has been stopped or halted. In this case, we typically want to keep 
+                // The game has been stopped or halted. In this case, we typically want to keep
                 // our current position. The rules for movement should be handled at a lower level.
                 break;
             }
-
         }
     }
 }
 
 void RobotFactoryPosition::handle_setup() {
     // Set up some restart
-    if (current_play_state_.our_restart()) {
+    if (current_play_state_.is_our_restart()) {
         // Set up our restart
 
-        if 
+        if (current_play_state_.is_kickoff() || current_play_state_.is_penalty()) {
+            start_kicker_picker();
+        }
+
+    } else {
+        // Their restart
+        if (current_play_state_.restart() == PlayState::Restart::Kickoff) {
+            set_current_position<Defense>();
+        } else if (current_play_state_.restart() == PlayState::Restart::Penalty) {
+            // assign stuff based on other code
+            // TODO
+        }
     }
 }
 
 void RobotFactoryPosition::handle_ready() {
     // Ready stage for a restart
+    // Time to kick
 
-    
-}
+    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick()) {
+        // There is no "Setup" stage for free kicks, so this is when we choose kicker
+        start_kicker_picker();
 
-
-void RobotFactoryPosition::handle_new_restart() {
-
-    if (current_play_state_.is_their_restart()) {
-        // This is the other team's restart!
-
-        switch (current_play_state_.restart()) {
-            case PlayState::Restart::Free:
-            case PlayState::Restart::Kickoff: {
-                // In a kick for the other team.
-                // We want to change as little as possible, because once they
-                // kick the ball, everything should go back to how it just was.
-
-                // TODO(Sid): Ideally, we actually do nothing here.
-                // Offense and defense should just be aware of this state, and
-                // not touch the ball.
-
-                // The only rule we have to follow right now is to not touch the
-                // ball until the other team does. Once the other team touches the
-                // ball, the GC will advance past this state.
-
-                if (current_position_->get_name() == "Offense" ||
-                    current_position_->get_name() == "PenaltyPlayer" ||
-                    current_position_->get_name() == "FreeKicker") {
-                    // If we are playing a position that might illegally touch the ball,
-                    // just set ourselves to idle for the time being.
-                    set_current_position<Idle>();
-                }
-                break;
-            }
-
-            case PlayState::Restart::Placement: {
-                // If the other team is doing a ball placement
-                // We should be able to play as normal
-                // Ball placement simply adds an obstacle
-                // (get out of the way of the placement line)
-                // Which we can/will add to the static obstacles
-                // as necessary
-                // TODO(https://app.clickup.com/t/86azm4y6z)
-
-                set_default_position();
-                break;
-            }
-
-            case PlayState::Restart::Penalty: {
-                // If the other team is kicking a penalty kick,
-                // a number of new rules apply
-
-                // If we are the goalie, we need to stay on the baseline
-                // until play has started
-
-                // If we are any other robot, we must stay 0.5 meters behind the
-                // ball at all times
-
-                // TODO(https://app.clickup.com/t/86azm51j4) assign positions that
-                // follow these rules
-                set_current_position<Idle>();
-                break;
-            }
-
-            case PlayState::Restart::None: {
-                // Should not happen!
-                break;
-            }
-        }
-    } else {
-        switch (current_play_state_.restart()) {
-            case PlayState::Restart::Free:
-            case PlayState::Restart::Kickoff:
-            case PlayState::Restart::Penalty: {
-                // We have just been assigned (on this tick) some restart.
-                // We must first choose which robot should kick.
-                choose_kicker();
-                break;
-            }
-
-            case PlayState::Restart::Placement: {
-                // We currently do not perform ball placement.
-                // This should never happen.
-
-                set_current_position<Idle>();
-                break;
-            }
-
-            case PlayState::Restart::None: {
-                // There is no restart.
-                set_default_position();
-                break;
-            }
+    } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
+        if (current_position_->get_name() == "Offense" ||
+            current_position_->get_name() == "PenaltyPlayer" ||
+            current_position_->get_name() == "GoalKicker") {
+            set_current_position<Idle>();
         }
     }
-}
-
-void handle_new_state() {
-
-    if (current_play_st)
-
 }
 
 void RobotFactoryPosition::update_position() {
-
-    auto alive_bot_count = std::count(alive_robots_.begin(), alive_robots_.end(), true);
-
-    if (current_play_state_.is_our_restart()) {
-        // Idle until a kicker is chosen
-
-        if (kicker_distances_.size() < alive_bot_count - 1) {
-            // No kicker chosen yet
-            set_current_position<Idle>();
-            return;
+    switch (current_play_state_.state()) {
+        case PlayState::State::Playing: {
+            // We just became regular playing.
+            set_default_position();
+            break;
         }
 
-        // A kicker has been chosen.
-        bool is_kicker = (get_closest_kicker(kicker_distances_).first == robot_id_);
+        case PlayState::State::Setup:
+        case PlayState::State::Ready: {
+            // Currently in setup
 
-        // Figure out what we need to do
+            // This is the only case where we have to do something on every tick
+            if (current_play_state_.is_our_restart()) {
 
-    }
-}
-
-
-
-
-
-    switch (current_state_) {
-        case FREE_KICK: {
-            if (kicker_distances_.count(robot_id_) == 0) {
-                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
-                broadcast_kicker_request();
-            } else if (kicker_distances_.size() == 5) {
-                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
-                    if (current_position_->get_name() != "FreeKicker") {
-                        SPDLOG_INFO("Robot {} is chosen as free kicker", robot_id_);
-
-                        current_position_ = std::make_unique<FreeKicker>(robot_id_);
+                if (have_all_kicker_responses()) {
+                    if (am_closest_kicker()) {
+                        // TODO BECOME KICKER
+                        set_current_position<FreeKicker>();
+                    } else {
+                        // TODO BE A SMART OTHER POSITION BASED ON PK OR KICKOFF
                     }
-
                 } else {
-                    if (current_position_->get_name() != "Defense") {
-                        SPDLOG_INFO("Robot {} is not chosen as free kicker", robot_id_);
-
-                        current_position_ = std::make_unique<Defense>(robot_id_);
-                    }
+                    set_current_position<Idle>();
                 }
-            } else {
-                if (current_position_->get_name() != "Idle") {
-                    current_position_ = std::make_unique<Idle>(robot_id_);
-                }
+
             }
+
             break;
         }
 
-        case PENALTY_SETUP: {
-            if (kicker_distances_.count(robot_id_) == 0) {
-                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
-                broadcast_kicker_request();
-            } else if (kicker_distances_.size() == 5) {
-                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
-                    set_current_position<Defense>();
-                } else {
-                    set_current_position<Defense>();
-                }
-            } else {
-                set_current_position<Idle>();
-            }
-            break;
-        }
-
-        case PENALTY_KICK: {
-            if (current_position_->get_name() == "PenaltyPlayer") {
-                current_position_ = std::make_unique<GoalKicker>(robot_id_);
-            }
-            break;
-        }
-
-        case KICKOFF_SETUP: {
-            if (kicker_distances_.count(robot_id_) == 0) {
-                SPDLOG_INFO("Robot {} sent a kick request", robot_id_);
-                broadcast_kicker_request();
-            } else if (kicker_distances_.size() == 5) {
-                if (get_closest_kicker(kicker_distances_).first == robot_id_) {
-                    set_current_position<PenaltyPlayer>();
-                } else {
-                    set_current_position<Defense>();
-                }
-            } else {
-                set_current_position<Idle>();
-            }
-            break;
-        }
-
-        case KICKOFF_KICK: {
-            set_current_position<PenaltyPlayer>();
-            break;
-        }
-
-        case STOP: {
-            // if (current_position_->get_name() != "Defense") {
-            //     current_position_ = std::make_unique<Defense>(robot_id_);
-            // }
-            set_default_position(*last_world_state_, field_dimensions_);
-            SPDLOG_INFO("Robot {} Speed: {}", robot_id_,
-                        last_world_state_->get_robot(true, robot_id_).velocity.linear().mag());
-            break;
-        }
-
-        case PLAYING: {
-            set_default_position(*last_world_state_, field_dimensions_);
+        case PlayState::State::PenaltyPlaying:
+        case PlayState::State::Stop:
+        case PlayState::State::Halt: {
+            // No action needed on each tick
             break;
         }
     }
 }
 
-void RobotFactoryPosition::choose_kicker() {
+void RobotFactoryPosition::start_kicker_picker() {
     kicker_distances_.clear();
     broadcast_kicker_request();
 }
 
-std::pair<int, double> RobotFactoryPosition::get_closest_kicker(
-    const std::unordered_map<int, double>& kicker_distances) {
+bool RobotFactoryPosition::have_all_kicker_responses() {
+
+    int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
+
+    return kicker_distances_.size() == num_alive;
+}
+
+
+bool RobotFactoryPosition::am_closest_kicker() {
     // Return the max, comparing by distances only
-    return *std::min_element(kicker_distances.begin(), kicker_distances.end(),
+    auto closest = std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
                              [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
                                  if (a.second == b.second) {
                                      return a.first < b.first;
                                  }
                                  return a.second < b.second;
                              });
+
+    // Closest is an iterator to the pair (robot_id, distance)
+    return closest->first == robot_id_;
 }
 
 void RobotFactoryPosition::set_default_position() {
@@ -402,7 +260,7 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
         kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-
+        broadcast_kicker_request();
     }
     // Return the response
     return current_position_->receive_communication_request(request);
