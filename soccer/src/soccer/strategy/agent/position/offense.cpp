@@ -567,7 +567,7 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
-//Checks whether ball is out of range for stealing/receiving
+// Checks whether ball is out of range for stealing/receiving
 bool Offense::ball_in_red(WorldState* last_world_state_) {
     auto& ball_pos = last_world_state_->ball.position;
     if (field_dimensions_.their_defense_area().contains_point(ball_pos) ||
