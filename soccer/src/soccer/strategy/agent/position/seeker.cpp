@@ -143,7 +143,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Same logic in passing to check if target is open
     rj_geometry::Segment pass_path{ball_pos, current_point};
     double min_robot_dist = std::numeric_limits<double>::infinity();
-    float min_path_dist = std::numeric_limits<double>::infinity();
+    float min_path_dist = std::numeric_limits<float>::infinity();
 
     for (const RobotState& robot : world_state->their_robots) {
         rj_geometry::Point opp_pos = robot.pose.position();
