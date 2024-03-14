@@ -49,7 +49,7 @@ public:
 
     rj_geometry::Point get_target_point();
 
-    void set_seeker_points(std::unordered_map<int, rj_geometry::Point> seeker_points);
+    void set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points);
 
 private:
     // The seeker's id

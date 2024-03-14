@@ -373,7 +373,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
         comm_response.response = response;
-        return comm_response;
     } else if (const communication::SeekerRequest* seeker_request =
                    std::get_if<communication::SeekerRequest>(&request.request)) {
         if (seeker_request->adding) {

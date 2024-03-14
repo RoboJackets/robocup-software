@@ -26,7 +26,7 @@ void Seeker::reset_target() { target_valid_ = false; }
 
 rj_geometry::Point Seeker::get_target_point() { return target_pt_; }
 
-void Seeker::set_seeker_points(std::unordered_map<int, rj_geometry::Point> seeker_points) {
+void Seeker::set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points) {
     seeker_points_ = seeker_points;
 }
 
@@ -125,7 +125,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
     if (goal_box.contains_point(current_point)) {
-        return 10000000;
+        return std::numeric_limits<double>::infinity();;
     }
 
     // Line of Sight Heuristic
@@ -142,8 +142,8 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Whether the path from ball to the point is blocked
     // Same logic in passing to check if target is open
     rj_geometry::Segment pass_path{ball_pos, current_point};
-    double min_robot_dist = 10000;
-    float min_path_dist = 10000;
+    double min_robot_dist = std::numeric_limits<double>::infinity();;
+    float min_path_dist = std::numeric_limits<double>::infinity();;
     for (const RobotState& robot : world_state->their_robots) {
         rj_geometry::Point opp_pos = robot.pose.position();
         auto robot_dist = current_point.dist_to(opp_pos);
@@ -190,6 +190,8 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
         block_shot_loss = 1;
     }
 
+    // Finding the minimum distance from the target point to the other seeker points (from communication)
+    // Heuristic to penalize being close to other seekers (a small minimum distance)s
     double min_seeker_dist = std::numeric_limits<double>::infinity();
     for (const auto& [key, value] : seeker_points_) {
         min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(value));
