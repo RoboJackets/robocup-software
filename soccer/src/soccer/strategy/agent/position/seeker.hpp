@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <unordered_map>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -37,7 +38,7 @@ public:
      *
      * @param intent The RobotIntent to add the movement to
      * @param world_state The current WorldState
-     * @param field_dimensions The dimensions of the field
+     * @param field_dimensions The dimensions of the fields
      *
      * @return [RobotIntent with next target point for the robot]
      */
@@ -45,6 +46,10 @@ public:
                                         FieldDimensions field_dimensions) override;
 
     void reset_target();
+
+    rj_geometry::Point get_target_point();
+
+    void set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points);
 
 private:
     // The seeker's id
@@ -103,9 +108,11 @@ private:
      *
      * @return double The evaluation of that target point
      */
-    static double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                             const WorldState* world_state,
-                             const FieldDimensions& field_dimensions);
+    [[nodiscard]] double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
+                                    const WorldState* world_state,
+                                    const FieldDimensions& field_dimensions) const;
+
+    std::unordered_map<int, rj_geometry::Point> seeker_points_{};
 };
 
 }  // namespace strategy

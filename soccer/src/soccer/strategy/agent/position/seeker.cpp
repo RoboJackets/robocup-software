@@ -24,6 +24,12 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
 
 void Seeker::reset_target() { target_valid_ = false; }
 
+rj_geometry::Point Seeker::get_target_point() { return target_pt_; }
+
+void Seeker::set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points) {
+    seeker_points_ = seeker_points;
+}
+
 rj_geometry::Point Seeker::get_open_point(const WorldState* world_state,
                                           rj_geometry::Point current_position,
                                           const FieldDimensions& field_dimensions) const {
@@ -60,7 +66,7 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
 
         // Finds the best point out of the ones checked
         for (auto point : check_points) {
-            curr_val = Seeker::eval_point(ball_pos, point, world_state, field_dimensions);
+            curr_val = eval_point(ball_pos, point, world_state, field_dimensions);
             if (curr_val < min_val) {
                 min_val = curr_val;
                 min = point;
@@ -107,42 +113,19 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
         }
     }
 
-    // Assigns robots to horizontal thirds
-    if (robot_id_ == 1) {
-        // Assign left
-        if (x > field_dimensions.field_x_left_coord() + field_dimensions.width() / 2) {
-            x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 2 -
-                border_buffer;
-        }
-    } else if (robot_id_ == 2) {
-        // Assign right
-        if (x < field_dimensions.field_x_right_coord() - field_dimensions.width() / 2) {
-            x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 2 +
-                border_buffer;
-        }
-    } else {
-        // Assign middle
-        if (x < field_dimensions.field_x_left_coord() + field_dimensions.width() / 3) {
-            x = field_dimensions.field_x_left_coord() + field_dimensions.width() / 3 +
-                border_buffer;
-        } else if (x > field_dimensions.field_x_right_coord() - field_dimensions.width() / 3) {
-            x = field_dimensions.field_x_right_coord() - field_dimensions.width() / 3 -
-                border_buffer;
-        }
-    }
-
     return rj_geometry::Point(x, y);
 }
 
 double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                          const WorldState* world_state, const FieldDimensions& field_dimensions) {
+                          const WorldState* world_state,
+                          const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
     // Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
     if (goal_box.contains_point(current_point)) {
-        return 10000000;
+        return std::numeric_limits<double>::infinity();
     }
 
     // Line of Sight Heuristic
@@ -159,8 +142,9 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Whether the path from ball to the point is blocked
     // Same logic in passing to check if target is open
     rj_geometry::Segment pass_path{ball_pos, current_point};
-    double min_robot_dist = 10000;
-    float min_path_dist = 10000;
+    double min_robot_dist = std::numeric_limits<double>::infinity();
+    float min_path_dist = std::numeric_limits<float>::infinity();
+
     for (const RobotState& robot : world_state->their_robots) {
         rj_geometry::Point opp_pos = robot.pose.position();
         auto robot_dist = current_point.dist_to(opp_pos);
@@ -207,9 +191,17 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
         block_shot_loss = 1;
     }
 
+    // Finding the minimum distance from the target point to the other seeker points (from
+    // communication) Heuristic to penalize being close to other seekers (a small minimum distance)s
+    double min_seeker_dist = std::numeric_limits<double>::infinity();
+    for (const auto& [key, value] : seeker_points_) {
+        min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(value));
+    }
+    const double seeker_dist_loss = 0.4 * 1 / min_seeker_dist;
+
     // Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist +
-           block_shot_loss;
+           block_shot_loss + seeker_dist_loss;
 }
 
 }  // namespace strategy
