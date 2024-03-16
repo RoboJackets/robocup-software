@@ -114,15 +114,15 @@ void ExternalReferee::setup_referee_multicast() {
         throw std::runtime_error("Failed to bind to shared referee port");
     }
 
-    // ExternalReferee will find any packets from kRefereeSourceAddress take
-    // them
-    SPDLOG_INFO("ExternalReferee joining kRefereeSourceAddress: {}", kRefereeSourceAddress);
+    // ExternalReferee will find any packets from kRefereeSourceAddress
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
-    const boost::asio::ip::address_v4 multicast_interface =
-        boost::asio::ip::address::from_string(kRefereeInterface).to_v4();
-    asio_socket_.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
+
+    // Join the multicast group. Note that by choosing not to specify a physical interface address,
+    // the default "any" address is used, which means the socket will receive packets from any
+    // interface, as long as the packets are addressed to the multicast address.
+    // This was changed in March 2024.
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }
