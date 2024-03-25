@@ -1,6 +1,8 @@
 #include "goalie.hpp"
 
 #include <spdlog/spdlog.h>
+#include <limits>
+#include <cmath>
 
 namespace strategy {
 
@@ -199,10 +201,33 @@ void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; 
 
 rj_geometry::Point Goalie::penalty_location() {
     // be dumb: center of baseline
-    return this->field_dimensions_.our_goal_loc();
+    auto goal_loc = this->field_dimensions_.our_goal_loc();
+    // return goal_loc;
     // be smart
     // find robot on their team closest to ball
+    RobotState enemy;
+    double dist_to_ball = std::numeric_limits<double>::max();
+    for (auto r : last_world_state_->their_robots) {
+        double d = r.pose.position().dist_to(last_world_state_->ball.position);
+        if (d < dist_to_ball) {
+            dist_to_ball = d;
+            enemy = r;
+        }
+    }
     // line up in line with them and the ball on the baseline
+    double m = (enemy.pose.position().y() - last_world_state_->ball.position.y()) / 
+                    (enemy.pose.position().x() - last_world_state_->ball.position.x());
+    double x_loc = ((goal_loc.y() - enemy.pose.position().y()) / m) + enemy.pose.position().x();
+    if (std::abs(x_loc) > field_dimensions_.goal_width() / 2.0) {
+        return goal_loc;
+    }
+    if (x_loc > (field_dimensions_.goal_width() / 2.0 - kRobotRadius)) {
+        return rj_geometry::Point{field_dimensions_.goal_width() / 2.0 - kRobotRadius, goal_loc.y()};
+    }
+    if (x_loc < (kRobotRadius - field_dimensions_.goal_width() / 2.0)) {
+        return rj_geometry::Point{kRobotRadius - field_dimensions_.goal_width() / 2.0, goal_loc.y()};
+    }
+    return rj_geometry::Point{x_loc, goal_loc.y()};
 }
 
 }  // namespace strategy

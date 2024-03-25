@@ -34,7 +34,7 @@ public:
     [[nodiscard]] Restart restart() const { return restart_; }
     [[nodiscard]] bool is_our_restart() const { return is_restart() && our_restart_; }
     [[nodiscard]] bool is_their_restart() const {
-        return is_restart() && our_restart_;
+        return is_restart() && !our_restart_;
     }  // is this wrong, should this be return is_restart() && !our_restart_;
     [[nodiscard]] bool is_halt() const { return state() == State::Halt; }
     [[nodiscard]] bool is_stop() const { return state() == State::Stop; }

@@ -51,8 +51,8 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     // rounding issues on midline)
     // Penalty mode
     if (current_play_state_.is_ready() && current_play_state_.is_penalty()) {
-        // first robot becomes penalty player
-        if (i == 0 && current_play_state_.is_our_restart()) {
+        // first robot after goalie becomes penalty player
+        if (i == 1 && current_play_state_.is_our_restart()) { 
             current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
         } else {
             // make everyone else a smart idle once that works
