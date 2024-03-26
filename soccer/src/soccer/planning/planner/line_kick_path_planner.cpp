@@ -71,7 +71,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
-    return path_target_.plan(modified_request);
+    return initial_planner.plan(modified_request);
 }
 
 Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
@@ -86,17 +86,17 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 
     LinearMotionInstant target{ball.position, vel};
 
-    MotionCommand modified_command{"path_target", target,
+    MotionCommand modified_command{"final_path_target", target,
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
-    return path_target_.plan(modified_request);
+    return final_planner.plan(modified_request);
 }
 
 void LineKickPathPlanner::process_state_transition() {
     // Let PathTarget decide when the first stage is done
     // Possible problem: can PathTarget get stuck and loop infinitely?
-    if (current_state_ == INITIAL_APPROACH && path_target_.is_done()) {
+    if (current_state_ == INITIAL_APPROACH && initial_planner.is_done()) {
         current_state_ = FINAL_APPROACH;
     }
 }
