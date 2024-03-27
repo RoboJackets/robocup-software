@@ -36,7 +36,7 @@ Offense::State Offense::next_state() {
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball() && !ball_in_red(last_world_state_)) {
+            if (can_steal_ball()) {
                 return STEALING;
             }
 
@@ -101,10 +101,6 @@ Offense::State Offense::next_state() {
         }
 
         case STEALING: {
-            if (ball_in_red(last_world_state_)) {
-                return SEEKING_START;
-            }
-
             // Go to possession if successful
             if (check_is_done()) {
                 return POSSESSION_START;
@@ -134,8 +130,8 @@ Offense::State Offense::next_state() {
                 return POSSESSION_START;
             }
 
-            if (ball_in_red(last_world_state_)) {
-                return SEEKING_START;
+            if (ball_in_red()) {
+                return DEFAULT;
             }
 
             // If we failed to get it in time
@@ -506,6 +502,10 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
+    //Ball in red zone or not
+    if (ball_in_red()) {
+        return false;
+    }
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
@@ -568,13 +568,12 @@ rj_geometry::Point Offense::calculate_best_shot() const {
 }
 
 // Checks whether ball is out of range for stealing/receiving
-bool Offense::ball_in_red(WorldState* last_world_state_) {
+bool Offense::ball_in_red() const {
     auto& ball_pos = last_world_state_->ball.position;
-    if (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
+    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
         field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-        !field_dimensions_.field_rect().contains_point(ball_pos)) {
-        return true;
-    }
-    return false;
+        !field_dimensions_.field_rect().contains_point(ball_pos)); 
+    
+    
 }
 }  // namespace strategy

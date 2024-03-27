@@ -110,6 +110,9 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
 
+    //Return an empty trajectory if the ball is hitting static obstacles
+    //or it is in the goalie area.
+    //Check the robot for the same conditions.
     if (static_obstacles.hit(ball.position) ||
         static_obstacles.hit(start_instant.pose.position())) {
         return Trajectory{};
@@ -275,12 +278,6 @@ Trajectory CollectPathPlanner::fine_approach(
     motion_constraints_hit.max_speed =
         std::min(target_hit_vel.mag(), motion_constraints_hit.max_speed);
 
-    // Trajectory path_hit = CreatePath::simple(start_instant.linear_motion(), target_hit,
-    //                                          plan_request.constraints.mot, start_instant.stamp);
-    // Trajectory path_hit = CreatePath::rrt(start_instant.linear_motion(), target_hit,
-    // plan_request.constraints.mot,
-    //                                  start_instant.stamp, static_obstacles, dynamic_obstacles);
-
     Replanner::PlanParams params{start_instant,
                                  target_hit,
                                  static_obstacles,
@@ -374,9 +371,6 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
     // Try to use the RRTPathPlanner to generate the path first
     // It reaches the target better for some reason
     std::vector<Point> start_end_points{start.position(), target.position};
-
-    // Trajectory path = CreatePath::rrt(start.linear_motion(), target, motion_constraints,
-    //                                   start.stamp, static_obstacles, dynamic_obstacles);
 
     Replanner::PlanParams params{start,
                                  target,
