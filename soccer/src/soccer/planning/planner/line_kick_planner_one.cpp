@@ -1,4 +1,4 @@
-#include "planning/planner/line_kick_path_planner.hpp"
+#include "planning/planner/line_kick_planner_one.hpp"
 
 #include <rj_geometry/util.hpp>
 
@@ -12,7 +12,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
-Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
+Trajectory LineKickPlannerOne::plan(const PlanRequest& plan_request) {
     // If we are not allowed to touch the ball, this planner always fails
     // This is preferred to simply ending the planner because it is possible (likely)
     // that strategy re-requests the same planner anyway.
@@ -35,15 +35,8 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
     }
 
-    process_state_transition();
-    switch (current_state_) {
-        case INITIAL_APPROACH:
-            prev_path_ = initial(plan_request);
-            break;
-        case FINAL_APPROACH:
-            prev_path_ = final(plan_request);
-            break;
-    }
+    prev_path_ = initial(plan_request);
+
     prev_path_.stamp(RJ::now());
     return prev_path_;
 }
@@ -72,33 +65,6 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);
-}
-
-Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
-    const BallState& ball = plan_request.world_state->ball;
-
-    // Velocity is the speed (parameter) times the unit vector in the correct direction
-    auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
-    auto vel = goal_to_ball.normalized() * kFinalRobotSpeed;
-
-    // Create an updated MotionCommand and forward to PathTargetPathPlaner
-    PlanRequest modified_request = plan_request;
-
-    LinearMotionInstant target{ball.position, vel};
-
-    MotionCommand modified_command{"path_target", target,
-                                   FacePoint{plan_request.motion_command.target.position}};
-    modified_request.motion_command = modified_command;
-
-    return path_target_.plan(modified_request);
-}
-
-void LineKickPathPlanner::process_state_transition() {
-    // Let PathTarget decide when the first stage is done
-    // Possible problem: can PathTarget get stuck and loop infinitely?
-    if (current_state_ == INITIAL_APPROACH && initial_planner.is_done()) {
-        current_state_ = FINAL_APPROACH;
-    }
 }
 
 bool LineKickPathPlanner::is_done() const {
