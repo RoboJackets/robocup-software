@@ -41,7 +41,7 @@ Trajectory LineKickPlannerOne::plan(const PlanRequest& plan_request) {
     return prev_path_;
 }
 
-Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
+Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
     // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
 
@@ -67,7 +67,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     return path_target_.plan(modified_request);
 }
 
-bool LineKickPathPlanner::is_done() const {
+bool LineKickPlannerOne::is_done() const {
     // if ball is fast, assume we have kicked it correctly
     // (either way we can't go recapture it)
     return average_ball_vel_.mag() > kIsDoneBallVel;

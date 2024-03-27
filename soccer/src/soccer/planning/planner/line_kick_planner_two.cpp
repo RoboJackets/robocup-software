@@ -42,7 +42,7 @@ Trajectory LineKickPlannerTwo::plan(const PlanRequest& plan_request) {
 }
 
 
-Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
+Trajectory LineKickPlannerTwo::final(const PlanRequest& plan_request) {
     const BallState& ball = plan_request.world_state->ball;
 
     // Velocity is the speed (parameter) times the unit vector in the correct direction
@@ -59,6 +59,13 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);
+}
+
+
+bool LineKickPlannerTwo::is_done() const {
+    // if ball is fast, assume we have kicked it correctly
+    // (either way we can't go recapture it)
+    return average_ball_vel_.mag() > kIsDoneBallVel;
 }
 
 }  // namespace planning
