@@ -3,6 +3,7 @@
 #include <chrono>
 #include <cmath>
 #include <string>
+#include <unordered_map>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
@@ -231,6 +232,10 @@ private:
      * @return the target (within the goal) that would be the most clear shot
      */
     rj_geometry::Point calculate_best_shot() const;
+
+    void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
+
+    std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
 
 }  // namespace strategy
