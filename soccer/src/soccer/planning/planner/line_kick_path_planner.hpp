@@ -45,7 +45,8 @@ private:
 
     State current_state_{INITIAL_APPROACH};
 
-    PathTargetPathPlanner path_target_{};
+    PathTargetPathPlanner initial_planner{};
+    PathTargetPathPlanner final_planner{};
     CollectPathPlanner collect_planner_{};
     Trajectory prev_path_;
 

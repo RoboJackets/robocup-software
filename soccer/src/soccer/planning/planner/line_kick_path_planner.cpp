@@ -67,11 +67,11 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
 
     LinearMotionInstant target{ball_position - offset_from_ball};
 
-    MotionCommand modified_command{"path_target", target,
+    MotionCommand modified_command{"initial_path_target", target,
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
-    return path_target_.plan(modified_request);
+    return initial_planner.plan(modified_request);
 }
 
 Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
@@ -86,11 +86,11 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 
     LinearMotionInstant target{ball.position, vel};
 
-    MotionCommand modified_command{"path_target", target,
+    MotionCommand modified_command{"final_path_target", target,
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
-    return path_target_.plan(modified_request);
+    return final_planner.plan(modified_request);
 }
 
 void LineKickPathPlanner::process_state_transition() {
