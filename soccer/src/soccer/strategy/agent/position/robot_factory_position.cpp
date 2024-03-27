@@ -92,8 +92,7 @@ void RobotFactoryPosition::handle_setup() {
         if (current_play_state_.restart() == PlayState::Restart::Kickoff) {
             set_current_position<Defense>();
         } else if (current_play_state_.restart() == PlayState::Restart::Penalty) {
-            // assign stuff based on other code
-            // TODO
+            set_current_position<SmartIdle>();
         }
     }
 }
@@ -123,7 +122,24 @@ void RobotFactoryPosition::update_position() {
             break;
         }
 
-        case PlayState::State::Setup:
+        case PlayState::State::Setup: {
+             if (current_play_state_.is_our_restart()) {
+                if (have_all_kicker_responses()) {
+                    if (current_play_state_.is_kickoff()) {
+                        set_current_position<Defense>();
+                    } else if (current_play_state_.is_penalty()) {
+                        set_current_position<SmartIdle>();
+                    } else if (current_play_state_.is_free_kick()) {
+                        // do what it was doing before foul
+                        set_default_position();
+                    }
+                } else {
+                    set_current_position<Idle>();
+                }
+
+            }
+            break;
+        }
         case PlayState::State::Ready: {
             // Currently in setup
 
@@ -132,10 +148,16 @@ void RobotFactoryPosition::update_position() {
                 if (have_all_kicker_responses()) {
                     SPDLOG_INFO("robot {} has all responses", robot_id_);
                     if (am_closest_kicker()) {
-                        // TODO BECOME KICKER
                         set_current_position<FreeKicker>();
                     } else {
-                        // TODO BE A SMART OTHER POSITION BASED ON PK OR KICKOFF
+                        if (current_play_state_.is_kickoff()) {
+                            set_current_position<Defense>();
+                        } else if (current_play_state_.is_penalty()) {
+                            set_current_position<SmartIdle>();
+                        } else if (current_play_state_.is_free_kick()) {
+                            // do what it was doing before foul
+                            set_default_position();
+                        }
                     }
                 } else {
                     set_current_position<Idle>();

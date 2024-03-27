@@ -8,6 +8,8 @@ namespace strategy {
 
 SmartIdle::SmartIdle(int r_id) : Position{r_id, "SmartIdle"} {}
 
+SmartIdle::SmartIdle(const Position& other) : Position{other} {}
+
 std::string SmartIdle::get_current_state() { return "SmartIdle"; }
 
 /**
@@ -26,7 +28,6 @@ void SmartIdle::derived_pass_ball(){
 void SmartIdle::derived_acknowledge_ball_in_transit() {}
 
 std::optional<RobotIntent> SmartIdle::derived_get_task(RobotIntent intent) {
-
  	latest_state_ = update_state();
     return state_to_task(intent);
 };
@@ -34,13 +35,25 @@ std::optional<RobotIntent> SmartIdle::derived_get_task(RobotIntent intent) {
 SmartIdle::State SmartIdle::update_state() {
 	switch(latest_state_) {
 		case IDLING: {
-			if (distance_to_ball() < 1) {
+            bool travel_upwards = false;
+			double y_pos = last_world_state_->ball.position.y();
+			if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
+                travel_upwards = true;
+            }
+            double our_y_pos = last_world_state_->get_robot(true, this->robot_id_).pose.position().y();
+			if ((!travel_upwards && y_pos - our_y_pos > 1) || (travel_upwards && y_pos - our_y_pos < 1)) {
 				return GET_AWAY;
 			}
 			break;
 		}
 		case GET_AWAY: {
-			if (distance_to_ball() >= 1) {
+            bool travel_upwards = false;
+			double y_pos = last_world_state_->ball.position.y();
+			if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
+                travel_upwards = true;
+            }
+            double our_y_pos = last_world_state_->get_robot(true, this->robot_id_).pose.position().y();
+			if ((travel_upwards && y_pos - our_y_pos >= 1) || (!travel_upwards && y_pos - our_y_pos <= 1)) {
 				return IDLING;
 			}
 			break;
@@ -74,7 +87,7 @@ std::optional<RobotIntent> SmartIdle::state_to_task(RobotIntent intent) {
 
             planning::LinearMotionInstant goal{target_pt, target_vel};
             intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, false};
-            
+
             return intent;
             break;
 		}
