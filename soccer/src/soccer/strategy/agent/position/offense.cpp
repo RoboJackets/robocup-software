@@ -334,7 +334,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case SHOOTING: {
             // target_ = calculate_best_shot();
             SPDLOG_INFO("2222222222222222222222222222222222222222222222222222222");
-            auto line_kick_cmd = planning::MotionCommand{"line_kick_two", planning::LinearMotionInstant{target_}};
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
