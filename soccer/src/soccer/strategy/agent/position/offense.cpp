@@ -152,12 +152,18 @@ Offense::State Offense::next_state() {
 
         case SHOOTING_START: {
             if (check_is_done()) {
-                return SHOOTING;
+                return LINE_KICK_FIRST;
             }
             if (distance_to_ball() < kOwnBallRadius) {
                 return DEFAULT;
             }
             return SHOOTING_START;
+        }
+
+        case LINE_KICK_FIRST: {
+            if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
+                return SHOOTING;
+            }
         }
 
         case SHOOTING: {
@@ -221,7 +227,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
 
             planning::LinearMotionInstant target{target_robot_pos};
-            planning::MotionCommand line_kick_cmd{"line_kick", target};
+            
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
             // Set intent to kick
             intent.motion_command = line_kick_cmd;
@@ -317,10 +324,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
+        case LINE_KICK_FIRST: {
+            SPDLOG_INFO("1111111111111111111111111111111111111111111111111111111");
+            auto line_kick_cmd = planning::MotionCommand{"line_kick_one", planning::LinearMotionInstant{target_}};
+            intent.motion_command = line_kick_cmd;
+            return intent;
+        }
+
         case SHOOTING: {
             // target_ = calculate_best_shot();
-            auto line_kick_cmd =
-                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+            SPDLOG_INFO("2222222222222222222222222222222222222222222222222222222");
+            auto line_kick_cmd = planning::MotionCommand{"line_kick_two", planning::LinearMotionInstant{target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;

@@ -21,7 +21,11 @@ Trajectory LineKickPlannerOne::plan(const PlanRequest& plan_request) {
         return Trajectory{};
     }
 
+    latest_robot_pos_ = plan_request.start.pose.position();
+
     const BallState& ball = plan_request.world_state->ball;
+
+    latest_ball_state_ = ball;
 
     if (!average_ball_vel_initialized_) {
         average_ball_vel_ = ball.velocity;
@@ -42,6 +46,7 @@ Trajectory LineKickPlannerOne::plan(const PlanRequest& plan_request) {
 }
 
 Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
+
     // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
 
@@ -68,9 +73,10 @@ Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
 }
 
 bool LineKickPlannerOne::is_done() const {
-    // if ball is fast, assume we have kicked it correctly
-    // (either way we can't go recapture it)
-    return average_ball_vel_.mag() > kIsDoneBallVel;
+    //end when close enough to the ball
+    
+    return (latest_ball_state_.position.dist_to(latest_robot_pos_) 
+        < kRobotRadius + kBallRadius + 0.1) || average_ball_vel_.mag() > kIsDoneBallVel;
 }
 
 }  // namespace planning

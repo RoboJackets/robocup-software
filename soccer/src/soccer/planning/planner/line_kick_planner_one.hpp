@@ -41,6 +41,7 @@ public:
 private:
     PathTargetPathPlanner path_target_{};
     Trajectory prev_path_;
+    rj_geometry::Point latest_robot_pos_;
 
     // These constants could be tuned more
     static constexpr double kIsDoneBallVel{1.5};
@@ -50,6 +51,7 @@ private:
     static constexpr double kLowPassFilterGain{0.2};
 
     rj_geometry::Point average_ball_vel_;
+    BallState latest_ball_state_;
     bool average_ball_vel_initialized_ = false;
 
     /**
