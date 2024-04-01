@@ -24,6 +24,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/robot_factory_position.hpp"
+#include "strategy/agent/position/robot_factory_position_path_test.hpp"
 #include "world_state.hpp"
 
 // Communication

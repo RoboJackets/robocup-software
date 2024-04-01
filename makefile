@@ -69,10 +69,16 @@ again:
 run-sim:
 	./launch/framework.bash
 
+run-sim-test:
+	./launch/framework.bash
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
 	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True
+
+run-with-path-tests:
+	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True path_plan_test:=True
+
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:

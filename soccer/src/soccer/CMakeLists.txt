@@ -77,6 +77,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/communication/communication.cpp
     strategy/agent/position/position.cpp
     strategy/agent/position/robot_factory_position.cpp
+    strategy/agent/position/robot_factory_position_path_test.cpp
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/defense.cpp
