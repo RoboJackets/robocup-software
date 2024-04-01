@@ -163,6 +163,7 @@ private:
     // us to set this once initially
     const int robot_id_;
 
+    bool path_plan_test_mode;
     /*
      * @return thread-safe ptr to most recent world_state
      */

@@ -24,6 +24,7 @@ AgentActionClient::AgentActionClient(int r_id)
                        .allow_undeclared_parameters(true)) {
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
+    this->get_parameter("path_plan_test", this->path_plan_test_mode);
 
     current_state_publisher_ = create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);

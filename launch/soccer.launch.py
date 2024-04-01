@@ -52,6 +52,8 @@ def generate_launch_description():
     use_internal_ref = LaunchConfiguration("use_internal_ref")
     ref_flag = LaunchConfiguration("ref_flag")
 
+    path_plan_test = LaunchConfiguration("path_plan_test")
+
     param_config = LaunchConfiguration("param_config")
     param_config_filepath = LaunchConfiguration("param_config_filepath")
 
@@ -81,6 +83,7 @@ def generate_launch_description():
                 "team_name", default_value=TextSubstitution(text="RoboJackets")
             ),
             DeclareLaunchArgument("team_flag", default_value="-y"),
+            DeclareLaunchArgument("path_plan_test", default_value="True"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
             DeclareLaunchArgument("use_internal_ref", default_value="True"),
@@ -188,7 +191,8 @@ def generate_launch_description():
                 package="rj_robocup",
                 executable="agent_action_client_node",
                 output="screen",
-                parameters=[param_config_filepath],
+                parameters=[param_config_filepath,
+                            {"path_plan_test": path_plan_test}],
                 on_exit=Shutdown(),
             ),
             Node(
