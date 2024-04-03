@@ -7,7 +7,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
         // } else if (robot_id_ == 1) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+        current_position_ = std::make_unique<PenaltyNonKicker>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
@@ -56,7 +56,7 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
             current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
         } else {
             // make everyone else a smart idle once that works
-            current_position_ = std::make_unique<SmartIdle>(robot_id_);
+            current_position_ = std::make_unique<PenaltyNonKicker>(robot_id_);
         }
     } else if (Position::our_possession_ ||
                world_state.ball.position.y() > field_dimensions.length() / 1.99) {
