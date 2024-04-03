@@ -20,8 +20,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
-        return current_position_->get_task(*last_world_state_, field_dimensions_,
-                                           current_play_state_);
+        return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
     }
 
     // Update our state
@@ -41,7 +40,7 @@ void RobotFactoryPosition::process_play_state() {
         switch (current_play_state_.state()) {
             case PlayState::State::Playing: {
                 // We just became regular playing.
-                set_default_position();
+                // set_default_position();
                 break;
             }
 
@@ -122,24 +121,27 @@ void RobotFactoryPosition::update_position() {
             break;
         }
 
-        case PlayState::State::Setup: {
-             if (current_play_state_.is_our_restart()) {
-                if (have_all_kicker_responses()) {
-                    if (current_play_state_.is_kickoff()) {
-                        set_current_position<Defense>();
-                    } else if (current_play_state_.is_penalty()) {
-                        set_current_position<SmartIdle>();
-                    } else if (current_play_state_.is_free_kick()) {
-                        // do what it was doing before foul
-                        set_default_position();
-                    }
-                } else {
-                    set_current_position<Idle>();
-                }
+        // case PlayState::State::Setup: {
+        //      if (current_play_state_.is_our_restart()) {
+        //         if (have_all_kicker_responses()) {
+        //             if (current_play_state_.is_kickoff()) {
 
-            }
-            break;
-        }
+        //                 set_current_position<Defense>();
+        //             } else if (current_play_state_.is_penalty()) {
+        //                 set_current_position<SmartIdle>();
+        //                 // set_current_position<PenaltyNonKicker>();
+        //             } else if (current_play_state_.is_free_kick()) {
+        //                 // do what it was doing before foul
+        //                 set_default_position();
+        //             }
+        //         } else {
+        //             // set_current_position<Idle>();
+        //         }
+
+        //     }
+        //     break;
+        // }
+        case PlayState::State::Setup:
         case PlayState::State::Ready: {
             // Currently in setup
 
@@ -148,21 +150,50 @@ void RobotFactoryPosition::update_position() {
                 if (have_all_kicker_responses()) {
                     SPDLOG_INFO("robot {} has all responses", robot_id_);
                     if (am_closest_kicker()) {
-                        set_current_position<FreeKicker>();
+                        if (current_play_state_.is_free_kick()) {
+                            set_current_position<FreeKicker>();
+                        } else {
+                            set_current_position<PenaltyPlayer>();
+                            SPDLOG_INFO("{} is a penalty player", robot_id_);
+
+                        }
                     } else {
                         if (current_play_state_.is_kickoff()) {
                             set_current_position<Defense>();
                         } else if (current_play_state_.is_penalty()) {
-                            set_current_position<SmartIdle>();
+                            // set_current_position<SmartIdle>();
+                            set_current_position<PenaltyNonKicker>();
+                            SPDLOG_INFO("{} is a penalty non kicker", robot_id_);
                         } else if (current_play_state_.is_free_kick()) {
                             // do what it was doing before foul
                             set_default_position();
+                            // don't want a player on offense to try to kick the
+                            // ball instead of free kicker
+                            if (current_position_->get_name() == "Offense") {
+                                set_current_position<SmartIdle>();
+                            }
                         }
                     }
                 } else {
-                    set_current_position<Idle>();
+                    // set_current_position<Idle>();
                 }
 
+            } else {
+                if (current_play_state_.is_kickoff()) {
+                    set_current_position<Defense>();
+                } else if (current_play_state_.is_penalty()) {
+                    // set_current_position<SmartIdle>();
+                    set_current_position<PenaltyNonKicker>();
+                    SPDLOG_INFO("{} is a penalty non kicker", robot_id_);
+                } else if (current_play_state_.is_free_kick()) {
+                    // do what it was doing before foul
+                    set_default_position();
+                    // don't want a player on offense to try to kick the
+                    // ball instead of free kicker
+                    if (current_position_->get_name() == "Offense") {
+                        set_current_position<SmartIdle>();
+                    }
+                }
             }
 
             break;
@@ -178,7 +209,7 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::start_kicker_picker() {
-    SPDLOG_INFO("robot {} has cleared", robot_id_);
+    // SPDLOG_INFO("robot {} has cleared", robot_id_);
     kicker_distances_.clear();
     broadcast_kicker_request();
 }

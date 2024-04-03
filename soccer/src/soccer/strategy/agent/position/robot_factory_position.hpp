@@ -23,6 +23,7 @@
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
+#include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/position.hpp"
 
 namespace strategy {
@@ -135,7 +136,12 @@ private:
     template <class Pos>
     void set_current_position() {
         // If we are not currently playing Pos
+        // if (current_position_->get_name() == "Defense") {
+        //     SPDLOG_INFO("we are never leaving defense :)");
+        //     return;
+        // }
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
+            SPDLOG_INFO("Robot {}: change {}", current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const Position&)
             current_position_ = std::make_unique<Pos>(*current_position_);
         }
