@@ -42,11 +42,11 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
         case LINE_UP: {
             double y_pos = last_world_state_->ball.position.y();
             // if ball is above goal, increase y_pos, else decrease
-            if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
-                y_pos += kRobotRadius - 0.15;
-            } else {
+            //if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
+            //   y_pos += kRobotRadius - 0.15;
+            // } else {
                 y_pos -= kRobotRadius - 0.15;
-            }
+            // }
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
