@@ -1,4 +1,4 @@
-#include "pivot_path_planner.hpp"
+#include "line_pivot_path_planner.hpp"
 
 #include <memory>
 #include <vector>
@@ -18,8 +18,66 @@
 namespace planning {
 using namespace rj_geometry;
 
-Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
-    const RobotInstant& start_instant = request.start;
+Trajectory LinePivotPathPlanner::plan(const PlanRequest& request) {
+
+    current_state_ = next_state(request);
+    Trajectory path;
+
+    if (current_state_ ==  LINE) {
+        path = line(request);
+    } else {
+        path = pivot(request);
+    }
+
+    return path;
+}
+
+bool LinePivotPathPlanner::is_done() const {
+    if (!cached_angle_change_.has_value()) {
+        return false;
+    }
+    bool val = abs(cached_angle_change_.value()) < degrees_to_radians(IS_DONE_ANGLE_CHANGE_THRESH);
+    return val;
+}
+
+LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request)  {
+    const MotionCommand& command = plan_request.motion_command;
+    auto current_point = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
+    auto pivot_point = command.pivot_point;
+    
+    double dist_from_point = kRobotRadius;
+    auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
+    double vel = plan_request.world_state->get_robot(true, plan_request.shell_id).velocity.linear().mag();
+    if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3)) {
+        return PIVOT;
+    }
+    if (current_state_ == PIVOT && (pivot_point.dist_to(current_point) > (dist_from_point * 5))) {
+        return LINE;
+    }
+    return current_state_;
+}
+
+Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
+    const MotionCommand& command = plan_request.motion_command;
+    auto pivot_point = command.pivot_point;
+    auto current_point = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
+    
+    double dist_from_point = kRobotRadius;
+    auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
+
+    // Create an updated MotionCommand and forward to PathTargetPathPlaner
+    PlanRequest modified_request = plan_request;
+
+    LinearMotionInstant target{target_point};
+
+    MotionCommand modified_command{"path_target", target};
+    modified_request.motion_command = modified_command;
+
+    return path_target_.plan(modified_request);
+}
+
+Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
+        const RobotInstant& start_instant = request.start;
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
@@ -33,28 +91,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 
-    // TODO(Kyle): These need real constants
-    const bool pivot_target_unchanged =
-        cached_pivot_target_.has_value() &&
-        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2;
-    bool pivot_point_unchanged =
-        cached_pivot_point_.has_value() &&
-        cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2;
-
-    // if (pivot_target_unchanged && pivot_point_unchanged) {
-    //     return previous_;
-    // }
-
-    // if (pivot_point_unchanged) {
-    //     pivot_point = *cached_pivot_point_;
-    // }
-    // if (pivot_target_unchanged) {
-    //     pivot_target = *cached_pivot_target_;
-    // }
-
-    cached_pivot_target_ = pivot_target;
-    cached_pivot_point_ = pivot_point;
-
     auto final_position = pivot_point + (pivot_point - pivot_target).normalized(radius);
     std::vector<Point> points;
 
@@ -67,14 +103,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         request.world_state->get_robot(true, request.shell_id).pose.position());
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
-    SPDLOG_INFO("Start Position: ({}, {})", request.world_state->get_robot(true, request.shell_id).pose.position().x(), request.world_state->get_robot(true, request.shell_id).pose.position().y());
-    SPDLOG_INFO("Pivot Point: ({}, {})", pivot_point.x(), pivot_point.y());
-    SPDLOG_INFO("Pivot Target: ({}, {})", pivot_target.x(), pivot_target.y());
-    SPDLOG_INFO("Final Position: ({}, {})", final_position.x(), final_position.y());
-    SPDLOG_INFO("Start Angle: {}", start_angle);
-    SPDLOG_INFO("Target Angle: {}", target_angle);
-    SPDLOG_INFO("Angle Change: {}", angle_change);
-    SPDLOG_INFO("----------------");
 
     cached_angle_change_ = angle_change;
 
@@ -104,20 +132,8 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);
     path.stamp(RJ::now());
-
-    previous_ = path;
+    
     return path;
-}
-
-bool PivotPathPlanner::is_done() const {
-    if (!cached_angle_change_.has_value()) {
-        return false;
-    }
-    SPDLOG_INFO("checking is done, {}", cached_angle_change_.value());
-    bool val = abs(cached_angle_change_.value()) < degrees_to_radians(IS_DONE_ANGLE_CHANGE_THRESH);
-    SPDLOG_INFO("Result: {}", val);
-    SPDLOG_INFO("----------------");
-    return val;
 }
 
 }  // namespace planning
