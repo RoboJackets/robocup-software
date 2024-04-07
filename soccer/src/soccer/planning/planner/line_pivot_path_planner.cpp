@@ -19,11 +19,10 @@ namespace planning {
 using namespace rj_geometry;
 
 Trajectory LinePivotPathPlanner::plan(const PlanRequest& request) {
-
     current_state_ = next_state(request);
     Trajectory path;
 
-    if (current_state_ ==  LINE) {
+    if (current_state_ == LINE) {
         path = line(request);
     } else {
         path = pivot(request);
@@ -40,14 +39,16 @@ bool LinePivotPathPlanner::is_done() const {
     return val;
 }
 
-LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request)  {
+LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request) {
     const MotionCommand& command = plan_request.motion_command;
-    auto current_point = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
+    auto current_point =
+        plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
     auto pivot_point = command.pivot_point;
-    
+
     double dist_from_point = kRobotRadius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
-    double vel = plan_request.world_state->get_robot(true, plan_request.shell_id).velocity.linear().mag();
+    double vel =
+        plan_request.world_state->get_robot(true, plan_request.shell_id).velocity.linear().mag();
     if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3)) {
         return PIVOT;
     }
@@ -60,8 +61,9 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
 Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
     const MotionCommand& command = plan_request.motion_command;
     auto pivot_point = command.pivot_point;
-    auto current_point = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
-    
+    auto current_point =
+        plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
+
     double dist_from_point = kRobotRadius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
 
@@ -77,7 +79,7 @@ Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
 }
 
 Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
-        const RobotInstant& start_instant = request.start;
+    const RobotInstant& start_instant = request.start;
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
@@ -132,7 +134,7 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);
     path.stamp(RJ::now());
-    
+
     return path;
 }
 

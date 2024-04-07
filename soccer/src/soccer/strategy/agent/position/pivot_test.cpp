@@ -52,17 +52,19 @@ std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case OUR_GOAL: {
             planning::LinearMotionInstant target{field_dimensions_.our_goal_loc()};
-            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
+            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
+                                                     false, last_world_state_->ball.position};
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255.0;
             return intent;
         }
         case OPP_GOAL: {
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
-            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
+            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
+                                                     false, last_world_state_->ball.position};
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255.0;
-            return intent;           
+            return intent;
         }
         case IDLE: {
             intent.motion_command = planning::MotionCommand{};
