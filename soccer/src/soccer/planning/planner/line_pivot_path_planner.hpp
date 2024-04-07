@@ -49,10 +49,7 @@ private:
     // TODO(Kevin): ros param this
     double IS_DONE_ANGLE_CHANGE_THRESH = 1.0;
 
-    enum State {
-        LINE,
-        PIVOT
-    };
+    enum State { LINE, PIVOT };
 
     State next_state(const PlanRequest& request);
 

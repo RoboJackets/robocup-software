@@ -6,9 +6,9 @@
 #include "planning/planner/goalie_idle_path_planner.hpp"
 #include "planning/planner/intercept_path_planner.hpp"
 #include "planning/planner/line_kick_path_planner.hpp"
+#include "planning/planner/line_pivot_path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
-#include "planning/planner/line_pivot_path_planner.hpp"
 #include "planning/planner/settle_path_planner.hpp"
 
 namespace planning {

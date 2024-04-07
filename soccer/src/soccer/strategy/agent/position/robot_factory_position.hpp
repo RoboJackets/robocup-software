@@ -21,8 +21,8 @@
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
-#include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/pivot_test.hpp"
+#include "strategy/agent/position/position.hpp"
 
 namespace strategy {
 

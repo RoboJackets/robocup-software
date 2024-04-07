@@ -34,11 +34,7 @@ private:
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State {
-        OUR_GOAL,
-        OPP_GOAL,
-        IDLE
-    };
+    enum State { OUR_GOAL, OPP_GOAL, IDLE };
 
     State current_state_ = IDLE;
 
@@ -55,7 +51,6 @@ private:
      * @return the task to execute. called on each get_task tick AFTER next_state()
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-
 };
 
 }  // namespace strategy
