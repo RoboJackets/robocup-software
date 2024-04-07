@@ -67,14 +67,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         request.world_state->get_robot(true, request.shell_id).pose.position());
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
-    SPDLOG_INFO("Start Position: ({}, {})", request.world_state->get_robot(true, request.shell_id).pose.position().x(), request.world_state->get_robot(true, request.shell_id).pose.position().y());
-    SPDLOG_INFO("Pivot Point: ({}, {})", pivot_point.x(), pivot_point.y());
-    SPDLOG_INFO("Pivot Target: ({}, {})", pivot_target.x(), pivot_target.y());
-    SPDLOG_INFO("Final Position: ({}, {})", final_position.x(), final_position.y());
-    SPDLOG_INFO("Start Angle: {}", start_angle);
-    SPDLOG_INFO("Target Angle: {}", target_angle);
-    SPDLOG_INFO("Angle Change: {}", angle_change);
-    SPDLOG_INFO("----------------");
 
     cached_angle_change_ = angle_change;
 
@@ -113,10 +105,7 @@ bool PivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-    SPDLOG_INFO("checking is done, {}", cached_angle_change_.value());
     bool val = abs(cached_angle_change_.value()) < degrees_to_radians(IS_DONE_ANGLE_CHANGE_THRESH);
-    SPDLOG_INFO("Result: {}", val);
-    SPDLOG_INFO("----------------");
     return val;
 }
 

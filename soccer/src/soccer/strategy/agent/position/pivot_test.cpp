@@ -8,7 +8,6 @@ std::optional<RobotIntent> Pivot::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
     if (new_state != current_state_) {
-        SPDLOG_INFO("New State: {}", new_state);
         curr_pt_ = last_world_state_->get_robot(true, robot_id_).pose.position();
     }
     current_state_ = new_state;
@@ -23,7 +22,6 @@ std::string Pivot::get_current_state() {
 
 Pivot::State Pivot::next_state() {
     // handle transitions between current state
-    SPDLOG_INFO("Current State: {}", current_state_);
     switch (current_state_) {
         case OUR_GOAL: {
             if (check_is_done()) {
@@ -53,17 +51,17 @@ Pivot::State Pivot::next_state() {
 std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case OUR_GOAL: {
-            SPDLOG_INFO("COMMAND: Pivot to our goal");
             planning::LinearMotionInstant target{field_dimensions_.our_goal_loc()};
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
             intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 255.0;
             return intent;
         }
         case OPP_GOAL: {
-            SPDLOG_INFO("COMMAND: Pivot to opp goal");
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
             intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 255.0;
             return intent;           
         }
         case IDLE: {
