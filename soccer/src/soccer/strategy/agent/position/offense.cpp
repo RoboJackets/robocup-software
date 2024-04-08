@@ -160,7 +160,6 @@ Offense::State Offense::next_state() {
             return SHOOTING_START;
         }
 
-
         case SHOOTING: {
             // If we either succeed or fail, it's time to start over.
             if (check_is_done() || timed_out()) {
@@ -222,8 +221,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
 
             planning::LinearMotionInstant target{target_robot_pos};
-            
-            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
             // Set intent to kick
             intent.motion_command = line_kick_cmd;
@@ -299,13 +299,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // Line kick best shot
             target_ = calculate_best_shot();
 
-            auto line_kick_cmd = planning::MotionCommand{"line_kick_one", planning::LinearMotionInstant{target_}};
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick_one", planning::LinearMotionInstant{target_}};
             intent.motion_command = line_kick_cmd;
             return intent;
         }
 
         case SHOOTING: {
-            auto line_kick_cmd = planning::MotionCommand{"line_kick_two", planning::LinearMotionInstant{target_}};
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick_two", planning::LinearMotionInstant{target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;

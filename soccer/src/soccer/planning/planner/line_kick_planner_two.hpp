@@ -58,7 +58,6 @@ private:
      * Tries to hit the ball with the mouth of the robot.
      */
     Trajectory final(const PlanRequest& plan_request);
-
 };
 
 }  // namespace planning
