@@ -5,7 +5,7 @@ namespace strategy {
 Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
 Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
-    SPDLOG_INFO("HELLO {}", robot_id_);
+    SPDLOG_INFO("HELLO {},", robot_id_);
     position_name_ = "Defense";
     walling_robots_ = {};
 }
@@ -216,7 +216,9 @@ void Defense::send_join_wall_request() {
     communication_request.urgent = false;
     communication_request.broadcast = true;
 
+    SPDLOG_INFO("sending join wall request 1,  {}", robot_id_);
     communication_requests_.push_back(communication_request);
+    SPDLOG_INFO("sending join wall request 2,  {}", robot_id_);
 
     current_state_ = WALLING;
 }
@@ -237,6 +239,7 @@ void Defense::send_leave_wall_request() {
 
 communication::JoinWallResponse Defense::handle_join_wall_request(
     communication::JoinWallRequest join_request) {
+    SPDLOG_INFO("Receiving join wall request from robot {}", join_request.robot_id);
     for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_request.robot_id) {
             break;

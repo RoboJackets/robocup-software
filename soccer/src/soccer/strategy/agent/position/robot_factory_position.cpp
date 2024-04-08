@@ -318,7 +318,7 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
         kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-        broadcast_kicker_request();
+        // broadcast_kicker_request();
     }
     // Return the response
     return current_position_->receive_communication_request(request);

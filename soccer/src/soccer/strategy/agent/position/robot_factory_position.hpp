@@ -143,6 +143,7 @@ private:
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
             SPDLOG_INFO("Robot {}: change {}", current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const Position&)
+            current_position_->die();
             current_position_ = std::make_unique<Pos>(*current_position_);
         }
     }
