@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.92.3 (3ce5693, 2018-03-11)"
    version="1.0"
-   sodipodi:docname="direct_blue.svg"
+   sodipodi:docname="penalty_blue.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs3266">
@@ -75,6 +75,6 @@
          id="tspan815"
          x="-0.9453125"
          y="127.66406"
-         style="font-size:32px;line-height:2;fill:#000080;fill-opacity:1;">F</tspan></text>
+         style="font-size:32px;line-height:2;fill:#000080;fill-opacity:1;">P</tspan></text>
   </g>
 </svg>

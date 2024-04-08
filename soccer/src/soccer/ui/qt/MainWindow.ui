@@ -251,16 +251,16 @@
           </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_13">
-           <property name="orientation">
+          <spacer name="horizontalSpacer_20">
+            <property name="orientation">
             <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
+            </property>
+            <property name="sizeHint" stdset="0">
             <size>
-             <width>40</width>
-             <height>20</height>
+              <width>40</width>
+              <height>20</height>
             </size>
-           </property>
+            </property>
           </spacer>
          </item>
          <item>
@@ -269,6 +269,9 @@
             <widget class="QPushButton" name="fastKickoffBlue">
              <property name="toolTip">
               <string>Kickoff Blue</string>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
              </property>
              <property name="text">
               <string/>
@@ -282,6 +285,9 @@
                <width>24</width>
                <height>24</height>
               </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -349,6 +355,59 @@
              <property name="icon">
               <iconset resource="main_icons.qrc">
                <normaloff>:/icons/direct_yellow.svg</normaloff>:/icons/direct_yellow.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="Penalties">
+           <item>
+            <widget class="QPushButton" name="penaltyBlue">
+             <property name="toolTip">
+              <string>Blue Penalty</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/icons/penalty_blue.svg</normaloff>:/icons/penalty_blue.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="penaltyYellow">
+             <property name="toolTip">
+              <string>Yellow Penalty</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>:/icons/penalty_yellow.svg</normaloff>:/icons/penalty_yellow.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -1813,7 +1872,6 @@
            </item>
           </layout>
          </widget>
-
          <widget class="QWidget" name="joystickTab">
           <attribute name="title">
            <string>Joystick</string>
@@ -1975,7 +2033,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">

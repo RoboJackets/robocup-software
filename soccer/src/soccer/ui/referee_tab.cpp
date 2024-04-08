@@ -14,7 +14,7 @@ void RefereeTab::on_actionReady_triggered() { command(' '); }
 
 void RefereeTab::on_actionStop_triggered() { command('S'); }
 
-void RefereeTab::on_actionForceStart_triggered() { command('s'); }
+void RefereeTab::on_actionForceStart_triggered() { command('s'); } // originally s
 
 void RefereeTab::on_refFirstHalf_clicked() { command('1'); }
 

@@ -15,7 +15,7 @@
    sodipodi:version="0.32"
    inkscape:version="0.92.3 (3ce5693, 2018-03-11)"
    version="1.0"
-   sodipodi:docname="direct_blue.svg"
+   sodipodi:docname="penalty_yellow.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs3266">
@@ -38,7 +38,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="32"
-     inkscape:cx="23.908154"
+     inkscape:cx="30.111279"
      inkscape:cy="17.754848"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -56,7 +56,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -67,7 +67,7 @@
      transform="translate(0,-104)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000080;fill-opacity:1;stroke:none;"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffff00;fill-opacity:1;stroke:none;"
        x="-0.9453125"
        y="127.66406"
        id="text817"><tspan
@@ -75,6 +75,6 @@
          id="tspan815"
          x="-0.9453125"
          y="127.66406"
-         style="font-size:32px;line-height:2;fill:#000080;fill-opacity:1;">F</tspan></text>
+         style="font-size:32px;line-height:2;fill:#ffff00;fill-opacity:1;">P</tspan></text>
   </g>
 </svg>

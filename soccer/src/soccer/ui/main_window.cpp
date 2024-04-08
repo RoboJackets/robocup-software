@@ -659,6 +659,8 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(false);
         _ui.fastKickoffBlue->setEnabled(false);
         _ui.fastKickoffYellow->setEnabled(false);
+        _ui.penaltyBlue->setEnabled(false);
+        _ui.penaltyYellow->setEnabled(false);
         _ui.fastBlue->setEnabled(false);
     } else {
         _ui.fastHalt->setEnabled(true);
@@ -667,6 +669,8 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(true);
         _ui.fastKickoffBlue->setEnabled(true);
         _ui.fastKickoffYellow->setEnabled(true);
+        _ui.penaltyBlue->setEnabled(true);
+        _ui.penaltyYellow->setEnabled(true);
         _ui.fastBlue->setEnabled(true);
     }
 
@@ -1100,17 +1104,18 @@ void MainWindow::send_quick_command(const PlayState& state) {
     queued_command_ = std::nullopt;
 }
 
-void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); }
+void MainWindow::on_fastHalt_clicked() { send_quick_command(PlayState::halt()); } 
 
 void MainWindow::on_fastStop_clicked() { send_quick_command(PlayState::stop()); }
 
 void MainWindow::on_fastReady_clicked() {
-    if (queued_command_) {
-        send_quick_command(*queued_command_);
-    }
+    // if (queued_command_) {
+    //     send_quick_command(*queued_command_);
+    // }
+    // send_quick_command(PlayState::ready_kickoff(true));
 }
 
-void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); }
+void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); } 
 
 void MainWindow::on_fastKickoffBlue_clicked() {
     send_quick_command(PlayState::setup_kickoff(context_->blue_team));

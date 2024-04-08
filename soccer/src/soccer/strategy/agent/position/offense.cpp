@@ -587,5 +587,5 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_request_ = communication_request;
-}
+ }
 }  // namespace strategy

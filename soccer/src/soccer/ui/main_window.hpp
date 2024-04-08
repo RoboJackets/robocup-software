@@ -161,6 +161,8 @@ private Q_SLOTS:
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
+    //void on_fastPenaltyBlue_clicked();
+    //void on_fastPenaltyYellow_clicked();
     void on_fastBlue_clicked();
     void on_fastYellow_clicked();
 
