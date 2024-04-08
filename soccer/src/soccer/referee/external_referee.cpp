@@ -67,9 +67,13 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
         return;
     }
 
+    if (recv_buffer_[18] >= 10) {
+        recv_buffer_[18] -= 2;
+    }
+
     SSL_Referee ref_packet;
     if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
-        SPDLOG_ERROR("Got bad packet of {} bytes from {}", num_bytes, sender_endpoint_);
+        SPDLOG_ERROR("Got BAD packet of {} bytes from {}", num_bytes, sender_endpoint_);
         SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeSourceAddress));
         return;
     }
@@ -119,10 +123,8 @@ void ExternalReferee::setup_referee_multicast() {
     SPDLOG_INFO("ExternalReferee joining kRefereeSourceAddress: {}", kRefereeSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kRefereeSourceAddress).to_v4();
-    const boost::asio::ip::address_v4 multicast_interface =
-        boost::asio::ip::address::from_string(kRefereeInterface).to_v4();
     asio_socket_.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address, multicast_interface));
+        boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() { io_service_.poll(); }
