@@ -1623,7 +1623,7 @@
           <enum>QTabWidget::East</enum>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="playsBehaviorsTab">
           <property name="sizePolicy">
@@ -1813,7 +1813,6 @@
            </item>
           </layout>
          </widget>
-
          <widget class="QWidget" name="joystickTab">
           <attribute name="title">
            <string>Joystick</string>
@@ -1962,6 +1961,1251 @@
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="positionsTab">
+          <attribute name="title">
+           <string>Positions</string>
+          </attribute>
+          <widget class="QWidget" name="gridLayoutWidget">
+           <property name="geometry">
+            <rect>
+             <x>-11</x>
+             <y>-1</y>
+             <width>371</width>
+             <height>671</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="positions_gridLayout" rowstretch="0" columnstretch="0,0,0,0" rowminimumheight="0">
+            <property name="leftMargin">
+             <number>11</number>
+            </property>
+            <property name="topMargin">
+             <number>11</number>
+            </property>
+            <property name="rightMargin">
+             <number>11</number>
+            </property>
+            <property name="bottomMargin">
+             <number>11</number>
+            </property>
+            <item row="0" column="1">
+             <widget class="QLabel" name="positionsLabel_0">
+              <property name="text">
+               <string>Robot 0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QComboBox" name="robotPosition_0">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QPushButton" name="positionReset_0">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="1" column="1">
+             <widget class="QLabel" name="positionsLabel_1">
+              <property name="text">
+               <string>Robot 1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QComboBox" name="robotPosition_1">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="positionReset_1">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="2" column="1">
+             <widget class="QLabel" name="positionsLabel_2">
+              <property name="text">
+               <string>Robot 2</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QComboBox" name="robotPosition_2">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QPushButton" name="positionReset_2">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="3" column="1">
+             <widget class="QLabel" name="positionsLabel_3">
+              <property name="text">
+               <string>Robot 3</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QComboBox" name="robotPosition_3">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="QPushButton" name="positionReset_3">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="4" column="1">
+             <widget class="QLabel" name="positionsLabel_4">
+              <property name="text">
+               <string>Robot 4</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QComboBox" name="robotPosition_4">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="QPushButton" name="positionReset_4">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="5" column="1">
+             <widget class="QLabel" name="positionsLabel_5">
+              <property name="text">
+               <string>Robot 5</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QComboBox" name="robotPosition_5">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="5" column="3">
+             <widget class="QPushButton" name="positionReset_5">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="6" column="1">
+             <widget class="QLabel" name="positionsLabel_6">
+              <property name="text">
+               <string>Robot 6</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QComboBox" name="robotPosition_6">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="6" column="3">
+             <widget class="QPushButton" name="positionReset_6">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="7" column="1">
+             <widget class="QLabel" name="positionsLabel_7">
+              <property name="text">
+               <string>Robot 7</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="2">
+             <widget class="QComboBox" name="robotPosition_7">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="7" column="3">
+             <widget class="QPushButton" name="positionReset_7">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="8" column="1">
+             <widget class="QLabel" name="positionsLabel_8">
+              <property name="text">
+               <string>Robot 8</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QComboBox" name="robotPosition_8">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="8" column="3">
+             <widget class="QPushButton" name="positionReset_8">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="9" column="1">
+             <widget class="QLabel" name="positionsLabel_9">
+              <property name="text">
+               <string>Robot 9</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="2">
+             <widget class="QComboBox" name="robotPosition_9">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="9" column="3">
+             <widget class="QPushButton" name="positionReset_9">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="10" column="1">
+             <widget class="QLabel" name="positionsLabel_10">
+              <property name="text">
+               <string>Robot 10</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="2">
+             <widget class="QComboBox" name="robotPosition_10">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="10" column="3">
+             <widget class="QPushButton" name="positionReset_10">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="11" column="1">
+             <widget class="QLabel" name="positionsLabel_11">
+              <property name="text">
+               <string>Robot 11</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="2">
+             <widget class="QComboBox" name="robotPosition_11">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="11" column="3">
+             <widget class="QPushButton" name="positionReset_11">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="12" column="1">
+             <widget class="QLabel" name="positionsLabel_12">
+              <property name="text">
+               <string>Robot 12</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="2">
+             <widget class="QComboBox" name="robotPosition_12">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="12" column="3">
+             <widget class="QPushButton" name="positionReset_12">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="13" column="1">
+             <widget class="QLabel" name="positionsLabel_13">
+              <property name="text">
+               <string>Robot 13</string>
+              </property>
+             </widget>
+            </item>
+            <item row="13" column="2">
+             <widget class="QComboBox" name="robotPosition_13">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="13" column="3">
+             <widget class="QPushButton" name="positionReset_13">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="14" column="1">
+             <widget class="QLabel" name="positionsLabel_14">
+              <property name="text">
+               <string>Robot 14</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="2">
+             <widget class="QComboBox" name="robotPosition_14">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="14" column="3">
+             <widget class="QPushButton" name="positionReset_14">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+            <item row="15" column="1">
+             <widget class="QLabel" name="positionsLabel_15">
+              <property name="text">
+               <string>Robot 15</string>
+              </property>
+             </widget>
+            </item>
+            <item row="15" column="2">
+             <widget class="QComboBox" name="robotPosition_15">
+              <property name="currentText">
+               <string>Auto</string>
+              </property>
+              <property name="currentIndex">
+               <number>0</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Auto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Offense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Defense</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goal Kicker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Goalie</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Marker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Penalty Player</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Seeker</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Waller</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="15" column="3">
+             <widget class="QPushButton" name="positionReset_15">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Reset</string>
+              </property>
+              <property name="checkable">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+
+           </layout>
+          </widget>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -1975,7 +3219,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
