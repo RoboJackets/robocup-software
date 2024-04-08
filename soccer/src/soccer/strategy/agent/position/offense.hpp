@@ -59,7 +59,6 @@ private:
         RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
         SHOOTING_START,    // Calculate shot
-        LINE_KICK_FIRST,
         SHOOTING,          // Winning the game
     };
 
@@ -113,8 +112,6 @@ private:
                 return RJ::Seconds{5};
             case SHOOTING_START:
                 return RJ::Seconds{3};
-            case LINE_KICK_FIRST:
-                return RJ::Seconds{3};
             case SHOOTING:
                 return RJ::Seconds{-1};
         }
@@ -145,8 +142,6 @@ private:
                 return "RECEIVING";
             case SHOOTING_START:
                 return "SHOOTING_START";
-            case LINE_KICK_FIRST:
-                return "LINE_KICK_FIRST";
             case SHOOTING:
                 return "SHOOTING";
         }

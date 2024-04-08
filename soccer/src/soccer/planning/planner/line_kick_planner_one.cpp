@@ -75,8 +75,7 @@ Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
 bool LineKickPlannerOne::is_done() const {
     //end when close enough to the ball
     
-    return (latest_ball_state_.position.dist_to(latest_robot_pos_) 
-        < kRobotRadius + kBallRadius + 0.1) || average_ball_vel_.mag() > kIsDoneBallVel;
+    return path_target_.is_done();
 }
 
 }  // namespace planning

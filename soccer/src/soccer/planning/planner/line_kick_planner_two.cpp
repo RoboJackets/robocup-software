@@ -66,6 +66,6 @@ bool LineKickPlannerTwo::is_done() const {
     // if ball is fast, assume we have kicked it correctly
     // (either way we can't go recapture it)
     return average_ball_vel_.mag() > kIsDoneBallVel;
-}
 
+}
 }  // namespace planning

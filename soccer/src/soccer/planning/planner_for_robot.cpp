@@ -9,6 +9,8 @@
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
 #include "planning/planner/settle_path_planner.hpp"
+#include "planning/planner/line_kick_planner_one.hpp"
+#include "planning/planner/line_kick_planner_two.hpp"
 
 namespace planning {
 
@@ -29,6 +31,8 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     path_planners_[SettlePathPlanner().name()] = std::make_unique<SettlePathPlanner>();
     path_planners_[CollectPathPlanner().name()] = std::make_unique<CollectPathPlanner>();
     path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();
+    path_planners_[LineKickPlannerOne().name()] = std::make_unique<LineKickPlannerOne>();
+    path_planners_[LineKickPlannerTwo().name()] = std::make_unique<LineKickPlannerTwo>();
     path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
     path_planners_[EscapeObstaclesPathPlanner().name()] =
         std::make_unique<EscapeObstaclesPathPlanner>();
