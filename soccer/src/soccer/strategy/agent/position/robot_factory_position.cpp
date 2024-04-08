@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "idle.hpp"
+#include "penalty_non_kicker.hpp"
 
 namespace strategy {
 
@@ -20,7 +21,8 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
-        return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
     }
 
     // Update our state
@@ -84,14 +86,8 @@ void RobotFactoryPosition::handle_setup() {
 
         if (current_play_state_.is_kickoff() || current_play_state_.is_penalty()) {
             start_kicker_picker();
-        }
-
-    } else {
-        // Their restart
-        if (current_play_state_.restart() == PlayState::Restart::Kickoff) {
-            set_current_position<Defense>();
-        } else if (current_play_state_.restart() == PlayState::Restart::Penalty) {
-            set_current_position<SmartIdle>();
+        } else {
+            SPDLOG_WARN("Invalid restart setup!");
         }
     }
 }
@@ -155,7 +151,6 @@ void RobotFactoryPosition::update_position() {
                         } else {
                             set_current_position<PenaltyPlayer>();
                             SPDLOG_INFO("{} is a penalty player", robot_id_);
-
                         }
                     } else {
                         if (current_play_state_.is_kickoff()) {
@@ -175,10 +170,10 @@ void RobotFactoryPosition::update_position() {
                         }
                     }
                 } else {
-                    // set_current_position<Idle>();
+                    set_current_position<SmartIdle>();
                 }
 
-            } else {
+            } else {  // Their restart
                 if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
@@ -215,25 +210,21 @@ void RobotFactoryPosition::start_kicker_picker() {
 }
 
 bool RobotFactoryPosition::have_all_kicker_responses() {
-
-
-
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
-    return kicker_distances_.size() == num_alive; // Don't expect the goalie to respond
+    return kicker_distances_.size() == num_alive;  // Don't expect the goalie to respond
 }
 
-
 bool RobotFactoryPosition::am_closest_kicker() {
-
     // Return the max, comparing by distances only
-    auto closest = std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
-                             [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                                 if (a.second == b.second) {
-                                     return a.first < b.first;
-                                 }
-                                 return a.second < b.second;
-                             });
+    auto closest =
+        std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
+                         [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
+                             if (a.second == b.second) {
+                                 return a.first < b.first;
+                             }
+                             return a.second < b.second;
+                         });
 
     // Closest is an iterator to the pair (robot_id, distance)
     return closest->first == robot_id_;
@@ -317,8 +308,11 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     communication::AgentPosRequestWrapper request) {
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
+        bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
         kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-        broadcast_kicker_request();
+        if (!prev) {
+            broadcast_kicker_request();
+        }
     }
     // Return the response
     return current_position_->receive_communication_request(request);

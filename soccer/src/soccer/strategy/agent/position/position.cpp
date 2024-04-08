@@ -190,12 +190,19 @@ void Position::broadcast_kicker_request() {
 
     double distance;
 
-    if (!last_world_state_) {
+    if (kicker_distances_.count(robot_id_)) {
+        distance = kicker_distances_[robot_id_];
+    } else if (!last_world_state_) {
         distance = std::numeric_limits<double>::infinity();
     } else {
         distance = last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     }
+
+    // if (last_world_state_) {
+    //     distance = last_world_state_->ball.position.dist_to(
+    //         last_world_state_->get_robot(true, robot_id_).pose.position());
+    // }
 
     kicker_distances_[robot_id_] = distance;
     kicker_request.distance = distance;
