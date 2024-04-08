@@ -1127,6 +1127,16 @@ void MainWindow::on_fastKickoffYellow_clicked() {
     queued_command_ = PlayState::ready_kickoff(context_->blue_team);
 }
 
+void MainWindow::on_fastPenaltyBlue_clicked() {
+    send_quick_command(PlayState::setup_penalty(context_->blue_team));
+    queued_command_ = PlayState::ready_penalty(context_->blue_team);
+} 
+
+void MainWindow::on_fastPenaltyYellow_clicked() {
+    send_quick_command(PlayState::setup_penalty(!context_->blue_team));
+    queued_command_ = PlayState::ready_penalty(context_->blue_team);
+}
+
 void MainWindow::on_fastBlue_clicked() {
     send_quick_command(PlayState::ready_free_kick(context_->blue_team));
 }

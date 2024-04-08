@@ -27,7 +27,13 @@ public:
                         // anything.
     };
 
-    enum Restart { None, Kickoff, Free, Penalty, Placement };
+    enum Restart { 
+        None, 
+        Kickoff, 
+        Free, 
+        Penalty, 
+        Placement 
+    };
 
     [[nodiscard]] State state() const { return state_; }
     [[nodiscard]] bool is_restart() const { return restart_ != Restart::None; }
