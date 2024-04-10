@@ -4,7 +4,7 @@ namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
     if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Pivot>(robot_id_);
+        current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
         // } else if (robot_id_ == 1) {
         current_position_ = std::make_unique<Offense>(robot_id_);

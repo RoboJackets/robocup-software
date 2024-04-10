@@ -39,9 +39,8 @@ Pivot::State Pivot::next_state() {
             if (current_play_state_.is_playing()) {
                 if (i % 2 == 0) {
                     return OUR_GOAL;
-                } else {
-                    return OPP_GOAL;
                 }
+                return OPP_GOAL;
             }
         }
     }

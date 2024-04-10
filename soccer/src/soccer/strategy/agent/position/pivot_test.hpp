@@ -17,7 +17,6 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
-#include "seeker.hpp"
 
 namespace strategy {
 
@@ -25,6 +24,10 @@ class Pivot : public Position {
 public:
     Pivot(int r_id);
     ~Pivot() override = default;
+    Pivot(const Pivot& other) = default;
+    Pivot(Pivot&& other) = default;
+    Pivot& operator=(const Pivot& other) = default;
+    Pivot& operator=(Pivot&& other) = default;
 
     std::string get_current_state() override;
 
