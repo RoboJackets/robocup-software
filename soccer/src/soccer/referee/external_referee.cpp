@@ -67,11 +67,11 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
         return;
     }
 
-    if (recv_buffer_[18] >= 10) {
-        recv_buffer_[18] -= 2;
-    }
+    // if (recv_buffer_[18] >= 10) {
+    //     recv_buffer_[18] -= 2;
+    // }
 
-    SSL_Referee ref_packet;
+    Referee ref_packet;
     if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
         SPDLOG_ERROR("Got BAD packet of {} bytes from {}", num_bytes, sender_endpoint_);
         SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeSourceAddress));
@@ -147,47 +147,49 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
     const auto placement_point = maybe_placement_point.value_or(rj_geometry::Point());
 
     switch (command_enum) {
-        case SSL_Referee::HALT:
+        case Referee::HALT:
             set_play_state(PlayState::halt());
             break;
-        case SSL_Referee::STOP:
+        case Referee::STOP:
             set_play_state(PlayState::stop());
             break;
-        case SSL_Referee::NORMAL_START:
+        case Referee::NORMAL_START:
             set_play_state(yellow_play_state().advanced_from_normal_start());
             break;
-        case SSL_Referee::FORCE_START:
+        case Referee::FORCE_START:
             set_play_state(PlayState::playing());
             break;
-        case SSL_Referee::PREPARE_KICKOFF_YELLOW:
+        case Referee::PREPARE_KICKOFF_YELLOW:
             set_play_state(PlayState::setup_kickoff(YELLOW));
             break;
-        case SSL_Referee::PREPARE_KICKOFF_BLUE:
+        case Referee::PREPARE_KICKOFF_BLUE:
             set_play_state(PlayState::setup_kickoff(BLUE));
             break;
-        case SSL_Referee::PREPARE_PENALTY_YELLOW:
+        case Referee::PREPARE_PENALTY_YELLOW:
             set_play_state(PlayState::setup_penalty(YELLOW));
             break;
-        case SSL_Referee::PREPARE_PENALTY_BLUE:
+        case Referee::PREPARE_PENALTY_BLUE:
             set_play_state(PlayState::setup_penalty(BLUE));
             break;
-        case SSL_Referee::DIRECT_FREE_YELLOW:
+        case Referee::DIRECT_FREE_YELLOW:
             set_play_state(PlayState::ready_free_kick(YELLOW));
             break;
-        case SSL_Referee::DIRECT_FREE_BLUE:
+        case Referee::DIRECT_FREE_BLUE:
             set_play_state(PlayState::ready_free_kick(BLUE));
             break;
-        case SSL_Referee::TIMEOUT_YELLOW:
-        case SSL_Referee::TIMEOUT_BLUE:
+        case Referee::TIMEOUT_YELLOW:
+        case Referee::TIMEOUT_BLUE:
             set_play_state(PlayState::halt());
             break;
-        case SSL_Referee::GOAL_YELLOW:
-        case SSL_Referee::GOAL_BLUE:
+        case Referee::GOAL_YELLOW:
+        case Referee::GOAL_BLUE:
+        case Referee::INDIRECT_FREE_BLUE:
+        case Referee::INDIRECT_FREE_YELLOW:
             break;
-        case SSL_Referee::BALL_PLACEMENT_YELLOW:
+        case Referee::BALL_PLACEMENT_YELLOW:
             set_play_state(PlayState::ball_placement(YELLOW, placement_point));
             break;
-        case SSL_Referee::BALL_PLACEMENT_BLUE:
+        case Referee::BALL_PLACEMENT_BLUE:
             set_play_state(PlayState::ball_placement(BLUE, placement_point));
             break;
     }
@@ -195,37 +197,37 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
     last_command_ = command;
 }
 
-MatchState::Period ExternalReferee::period_from_proto(SSL_Referee::Stage stage) {
+MatchState::Period ExternalReferee::period_from_proto(Referee::Stage stage) {
     switch (stage) {
-        case SSL_Referee::NORMAL_FIRST_HALF_PRE:
-        case SSL_Referee::NORMAL_FIRST_HALF:
+        case Referee::NORMAL_FIRST_HALF_PRE:
+        case Referee::NORMAL_FIRST_HALF:
             return MatchState::FirstHalf;
-        case SSL_Referee::NORMAL_HALF_TIME:
+        case Referee::NORMAL_HALF_TIME:
             return MatchState::Halftime;
-        case SSL_Referee::NORMAL_SECOND_HALF_PRE:
-        case SSL_Referee::NORMAL_SECOND_HALF:
+        case Referee::NORMAL_SECOND_HALF_PRE:
+        case Referee::NORMAL_SECOND_HALF:
             return MatchState::SecondHalf;
-        case SSL_Referee::EXTRA_TIME_BREAK:
+        case Referee::EXTRA_TIME_BREAK:
             return MatchState::FirstHalf;
-        case SSL_Referee::EXTRA_FIRST_HALF_PRE:
-        case SSL_Referee::EXTRA_FIRST_HALF:
+        case Referee::EXTRA_FIRST_HALF_PRE:
+        case Referee::EXTRA_FIRST_HALF:
             return MatchState::Overtime1;
-        case SSL_Referee::EXTRA_HALF_TIME:
+        case Referee::EXTRA_HALF_TIME:
             return MatchState::Halftime;
-        case SSL_Referee::EXTRA_SECOND_HALF_PRE:
-        case SSL_Referee::EXTRA_SECOND_HALF:
+        case Referee::EXTRA_SECOND_HALF_PRE:
+        case Referee::EXTRA_SECOND_HALF:
             return MatchState::Overtime2;
-        case SSL_Referee::PENALTY_SHOOTOUT_BREAK:
-        case SSL_Referee::PENALTY_SHOOTOUT:
+        case Referee::PENALTY_SHOOTOUT_BREAK:
+        case Referee::PENALTY_SHOOTOUT:
             return MatchState::PenaltyShootout;
-        case SSL_Referee::POST_GAME:
+        case Referee::POST_GAME:
             return MatchState::Overtime2;
         default:
             return MatchState::FirstHalf;
     }
 }
 
-void ExternalReferee::handle_stage(SSL_Referee::Stage stage) {
+void ExternalReferee::handle_stage(Referee::Stage stage) {
     set_period(ExternalReferee::period_from_proto(stage));
 }
 

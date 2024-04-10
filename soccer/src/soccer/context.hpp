@@ -54,7 +54,7 @@ struct Context {
     bool blue_team = true;
     DebugDrawer debug_drawer;
 
-    std::vector<SSL_Referee> referee_packets;
+    std::vector<Referee> referee_packets;
     std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
