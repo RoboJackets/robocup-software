@@ -212,7 +212,7 @@ void RobotFactoryPosition::start_kicker_picker() {
 bool RobotFactoryPosition::have_all_kicker_responses() {
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
-    return kicker_distances_.size() == num_alive;  // Don't expect the goalie to respond
+    return kicker_distances_.size() == num_alive - 1;  // Don't expect the goalie to respond
 }
 
 bool RobotFactoryPosition::am_closest_kicker() {
@@ -308,10 +308,12 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     communication::AgentPosRequestWrapper request) {
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
-        bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
-        kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-        if (!prev) {
-            broadcast_kicker_request();
+        if (kicker_distances_.size() >= 1 && !have_all_kicker_responses() &&  current_position_->get_name() != "GoalKicker") {
+            bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
+            if (!prev) {
+                kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
+                broadcast_kicker_request();
+            }
         }
     }
     // Return the response
