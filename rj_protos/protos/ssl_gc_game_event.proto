@@ -6,13 +6,13 @@ import "ssl_gc_common.proto";
 import "ssl_gc_geometry.proto";
 
 // GameEvent contains exactly one game event
-// Each game event has optional and required fields. The required fields are mandatory to process the event.
-// Some optional fields are only used for visualization, others are required to determine the ball placement position.
-// If fields are missing that are required for the ball placement position, no ball placement command will be issued.
-// Fields are marked optional to make testing and extending of the protocol easier.
-// An autoRef should ideally set all fields, except if there are good reasons to not do so.
+// Each game event has optional and required fields. The required fields are mandatory to process
+// the event. Some optional fields are only used for visualization, others are required to determine
+// the ball placement position. If fields are missing that are required for the ball placement
+// position, no ball placement command will be issued. Fields are marked optional to make testing
+// and extending of the protocol easier. An autoRef should ideally set all fields, except if there
+// are good reasons to not do so.
 message GameEvent {
-
     // A globally unique id of the game event.
     optional string id = 50;
 
@@ -30,7 +30,6 @@ message GameEvent {
 
     // the event that occurred
     oneof event {
-
         // Ball out of field events (stopping)
 
         BallLeftField ball_left_field_touch_line = 6;
@@ -100,9 +99,11 @@ message GameEvent {
         // obsolete
         KickTimeout kick_timeout = 12 [deprecated = true];
         // rule removed
-        AttackerTouchedOpponentInDefenseArea attacker_touched_opponent_in_defense_area = 16 [deprecated = true];
+        AttackerTouchedOpponentInDefenseArea attacker_touched_opponent_in_defense_area = 16
+            [deprecated = true];
         // obsolete
-        AttackerTouchedOpponentInDefenseArea attacker_touched_opponent_in_defense_area_skipped = 42 [deprecated = true];
+        AttackerTouchedOpponentInDefenseArea attacker_touched_opponent_in_defense_area_skipped = 42
+            [deprecated = true];
         // obsolete
         BotCrashUnique bot_crash_unique_skipped = 23 [deprecated = true];
         // can not be used as long as autoRefs do not judge pushing
@@ -145,9 +146,11 @@ message GameEvent {
         optional Vector2 location = 3;
         // the location where the ball was kicked (for deciding if this was a valid goal) [m]
         optional Vector2 kick_location = 4;
-        // the maximum height the ball reached during the goal kick (for deciding if this was a valid goal) [m]
+        // the maximum height the ball reached during the goal kick (for deciding if this was a
+        // valid goal) [m]
         optional float max_ball_height = 5;
-        // number of robots of scoring team when the ball entered the goal (for deciding if this was a valid goal)
+        // number of robots of scoring team when the ball entered the goal (for deciding if this was
+        // a valid goal)
         optional uint32 num_robots_by_team = 7;
         // The UNIX timestamp [μs] when the scoring team last touched the ball
         optional uint64 last_touch_by_team = 8;
@@ -175,7 +178,8 @@ message GameEvent {
         optional Vector2 location = 3;
         // the location where the ball was kicked [m]
         optional Vector2 kick_location = 4;
-        // the maximum height [m] of the ball, before it entered the goal and since the last kick [m]
+        // the maximum height [m] of the ball, before it entered the goal and since the last kick
+        // [m]
         optional float max_ball_height = 5;
     }
     // a bot moved too fast while the game was stopped
@@ -217,7 +221,8 @@ message GameEvent {
         // an angle of π rad (180°) means, the bots crashed frontal into each other
         optional float crash_angle = 6;
     }
-    // two robots crashed into each other and one team was found guilty to due significant speed difference
+    // two robots crashed into each other and one team was found guilty to due significant speed
+    // difference
     message BotCrashUnique {
         // the team that caused the crash
         required Team by_team = 1;
@@ -271,7 +276,8 @@ message GameEvent {
         // the location of the ball at the moment when this foul occurred [m]
         optional Vector2 ball_location = 4;
     }
-    // a defender other than the keeper was fully located inside its own defense and touched the ball
+    // a defender other than the keeper was fully located inside its own defense and touched the
+    // ball
     message DefenderInDefenseArea {
         // the team that found guilty
         required Team by_team = 1;
@@ -282,7 +288,8 @@ message GameEvent {
         // the distance [m] from bot case to the nearest point outside the defense area
         optional float distance = 4;
     }
-    // a defender other than the keeper was partially located inside its own defense area and touched the ball
+    // a defender other than the keeper was partially located inside its own defense area and
+    // touched the ball
     message DefenderInDefenseAreaPartially {
         // the team that found guilty
         required Team by_team = 1;
@@ -524,61 +531,61 @@ message GameEvent {
 
         // Ball out of field events (stopping)
 
-        BALL_LEFT_FIELD_TOUCH_LINE = 6; // triggered by autoRef
-        BALL_LEFT_FIELD_GOAL_LINE = 7; // triggered by autoRef
-        AIMLESS_KICK = 11; // triggered by autoRef
+        BALL_LEFT_FIELD_TOUCH_LINE = 6;  // triggered by autoRef
+        BALL_LEFT_FIELD_GOAL_LINE = 7;   // triggered by autoRef
+        AIMLESS_KICK = 11;               // triggered by autoRef
 
         // Stopping Fouls
 
-        ATTACKER_TOO_CLOSE_TO_DEFENSE_AREA = 19; // triggered by autoRef
-        DEFENDER_IN_DEFENSE_AREA = 31; // triggered by autoRef
-        BOUNDARY_CROSSING = 41; // triggered by autoRef
-        KEEPER_HELD_BALL = 13; // triggered by GC
-        BOT_DRIBBLED_BALL_TOO_FAR = 17; // triggered by autoRef
+        ATTACKER_TOO_CLOSE_TO_DEFENSE_AREA = 19;  // triggered by autoRef
+        DEFENDER_IN_DEFENSE_AREA = 31;            // triggered by autoRef
+        BOUNDARY_CROSSING = 41;                   // triggered by autoRef
+        KEEPER_HELD_BALL = 13;                    // triggered by GC
+        BOT_DRIBBLED_BALL_TOO_FAR = 17;           // triggered by autoRef
 
-        BOT_PUSHED_BOT = 24; // triggered by human ref
-        BOT_HELD_BALL_DELIBERATELY = 26; // triggered by human ref
-        BOT_TIPPED_OVER = 27; // triggered by human ref
-        BOT_DROPPED_PARTS = 47; // triggered by human ref
+        BOT_PUSHED_BOT = 24;              // triggered by human ref
+        BOT_HELD_BALL_DELIBERATELY = 26;  // triggered by human ref
+        BOT_TIPPED_OVER = 27;             // triggered by human ref
+        BOT_DROPPED_PARTS = 47;           // triggered by human ref
 
         // Non-Stopping Fouls
 
-        ATTACKER_TOUCHED_BALL_IN_DEFENSE_AREA = 15; // triggered by autoRef
-        BOT_KICKED_BALL_TOO_FAST = 18; // triggered by autoRef
-        BOT_CRASH_UNIQUE = 22; // triggered by autoRef
-        BOT_CRASH_DRAWN = 21; // triggered by autoRef
+        ATTACKER_TOUCHED_BALL_IN_DEFENSE_AREA = 15;  // triggered by autoRef
+        BOT_KICKED_BALL_TOO_FAST = 18;               // triggered by autoRef
+        BOT_CRASH_UNIQUE = 22;                       // triggered by autoRef
+        BOT_CRASH_DRAWN = 21;                        // triggered by autoRef
 
         // Fouls while ball out of play
 
-        DEFENDER_TOO_CLOSE_TO_KICK_POINT = 29; // triggered by autoRef
-        BOT_TOO_FAST_IN_STOP = 28; // triggered by autoRef
-        BOT_INTERFERED_PLACEMENT = 20; // triggered by autoRef
-        EXCESSIVE_BOT_SUBSTITUTION = 48; // triggered by GC
+        DEFENDER_TOO_CLOSE_TO_KICK_POINT = 29;  // triggered by autoRef
+        BOT_TOO_FAST_IN_STOP = 28;              // triggered by autoRef
+        BOT_INTERFERED_PLACEMENT = 20;          // triggered by autoRef
+        EXCESSIVE_BOT_SUBSTITUTION = 48;        // triggered by GC
 
         // Scoring goals
 
-        POSSIBLE_GOAL = 39; // triggered by autoRef
-        GOAL = 8; // triggered by GC
-        INVALID_GOAL = 42; // triggered by GC
+        POSSIBLE_GOAL = 39;  // triggered by autoRef
+        GOAL = 8;            // triggered by GC
+        INVALID_GOAL = 42;   // triggered by GC
 
         // Other events
 
-        ATTACKER_DOUBLE_TOUCHED_BALL = 14; // triggered by autoRef
-        PLACEMENT_SUCCEEDED = 5; // triggered by autoRef
-        PENALTY_KICK_FAILED = 43; // triggered by GC and autoRef
+        ATTACKER_DOUBLE_TOUCHED_BALL = 14;  // triggered by autoRef
+        PLACEMENT_SUCCEEDED = 5;            // triggered by autoRef
+        PENALTY_KICK_FAILED = 43;           // triggered by GC and autoRef
 
-        NO_PROGRESS_IN_GAME = 2; // triggered by GC
-        PLACEMENT_FAILED = 3; // triggered by GC
-        MULTIPLE_CARDS = 32; // triggered by GC
-        MULTIPLE_FOULS = 34; // triggered by GC
-        BOT_SUBSTITUTION = 37; // triggered by GC
-        TOO_MANY_ROBOTS = 38; // triggered by GC
-        CHALLENGE_FLAG = 44; // triggered by GC
-        CHALLENGE_FLAG_HANDLED = 46; // triggered by GC
-        EMERGENCY_STOP = 45; // triggered by GC
+        NO_PROGRESS_IN_GAME = 2;      // triggered by GC
+        PLACEMENT_FAILED = 3;         // triggered by GC
+        MULTIPLE_CARDS = 32;          // triggered by GC
+        MULTIPLE_FOULS = 34;          // triggered by GC
+        BOT_SUBSTITUTION = 37;        // triggered by GC
+        TOO_MANY_ROBOTS = 38;         // triggered by GC
+        CHALLENGE_FLAG = 44;          // triggered by GC
+        CHALLENGE_FLAG_HANDLED = 46;  // triggered by GC
+        EMERGENCY_STOP = 45;          // triggered by GC
 
-        UNSPORTING_BEHAVIOR_MINOR = 35; // triggered by human ref
-        UNSPORTING_BEHAVIOR_MAJOR = 36; // triggered by human ref
+        UNSPORTING_BEHAVIOR_MINOR = 35;  // triggered by human ref
+        UNSPORTING_BEHAVIOR_MAJOR = 36;  // triggered by human ref
 
         // Deprecated events
 
