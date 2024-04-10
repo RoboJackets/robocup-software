@@ -25,19 +25,19 @@ Pivot::State Pivot::next_state() {
     switch (current_state_) {
         case OUR_GOAL: {
             if (check_is_done()) {
-                i++;
+                count_++;
                 return IDLE;
             }
         }
         case OPP_GOAL: {
             if (check_is_done()) {
-                i++;
+                count_++;
                 return IDLE;
             }
         }
         case IDLE: {
             if (current_play_state_.is_playing()) {
-                if (i % 2 == 0) {
+                if (count_ % 2 == 0) {
                     return OUR_GOAL;
                 }
                 return OPP_GOAL;
