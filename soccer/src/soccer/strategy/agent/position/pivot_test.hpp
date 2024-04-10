@@ -26,8 +26,6 @@ public:
     ~Pivot() override = default;
     Pivot(const Pivot& other) = default;
     Pivot(Pivot&& other) = default;
-    Pivot& operator=(const Pivot& other) = default;
-    Pivot& operator=(Pivot&& other) = default;
 
     std::string get_current_state() override;
 
@@ -43,7 +41,7 @@ private:
 
     rj_geometry::Point curr_pt_{};
 
-    int i = 0;
+    int count_ = 0;
 
     /**
      * @return what the state should be right now. called on each get_task tick

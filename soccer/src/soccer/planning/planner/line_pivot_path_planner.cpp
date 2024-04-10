@@ -36,7 +36,7 @@ bool LinePivotPathPlanner::is_done() const {
         return false;
     }
     bool val = abs(cached_angle_change_.value()) <
-               degrees_to_radians(static_cast<float>(IS_DONE_ANGLE_CHANGE_THRESH));
+               degrees_to_radians(static_cast<float>(is_done_angle_change_thresh));
     return val;
 }
 
@@ -106,7 +106,8 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
         std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
 
     double start_angle = pivot_point.angle_to(
-        request.world_state->get_robot(true, request.shell_id).pose.position());
+        request.world_state->get_robot(true, static_cast<int> 
+        (request.shell_id)).pose.position());
     double target_angle = pivot_point.angle_to(final_position);
     double angle_change = fix_angle_radians(target_angle - start_angle);
 
