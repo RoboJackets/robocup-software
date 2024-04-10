@@ -7,10 +7,12 @@ import "ssl_gc_game_event.proto";
 // Each UDP packet contains one of these messages.
 message Referee {
     // A random UUID of the source that is kept constant at the source while running
-    // If multiple sources are broadcasting to the same network, this id can be used to identify individual sources
+    // If multiple sources are broadcasting to the same network, this id can be used to identify
+    // individual sources
     optional string source_identifier = 18;
 
-    // The match type is a meta information about the current match that helps to process the logs after a competition
+    // The match type is a meta information about the current match that helps to process the logs
+    // after a competition
     optional MatchType match_type = 19 [default = UNKNOWN_MATCH];
 
     // The UNIX timestamp when the packet was sent, in microseconds.
@@ -105,7 +107,8 @@ message Referee {
         TIMEOUT_BLUE = 13;
         // The yellow team just scored a goal.
         // For information only.
-        // Deprecated: Use the score field from the team infos instead. That way, you can also detect revoked goals.
+        // Deprecated: Use the score field from the team infos instead. That way, you can also
+        // detect revoked goals.
         GOAL_YELLOW = 14 [deprecated = true];
         // The blue team just scored a goal. See also GOAL_YELLOW.
         GOAL_BLUE = 15 [deprecated = true];
@@ -156,7 +159,8 @@ message Referee {
         optional uint32 max_allowed_bots = 13;
         // The team has submitted an intent to substitute one or more robots at the next chance
         optional bool bot_substitution_intent = 14;
-        // Indicate if the team reached the maximum allowed ball placement failures and is thus not allowed to place the ball anymore
+        // Indicate if the team reached the maximum allowed ball placement failures and is thus not
+        // allowed to place the ball anymore
         optional bool ball_placement_failures_reached = 15;
         // The team is allowed to substitute one or more robots currently
         optional bool bot_substitution_allowed = 16;
@@ -181,8 +185,8 @@ message Referee {
     optional Point designated_position = 9;
 
     // Information about the direction of play.
-    // True, if the blue team will have it's goal on the positive x-axis of the ssl-vision coordinate system.
-    // Obviously, the yellow team will play on the opposite half.
+    // True, if the blue team will have it's goal on the positive x-axis of the ssl-vision
+    // coordinate system. Obviously, the yellow team will play on the opposite half.
     optional bool blue_team_on_positive_half = 10;
 
     // The game event that caused the referee command.
@@ -190,7 +194,8 @@ message Referee {
     //    optional Game_Event game_event = 11 [deprecated = true];
     reserved 11;
 
-    // The command that will be issued after the current stoppage and ball placement to continue the game.
+    // The command that will be issued after the current stoppage and ball placement to continue the
+    // game.
     optional Command next_command = 12;
 
     // All game events that were detected since the last RUNNING state.
