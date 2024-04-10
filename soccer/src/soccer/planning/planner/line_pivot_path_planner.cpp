@@ -35,22 +35,23 @@ bool LinePivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-    bool val = abs(cached_angle_change_.value()) < degrees_to_radians(static_cast<float> 
-        (IS_DONE_ANGLE_CHANGE_THRESH));
+    bool val = abs(cached_angle_change_.value()) <
+               degrees_to_radians(static_cast<float>(IS_DONE_ANGLE_CHANGE_THRESH));
     return val;
 }
 
 LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request) {
     const MotionCommand& command = plan_request.motion_command;
-    auto current_point = plan_request.world_state->get_robot(true, static_cast<int> 
-        (plan_request.shell_id)).pose.position();
+    auto current_point =
+        plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
+            .pose.position();
     auto pivot_point = command.pivot_point;
 
     double dist_from_point = kRobotRadius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
-    double vel =
-        plan_request.world_state->get_robot(true, static_cast<int> 
-        (plan_request.shell_id)).velocity.linear().mag();
+    double vel = plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
+                     .velocity.linear()
+                     .mag();
     if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3)) {
         return PIVOT;
     }
@@ -63,8 +64,9 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
 Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
     const MotionCommand& command = plan_request.motion_command;
     auto pivot_point = command.pivot_point;
-    auto current_point = plan_request.world_state->get_robot(true, static_cast<int> 
-        (plan_request.shell_id)).pose.position();
+    auto current_point =
+        plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
+            .pose.position();
 
     double dist_from_point = kRobotRadius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
