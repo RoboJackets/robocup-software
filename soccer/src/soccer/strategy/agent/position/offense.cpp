@@ -10,6 +10,12 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
+
+        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+        if (current_state_ == SEEKING) {
+            broadcast_seeker_request(rj_geometry::Point{}, false);
+        }
+
     }
 
     current_state_ = new_state;
@@ -182,7 +188,11 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case SEEKING_START: {
             // Calculate a new seeking point
             seeker_.reset_target();
-            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            seeker_.set_seeker_points(seeker_points_);
+            std::optional<RobotIntent> actual_intent =
+                seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            broadcast_seeker_request(seeker_.get_target_point(), true);
+            return actual_intent;
         }
 
         case SEEKING: {
@@ -369,7 +379,14 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
         comm_response.response = response;
-        return comm_response;
+    } else if (const communication::SeekerRequest* seeker_request =
+                   std::get_if<communication::SeekerRequest>(&request.request)) {
+        if (seeker_request->adding) {
+            seeker_points_[seeker_request->robot_id] = rj_geometry::Point{
+                seeker_request->seeking_point_x, seeker_request->seeking_point_y};
+        } else {
+            seeker_points_.erase(seeker_request->robot_id);
+        }
     }
 
     return comm_response;
@@ -575,5 +592,19 @@ bool Offense::ball_in_red() const {
         !field_dimensions_.field_rect().contains_point(ball_pos)); 
     
     
+}
+void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
+    communication::SeekerRequest seeker_request{};
+    communication::generate_uid(seeker_request);
+    seeker_request.robot_id = robot_id_;
+    seeker_request.seeking_point_x = seeking_point.x();
+    seeker_request.seeking_point_y = seeking_point.y();
+    seeker_request.adding = adding;
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = seeker_request;
+    communication_request.urgent = false;
+    communication_request.broadcast = true;
+    communication_request_ = communication_request;
 }
 }  // namespace strategy
