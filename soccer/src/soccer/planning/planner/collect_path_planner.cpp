@@ -110,9 +110,9 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
 
-    //Return an empty trajectory if the ball is hitting static obstacles
-    //or it is in the goalie area.
-    //Check the robot for the same conditions.
+    // Return an empty trajectory if the ball is hitting static obstacles
+    // or it is in the goalie area.
+    // Check the robot for the same conditions.
     if (static_obstacles.hit(ball.position) ||
         static_obstacles.hit(start_instant.pose.position())) {
         return Trajectory{};
