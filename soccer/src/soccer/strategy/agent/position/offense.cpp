@@ -10,6 +10,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     if (current_state_ != new_state) {
         reset_timeout();
+
         SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
         if (current_state_ == SEEKING) {
             broadcast_seeker_request(rj_geometry::Point{}, false);
@@ -132,6 +133,10 @@ Offense::State Offense::next_state() {
             // If we got it, cool, we have it!
             if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
+            }
+
+            if (ball_in_red()) {
+                return DEFAULT;
             }
 
             // If we failed to get it in time
@@ -513,6 +518,10 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
+    // Ball in red zone or not
+    if (ball_in_red()) {
+        return false;
+    }
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
@@ -574,6 +583,13 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
+// Checks whether ball is out of range for stealing/receiving
+bool Offense::ball_in_red() const {
+    auto& ball_pos = last_world_state_->ball.position;
+    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
+            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
+            !field_dimensions_.field_rect().contains_point(ball_pos));
+}
 void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
     communication::SeekerRequest seeker_request{};
     communication::generate_uid(seeker_request);

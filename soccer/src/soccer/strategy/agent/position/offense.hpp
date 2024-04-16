@@ -233,6 +233,11 @@ private:
      */
     rj_geometry::Point calculate_best_shot() const;
 
+    /**
+     * @return whether the ball is in an area that non-goalies cannot reach.
+     */
+    bool ball_in_red() const;
+
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
