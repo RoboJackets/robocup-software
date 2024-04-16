@@ -44,16 +44,16 @@ private:
      */
     void update();
 
-    static MatchState::Period period_from_proto(SSL_Referee::Stage stage);
+    static MatchState::Period period_from_proto(Referee::Stage stage);
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_ref_pub_;
     rclcpp::TimerBase::SharedPtr network_timer_;
 
-    using Command = std::pair<SSL_Referee::Command, std::optional<rj_geometry::Point>>;
+    using Command = std::pair<Referee::Command, std::optional<rj_geometry::Point>>;
 
     // Process a new referee command
     void handle_command(const Command& command);
-    void handle_stage(SSL_Referee::Stage stage);
+    void handle_stage(Referee::Stage stage);
 
     // Arbitrary receive buffer size
     static constexpr size_t kRecvBufferSize = std::numeric_limits<uint16_t>::max() + 1;

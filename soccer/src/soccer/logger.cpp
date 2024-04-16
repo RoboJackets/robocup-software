@@ -170,7 +170,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
 
     // Copy referee packets.
     for (const auto& packet : context->referee_packets) {
-        SSL_Referee* referee = log_frame->add_raw_refbox();
+        Referee* referee = log_frame->add_raw_refbox();
         referee->CopyFrom(packet);
     }
     context->referee_packets.clear();
