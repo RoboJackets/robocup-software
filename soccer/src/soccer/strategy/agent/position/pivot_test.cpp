@@ -53,7 +53,7 @@ std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant target{field_dimensions_.our_goal_loc()};
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
                                                      false, last_world_state_->ball.position};
-            pivot_cmd.pivot_radius = 1;                       
+            pivot_cmd.pivot_radius = 1;
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255.0;
             return intent;
@@ -62,7 +62,7 @@ std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
                                                      false, last_world_state_->ball.position};
-            pivot_cmd.pivot_radius = 1;                       
+            pivot_cmd.pivot_radius = 1;
 
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255.0;
