@@ -47,7 +47,7 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
             .pose.position();
     auto pivot_point = command.pivot_point;
 
-    double dist_from_point = kRobotRadius;
+    double dist_from_point = command.pivot_radius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
     double vel = plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
                      .velocity.linear()
@@ -68,7 +68,7 @@ Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
         plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
             .pose.position();
 
-    double dist_from_point = kRobotRadius;
+    double dist_from_point = command.pivot_radius;
     auto target_point = pivot_point + (current_point - pivot_point).normalized(dist_from_point);
 
     // Create an updated MotionCommand and forward to PathTargetPathPlaner
@@ -93,7 +93,7 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
+    double radius = pivot::PARAM_radius_multiplier * command.pivot_radius;
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 
