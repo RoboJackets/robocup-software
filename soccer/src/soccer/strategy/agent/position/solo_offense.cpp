@@ -60,12 +60,15 @@ SoloOffense::State SoloOffense::next_state() {
 }
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
-   
     switch (current_state_) {
         case MARKER: {
-            auto marker_target_pos = last_world_state_->get_robot(false, marking_id_).pose.position();
-            auto target = marker_target_pos + (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5); 
-            auto mark_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
+            auto marker_target_pos =
+                last_world_state_->get_robot(false, marking_id_).pose.position();
+            auto target =
+                marker_target_pos +
+                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
+            auto mark_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
             intent.motion_command = mark_cmd;
 
             return intent;
@@ -93,9 +96,6 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     return intent;
 }
 
-
-
-
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
@@ -120,7 +120,8 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
     return best_shot;
 }
 
-double SoloOffense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
+                                               rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 
