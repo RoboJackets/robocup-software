@@ -4,8 +4,16 @@ namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
+Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
+    SPDLOG_INFO("HELLO {}", robot_id_);
+    position_name_ = "Defense";
+    walling_robots_ = {};
+}
+
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
+    // SPDLOG_INFO("waller length (sus) {}, {}", walling_robots_.size(), robot_id_);
     current_state_ = update_state();
+    // waller_id_ = get_waller_id();
     return state_to_task(intent);
 }
 
@@ -33,6 +41,7 @@ Defense::State Defense::update_state() {
             break;
         case JOINING_WALL:
             send_join_wall_request();
+            SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
@@ -43,6 +52,7 @@ Defense::State Defense::update_state() {
             if (walling_robots_.size() > kMaxWallers &&
                 this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
                 send_leave_wall_request();
+                // SPDLOG_INFO("leave wall {}", robot_id_);
                 next_state = ENTERING_MARKING;
             }
             break;
@@ -206,7 +216,7 @@ void Defense::send_join_wall_request() {
     communication_request.urgent = false;
     communication_request.broadcast = true;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
 }
@@ -222,12 +232,12 @@ void Defense::send_leave_wall_request() {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 }
 
 communication::JoinWallResponse Defense::handle_join_wall_request(
     communication::JoinWallRequest join_request) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_request.robot_id) {
             break;
         } else if (walling_robots_[i] > join_request.robot_id) {
@@ -249,13 +259,15 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
 
 communication::Acknowledge Defense::handle_leave_wall_request(
     communication::LeaveWallRequest leave_request) {
-    for (int i = walling_robots_.size() - 1; i > 0; i--) {
-        if (walling_robots_[i] == leave_request.robot_id) {
-            walling_robots_.erase(walling_robots_.begin() + i);
-            waller_id_ = get_waller_id();
-            break;
-        } else if (walling_robots_[i] < leave_request.robot_id) {
-            break;
+    if (robot_id_ != leave_request.robot_id) {
+        for (int i = walling_robots_.size() - 1; i > 0; i--) {
+            if (walling_robots_[i] == leave_request.robot_id) {
+                walling_robots_.erase(walling_robots_.begin() + i);
+                waller_id_ = get_waller_id();
+                break;
+            } else if (walling_robots_[i] < leave_request.robot_id) {
+                break;
+            }
         }
     }
 
@@ -266,7 +278,7 @@ communication::Acknowledge Defense::handle_leave_wall_request(
 }
 
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_response.robot_id) {
             return;
         } else if (walling_robots_[i] > join_response.robot_id) {

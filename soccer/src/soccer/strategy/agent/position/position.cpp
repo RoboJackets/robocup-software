@@ -2,15 +2,18 @@
 
 #include "game_state.hpp"
 
+#include <limits>
+
 namespace strategy {
 
 Position::Position(int r_id) : robot_id_(r_id) {}
 
 Position::Position(int r_id, std::string position_name)
-    : robot_id_{r_id}, position_name_{std::move(position_name)} {};
+    : position_name_{std::move(position_name)}, robot_id_{r_id} {};
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
-                                              FieldDimensions& field_dimensions) {
+                                              FieldDimensions& field_dimensions,
+                                              PlayState& play_state) {
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;
@@ -60,15 +63,13 @@ void Position::update_field_dimensions(const FieldDimensions& field_dims) {
     field_dimensions_ = field_dims;
 }
 
-void Position::update_alive_robots(std::vector<u_int8_t> alive_robots) {
+void Position::update_alive_robots(std::array<bool, kNumShells> alive_robots) {
     alive_robots_ = alive_robots;
 
-    if (alive &&
-        std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) != alive_robots_.end()) {
+    if (alive && !alive_robots_[robot_id_]) {
         alive = false;
         die();
-    } else if (!alive && std::find(alive_robots_.begin(), alive_robots_.end(), robot_id_) ==
-                             alive_robots_.end()) {
+    } else if (!alive && alive_robots_[robot_id_]) {
         alive = true;
         revive();
     }
@@ -82,13 +83,9 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
-std::optional<communication::PosAgentRequestWrapper> Position::send_communication_request() {
-    if (communication_request_ != std::nullopt) {
-        auto saved_comm_req = communication_request_;
-        communication_request_ = std::nullopt;
-        return saved_comm_req;
-    }
-    return std::nullopt;
+std::deque<communication::PosAgentRequestWrapper> Position::send_communication_request() {
+    // Return and reset this member
+    return std::exchange(communication_requests_, {});
 }
 
 void Position::receive_communication_response(communication::AgentPosResponseWrapper response) {
@@ -170,7 +167,7 @@ void Position::send_direct_pass_request(std::vector<u_int8_t> target_robots) {
     communication_request.target_agents = target_robots;
     communication_request.urgent = true;
     communication_request.broadcast = false;
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 }
 
 void Position::broadcast_direct_pass_request() {
@@ -183,7 +180,38 @@ void Position::broadcast_direct_pass_request() {
     communication_request.request = pass_request;
     communication_request.urgent = false;
     communication_request.broadcast = true;
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
+}
+
+void Position::broadcast_kicker_request() {
+    communication::KickerRequest kicker_request{};
+    communication::generate_uid(kicker_request);
+    kicker_request.robot_id = robot_id_;
+
+    double distance;
+
+    if (kicker_distances_.count(robot_id_)) {
+        distance = kicker_distances_[robot_id_];
+    } else if (!last_world_state_) {
+        distance = std::numeric_limits<double>::infinity();
+    } else {
+        distance = last_world_state_->ball.position.dist_to(
+            last_world_state_->get_robot(true, robot_id_).pose.position());
+    }
+
+    // if (last_world_state_) {
+    //     distance = last_world_state_->ball.position.dist_to(
+    //         last_world_state_->get_robot(true, robot_id_).pose.position());
+    // }
+
+    kicker_distances_[robot_id_] = distance;
+    kicker_request.distance = distance;
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = kicker_request;
+    communication_request.urgent = false;
+    communication_request.broadcast = true;
+    communication_requests_.push_back(communication_request);
 }
 
 communication::PassResponse Position::receive_pass_request(
@@ -213,7 +241,7 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication_request.broadcast = false;
     communication_request.urgent = true;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 }
 
 communication::Acknowledge Position::acknowledge_pass(
@@ -241,7 +269,7 @@ void Position::pass_ball(int robot_id) {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 
     derived_pass_ball();
 }
