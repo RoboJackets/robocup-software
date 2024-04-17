@@ -70,6 +70,7 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
+            marker_.choose_target(world_state);
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
                 next_state = ENTERING_MARKING;
             }
