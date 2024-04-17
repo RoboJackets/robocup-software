@@ -122,11 +122,13 @@ private:
 
     bool have_all_kicker_responses();
 
+    void handle_stop();
+
     void handle_ready();
 
     void handle_setup();
 
-    void handle_penalty_playing() {}
+    void handle_penalty_playing();
 
     /**
      * @brief Sets the current position to the parameterized type.

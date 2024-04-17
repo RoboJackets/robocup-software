@@ -36,7 +36,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
 void RobotFactoryPosition::process_play_state() {
     // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
-
+    
     if (last_play_state_.state() != current_play_state_.state()) {
         last_play_state_ = current_play_state_;
         switch (current_play_state_.state()) {
@@ -64,7 +64,6 @@ void RobotFactoryPosition::process_play_state() {
                 // moving.
 
                 // TODO(https://app.clickup.com/t/86azm51j4) we should handle this at a lower level
-                // if possible
                 handle_penalty_playing();
                 break;
             }
@@ -73,9 +72,20 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Halt: {
                 // The game has been stopped or halted. In this case, we typically want to keep
                 // our current position. The rules for movement should be handled at a lower level.
+                handle_stop();
                 break;
             }
         }
+    }
+}
+
+void RobotFactoryPosition::handle_stop() {
+    set_default_position();
+}
+
+void RobotFactoryPosition::handle_penalty_playing() {
+    if (!am_closest_kicker()) {
+        set_current_position<SmartIdle>();
     }
 }
 
@@ -117,26 +127,6 @@ void RobotFactoryPosition::update_position() {
             break;
         }
 
-        // case PlayState::State::Setup: {
-        //      if (current_play_state_.is_our_restart()) {
-        //         if (have_all_kicker_responses()) {
-        //             if (current_play_state_.is_kickoff()) {
-
-        //                 set_current_position<Defense>();
-        //             } else if (current_play_state_.is_penalty()) {
-        //                 set_current_position<SmartIdle>();
-        //                 // set_current_position<PenaltyNonKicker>();
-        //             } else if (current_play_state_.is_free_kick()) {
-        //                 // do what it was doing before foul
-        //                 set_default_position();
-        //             }
-        //         } else {
-        //             // set_current_position<Idle>();
-        //         }
-
-        //     }
-        //     break;
-        // }
         case PlayState::State::Setup:
         case PlayState::State::Ready: {
             // Currently in setup
@@ -144,13 +134,11 @@ void RobotFactoryPosition::update_position() {
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_our_restart()) {
                 if (have_all_kicker_responses()) {
-                    SPDLOG_INFO("robot {} has all responses", robot_id_);
                     if (am_closest_kicker()) {
                         if (current_play_state_.is_free_kick()) {
                             set_current_position<FreeKicker>();
                         } else {
                             set_current_position<PenaltyPlayer>();
-                            SPDLOG_INFO("{} is a penalty player", robot_id_);
                         }
                     } else {
                         if (current_play_state_.is_kickoff()) {
@@ -158,7 +146,6 @@ void RobotFactoryPosition::update_position() {
                         } else if (current_play_state_.is_penalty()) {
                             // set_current_position<SmartIdle>();
                             set_current_position<PenaltyNonKicker>();
-                            SPDLOG_INFO("{} is a penalty non kicker", robot_id_);
                         } else if (current_play_state_.is_free_kick()) {
                             // do what it was doing before foul
                             set_default_position();
@@ -179,7 +166,6 @@ void RobotFactoryPosition::update_position() {
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();
                     set_current_position<PenaltyNonKicker>();
-                    SPDLOG_INFO("{} is a penalty non kicker", robot_id_);
                 } else if (current_play_state_.is_free_kick()) {
                     // do what it was doing before foul
                     set_default_position();
