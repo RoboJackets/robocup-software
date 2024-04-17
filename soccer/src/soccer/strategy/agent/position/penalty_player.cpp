@@ -16,7 +16,8 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
     switch (latest_state_) {
         case LINE_UP: {
             // if penalty playing and restart penalty in playstate we switch to shooting
-            if (current_play_state_.is_ready() && (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
+            if (current_play_state_.is_ready() &&
+                (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
                 return SHOOTING_START;
             }
             break;
@@ -46,9 +47,9 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             double y_pos = last_world_state_->ball.position.y();
             // if ball is above goal, increase y_pos, else decrease
             // if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
-                // y_pos += kRobotRadius - 0.15;
+            // y_pos += kRobotRadius - 0.15;
             // } else {
-                y_pos -= kRobotRadius + 0.3;
+            y_pos -= kRobotRadius + 0.3;
             // }
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
@@ -59,7 +60,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
             // Create Motion Command
             planning::LinearMotionInstant goal{target_pt, target_vel};
-            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             break;
         }
         case SHOOTING_START: {
@@ -94,7 +96,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
 std::string PenaltyPlayer::get_current_state() { return "PenaltyPlayer"; }
 
-double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail,
+                                                 rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 

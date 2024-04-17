@@ -17,8 +17,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
+    [maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -36,7 +36,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
 void RobotFactoryPosition::process_play_state() {
     // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
-    
+
     if (last_play_state_.state() != current_play_state_.state()) {
         last_play_state_ = current_play_state_;
         switch (current_play_state_.state()) {
@@ -79,9 +79,7 @@ void RobotFactoryPosition::process_play_state() {
     }
 }
 
-void RobotFactoryPosition::handle_stop() {
-    set_default_position();
-}
+void RobotFactoryPosition::handle_stop() { set_default_position(); }
 
 void RobotFactoryPosition::handle_penalty_playing() {
     if (!am_closest_kicker()) {
@@ -294,7 +292,8 @@ communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communicati
     communication::AgentPosRequestWrapper request) {
     if (const communication::KickerRequest* kicker_request =
             std::get_if<communication::KickerRequest>(&request.request)) {
-        if (kicker_distances_.size() >= 1 && !have_all_kicker_responses() &&  current_position_->get_name() != "GoalKicker") {
+        if (kicker_distances_.size() >= 1 && !have_all_kicker_responses() &&
+            current_position_->get_name() != "GoalKicker") {
             bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
             if (!prev) {
                 kicker_distances_[kicker_request->robot_id] = kicker_request->distance;

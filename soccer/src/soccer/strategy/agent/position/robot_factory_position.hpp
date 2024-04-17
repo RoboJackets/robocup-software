@@ -18,13 +18,13 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/free_kicker.hpp"
-#include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
-#include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/penalty_non_kicker.hpp"
+#include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/smartidling.hpp"
 
 namespace strategy {
 
@@ -112,7 +112,7 @@ private:
 
     void set_default_position();
 
-    PlayState last_play_state_ {PlayState::halt()};
+    PlayState last_play_state_{PlayState::halt()};
 
     void process_play_state();
 
