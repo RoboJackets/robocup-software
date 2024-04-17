@@ -87,6 +87,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goal_kicker.cpp
     strategy/agent/position/penalty_player.cpp
     strategy/agent/position/pivot_test.cpp
+    strategy/agent/position/solo_offense.cpp
 
         )
 
