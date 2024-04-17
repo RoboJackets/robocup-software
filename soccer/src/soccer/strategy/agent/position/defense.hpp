@@ -10,6 +10,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "marker.hpp"
+#include "ball_marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/field_dimensions.hpp"
@@ -120,7 +121,7 @@ private:
     State current_state_ = JOINING_WALL;
 
     int get_marker_target_id();
-    Marker marker_;
+    BallMarker marker_;
 };
 
 }  // namespace strategy
