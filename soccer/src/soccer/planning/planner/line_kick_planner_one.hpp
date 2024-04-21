@@ -60,7 +60,6 @@ private:
      * Avoids the ball
      */
     Trajectory initial(const PlanRequest& plan_request);
-
 };
 
 }  // namespace planning

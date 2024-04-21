@@ -41,7 +41,6 @@ Trajectory LineKickPlannerTwo::plan(const PlanRequest& plan_request) {
     return prev_path_;
 }
 
-
 Trajectory LineKickPlannerTwo::final(const PlanRequest& plan_request) {
     const BallState& ball = plan_request.world_state->ball;
 
@@ -61,11 +60,9 @@ Trajectory LineKickPlannerTwo::final(const PlanRequest& plan_request) {
     return path_target_.plan(modified_request);
 }
 
-
 bool LineKickPlannerTwo::is_done() const {
     // if ball is fast, assume we have kicked it correctly
     // (either way we can't go recapture it)
     return average_ball_vel_.mag() > kIsDoneBallVel;
-
 }
 }  // namespace planning

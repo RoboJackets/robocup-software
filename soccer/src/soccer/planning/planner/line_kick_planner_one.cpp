@@ -46,7 +46,6 @@ Trajectory LineKickPlannerOne::plan(const PlanRequest& plan_request) {
 }
 
 Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
-
     // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
 
@@ -73,8 +72,8 @@ Trajectory LineKickPlannerOne::initial(const PlanRequest& plan_request) {
 }
 
 bool LineKickPlannerOne::is_done() const {
-    //end when close enough to the ball
-    
+    // end when close enough to the ball
+
     return path_target_.is_done();
 }
 
