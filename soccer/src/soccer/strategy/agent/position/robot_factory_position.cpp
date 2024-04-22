@@ -17,8 +17,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -28,6 +28,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // Update our state
     process_play_state();
 
+    // Every tick, update position based on PlayState
     update_position();
 
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);

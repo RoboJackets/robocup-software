@@ -9,7 +9,7 @@ FreeKicker::FreeKicker(const Position& other) : Position{other} { position_name_
 std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
 
-    SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
+    //SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
 
     rj_geometry::Point goal_corner{
         this->field_dimensions_.their_goal_loc().x() + 0.5 * this->field_dimensions_.goal_width(),
@@ -21,7 +21,6 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     // note: the way this is set up makes it impossible to
     // shoot on time without breakbeam
-    // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
     intent.shoot_mode = RobotIntent::ShootMode::CHIP;
     intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
     intent.kick_speed = 4.0;
