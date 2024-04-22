@@ -40,13 +40,17 @@ std::optional<RobotIntent> PenaltyNonKicker::derived_get_task(RobotIntent intent
 //             if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
 //                 travel_upwards = true;
 //             }
-//             if ((!travel_upwards && y_pos - last_world_state_->get_robot(true, this->robot_id_).pose.position().y() > 0) || (travel_upwards && y_pos - last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
+//             if ((!travel_upwards && y_pos - last_world_state_->get_robot(true,
+//             this->robot_id_).pose.position().y() > 0) || (travel_upwards && y_pos -
+//             last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
 //                 return GET_AWAY;
 //             }
 //             break;
 //         }
 //         case GET_AWAY: {
-//             if ((travel_upwards && y_pos - last_world_state_->get_robot(true, this->robot_id_).pose.position().y() > 0) || (!travel_upwards && y_pos - last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
+//             if ((travel_upwards && y_pos - last_world_state_->get_robot(true,
+//             this->robot_id_).pose.position().y() > 0) || (!travel_upwards && y_pos -
+//             last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
 //               {
 //                 return IDLING;
 //             }
@@ -57,26 +61,22 @@ std::optional<RobotIntent> PenaltyNonKicker::derived_get_task(RobotIntent intent
 // }
 
 std::optional<RobotIntent> PenaltyNonKicker::state_to_task(RobotIntent intent) {
-
     double y_pos = last_world_state_->ball.position.y();
     double offset = 1.5;
     if (current_play_state_.is_our_restart()) {
-    	offset = -offset;
+        offset = -offset;
     }
 
     rj_geometry::Point target_pt{
-        last_world_state_->get_robot(true, this->robot_id_).pose.position().x(),
-        y_pos + offset};
+        last_world_state_->get_robot(true, this->robot_id_).pose.position().x(), y_pos + offset};
     rj_geometry::Point target_vel{0.0, 0.0};
 
     planning::PathTargetFaceOption face_option{planning::FaceBall{}};
 
     planning::LinearMotionInstant goal{target_pt, target_vel};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", goal, face_option, false};
+    intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, false};
 
     return intent;
-
 }
 
 }  // namespace strategy
