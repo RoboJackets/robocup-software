@@ -2024,11 +2024,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2096,11 +2091,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2176,11 +2166,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2248,11 +2233,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2328,11 +2308,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2400,11 +2375,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2480,11 +2450,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2552,11 +2517,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2632,11 +2592,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2704,11 +2659,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2784,11 +2734,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -2856,11 +2801,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -2936,11 +2876,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -3008,11 +2943,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>
@@ -3088,11 +3018,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Goalie</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Marker</string>
                </property>
               </item>
@@ -3160,11 +3085,6 @@
               <item>
                <property name="text">
                 <string>Goal Kicker</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Goalie</string>
                </property>
               </item>
               <item>

@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QComboBox>
 #include <QTime>
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
@@ -15,10 +16,12 @@
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
+#include <rj_msgs/msg/override_position.hpp>
 
 #include "field_view.hpp"
 #include "game_state.hpp"
 #include "processor.hpp"
+#include "strategy/agent/position/overriding_positions.hpp"
 #include "ui_MainWindow.h"
 
 #include "rc-fshare/rtp.hpp"
@@ -77,8 +80,6 @@ public:
     QTimer updateTimer;
 
     void setUseRefChecked(bool use_ref);
-
-    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr test_play_pub_;
 
 private Q_SLOTS:
     void addLayer(int i, const QString& name, bool checked);
@@ -164,6 +165,41 @@ private Q_SLOTS:
     void on_fastBlue_clicked();
     void on_fastYellow_clicked();
 
+    // Robot Position Dropdowns and Reset Buttons
+    void on_robotPosition_0_currentIndexChanged(int value);
+    void on_robotPosition_1_currentIndexChanged(int value);
+    void on_robotPosition_2_currentIndexChanged(int value);
+    void on_robotPosition_3_currentIndexChanged(int value);
+    void on_robotPosition_4_currentIndexChanged(int value);
+    void on_robotPosition_5_currentIndexChanged(int value);
+    void on_robotPosition_6_currentIndexChanged(int value);
+    void on_robotPosition_7_currentIndexChanged(int value);
+    void on_robotPosition_8_currentIndexChanged(int value);
+    void on_robotPosition_9_currentIndexChanged(int value);
+    void on_robotPosition_10_currentIndexChanged(int value);
+    void on_robotPosition_11_currentIndexChanged(int value);
+    void on_robotPosition_12_currentIndexChanged(int value);
+    void on_robotPosition_13_currentIndexChanged(int value);
+    void on_robotPosition_14_currentIndexChanged(int value);
+    void on_robotPosition_15_currentIndexChanged(int value);
+
+    void on_positionReset_0_clicked();
+    void on_positionReset_1_clicked();
+    void on_positionReset_2_clicked();
+    void on_positionReset_3_clicked();
+    void on_positionReset_4_clicked();
+    void on_positionReset_5_clicked();
+    void on_positionReset_6_clicked();
+    void on_positionReset_7_clicked();
+    void on_positionReset_8_clicked();
+    void on_positionReset_9_clicked();
+    void on_positionReset_10_clicked();
+    void on_positionReset_11_clicked();
+    void on_positionReset_12_clicked();
+    void on_positionReset_13_clicked();
+    void on_positionReset_14_clicked();
+    void on_positionReset_15_clicked();
+
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
@@ -195,6 +231,26 @@ private:
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
     std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
+
+    // Arrays containing dropdown and reset button UI objects
+    std::array<QComboBox*, kNumShells> robot_pos_selectors{};
+    std::array<QPushButton*, kNumShells> position_reset_buttons{};
+
+    // Methods to update positions and broadcast those changes
+    /*
+     * Sets which dropdown represents the goalie — disabling it and ensuring the previous goalie
+     * dropdown is re-enabled.
+     */
+    void setGoalieDropdown(int robot);
+    /*
+     * Callback when a dropdown is changed (whether by user or program)
+     */
+    void onPositionDropdownChanged(int robot, int position_number);
+    /*
+     * Callback when a reset button is clicked
+     */
+    void onResetButtonClicked(int robot);
+    // TODO: Add a publisher and a subscriber to implement these
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
@@ -241,6 +297,7 @@ private:
     rclcpp::Node::SharedPtr _node;
     rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
     rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
+    rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr test_play_pub_;
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
 
@@ -256,4 +313,8 @@ private:
 
     rj_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;
+
+    // sets robot override position when a dropdown is clicked
+
+    // Resets the position of the given robot
 };

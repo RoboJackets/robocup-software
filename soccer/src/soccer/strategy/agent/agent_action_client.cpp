@@ -63,7 +63,8 @@ AgentActionClient::AgentActionClient(int r_id)
     // Default Positions with the Position class
     if (path_plan_test_mode) {
         current_position_ = std::make_unique<RobotFactoryPositionPathTest>(robot_id_);
-        SPDLOG_INFO("TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE");
+        SPDLOG_INFO(
+            "TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE TEST MODE");
     } else {
         current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
     }

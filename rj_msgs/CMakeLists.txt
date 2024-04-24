@@ -57,6 +57,7 @@ rosidl_generate_interfaces(
   msg/AgentRequest.msg
   msg/AgentResponse.msg
   msg/AgentResponseVariant.msg
+  msg/OverridePosition.msg
 
   # Agent Request Messages
   request/LeaveWallRequest.msg
