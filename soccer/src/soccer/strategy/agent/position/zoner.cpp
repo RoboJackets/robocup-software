@@ -7,7 +7,6 @@ Zoner::Zoner(int r_id) : Position(r_id, "Zoner") {}
 Zoner::Zoner(const Position& other) : Position{other} { position_name_ = "Zoner"; }
 
 std::optional<RobotIntent> Zoner::derived_get_task(RobotIntent intent) {
-    // SPDLOG_INFO("waller length (sus) {}, {}", walling_robots_.size(), robot_id_);
     current_state_ = next_state();
     // waller_id_ = get_waller_id();
     return state_to_task(intent);
@@ -79,13 +78,11 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
 
             for (RobotState opp : last_world_state_->their_robots) {
                 double dist = center.dist_to(opp.pose.position());
-                SPDLOG_INFO("-------------------");
                 if (dist < radius) {
                     opp_poses.emplace_back(opp.pose.position());
-                    SPDLOG_INFO("position: ({}, {})", opp.pose.position().x(), opp.pose.position().y());
                 }
             }
-            SPDLOG_INFO("opp pose size: {}", opp_poses.size());
+            // SPDLOG_INFO("opp pose size: {}", opp_poses.size());
 
             rj_geometry::Point target_point{};
             if (opp_poses.size() >= 2) {
@@ -115,25 +112,15 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
 }
 
 rj_geometry::Point Zoner::find_centroid(std::vector<rj_geometry::Point> opp_poses) {
-    // double x = 0, y = 0;
     rj_geometry::Point p{};
 
     for (rj_geometry::Point pos : opp_poses) {
-        // x += pos.x();
-        // y += pos.y();
         p += pos;
     }
-    // x /= opp_poses.size();
-    // y /= opp_poses.size();
 
-    // SPDLOG_INFO("target: ({}, {})", x, y);
-    
     return p / opp_poses.size();
-    // return rj_geometry::Point{x, y};
 }
 
-std::string Zoner::get_current_state() {
-    return "";
-}
+std::string Zoner::get_current_state() { return "Zoner"; }
 
 }  // namespace strategy

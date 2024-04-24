@@ -49,7 +49,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     rj_geometry::Point find_centroid(std::vector<rj_geometry::Point> opp_poses);
-    
+
     std::string get_current_state() override;
 };
 
