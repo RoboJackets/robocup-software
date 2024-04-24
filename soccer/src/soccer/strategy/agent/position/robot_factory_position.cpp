@@ -5,11 +5,6 @@
 #include "idle.hpp"
 #include "penalty_non_kicker.hpp"
 
-#include <algorithm>
-
-#include "idle.hpp"
-#include "penalty_non_kicker.hpp"
-
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
