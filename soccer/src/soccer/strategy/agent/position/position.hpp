@@ -2,8 +2,10 @@
 
 #include <cstdlib>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
+#include <queue>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
@@ -25,6 +27,7 @@
 // Requests
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
 #include <rj_msgs/msg/incoming_ball_request.hpp>
+#include <rj_msgs/msg/kicker_request.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
@@ -55,6 +58,7 @@ class Position {
 public:
     Position(int r_id);
     virtual ~Position() = default;
+    Position(const Position& other) = default;
 
     /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
@@ -68,12 +72,13 @@ public:
      */
 
     virtual std::optional<RobotIntent> get_task(WorldState& world_state,
-                                                FieldDimensions& field_dimensions);
+                                                FieldDimensions& field_dimensions,
+                                                PlayState& play_state);
 
     // communication with AC
     virtual void update_play_state(const PlayState& play_state);
     virtual void update_field_dimensions(const FieldDimensions& field_dimensions);
-    virtual void update_alive_robots(std::vector<u_int8_t> alive_robots);
+    virtual void update_alive_robots(std::array<bool, kNumShells> alive_robots);
     virtual const std::string get_name();
 
     // returns the current state of the robot
@@ -106,7 +111,7 @@ public:
      *
      * @return communication::PosAgentRequestWrapper the request to be sent
      */
-    virtual std::optional<communication::PosAgentRequestWrapper> send_communication_request();
+    virtual std::deque<communication::PosAgentRequestWrapper> send_communication_request();
 
     /**
      * @brief Receive the response from a sent request.
@@ -134,6 +139,12 @@ public:
     virtual void send_direct_pass_request(std::vector<u_int8_t> target_robots);
 
     virtual void broadcast_direct_pass_request();
+
+    void broadcast_kicker_request();
+
+    std::unordered_map<int, double> kicker_distances_;
+
+    bool is_kicker_ = false;
 
     /**
      * @brief receives and handles a pass_request
@@ -235,6 +246,9 @@ protected:
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     PlayState current_play_state_ = PlayState::halt();
 
+    // Current queue of requests to return to the AAC
+    std::deque<communication::PosAgentRequestWrapper> communication_requests_{};
+
     /*
      * @brief assert world_state is valid before using it in get_task().
      *
@@ -276,9 +290,6 @@ protected:
     // set to true when the ball gets close to this robot
     bool chasing_ball = false;
 
-    // Request
-    std::optional<communication::PosAgentRequestWrapper> communication_request_;
-
     // farthest distance the robot is willing to go to receive a pass
     static constexpr double ball_receive_distance_ = 0.1;
 
@@ -286,12 +297,12 @@ protected:
     static constexpr double ball_lost_distance_ = 0.5;
 
     // vector of alive robots from the agent action client
-    std::vector<u_int8_t> alive_robots_ = {};
+    std::array<bool, kNumShells> alive_robots_ = {};
 
     // true if this robot is alive
     bool alive = false;
 
-    // protected to allow WorldState to be accessed directly by derived
+    // protected to allow WorldState to be accessed directly by deriveed
     WorldState* last_world_state_;
 
     // Current goalie

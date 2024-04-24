@@ -7,7 +7,6 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-
 #include "rj_msgs/msg/seeker_request.hpp"
 
 namespace strategy::communication {
