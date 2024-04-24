@@ -47,6 +47,6 @@ private:
     std::optional<double> cached_angle_change_;
 
     // TODO(Kevin): ros param this
-    static constexpr double is_done_angle_change_thresh_{1.0};
+    static constexpr double kIsDoneAngleChangeThresh{1.0};
 };
 }  // namespace planning

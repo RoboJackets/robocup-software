@@ -106,7 +106,7 @@ bool PivotPathPlanner::is_done() const {
         return false;
     }
     bool val = abs(cached_angle_change_.value()) <
-               degrees_to_radians(static_cast<float>(is_done_angle_change_thresh_));
+               degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
     return val;
 }
 

@@ -36,7 +36,7 @@ bool LinePivotPathPlanner::is_done() const {
         return false;
     }
     return abs(cached_angle_change_.value()) <
-               degrees_to_radians(static_cast<float>(is_done_angle_change_thresh_));
+           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
 }
 
 LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request) {

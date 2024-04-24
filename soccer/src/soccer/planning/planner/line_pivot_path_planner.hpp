@@ -47,7 +47,7 @@ private:
     Trajectory pivot(const PlanRequest& request);
 
     // TODO(Kevin): ros param this
-    static constexpr double is_done_angle_change_thresh_{1.0};
+    static constexpr double kIsDoneAngleChangeThresh{1.0};
 
     enum State { LINE, PIVOT };
 
