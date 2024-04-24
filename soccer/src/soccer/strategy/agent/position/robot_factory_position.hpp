@@ -18,12 +18,16 @@
 #include "rj_geometry/geometry_conversions.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/free_kicker.hpp"
+#include "strategy/agent/position/free_kicker.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_non_kicker.hpp"
+#include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
+#include "strategy/agent/position/smartidling.hpp"
+#include "strategy/agent/position/zoner.hpp"
 #include "strategy/agent/position/smartidling.hpp"
 
 namespace strategy {
@@ -50,6 +54,7 @@ public:
         communication::AgentPosRequestWrapper request) override;
 
     std::deque<communication::PosAgentRequestWrapper> send_communication_request() override;
+    std::deque<communication::PosAgentRequestWrapper> send_communication_request() override;
 
     void derived_acknowledge_pass() override;
     void derived_pass_ball() override;
@@ -63,6 +68,7 @@ public:
 
     void update_play_state(const PlayState& play_state) override {
         Position::update_play_state(play_state);
+        Position::update_play_state(play_state);
         current_position_->update_play_state(play_state);
     }
 
@@ -70,6 +76,8 @@ public:
         current_position_->update_field_dimensions(field_dimensions);
     }
 
+    void update_alive_robots(std::array<bool, kNumShells> alive_robots) override {
+        Position::update_alive_robots(alive_robots);
     void update_alive_robots(std::array<bool, kNumShells> alive_robots) override {
         Position::update_alive_robots(alive_robots);
         current_position_->update_alive_robots(alive_robots);
@@ -80,6 +88,11 @@ public:
     void set_time_left(double time_left) override { current_position_->set_time_left(time_left); }
 
     void set_goal_canceled() override { current_position_->set_goal_canceled(); }
+
+    void set_goalie_id(int goalie_id) override {
+        Position::set_goalie_id(goalie_id);
+        current_position_->set_goalie_id(goalie_id);
+    }
 
     void set_goalie_id(int goalie_id) override {
         Position::set_goalie_id(goalie_id);
@@ -107,6 +120,49 @@ private:
     std::unique_ptr<Position> current_position_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    bool am_closest_kicker();
+
+    void set_default_position();
+
+    PlayState last_play_state_{PlayState::halt()};
+
+    void process_play_state();
+
+    void update_position();
+
+    void start_kicker_picker();
+
+    bool have_all_kicker_responses();
+
+    void handle_stop();
+
+    void handle_ready();
+
+    void handle_setup();
+
+    void handle_penalty_playing();
+
+    /**
+     * @brief Sets the current position to the parameterized type.
+     * Requires the type to have a constructor that takes a reference to the old Position
+     * (and to be a subclass of Position)
+     */
+    template <class Pos>
+    void set_current_position() {
+        // If we are not currently playing Pos
+        // if (current_position_->get_name() == "Defense") {
+        //     SPDLOG_INFO("we are never leaving defense :)");
+        //     return;
+        // }
+        if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
+            SPDLOG_INFO("Robot {}: change {}", current_position_->get_name());
+            // This line requires Pos to implement the constructor Pos(const
+            // Position&)
+            current_position_->die();
+            current_position_ = std::make_unique<Pos>(*current_position_);
+        }
+    }
 
     bool am_closest_kicker();
 
