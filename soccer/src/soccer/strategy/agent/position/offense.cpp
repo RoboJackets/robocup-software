@@ -163,7 +163,7 @@ Offense::State Offense::next_state() {
             if (check_is_done()) {
                 return SHOOTING;
             }
-            if (distance_to_ball() < kOwnBallRadius) {
+            if (timed_out()) {
                 return DEFAULT;
             }
             return SHOOTING_START;
@@ -230,7 +230,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
 
             planning::LinearMotionInstant target{target_robot_pos};
-            planning::MotionCommand line_kick_cmd{"line_kick", target};
+
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
             // Set intent to kick
             intent.motion_command = line_kick_cmd;
@@ -306,30 +308,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // Line kick best shot
             target_ = calculate_best_shot();
 
-            // auto line_kick_cmd =
-            //     planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
-
-            // intent.motion_command = line_kick_cmd;
-            // intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            // intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            // intent.kick_speed = 4.0;
-
-            rj_geometry::Point ball_position = last_world_state_->ball.position;
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-            auto move_vector = (current_pos - ball_position).normalized(0.2);
-
-            planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
-
-            intent.motion_command = prep_command;
-
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick_one", planning::LinearMotionInstant{target_}};
+            intent.motion_command = line_kick_cmd;
             return intent;
         }
 
         case SHOOTING: {
-            // target_ = calculate_best_shot();
             auto line_kick_cmd =
-                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+                planning::MotionCommand{"line_kick_two", planning::LinearMotionInstant{target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;

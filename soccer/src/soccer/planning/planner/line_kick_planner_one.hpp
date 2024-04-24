@@ -2,7 +2,6 @@
 
 #include <optional>
 
-#include "planning/planner/collect_path_planner.hpp"
 #include "planning/planner/path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/trajectory.hpp"
@@ -27,28 +26,22 @@ namespace planning {
  * Params taken from MotionCommand:
  *   target.position - planner will kick to this point
  */
-class LineKickPathPlanner : public PathPlanner {
+class LineKickPlannerOne : public PathPlanner {
 public:
-    LineKickPathPlanner() : PathPlanner("line_kick"){};
+    LineKickPlannerOne() : PathPlanner("line_kick_one"){};
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {
         prev_path_ = {};
-        current_state_ = INITIAL_APPROACH;
         average_ball_vel_initialized_ = false;
     }
 
     [[nodiscard]] bool is_done() const override;
 
 private:
-    enum State { INITIAL_APPROACH, FINAL_APPROACH };
-
-    State current_state_{INITIAL_APPROACH};
-
-    PathTargetPathPlanner initial_planner_{};
-    PathTargetPathPlanner final_planner{};
-    CollectPathPlanner collect_planner_{};
+    PathTargetPathPlanner path_target_{};
     Trajectory prev_path_;
+    rj_geometry::Point latest_robot_pos_;
 
     // These constants could be tuned more
     static constexpr double kIsDoneBallVel{1.5};
@@ -58,6 +51,7 @@ private:
     static constexpr double kLowPassFilterGain{0.2};
 
     rj_geometry::Point average_ball_vel_;
+    BallState latest_ball_state_;
     bool average_ball_vel_initialized_ = false;
 
     /**
@@ -66,18 +60,6 @@ private:
      * Avoids the ball
      */
     Trajectory initial(const PlanRequest& plan_request);
-
-    /**
-     * Returns the trajectory during the final stage.
-     * Uses PathTargetPathPlanner to draw a path directly into the ball.
-     * Tries to hit the ball with the mouth of the robot.
-     */
-    Trajectory final(const PlanRequest& plan_request);
-
-    /**
-     * Decides if the intial approach is complete and updates internal state as necessary.
-     */
-    void process_state_transition();
 };
 
 }  // namespace planning
