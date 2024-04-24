@@ -1196,7 +1196,7 @@ void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
 void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }
 
 void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
-    SPDLOG_INFO("SOMETHING CHANGED ON ROBOT POSITION 0");
+    //SPDLOG_INFO("SOMETHING CHANGED ON ROBOT POSITION 0");
     onPositionDropdownChanged(0, value);
 }
 
@@ -1266,6 +1266,7 @@ void MainWindow::onResetButtonClicked(int robot) {
     message.overriding_position = 0;
 
     test_play_pub_->publish(message);
+    position_reset_buttons.at(robot)->setEnabled(false);
 }
 
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
@@ -1275,6 +1276,11 @@ void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
         message.overriding_position = position_number;
 
         test_play_pub_->publish(message);
+        if (position_number != 0) {
+            position_reset_buttons.at(robot)->setEnabled(true);
+        } else {
+            position_reset_buttons.at(robot)->setEnabled(false);
+        }
     }
 }
 
