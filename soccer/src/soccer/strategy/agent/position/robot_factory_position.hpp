@@ -24,8 +24,9 @@
 #include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/pivot_test.hpp"
-#include "strategy/agent/position/solo_offense.hpp"
+#include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/smartidling.hpp"
+#include "strategy/agent/position/solo_offense.hpp"
 
 namespace strategy {
 
