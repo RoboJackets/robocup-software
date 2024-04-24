@@ -30,21 +30,14 @@ public:
     ~Zoner() override = default;
     Zoner(const Position& other);
 
-
-
 private:
-
-	std::optional<RobotIntent> derived_get_task(RobotIntent intent);
+    std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     // static constexpr double robot_diameter_multiplier_ = 1.5;
-    enum State {
-    	ZONE,
-    	WALL
-    }
+    enum State { ZONE, WALL };
 
     State current_state_ = ZONE;
 
-    
     /**
      * @return what the state should be right now. called on each get_task tick
      */
@@ -54,6 +47,10 @@ private:
      * @return the task to execute. called on each get_task tick AFTER next_state()
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    rj_geometry::Point find_centroid(std::vector<rj_geometry::Point> opp_poses);
+    
+    std::string get_current_state() override;
 };
 
 }  // namespace strategy

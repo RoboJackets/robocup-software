@@ -10,8 +10,8 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Zoner>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
@@ -218,6 +218,14 @@ bool RobotFactoryPosition::am_closest_kicker() {
 void RobotFactoryPosition::set_default_position() {
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
     // Get sorted positions of all friendly robots
+    if (robot_id_ == 0) {
+        set_current_position<Goalie>();
+    } else if (robot_id_ == 1) {
+        set_current_position<Zoner>();
+    } else {
+        set_current_position<Defense>();
+    }
+    return;
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;

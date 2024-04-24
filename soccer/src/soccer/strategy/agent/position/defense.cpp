@@ -40,7 +40,7 @@ Defense::State Defense::update_state() {
             break;
         case JOINING_WALL:
             send_join_wall_request();
-            //SPDLOG_INFO("join wall {}", robot_id_);
+            // SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
