@@ -12,7 +12,7 @@ std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
     if (new_state != current_state_) {
-        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+        //SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     }
     current_state_ = new_state;
 
@@ -41,7 +41,7 @@ SoloOffense::State SoloOffense::next_state() {
 
     // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
 
-    if (closest_dist < (0.5)) {
+    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) || field_dimensions_.their_defense_area().contains_point(current_point) || !field_dimensions_.field_coordinates().contains_point(current_point)) {
         return MARKER;
     }
     switch (current_state_) {
