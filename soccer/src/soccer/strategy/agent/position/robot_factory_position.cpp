@@ -261,9 +261,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 3) {
             set_current_position<Defense>();
         } else {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(robot_id_);
-            }
+            set_current_position<Offense>();
         }
     }
 }
