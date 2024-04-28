@@ -132,7 +132,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             max_dribbler_speed = 0;
             break;
         case PlayState::State::Setup:
-            // TODO: this is a hacky solution for us to stop kicking the ball by
+            // TODO(jacksherling): this is a hacky solution for us to stop kicking the ball by
             // accident in kickoff, not an actual league rule
             min_dist_from_ball = 0.2;
             max_robot_speed = 10.0;

@@ -27,6 +27,9 @@ public:
     Pivot(const Pivot& other) = default;
     Pivot(Pivot&& other) = default;
 
+    Pivot& operator=(const Pivot& other) = delete;
+    Pivot& operator=(Pivot&& other) = delete;
+
     std::string get_current_state() override;
 
 private:

@@ -151,7 +151,7 @@ public:
                ball_placement_point() == other.ball_placement_point();
     }
 
-    bool same_as(const PlayState& other) const {
+    [[nodiscard]] bool same_as(const PlayState& other) const {
         return state_ == other.state_ && restart_ == other.restart_ &&
                our_restart_ == other.our_restart_;
     }
