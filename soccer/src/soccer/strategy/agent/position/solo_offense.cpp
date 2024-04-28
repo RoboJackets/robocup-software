@@ -2,6 +2,10 @@
 
 namespace strategy {
 
+SoloOffense::SoloOffense(const Position& other) : Position{other} {
+    position_name_ = "SoloOffense";
+}
+
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {

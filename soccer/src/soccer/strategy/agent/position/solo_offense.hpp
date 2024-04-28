@@ -22,6 +22,7 @@ namespace strategy {
 
 class SoloOffense : public Position {
 public:
+    SoloOffense(const Position& other);
     SoloOffense(int r_id);
     ~SoloOffense() override = default;
     SoloOffense(const SoloOffense& other) = default;
