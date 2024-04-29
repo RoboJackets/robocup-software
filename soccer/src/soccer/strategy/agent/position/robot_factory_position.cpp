@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "idle.hpp"
+#include "line.hpp"
 #include "penalty_non_kicker.hpp"
 
 namespace strategy {
@@ -17,15 +18,13 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
-        set_current_position<Goalie>();
+        set_current_position<Line>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
-
-    
 
     // Update our state
     process_play_state();
