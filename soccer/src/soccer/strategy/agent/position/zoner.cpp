@@ -17,18 +17,21 @@ Zoner::State Zoner::next_state() {
     rj_geometry::Segment block_path{ball_pos, field_dimensions_.our_goal_loc()};
 
     double min_dist = std::numeric_limits<double>::infinity();
-    for (int i = 0; i < 6; i++) {
-        if (i == robot_id_) continue;
-        RobotState robot = last_world_state_->get_robot(true, i);
-        double dist = block_path.dist_to(robot.pose.position());
-        min_dist = std::min(min_dist, dist);
+    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
+        if (i == robot_id_ || i == goalie_id_) {
+            continue;
+        }
+        if (alive_robots_[i]) {
+            RobotState robot = last_world_state_->get_robot(true, i);
+            double dist = block_path.dist_to(robot.pose.position());
+            min_dist = std::min(min_dist, dist);
+        }
     }
 
     if (min_dist < (2 * kRobotRadius)) {
         return ZONE;
-    } else {
-        return WALL;
     }
+    return WALL;
 }
 
 std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
@@ -64,21 +67,22 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
         }
 
         case ZONE: {
-            rj_geometry::Point center{};
+            // can change this point depending on zoner behavior
+            rj_geometry::Point center{1.35, 1.5};
             rj_geometry::Point ball_pos = last_world_state_->ball.position;
-            double radius = 1.5;
 
-            if (ball_pos.x() < 0) {
-                center = rj_geometry::Point{1.75, 1.5};
-            } else {
-                center = rj_geometry::Point{-1.75, 1.5};
+            if (field_dimensions_.our_goal_loc().y() > 4.5) {
+                center.y() = -1 * center.y();
+            }
+            if (ball_pos.x() > 0) {
+                center.x() = -1 * center.x();
             }
 
             std::vector<rj_geometry::Point> opp_poses{};
 
             for (RobotState opp : last_world_state_->their_robots) {
                 double dist = center.dist_to(opp.pose.position());
-                if (dist < radius) {
+                if (dist < kZonerRadius) {
                     opp_poses.emplace_back(opp.pose.position());
                 }
             }
@@ -86,8 +90,10 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
 
             rj_geometry::Point target_point{};
             if (opp_poses.size() >= 2) {
+                // finding point that minimizes distance from opponent robots
                 target_point = find_centroid(opp_poses);
             } else if (opp_poses.size() == 1) {
+                // mark if just one robot
                 double mark_rad = kRobotRadius * 4;
                 target_point = (ball_pos - opp_poses[0]).normalized(mark_rad) + opp_poses[0];
             } else {
@@ -111,14 +117,14 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
     }
 }
 
-rj_geometry::Point Zoner::find_centroid(std::vector<rj_geometry::Point> opp_poses) {
+rj_geometry::Point Zoner::find_centroid(const std::vector<rj_geometry::Point> opp_poses) {
     rj_geometry::Point p{};
 
     for (rj_geometry::Point pos : opp_poses) {
         p += pos;
     }
 
-    return p / opp_poses.size();
+    return p / static_cast<double>(opp_poses.size());
 }
 
 std::string Zoner::get_current_state() { return "Zoner"; }

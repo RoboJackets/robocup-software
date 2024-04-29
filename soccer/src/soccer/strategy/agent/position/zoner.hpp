@@ -48,9 +48,11 @@ private:
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    rj_geometry::Point find_centroid(std::vector<rj_geometry::Point> opp_poses);
+    static rj_geometry::Point find_centroid(const std::vector<rj_geometry::Point> opp_poses);
 
     std::string get_current_state() override;
+
+    static constexpr double kZonerRadius = 1.5;
 };
 
 }  // namespace strategy

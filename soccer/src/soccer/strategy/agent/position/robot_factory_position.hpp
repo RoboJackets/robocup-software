@@ -25,6 +25,7 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/smartidling.hpp"
+#include "strategy/agent/position/zoner.hpp"
 
 namespace strategy {
 
