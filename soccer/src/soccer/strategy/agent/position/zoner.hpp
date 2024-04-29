@@ -29,6 +29,9 @@ public:
     Zoner(int r_id);
     ~Zoner() override = default;
     Zoner(const Position& other);
+    Zoner(Zoner&& other) = default;
+    Zoner& operator=(const Zoner& other) = default;
+    Zoner& operator=(Zoner&& other) = default;
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
