@@ -125,7 +125,7 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
         return;
     }
 
-    uint16_t alive = (((uint16_t) alive_robots_buffer_[1]) << 8) | (alive_robots_buffer_[0]);
+    uint16_t alive = (((uint16_t)alive_robots_buffer_[1]) << 8) | (alive_robots_buffer_[0]);
     SPDLOG_INFO("Alive: {}", alive);
 
     // uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
