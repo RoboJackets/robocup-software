@@ -18,6 +18,7 @@ Zoner::State Zoner::next_state() {
 
     double min_dist = std::numeric_limits<double>::infinity();
     for (int i = 0; i < static_cast<int>(kNumShells); i++) {
+        // TODO: Add solo offense here as well
         if (i == robot_id_ || i == goalie_id_) {
             continue;
         }
