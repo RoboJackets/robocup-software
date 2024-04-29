@@ -39,6 +39,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/line_kick_path_planner.cpp
     planning/planner/path_target_path_planner.cpp
     planning/planner/pivot_path_planner.cpp
+    planning/planner/line_pivot_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_path_planner.cpp
     planning/planner/goalie_idle_path_planner.cpp
@@ -80,7 +81,6 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/idle.cpp
-    strategy/agent/position/idle.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
     strategy/agent/position/seeker.cpp
@@ -91,6 +91,8 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/penalty_non_kicker.cpp
     strategy/agent/position/smartidling.cpp
     strategy/agent/position/zoner.cpp
+    strategy/agent/position/pivot_test.cpp
+
         )
 
 set(SOCCER_TEST_SRC
