@@ -49,6 +49,8 @@ void Radio::publish_robot_status(int robot_id, const rj_msgs::msg::RobotStatus& 
 }
 
 void Radio::publish_alive_robots(const rj_msgs::msg::AliveRobots& alive_robots) {
+    // SPDLOG_INFO("publishing alive robots {}", alive_robots);
+    SPDLOG_INFO("publishing alive robots");
     alive_robots_pub_->publish(alive_robots);
 }
 

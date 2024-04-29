@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "idle.hpp"
+#include "line.hpp"
 #include "penalty_non_kicker.hpp"
 
 namespace strategy {
@@ -17,10 +18,10 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     }
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
-        set_current_position<Goalie>();
+        set_current_position<Line>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
@@ -250,10 +251,10 @@ void RobotFactoryPosition::set_default_position() {
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 1) {
+        if (i <= 3) {
             set_current_position<Defense>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<SoloOffense>();
         }
     } else {
         // Defensive mode
@@ -261,7 +262,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 3) {
             set_current_position<Defense>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<SoloOffense>();
         }
     }
 }
