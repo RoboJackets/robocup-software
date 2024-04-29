@@ -14,7 +14,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                     field_dimensions_.center_field_loc().x() - 1.0,
                     field_dimensions_.center_field_loc().y() - 1.0 + robot_id_ * 0.75},
                 rj_geometry::Point{0.0, 0.0}},
-            planning::FacePoint{rj_geometry::Point{0.0,0.0}}, true};
+            planning::FacePoint{rj_geometry::Point{0.0, 0.0}}, true};
 
         intent.motion_command = motion_command;
     } else {
@@ -25,7 +25,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                     field_dimensions_.center_field_loc().x() + 1.0,
                     field_dimensions_.center_field_loc().y() - 1.0 + robot_id_ * 0.75},
                 rj_geometry::Point{0.0, 0.0}},
-            planning::FacePoint{rj_geometry::Point{0.0,0.0}}, true};
+            planning::FacePoint{rj_geometry::Point{0.0, 0.0}}, true};
 
         intent.motion_command = motion_command;
     }
