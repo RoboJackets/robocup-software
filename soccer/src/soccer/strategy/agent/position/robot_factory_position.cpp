@@ -25,6 +25,8 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
                                            current_play_state_);
     }
 
+    
+
     // Update our state
     process_play_state();
 

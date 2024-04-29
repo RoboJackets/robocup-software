@@ -20,7 +20,8 @@ NetworkRadio::NetworkRadio()
     : control_message_socket_(io_service_),
       robot_status_socket_(io_service_),
       alive_robots_socket_(io_service_),
-      send_buffers_(kNumShells) {
+      send_buffers_(kNumShells),
+      Radio() {
     control_message_socket_.open(udp::v4());
     control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
 
@@ -111,6 +112,7 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
 }
 
 void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, size_t num_bytes) {
+    SPDLOG_INFO("Receiving Alive Robots");
     if (static_cast<bool>(error)) {
         SPDLOG_ERROR("Error Receiving Alive Robots: {}", error.message());
         start_alive_robots_receive();
@@ -123,13 +125,19 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
         return;
     }
 
-    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
+    uint16_t alive = (((uint16_t) alive_robots_buffer_[1]) << 8) | (alive_robots_buffer_[0]);
+    SPDLOG_INFO("Alive: {}", alive);
+
+    // uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
     for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
         if ((alive & (1 << robot_id)) != 0) {
             alive_robots_[robot_id] = true;
         } else {
             alive_robots_[robot_id] = false;
         }
+    }
+    for (int robot_id = 0; robot_id < 16; robot_id++) {
+        SPDLOG_INFO("Robot {} is Alive {}", robot_id, alive_robots_[robot_id]);
     }
 
     rj_msgs::msg::AliveRobots alive_message{};
