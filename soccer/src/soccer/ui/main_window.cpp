@@ -1045,6 +1045,15 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
+        //This is a convoluted scheme to figure out who the goalie is
+    //May not be necessary later
+    QString goalieNum = _ui.goalieID->currentText();
+    bool goalieNumIsInt {false};
+    int goalieInt = goalieNum.toInt(&goalieNumIsInt);
+    if (goalieNumIsInt)
+        setGoalieDropdown(goalieInt);
+    else 
+        setGoalieDropdown(-1);
 }
 
 ////////////////
@@ -1196,7 +1205,6 @@ void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
 void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }
 
 void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
-    //SPDLOG_INFO("SOMETHING CHANGED ON ROBOT POSITION 0");
     onPositionDropdownChanged(0, value);
 }
 
@@ -1267,10 +1275,17 @@ void MainWindow::onResetButtonClicked(int robot) {
 
     test_play_pub_->publish(message);
     position_reset_buttons.at(robot)->setEnabled(false);
+    robot_pos_selectors.at(robot)->setCurrentIndex(0);
 }
 
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
-    if (_ui.goalieID->currentIndex() != robot) {
+    //This is a convoluted scheme to figure out who the goalie is
+    //May not be necessary later
+    QString goalieNum = _ui.goalieID->currentText();
+    bool goalieNumIsInt {false};
+    int goalieInt = goalieNum.toInt(&goalieNumIsInt);
+    if (!goalieNumIsInt || goalieInt != robot) {
+        SPDLOG_INFO("Robot position changed is NOT the goalie");
         rj_msgs::msg::OverridePosition message;
         message.robot_id = robot;
         message.overriding_position = position_number;
@@ -1289,7 +1304,9 @@ void MainWindow::setGoalieDropdown(int robot) {
         if (i != robot) {
             robot_pos_selectors.at(i)->setEnabled(true);
         } else {
+            robot_pos_selectors.at(i)->setCurrentIndex(0);
             robot_pos_selectors.at(i)->setEnabled(false);
         }
     }
 }
+
