@@ -17,6 +17,7 @@
 
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/override_position.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
 #include <ui/style_sheet_manager.hpp>
@@ -49,6 +50,7 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
     widget->setMinimumWidth(rect.width());
 }
 
+// TODO: Set up the UI objects and bind them to methods
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
@@ -185,8 +187,17 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
+    test_play_pub_ = _node->create_publisher<rj_msgs::msg::OverridePosition>(
+        "override_position_for_robot", 1);
+
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
+
+    // Connect up all the test position buttons and dropdowns to their listeners
+    for (int i = 0; i < kNumShells; ++i) {
+        robot_pos_selectors[i] = findChild<QComboBox*>(QString::fromStdString("robotPosition_" + std::to_string(i)));
+        position_reset_buttons[i] = findChild<QPushButton*>(QString::fromStdString("positionReset_" + std::to_string(i)));
+    }
 }
 
 void MainWindow::initialize() {
@@ -196,6 +207,7 @@ void MainWindow::initialize() {
     } else {
         _ui.actionTeamYellow->trigger();
     }
+
 
     logFileChanged();
 
@@ -1033,6 +1045,15 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
+        //This is a convoluted scheme to figure out who the goalie is
+    //May not be necessary later
+    QString goalieNum = _ui.goalieID->currentText();
+    bool goalieNumIsInt {false};
+    int goalieInt = goalieNum.toInt(&goalieNumIsInt);
+    if (goalieNumIsInt)
+        setGoalieDropdown(goalieInt);
+    else 
+        setGoalieDropdown(-1);
 }
 
 ////////////////
@@ -1146,3 +1167,145 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
         _ui.debugLayers->sortItems();
     }
 }
+
+/**
+ * The following methods are event listeners for the manual position assignments.
+ * TODO: implement all of these
+ */
+void MainWindow::on_positionReset_0_clicked() { onResetButtonClicked(0); }
+
+void MainWindow::on_positionReset_1_clicked() { onResetButtonClicked(1); }
+
+void MainWindow::on_positionReset_2_clicked() { onResetButtonClicked(2); }
+
+void MainWindow::on_positionReset_3_clicked() { onResetButtonClicked(3); }
+
+void MainWindow::on_positionReset_4_clicked() { onResetButtonClicked(4); }
+
+void MainWindow::on_positionReset_5_clicked() { onResetButtonClicked(5); }
+
+void MainWindow::on_positionReset_6_clicked() { onResetButtonClicked(6); }
+
+void MainWindow::on_positionReset_7_clicked() { onResetButtonClicked(7); }
+
+void MainWindow::on_positionReset_8_clicked() { onResetButtonClicked(8); }
+
+void MainWindow::on_positionReset_9_clicked() { onResetButtonClicked(9); }
+
+void MainWindow::on_positionReset_10_clicked() { onResetButtonClicked(10); }
+
+void MainWindow::on_positionReset_11_clicked() { onResetButtonClicked(11); }
+
+void MainWindow::on_positionReset_12_clicked() { onResetButtonClicked(12); }
+
+void MainWindow::on_positionReset_13_clicked() { onResetButtonClicked(13); }
+
+void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
+
+void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }
+
+void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
+    onPositionDropdownChanged(0, value);
+}
+
+void MainWindow::on_robotPosition_1_currentIndexChanged(int value) {
+    onPositionDropdownChanged(1, value);
+}
+
+void MainWindow::on_robotPosition_2_currentIndexChanged(int value) {
+    onPositionDropdownChanged(2, value);
+}
+
+void MainWindow::on_robotPosition_3_currentIndexChanged(int value) {
+    onPositionDropdownChanged(3, value);
+}
+
+void MainWindow::on_robotPosition_4_currentIndexChanged(int value) {
+    onPositionDropdownChanged(4, value);
+}
+
+void MainWindow::on_robotPosition_5_currentIndexChanged(int value) {
+    onPositionDropdownChanged(5, value);
+}
+
+void MainWindow::on_robotPosition_6_currentIndexChanged(int value) {
+    onPositionDropdownChanged(6, value);
+}
+
+void MainWindow::on_robotPosition_7_currentIndexChanged(int value) {
+    onPositionDropdownChanged(7, value);
+}
+
+void MainWindow::on_robotPosition_8_currentIndexChanged(int value) {
+    onPositionDropdownChanged(8, value);
+}
+
+void MainWindow::on_robotPosition_9_currentIndexChanged(int value) {
+    onPositionDropdownChanged(9, value);
+}
+
+void MainWindow::on_robotPosition_10_currentIndexChanged(int value) {
+    onPositionDropdownChanged(10, value);
+}
+
+void MainWindow::on_robotPosition_11_currentIndexChanged(int value) {
+    onPositionDropdownChanged(11, value);
+}
+
+void MainWindow::on_robotPosition_12_currentIndexChanged(int value) {
+    onPositionDropdownChanged(12, value);
+}
+
+void MainWindow::on_robotPosition_13_currentIndexChanged(int value) {
+    onPositionDropdownChanged(13, value);
+}
+
+void MainWindow::on_robotPosition_14_currentIndexChanged(int value) {
+    onPositionDropdownChanged(14, value);
+}
+
+void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
+    onPositionDropdownChanged(15, value);
+}
+
+void MainWindow::onResetButtonClicked(int robot) {
+    rj_msgs::msg::OverridePosition message;
+    message.robot_id = robot;
+    message.overriding_position = 0;
+
+    test_play_pub_->publish(message);
+    position_reset_buttons.at(robot)->setEnabled(false);
+    robot_pos_selectors.at(robot)->setCurrentIndex(0);
+}
+
+void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
+    //This is a convoluted scheme to figure out who the goalie is
+    //May not be necessary later
+    QString goalieNum = _ui.goalieID->currentText();
+    bool goalieNumIsInt {false};
+    int goalieInt = goalieNum.toInt(&goalieNumIsInt);
+    if (!goalieNumIsInt || goalieInt != robot) {
+        rj_msgs::msg::OverridePosition message;
+        message.robot_id = robot;
+        message.overriding_position = position_number;
+
+        test_play_pub_->publish(message);
+        if (position_number != 0) {
+            position_reset_buttons.at(robot)->setEnabled(true);
+        } else {
+            position_reset_buttons.at(robot)->setEnabled(false);
+        }
+    }
+}
+
+void MainWindow::setGoalieDropdown(int robot) {
+    for (int i = 0; i < robot_pos_selectors.size(); ++i) {
+        if (i != robot) {
+            robot_pos_selectors.at(i)->setEnabled(true);
+        } else {
+            robot_pos_selectors.at(i)->setCurrentIndex(0);
+            robot_pos_selectors.at(i)->setEnabled(false);
+        }
+    }
+}
+
