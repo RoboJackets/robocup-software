@@ -1285,7 +1285,6 @@ void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
     bool goalieNumIsInt {false};
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     if (!goalieNumIsInt || goalieInt != robot) {
-        SPDLOG_INFO("Robot position changed is NOT the goalie");
         rj_msgs::msg::OverridePosition message;
         message.robot_id = robot;
         message.overriding_position = position_number;

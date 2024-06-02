@@ -23,6 +23,9 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/position.hpp"
 
+#include <rj_msgs/msg/override_position.hpp>
+
+
 namespace strategy {
 
 /*
@@ -100,6 +103,11 @@ public:
 
 private:
     std::unique_ptr<Position> current_position_;
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr test_play_sub_;
+    int override_pos_index_ {0};
+    rclcpp::executors::SingleThreadedExecutor _executor;
+    std::thread _executor_thread;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 };

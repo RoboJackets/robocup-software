@@ -11,6 +11,21 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
+
+    std::string node_name {"robot_factory_position_"};
+    node_name.append(std::to_string(r_id));
+    node_ = std::make_shared<rclcpp::Node>(node_name);
+
+    test_play_sub_ = node_->create_subscription<rj_msgs::msg::OverridePosition>(
+        "override_position_for_robot",
+        1,
+        [this](rj_msgs::msg::OverridePosition::UniquePtr msg) {
+            if (msg->robot_id == robot_id_) this->override_pos_index_ = msg->overriding_position;
+        }
+    );
+
+    _executor.add_node(node_);
+    _executor_thread = std::thread([this]() { _executor.spin(); });
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
