@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 
 #include <rclcpp/rclcpp.hpp>
@@ -7,9 +8,11 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "planning/instant.hpp"
 #include "position.hpp"
+#include "rclcpp/utilities.hpp"
 #include "rj_common/field_dimensions.hpp"
 #include "rj_common/time.hpp"
 #include "rj_constants/constants.hpp"
@@ -26,7 +29,7 @@ namespace strategy {
  */
 class Waller : public RoleInterface {
 public:
-    Waller(int waller_num, int total_wallers);
+    Waller(int waller_num, int robot_id, int total_wallers, std::vector<u_int8_t> waller_ids);
     ~Waller() = default;
 
     /**
@@ -42,7 +45,12 @@ public:
 private:
     std::string defense_type_;
     int waller_pos_;
+    int robot_id_;
     int total_wallers_;
+    std::vector<u_int8_t> waller_ids_;  // list of wallers
+
+    // max distance away the ball can be from a waller for it to jump out and kick it
+    const float CLEAR_DIST = 0.75;
 
     static constexpr double robot_diameter_multiplier_ = 1.5;
 };

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>

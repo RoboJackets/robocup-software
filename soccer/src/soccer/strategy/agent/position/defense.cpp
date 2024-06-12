@@ -143,7 +143,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty()) {
-            Waller waller{waller_id_, (int)walling_robots_.size()};
+            Waller waller{waller_id_, robot_id_, (int)walling_robots_.size(), walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
     } else if (current_state_ == FACING) {
@@ -245,6 +245,7 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
             break;
         } else if (i == walling_robots_.size() - 1) {
             walling_robots_.push_back(join_request.robot_id);
+
             waller_id_ = get_waller_id();
         }
     }
