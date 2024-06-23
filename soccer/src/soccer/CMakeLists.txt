@@ -90,6 +90,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/penalty_player.cpp
     strategy/agent/position/penalty_non_kicker.cpp
     strategy/agent/position/smartidling.cpp
+    strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
 

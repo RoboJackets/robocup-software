@@ -216,6 +216,18 @@ bool RobotFactoryPosition::am_closest_kicker() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    // zoner defense testing
+    // if (robot_id_ == goalie_id_) {
+    //     return;
+    // }
+    // if (robot_id_ == 1) {
+    //     set_current_position<Zoner>();
+    // } else {
+    //     set_current_position<Defense>();
+    // }
+    // return;
+    // end zoner defense testing
+
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)

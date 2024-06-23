@@ -27,6 +27,7 @@
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
+#include "strategy/agent/position/zoner.hpp"
 
 namespace strategy {
 
