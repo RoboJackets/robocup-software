@@ -92,6 +92,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/smartidling.cpp
     strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
+    strategy/agent/position/solo_offense.cpp
 
         )
 
