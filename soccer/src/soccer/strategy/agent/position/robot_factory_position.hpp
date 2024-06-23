@@ -26,6 +26,7 @@
 #include "strategy/agent/position/pivot_test.hpp"
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/smartidling.hpp"
+#include "strategy/agent/position/zoner.hpp"
 
 namespace strategy {
 
