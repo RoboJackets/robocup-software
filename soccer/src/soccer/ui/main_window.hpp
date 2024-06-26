@@ -314,7 +314,16 @@ private:
     rj_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;
 
-    // sets robot override position when a dropdown is clicked
-
-    // Resets the position of the given robot
+    std::vector<std::string> overriding_position_labels {
+        "Auto",
+        "Offense",
+        "Defense",
+        "Free Kicker",
+        "Penalty Player",
+        "Penalty Non-Kicker",
+        "Solo Offense",
+        "Smart Idle",
+        "Zoner",
+        "Idle"
+    };
 };
