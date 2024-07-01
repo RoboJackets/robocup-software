@@ -6,17 +6,16 @@
 #include <QComboBox>
 #include <QMainWindow>
 #include <QPushButton>
-#include <QComboBox>
 #include <QTime>
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
-#include <rj_msgs/msg/override_position.hpp>
 
 #include "field_view.hpp"
 #include "game_state.hpp"
@@ -314,18 +313,11 @@ private:
     rj_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;
 
-    std::vector<std::string> overriding_position_labels {
-        "Auto",
-        "Offense",
-        "Defense",
-        "Free Kicker",
-        "Penalty Player",
-        "Penalty Non-Kicker",
-        "Solo Offense",
-        "Smart Idle",
-        "Zoner",
-        "Idle"
-    };
+    std::vector<std::string> overriding_position_labels{"Auto",           "Offense",
+                                                        "Defense",        "Free Kicker",
+                                                        "Penalty Player", "Penalty Non-Kicker",
+                                                        "Solo Offense",   "Smart Idle",
+                                                        "Zoner",          "Idle"};
 
     void populate_override_position_dropdowns();
 };
