@@ -187,16 +187,18 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
-    test_play_pub_ = _node->create_publisher<rj_msgs::msg::OverridePosition>(
-        "override_position_for_robot", 1);
+    test_play_pub_ =
+        _node->create_publisher<rj_msgs::msg::OverridePosition>("override_position_for_robot", 1);
 
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
 
     // Connect up all the test position buttons and dropdowns to their listeners
     for (int i = 0; i < kNumShells; ++i) {
-        robot_pos_selectors[i] = findChild<QComboBox*>(QString::fromStdString("robotPosition_" + std::to_string(i)));
-        position_reset_buttons[i] = findChild<QPushButton*>(QString::fromStdString("positionReset_" + std::to_string(i)));
+        robot_pos_selectors[i] =
+            findChild<QComboBox*>(QString::fromStdString("robotPosition_" + std::to_string(i)));
+        position_reset_buttons[i] =
+            findChild<QPushButton*>(QString::fromStdString("positionReset_" + std::to_string(i)));
     }
 }
 
@@ -1046,14 +1048,14 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
-        //This is a convoluted scheme to figure out who the goalie is
-    //May not be necessary later
+    // This is a convoluted scheme to figure out who the goalie is
+    // May not be necessary later
     QString goalieNum = _ui.goalieID->currentText();
-    bool goalieNumIsInt {false};
+    bool goalieNumIsInt{false};
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     if (goalieNumIsInt)
         setGoalieDropdown(goalieInt);
-    else 
+    else
         setGoalieDropdown(-1);
 }
 
@@ -1280,10 +1282,10 @@ void MainWindow::onResetButtonClicked(int robot) {
 }
 
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
-    //This is a convoluted scheme to figure out who the goalie is
-    //May not be necessary later
+    // This is a convoluted scheme to figure out who the goalie is
+    // May not be necessary later
     QString goalieNum = _ui.goalieID->currentText();
-    bool goalieNumIsInt {false};
+    bool goalieNumIsInt{false};
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     if (!goalieNumIsInt || goalieInt != robot) {
         rj_msgs::msg::OverridePosition message;
@@ -1318,4 +1320,3 @@ void MainWindow::populate_override_position_dropdowns() {
         }
     }
 }
-
