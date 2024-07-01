@@ -208,12 +208,7 @@ void MainWindow::initialize() {
         _ui.actionTeamYellow->trigger();
     }
 
-    for (int i = 0; i < kNumShells; i++) {
-        robot_pos_selectors[i]->clear();
-        for (int j = 0; j < overriding_position_labels.size(); j++) {
-            robot_pos_selectors[i]->addItem(QString::fromStdString(overriding_position_labels[j]));
-        }
-    }
+    populate_override_position_dropdowns();
 
     logFileChanged();
 
@@ -1311,6 +1306,15 @@ void MainWindow::setGoalieDropdown(int robot) {
         } else {
             robot_pos_selectors.at(i)->setCurrentIndex(0);
             robot_pos_selectors.at(i)->setEnabled(false);
+        }
+    }
+}
+
+void MainWindow::populate_override_position_dropdowns() {
+    for (int i = 0; i < kNumShells; i++) {
+        robot_pos_selectors[i]->clear();
+        for (int j = 0; j < overriding_position_labels.size(); j++) {
+            robot_pos_selectors[i]->addItem(QString::fromStdString(overriding_position_labels[j]));
         }
     }
 }

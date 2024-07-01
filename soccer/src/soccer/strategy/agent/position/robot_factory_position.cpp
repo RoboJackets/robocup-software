@@ -355,7 +355,7 @@ std::string RobotFactoryPosition::get_current_state() {
 }
 
 void RobotFactoryPosition::test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr message) {
-    if (message->robot_id == this->robot_id_) {
+    if (message->robot_id == this->robot_id_ && message->overriding_position < Strategy::OverridingPositions::LENGTH) {
         test_play_position_ = static_cast<Strategy::OverridingPositions>(message->overriding_position);
     }
 }

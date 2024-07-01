@@ -326,4 +326,6 @@ private:
         "Zoner",
         "Idle"
     };
+
+    void populate_override_position_dropdowns();
 };
