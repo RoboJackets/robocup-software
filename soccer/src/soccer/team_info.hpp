@@ -45,7 +45,7 @@ public:
 
     bool operator!=(const TeamInfo& other) const { return !(*this == other); }
 
-    static TeamInfo from_refbox_packet(const SSL_Referee_TeamInfo& packet) {
+    static TeamInfo from_refbox_packet(const Referee_TeamInfo& packet) {
         TeamInfo info;
         info.name = packet.name();
         info.score = packet.score();
@@ -58,7 +58,7 @@ public:
         }
         info.timeouts_left = packet.timeouts();
         info.timeout_time = std::chrono::microseconds(packet.timeout_time());
-        info.goalie = packet.goalie();
+        info.goalie = packet.goalkeeper();
         return info;
     }
 };

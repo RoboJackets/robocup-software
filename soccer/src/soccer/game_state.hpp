@@ -33,7 +33,7 @@ public:
     [[nodiscard]] bool is_restart() const { return restart_ != Restart::None; }
     [[nodiscard]] Restart restart() const { return restart_; }
     [[nodiscard]] bool is_our_restart() const { return is_restart() && our_restart_; }
-    [[nodiscard]] bool is_their_restart() const { return is_restart() && our_restart_; }
+    [[nodiscard]] bool is_their_restart() const { return is_restart() && !our_restart_; }
     [[nodiscard]] bool is_halt() const { return state() == State::Halt; }
     [[nodiscard]] bool is_stop() const { return state() == State::Stop; }
     [[nodiscard]] bool is_setup() const { return state() == State::Setup; }
@@ -149,6 +149,11 @@ public:
         return state() == other.state() && restart() == other.restart() &&
                is_our_restart() == other.is_our_restart() &&
                ball_placement_point() == other.ball_placement_point();
+    }
+
+    [[nodiscard]] bool same_as(const PlayState& other) const {
+        return state_ == other.state_ && restart_ == other.restart_ &&
+               our_restart_ == other.our_restart_;
     }
 
     bool operator!=(const PlayState& other) const { return !(*this == other); }

@@ -41,16 +41,16 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         cached_pivot_point_.has_value() &&
         cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2;
 
-    if (pivot_target_unchanged && pivot_point_unchanged) {
-        return previous_;
-    }
+    // if (pivot_target_unchanged && pivot_point_unchanged) {
+    //     return previous_;
+    // }
 
-    if (pivot_point_unchanged) {
-        pivot_point = *cached_pivot_point_;
-    }
-    if (pivot_target_unchanged) {
-        pivot_target = *cached_pivot_target_;
-    }
+    // if (pivot_point_unchanged) {
+    //     pivot_point = *cached_pivot_point_;
+    // }
+    // if (pivot_target_unchanged) {
+    //     pivot_target = *cached_pivot_target_;
+    // }
 
     cached_pivot_target_ = pivot_target;
     cached_pivot_point_ = pivot_point;
@@ -105,7 +105,9 @@ bool PivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-    return cached_angle_change_.value() < IS_DONE_ANGLE_CHANGE_THRESH;
+    bool val = abs(cached_angle_change_.value()) <
+               degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
+    return val;
 }
 
 }  // namespace planning

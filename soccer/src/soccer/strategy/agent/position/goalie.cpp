@@ -6,6 +6,8 @@ namespace strategy {
 
 Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {}
 
+Goalie::Goalie(const Position& other) : Position{other} {}
+
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
     return state_to_task(intent);
@@ -16,6 +18,20 @@ std::string Goalie::get_current_state() { return "Goalie"; }
 Goalie::State Goalie::update_state() {
     // if a shot is coming, override all and go block it
     WorldState* world_state = last_world_state_;
+
+    // if PlayState is in state Ready and Restart is Penalty go to penalty state
+    // call is_our_restart and if that is false we go into this state
+    if (current_play_state_.is_ready() && current_play_state_.is_penalty() &&
+        !current_play_state_.is_our_restart()) {
+        return PENALTY;
+    }
+
+    if (latest_state_ == PENALTY) {
+        if (current_play_state_.is_playing()) {
+            return BLOCKING;
+        }
+        return PENALTY;
+    }
 
     // if no ball found, stop and return to box immediately
     if (!world_state->ball.visible) {
@@ -34,12 +50,8 @@ Goalie::State Goalie::update_state() {
 
     bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
-        if (latest_state_ != CLEARING) {
-            return PREPARING_SHOT;
-        } else if (latest_state_ == PREPARING_SHOT && check_is_done()) {
-            // when PREPARING_SHOT is done, CLEAR
-            return CLEARING;
-        }
+        // TODO: add pivot logic once its is_done
+        return CLEARING;
     }
 
     // when line kick fails but ball leaves box, don't chase it
@@ -137,6 +149,21 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.kick_speed = 4.0;
         intent.is_active = true;
         return intent;
+    } else if (latest_state_ == PENALTY) {
+        // stay on baseline
+        rj_geometry::Point target_pt = penalty_location();
+        rj_geometry::Point target_vel{0.0, 0.0};
+
+        planning::PathTargetFaceOption face_option =
+            planning::FacePoint{rj_geometry::Point{0.0, 4.5}};
+
+        // ball not found
+        bool ignore_ball = true;
+
+        planning::LinearMotionInstant target{target_pt, target_vel};
+        intent.motion_command =
+            planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+        return intent;
     }
 
     // should be impossible to reach, but this is equivalent to
@@ -160,9 +187,10 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
     double cross_x = ball_pos.x() + ball_vel.x() * time_to_cross;
 
     bool shot_on_target = std::abs(cross_x) < this->field_dimensions_.goal_width() / 2.0;
+    bool in_direction = ball_vel.y() < 0;
 
     bool ball_is_fast = ball_vel.mag() > 1.0;
-    return ball_is_fast && shot_on_target;
+    return ball_is_fast && shot_on_target && in_direction;
 }
 
 void Goalie::derived_acknowledge_pass() { latest_state_ = FACING; }
@@ -170,5 +198,13 @@ void Goalie::derived_acknowledge_pass() { latest_state_ = FACING; }
 void Goalie::derived_pass_ball() { latest_state_ = PASSING; }
 
 void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; }
+
+rj_geometry::Point Goalie::penalty_location() {
+    // be dumb: center of baseline
+    return this->field_dimensions_.our_goal_loc();
+    // be smart
+    // find robot on their team closest to ball
+    // line up in line with them and the ball on the baseline
+}
 
 }  // namespace strategy

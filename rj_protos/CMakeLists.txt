@@ -32,6 +32,8 @@ set(PROTO_FILES
     protos/referee.proto
     protos/Robot.proto
     protos/ssl_gc_common.proto
+    protos/ssl_gc_geometry.proto
+    protos/ssl_gc_game_event.proto
     protos/ssl_simulation_config.proto
     protos/ssl_simulation_control.proto
     protos/ssl_simulation_error.proto

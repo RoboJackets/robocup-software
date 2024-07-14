@@ -19,25 +19,24 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
 
 std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_state,
                                                           FieldDimensions& field_dimensions) {
-    return current_position_->get_task(world_state, field_dimensions);
-
     // If keeper, make no changes
     if (robot_id_ == 0) {
         return current_position_->get_task(world_state, field_dimensions);
     }
 
     // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
-
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
     std::vector<RobotPos> robots_copy;
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
         // Ignore goalie
-        if (i == 0) {
+        if (i == goalie_id_) {
             continue;
         }
-        robots_copy.emplace_back(i, world_state.our_robots[i].pose.position().y());
+        if (alive_robots_[i]) {
+            robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
+        }
     }
 
     std::sort(robots_copy.begin(), robots_copy.end(),
@@ -55,46 +54,41 @@ std::optional<RobotIntent> RobotFactoryPosition::get_task(WorldState& world_stat
     // Assigning new position
     // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
     // rounding issues on midline)
-    if (Position::our_possession_ ||
-        world_state.ball.position.y() > field_dimensions.length() / 1.99) {
+    if (our_possession_ || last_world_state_->ball.position.y() >
+                               field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 1) {
-            if (current_position_->get_name() != "Defense") {
-                current_position_ = std::make_unique<Defense>(robot_id_);
-            }
+        if (i <= 3) {
+            set_current_position<Defense>();
         } else {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(robot_id_);
-            }
+            set_current_position<SoloOffense>();
         }
     } else {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
         if (i <= 3) {
-            if (current_position_->get_name() != "Defense") {
-                current_position_ = std::make_unique<Defense>(robot_id_);
-            }
+            set_current_position<Defense>();
         } else {
-            if (current_position_->get_name() != "Offense") {
-                current_position_ = std::make_unique<Offense>(robot_id_);
-            }
+            set_current_position<SoloOffense>();
         }
     }
-
-    return current_position_->get_task(world_state, field_dimensions);
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
-    SPDLOG_ERROR("RobotFactory derived_get_task() should not be called!");
-    return std::nullopt;
-}
-
-std::optional<communication::PosAgentRequestWrapper>
+std::deque<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {
-    // Call to super
-    return current_position_->send_communication_request();
+    // Return both this position's communication requests and its child position's communication
+    // requests
+
+    // This class
+    auto result = Position::send_communication_request();
+
+    // Delegated class
+    auto current = current_position_->send_communication_request();
+
+    // Combine the two
+    result.insert(result.end(), current.begin(), current.end());
+
+    return result;
 }
 
 void RobotFactoryPosition::receive_communication_response(
@@ -105,6 +99,17 @@ void RobotFactoryPosition::receive_communication_response(
 
 communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
+    if (const communication::KickerRequest* kicker_request =
+            std::get_if<communication::KickerRequest>(&request.request)) {
+        if (kicker_distances_.size() >= 1 && !have_all_kicker_responses() &&
+            current_position_->get_name() != "GoalKicker") {
+            bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
+            if (!prev) {
+                kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
+                broadcast_kicker_request();
+            }
+        }
+    }
     // Return the response
     return current_position_->receive_communication_request(request);
 }

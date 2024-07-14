@@ -1,105 +1,123 @@
+syntax = "proto2";
+
+option go_package = "github.com/RoboCup-SSL/ssl-game-controller/internal/app/state";
+
+import "ssl_gc_game_event.proto";
+
 // Each UDP packet contains one of these messages.
-syntax="proto2";
+message Referee {
+    // A random UUID of the source that is kept constant at the source while running
+    // If multiple sources are broadcasting to the same network, this id can be used to identify
+    // individual sources
+    optional string source_identifier = 18;
 
-message SSL_Referee {
-	// The UNIX timestamp when the packet was sent, in microseconds.
-	// Divide by 1,000,000 to get a time_t.
-	required uint64 packet_timestamp = 1;
+    // The match type is a meta information about the current match that helps to process the logs
+    // after a competition
+    optional MatchType match_type = 19 [default = UNKNOWN_MATCH];
 
-	// These are the "coarse" stages of the game.
-	enum Stage {
-		// The first half is about to start.
-		// A kickoff is called within this stage.
-		// This stage ends with the NORMAL_START.
-		NORMAL_FIRST_HALF_PRE = 0;
-		// The first half of the normal game, before half time.
-		NORMAL_FIRST_HALF = 1;
-		// Half time between first and second halves.
-		NORMAL_HALF_TIME = 2;
-		// The second half is about to start.
-		// A kickoff is called within this stage.
-		// This stage ends with the NORMAL_START.
-		NORMAL_SECOND_HALF_PRE = 3;
-		// The second half of the normal game, after half time.
-		NORMAL_SECOND_HALF = 4;
-		// The break before extra time.
-		EXTRA_TIME_BREAK = 5;
-		// The first half of extra time is about to start.
-		// A kickoff is called within this stage.
-		// This stage ends with the NORMAL_START.
-		EXTRA_FIRST_HALF_PRE = 6;
-		// The first half of extra time.
-		EXTRA_FIRST_HALF = 7;
-		// Half time between first and second extra halves.
-		EXTRA_HALF_TIME = 8;
-		// The second half of extra time is about to start.
-		// A kickoff is called within this stage.
-		// This stage ends with the NORMAL_START.
-		EXTRA_SECOND_HALF_PRE = 9;
-		// The second half of extra time.
-		EXTRA_SECOND_HALF = 10;
-		// The break before penalty shootout.
-		PENALTY_SHOOTOUT_BREAK = 11;
-		// The penalty shootout.
-		PENALTY_SHOOTOUT = 12;
-		// The game is over.
-		POST_GAME = 13;
-	}
-	required Stage stage = 2;
+    // The UNIX timestamp when the packet was sent, in microseconds.
+    // Divide by 1,000,000 to get a time_t.
+    required uint64 packet_timestamp = 1;
 
-	// The number of microseconds left in the stage.
-	// The following stages have this value; the rest do not:
-	// NORMAL_FIRST_HALF
-	// NORMAL_HALF_TIME
-	// NORMAL_SECOND_HALF
-	// EXTRA_TIME_BREAK
-	// EXTRA_FIRST_HALF
-	// EXTRA_HALF_TIME
-	// EXTRA_SECOND_HALF
-	// PENALTY_SHOOTOUT_BREAK
-	//
-	// If the stage runs over its specified time, this value
-	// becomes negative.
-	optional sint32 stage_time_left = 3;
+    // These are the "coarse" stages of the game.
+    enum Stage {
+        // The first half is about to start.
+        // A kickoff is called within this stage.
+        // This stage ends with the NORMAL_START.
+        NORMAL_FIRST_HALF_PRE = 0;
+        // The first half of the normal game, before half time.
+        NORMAL_FIRST_HALF = 1;
+        // Half time between first and second halves.
+        NORMAL_HALF_TIME = 2;
+        // The second half is about to start.
+        // A kickoff is called within this stage.
+        // This stage ends with the NORMAL_START.
+        NORMAL_SECOND_HALF_PRE = 3;
+        // The second half of the normal game, after half time.
+        NORMAL_SECOND_HALF = 4;
+        // The break before extra time.
+        EXTRA_TIME_BREAK = 5;
+        // The first half of extra time is about to start.
+        // A kickoff is called within this stage.
+        // This stage ends with the NORMAL_START.
+        EXTRA_FIRST_HALF_PRE = 6;
+        // The first half of extra time.
+        EXTRA_FIRST_HALF = 7;
+        // Half time between first and second extra halves.
+        EXTRA_HALF_TIME = 8;
+        // The second half of extra time is about to start.
+        // A kickoff is called within this stage.
+        // This stage ends with the NORMAL_START.
+        EXTRA_SECOND_HALF_PRE = 9;
+        // The second half of extra time.
+        EXTRA_SECOND_HALF = 10;
+        // The break before penalty shootout.
+        PENALTY_SHOOTOUT_BREAK = 11;
+        // The penalty shootout.
+        PENALTY_SHOOTOUT = 12;
+        // The game is over.
+        POST_GAME = 13;
+    }
+    required Stage stage = 2;
 
-	// These are the "fine" states of play on the field.
-	enum Command {
-		// All robots should completely stop moving.
-		HALT = 0;
-		// Robots must keep 50 cm from the ball.
-		STOP = 1;
-		// A prepared kickoff or penalty may now be taken.
-		NORMAL_START = 2;
-		// The ball is dropped and free for either team.
-		FORCE_START = 3;
-		// The yellow team may move into kickoff position.
-		PREPARE_KICKOFF_YELLOW = 4;
-		// The blue team may move into kickoff position.
-		PREPARE_KICKOFF_BLUE = 5;
-		// The yellow team may move into penalty position.
-		PREPARE_PENALTY_YELLOW = 6;
-		// The blue team may move into penalty position.
-		PREPARE_PENALTY_BLUE = 7;
-        // The yellow team may take a free kick.
+    // The number of microseconds left in the stage.
+    // The following stages have this value; the rest do not:
+    // NORMAL_FIRST_HALF
+    // NORMAL_HALF_TIME
+    // NORMAL_SECOND_HALF
+    // EXTRA_TIME_BREAK
+    // EXTRA_FIRST_HALF
+    // EXTRA_HALF_TIME
+    // EXTRA_SECOND_HALF
+    // PENALTY_SHOOTOUT_BREAK
+    //
+    // If the stage runs over its specified time, this value
+    // becomes negative.
+    optional sint64 stage_time_left = 3;
+
+    // These are the "fine" states of play on the field.
+    enum Command {
+        // All robots should completely stop moving.
+        HALT = 0;
+        // Robots must keep 50 cm from the ball.
+        STOP = 1;
+        // A prepared kickoff or penalty may now be taken.
+        NORMAL_START = 2;
+        // The ball is dropped and free for either team.
+        FORCE_START = 3;
+        // The yellow team may move into kickoff position.
+        PREPARE_KICKOFF_YELLOW = 4;
+        // The blue team may move into kickoff position.
+        PREPARE_KICKOFF_BLUE = 5;
+        // The yellow team may move into penalty position.
+        PREPARE_PENALTY_YELLOW = 6;
+        // The blue team may move into penalty position.
+        PREPARE_PENALTY_BLUE = 7;
+        // The yellow team may take a direct free kick.
         DIRECT_FREE_YELLOW = 8;
-        // The blue team may take a free kick.
+        // The blue team may take a direct free kick.
         DIRECT_FREE_BLUE = 9;
+        // The yellow team may take an indirect free kick.
+        INDIRECT_FREE_YELLOW = 10 [deprecated = true];
+        // The blue team may take an indirect free kick.
+        INDIRECT_FREE_BLUE = 11 [deprecated = true];
         // The yellow team is currently in a timeout.
-        TIMEOUT_YELLOW = 10;
+        TIMEOUT_YELLOW = 12;
         // The blue team is currently in a timeout.
-        TIMEOUT_BLUE = 11;
+        TIMEOUT_BLUE = 13;
         // The yellow team just scored a goal.
         // For information only.
-        // For rules compliance, teams must treat as STOP.
-        GOAL_YELLOW = 12;
-        // The blue team just scored a goal.
-        GOAL_BLUE = 13;
+        // Deprecated: Use the score field from the team infos instead. That way, you can also
+        // detect revoked goals.
+        GOAL_YELLOW = 14 [deprecated = true];
+        // The blue team just scored a goal. See also GOAL_YELLOW.
+        GOAL_BLUE = 15 [deprecated = true];
         // Equivalent to STOP, but the yellow team must pick up the ball and
         // drop it in the Designated Position.
-        BALL_PLACEMENT_YELLOW = 14;
+        BALL_PLACEMENT_YELLOW = 16;
         // Equivalent to STOP, but the blue team must pick up the ball and drop
         // it in the Designated Position.
-        BALL_PLACEMENT_BLUE = 15;
+        BALL_PLACEMENT_BLUE = 17;
     }
     required Command command = 4;
 
@@ -129,8 +147,27 @@ message SSL_Referee {
         required uint32 timeouts = 6;
         // The number of microseconds of timeout this team can use.
         required uint32 timeout_time = 7;
-        // The pattern number of this team's goalie.
-        required uint32 goalie = 8;
+        // The pattern number of this team's goalkeeper.
+        required uint32 goalkeeper = 8;
+        // The total number of countable fouls that act towards yellow cards
+        optional uint32 foul_counter = 9;
+        // The number of consecutive ball placement failures of this team
+        optional uint32 ball_placement_failures = 10;
+        // Indicate if the team is able and allowed to place the ball
+        optional bool can_place_ball = 12;
+        // The maximum number of bots allowed on the field based on division and cards
+        optional uint32 max_allowed_bots = 13;
+        // The team has submitted an intent to substitute one or more robots at the next chance
+        optional bool bot_substitution_intent = 14;
+        // Indicate if the team reached the maximum allowed ball placement failures and is thus not
+        // allowed to place the ball anymore
+        optional bool ball_placement_failures_reached = 15;
+        // The team is allowed to substitute one or more robots currently
+        optional bool bot_substitution_allowed = 16;
+        // The number of bot substitutions left by the team in this halftime
+        optional uint32 bot_substitutions_left = 17;
+        // The number of microseconds left for current bot substitution
+        optional uint32 bot_substitution_time_left = 18;
     }
 
     // Information about the two teams.
@@ -146,4 +183,61 @@ message SSL_Referee {
         required float y = 2;
     }
     optional Point designated_position = 9;
+
+    // Information about the direction of play.
+    // True, if the blue team will have it's goal on the positive x-axis of the ssl-vision
+    // coordinate system. Obviously, the yellow team will play on the opposite half.
+    optional bool blue_team_on_positive_half = 10;
+
+    // The game event that caused the referee command.
+    // deprecated in favor of game_events.
+    //    optional Game_Event game_event = 11 [deprecated = true];
+    reserved 11;
+
+    // The command that will be issued after the current stoppage and ball placement to continue the
+    // game.
+    optional Command next_command = 12;
+
+    // All game events that were detected since the last RUNNING state.
+    // Will be cleared as soon as the game is continued.
+    reserved 13;
+    repeated GameEvent game_events = 16;
+
+    // All proposed game events that were detected since the last RUNNING state.
+    reserved 14;
+    repeated GameEventProposalGroup game_event_proposals = 17;
+
+    // The time in microseconds that is remaining until the current action times out
+    // The time will not be reset. It can get negative.
+    // An autoRef would raise an appropriate event, if the time gets negative.
+    // Possible actions where this time is relevant:
+    //  * free kicks
+    //  * kickoff, penalty kick, force start
+    //  * ball placement
+    optional int64 current_action_time_remaining = 15;
+
+    // A message that can be displayed to the spectators, like a reason for a stoppage.
+    optional string status_message = 20;
+}
+
+// List of matching proposals
+message GameEventProposalGroup {
+    // Unique ID of this group
+    optional string id = 3;
+    // The proposed game events
+    repeated GameEvent game_events = 1;
+    // Whether the proposal group was accepted
+    optional bool accepted = 2;
+}
+
+// MatchType is a meta information about the current match for easier log processing
+enum MatchType {
+    // not set
+    UNKNOWN_MATCH = 0;
+    // match is part of the group phase
+    GROUP_PHASE = 1;
+    // match is part of the elimination phase
+    ELIMINATION_PHASE = 2;
+    // a friendly match, not part of a tournament
+    FRIENDLY = 3;
 }

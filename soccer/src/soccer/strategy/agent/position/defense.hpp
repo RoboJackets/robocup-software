@@ -9,6 +9,7 @@
 
 #include <rj_msgs/action/robot_move.hpp>
 
+#include "marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
 #include "rj_common/field_dimensions.hpp"
@@ -28,6 +29,7 @@ class Defense : public Position {
 public:
     Defense(int r_id);
     ~Defense() override = default;
+    Defense(const Position& other);
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(
@@ -42,7 +44,9 @@ public:
     void revive() override;
 
 private:
-    int move_ct_ = 0;
+    // static constexpr int kMaxWallers{6};
+    static constexpr int kMaxWallers{
+        static_cast<int>(kNumShells)};  // This effectively turns off marking
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -56,13 +60,15 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        IDLING,        // simply staying in place
-        JOINING_WALL,  // send message to find its place in the wall
-        WALLING,       // participating in the wall
-        SEARCHING,     // moving around on the field to do something
-        RECEIVING,     // physically intercepting the ball from a pass
-        PASSING,       // physically kicking the ball towards another robot
-        FACING,        // turning to face the passing robot
+        IDLING,            // simply staying in place
+        JOINING_WALL,      // send message to find its place in the wall
+        WALLING,           // participating in the wall
+        SEARCHING,         // moving around on the field to do something
+        RECEIVING,         // physically intercepting the ball from a pass
+        PASSING,           // physically kicking the ball towards another robot
+        FACING,            // turning to face the passing robot
+        MARKING,           // Following closely to an offense robot
+        ENTERING_MARKING,  // Choosing/waiting for a robot to mark
     };
 
     State update_state();
@@ -113,6 +119,9 @@ private:
     // current state of the defense agent (state machine)
     int get_waller_id();
     State current_state_ = JOINING_WALL;
+
+    int get_marker_target_id();
+    Marker marker_;
 };
 
 }  // namespace strategy

@@ -2,10 +2,17 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id, "Defense") {}
+Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
+
+Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
+    position_name_ = "Defense";
+    walling_robots_ = {};
+}
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
+    // SPDLOG_INFO("waller length (sus) {}, {}", walling_robots_.size(), robot_id_);
     current_state_ = update_state();
+    // waller_id_ = get_waller_id();
     return state_to_task(intent);
 }
 
@@ -33,10 +40,20 @@ Defense::State Defense::update_state() {
             break;
         case JOINING_WALL:
             send_join_wall_request();
+            // SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
         case WALLING:
+            // If a wall is already full,
+            // Remove the robot with the highest ID from a wall
+            // and make them a marker instead.
+            if (walling_robots_.size() > kMaxWallers &&
+                this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
+                send_leave_wall_request();
+                // SPDLOG_INFO("leave wall {}", robot_id_);
+                next_state = ENTERING_MARKING;
+            }
             break;
         case SEARCHING:
             break;
@@ -61,12 +78,28 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+        case MARKING:
+            if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
+                next_state = ENTERING_MARKING;
+            }
+            break;
+        case ENTERING_MARKING:
+            marker_.choose_target(world_state);
+            int target_id = marker_.get_target();
+            if (target_id == -1) {
+                next_state = ENTERING_MARKING;
+            } else {
+                next_state = MARKING;
+            }
     }
 
     return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
+    // if (robot_id_ == 2) {
+    //     SPDLOG_INFO("{} current state of 2", current_state_);
+    // }
     if (current_state_ == IDLING) {
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
@@ -113,7 +146,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             Waller waller{waller_id_, (int)walling_robots_.size()};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
-    } else if (current_state_ = FACING) {
+    } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             last_world_state_->get_robot(true, robot_id_).pose.position();
         auto current_location_instant =
@@ -123,6 +156,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", current_location_instant, face_ball};
         intent.motion_command = face_ball_cmd;
         return intent;
+    } else if (current_state_ == ENTERING_MARKING) {
+        // Prepares a robot for marking. NOTE: May update to add move to center of field
+        auto empty_motion_cmd = planning::MotionCommand{};
+        intent.motion_command = empty_motion_cmd;
+        return intent;
+    } else if (current_state_ == MARKING) {
+        // Marker marker = Marker((u_int8_t) robot_id_);
+        return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 
     return std::nullopt;
@@ -174,7 +215,7 @@ void Defense::send_join_wall_request() {
     communication_request.urgent = false;
     communication_request.broadcast = true;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
 }
@@ -190,12 +231,12 @@ void Defense::send_leave_wall_request() {
     communication_request.urgent = true;
     communication_request.broadcast = false;
 
-    communication_request_ = communication_request;
+    communication_requests_.push_back(communication_request);
 }
 
 communication::JoinWallResponse Defense::handle_join_wall_request(
     communication::JoinWallRequest join_request) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_request.robot_id) {
             break;
         } else if (walling_robots_[i] > join_request.robot_id) {
@@ -217,13 +258,15 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
 
 communication::Acknowledge Defense::handle_leave_wall_request(
     communication::LeaveWallRequest leave_request) {
-    for (int i = walling_robots_.size() - 1; i > 0; i--) {
-        if (walling_robots_[i] == leave_request.robot_id) {
-            walling_robots_.erase(walling_robots_.begin() + i);
-            waller_id_ = get_waller_id();
-            break;
-        } else if (walling_robots_[i] < leave_request.robot_id) {
-            break;
+    if (robot_id_ != leave_request.robot_id) {
+        for (int i = walling_robots_.size() - 1; i > 0; i--) {
+            if (walling_robots_[i] == leave_request.robot_id) {
+                walling_robots_.erase(walling_robots_.begin() + i);
+                waller_id_ = get_waller_id();
+                break;
+            } else if (walling_robots_[i] < leave_request.robot_id) {
+                break;
+            }
         }
     }
 
@@ -234,7 +277,7 @@ communication::Acknowledge Defense::handle_leave_wall_request(
 }
 
 void Defense::handle_join_wall_response(communication::JoinWallResponse join_response) {
-    for (int i = 0; i < walling_robots_.size(); i++) {
+    for (size_t i = 0; i < walling_robots_.size(); i++) {
         if (walling_robots_[i] == join_response.robot_id) {
             return;
         } else if (walling_robots_[i] > join_response.robot_id) {

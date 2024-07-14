@@ -1,5 +1,9 @@
 #include "agent_action_client.hpp"
 
+#include <rclcpp/rclcpp.hpp>
+
+#include <std_msgs/msg/string.hpp>
+
 #include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
 
@@ -13,13 +17,17 @@ AgentActionClient::AgentActionClient() : AgentActionClient(0) {
 }
 
 AgentActionClient::AgentActionClient(int r_id)
-    : robot_id_(r_id),
-      rclcpp::Node(fmt::format("agent_{}_action_client_node", r_id),
+    : rclcpp::Node(::fmt::format("agent_{}_action_client_node", r_id),
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
-                       .allow_undeclared_parameters(true)) {
+                       .allow_undeclared_parameters(true)),
+      current_position_{std::make_unique<RobotFactoryPosition>(r_id)},
+      robot_id_{r_id} {
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
+
+    current_state_publisher_ = create_publisher<AgentStateMsg>(
+        fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
     world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
@@ -34,7 +42,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
-        "strategy/alive_robots", 1,
+        ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
     game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
@@ -42,7 +50,7 @@ AgentActionClient::AgentActionClient(int r_id)
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = create_subscription<rj_msgs::msg::Goalie>(
-        ::referee::topics::kGoalieTopic, 1,
+        ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
@@ -51,9 +59,6 @@ AgentActionClient::AgentActionClient(int r_id)
                std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
             receive_communication_callback(request, response);
         });
-
-    // Default Positions with the Position class
-    current_position_ = std::make_unique<RobotFactoryPosition>(robot_id_);
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
@@ -116,6 +121,8 @@ void AgentActionClient::goalie_id_callback(int goalie_id) {
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
+
+    current_position_->update_alive_robots(alive_robots_);
 }
 
 void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
@@ -140,7 +147,8 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 void AgentActionClient::get_task() {
     auto lock = std::lock_guard(world_state_mutex_);
 
-    auto optional_task = current_position_->get_task(last_world_state_, field_dimensions_);
+    auto optional_task =
+        current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
 
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
@@ -152,6 +160,9 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
+
+    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
+        rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -234,51 +245,55 @@ void AgentActionClient::get_communication() {
     }
 
     auto optional_communication_request = current_position_->send_communication_request();
-    if (!optional_communication_request.has_value()) {
+    if (optional_communication_request.empty()) {
         return;
     }
 
-    auto communication_request = optional_communication_request.value();
+    for (int i = 0; i < optional_communication_request.size(); i++) {
+        auto communication_request = optional_communication_request.front();
+        optional_communication_request.pop_front();
 
-    // create a buffer to hold the responses and the outgoing request
-    communication::AgentPosResponseWrapper buffered_response;
+        // create a buffer to hold the responses and the outgoing request
+        communication::AgentPosResponseWrapper buffered_response;
 
-    auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-    request->agent_request = rj_convert::convert_to_ros(communication_request.request);
+        auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
+        request->agent_request = rj_convert::convert_to_ros(communication_request.request);
 
-    // send communication requests
-    std::vector<u_int8_t> sent_robot_ids = {};
-    if (communication_request.broadcast) {
-        for (u_int8_t i = 0; i < kNumShells; i++) {
-            if (i != robot_id_ && check_robot_alive(i)) {
-                robot_communication_cli_[i]->async_send_request(
-                    request, [this, i](const std::shared_future<
-                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                           response) {
-                        receive_response_callback(response, ((u_int8_t)i));
-                    });
-                sent_robot_ids.push_back(i);
+        // send communication requests
+        std::vector<u_int8_t> sent_robot_ids = {};
+        if (communication_request.broadcast) {
+            for (u_int8_t i = 0; i < kNumShells; i++) {
+                if (i != robot_id_ && check_robot_alive(i)) {
+                    robot_communication_cli_[i]->async_send_request(
+                        request, [this, i](const std::shared_future<
+                                           rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                               response) {
+                            receive_response_callback(response, ((u_int8_t)i));
+                        });
+                    sent_robot_ids.push_back(i);
+                }
+            }
+            // set broadcast to true in buffer
+            buffered_response.broadcast = true;
+        } else {
+            for (u_int8_t i : communication_request.target_agents) {
+                if (i != robot_id_ && check_robot_alive(i)) {
+                    robot_communication_cli_[i]->async_send_request(
+                        request,
+                        [this, i](const std::shared_future<
+                                  rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                      response) { receive_response_callback(response, i); });
+                    sent_robot_ids.push_back(i);
+                }
             }
         }
-        // set broadcast to true in buffer
-        buffered_response.broadcast = true;
-    } else {
-        for (u_int8_t i : communication_request.target_agents) {
-            if (i != robot_id_ && check_robot_alive(i)) {
-                robot_communication_cli_[i]->async_send_request(
-                    request, [this, i](const std::shared_future<
-                                       rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                           response) { receive_response_callback(response, i); });
-                sent_robot_ids.push_back(i);
-            }
-        }
+
+        buffered_response.to_robot_ids = sent_robot_ids;
+        buffered_response.associated_request = communication_request.request;
+        buffered_response.urgent = communication_request.urgent;
+        buffered_response.created = RJ::now();
+        buffered_responses_.push_back(buffered_response);
     }
-
-    buffered_response.to_robot_ids = sent_robot_ids;
-    buffered_response.associated_request = communication_request.request;
-    buffered_response.urgent = communication_request.urgent;
-    buffered_response.created = RJ::now();
-    buffered_responses_.push_back(buffered_response);
 }
 
 void AgentActionClient::receive_communication_callback(

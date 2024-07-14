@@ -20,7 +20,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             last_game_settings_ = rj_convert::convert_from_ros(*settings);
         });
     goalie_sub_ = node->create_subscription<rj_msgs::msg::Goalie>(
-        referee::topics::kGoalieTopic, rclcpp::QoS(1),
+        referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
             auto lock = std::lock_guard(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
@@ -82,6 +82,11 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     auto our_defense_area{
         std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_defense_area())};
 
+    auto our_goal_area{std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_goal_area())};
+
+    auto their_goal_area{
+        std::make_shared<rj_geometry::Rect>(last_field_dimensions_.their_goal_area())};
+
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area
     bool is_extra_dist_necessary = (last_play_state_.state() == PlayState::State::Stop ||
@@ -99,7 +104,9 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
     def_area_obstacles.add(our_defense_area);
+    def_area_obstacles.add(our_goal_area);
     def_area_obstacles.add(their_defense_area);
+    def_area_obstacles.add(their_goal_area);
 
     return def_area_obstacles;
 }

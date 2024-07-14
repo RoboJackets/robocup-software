@@ -57,6 +57,7 @@ struct MotionCommand {
     PathTargetFaceOption face_option = FaceTarget{};
     bool ignore_ball{false};
     rj_geometry::Point pivot_point{};
+    double pivot_radius{kRobotRadius};
 };
 bool operator==(const MotionCommand& a, const MotionCommand& b);
 
@@ -109,6 +110,9 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         // convert pivot point
         result.pivot_point.push_back(convert_to_ros(from.pivot_point));
 
+        // convert the pivot radius
+        result.pivot_radius.push_back(from.pivot_radius);
+
         return result;
     }
 
@@ -144,6 +148,10 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         // convert pivot_point
         if (!from.pivot_point.empty()) {
             result.pivot_point = convert_from_ros(from.pivot_point[0]);
+        }
+
+        if (!from.pivot_radius.empty()) {
+            result.pivot_radius = from.pivot_radius[0];
         }
 
         return result;
