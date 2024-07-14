@@ -40,7 +40,7 @@ Offense::State Offense::next_state() {
 
         case SEEKING_START: {
             // Unconditionally only stay in this state for one tick.
-            return SEEKING;
+            return DEFAULT;
         }
 
         case SEEKING: {

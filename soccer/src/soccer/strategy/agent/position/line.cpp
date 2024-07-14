@@ -1,6 +1,11 @@
 #include "line.hpp"
 
 namespace strategy {
+
+Line::Line(const Position& other) : Position{other} { position_name_ = "SoloOffense"; }
+
+Line::Line(int r_id) : Position{r_id, "SoloOffense"} {}
+
 std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     if (check_is_done()) {
         forward_ = !forward_;
