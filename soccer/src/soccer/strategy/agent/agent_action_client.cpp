@@ -6,6 +6,7 @@
 
 #include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
+#include "strategy/agent/position/line.hpp"
 
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
@@ -21,7 +22,7 @@ AgentActionClient::AgentActionClient(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)),
-      current_position_{std::make_unique<RobotFactoryPosition>(r_id)},
+      current_position_{std::make_unique<Line>(r_id)},
       robot_id_{r_id} {
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");

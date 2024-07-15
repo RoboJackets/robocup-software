@@ -81,6 +81,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goalie.cpp
     strategy/agent/position/offense.cpp
     strategy/agent/position/idle.cpp
+    strategy/agent/position/line.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
     strategy/agent/position/seeker.cpp
