@@ -4,15 +4,15 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.0
-    max_velocity: 1.0
-    rotation_kd: 0.0
-    rotation_ki: 0.0
-    rotation_kp: 0.0
+    max_acceleration: 5.0
+    max_velocity: 4.5
+    rotation_kd: 5.0
+    rotation_ki: 0.3
+    rotation_kp: 1.0
     rotation_windup: 0
-    translation_kd: 0.3
+    translation_kd: 0.1
     translation_ki: 0.0
-    translation_kp: 0.6
+    translation_kp: 0.5
     translation_windup: 0
     use_sim_time: false
 
@@ -58,10 +58,10 @@
       vel_cutoff_to_control: 0.3
       velocity_control_scale: 0.5
     constraints:
-      max_rotational_accel: 3.0
-      max_rotational_speed: 3.0
-      max_translational_accel: 3.0
-      max_translational_speed: 2.0
+      max_rotational_accel: 4.5
+      max_rotational_speed: 4.5
+      max_translational_accel: 4.0
+      max_translational_speed: 4.0
     escape:
       goal_change_threshold: 0.9
       step_size: 0.1
