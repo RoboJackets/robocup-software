@@ -9,18 +9,18 @@ namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
     if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
+        current_position_ = std::make_unique<Line>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+        current_position_ = std::make_unique<Line>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<Line>(robot_id_);
     }
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
-        set_current_position<Goalie>();
+        set_current_position<Line>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
@@ -217,6 +217,9 @@ bool RobotFactoryPosition::am_closest_kicker() {
 
 void RobotFactoryPosition::set_default_position() {
     // zoner defense testing
+    set_current_position<Line>();
+    return;
+
     if (robot_id_ == goalie_id_) {
         return;
     }
