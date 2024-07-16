@@ -37,7 +37,7 @@ SoloOffense::State SoloOffense::next_state() {
             marking_id_ = i;
             closest_dist = robot_dist;
         }
-    } 
+    }
 
     // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
 

@@ -62,6 +62,11 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
     auto* body = reinterpret_cast<rtp::ControlMessage*>(&forward_packet_buffer[0]);
 
     ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team());
+    if (body->robot_id == 2) {
+        // SPDLOG_INFO("trigger_mode: {} shoot_mode: {} robot_id: {} team: {} body_x: {} body_y: {}
+        // body_w: {} dribbler_speed: {} kick_strength: {} role: {}",
+        // body->trigger_mode,body->shoot_mode,body->robot_id,body->team,body->body_x,body->body_y,body->body_w,body->dribbler_speed,body->kick_strength,body->robot_id);
+    }
 
     control_message_socket_.async_send_to(
         boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,

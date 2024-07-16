@@ -270,12 +270,9 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 strategy::Positions role, bool blue_team) {
     rtp->team = blue_team;
     rtp->robot_id = shell;
-    rtp->body_x =
-        static_cast<int16_t>(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->body_y =
-        static_cast<int16_t>(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->body_w =
-        static_cast<int16_t>(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_x = (int16_t)(motion.velocity_x_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_y = (int16_t)(motion.velocity_y_mps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_w = (int16_t)(motion.velocity_z_radps * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->dribbler_speed = manipulator.dribbler_speed;
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);

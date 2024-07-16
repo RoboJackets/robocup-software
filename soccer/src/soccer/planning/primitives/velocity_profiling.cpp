@@ -9,7 +9,7 @@ using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-constexpr int kInterpolationsPerBezier = 40;
+constexpr int kInterpolationsPerBezier = 30;
 
 double limit_acceleration(double velocity_initial, double velocity_final, double displacement,
                           double max_accel) {
@@ -112,7 +112,8 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         if (limit_curvature) {
             double centripetal_acceleration = speed[n] * speed[n] * curvature[n];
             double squared_max_tangential_acceleration =
-                std::pow(constraints.max_acceleration, 2) - std::pow(centripetal_acceleration, 2);
+                std::pow(constraints.max_acceleration / 2, 2) -
+                std::pow(centripetal_acceleration, 2);
 
             // This can occur when our initial speed is fast enough that we
             // will slip no matter what.
@@ -131,7 +132,10 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         speed[n - 1] =
             limit_acceleration(speed[n], speed[n - 1], distance, max_tangential_acceleration);
     }
-
+    for (int i = 0; i < num_points; i++) {
+        SPDLOG_INFO(speed[i]);
+    }
+    SPDLOG_INFO("DONE");
     Trajectory trajectory{{}};
 
     Pose initial_pose{points[0], 0};

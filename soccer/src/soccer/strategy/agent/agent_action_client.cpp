@@ -121,8 +121,10 @@ void AgentActionClient::goalie_id_callback(int goalie_id) {
 }
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
-    alive_robots_ = msg->alive_robots;
-
+    // alive_robots_ = msg->alive_robots;
+    for (int i = 0; i < 16; i++) {
+        alive_robots_[i] = this->world_state()->get_robot(true, i).visible;
+    }
     current_position_->update_alive_robots(alive_robots_);
 }
 
