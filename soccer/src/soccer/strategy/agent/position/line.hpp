@@ -21,6 +21,6 @@ private:
     int robot_id_;
     bool forward_ = true;
     bool vertical_ = false;
-    bool face_target_ = true;
+    bool face_target_ = false;
 };
 }  // namespace strategy

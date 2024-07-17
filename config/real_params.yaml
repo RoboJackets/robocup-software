@@ -6,13 +6,13 @@
   ros__parameters:
     max_acceleration: 5.0
     max_velocity: 4.5
-    rotation_kd: 0.0
+    rotation_kd: 3.0
     rotation_ki: 0.0
-    rotation_kp: 0.1
+    rotation_kp: 1.0
     rotation_windup: 0
-    translation_kd: 0.1
+    translation_kd: 0.7
     translation_ki: 0.0
-    translation_kp: 0.8
+    translation_kp: 0.3
     translation_windup: 0
     use_sim_time: false
 

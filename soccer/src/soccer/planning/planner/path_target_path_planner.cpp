@@ -61,8 +61,8 @@ bool PathTargetPathPlanner::is_done() const {
     // getting to the desired angle.
     //
     // may be related to issue #1506?
-    double position_tolerance = 0.2;
-    double velocity_tolerance = 0.2;
+    double position_tolerance = 0.1;
+    double velocity_tolerance = 0.1;
     return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
                                               cached_target_instant_.value(), position_tolerance,
                                               velocity_tolerance);
