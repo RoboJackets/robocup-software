@@ -92,7 +92,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                     "path_target",
                     planning::LinearMotionInstant{
                         rj_geometry::Point{
-                            field_dimensions_.center_field_loc().x() - 4.5 + 5 * 0.75,
+                            field_dimensions_.our_defense_area().minx(),
                             (field_dimensions_.center_field_loc().y() - 1) / 6 * robot_id_ + 1,
                         },
                         rj_geometry::Point{0.0, 0.0},

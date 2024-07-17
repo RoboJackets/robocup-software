@@ -4,15 +4,27 @@
 
 /control:
   ros__parameters:
+    # max_acceleration: 5.0
+    # max_velocity: 4.5
+    # rotation_kd: 3.0
+    # rotation_ki: 0.0
+    # rotation_kp: 1.0
+    # rotation_windup: 0
+    # translation_kd: 0.7
+    # translation_ki: 0.0
+    # translation_kp: 0.3
+    # translation_windup: 0
+    # use_sim_time: false
+
     max_acceleration: 5.0
-    max_velocity: 4.5
-    rotation_kd: 3.0
+    max_velocity: 5.0
+    rotation_kd: 0.0
     rotation_ki: 0.0
-    rotation_kp: 1.0
+    rotation_kp: 0.0
     rotation_windup: 0
-    translation_kd: 0.7
+    translation_kd: 2.0
     translation_ki: 0.0
-    translation_kp: 0.3
+    translation_kp: 0.1
     translation_windup: 0
     use_sim_time: false
 
@@ -58,8 +70,8 @@
       vel_cutoff_to_control: 0.3
       velocity_control_scale: 0.5
     constraints:
-      max_rotational_accel: 0.1
-      max_rotational_speed: 0.1
+      max_rotational_accel: 0.0
+      max_rotational_speed: 0.0
       max_translational_accel: 5.0
       max_translational_speed: 5.0
     escape:
@@ -68,10 +80,10 @@
     pivot:
       radius_multiplier: 1.0
     replanner:
-      off_path_threshold: 0.1
-      partial_replan_lead_time: 0.1
-      pos_change_threshold: 0.025
-      vel_change_threshold: 0.025
+      off_path_threshold: 0.11
+      partial_replan_lead_time: 0.11
+      pos_change_threshold: 0.035
+      vel_change_threshold: 0.035
     rrt:
       enable_debug_drawing: false
       goal_bias: 0.3

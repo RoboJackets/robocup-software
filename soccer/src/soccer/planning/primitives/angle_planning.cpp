@@ -5,8 +5,7 @@
 namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
-                 const AngleFunction& angle_function,
-                 const RotationConstraints& /* constraints */) {
+                 const AngleFunction& angle_function, const RotationConstraints& constraints) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
@@ -60,10 +59,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     // a final goal velocity of zero, until we get to a point where we couldn't
     // get back to the initial position in time. From there, fill the rest up
     // with a trapezoidal motion from the beginning.
-
-    /*
-    Trapezoid::State initial{start_instant.heading(),
-                             start_instant.angular_velocity()};
 
     // The sample to which we need to do a regular trapezoid profile.
     int num_trapezoid_samples = trajectory->num_instants();
@@ -132,7 +127,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i) = state.position;
         velocity.at(i) = state.velocity;
     }
-    */
 
     // Fill in the trajectory
     auto instant_it = trajectory->instants_begin();
