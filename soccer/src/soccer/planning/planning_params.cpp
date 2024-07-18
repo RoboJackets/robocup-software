@@ -4,7 +4,7 @@ namespace planning {
 
 DEFINE_FLOAT64(kPlanningParamModule, timeout, 0.1, "Timeout for vision data to reach planning (s)");
 
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 5.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 8.0,
                   "Maximum translational speed for planning (m/s)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 5.0,
                   "Maximum translational acceleration for planning (m/s^2)");

@@ -223,9 +223,9 @@ void RobotFactoryPosition::set_default_position() {
     if (robot_id_ == goalie_id_) {
         return;
     }
-    if (robot_id_ == 2) {
-        set_current_position<Zoner>();
-    } else if (robot_id_ == 3) {
+    if (robot_id_ == 5) {
+        set_current_position<SoloOffense>();
+    } else if (robot_id_ == 2) {
         set_current_position<SoloOffense>();
     } else {
         set_current_position<Defense>();

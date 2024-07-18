@@ -18,7 +18,7 @@ using rj_geometry::Twist;
 
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 5.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 5.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 8.0,
                "Maximum velocity limit (motion control) (m/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 1,
                "Maximum angular velocity limit (motion control) (rad/s)");
@@ -138,10 +138,10 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
                              PARAM_max_angular_velocity *
                                  (std::abs(result_world.angular()) / result_world.angular())};
     }
-    // if (std::abs(result_world.linear().mag()) > 0.1 && std::abs(result_world.linear().mag()) <
-    // 0.5) {
-    //     result_world = Twist{result_world.linear().normalized(0.5), result_world.angular()};
-    // }
+    if (std::abs(result_world.linear().mag()) > 0.1 &&
+        std::abs(result_world.linear().mag()) < 0.5) {
+        result_world = Twist{result_world.linear().normalized(0.5), result_world.angular()};
+    }
 
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
