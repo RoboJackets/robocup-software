@@ -64,11 +64,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                         },
                         rj_geometry::Point{0.0, 0.0},
                     },
-                    planning::FacePoint{rj_geometry::Point{
-                        field_dimensions_.field_x_left_coord(),
-                        (field_dimensions_.center_field_loc().y() - 1) / 6 * robot_id_ + 1,
-                    }},
-                    true};
+                    planning::FaceAngle{0}, true};
 
                 intent.motion_command = motion_command;
             }
@@ -97,11 +93,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                         },
                         rj_geometry::Point{0.0, 0.0},
                     },
-                    planning::FacePoint{rj_geometry::Point{
-                        field_dimensions_.field_x_left_coord(),
-                        (field_dimensions_.center_field_loc().y() - 1) / 6 * robot_id_ + 1,
-                    }},
-                    true};
+                    planning::FaceAngle{0}, true};
 
                 intent.motion_command = motion_command;
             }

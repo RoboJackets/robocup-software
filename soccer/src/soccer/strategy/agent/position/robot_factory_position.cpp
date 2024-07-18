@@ -11,9 +11,9 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Defense>(robot_id_);
-    } else {
         current_position_ = std::make_unique<Offense>(robot_id_);
+    } else {
+        current_position_ = std::make_unique<Defense>(robot_id_);
     }
 }
 
@@ -119,6 +119,8 @@ void RobotFactoryPosition::handle_ready() {
 }
 
 void RobotFactoryPosition::update_position() {
+    // set_current_position<Line>();
+    // return;
     switch (current_play_state_.state()) {
         case PlayState::State::Playing: {
             // We just became regular playing.
@@ -221,9 +223,9 @@ void RobotFactoryPosition::set_default_position() {
     if (robot_id_ == goalie_id_) {
         return;
     }
-    if (robot_id_ == 1) {
+    if (robot_id_ == 2) {
         set_current_position<Zoner>();
-    } else if (robot_id_ == 4) {
+    } else if (robot_id_ == 3) {
         set_current_position<SoloOffense>();
     } else {
         set_current_position<Defense>();

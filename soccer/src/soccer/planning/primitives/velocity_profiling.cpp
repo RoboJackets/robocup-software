@@ -133,9 +133,9 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
             limit_acceleration(speed[n], speed[n - 1], distance, max_tangential_acceleration);
     }
     for (int i = 0; i < num_points; i++) {
-        SPDLOG_INFO(speed[i]);
+        // SPDLOG_INFO(speed[i]);
     }
-    SPDLOG_INFO("DONE");
+    // SPDLOG_INFO("DONE");
     Trajectory trajectory{{}};
 
     Pose initial_pose{points[0], 0};

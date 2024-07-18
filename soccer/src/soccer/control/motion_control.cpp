@@ -16,25 +16,25 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 5.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 5.0,
                "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 1,
                "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 10.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 0.04,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.1,
                "Kd for rotation ((rad/s)/(rad/s))");
 DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 0.6,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 0.3,
                "Kp for translation ((m/s)/m)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
                "Ki for translation ((m/s)/(m*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
+DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 2.5,
                "Kd for translation ((m/s)/(m/s))");
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
              "Windup limit for translation (unknown units)");
@@ -133,8 +133,21 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
     // Apply the correction and rotate into the world frame.
     Twist result_world = velocity_target + correction;
+    if (std::abs(result_world.angular()) > PARAM_max_angular_velocity) {
+        result_world = Twist{result_world.linear(),
+                             PARAM_max_angular_velocity *
+                                 (std::abs(result_world.angular()) / result_world.angular())};
+    }
+    // if (std::abs(result_world.linear().mag()) > 0.1 && std::abs(result_world.linear().mag()) <
+    // 0.5) {
+    //     result_world = Twist{result_world.linear().normalized(0.5), result_world.angular()};
+    // }
+
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
+
+    SPDLOG_INFO("RESULT BODY: {}, {}, {}", result_body.linear().x(), result_body.linear().y(),
+                result_body.angular());
 
     set_velocity(setpoint, result_body);
 
