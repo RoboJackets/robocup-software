@@ -37,6 +37,12 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    enum State { APPROACH, KICK };
+
+    State next_state();
+
+    State current_state_ = APPROACH;
 };
 
 }  // namespace strategy

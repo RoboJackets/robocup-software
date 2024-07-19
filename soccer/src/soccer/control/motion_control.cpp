@@ -156,9 +156,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
-    if (shell_id_ == 2)
-        SPDLOG_INFO("Robot: {} - {}, {}, {}", shell_id_, result_body.linear().x(),
-                    result_body.linear().y(), result_body.angular());
+    // if (shell_id_ == 2)
+    //     SPDLOG_INFO("Robot: {} - {}, {}, {}", shell_id_, result_body.linear().x(),
+    //                 result_body.linear().y(), result_body.angular());
 
     set_velocity(setpoint, result_body);
 

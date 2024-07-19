@@ -10,7 +10,7 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
     if (robot_id_ == goalie_id_) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 2 || robot_id_ == 0 || robot_id_ == solo_offense_id_) {
+    } else if (robot_id_ == 0 || robot_id_ == 0 || robot_id_ == solo_offense_id_) {
         current_position_ = std::make_unique<SoloOffense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -138,7 +138,8 @@ void RobotFactoryPosition::update_position() {
             if (current_play_state_.is_our_restart()) {
                 if (have_all_kicker_responses()) {
                     if (am_closest_kicker()) {
-                        if (current_play_state_.is_free_kick()) {
+                        if (current_play_state_.is_free_kick() ||
+                            current_play_state_.is_kickoff()) {
                             set_current_position<FreeKicker>();
                         } else {
                             set_current_position<PenaltyPlayer>();
@@ -236,7 +237,7 @@ void RobotFactoryPosition::set_default_position() {
     if (robot_id_ == goalie_id_) {
         return;
     }
-    if (robot_id_ == 2 || robot_id_ == 0) {
+    if (robot_id_ == 0 || robot_id_ == 0) {
         set_current_position<SoloOffense>();
     } else if (robot_id_ == solo_offense_id_) {
         set_current_position<SoloOffense>();

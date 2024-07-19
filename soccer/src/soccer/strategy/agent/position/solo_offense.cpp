@@ -12,7 +12,7 @@ std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
     if (new_state != current_state_) {
-        // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     }
     current_state_ = new_state;
 
@@ -43,7 +43,7 @@ SoloOffense::State SoloOffense::next_state() {
     rj_geometry::Point ball_pt = last_world_state_->ball.position;
     bool ball_in_our_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     bool ball_in_their_box = this->field_dimensions_.their_defense_area().contains_point(ball_pt);
-    if (ball_in_our_box || ball_in_their_box) {
+    if (ball_in_our_box || ball_in_their_box || current_play_state_.is_stop()) {
         return IDLE;
     }
 
