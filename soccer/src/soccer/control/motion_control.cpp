@@ -16,9 +16,9 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 5.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 8.0,
                "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 8.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 5.0,
                "Maximum velocity limit (motion control) (m/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 4,
                "Maximum angular velocity limit (motion control) (rad/s)");
@@ -156,9 +156,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
-    // if (shell_id_ == 2) SPDLOG_INFO("Robot: {} - {}, {}, {}", shell_id_,
-    // result_body.linear().x(), result_body.linear().y(),
-    //             result_body.angular());
+    if (shell_id_ == 2)
+        SPDLOG_INFO("Robot: {} - {}, {}, {}", shell_id_, result_body.linear().x(),
+                    result_body.linear().y(), result_body.angular());
 
     set_velocity(setpoint, result_body);
 

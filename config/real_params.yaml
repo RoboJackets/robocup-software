@@ -17,7 +17,7 @@
     # use_sim_time: false
 
     max_acceleration: 5.0
-    max_velocity: 5.0
+    max_velocity: 8.0
     rotation_kd: 0.0
     rotation_ki: 0.0
     rotation_kp: 0.0

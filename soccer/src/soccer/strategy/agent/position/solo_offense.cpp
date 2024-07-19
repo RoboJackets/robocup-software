@@ -60,7 +60,6 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case TO_BALL: {
             if (check_is_done()) {
-                target_ = calculate_best_shot();
                 return KICK;
             }
             break;
@@ -82,6 +81,7 @@ SoloOffense::State SoloOffense::next_state() {
 }
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
+    target_ = calculate_best_shot();
     switch (current_state_) {
         case MARKER: {
             // auto marker_target_pos =
@@ -101,7 +101,8 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             // return intent;
         }
         case TO_BALL: {
-            planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+            // SPDLOG_INFO("TARGET: {}, {}", target_.x(), target_.y());
+            planning::LinearMotionInstant target{target_};
             auto target_pos = last_world_state_->ball.position;
             // if (current_play_state_.is_stop()) {
             //     target_pos += (last_world_state_->get_robot(true, robot_id_).pose.position() -
@@ -109,7 +110,13 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             // }
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
                                                      false, target_pos};
-            pivot_cmd.pivot_radius = 0.7;
+            pivot_cmd.pivot_radius = 0.5;
+            for (auto border : field_dimensions_.field_borders()) {
+                if (border.dist_to(target_pos) < (pivot_cmd.pivot_radius * 1.1)) {
+                    pivot_cmd.pivot_radius = 0.3;
+                    break;
+                }
+            }
             intent.motion_command = pivot_cmd;
             return intent;
         }
@@ -151,6 +158,8 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
             best_distance = distance;
             best_shot = curr_point;
         }
+        // SPDLOG_INFO("POINT: {}, {}", curr_point.x(), curr_point.y());
+        // SPDLOG_INFO("DIST: {}", distance);
         curr_point = curr_point + increment;
     }
     return best_shot;

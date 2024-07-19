@@ -93,7 +93,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
                                     last_play_state_.restart() == PlayState::Restart::Free);
 
     // Also add a slack around the box
-    float slack_around_box{0.3f};
+    float slack_around_box{0.5f};
 
     auto their_defense_area =
         is_extra_dist_necessary

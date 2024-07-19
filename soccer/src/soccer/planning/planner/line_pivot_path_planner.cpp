@@ -20,23 +20,23 @@ using namespace rj_geometry;
 
 Trajectory LinePivotPathPlanner::plan(const PlanRequest& request) {
     current_state_ = next_state(request);
-    Trajectory path;
 
     if (current_state_ == LINE) {
-        path = line(request);
+        path_ = line(request);
     } else {
-        path = pivot(request);
+        path_ = pivot(request);
     }
 
-    return path;
+    return path_;
 }
 
 bool LinePivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-    return abs(cached_angle_change_.value()) <
-           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
+    return (abs(cached_angle_change_.value()) <
+            degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh))) ||
+           (current_state_ == PIVOT && (RJ::now() - path_.end_time() > RJ::Seconds{4.0}));
 }
 
 LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request) {

@@ -54,5 +54,7 @@ private:
     State next_state(const PlanRequest& request);
 
     State current_state_ = LINE;
+
+    Trajectory path_;
 };
 }  // namespace planning

@@ -112,7 +112,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         if (limit_curvature) {
             double centripetal_acceleration = speed[n] * speed[n] * curvature[n];
             double squared_max_tangential_acceleration =
-                std::pow(constraints.max_acceleration / 1.8, 2) -
+                std::pow(constraints.max_acceleration / 1, 2) -
                 std::pow(centripetal_acceleration, 2);
 
             // This can occur when our initial speed is fast enough that we
