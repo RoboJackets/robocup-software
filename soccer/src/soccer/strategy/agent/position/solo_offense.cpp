@@ -52,8 +52,13 @@ SoloOffense::State SoloOffense::next_state() {
         field_dimensions_.their_goal_area().contains_point(current_point) ||
         field_dimensions_.their_defense_area().contains_point(current_point) ||
         !field_dimensions_.field_coordinates().contains_point(current_point)) {
+        return IDLE;
+    }
+
+    if (closest_dist < 0.3) {
         return MARKER;
     }
+
     switch (current_state_) {
         case MARKER: {
             return TO_BALL;
@@ -84,21 +89,15 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     target_ = calculate_best_shot();
     switch (current_state_) {
         case MARKER: {
-            // auto marker_target_pos =
-            //     last_world_state_->get_robot(false, marking_id_).pose.position();
-            // auto target =
-            //     marker_target_pos +
-            //     (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius *
-            //     5);
-            // auto mark_cmd = planning::MotionCommand{
-            //     "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{},
-            //     true};
-            // intent.motion_command = mark_cmd;
-
-            SmartIdle smart_idle{robot_id_};
-            return smart_idle.get_task(*last_world_state_, field_dimensions_, current_play_state_);
-
-            // return intent;
+            auto marker_target_pos =
+                last_world_state_->get_robot(false, marking_id_).pose.position();
+            auto target =
+                marker_target_pos +
+                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 7);
+            auto mark_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
+            intent.motion_command = mark_cmd;
+            return intent;
         }
         case TO_BALL: {
             // SPDLOG_INFO("TARGET: {}, {}", target_.x(), target_.y());
@@ -113,7 +112,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             pivot_cmd.pivot_radius = 0.5;
             for (auto border : field_dimensions_.field_borders()) {
                 if (border.dist_to(target_pos) < (pivot_cmd.pivot_radius * 1.1)) {
-                    pivot_cmd.pivot_radius = 0.3;
+                    pivot_cmd.pivot_radius = 0.25;
                     break;
                 }
             }
@@ -132,8 +131,8 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case IDLE: {
-            intent.motion_command = planning::MotionCommand{};
-            return intent;
+            SmartIdle smart_idle{robot_id_};
+            return smart_idle.get_task(*last_world_state_, field_dimensions_, current_play_state_);
         }
     }
     return intent;
