@@ -133,7 +133,7 @@ private:
 
     void handle_penalty_playing();
 
-    int solo_offense_id_ = 2;
+    int solo_offense_id_ = 0;
 
     /**
      * @brief Sets the current position to the parameterized type.

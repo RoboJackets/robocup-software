@@ -70,7 +70,7 @@ SoloOffense::State SoloOffense::next_state() {
                 return TO_BALL;
             }
             break;
-        } 
+        }
         case IDLE: {
             if (!ball_in_our_box && !ball_in_their_box) {
                 return MARKER;

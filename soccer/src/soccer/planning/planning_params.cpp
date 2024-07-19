@@ -8,9 +8,9 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_speed, 8.
                   "Maximum translational speed for planning (m/s)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_translational_accel, 5.0,
                   "Maximum translational acceleration for planning (m/s^2)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 1.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_speed, 4.0,
                   "Maximum rotational speed for planning (rad/s)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 1.0,
+DEFINE_NS_FLOAT64(kPlanningParamModule, constraints, max_rotational_accel, 3.0,
                   "Maximum rotational acceleration for planning (rad/s^2)");
 
 DEFINE_NS_FLOAT64(
