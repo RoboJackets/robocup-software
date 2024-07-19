@@ -40,6 +40,12 @@ SoloOffense::State SoloOffense::next_state() {
     }
 
     // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
+    rj_geometry::Point ball_pt = last_world_state_->ball.position;
+    bool ball_in_our_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
+    bool ball_in_their_box = this->field_dimensions_.their_defense_area().contains_point(ball_pt);
+    if (ball_in_our_box || ball_in_their_box) {
+        return IDLE;
+    }
 
     if ((current_play_state_.is_their_restart() &&
          (current_play_state_.is_setup() || current_play_state_.is_ready())) ||
@@ -57,11 +63,19 @@ SoloOffense::State SoloOffense::next_state() {
                 target_ = calculate_best_shot();
                 return KICK;
             }
+            break;
         }
         case KICK: {
             if (check_is_done()) {
                 return TO_BALL;
             }
+            break;
+        } 
+        case IDLE: {
+            if (!ball_in_our_box && !ball_in_their_box) {
+                return MARKER;
+            }
+            break;
         }
     }
     return current_state_;
@@ -108,6 +122,10 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
             intent.kick_speed = 4.0;
 
+            return intent;
+        }
+        case IDLE: {
+            intent.motion_command = planning::MotionCommand{};
             return intent;
         }
     }
