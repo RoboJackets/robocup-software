@@ -26,7 +26,6 @@
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/pivot_test.hpp"
 #include "strategy/agent/position/position.hpp"
-#include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
 
@@ -133,6 +132,8 @@ private:
     void handle_setup();
 
     void handle_penalty_playing();
+
+    int solo_offense_id_ = 2;
 
     /**
      * @brief Sets the current position to the parameterized type.

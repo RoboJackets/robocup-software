@@ -41,7 +41,9 @@ SoloOffense::State SoloOffense::next_state() {
 
     // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
 
-    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
+    if ((current_play_state_.is_their_restart() &&
+         (current_play_state_.is_setup() || current_play_state_.is_ready())) ||
+        field_dimensions_.their_goal_area().contains_point(current_point) ||
         field_dimensions_.their_defense_area().contains_point(current_point) ||
         !field_dimensions_.field_coordinates().contains_point(current_point)) {
         return MARKER;
@@ -68,22 +70,32 @@ SoloOffense::State SoloOffense::next_state() {
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case MARKER: {
-            auto marker_target_pos =
-                last_world_state_->get_robot(false, marking_id_).pose.position();
-            auto target =
-                marker_target_pos +
-                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
-            auto mark_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
-            intent.motion_command = mark_cmd;
+            // auto marker_target_pos =
+            //     last_world_state_->get_robot(false, marking_id_).pose.position();
+            // auto target =
+            //     marker_target_pos +
+            //     (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius *
+            //     5);
+            // auto mark_cmd = planning::MotionCommand{
+            //     "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{},
+            //     true};
+            // intent.motion_command = mark_cmd;
 
-            return intent;
+            SmartIdle smart_idle{robot_id_};
+            return smart_idle.get_task(*last_world_state_, field_dimensions_, current_play_state_);
+
+            // return intent;
         }
         case TO_BALL: {
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+            auto target_pos = last_world_state_->ball.position;
+            // if (current_play_state_.is_stop()) {
+            //     target_pos += (last_world_state_->get_robot(true, robot_id_).pose.position() -
+            //     target_pos).normalized(0.7);
+            // }
             auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
-                                                     false, last_world_state_->ball.position};
-            pivot_cmd.pivot_radius = kRobotRadius * 2.5;
+                                                     false, target_pos};
+            pivot_cmd.pivot_radius = 0.7;
             intent.motion_command = pivot_cmd;
             return intent;
         }

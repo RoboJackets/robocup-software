@@ -10,8 +10,8 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
     if (robot_id_ == goalie_id_) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 3 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    } else if (robot_id_ == 3 || robot_id_ == solo_offense_id_) {
+        current_position_ = std::make_unique<SoloOffense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
@@ -40,6 +40,8 @@ void RobotFactoryPosition::process_play_state() {
 
     if (last_play_state_.state() != current_play_state_.state()) {
         last_play_state_ = current_play_state_;
+        SPDLOG_INFO("STATE: {}, RESTART: {}", current_play_state_.state(),
+                    current_play_state_.restart());
         switch (current_play_state_.state()) {
             case PlayState::State::Playing: {
                 // We just became regular playing.
@@ -81,7 +83,6 @@ void RobotFactoryPosition::process_play_state() {
 }
 
 void RobotFactoryPosition::handle_stop() { set_default_position(); }
-
 void RobotFactoryPosition::handle_penalty_playing() {
     if (!am_closest_kicker()) {
         set_current_position<SmartIdle>();
@@ -112,6 +113,7 @@ void RobotFactoryPosition::handle_ready() {
     } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
         if (current_position_->get_name() == "Offense" ||
             current_position_->get_name() == "PenaltyPlayer" ||
+            current_position_->get_name() == "SoloOffense" ||
             current_position_->get_name() == "GoalKicker") {
             set_current_position<Idle>();
         }
@@ -191,18 +193,21 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::start_kicker_picker() {
+    return;
     // SPDLOG_INFO("robot {} has cleared", robot_id_);
     kicker_distances_.clear();
     broadcast_kicker_request();
 }
 
 bool RobotFactoryPosition::have_all_kicker_responses() {
+    return true;
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
     return kicker_distances_.size() == num_alive - 1;  // Don't expect the goalie to respond
 }
 
 bool RobotFactoryPosition::am_closest_kicker() {
+    return robot_id_ == solo_offense_id_;
     // Return the max, comparing by distances only
     auto closest =
         std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
@@ -224,8 +229,8 @@ void RobotFactoryPosition::set_default_position() {
         return;
     }
     if (robot_id_ == 3) {
-        set_current_position<SoloOffense>();
-    } else if (robot_id_ == 2) {
+        set_current_position<Defense>();
+    } else if (robot_id_ == solo_offense_id_) {
         set_current_position<SoloOffense>();
     } else {
         set_current_position<Defense>();

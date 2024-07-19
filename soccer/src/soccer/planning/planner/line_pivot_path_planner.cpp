@@ -77,6 +77,7 @@ Trajectory LinePivotPathPlanner::line(const PlanRequest& plan_request) {
     LinearMotionInstant target{target_point};
 
     MotionCommand modified_command{"path_target", target};
+    modified_command.ignore_ball = true;
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);

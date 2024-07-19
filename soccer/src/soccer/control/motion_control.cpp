@@ -124,9 +124,19 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     if (maybe_pose_target) {
         Pose error = maybe_pose_target.value() - state.pose;
         error.heading() = fix_angle_radians(error.heading());
+
         correction = Twist(position_x_controller_.run(static_cast<float>(error.position().x())),
                            position_y_controller_.run(static_cast<float>(error.position().y())),
                            angle_controller_.run(static_cast<float>(error.heading())));
+
+        // if (shell_id_ == 2 ) {
+        //     SPDLOG_INFO("CURRENT: {}", state.pose.heading());
+        //     SPDLOG_INFO("TARGET: {}", maybe_pose_target.value().heading());
+        //     SPDLOG_INFO("ERROR: {}", error.heading());
+        //     SPDLOG_INFO("CORRECTION: {}", correction.angular());
+        //     SPDLOG_INFO("UNCORRECTED VEL: {}", velocity_target.angular());
+        //     SPDLOG_INFO("NEW VEL: {}", (velocity_target + correction).angular());
+        // }
     } else {
         reset();
     }
@@ -146,8 +156,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
-    SPDLOG_INFO("RESULT BODY: {}, {}, {}", result_body.linear().x(), result_body.linear().y(),
-                result_body.angular());
+    // if (shell_id_ == 2) SPDLOG_INFO("Robot: {} - {}, {}, {}", shell_id_,
+    // result_body.linear().x(), result_body.linear().y(),
+    //             result_body.angular());
 
     set_velocity(setpoint, result_body);
 

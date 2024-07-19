@@ -57,7 +57,7 @@ struct MotionCommand {
     PathTargetFaceOption face_option = FaceTarget{};
     bool ignore_ball{false};
     rj_geometry::Point pivot_point{};
-    double pivot_radius{kRobotRadius};
+    double pivot_radius{kRobotRadius * 2};
 };
 bool operator==(const MotionCommand& a, const MotionCommand& b);
 

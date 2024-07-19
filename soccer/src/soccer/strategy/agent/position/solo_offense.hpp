@@ -17,6 +17,7 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/geometry_conversions.hpp"
 #include "rj_geometry/point.hpp"
+#include "strategy/agent/position/smartidling.hpp"
 
 namespace strategy {
 
