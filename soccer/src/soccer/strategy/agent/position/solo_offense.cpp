@@ -112,7 +112,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             pivot_cmd.pivot_radius = 0.5;
             for (auto border : field_dimensions_.field_borders()) {
                 if (border.dist_to(target_pos) < (pivot_cmd.pivot_radius * 1.1)) {
-                    pivot_cmd.pivot_radius = 0.25;
+                    pivot_cmd.pivot_radius = 0.15;
                     break;
                 }
             }

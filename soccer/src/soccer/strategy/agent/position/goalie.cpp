@@ -21,13 +21,13 @@ Goalie::State Goalie::update_state() {
 
     // if PlayState is in state Ready and Restart is Penalty go to penalty state
     // call is_our_restart and if that is false we go into this state
-    if ((current_play_state_.is_setup() || current_play_state_.is_ready()) &&
-        current_play_state_.is_penalty() && !current_play_state_.is_our_restart()) {
+    if ((current_play_state_.is_setup()) && current_play_state_.is_penalty() &&
+        !current_play_state_.is_our_restart()) {
         return PENALTY;
     }
 
     if (latest_state_ == PENALTY) {
-        if (current_play_state_.is_playing()) {
+        if (current_play_state_.is_ready()) {
             return BLOCKING;
         }
         return PENALTY;

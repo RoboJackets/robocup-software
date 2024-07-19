@@ -16,7 +16,7 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
     switch (latest_state_) {
         case LINE_UP: {
             // if penalty playing and restart penalty in playstate we switch to shooting
-            if (current_play_state_.is_ready() &&
+            if ((current_play_state_.is_penalty_playing() || current_play_state_.is_ready()) &&
                 (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
                 return SHOOTING_START;
             }
@@ -44,24 +44,24 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
 std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
         case LINE_UP: {
-            double y_pos = last_world_state_->ball.position.y();
-            // if ball is above goal, increase y_pos, else decrease
-            // if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
-            // y_pos += kRobotRadius - 0.15;
-            // } else {
-            y_pos -= kRobotRadius + 0.3;
-            // }
+            double y_pos = field_dimensions_.their_goal_loc().y();
+
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
-            planning::PathTargetFaceOption face_option{planning::FaceBall{}};
+            planning::PathTargetFaceOption face_option{planning::FaceTarget{}};
             // Avoid ball
             bool ignore_ball{false};
 
             // Create Motion Command
             planning::LinearMotionInstant goal{target_pt, target_vel};
-            intent.motion_command =
-                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            auto motion_command = planning::MotionCommand{
+                "line_pivot", goal, face_option, ignore_ball, last_world_state_->ball.position};
+
+            motion_command.pivot_radius = 0.5;
+
+            intent.motion_command = motion_command;
+
             break;
         }
         case SHOOTING_START: {
@@ -71,7 +71,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             auto move_vector = (current_pos - ball_position).normalized(0.2);
 
             planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
+            planning::MotionCommand prep_command{"path_target", target, planning::FaceTarget{}};
 
             intent.motion_command = prep_command;
 
