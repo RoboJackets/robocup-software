@@ -57,6 +57,8 @@ private:
 
     rj_geometry::Point calculate_best_shot() const;
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
+
+    std::optional<RJ::Time> cached_start_time_;
 };
 
 }  // namespace strategy

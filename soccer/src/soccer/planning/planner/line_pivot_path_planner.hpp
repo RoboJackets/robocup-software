@@ -40,6 +40,7 @@ private:
 
     // cache the most recent angle change so we know when we're done
     std::optional<double> cached_angle_change_;
+    std::optional<bool> cached_robot_face_correct;
 
     PathTargetPathPlanner path_target_{};
 

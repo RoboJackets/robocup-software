@@ -133,8 +133,8 @@ rj_geometry::Point PenaltyPlayer::calculate_best_shot() const {
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
     rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 19; i++) {
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment + 0.1;
+    for (int i = 0; i < 17; i++) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
             best_distance = distance;

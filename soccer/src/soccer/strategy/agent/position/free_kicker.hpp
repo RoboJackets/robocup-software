@@ -43,6 +43,10 @@ private:
     State next_state();
 
     State current_state_ = APPROACH;
+
+    std::optional<RobotIntent> state_to_task(RobotIntent intent);
+
+    std::optional<RJ::Time> cached_start_time_;
 };
 
 }  // namespace strategy

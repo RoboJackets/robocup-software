@@ -104,6 +104,9 @@ void LineKickPathPlanner::process_state_transition() {
 bool LineKickPathPlanner::is_done() const {
     // if ball is fast, assume we have kicked it correctly
     // (either way we can't go recapture it)
+
+    SPDLOG_INFO("line kick ball vel {}", average_ball_vel_.mag());
+
     return average_ball_vel_.mag() > kIsDoneBallVel;
 }
 

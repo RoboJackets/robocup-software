@@ -44,6 +44,7 @@ SoloOffense::State SoloOffense::next_state() {
     bool ball_in_our_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     bool ball_in_their_box = this->field_dimensions_.their_defense_area().contains_point(ball_pt);
     if (ball_in_our_box || ball_in_their_box || current_play_state_.is_stop()) {
+        cached_start_time_.reset();
         return IDLE;
     }
 
@@ -52,32 +53,51 @@ SoloOffense::State SoloOffense::next_state() {
         field_dimensions_.their_goal_area().contains_point(current_point) ||
         field_dimensions_.their_defense_area().contains_point(current_point) ||
         !field_dimensions_.field_coordinates().contains_point(current_point)) {
+        cached_start_time_.reset();
         return IDLE;
     }
 
     if (closest_dist < 0.3) {
+        cached_start_time_.reset();
         return MARKER;
     }
 
     switch (current_state_) {
         case MARKER: {
+            cached_start_time_ = RJ::now();
             return TO_BALL;
         }
         case TO_BALL: {
-            if (check_is_done()) {
+            auto is_done = check_is_done();
+            SPDLOG_INFO("IS_DONE: {}", is_done);
+            if (is_done || (RJ::now() - *cached_start_time_ > RJ::Seconds(7.5))) {
+                cached_start_time_.reset();
                 return KICK;
             }
             break;
         }
         case KICK: {
-            if (check_is_done()) {
+            auto is_done = check_is_done();
+            // SPDLOG_INFO("Is done {}", is_done);
+            if (is_done) {
+                cached_start_time_ = RJ::now();
                 return TO_BALL;
             }
             break;
         }
         case IDLE: {
-            if (!ball_in_our_box && !ball_in_their_box) {
-                return MARKER;
+            if (!(ball_in_our_box || ball_in_their_box || current_play_state_.is_stop())) {
+                cached_start_time_ = RJ::now();
+                return TO_BALL;
+            }
+
+            if (!((current_play_state_.is_their_restart() &&
+                   (current_play_state_.is_setup() || current_play_state_.is_ready())) ||
+                  field_dimensions_.their_goal_area().contains_point(current_point) ||
+                  field_dimensions_.their_defense_area().contains_point(current_point) ||
+                  !field_dimensions_.field_coordinates().contains_point(current_point))) {
+                cached_start_time_ = RJ::now();
+                return TO_BALL;
             }
             break;
         }

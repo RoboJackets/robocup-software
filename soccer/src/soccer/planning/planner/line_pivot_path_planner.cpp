@@ -34,9 +34,10 @@ bool LinePivotPathPlanner::is_done() const {
     if (!cached_angle_change_.has_value()) {
         return false;
     }
-    return (abs(cached_angle_change_.value()) <
-            degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh))) ||
-           (current_state_ == PIVOT && (RJ::now() - path_.end_time() > RJ::Seconds{4.0}));
+
+    return (cached_robot_face_correct.value() &&
+            abs(cached_angle_change_.value()) <
+                degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh)));
 }
 
 LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& plan_request) {
@@ -51,8 +52,7 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
     double vel = plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
                      .velocity.linear()
                      .mag();
-    if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3) &&
-        (!plan_request.play_state.is_stop())) {
+    if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3)) {
         return PIVOT;
     }
     if (current_state_ == PIVOT && (pivot_point.dist_to(current_point) > (dist_from_point * 5))) {
@@ -112,6 +112,16 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
     double angle_change = fix_angle_radians(target_angle - start_angle);
 
     cached_angle_change_ = angle_change;
+
+    double robot_angle =
+        request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.heading();
+    SPDLOG_INFO("robot angle {}", robot_angle);
+    SPDLOG_INFO("target angle {}", target_angle);
+    cached_robot_face_correct =
+        (abs(robot_angle - target_angle - M_PI) <
+         degrees_to_radians(static_cast<float>(2 * kIsDoneAngleChangeThresh))) ||
+        (abs(robot_angle - target_angle - 3 * M_PI) <
+         degrees_to_radians(static_cast<float>(2 * kIsDoneAngleChangeThresh)));
 
     constexpr double kMaxInterpolationRadians = 10 * M_PI / 180;
     const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadians);
