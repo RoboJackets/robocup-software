@@ -138,6 +138,12 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             max_robot_speed = 10.0;
             max_dribbler_speed = 255;
             break;
+        case PlayState::State::Ready:
+            if (play_state.is_their_restart()) {
+                min_dist_from_ball = 0.4;
+                max_robot_speed = 10.0;
+                max_dribbler_speed = 255;
+            }
         case PlayState::State::Playing:
         default:
 

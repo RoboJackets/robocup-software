@@ -22,7 +22,7 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 5.0,
                "Maximum velocity limit (motion control) (m/s)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 4,
                "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 0.9,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 1.1,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");

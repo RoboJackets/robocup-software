@@ -19,8 +19,12 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
-                   &ball_trajectory);
+
+    if (request.shell_id != 1)
+        fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
+                       &ball_trajectory);
+    else
+        fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false, &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.

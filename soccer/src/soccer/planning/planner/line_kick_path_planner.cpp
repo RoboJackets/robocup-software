@@ -54,6 +54,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
 
     // Distance to stay away from the ball
     auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
+    if (plan_request.shell_id == 1) distance_from_ball = kBallRadius;
 
     // In case the ball is (slowly) moving
     auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn}).position;
