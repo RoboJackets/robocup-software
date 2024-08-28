@@ -88,6 +88,8 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 
     MotionCommand modified_command{"path_target", target,
                                    FacePoint{plan_request.motion_command.target.position}};
+
+    modified_command.ignore_ball = true;
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);

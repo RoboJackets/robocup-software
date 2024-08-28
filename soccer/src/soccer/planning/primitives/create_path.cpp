@@ -75,4 +75,86 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
+Trajectory intermediate(const LinearMotionInstant& start,
+               const LinearMotionInstant& goal,
+               const MotionConstraints& motion_constraints, RJ::Time start_time,
+               const rj_geometry::ShapeSet& static_obstacles) {
+    
+    // if already on goal, no need to move
+    if (start.position.dist_to(goal.position) < 1e-6) {
+        return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
+    }
+
+    // maybe we don't need an RRT
+    Trajectory straight_trajectory =
+        CreatePath::simple(start, goal, motion_constraints, start_time);
+
+    // If we are very close to the goal (i.e. there physically can't be a robot
+    // in our way) or the straight trajectory is feasible, we can use it.
+    if (start.position.dist_to(goal.position) < kRobotRadius ||
+        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr))) {
+        return straight_trajectory;
+    }
+
+
+    std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal);
+
+
+    for (int i = 0; i < NUM_INTERMEDIATES; i++) {
+        rj_geometry::Point final_inter = intermediates[i];
+
+        for (double t = STEP_SIZE; t < final_inter.dist_to(start.position); t += STEP_SIZE) {
+            rj_geometry::Point intermediate = (final_inter - start.position).normalized(t) + start.position;
+    
+            
+            Trajectory trajectory = CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
+
+            RJ::Time first_hit_time = RJ::Time::max(), second_hit_time = RJ::Time::max();;
+            bool first_hits = trajectory_hits_static(trajectory, static_obstacles, start_time, &first_hit_time);
+            
+            if ((!first_hits)) {
+                return trajectory;
+            }
+        }
+    }
+
+    return straight_trajectory;
+}
+
+
+std::vector<rj_geometry::Point> get_intermediates(
+    const LinearMotionInstant& start,
+    const LinearMotionInstant& goal) {
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> scale_dist(MIN_SCALE, MAX_SCALE);
+    double angle_range = MAX_ANGLE - MIN_ANGLE;
+    std::uniform_real_distribution<> angle_dist(-angle_range, angle_range);
+
+    std::vector<rj_geometry::Point> intermediates;
+    std::vector<std::pair<double, double>> inter_pairs;
+
+    for (int i = 0; i < NUM_INTERMEDIATES; i++) {
+        double angle = angle_dist(gen);
+        angle += std::copysign(MIN_ANGLE, angle);
+        angle = degrees_to_radians(angle);
+        double scale = scale_dist(gen);
+
+        inter_pairs.emplace_back(angle, scale);   
+    }
+    sort(inter_pairs.begin(), inter_pairs.end());
+    
+    for (int i = 0; i < NUM_INTERMEDIATES; i++) {
+        double angle = inter_pairs[i].first;
+        double scale = inter_pairs[i].second;
+
+        double fin_angle = goal.position.angle_to(start.position) + angle;
+        double fin_length = scale;
+        intermediates.push_back(start.position + rj_geometry::Point{fin_length * cos(fin_angle), fin_length * sin(fin_angle)});
+    }
+
+    return intermediates;
+}
+
 }  // namespace planning::CreatePath
