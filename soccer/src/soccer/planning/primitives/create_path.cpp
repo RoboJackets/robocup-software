@@ -85,7 +85,7 @@ Trajectory intermediate(const LinearMotionInstant& start,
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
 
-    // maybe we don't need an RRT
+    // maybe straight line works
     Trajectory straight_trajectory =
         CreatePath::simple(start, goal, motion_constraints, start_time);
 
@@ -97,22 +97,20 @@ Trajectory intermediate(const LinearMotionInstant& start,
     }
 
 
+    // Generate list of intermediate points
     std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal);
 
 
     for (int i = 0; i < NUM_INTERMEDIATES; i++) {
         rj_geometry::Point final_inter = intermediates[i];
 
+        // Step through the path from the robot to the final intermediate point
+        // and test that as an intermediate point
         for (double t = STEP_SIZE; t < final_inter.dist_to(start.position); t += STEP_SIZE) {
-            rj_geometry::Point intermediate = (final_inter - start.position).normalized(t) + start.position;
-    
-            
+            rj_geometry::Point intermediate = (final_inter - start.position).normalized(t) + start.position;            
             Trajectory trajectory = CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
-
-            RJ::Time first_hit_time = RJ::Time::max(), second_hit_time = RJ::Time::max();;
-            bool first_hits = trajectory_hits_static(trajectory, static_obstacles, start_time, &first_hit_time);
             
-            if ((!first_hits)) {
+            if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 return trajectory;
             }
         }
