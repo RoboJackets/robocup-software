@@ -28,6 +28,7 @@
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
+#include "strategy/agent/position/line.hpp"
 
 namespace strategy {
 
@@ -146,9 +147,9 @@ private:
         //     return;
         // }
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
+            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             current_position_->die();
             current_position_ = std::make_unique<Pos>(*current_position_);
         }
