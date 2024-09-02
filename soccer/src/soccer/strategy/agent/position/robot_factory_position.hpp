@@ -28,6 +28,7 @@
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
+#include "strategy/agent/position/line.hpp"
 
 namespace strategy {
 
@@ -145,8 +146,8 @@ private:
         //     SPDLOG_INFO("we are never leaving defense :)");
         //     return;
         // }
+        SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            SPDLOG_INFO("Robot {}: change {}", current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
             current_position_->die();

@@ -216,6 +216,8 @@ bool RobotFactoryPosition::am_closest_kicker() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    set_current_position<Line>();
+    return;
     // zoner defense testing
     // if (robot_id_ == goalie_id_) {
     //     return;
