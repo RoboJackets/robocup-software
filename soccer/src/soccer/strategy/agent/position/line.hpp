@@ -18,7 +18,6 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-    int robot_id_;
     bool forward_ = true;
     bool vertical_ = false;
     bool face_target_ = false;
