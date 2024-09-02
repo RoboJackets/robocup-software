@@ -40,6 +40,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/path_target_path_planner.cpp
     planning/planner/pivot_path_planner.cpp
     planning/planner/line_pivot_path_planner.cpp
+    planning/planner/rotate_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_path_planner.cpp
     planning/planner/goalie_idle_path_planner.cpp

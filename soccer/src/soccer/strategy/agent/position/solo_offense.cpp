@@ -53,7 +53,7 @@ SoloOffense::State SoloOffense::next_state() {
         case TO_BALL: {
             if (check_is_done()) {
                 target_ = calculate_best_shot();
-                return KICK;
+                return TO_BALL;
             }
         }
         case KICK: {
@@ -81,8 +81,10 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
         }
         case TO_BALL: {
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
-            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
-                                                     false, last_world_state_->ball.position};
+            auto pivot_cmd = planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false, 
+            last_world_state_->get_robot(true, robot_id_).pose.position()};
+            //planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
+            //                                         false, last_world_state_->ball.position}; // get_robot(true, robot_id_).pose.position()
             pivot_cmd.pivot_radius = kRobotRadius * 2.5;
             intent.motion_command = pivot_cmd;
             return intent;
