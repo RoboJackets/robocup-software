@@ -43,14 +43,13 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 
-    linear_constraints.max_speed = 0;
-    linear_constraints.max_acceleration = 0;
+    SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
+    SPDLOG_INFO("Pivot point y is {}", pivot_point.y());
 
-    SPDLOG_INFO("Pivot point is {}", pivot_point.y());
+    auto final_position = pivot_point + (pivot_point - pivot_target).normalized();
 
-    auto final_position = pivot_point; // pivot_point + (pivot_point - pivot_target).normalized();
-
-    SPDLOG_INFO("Final position is {}", final_position.y());
+    // SPDLOG_INFO("Final position x is {}", final_position.x());
+    // SPDLOG_INFO("Final position y is {}", final_position.y());
 
     std::vector<Point> points;
 
@@ -69,12 +68,15 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadius);
 
     points.push_back(start_instant.position());
-    for (int i = 1; i <= interpolations; i++) {
-        double percent = (double) i / interpolations;
-        double angle = start_angle + angle_change * percent;
-        Point point = Point::direction(angle).normalized() + pivot_point;
-        points.push_back(point);
-    }
+    points.push_back(pivot_point);
+    // for (int i = 1; i <= interpolations; i++) {
+    //     double percent = (double) i / interpolations;
+    //     double angle = start_angle + angle_change * percent;
+    //     SPDLOG_INFO("Normalized value x is {}" , Point::direction(angle).normalized().x());
+    //     SPDLOG_INFO("Normalized value y is {}" , Point::direction(angle).normalized().y());
+    //     Point point = Point::direction(angle).normalized() + pivot_point;
+    //     points.push_back(point);
+    // }
 
     BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
 
