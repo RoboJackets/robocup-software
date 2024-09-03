@@ -221,9 +221,9 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Trajectory path = CreatePath::rrt(start_instant.linear_motion(), target_robot_intersection,
+        Trajectory path = CreatePath::intermediate(start_instant.linear_motion(), target_robot_intersection,
                                           plan_request.constraints.mot, start_instant.stamp,
-                                          static_obstacles, dynamic_obstacles);
+                                          static_obstacles);
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -333,8 +333,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
                                    settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut =
-            CreatePath::rrt(start_instant.linear_motion(), target, plan_request.constraints.mot,
-                            start_instant.stamp, static_obstacles, dynamic_obstacles);
+            CreatePath::intermediate(start_instant.linear_motion(), target, plan_request.constraints.mot,
+                            start_instant.stamp, static_obstacles);
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),

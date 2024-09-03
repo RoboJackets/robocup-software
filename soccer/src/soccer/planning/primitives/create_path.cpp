@@ -105,17 +105,19 @@ Trajectory intermediate(const LinearMotionInstant& start,
         rj_geometry::Point final_inter = intermediates[i];
 
         // Step through the path from the robot to the final intermediate point
-        // and test that as an intermediate point
+        // and test each point on that path as an intermediate point
         for (double t = STEP_SIZE; t < final_inter.dist_to(start.position); t += STEP_SIZE) {
             rj_geometry::Point intermediate = (final_inter - start.position).normalized(t) + start.position;            
             Trajectory trajectory = CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
             
+            // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 return trajectory;
             }
         }
     }
 
+    // If all else fails, return the straight-line trajectory
     return straight_trajectory;
 }
 
@@ -126,8 +128,13 @@ std::vector<rj_geometry::Point> get_intermediates(
 
     std::random_device rd;
     std::mt19937 gen(rd());
+    // Create a random distribution for the distance between the start
+    // and the intermediate points
     std::uniform_real_distribution<> scale_dist(MIN_SCALE, MAX_SCALE);
+
     double angle_range = MAX_ANGLE - MIN_ANGLE;
+    // Create a random distribution for the angle between the start
+    // and the intermediate points
     std::uniform_real_distribution<> angle_dist(-angle_range, angle_range);
 
     std::vector<rj_geometry::Point> intermediates;
@@ -139,8 +146,13 @@ std::vector<rj_geometry::Point> get_intermediates(
         angle = degrees_to_radians(angle);
         double scale = scale_dist(gen);
 
+        // Generate random pairs of distances and angles
         inter_pairs.emplace_back(angle, scale);   
     }
+
+    // Sort the list of pairs by the angle
+    // This ensures that we take paths with 
+    // smaller offsets from the simple path
     sort(inter_pairs.begin(), inter_pairs.end());
     
     for (int i = 0; i < NUM_INTERMEDIATES; i++) {
@@ -149,6 +161,8 @@ std::vector<rj_geometry::Point> get_intermediates(
 
         double fin_angle = goal.position.angle_to(start.position) + angle;
         double fin_length = scale;
+
+        // Convert the distances and angles into a point
         intermediates.push_back(start.position + rj_geometry::Point{fin_length * cos(fin_angle), fin_length * sin(fin_angle)});
     }
 
