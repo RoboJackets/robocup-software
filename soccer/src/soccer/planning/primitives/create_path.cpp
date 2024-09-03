@@ -75,11 +75,9 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
-Trajectory intermediate(const LinearMotionInstant& start,
-               const LinearMotionInstant& goal,
-               const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const rj_geometry::ShapeSet& static_obstacles) {
-    
+Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
+                        const MotionConstraints& motion_constraints, RJ::Time start_time,
+                        const rj_geometry::ShapeSet& static_obstacles) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -96,10 +94,8 @@ Trajectory intermediate(const LinearMotionInstant& start,
         return straight_trajectory;
     }
 
-
     // Generate list of intermediate points
     std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal);
-
 
     for (int i = 0; i < NUM_INTERMEDIATES; i++) {
         rj_geometry::Point final_inter = intermediates[i];
@@ -107,9 +103,11 @@ Trajectory intermediate(const LinearMotionInstant& start,
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
         for (double t = STEP_SIZE; t < final_inter.dist_to(start.position); t += STEP_SIZE) {
-            rj_geometry::Point intermediate = (final_inter - start.position).normalized(t) + start.position;            
-            Trajectory trajectory = CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
-            
+            rj_geometry::Point intermediate =
+                (final_inter - start.position).normalized(t) + start.position;
+            Trajectory trajectory =
+                CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
+
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 return trajectory;
@@ -121,11 +119,8 @@ Trajectory intermediate(const LinearMotionInstant& start,
     return straight_trajectory;
 }
 
-
-std::vector<rj_geometry::Point> get_intermediates(
-    const LinearMotionInstant& start,
-    const LinearMotionInstant& goal) {
-
+std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
+                                                  const LinearMotionInstant& goal) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
@@ -147,14 +142,14 @@ std::vector<rj_geometry::Point> get_intermediates(
         double scale = scale_dist(gen);
 
         // Generate random pairs of distances and angles
-        inter_pairs.emplace_back(angle, scale);   
+        inter_pairs.emplace_back(angle, scale);
     }
 
     // Sort the list of pairs by the angle
-    // This ensures that we take paths with 
+    // This ensures that we take paths with
     // smaller offsets from the simple path
     sort(inter_pairs.begin(), inter_pairs.end());
-    
+
     for (int i = 0; i < NUM_INTERMEDIATES; i++) {
         double angle = inter_pairs[i].first;
         double scale = inter_pairs[i].second;
@@ -163,7 +158,8 @@ std::vector<rj_geometry::Point> get_intermediates(
         double fin_length = scale;
 
         // Convert the distances and angles into a point
-        intermediates.push_back(start.position + rj_geometry::Point{fin_length * cos(fin_angle), fin_length * sin(fin_angle)});
+        intermediates.push_back(start.position + rj_geometry::Point{fin_length * cos(fin_angle),
+                                                                    fin_length * sin(fin_angle)});
     }
 
     return intermediates;
