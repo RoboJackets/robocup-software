@@ -6,11 +6,25 @@ namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                  const AngleFunction& angle_function,
-                 const RotationConstraints& /* constraints */) {
+                 const RotationConstraints& constraints) {
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
-        throw std::invalid_argument("Cannot profile angles for empty trajectory.");
+        trajectory->append_instant(start_instant);
+        double delta_angle = angle_function(start_instant.linear_motion(), start_instant.heading(), nullptr);
+        double time = Trapezoidal::get_time(delta_angle, delta_angle, constraints.max_speed, constraints.max_accel, 0, 0);
+
+        SPDLOG_INFO("Delta Algne: {}", delta_angle);
+        SPDLOG_INFO("Time: {}", time);
+        for (int i = 1; i < time / TIME_STEP; i++) {
+            double pos_out = 0;
+            double speed_out = 0;
+            Trapezoidal::trapezoidal_motion(delta_angle, constraints.max_speed, constraints.max_accel, i * TIME_STEP, 0, 0, pos_out, speed_out);
+            trajectory->append_instant(RobotInstant{rj_geometry::Pose{start_instant.position(), pos_out + start_instant.heading}, rj_geometry::Twist{start_instant.linear_velocity(), speed_out}, start_instant.stamp + RJ::Seconds(i * TIME_STEP)});
+            SPDLOG_INFO("speed_out: {}", speed_out);
+        }
+        trajectory->mark_angles_valid();
+        return;
     }
 
     if (!trajectory->check_time(start_time)) {

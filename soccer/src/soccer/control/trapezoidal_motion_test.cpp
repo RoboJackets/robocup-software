@@ -16,7 +16,7 @@ bool trapezoid1(double t, double& pos_out, double& speed_out) {
     double start_speed = 0;
     double final_speed = 0;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {
@@ -34,7 +34,7 @@ bool trapezoid2(double t, double& pos_out, double& speed_out) {
     double start_speed = 1;
     double final_speed = 0;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {
@@ -55,7 +55,7 @@ bool triangle1(double t, double& pos_out, double& speed_out) {
     double start_speed = 0;
     double final_speed = 0;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {
@@ -76,7 +76,7 @@ bool triangle2(double t, double& pos_out, double& speed_out) {
     double start_speed = 0;
     double final_speed = 0;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {
@@ -97,7 +97,7 @@ bool triangle3(double t, double& pos_out, double& speed_out) {
     double start_speed = 1;
     double final_speed = 1;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {
@@ -118,7 +118,7 @@ bool triangle4(double t, double& pos_out, double& speed_out) {
     double start_speed = 1;
     double final_speed = 0;
 
-    bool valid = trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
+    bool valid = Trapezoidal::trapezoidal_motion(path_length, max_speed, max_acc, t, start_speed, final_speed,
                                     pos_out, speed_out);
 
     if (valid) {

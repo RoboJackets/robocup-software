@@ -112,7 +112,7 @@ double Trapezoidal::get_time(double distance, double path_length, double max_spe
     }
 }
 
-bool trapezoidal_motion(double path_length, double max_speed, double max_acc, double time_into_lap,
+bool Trapezoidal::trapezoidal_motion(double path_length, double max_speed, double max_acc, double time_into_lap,
                         double start_speed, double final_speed, double& pos_out,
                         double& speed_out) {
     // begin by assuming that there's enough time to get up to full speed

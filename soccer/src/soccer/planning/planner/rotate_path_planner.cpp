@@ -40,58 +40,52 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    auto pivot_point = command.pivot_point;
+    auto pivot_point = request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position();
     auto pivot_target = command.target.position;
 
     SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
     SPDLOG_INFO("Pivot point y is {}", pivot_point.y());
 
-    auto final_position = pivot_point + (pivot_point - pivot_target).normalized();
-
+    auto final_position = pivot_point;
     // SPDLOG_INFO("Final position x is {}", final_position.x());
     // SPDLOG_INFO("Final position y is {}", final_position.y());
 
     std::vector<Point> points;
 
-    MotionConstraints new_constraints = request.constraints.mot;
-    new_constraints.max_speed = std::min(new_constraints.max_speed, rotation_constraints.max_speed) * .5;
+    double start_angle = 
+        request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.heading();
 
-    double start_angle = pivot_point.angle_to(
-        request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position()
-    );
-    double target_angle = pivot_point.angle_to(final_position);
+    double target_angle = pivot_point.angle_to(pivot_target);
     double angle_change = fix_angle_radians(target_angle - start_angle);
+    SPDLOG_INFO("target anlge: {}", target_angle);
+    SPDLOG_INFO("current angle: {}", start_angle);
 
     cached_angle_change_ = angle_change;
 
     constexpr double kMaxInterpolationRadius = 10 * M_PI / 100;
     const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadius);
 
-    points.push_back(start_instant.position());
-    points.push_back(pivot_point);
+    Trajectory path{};
+    // path.append_instant(start_instant);
     // for (int i = 1; i <= interpolations; i++) {
-    //     double percent = (double) i / interpolations;
-    //     double angle = start_angle + angle_change * percent;
-    //     SPDLOG_INFO("Normalized value x is {}" , Point::direction(angle).normalized().x());
-    //     SPDLOG_INFO("Normalized value y is {}" , Point::direction(angle).normalized().y());
-    //     Point point = Point::direction(angle).normalized() + pivot_point;
-    //     points.push_back(point);
+    //     auto instant = RobotInstant{Pose{start_instant.position(), }};
+    //     path.append_instant(instant);
+    // }
+    // SPDLOG_INFO("leng: {}", points.size());
+
+    // BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
+
+    // Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0, linear_constraints, start_instant.stamp);
+
+    // if (!Twist::nearly_equals(path.last().velocity, Twist::zero())) {
+    //     RobotInstant last;
+    //     last.position() = final_position;
+    //     last.velocity = Twist::zero();
+    //     last.stamp = path.end_time() + 100ms;
+    //     path.append_instant(last);
     // }
 
-    BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
-
-    Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0, linear_constraints, start_instant.stamp);
-
-    if (!Twist::nearly_equals(path.last().velocity, Twist::zero())) {
-        RobotInstant last;
-        last.position() = final_position;
-        last.velocity = Twist::zero();
-        last.stamp = path.end_time() + 100ms;
-        path.append_instant(last);
-    }
-    path.hold_for(RJ::Seconds(3.0));
-
-    plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);
+    plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
     path.stamp(RJ::now());
 
     return path;
