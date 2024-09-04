@@ -8,6 +8,7 @@
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
+#include "control/trapezoidal_motion.hpp"
 
 namespace planning {
 
@@ -114,4 +115,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
+
+constexpr double TIME_STEP = 0.001;
 }  // namespace planning
