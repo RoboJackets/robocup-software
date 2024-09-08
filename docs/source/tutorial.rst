@@ -321,8 +321,7 @@ team. If you're still stuck, your software lead is happy to give you some hints
 and troubleshoot bugs.
 
 Your task is to create a new position, like Offense, Defense, or Goalie. Your
-new position will be called Runner. Note that this class is not a ROS node
-like the last class you made, but it will be a subclass of ``position.hpp``. 
+new position will be called Runner. It will be a subclass of ``position.hpp``. 
 
 Some useful C++ resources:
 
