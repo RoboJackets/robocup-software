@@ -23,7 +23,7 @@ Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
 }
 
 bool RotatePathPlanner::is_done() const {
-    if (!cached_angle_change_.has_value()) {
+    if (!cached_angle_change_) {
         return false;
     }
     return abs(cached_angle_change_.value()) < degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
@@ -46,47 +46,40 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
     SPDLOG_INFO("Pivot point y is {}", pivot_point.y());
 
-    auto final_position = pivot_point;
-    // SPDLOG_INFO("Final position x is {}", final_position.x());
-    // SPDLOG_INFO("Final position y is {}", final_position.y());
-
-    std::vector<Point> points;
-
     double start_angle = 
         request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.heading();
 
     double target_angle = pivot_point.angle_to(pivot_target);
     double angle_change = fix_angle_radians(target_angle - start_angle);
-    SPDLOG_INFO("target anlge: {}", target_angle);
     SPDLOG_INFO("current angle: {}", start_angle);
+    SPDLOG_INFO("cached_target_agne: {}", cached_target_angle_.value_or(0));
+    SPDLOG_INFO("target angle: {}", target_angle);
 
     cached_angle_change_ = angle_change;
+    SPDLOG_INFO("cached angle change: {}", *cached_angle_change_);
 
-    constexpr double kMaxInterpolationRadius = 10 * M_PI / 100;
-    const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationRadius);
 
     Trajectory path{};
-    // path.append_instant(start_instant);
-    // for (int i = 1; i <= interpolations; i++) {
-    //     auto instant = RobotInstant{Pose{start_instant.position(), }};
-    //     path.append_instant(instant);
-    // }
-    // SPDLOG_INFO("leng: {}", points.size());
 
-    // BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
+    if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(1)) {
+        if (cached_path_) {
+           path = cached_path_.value();
+        }
+        else {
+            SPDLOG_INFO("reset");
+            plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+            path.stamp(RJ::now());
+            cached_path_ = path;
+        }   
+    } else {
+        SPDLOG_INFO("reset");
+        cached_path_.reset();
+        plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+        path.stamp(RJ::now());
+        cached_path_ = path;
+    }
 
-    // Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0, linear_constraints, start_instant.stamp);
-
-    // if (!Twist::nearly_equals(path.last().velocity, Twist::zero())) {
-    //     RobotInstant last;
-    //     last.position() = final_position;
-    //     last.velocity = Twist::zero();
-    //     last.stamp = path.end_time() + 100ms;
-    //     path.append_instant(last);
-    // }
-
-    plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
-    path.stamp(RJ::now());
+    cached_target_angle_ = target_angle;
 
     return path;
 }

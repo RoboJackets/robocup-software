@@ -11,9 +11,9 @@ SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
-    if (new_state != current_state_) {
-        // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
-    }
+    // if (new_state != current_state_) {
+    // }
+    SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     current_state_ = new_state;
 
     // Calculate task based on state
@@ -51,13 +51,19 @@ SoloOffense::State SoloOffense::next_state() {
             return TO_BALL;
         }
         case TO_BALL: {
+            SPDLOG_INFO("{}", (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag());
+            if ((last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() < kRobotDiameter){
+                return ROTATE;
+            }
+        }
+        case ROTATE: {
             if (check_is_done()) {
                 target_ = calculate_best_shot();
-                return TO_BALL;
+                return KICK;
             }
         }
         case KICK: {
-            if (check_is_done()) {
+            if (check_is_done() || (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() > kRobotDiameter * 3) {
                 return TO_BALL;
             }
         }
@@ -80,12 +86,16 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TO_BALL: {
+            planning::LinearMotionInstant target{last_world_state_->ball.position};
+            auto pivot_cmd = planning::MotionCommand{"path_target", target, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            return intent;
+        }
+        case ROTATE: {
             planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
             auto pivot_cmd = planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
-            //planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
-            //                                         false, last_world_state_->ball.position}; // get_robot(true, robot_id_).pose.position()
-            pivot_cmd.pivot_radius = kRobotRadius * 2.5;
             intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 1;
             return intent;
         }
         case KICK: {

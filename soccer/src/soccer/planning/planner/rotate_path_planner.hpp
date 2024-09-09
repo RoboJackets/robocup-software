@@ -24,6 +24,7 @@ namespace planning {
         Trajectory plan(const PlanRequest& request) override;
 
         void reset() override {
+            cached_target_angle_ = std::nullopt;
             cached_angle_change_ = std::nullopt;
         }
         [[nodiscard]] bool is_done() const override;
@@ -31,7 +32,10 @@ namespace planning {
     private:
         Trajectory previous_;
         
-        std::optional<double> cached_angle_change_; // equivalent to previously recorded accorded
+        std::optional<double> cached_target_angle_; // equivalent to previously recorded accorded
+        std::optional<double> cached_angle_change_;
+
+        std::optional<Trajectory> cached_path_;
 
         PathTargetPathPlanner path_target_{};
 
