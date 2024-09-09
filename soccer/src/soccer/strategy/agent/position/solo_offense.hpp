@@ -36,7 +36,7 @@ private:
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { TO_BALL, KICK, MARKER };
+    enum State { TO_BALL, KICK, MARKER, ROTATE };
 
     State current_state_ = TO_BALL;
 
