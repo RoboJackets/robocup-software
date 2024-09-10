@@ -75,6 +75,9 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
+static std::optional<std::pair<double, double>> cached_intermediate_pair_{};
+
+
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles) {
@@ -146,7 +149,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         inter_pairs.emplace_back(angle, scale);
     }
 
-    if (planning::Replanner::cached_intermediate_pair_) {
+    if (cached_intermediate_pair_) {
         inter_pairs.push_back(*cached_intermediate_pair_);
     }
 

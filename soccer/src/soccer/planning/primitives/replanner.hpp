@@ -65,8 +65,6 @@ public:
         return RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
     }
 
-    std::optional<std::pair<double, double>> cached_intermediate_pair_;
-
 private:
     // Attempt a partial replan, and use it only if it is faster.
     static Trajectory check_better(const PlanParams& params,

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <random>
-
+#include <optional>
 #include "planning/motion_constraints.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/trajectory.hpp"
