@@ -100,12 +100,12 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     // Generate list of intermediate points
     std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal);
 
-    for (int i = 0; i < kNumIntermediates; i++) {
+    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         rj_geometry::Point final_inter = intermediates[i];
 
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
-        for (double t = kStepSize; t < final_inter.dist_to(start.position); t += kStepSize) {
+    for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position); t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             Trajectory trajectory =
@@ -129,9 +129,9 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
     // and the intermediate points
-    std::uniform_real_distribution<> scale_dist(kMinScale, kMaxScale);
+    std::uniform_real_distribution<> scale_dist(intermediate::PARAM_min_scale, intermediate::PARAM_max_scale);
 
-    double angle_range = kMaxAngle - kMinAngle;
+    double angle_range = intermediate::PARAM_max_angle - intermediate::PARAM_min_angle;
     // Create a random distribution for the angle between the start
     // and the intermediate points
     std::uniform_real_distribution<> angle_dist(-angle_range, angle_range);
@@ -139,9 +139,9 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     std::vector<rj_geometry::Point> intermediates;
     std::vector<std::pair<double, double>> inter_pairs;
 
-    for (int i = 0; i < kNumIntermediates; i++) {
+    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         double angle = angle_dist(gen);
-        angle += std::copysign(kMinAngle, angle);
+        angle += std::copysign(intermediate::PARAM_min_angle, angle);
         angle = degrees_to_radians(angle);
         double scale = scale_dist(gen);
 
@@ -158,7 +158,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     // smaller offsets from the simple path
     sort(inter_pairs.begin(), inter_pairs.end());
 
-    for (int i = 0; i < kNumIntermediates; i++) {
+    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         double angle = inter_pairs[i].first;
         double scale = inter_pairs[i].second;
 

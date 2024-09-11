@@ -32,9 +32,4 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal);
-
-constexpr double kMinScale = 0.5, kMaxScale = 1.5;
-constexpr double kMinAngle = 20, kMaxAngle = 140;
-constexpr int kNumIntermediates = 10;
-constexpr double kStepSize = 0.1;
 }  // namespace planning::CreatePath
