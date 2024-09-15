@@ -9,6 +9,7 @@ project(rj_config)
 # ======================================================================
 find_package(rclcpp REQUIRED)
 find_package(rj_msgs REQUIRED)
+find_package(fmt REQUIRED)
 
 # ======================================================================
 # Define Targets
@@ -25,7 +26,7 @@ add_subdirectory(src)
 # ======================================================================
 set(RJ_CONFIG_DEPS_INCLUDE_DIRS include)
 
-set(RJ_CONFIG_DEPS_LIBRARIES rj_constants rj_common rj_utils)
+set(RJ_CONFIG_DEPS_LIBRARIES rj_constants rj_common rj_utils fmt)
 
 # ======================================================================
 # Include and Linking
