@@ -1,10 +1,12 @@
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
+#include <optional>
+#include <string>
 
 #include <QtWidgets>
-#include <string>
-#include <optional>
+
+#include <rj_protos/LogFrame.pb.h>
+
 #include "ui_RobotStatusWidget.h"
 
 /**

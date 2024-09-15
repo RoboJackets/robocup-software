@@ -10,14 +10,14 @@
 #include <QResizeEvent>
 #include <QStyleOption>
 
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/segment.hpp>
-#include <rj_geometry/util.hpp>
 #include <log_utils.hpp>
 #include <planning/motion_constraints.hpp>
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/segment.hpp>
+#include <rj_geometry/util.hpp>
 
 using namespace std;
 

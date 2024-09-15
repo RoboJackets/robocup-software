@@ -177,15 +177,11 @@ void AgentActionClient::send_new_goal() {
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
-    send_goal_options.goal_response_callback = [this](auto arg) {
-        goal_response_callback(arg);
-    };
+    send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
     send_goal_options.feedback_callback = [this](auto arg1, auto arg2) {
         feedback_callback(arg1, arg2);
     };
-    send_goal_options.result_callback = [this](auto arg) {
-        result_callback(arg);
-    };
+    send_goal_options.result_callback = [this](auto arg) { result_callback(arg); };
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
 }
 
@@ -199,9 +195,7 @@ void AgentActionClient::send_new_goal() {
 // in the initializer. This will call the class which will analyze the
 // situation based on the current tick.
 
-void AgentActionClient::goal_response_callback(
-    GoalHandleRobotMove::SharedPtr goal_handle) {
-
+void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr goal_handle) {
     if (!goal_handle) {
         current_position_->set_goal_canceled();
     }

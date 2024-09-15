@@ -98,12 +98,11 @@ struct RosConverter<RJ::Time, builtin_interfaces::msg::Time> {
         return RosConverter<RJ::Time, rclcpp::Time>::from_ros(value);
     }
 };
-//std::chrono::duration_cast<std::chrono::nanoseconds>(value).count()
+// std::chrono::duration_cast<std::chrono::nanoseconds>(value).count()
 template <>
 struct RosConverter<RJ::Seconds, rclcpp::Duration> {
     static rclcpp::Duration to_ros(const RJ::Seconds& value) {
-        return rclcpp::Duration(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(value));
+        return rclcpp::Duration(std::chrono::duration_cast<std::chrono::nanoseconds>(value));
     }
     static RJ::Seconds from_ros(const rclcpp::Duration& value) {
         const std::chrono::nanoseconds dur(value.nanoseconds());
