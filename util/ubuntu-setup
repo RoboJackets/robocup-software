@@ -28,7 +28,7 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # don't add repositorie
     ADD_REPOS=false
 elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
     if cat /etc/os-release | grep -iq '^VERSION=.*22.04'; then # Using Ubuntu 20.04
-        echo "Ubuntu 20.04 Detected..."
+        echo "Ubuntu 22.04 Detected..."
         SYSTEM="ubuntu-22.04"
         ADD_REPOS=false
     else
