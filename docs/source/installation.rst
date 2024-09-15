@@ -5,13 +5,13 @@ Installation
    If you are completely unfamiliar with the command line or basic git
    usage, see the Tutorial page before proceeding. 
 
-We only provide official support for Ubuntu 20.04 due to ROS2. Make sure you
-are on an Ubuntu 20.04 machine before continuing. For Windows users, using WSL2
-with Ubuntu 20.04 will work. The steps to set this up can be found `here
+We only provide official support for Ubuntu 22.04 due to ROS2. Make sure you
+are on an Ubuntu 22.04 machine before continuing. For Windows users, using WSL2
+with Ubuntu 22.04 will work. The steps to set this up can be found `here
 <https://ubuntu
 .com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_. For Mac
-users, Ubuntu 20.04 can be emulated in a virtual machine. For M1 Macs
-specifically, using the arm64 version of Ubuntu 20.04 with the application UTM
+users, Ubuntu 22.04 can be emulated in a virtual machine. For M1 Macs
+specifically, using the arm64 version of Ubuntu 22.04 with the application UTM
 has worked in the past.
 
 First, clone the repository from GitHub:
