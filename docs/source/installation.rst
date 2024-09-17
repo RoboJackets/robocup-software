@@ -29,7 +29,7 @@ install all required dependencies:
 
 To simulate the vision data we'd get from a real field camera setup, we'll use
 ER-Force's simulator. For that, clone their repo, and ``cd`` into it. Note, this should
-NOT be cloned inside the `robocup-software` repository, so you should `cd ..` if necesary.
+NOT be cloned inside the ``robocup-software`` repository, so you should ``cd ..`` if necesary.
 
 .. code-block:: sh
 
