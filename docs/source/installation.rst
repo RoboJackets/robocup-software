@@ -25,10 +25,11 @@ install all required dependencies:
 
 .. code-block:: bash
 
-    cd robocup-software ./util/ubuntu-setup && ./util/git-setup
+    cd robocup-software && ./util/ubuntu-setup && ./util/git-setup
 
 To simulate the vision data we'd get from a real field camera setup, we'll use
-ER-Force's simulator. For that, clone their repo, and ``cd`` into it.
+ER-Force's simulator. For that, clone their repo, and ``cd`` into it. Note, this should
+NOT be cloned inside the `robocup-software` repository, so you should `cd ..` if necesary.
 
 .. code-block:: sh
 
@@ -83,7 +84,7 @@ Then, source the ROS setup file. This allows your shell to use ROS commands.
 
 .. code-block:: bash
 
-    source /opt/ros/foxy/setup.bash
+    source /opt/ros/humble/setup.bash
 
 If you're on zsh, source ``setup.zsh`` instead. (If you don't know what
 zsh is, you're not on zsh.)
