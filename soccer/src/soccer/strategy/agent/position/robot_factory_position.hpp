@@ -146,7 +146,7 @@ private:
         //     return;
         // }
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            SPDLOG_INFO("Robot {}: change {}", current_position_->get_name());
+            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
             current_position_->die();
