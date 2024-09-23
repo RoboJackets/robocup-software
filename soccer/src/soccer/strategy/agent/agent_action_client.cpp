@@ -6,6 +6,7 @@
 
 #include "game_state.hpp"
 #include "rj_constants/topic_names.hpp"
+#include "strategy/agent/position/line.hpp"
 
 namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
