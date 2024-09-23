@@ -145,10 +145,15 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
     /*                  sim_robot->dribbler_speed()); */
     /* } */
 
-
-    if (robot_id = 2) {
-        SPDLOG_INFO("manip spee: {}", manipulator.dribbler_speed);
-        SPDLOG_INFO("dribbler speed: {}", sim_robot->dribbler_speed());
+    static bool temp = false;
+    if (robot_id == 1) {
+        if (manipulator.dribbler_speed == 1 || temp) {
+            SPDLOG_INFO("manip spee: {}", manipulator.dribbler_speed);
+            temp = true;
+            if (manipulator.dribbler_speed != 1) temp = false;
+        } else {
+            temp = false;
+        }
     }
     socket_.send_to(buffer(out), robot_control_endpoint_);
 }

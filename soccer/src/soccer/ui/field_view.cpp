@@ -6,6 +6,7 @@
 
 #include <QLayout>
 #include <QPainter>
+#include <QPainterPath>
 #include <QResizeEvent>
 #include <QStyleOption>
 
