@@ -131,6 +131,7 @@ void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
     msg->battery_voltage = status.battery_voltage;
     msg->motor_errors = status.motors_healthy;
     msg->has_ball_sense = status.has_ball;
+    SPDLOG_INFO("ID: {} HAS BALL: {}", msg->robot_id, msg->has_ball_sense);
     msg->kicker_charged = status.kicker == RobotStatus::KickerState::kCharged;
     msg->kicker_healthy = status.kicker != RobotStatus::KickerState::kFailed;
     msg->fpga_error = !status.fpga_healthy;
@@ -318,7 +319,16 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     command->set_left(-static_cast<float>(motion.velocity_x_mps));
     command->set_angular(static_cast<float>(motion.velocity_z_radps));
 
-    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * manipulator.dribbler_speed));
+    sim->set_dribbler_speed(2000 - 1 * i);
+    i = -i;
+
+    // SPDLOG_INFO("ID: {}", sim->id());
+    // SPDLOG_INFO("forward: {}", sim->move_command().local_velocity().forward());
+    // SPDLOG_INFO("left: {}", sim->move_command().local_velocity().left());
+    // SPDLOG_INFO("angular: {}", sim->move_command().local_velocity().angular());
+    // SPDLOG_INFO("Kick Speed: {}", sim->kick_speed());
+    // SPDLOG_INFO("Kick Angle: {}", sim->kick_angle());
+    // SPDLOG_INFO("Dribbler Speed: {}", sim->dribbler_speed());
 }
 
 }  // namespace ConvertTx

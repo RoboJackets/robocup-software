@@ -65,5 +65,5 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
                 RobotCommand* sim);
-
+static int i = 1;
 }  // namespace ConvertTx
