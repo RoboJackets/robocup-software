@@ -75,7 +75,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
-static std::optional<std::pair<double, double>> cached_intermediate_pair_{};
+static std::optional<std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
@@ -105,7 +105,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
 
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
-    for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position); t += intermediate::PARAM_step_size) {
+        for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position); t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             Trajectory trajectory =
@@ -113,7 +113,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
 
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
-                cached_intermediate_pair_ = {(final_inter - start.position).angle(), (final_inter - start.position).mag()};
+                auto angle = (final_inter - start.position).angle();
+                cached_intermediate_tuple_ = {abs(angle), signbit(angle) ? -1 : 1, (final_inter - start.position).mag()};
                 return trajectory;
             }
         }
@@ -137,7 +138,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     std::uniform_real_distribution<> angle_dist(-angle_range, angle_range);
 
     std::vector<rj_geometry::Point> intermediates;
-    std::vector<std::pair<double, double>> inter_pairs;
+    std::vector<std::tuple<double, double, double>> inter_tuples;
 
     for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         double angle = angle_dist(gen);
@@ -145,22 +146,22 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         angle = degrees_to_radians(angle);
         double scale = scale_dist(gen);
 
-        // Generate random pairs of distances and angles
-        inter_pairs.emplace_back(angle, scale);
+        // Generate random tuples of distances and angles
+        inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
     }
 
-    if (cached_intermediate_pair_) {
-        inter_pairs.push_back(*cached_intermediate_pair_);
+    if (cached_intermediate_tuple_) {
+        inter_tuples.push_back(*cached_intermediate_tuple_);
     }
 
-    // Sort the list of pairs by the angle
+    // Sort the list of tuples by the magnitude of angle
     // This ensures that we take paths with
     // smaller offsets from the simple path
-    sort(inter_pairs.begin(), inter_pairs.end());
+    sort(inter_tuples.begin(), inter_tuples.end());
 
     for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
-        double angle = inter_pairs[i].first;
-        double scale = inter_pairs[i].second;
+        double angle = std::get<0>(inter_tuples[i]) * std::get<1>(inter_tuples[i]);
+        double scale = std::get<2>(inter_tuples[i]);
 
         double fin_angle = goal.position.angle_to(start.position) + angle;
         double fin_length = scale;
