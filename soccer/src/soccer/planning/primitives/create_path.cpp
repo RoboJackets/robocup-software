@@ -77,7 +77,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
 
 static std::optional<std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
-
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles) {
@@ -105,7 +104,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
 
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
-        for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position); t += intermediate::PARAM_step_size) {
+        for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position);
+             t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             Trajectory trajectory =
@@ -114,7 +114,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
-                cached_intermediate_tuple_ = {abs(angle), signbit(angle) ? -1 : 1, (final_inter - start.position).mag()};
+                cached_intermediate_tuple_ = {abs(angle), signbit(angle) ? -1 : 1,
+                                              (final_inter - start.position).mag()};
                 return trajectory;
             }
         }
@@ -130,7 +131,8 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
     // and the intermediate points
-    std::uniform_real_distribution<> scale_dist(intermediate::PARAM_min_scale, intermediate::PARAM_max_scale);
+    std::uniform_real_distribution<> scale_dist(intermediate::PARAM_min_scale,
+                                                intermediate::PARAM_max_scale);
 
     double angle_range = intermediate::PARAM_max_angle - intermediate::PARAM_min_angle;
     // Create a random distribution for the angle between the start
