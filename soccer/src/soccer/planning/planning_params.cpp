@@ -41,14 +41,18 @@ DEFINE_NS_INT64(kPlanningParamModule, rrt, min_iterations, 50,
 DEFINE_NS_INT64(kPlanningParamModule, rrt, max_iterations, 500,
                 "Maximum number of RRT iterations to run before giving up");
 
-
-DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_scale, 0.5, "Minimum length for intermediate point (m)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_scale, 1.5, "Maximum length for intermediate point (m)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_angle, 20, "Minimum angle for intermediate point (deg)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_angle, 140, "Maximum angle for intermediate point (deg)");
-DEFINE_NS_INT64(kPlanningParamModule, intermediate, num_intermediates, 5, "Number of intermediate points used (unitless)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, step_size, 0.1, "Step size for testing intermediates (m)");
-
+DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_scale, 0.5,
+                  "Minimum length for intermediate point (m)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_scale, 1.5,
+                  "Maximum length for intermediate point (m)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_angle, 20,
+                  "Minimum angle for intermediate point (deg)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_angle, 140,
+                  "Maximum angle for intermediate point (deg)");
+DEFINE_NS_INT64(kPlanningParamModule, intermediate, num_intermediates, 5,
+                "Number of intermediate points used (unitless)");
+DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, step_size, 0.1,
+                  "Step size for testing intermediates (m)");
 
 DEFINE_NS_FLOAT64(
     kPlanningParamModule, escape, step_size, 0.1,
