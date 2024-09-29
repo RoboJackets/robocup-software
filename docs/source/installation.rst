@@ -129,10 +129,15 @@ If everything is working properly, you should see the following window show up.
 
 Docker Setup
 ------------
-Instead of using a virtual machine, you can also install robocup software using Docker. 
-The Docker image has our software stack and all the dependencies pre-installed with 
-a desktop GUI. The steps for installation can be found on
-`DockerHub
+Instead of using a virtual machine, you can also install our software using Docker. 
+The Docker image has our tech stack and all the dependencies pre-installed with 
+a desktop GUI. The Docker setup should work on any platform (Windows, Mac, ARM, AMD, etc.).
+
+Before you start, make sure you have Docker installed on your computer. The steps for doing
+so can be found at https://docs.docker.com/engine/install/.
+
+Once you have Docker installed, please follow the steps for installing and using our RoboCup 
+image at `DockerHub
 <https://hub.docker.com/r/robojackets/robocup-software>`_.
 
 Shortcuts
