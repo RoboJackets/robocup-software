@@ -1,8 +1,11 @@
 #pragma once
 
+#include <optional>
+#include <random>
+
 #include "planning/motion_constraints.hpp"
-#include "planning/trajectory.hpp"
 #include "planning/primitives/path_smoothing.hpp"
+#include "planning/trajectory.hpp"
 
 namespace planning::CreatePath {
 
@@ -24,4 +27,10 @@ Trajectory simple(
     const MotionConstraints& motion_constraints, RJ::Time start_time,
     const std::vector<rj_geometry::Point>& intermediate_points = {});
 
+Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
+                        const MotionConstraints& motion_constraints, RJ::Time start_time,
+                        const rj_geometry::ShapeSet& static_obstacles);
+
+std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
+                                                  const LinearMotionInstant& goal);
 }  // namespace planning::CreatePath
