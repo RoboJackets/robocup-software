@@ -137,16 +137,19 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
 
     std::string out;
     sim_packet.SerializeToString(&out);
+
+    if (robot_id == -1) {
     
-    SPDLOG_INFO("size: {}", out.size());
+        SPDLOG_INFO("size: {}", out.size());
 
-    std::string print = "";
+        std::string print = "";
 
-    for (auto &c : out) {
-        print += std::to_string(static_cast<int>(c)) + " ";
+        for (auto &c : out) {
+            print += std::to_string(static_cast<int>(c)) + " ";
+        }
+
+        SPDLOG_INFO("msg: {}", print);
     }
-
-    SPDLOG_INFO("msg: {}", print);
 
     // print kick speed
     // TODO(Alex): replace with UI indicator
