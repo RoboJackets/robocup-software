@@ -94,6 +94,8 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
+    strategy/agent/position/runner.cpp
+    
 
         )
 
