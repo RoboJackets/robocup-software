@@ -34,7 +34,7 @@ _pythonpath_add() {
 # No direct replacement for the command exists, and in Ubuntu 22.04,
 # this script will produce a warning about this. We may need to find a
 # replacement library in the future.
-_PYTHON_LIB_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(prefix='${_INSTALL_PATH}'))")
+_PYTHON_LIB_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))")
 _pythonpath_add "${_PYTHON_LIB_PATH}"
 unset _PYTHON_LIB_PATH
 
