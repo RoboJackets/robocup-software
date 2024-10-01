@@ -159,8 +159,6 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         drawer_.publish();
     }
 
-    set_velocity(setpoint, rj_geometry::Twist{rj_geometry::Point{}, 1.4});
-
     if (maybe_target) {
         RobotState desired_state;
         desired_state.pose = maybe_target->pose;

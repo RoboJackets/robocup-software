@@ -74,7 +74,7 @@ void Radio::tick() {
                                          .shoot_mode(ManipulatorSetpoint::SHOOT_MODE_KICK)
                                          .trigger_mode(ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN)
                                          .kick_speed(0)
-                                         .dribbler_speed(2000);
+                                         .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
             send_control_message(i, motion, manipulator, positions_.at(i));
         }
