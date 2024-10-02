@@ -72,11 +72,11 @@ run-sim:
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
-	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
-	ROS_LOCALHOST_ONLY=1 ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
 
 run-sim-ex: run-sim-external
 
@@ -95,7 +95,7 @@ run-manual:
 
 # same as run-real, with different server port
 run-alt-real:
-	ROS_DOMAIN_ID=2 ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
 
 # run sim2play (requires external referee)
 run-sim2play:
