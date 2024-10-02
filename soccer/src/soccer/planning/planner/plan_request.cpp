@@ -74,10 +74,55 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         // Draw ball obstacle in simulator
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(ball_obs, draw_color);
+            // in.debug_drawer->draw_circle(ball_obs, draw_color);
         }
 
         out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
+
+        auto maybe_bp_point = in.play_state.ball_placement_point();
+        if (maybe_bp_point.has_value()) {
+            rj_geometry::Point bp_point = maybe_bp_point.value();
+            auto ball_obs2 = make_inflated_static_obs(bp_point, in.world_state->ball.velocity, kBallRadius + kAvoidBallDistance);
+            double x1 = ball_obs.center.x();
+            double y1 = ball_obs.center.y();
+            double x2 = ball_obs2.center.x();
+            double y2 = ball_obs2.center.y();
+
+            double rect_x_left = x1 - (y2 - y1) / (2 * ball_obs.radius());
+            double rect_y_left = y1 + (x2 - x1) / (2 * ball_obs.radius());
+
+            double rect_x_right = x2 + (y2 - y1) / (2 * ball_obs.radius());
+            double rect_y_right = y2 - (x2 - x1) / (2 * ball_obs2.radius());
+
+            rj_geometry::Point rect_top_left{rect_x_left, rect_y_left};
+            rj_geometry::Point rect_bottom_right{rect_x_right, rect_y_right};
+
+            rj_geometry::Rect rect_obs{rect_top_left, rect_bottom_right};
+
+            rj_geometry::CompositeShape track_obs{};
+            std::shared_ptr<rj_geometry::Shape> ball_obs_ptr = std::make_shared<rj_geometry::Shape>(ball_obs);
+            std::shared_ptr<rj_geometry::Shape> rect_obs_ptr = std::make_shared<rj_geometry::Shape>(rect_obs);
+            std::shared_ptr<rj_geometry::Shape> ball_obs2_ptr = std::make_shared<rj_geometry::Shape>(ball_obs2);
+            track_obs.add(ball_obs_ptr);
+            track_obs.add(rect_obs_ptr);
+            track_obs.add(ball_obs2_ptr);
+
+            out_static->add(std::make_shared<rj_geometry::CompositeShape>(std::move(track_obs)));
+
+            if (in.debug_drawer != nullptr) {
+                QColor draw_color = Qt::red;
+                in.debug_drawer->draw_circle(ball_obs, draw_color);
+                in.debug_drawer->draw_rect(rect_obs, draw_color);
+                in.debug_drawer->draw_circle(ball_obs2, draw_color);
+            }
+        }
+
+        // replace with composite shape: 2 circles + rectangle
+        // circle 1: center of ball position, radius is kBallRadius + kAvoidBallDistance
+        // rectangle 1: top left of robot is (x1 - (y2 - y1)/(2 * (ball_obs.radius())), y1 + (x2 - x1)/(2 * (ball_obs.radius())))
+        // bottom right of the robot is (x2 + (y2 - y1)/(2 * (ball_obs.radius())), y2 - (x2 - x1)/(2 * (ball_obs.radius())))
+        // (x1, y1) is ball position, (x2, y2) is ball placement position
+        // circle 2: center of ball placement position, radius is kBallRadius + kAvoidBallDistance
     }
 }
 
