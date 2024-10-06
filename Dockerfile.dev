@@ -1,0 +1,98 @@
+# The image has been pushed to rishiso/robocup-software:latest on DockerHub
+# Please read https://hub.docker.com/repository/docker/rishiso/robocup-software/general for usage
+
+# Use the official Ubuntu 22.04 image
+FROM ubuntu:22.04
+
+# Set environment variables for non-interactive installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV USER=root
+ENV DISPLAY=:1
+
+# Define the architecture-specific variable
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH}
+
+# Update the package list and install necessary packages, including the missing ones
+RUN apt-get update && \
+    apt-get install -y \
+    xfce4 xfce4-goodies \
+    tightvncserver \
+    xterm \
+    sudo \
+    dbus-x11 \
+    git \
+    net-tools \
+    vim \
+    python3 \
+    python3-pip \
+    curl \
+    wget \
+    cmake \
+    build-essential \
+    lsb-release \
+    software-properties-common \
+    gnupg \
+    locales \
+    && apt-get clean
+
+# Install websockify and its dependencies (latest stable version)
+RUN pip3 install --upgrade websockify
+
+# Download and install the latest stable version of noVNC from GitHub
+RUN git clone https://github.com/novnc/noVNC.git /opt/noVNC && \
+    cd /opt/noVNC && \
+    git checkout v1.3.0 && \
+    ln -s /opt/noVNC/vnc.html /opt/noVNC/index.html
+
+# Setup the VNC server configuration
+RUN mkdir -p /root/.vnc && \
+    echo "#!/bin/bash\nxrdb $HOME/.Xresources\nstartxfce4 &" > /root/.vnc/xstartup && \
+    chmod +x /root/.vnc/xstartup
+
+# Clone RoboJackets RoboCup software and install dependencies
+RUN git clone https://github.com/RoboJackets/robocup-software.git /root/robocup-software
+
+# Set timezone to avoid interactive prompt
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Install dependencies
+RUN cd /root/robocup-software && \
+    ./util/ubuntu-setup -y || { echo 'ubuntu-setup script failed' ; exit 1; }
+
+RUN cd /root/robocup-software && \
+    ./util/git-setup || { echo 'git-setup script failed' ; exit 1; }
+
+# Clone and build ER-Force’s simulator
+RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework && \
+    cd /root/framework && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make simulator-cli
+
+# Use bash to source the ROS2 setup file and run make perf
+RUN bash -c "source /opt/ros/humble/setup.bash && \
+    cd /root/robocup-software && make perf && \
+    source install/setup.bash"
+
+# Install external ref (conditionally download the correct binary based on architecture)
+RUN cd /root && \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.12.3/ssl-game-controller_v3.12.3_linux_amd64 -L -O; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.12.3/ssl-game-controller_v3.12.3_linux_arm64 -L -O; \
+    fi && \
+    chmod +x ssl-game-controller_v3.12.3_linux_*
+
+# Expose the VNC, noVNC, and external ref ports
+EXPOSE 5901 6080 8081
+
+# Start the VNC server and noVNC services
+CMD ["/bin/bash", "-c", "\
+    rm -rf /tmp/.X1-lock /tmp/.X11-unix/X1 && \
+    mkdir -p /root/.vnc && \
+    echo 'password' | vncpasswd -f > /root/.vnc/passwd && \
+    chmod 600 /root/.vnc/passwd && \
+    vncserver :1 -geometry 1920x1080 -depth 24 && \
+    /opt/noVNC/utils/novnc_proxy --vnc localhost:5901 --listen 6080"]

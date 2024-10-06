@@ -5,6 +5,8 @@ Installation
    If you are completely unfamiliar with the command line or basic git
    usage, see the Tutorial page before proceeding. 
 
+Virtual Machine Setup
+---------------------
 We only provide official support for Ubuntu 22.04 due to ROS2. Make sure you
 are on an Ubuntu 22.04 machine before continuing. For Windows users, using WSL2
 with Ubuntu 22.04 will work. The steps to set this up can be found `here
@@ -125,6 +127,18 @@ If everything is working properly, you should see the following window show up.
 
    ./_static/soccer.png
 
+Docker Setup
+------------
+Instead of using a virtual machine, you can also install our software using Docker. 
+The Docker image has our tech stack and all the dependencies pre-installed with 
+a desktop GUI. The Docker setup should work on any platform (Windows, Mac, ARM, AMD, etc.).
+
+Before you start, make sure you have Docker installed on your computer. The steps for doing
+so can be found at https://docs.docker.com/engine/install/.
+
+Once you have Docker installed, please follow the steps for installing and using our RoboCup 
+image at `DockerHub
+<https://hub.docker.com/r/robojackets/robocup-software>`_.
 
 Shortcuts
 ---------
