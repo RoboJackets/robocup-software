@@ -1,5 +1,5 @@
 # Use phusion/baseimage if problems arise
-FROM ros:foxy-ros-base-focal
+FROM ros:humble-ros-base-jammy
 LABEL maintainer="oswinso@gmail.com"
 
 # Setup apt to be happy with no console input

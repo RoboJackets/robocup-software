@@ -95,7 +95,7 @@ from above, as well as a working knowledge of Git (which you can get either
 online (`Git Guide`_) or from the "Contributing"
 page).
 
-Once you've installed, play around with the simulator a little bit. Be familiar 
+Once you've installed, play around with the simulator a little bit. Be familiar
 with how to move the ball (click), take a shot (right click and drag), move a robot
 (click and drag), and issue the basic referee commands: stop, halt, and force start.
 (Buttons in the top left)
@@ -128,18 +128,18 @@ Next, create a new branch under this naming scheme:
 For instance, the author's branch would be named
 ``kevin-fu/robocup-sw-tutorial``.
 
-Launch soccer (our UI) and the ER-force simulator, same way as you did in the 
+Launch soccer (our UI) and the ER-force simulator, same way as you did in the
 installation guide. Press the green check mark. You should see three wallers
-and one goalie move into position. Click anywhere on the field to place the 
+and one goalie move into position. Click anywhere on the field to place the
 ball in that location. You should see all five robots move between the ball
 and the goal.
 
-Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``. 
+Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``.
 Find the line of code that calculates the ``wall_spacing`` and double its value.
 
 Re-build the project (:sh:`make again`) and run the simulator again. You should
 see the wallers more spread out. Note that this is probably a less effective wall!
-This change is just for educational purposes. 
+This change is just for educational purposes.
 
 **Take a screenshot of your new wall.***
 
@@ -158,7 +158,7 @@ how, or see the previous section on git), then commit them:
    this case, "double wall spacing" is fine.
 
    Without the -m flag, git commit will open a nano (or whatever your
-   default text editor is set to) and ask you to type in 
+   default text editor is set to) and ask you to type in
    a commit msg. -m is a bit faster.
 
 When you commit, you should see our pre-commit hooks run. These are automated
@@ -268,108 +268,7 @@ the runner (and every other robot on our team) move much more quickly.
 Take a screen recording of this whole process and send it to your software lead
 via Slack. Feel free to play around with any other params you see!
 
-5. Action Clients and building a position
------------------------------------------
-
-Background
-~~~~~~~~~~~
-
-This section introduces more concepts of ROS and our strategy. 
-
-First, read this page and do some research if you need to get an understanding
-of ROS actions. Our strategy stack is centered around an Action Server and six
-Action Clients, each of which represent a robot on the field. 
-
-Also, take a second to understand the difference between
-strategy and planning in our stack. Strategy is responsible for high level decisions,
-such as robot movement, kicking procedure, robot communication, and referee interaction. Planning is responsible
-for taking the instructions from strategy and turning them into trajectories and commands a robot can execute,
-which are relayed to our physical robots by the radio.
-
-The Action Server is housed by the Planner node, which is the node responsible for turning requests
-for robot actions into trajectories for the robot to follow.
-
-The Action Clients are created by the AgentActionClient node which contain some 
-other useful subscriptions to get information about the field and referee.
-
-At any given time, an AgentActionClient is playing a single position. 
-It creates a RobotFactoryPosition instance and checks for its task,
-which it then relays to the planner using ROS actions. Take a look through ``agent_action_client.cpp`` to get a better understanding of this process. 
-
-Strategy decisions are delegated to the Positions. This makes
-sense with respect to soccer—players play differently based on their position.
-
-There are three major positions: Offense, Defense, and Goalie. You may see
-some others, but these are only for special game cases.
-
-Robots independently make choices on what position to play via the RobotFactoryPosition.
-The RobotFactoryPosition follows the factory design pattern, as it generates
-different position instances (e.g., Offense) based on the game state, and returns
-the relevant intent from whatever position it is playing.
-
-Take some time to read through Offense, Defense, and Goalie, paying special 
-attention to how they each implement ``state_to_task`` and ``update_state``.
-This is called a finite state machine, and it is a crucial concept to get the 
-hang of. Here's a simple article to get you started: `Finite State Machines`_ 
-
-Instructions
-~~~~~~~~~~~~
-
-This is the most open-ended part of the tutorial, but you got this! 
-Remember, if you get stuck, ask Google first. Then, check with your peers. We're a very collaborative
-team. If you're still stuck, your software lead is happy to give you some hints
-and troubleshoot bugs.
-
-Your task is to create a new position, like Offense, Defense, or Goalie. Your
-new position will be called Runner. It will be a subclass of ``position.hpp``. 
-
-Some useful C++ resources:
-
-* `C++ Classes`_
-* `C++ Inheritance`_ 
-
-Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
-If you're feeling creative, the shape it runs in can be any polygon with 4 or more sides. 
-
-A runner's process looks like this:
-
-#. Run along first side of shape 
-#. Continue until done
-#. Run along second side of shape
-#. Continue until done
-#. Run along third side of shape
-#. Continue until done
-
-etc, starting over when it finishes the shape.
-
-Hopefully, you're seeing how this list lends nicely to a state machine, where states are sides
-and you know to switch states based on when the robot has reached a vertex (the end of its path).
-
-You will need to look through the other positions to figure out the details of creating this position,
-but here are some more hints.
-
-* The motion command for driving in a straight line is :cpp:`"path_target"`.
-* You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
-* The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
-
-Testing
-~~~~~~~
-
-To test your new position, the robot(s) needs to know to use it.
-Recall that the RobotFactoryPosition (``robot_factory_position.cpp``) is how the robot assigns itself a position.
-Take some time to review this file. RobotFactoryPosition is a subclass of Postion, just like your new runner.
-However, it determines what intent to return by calling ``get_task`` on the ``current_position_`` instance, which in our case should be your runner!
-
-You only want one Runner robot, so just set the robot with ID 1 to always be a Runner. See how this is done in the constructor with Offense.
-You will also need to change other methods as well (i.e. ``set_default_position``) so the position is not overridden on later ticks.
-
-Wrapping up
-~~~~~~~~~~~
-Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!
-
-Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Congratulations!
-
-6. ROS and C++
+5. ROS and C++
 --------------
 
 Much like Section 4, this section is our version of an official ROS
@@ -379,7 +278,7 @@ on any of the readings from section 4 that you need to. Ignore
 "Prerequisites"--our workspace is already set up for you, and we'll walk through
 instructions for building your code here.
 
-This section is by far the most difficult of the tutorial. 
+This section is by far the most difficult of the tutorial.
 
 **Read the rest of this section before starting.**
 
@@ -391,7 +290,7 @@ and picks a fruit to match. Our robots have to stay motivated somehow!
 
 You can find the team color by subscribing to the relevant topic (this should
 become obvious after looking at the list of topics). To "pick a fruit", publish
-a standard `String Msg`_ 
+a standard `String Msg`_
 to a new topic ``/team_fruit``.
  * When our team color is yellow, publish "banana" to ``/team_fruit``.
  * When our team color is blue, publish "blueberries" to ``/team_fruit``.
@@ -405,7 +304,7 @@ declarations and docstrings explaining their use. Source files contain the
 function definitions--that is, the code that actually makes the functions work.
 This allows for many files to share access to the same methods or classes
 without copy-pasting their entire implementation by importing the right header
-files. 
+files.
 
 (For more information, check out `Headers and Includes`_ resource.)
 
@@ -413,7 +312,7 @@ Let's take a look at a real example in our codebase to make this more
 understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
 last section, you used :sh:`rqt` to launch the Node Graph. One of the nodes that
 subscribe and publish to various topics is ``/radio``, and these files are the
-source of that node. 
+source of that node.
 
 Comparing the similarities and differences between the subscribers and
 publishers in these files vs. the ROS tutorial will help you learn what you can
@@ -427,7 +326,7 @@ As a brief overview to help you get started...
   include certain things; again, check out the ROS tutorial.
 
 * The header file defines Radio to be subclass of rclcpp::Node (see :cpp:`public rclcpp::Node`).
-  This means the Radio has access to all the methods of rclcpp::Node 
+  This means the Radio has access to all the methods of rclcpp::Node
   (notice that Node is under :cpp:`namespace rclcpp`!).
 
 * The header file also categorizes all variables and methods of the Radio
@@ -447,7 +346,7 @@ As a brief overview to help you get started...
    .. code-block:: cpp
 
       create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
-               control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1), 
+               control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1),
                [this, i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {
                   manipulators_cached_.at(i) = *manipulator;
                });
@@ -457,7 +356,7 @@ see in the ROS tutorial. A lambda expression is just a concise way of defining
 a function without giving it a name. This is only suitable when you know you
 don't want to reuse a function (since without a name, you can't reference that
 function anywhere else). and requires less lines of code when compared to
-having another function. 
+having another function.
 
 Read more about `Lambda Expressions`_
 if you would like.
@@ -488,7 +387,7 @@ Well, both NetworkRadio and SimRadio have an associated <name>_main.cpp file
 (e.g. ``sim_radio_node_main``) which contains the main function for its
 respective node. This structure is intended to make writing the CMake files for
 the directory easier. We use `CMake`_ to compile
-our C++ programs on a variety of different hardware architectures. 
+our C++ programs on a variety of different hardware architectures.
 
 As a result, to compile and use your new node, you'll need to add your new
 source files to the right CMake files.
@@ -519,7 +418,7 @@ Let's start looking at all the magic CMake text that builds our cpp code:
 
 The rest is up to you. Keep using SimRadio as an example. Search through and
 find the parts of the CMake file where SimRadio is used, then follow that
-format for your own node. 
+format for your own node.
 
 It's okay if you don't understand everything that's going on. (Honestly, CMake
 files are one of those things we re-learn when adding new nodes and forget
@@ -535,7 +434,7 @@ You're almost there! The final file to get your node up and running is the
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
 initial parameters, and other requirements. Find the ``robocup-software/launch``
 directory and open the file that seems most relevant to your new node.
-(HINT: Your node should be located in ``robocup-software/soccer``.) 
+(HINT: Your node should be located in ``robocup-software/soccer``.)
 
 Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node's names. If you want to read more about ROS
@@ -546,7 +445,7 @@ Testing
 ~~~~~~~
 
 Whew! What a section. If you've made it this far, you should have everything
-you need to create the SoccerMom node. 
+you need to create the SoccerMom node.
 
 This section will probably take you a while. Remember, when you run into
 issues, your order of question-asking should be:
@@ -607,15 +506,15 @@ career.
 Here are all the external links from this document, copied again for your easy reference
 
 * `Command Line Basics`_
-  
+
 .. _Command Line Basics: https://ubuntu.com/tutorials/command-line-for-beginners#1-overview
 
 * `Git Guide`_
-  
+
 .. _Git Guide: https://rogerdudler.github.io/git-guide/
 
 * `Beginner CLI Tools`_
-  
+
 .. _Beginner CLI Tools: https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>
 
 * `Install Groovy`_
@@ -635,7 +534,7 @@ Here are all the external links from this document, copied again for your easy r
 .. _Headers and Includes: https://cplusplus.com/articles/Gw6AC542/
 
 * `Access Specifiers`_
-  
+
 .. _Access Specifiers: https://www.w3schools.com/cpp/cpp_access_specifiers.asp
 
 * `Lambda Expressions`_
@@ -658,7 +557,7 @@ Here are all the external links from this document, copied again for your easy r
 
 .. _Launch Files Tutorial: https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html
 
-* `Finite State Machines`_ 
+* `Finite State Machines`_
 
 .. _Finite State Machines: https://medium.com/@mlbors/what-is-a-finite-state-machine-6d8dec727e2c
 
@@ -666,6 +565,6 @@ Here are all the external links from this document, copied again for your easy r
 
 .. _C++ Classes: https://www.learncpp.com/cpp-tutorial/classes-and-class-members/
 
-* `C++ Inheritance`_ 
+* `C++ Inheritance`_
 
 .. _C++ Inheritance: https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/

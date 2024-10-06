@@ -20,6 +20,7 @@
 #include "strategy/agent/position/free_kicker.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
+#include "strategy/agent/position/line.hpp"
 #include "strategy/agent/position/offense.hpp"
 #include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
@@ -149,6 +150,7 @@ private:
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
+            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             current_position_->die();
             current_position_ = std::make_unique<Pos>(*current_position_);
         }
