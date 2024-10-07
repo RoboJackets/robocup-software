@@ -2,19 +2,15 @@
 
 namespace strategy {
 
-Waller::Waller(int waller_num, int total_wallers) {
+Waller::Waller(int waller_num, std::vector<u_int8_t> walling_robots) {
     defense_type_ = "Waller";
     waller_pos_ = waller_num;
-    total_wallers_ = total_wallers;
+    walling_robots_ = walling_robots;
 }
 
 std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState* world_state,
                                             FieldDimensions field_dimensions) {
-    rj_geometry::Point ball_location{world_state->ball.position};
-
-    // Get Goal Location (Always (0,0)) as of creation
-    rj_geometry::Point goal_center_point{0, 0};
-
+                                    
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
     // from vision
@@ -24,39 +20,26 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
                         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)))};
 
-    // Find ball_direction unit vector
-    rj_geometry::Point ball_dir_vector{(ball_location - goal_center_point)};
-    // (avoid div by 0)
-    ball_dir_vector /= (ball_dir_vector.mag() + 0.000001);
+    SPDLOG_INFO("asdf : {}", min_wall_rad);
 
-    // Find target Point
-    rj_geometry::Point mid_point{(goal_center_point) + (ball_dir_vector * min_wall_rad)};
+    auto motion_command = planning::MotionCommand{"waller"};    
+    motion_command.waller_radius = min_wall_rad;
+    motion_command.waller_id = waller_pos_;
 
-    // Calculate the wall spacing
-    auto wall_spacing = robot_diameter_multiplier_ * kRobotDiameter + kBallRadius;
+    auto ball_pos = world_state->ball.position;
 
-    // Calculate the target point
-    rj_geometry::Point target_point{};
+    uint8_t parent_id;
+    if (ball_pos.x() < world_state->get_robot(true, intent.robot_id).pose.position().x()) {
+        parent_id = walling_robots_[waller_pos_ - 2];
+    } else {
+        parent_id = walling_robots_[waller_pos_];
+    }
 
-    target_point =
-        mid_point +
-        ball_dir_vector * ((total_wallers_ - waller_pos_ - (total_wallers_ / 2)) * wall_spacing);
+    motion_command.waller_parent = parent_id;
 
-    target_point = target_point.rotate(mid_point, M_PI / 2);
 
-    // Stop at end of path
-    rj_geometry::Point target_vel{0.0, 0.0};
+    intent.motion_command = motion_command;
 
-    // Face ball
-    planning::PathTargetFaceOption face_option{planning::FaceBall{}};
-
-    // Avoid ball
-    bool ignore_ball{true};
-
-    // Create Motion Command
-    planning::LinearMotionInstant target{target_point, target_vel};
-    intent.motion_command =
-        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
     return intent;
 }
 
