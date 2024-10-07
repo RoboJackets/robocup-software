@@ -82,6 +82,7 @@ add_executable(external_referee_node)
 add_executable(planner_node)
 add_executable(control_node)
 add_executable(sim_radio_node)
+add_executable(soccermom_node)
 add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
@@ -225,6 +226,10 @@ target_link_libraries(internal_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_L
 target_link_libraries(sim_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
         ${RADIO_NODE_DEPS_LIBRARIES})
 
+# -- soccermom_node --
+target_link_libraries(soccermom_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${RADIO_NODE_DEPS_LIBRARIES})
+
 # -- network_radio_node --
 target_link_libraries(network_radio_node PRIVATE ${RADIO_NODE_DEPS_SYSTEM_LIBRARIES}
         ${RADIO_NODE_DEPS_LIBRARIES})
@@ -289,6 +294,7 @@ install(
         planner_node
         control_node
         sim_radio_node
+        soccermom_node
         network_radio_node
         manual_control_node
         global_param_server_node
