@@ -58,6 +58,10 @@ struct MotionCommand {
     bool ignore_ball{false};
     rj_geometry::Point pivot_point{};
     double pivot_radius{kRobotRadius};
+    double waller_radius{0};
+    uint8_t waller_id{};
+    uint8_t num_wallers{};
+    uint8_t waller_parent{};
 };
 bool operator==(const MotionCommand& a, const MotionCommand& b);
 
@@ -113,6 +117,16 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         // convert the pivot radius
         result.pivot_radius.push_back(from.pivot_radius);
 
+        // convert pivot point
+        result.waller_parent.push_back(from.waller_parent);
+
+        // convert the pivot radius
+        result.waller_radius.push_back(from.pivot_radius);     
+
+        result.waller_id.push_back(from.waller_id);   
+        
+        result.num_wallers.push_back(from.num_wallers);   
+
         return result;
     }
 
@@ -152,6 +166,24 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         if (!from.pivot_radius.empty()) {
             result.pivot_radius = from.pivot_radius[0];
+        }
+
+        // convert waller
+        if (!from.waller_parent.empty()) {
+            result.waller_parent = from.waller_parent[0];
+        }
+
+        if (!from.waller_radius.empty()) {
+            result.waller_radius = from.waller_radius[0];
+        }
+
+        if (!from.waller_id.empty()) {
+            result.waller_id = from.waller_id[0];
+        }
+
+
+        if (!from.num_wallers.empty()) {
+            result.num_wallers = from.num_wallers[0];
         }
 
         return result;

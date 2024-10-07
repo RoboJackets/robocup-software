@@ -6,3 +6,7 @@ bool[<=1] face_ball
 bool[<=1] ignore_ball
 rj_geometry_msgs/Point[<=1] pivot_point
 float64[<=1] pivot_radius
+float64[<=1] waller_radius
+uint8[<=1] waller_parent
+uint8[<=1] waller_id
+uint8[<=1] num_wallers

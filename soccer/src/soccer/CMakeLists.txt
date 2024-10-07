@@ -38,6 +38,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/intercept_path_planner.cpp
     planning/planner/line_kick_path_planner.cpp
     planning/planner/path_target_path_planner.cpp
+    planning/planner/waller_path_planner.cpp
     planning/planner/pivot_path_planner.cpp
     planning/planner/line_pivot_path_planner.cpp
     planning/planner/plan_request.cpp
