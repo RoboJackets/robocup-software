@@ -36,7 +36,12 @@ Zoner::State Zoner::next_state() {
 }
 
 std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
-    switch (current_state_) {
+
+    planning::LinearMotionInstant target{{4, 11}, {0.0, 0.0}};
+    intent.motion_command =
+        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+
+    /*switch (current_state_) {
         case WALL: {
             float box_w{field_dimensions_.penalty_long_dist()};
             float box_h{field_dimensions_.penalty_short_dist()};
@@ -114,7 +119,7 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
             intent.motion_command =
                 planning::MotionCommand{"path_target", target, face_option, ignore_ball};
             return intent;
-        }
+        } */
     }
 }
 
