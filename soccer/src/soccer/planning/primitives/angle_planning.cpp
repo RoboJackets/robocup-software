@@ -12,15 +12,26 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
     if (trajectory->empty()) {
         trajectory->append_instant(start_instant);
         double delta_angle = angle_function(start_instant.linear_motion(), start_instant.heading(), nullptr) - start_instant.heading();
-        double time = Trapezoidal::get_time(delta_angle, delta_angle, constraints.max_speed, constraints.max_accel, 0, 0);
+        
+        if (delta_angle > M_PI) {
+            delta_angle -= 2 * M_PI;
+        }
+
+        if (delta_angle < -M_PI) {
+            delta_angle += 2 * M_PI;
+        }
+
+        double time = Trapezoidal::get_time(abs(delta_angle), abs(delta_angle), constraints.max_speed, constraints.max_accel, 0, 0);
+        
 
         SPDLOG_INFO("delta angle: {}", delta_angle);
         for (int i = 1; i < time / TIME_STEP; i++) {
             double pos_out = 0;
             double speed_out = 0;
-            Trapezoidal::trapezoidal_motion(delta_angle, constraints.max_speed, constraints.max_accel, i * TIME_STEP, 0, 0, pos_out, speed_out);
+            Trapezoidal::trapezoidal_motion(abs(delta_angle), constraints.max_speed, constraints.max_accel, i * TIME_STEP, 0, 0, pos_out, speed_out);
+            pos_out *= std::signbit(delta_angle) ? -1 : 1;
             trajectory->append_instant(RobotInstant{rj_geometry::Pose{start_instant.position(), pos_out + start_instant.heading()}, rj_geometry::Twist{start_instant.linear_velocity(), speed_out}, start_instant.stamp + RJ::Seconds(i * TIME_STEP)});
-            // SPDLOG_INFO("speed_out: {}", speed_out);
+            SPDLOG_INFO("pos_out: {}", pos_out);
         }
         trajectory->mark_angles_valid();
         return;

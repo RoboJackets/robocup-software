@@ -60,36 +60,6 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
 
     Trajectory path{};
-    auto func = [=](const LinearMotionInstant& instant, double previous_angle,
-               Eigen::Vector2d* jacobian) -> double {
-
-                    if ((instant.position - pivot_target).mag() < kRobotRadius) {
-                        return previous_angle;
-                    }
-
-                    if (jacobian != nullptr) {
-                        rj_geometry::Point displacement = pivot_target - instant.position;
-                        double distance_sq = displacement.magsq();
-                        *jacobian =
-                            Eigen::Vector2d(displacement.rotate(-M_PI / 2) / distance_sq);
-                    }
-
-                    double delta_forward = instant.position.angle_to(pivot_target);
-                    double delta_reverse = fix_angle_radians(M_PI + delta_forward);
-
-                    // double delta_forward = fix_angle_radians(instant.velocity.angle() - previous_angle);
-                    // double delta_reverse = fix_angle_radians(M_PI + instant.velocity.angle() - previous_angle);
-
-                    double result = 0.0;
-
-                    if (std::abs(delta_forward) < std::abs(delta_reverse)) {
-                        result = delta_forward;
-                    } else {
-                        result = delta_reverse;
-                    }
-
-                    return result;
-                };
 
     if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(1)) {
         if (cached_path_) {
@@ -97,16 +67,16 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
         }
         else {
             // SPDLOG_INFO("reset");
-            // plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
-            plan_angles(&path, start_instant, func, request.constraints.rot);
+            plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+            // plan_angles(&path, start_instant, func, request.constraints.rot);
             path.stamp(RJ::now());
             cached_path_ = path;
         }
     } else {
         // SPDLOG_INFO("reset");
         cached_path_.reset();
-        // plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
-        plan_angles(&path, start_instant, func, request.constraints.rot);
+        plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+        // plan_angles(&path, start_instant, func, request.constraints.rot);
         path.stamp(RJ::now());
         cached_path_ = path;
     }

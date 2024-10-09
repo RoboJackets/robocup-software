@@ -11,9 +11,9 @@ SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    if (new_state != current_state_) {
+        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    }
     current_state_ = new_state;
 
     // Calculate task based on state
