@@ -29,46 +29,42 @@ Trajectory WallerPathPlanner::plan(const PlanRequest& request) {
     rj_geometry::Point target_point{};
     SPDLOG_INFO("Radius: {}", waller_radius);
     SPDLOG_INFO("Midpoint: ({}, {})", mid_point.x(), mid_point.y());
+    SPDLOG_INFO("Waller ID: {}", waller_id);
+
 
     if (abs(robot_pos.dist_to(goal_pos) - waller_radius) > kRobotRadius) {
+        SPDLOG_INFO("CASE ONE");
         auto angle = (mid_point - goal_pos).angle();
         auto delta_angle = (wall_spacing * abs(waller_id - num_wallers / 2. + 0.5)) / waller_radius;
         auto target_angle = angle - delta_angle * (signbit(waller_id - num_wallers / 2. + 0.5) ? -1 : 1);
 
         target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
 
-    } else if (ball_pos.x() < robot_pos.x()) {
-        if (waller_id == 1) {
-            auto angle = (mid_point - goal_pos).angle();
-            auto delta_angle = (wall_spacing * abs(waller_id - num_wallers / 2. + 0.5)) / waller_radius;
-            auto target_angle = angle - delta_angle * (signbit(waller_id - num_wallers / 2. + 0.5) ? -1 : 1);
-
-            target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
-
-
-            SPDLOG_INFO("Target: ({}, {})", target_point.x(), target_point.y());
-        } else {
-            auto angle = (parent_point - goal_pos).angle();
-            auto delta_angle = wall_spacing / waller_radius;
-            auto target_angle = angle - delta_angle;
-
-            target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
-        }
     } else {
-        if (waller_id == num_wallers) {
-            auto angle = (mid_point - goal_pos).angle();
-            auto delta_angle = (wall_spacing * abs(waller_id - num_wallers / 2. + 0.5)) / waller_radius;
-            auto target_angle = angle - delta_angle * (signbit(waller_id - num_wallers / 2. + 0.5) ? -1 : 1);
+        auto angle = (mid_point - goal_pos).angle();
+        auto delta_angle = (wall_spacing * abs(waller_id - num_wallers / 2. + 0.5)) / waller_radius;
+        auto target_angle = angle - delta_angle * (signbit(waller_id - num_wallers / 2. + 0.5) ? -1 : 1);
 
-            target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
+        target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
+
+        if (target_point.x() < robot_pos.x()) {
+            SPDLOG_INFO("CASE TWO");
+            
         } else {
-            auto angle = (parent_point - goal_pos).angle();
-            auto delta_angle = wall_spacing / waller_radius;
-            auto target_angle = angle + delta_angle;
+            SPDLOG_INFO("CASE THREE");        
+        }
+
+        if ((target_point.x() < robot_pos.x() && waller_id != 1) || (target_point.x() > robot_pos.x() && waller_id != num_wallers)) {
+            SPDLOG_INFO("FOLLOWING PARENT AT ({}, {})", parent_point.x(), parent_point.y());
+            angle = (parent_point - goal_pos).angle();
+            delta_angle = wall_spacing / waller_radius;
+            target_angle = angle - delta_angle;
 
             target_point = (goal_pos + Point{1, 0}).normalized(waller_radius).rotated(target_angle);
         }
     }
+
+    SPDLOG_INFO("TARGET POS: ({}, {})", target_point.x(), target_point.y());
 
     PlanRequest modified_request = request;
     LinearMotionInstant target{target_point};

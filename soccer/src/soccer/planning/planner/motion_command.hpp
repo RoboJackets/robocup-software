@@ -121,7 +121,7 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         result.waller_parent.push_back(from.waller_parent);
 
         // convert the pivot radius
-        result.waller_radius.push_back(from.pivot_radius);     
+        result.waller_radius.push_back(from.waller_radius);     
 
         result.waller_id.push_back(from.waller_id);   
         

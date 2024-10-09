@@ -20,22 +20,24 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     double min_wall_rad{(kRobotRadius * 4.0f) + line_w +
                         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)))};
 
-    SPDLOG_INFO("asdf : {}", min_wall_rad);
-
     auto motion_command = planning::MotionCommand{"waller"};    
     motion_command.waller_radius = min_wall_rad;
     motion_command.waller_id = waller_pos_;
+    
+    SPDLOG_INFO("IN: {}", waller_pos_);
 
     auto ball_pos = world_state->ball.position;
 
     uint8_t parent_id;
-    if (ball_pos.x() < world_state->get_robot(true, intent.robot_id).pose.position().x()) {
+    if (waller_pos_ > 1 && ball_pos.x() < world_state->get_robot(true, intent.robot_id).pose.position().x()) {
         parent_id = walling_robots_[waller_pos_ - 2];
-    } else {
+    } else if (waller_pos_ < walling_robots_.size()) {
         parent_id = walling_robots_[waller_pos_];
     }
 
     motion_command.waller_parent = parent_id;
+
+    motion_command.num_wallers = walling_robots_.size();
 
 
     intent.motion_command = motion_command;
