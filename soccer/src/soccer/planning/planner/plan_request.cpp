@@ -83,36 +83,58 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         if (maybe_bp_point.has_value()) {
             rj_geometry::Point bp_point = maybe_bp_point.value();
             auto ball_obs2 = make_inflated_static_obs(bp_point, in.world_state->ball.velocity, kBallRadius + kAvoidBallDistance);
+            ball_obs2.radius(ball_obs2.radius() + in.min_dist_from_ball);
             double x1 = ball_obs.center.x();
             double y1 = ball_obs.center.y();
             double x2 = ball_obs2.center.x();
             double y2 = ball_obs2.center.y();
 
-            double rect_x_left = x1 - (y2 - y1) / (2 * ball_obs.radius());
-            double rect_y_left = y1 + (x2 - x1) / (2 * ball_obs.radius());
+            rj_geometry::Segment vect{in.world_state->ball.position, bp_point};
+           
+            rj_geometry::Point end1{in.world_state->ball.position.x() + ball_obs.radius() * (bp_point.x() - in.world_state->ball.position.x()) / vect.length(), in.world_state->ball.position.y() + ball_obs.radius() * (bp_point.y() - in.world_state->ball.position.y()) / vect.length()};
+            rj_geometry::Point end2{bp_point.x() - ball_obs.radius() * (bp_point.x() - in.world_state->ball.position.x()) / vect.length(), bp_point.y() - ball_obs.radius() * (bp_point.y() - in.world_state->ball.position.y()) / vect.length()};
+            
+            rj_geometry::Segment vect_updated{end1, end2};
+            rj_geometry::Polygon rect_obs{vect_updated, ball_obs.radius()};
 
-            double rect_x_right = x2 + (y2 - y1) / (2 * ball_obs.radius());
-            double rect_y_right = y2 - (x2 - x1) / (2 * ball_obs2.radius());
+            // double dx = x2 - x1;
+            // double dy = y2 - y1;
 
-            rj_geometry::Point rect_top_left{rect_x_left, rect_y_left};
-            rj_geometry::Point rect_bottom_right{rect_x_right, rect_y_right};
+            // double Mx = (x1 + x2) / 2;
+            // double My = (y1 + y2) / 2;
 
-            rj_geometry::Rect rect_obs{rect_top_left, rect_bottom_right};
+            // double l = (sqrt(dx * dx  + dy * dy));
+
+            // double px = -dy / l;
+            // double py = dx / l;
+
+            // double rect_x_left = x1 - ball_obs.radius() * px;
+            // double rect_y_left = y1 - ball_obs.radius() * py;
+
+            // double rect_x_right = x2 + ball_obs.radius() * px;
+            // double rect_y_right = y2 + ball_obs.radius() * py;
+
+            // rj_geometry::Point rect_top_left{rect_x_left, rect_y_left};
+            // rj_geometry::Point rect_bottom_right{rect_x_right, rect_y_right};
+
+            // rj_geometry::Rect rect_obs{rect_top_left, rect_bottom_right};
 
             rj_geometry::CompositeShape track_obs{};
-            std::shared_ptr<rj_geometry::Shape> ball_obs_ptr = std::make_shared<rj_geometry::Shape>(ball_obs);
-            std::shared_ptr<rj_geometry::Shape> rect_obs_ptr = std::make_shared<rj_geometry::Shape>(rect_obs);
-            std::shared_ptr<rj_geometry::Shape> ball_obs2_ptr = std::make_shared<rj_geometry::Shape>(ball_obs2);
+            std::shared_ptr<rj_geometry::Circle> ball_obs_ptr = std::make_shared<rj_geometry::Circle>(ball_obs);
+            std::shared_ptr<rj_geometry::Polygon> rect_obs_ptr = std::make_shared<rj_geometry::Polygon>(rect_obs);
+            std::shared_ptr<rj_geometry::Circle> ball_obs2_ptr = std::make_shared<rj_geometry::Circle>(ball_obs2);
             track_obs.add(ball_obs_ptr);
             track_obs.add(rect_obs_ptr);
             track_obs.add(ball_obs2_ptr);
 
-            out_static->add(std::make_shared<rj_geometry::CompositeShape>(std::move(track_obs)));
+            std::shared_ptr<rj_geometry::CompositeShape> track_obs_ptr = std::make_shared<rj_geometry::CompositeShape>(track_obs);
+
+            // out_static->add(std::make_shared<rj_geometry::CompositeShape>(track_obs));
 
             if (in.debug_drawer != nullptr) {
                 QColor draw_color = Qt::red;
                 in.debug_drawer->draw_circle(ball_obs, draw_color);
-                in.debug_drawer->draw_rect(rect_obs, draw_color);
+                in.debug_drawer->draw_polygon(rect_obs, draw_color);
                 in.debug_drawer->draw_circle(ball_obs2, draw_color);
             }
         }
