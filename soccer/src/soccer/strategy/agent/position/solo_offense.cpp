@@ -146,11 +146,11 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
     rj_geometry::Point best_shot = their_goal_pos;
+    double buffer = 0.05;
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
-    rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 19; i++) {
+    rj_geometry::Point curr_point = their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + rj_geometry::Point(kBallDiameter + buffer, 0);
+    while (curr_point.x() < (their_goal_pos + rj_geometry::Point(goal_width / 2.0, 0) - rj_geometry::Point(kBallDiameter + buffer, 0)).x()) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
             best_distance = distance;
