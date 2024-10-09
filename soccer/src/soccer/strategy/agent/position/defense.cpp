@@ -142,7 +142,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {
-        if (!walling_robots_.empty()) {
+        if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
