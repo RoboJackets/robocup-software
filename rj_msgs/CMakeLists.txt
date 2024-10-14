@@ -52,6 +52,7 @@ rosidl_generate_interfaces(
   msg/TeamInfo.msg
   msg/Trajectory.msg
   msg/WorldState.msg
+  msg/OverridePosition.msg
 
   # Communication
   msg/AgentRequest.msg

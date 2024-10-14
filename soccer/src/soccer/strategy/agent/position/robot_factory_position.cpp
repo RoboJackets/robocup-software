@@ -15,6 +15,14 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
+
+    std::string node_name{"robot_factory_position_"};
+    _node = std::make_shared<rclcpp::Node>(node_name.append(std::to_string(robot_id_)));
+    override_play_sub_ = _node->create_subscription<rj_msgs::msg::OverridePosition>(
+        "override_position_for_robot", 1,
+        [this](const rj_msgs::msg::OverridePosition::SharedPtr msg) { test_play_callback(msg); });
+    _executor.add_node(_node);
+    _executor_thread = std::thread([this]() { _executor.spin(); });
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
@@ -119,6 +127,9 @@ void RobotFactoryPosition::handle_ready() {
 }
 
 void RobotFactoryPosition::update_position() {
+    bool manual_position_set = check_for_position_override();
+    if (manual_position_set) return;
+
     switch (current_play_state_.state()) {
         case PlayState::State::Playing: {
             // We just became regular playing.
@@ -336,6 +347,63 @@ void RobotFactoryPosition::revive() { current_position_->revive(); }
 
 std::string RobotFactoryPosition::get_current_state() {
     return current_position_->get_current_state();
+}
+
+void RobotFactoryPosition::test_play_callback(
+    const rj_msgs::msg::OverridePosition::SharedPtr message) {
+    if (message->robot_id == this->robot_id_ &&
+        message->overriding_position < Strategy::OverridingPositions::LENGTH) {
+        override_play_position_ =
+            static_cast<Strategy::OverridingPositions>(message->overriding_position);
+    }
+}
+
+/**
+ * Checks override_play_position_, which automatically updates when an override is set.
+ * If it is anything but auto, set the current position to that position and return true.
+ */
+bool RobotFactoryPosition::check_for_position_override() {
+    switch (override_play_position_) {
+        case Strategy::OverridingPositions::OFFENSE: {
+            set_current_position<Offense>();
+            return true;
+        }
+        case Strategy::OverridingPositions::DEFENSE: {
+            set_current_position<Defense>();
+            return true;
+        }
+        case Strategy::OverridingPositions::FREE_KICKER: {
+            set_current_position<FreeKicker>();
+            return true;
+        }
+        case Strategy::OverridingPositions::PENALTY_PLAYER: {
+            set_current_position<PenaltyPlayer>();
+            return true;
+        }
+        case Strategy::OverridingPositions::PENALTY_NON_KICKER: {
+            set_current_position<PenaltyNonKicker>();
+            return true;
+        }
+        case Strategy::OverridingPositions::SMART_IDLE: {
+            set_current_position<SmartIdle>();
+            return true;
+        }
+        case Strategy::OverridingPositions::SOLO_OFFENSE: {
+            set_current_position<SoloOffense>();
+            return true;
+        }
+        case Strategy::OverridingPositions::ZONER: {
+            set_current_position<Zoner>();
+            return true;
+        }
+        case Strategy::OverridingPositions::IDLE: {
+            set_current_position<Idle>();
+            return true;
+        }
+        default: {
+            return false;
+        }
+    }
 }
 
 }  // namespace strategy
