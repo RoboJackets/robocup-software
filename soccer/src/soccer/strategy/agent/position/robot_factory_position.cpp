@@ -18,7 +18,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
 
     std::string node_name{"robot_factory_position_"};
     _node = std::make_shared<rclcpp::Node>(node_name.append(std::to_string(robot_id_)));
-    test_play_sub_ = _node->create_subscription<rj_msgs::msg::OverridePosition>(
+    override_play_sub_ = _node->create_subscription<rj_msgs::msg::OverridePosition>(
         "override_position_for_robot", 1,
         [this](const rj_msgs::msg::OverridePosition::SharedPtr msg) { test_play_callback(msg); });
     _executor.add_node(_node);
@@ -127,11 +127,6 @@ void RobotFactoryPosition::handle_ready() {
 }
 
 void RobotFactoryPosition::update_position() {
-    // if (test_play_position_ == Strategy::OverridingPositions::OFFENSE) {
-    //  SPDLOG_INFO("OFFENSE SELECTED");
-    // set_current_position<Offense>();
-    // return;
-    //}
     bool manual_position_set = check_for_position_override();
     if (manual_position_set) return;
 
@@ -358,17 +353,17 @@ void RobotFactoryPosition::test_play_callback(
     const rj_msgs::msg::OverridePosition::SharedPtr message) {
     if (message->robot_id == this->robot_id_ &&
         message->overriding_position < Strategy::OverridingPositions::LENGTH) {
-        test_play_position_ =
+        override_play_position_ =
             static_cast<Strategy::OverridingPositions>(message->overriding_position);
     }
 }
 
 /**
- * Checks test_play_position_, which automatically updates when an override is set.
+ * Checks override_play_position_, which automatically updates when an override is set.
  * If it is anything but auto, set the current position to that position and return true.
  */
 bool RobotFactoryPosition::check_for_position_override() {
-    switch (test_play_position_) {
+    switch (override_play_position_) {
         case Strategy::OverridingPositions::OFFENSE: {
             set_current_position<Offense>();
             return true;

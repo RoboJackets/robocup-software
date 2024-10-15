@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <fstream>
+#include <regex>
 
 #include <QActionGroup>
 #include <QDateTime>
@@ -10,6 +11,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QObject>
 #include <QString>
 #include <boost/algorithm/string.hpp>
 #include <google/protobuf/descriptor.h>
@@ -187,7 +189,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
-    test_play_pub_ =
+    override_play_pub_ =
         _node->create_publisher<rj_msgs::msg::OverridePosition>("override_position_for_robot", 1);
 
     _executor.add_node(_node);
@@ -1048,11 +1050,10 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
-    // This is a convoluted scheme to figure out who the goalie is
-    // May not be necessary later
     QString goalieNum = _ui.goalieID->currentText();
     bool goalieNumIsInt{false};
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
+    current_goalie_num_ = goalieInt;
     if (goalieNumIsInt)
         setGoalieDropdown(goalieInt);
     else
@@ -1173,7 +1174,11 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
 
 /**
  * The following methods are event listeners for the manual position assignments.
- * TODO: implement all of these
+ * In the QT5 event handling system, these methods are automatically connected to the
+ * QObject with the relevant name due to their naming scheme and their labels as Q_SLOT functions.
+ * 
+ * For this reason, all of these methods are REQUIRED by the UI - Consolidating them into one method
+ * produces unnecessary complications.
  */
 void MainWindow::on_positionReset_0_clicked() { onResetButtonClicked(0); }
 
@@ -1206,6 +1211,7 @@ void MainWindow::on_positionReset_13_clicked() { onResetButtonClicked(13); }
 void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
 
 void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }
+
 
 void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
     onPositionDropdownChanged(0, value);
@@ -1276,23 +1282,18 @@ void MainWindow::onResetButtonClicked(int robot) {
     message.robot_id = robot;
     message.overriding_position = 0;
 
-    test_play_pub_->publish(message);
+    override_play_pub_->publish(message);
     position_reset_buttons.at(robot)->setEnabled(false);
     robot_pos_selectors.at(robot)->setCurrentIndex(0);
 }
 
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
-    // This is a convoluted scheme to figure out who the goalie is
-    // May not be necessary later
-    QString goalieNum = _ui.goalieID->currentText();
-    bool goalieNumIsInt{false};
-    int goalieInt = goalieNum.toInt(&goalieNumIsInt);
-    if (!goalieNumIsInt || goalieInt != robot) {
+    if (current_goalie_num_ != robot) {
         rj_msgs::msg::OverridePosition message;
         message.robot_id = robot;
         message.overriding_position = position_number;
 
-        test_play_pub_->publish(message);
+        override_play_pub_->publish(message);
         if (position_number != 0) {
             position_reset_buttons.at(robot)->setEnabled(true);
         } else {

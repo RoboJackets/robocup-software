@@ -198,6 +198,7 @@ private Q_SLOTS:
     void on_positionReset_13_clicked();
     void on_positionReset_14_clicked();
     void on_positionReset_15_clicked();
+    
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
@@ -220,6 +221,8 @@ private:
 
     Processor* const _processor;
     bool _has_external_ref;
+
+    int current_goalie_num_ {0};
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
@@ -249,7 +252,6 @@ private:
      * Callback when a reset button is clicked
      */
     void onResetButtonClicked(int robot);
-    // TODO: Add a publisher and a subscriber to implement these
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
@@ -296,7 +298,7 @@ private:
     rclcpp::Node::SharedPtr _node;
     rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
     rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
-    rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr test_play_pub_;
+    rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr override_play_pub_;
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
 

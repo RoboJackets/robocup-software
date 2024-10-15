@@ -113,11 +113,11 @@ private:
     std::unique_ptr<Position> current_position_;
 
     // subscription for test mode - Allows position overriding
-    rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr test_play_sub_;
+    rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
     void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr message);
-    Strategy::OverridingPositions test_play_position_{Strategy::OverridingPositions::AUTO};
+    Strategy::OverridingPositions override_play_position_{Strategy::OverridingPositions::AUTO};
     rclcpp::Node::SharedPtr _node;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
