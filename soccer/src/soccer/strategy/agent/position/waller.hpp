@@ -42,6 +42,7 @@ public:
 private:
     std::string defense_type_;
     int waller_pos_;
+    static constexpr double kRobotDiameterMultiplier = 1.5;
     std::vector<u_int8_t> walling_robots_;
 };
 
