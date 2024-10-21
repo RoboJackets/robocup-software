@@ -7,7 +7,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: robojackets/robocup-software:foxy
+      image: robojackets/robocup-software:humble
     defaults:
       run:
         shell: bash
@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: |
           echo "::add-matcher::ci/clang.json"
-          source /opt/ros/foxy/setup.bash
+          source /opt/ros/humble/setup.bash
           source install/setup.bash
           make all
           echo "::remove-matcher owner=clang::"
@@ -42,7 +42,7 @@ jobs:
       - name: Test
         run: |
           echo "::add-matcher::ci/gtest.json"
-          source /opt/ros/foxy/setup.bash
+          source /opt/ros/humble/setup.bash
           source install/setup.bash
           ./install/lib/rj_robocup/test-soccer
           echo "::remove-matcher owner=gtest::"
@@ -50,7 +50,7 @@ jobs:
       - name: Run clang-tidy
         run: |
           echo "::add-matcher::ci/clang-tidy.json"
-          source /opt/ros/foxy/setup.bash
+          source /opt/ros/humble/setup.bash
           source install/setup.bash
           DIFFBASE=${{ github.base_ref }} make checktidy-lines
           echo "::remove-matcher owner=clang-tidy::"
@@ -61,7 +61,7 @@ jobs:
     if: startsWith(github.head_ref, 'fix-code-style') == false
     runs-on: ubuntu-latest
     container:
-      image: ros:foxy
+      image: ros:humble
     defaults:
       run:
         shell: bash
