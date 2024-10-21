@@ -74,7 +74,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         // Draw ball obstacle in simulator
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;
-            // in.debug_drawer->draw_circle(ball_obs, draw_color);
+            in.debug_drawer->draw_circle(ball_obs, draw_color);
         }
 
         out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
@@ -84,10 +84,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             rj_geometry::Point bp_point = maybe_bp_point.value();
             auto ball_obs2 = make_inflated_static_obs(bp_point, in.world_state->ball.velocity, kBallRadius + kAvoidBallDistance);
             ball_obs2.radius(ball_obs2.radius() + in.min_dist_from_ball);
-            double x1 = ball_obs.center.x();
-            double y1 = ball_obs.center.y();
-            double x2 = ball_obs2.center.x();
-            double y2 = ball_obs2.center.y();
 
             rj_geometry::Segment vect{in.world_state->ball.position, bp_point};
            
@@ -96,28 +92,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             
             rj_geometry::Segment vect_updated{end1, end2};
             rj_geometry::Polygon rect_obs{vect_updated, ball_obs.radius()};
-
-            // double dx = x2 - x1;
-            // double dy = y2 - y1;
-
-            // double Mx = (x1 + x2) / 2;
-            // double My = (y1 + y2) / 2;
-
-            // double l = (sqrt(dx * dx  + dy * dy));
-
-            // double px = -dy / l;
-            // double py = dx / l;
-
-            // double rect_x_left = x1 - ball_obs.radius() * px;
-            // double rect_y_left = y1 - ball_obs.radius() * py;
-
-            // double rect_x_right = x2 + ball_obs.radius() * px;
-            // double rect_y_right = y2 + ball_obs.radius() * py;
-
-            // rj_geometry::Point rect_top_left{rect_x_left, rect_y_left};
-            // rj_geometry::Point rect_bottom_right{rect_x_right, rect_y_right};
-
-            // rj_geometry::Rect rect_obs{rect_top_left, rect_bottom_right};
 
             rj_geometry::CompositeShape track_obs{};
             std::shared_ptr<rj_geometry::Circle> ball_obs_ptr = std::make_shared<rj_geometry::Circle>(ball_obs);
