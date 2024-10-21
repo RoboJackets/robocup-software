@@ -129,7 +129,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
             std::shared_ptr<rj_geometry::CompositeShape> track_obs_ptr = std::make_shared<rj_geometry::CompositeShape>(track_obs);
 
-            // out_static->add(std::make_shared<rj_geometry::CompositeShape>(track_obs));
+            out_static->add(std::make_shared<rj_geometry::CompositeShape>(track_obs));
 
             if (in.debug_drawer != nullptr) {
                 QColor draw_color = Qt::red;
