@@ -80,45 +80,20 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
 
         auto maybe_bp_point = in.play_state.ball_placement_point();
-        if (maybe_bp_point.has_value()) {
+        if (maybe_bp_point.has_value() && in.play_state.is_their_restart()) {
             rj_geometry::Point bp_point = maybe_bp_point.value();
-            auto ball_obs2 = make_inflated_static_obs(bp_point, in.world_state->ball.velocity, kBallRadius + kAvoidBallDistance);
-            ball_obs2.radius(ball_obs2.radius() + in.min_dist_from_ball);
+            rj_geometry::StadiumShape stadium = rj_geometry::StadiumShape{in.world_state->ball.position, bp_point, ball_obs.radius()};
 
-            rj_geometry::Segment vect{in.world_state->ball.position, bp_point};
-           
-            rj_geometry::Point end1{in.world_state->ball.position.x() + ball_obs.radius() * (bp_point.x() - in.world_state->ball.position.x()) / vect.length(), in.world_state->ball.position.y() + ball_obs.radius() * (bp_point.y() - in.world_state->ball.position.y()) / vect.length()};
-            rj_geometry::Point end2{bp_point.x() - ball_obs.radius() * (bp_point.x() - in.world_state->ball.position.x()) / vect.length(), bp_point.y() - ball_obs.radius() * (bp_point.y() - in.world_state->ball.position.y()) / vect.length()};
-            
-            rj_geometry::Segment vect_updated{end1, end2};
-            rj_geometry::Polygon rect_obs{vect_updated, ball_obs.radius()};
+            // for some reason adding the shared pointer below to our static obstacles breaks it, so we add the shape set it has instead.
+            // std::shared_ptr<rj_geometry::Shape> track_obs_ptr = std::make_shared<rj_geometry::Shape>(stadium);
 
-            rj_geometry::CompositeShape track_obs{};
-            std::shared_ptr<rj_geometry::Circle> ball_obs_ptr = std::make_shared<rj_geometry::Circle>(ball_obs);
-            std::shared_ptr<rj_geometry::Polygon> rect_obs_ptr = std::make_shared<rj_geometry::Polygon>(rect_obs);
-            std::shared_ptr<rj_geometry::Circle> ball_obs2_ptr = std::make_shared<rj_geometry::Circle>(ball_obs2);
-            track_obs.add(ball_obs_ptr);
-            track_obs.add(rect_obs_ptr);
-            track_obs.add(ball_obs2_ptr);
-
-            std::shared_ptr<rj_geometry::CompositeShape> track_obs_ptr = std::make_shared<rj_geometry::CompositeShape>(track_obs);
-
-            out_static->add(std::make_shared<rj_geometry::CompositeShape>(track_obs));
+            out_static->add(stadium.drawshapes());
 
             if (in.debug_drawer != nullptr) {
                 QColor draw_color = Qt::red;
-                in.debug_drawer->draw_circle(ball_obs, draw_color);
-                in.debug_drawer->draw_polygon(rect_obs, draw_color);
-                in.debug_drawer->draw_circle(ball_obs2, draw_color);
+                in.debug_drawer->draw_stadium(stadium, draw_color);
             }
         }
-
-        // replace with composite shape: 2 circles + rectangle
-        // circle 1: center of ball position, radius is kBallRadius + kAvoidBallDistance
-        // rectangle 1: top left of robot is (x1 - (y2 - y1)/(2 * (ball_obs.radius())), y1 + (x2 - x1)/(2 * (ball_obs.radius())))
-        // bottom right of the robot is (x2 + (y2 - y1)/(2 * (ball_obs.radius())), y2 - (x2 - x1)/(2 * (ball_obs.radius())))
-        // (x1, y1) is ball position, (x2, y2) is ball placement position
-        // circle 2: center of ball placement position, radius is kBallRadius + kAvoidBallDistance
     }
 }
 

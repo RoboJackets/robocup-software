@@ -58,6 +58,10 @@ public:
                 color_from_qt(color)));
     }
 
+    void draw_stadium(const rj_geometry::StadiumShape& stadium, const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
+        this->draw_shapes(stadium.drawshapes(), color);
+    }
+
     void draw_segment(const rj_geometry::Segment& segment,
                       const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.segments.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawSegment>()

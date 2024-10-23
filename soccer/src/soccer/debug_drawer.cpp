@@ -49,9 +49,9 @@ void DebugDrawer::draw_circle(rj_geometry::Point center, float radius, const QCo
 }
 
 // void DebugDrawer::draw_stadium(rj_geometry::StadiumShape& stadium, const QColor& qc, const QString& layer) {
-//     this->draw_circle(stadium.subshapes()[0], qc, layer);
-//     this->draw_polygon(stadium.subshapes()[1], qc, layer);
-//     this->draw_circle(stadium.subshapes()[2], qc, layer);
+//     this->draw_circle(stadium.drawshapes()[0], qc, layer);
+//     this->draw_polygon(stadium.drawshapes()[1], qc, layer);
+//     this->draw_circle(stadium.drawshapes()[2], qc, layer);
 // }
 
 void DebugDrawer::draw_arc(const rj_geometry::Arc& arc, const QColor& qc, const QString& layer) {

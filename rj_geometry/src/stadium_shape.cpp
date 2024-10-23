@@ -23,6 +23,10 @@ void StadiumShape::init(Point c1, Point c2, float r) {
     subshapes_.push_back(c1_obs_ptr);
     subshapes_.push_back(rect_obs_ptr);
     subshapes_.push_back(c2_obs_ptr);
+
+    drawshapes_.add(c1_obs_ptr);
+    drawshapes_.add(rect_obs_ptr);
+    drawshapes_.add(c2_obs_ptr);
 }
 
 bool StadiumShape::contains_point(Point pt) const {

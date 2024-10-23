@@ -79,9 +79,9 @@ public:
                      const QColor& qw = Qt::black,
                      const QString& layer = QString());
 
-    void draw_stadium(rj_geometry::StadiumShape& stadium, 
-                    const QColor& qc = Qt::black, 
-                    const QString& layer = QString());
+    // void draw_stadium(rj_geometry::StadiumShape& stadium, 
+    //                 const QColor& qc = Qt::black, 
+    //                 const QString& layer = QString());
 
     /**
      * Fill the given log frame with the current debug drawing information,

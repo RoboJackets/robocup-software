@@ -4,6 +4,7 @@
 #include "shape.hpp"
 #include "segment.hpp"
 #include "polygon.hpp"
+#include "shape_set.hpp"
 #include <vector>
 #include <memory>
 #include <set>
@@ -32,11 +33,16 @@ public:
         return subshapes_;
     }
 
+    [[nodiscard]] const rj_geometry::ShapeSet drawshapes() const {
+        return drawshapes_;
+    }
+
 protected:
     void init(Point c1, Point c2, float r);
 
 private:
     std::vector<std::shared_ptr<Shape>> subshapes_;
+    rj_geometry::ShapeSet drawshapes_;
 };
 
 }
