@@ -25,7 +25,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         double time = Trapezoidal::get_time(abs(delta_angle), abs(delta_angle),
                                             constraints.max_speed, constraints.max_accel, 0, 0);
 
-        SPDLOG_INFO("delta angle: {}", delta_angle);
         for (int i = 1; i < time / TIME_STEP; i++) {
             double pos_out = 0;
             double speed_out = 0;
@@ -37,7 +36,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 rj_geometry::Pose{start_instant.position(), pos_out + start_instant.heading()},
                 rj_geometry::Twist{start_instant.linear_velocity(), speed_out},
                 start_instant.stamp + RJ::Seconds(i * TIME_STEP)});
-            SPDLOG_INFO("pos_out: {}", pos_out);
         }
         trajectory->mark_angles_valid();
         return;
