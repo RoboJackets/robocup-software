@@ -74,6 +74,10 @@ GlobalState::GlobalState(rclcpp::Node* node) {
     auto lock = std::lock_guard(last_world_state_mutex_);
     return &last_world_state_;
 }
+[[nodiscard]] FieldDimensions GlobalState::field_dimensions() const {
+    auto lock = std::lock_guard(last_field_dimensions_mutex_);
+    return last_field_dimensions_;
+}
 
 rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     // need field dimensions and to be initialized for this to

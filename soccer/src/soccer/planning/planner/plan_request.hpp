@@ -29,7 +29,7 @@ struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
-                unsigned shell_id, const WorldState* world_state, PlayState play_state,
+                unsigned shell_id, const WorldState* world_state, PlayState play_state, FieldDimensions field_dimensions,
                 int8_t priority = 0, rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
                 bool ball_sense = false, float min_dist_from_ball = 0, float dribbler_speed = 0)
         : start(start),
@@ -40,6 +40,7 @@ struct PlanRequest {
           planned_trajectories(planned_trajectories),
           shell_id(shell_id),
           world_state(world_state),
+          field_dimensions(field_dimensions),
           priority(priority),
           play_state(play_state),
           debug_drawer(debug_drawer),
@@ -91,6 +92,11 @@ struct PlanRequest {
      * can be used for lookup of robots/balls by ID.
      */
     const WorldState* world_state;
+
+    /**
+     * The dimensions of the field
+     */
+    FieldDimensions field_dimensions;
 
     /**
      * The priority of this plan request.

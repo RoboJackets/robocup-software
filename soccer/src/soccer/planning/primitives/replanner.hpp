@@ -8,6 +8,7 @@
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 #include "velocity_profiling.hpp"
+#include "rj_common/field_dimensions.hpp"
 
 namespace planning {
 
@@ -27,6 +28,7 @@ public:
         LinearMotionInstant goal;
         const rj_geometry::ShapeSet& static_obstacles;
         const std::vector<DynamicObstacle>& dynamic_obstacles;
+        const FieldDimensions field_dimensions;
         RobotConstraints constraints;
         const AngleFunction& angle_function;
         std::optional<RJ::Seconds> hold_time = std::nullopt;

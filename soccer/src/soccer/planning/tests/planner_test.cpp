@@ -14,6 +14,7 @@
 #include "planning/tests/testing_utils.hpp"
 #include "planning/trajectory.hpp"
 #include "rj_geometry/pose.hpp"
+#include "rj_common/field_dimensions.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure
@@ -49,6 +50,7 @@ TEST(Planning, path_target_random) {
 
         LinearMotionInstant goal = random_instant(&gen).linear_motion();
         PlayState play_state = PlayState::halt();
+        FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
         PlanRequest request{start,
                             MotionCommand{"path_target", goal},
                             RobotConstraints{},
@@ -58,6 +60,7 @@ TEST(Planning, path_target_random) {
                             0,
                             &world_state,
                             play_state,
+                            field_dimensions,
                             2,
                             nullptr};
         Trajectory path = planner.plan(std::move(request));
@@ -91,6 +94,7 @@ TEST(Planning, collect_basic) {
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -100,6 +104,7 @@ TEST(Planning, collect_basic) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -115,6 +120,7 @@ TEST(Planning, collect_obstructed) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -124,6 +130,7 @@ TEST(Planning, collect_obstructed) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -142,6 +149,7 @@ TEST(Planning, collect_pointless_obs) {
     obstacles.add(std::make_shared<Circle>(Point{-2, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{0, 5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -151,6 +159,7 @@ TEST(Planning, collect_pointless_obs) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -166,6 +175,7 @@ TEST(Planning, collect_moving_ball_quick) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -175,6 +185,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -190,6 +201,7 @@ TEST(Planning, collect_moving_ball_slow) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-0.5, .5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -199,6 +211,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -214,6 +227,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0, .5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"collect"},
                         RobotConstraints{},
@@ -223,6 +237,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -251,6 +266,7 @@ TEST(Planning, collect_random) {
         }
         PlayState play_state =
             PlayState::playing();  // Some planners now return no trajectory in halt
+        FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"collect"},
                             RobotConstraints{},
@@ -260,6 +276,7 @@ TEST(Planning, collect_random) {
                             0,
                             &world_state,
                             play_state,
+                            field_dimensions,
                             2,
                             nullptr};
         CollectPathPlanner planner;
@@ -284,6 +301,7 @@ TEST(Planning, settle_basic) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5, .5}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -293,6 +311,7 @@ TEST(Planning, settle_basic) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -310,6 +329,7 @@ TEST(Planning, settle_pointless_obs) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-1, 1.0}, .2));
     PlayState play_state = PlayState::playing();  // Some planners now return no trajectory in halt
+    FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         MotionCommand{"settle"},
                         RobotConstraints{},
@@ -319,6 +339,7 @@ TEST(Planning, settle_pointless_obs) {
                         0,
                         &world_state,
                         play_state,
+                        field_dimensions,
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -348,6 +369,7 @@ TEST(Planning, settle_random) {
         }
         PlayState play_state =
             PlayState::playing();  // Some planners now return no trajectory in halt
+        FieldDimensions field_dimensions = FieldDimensions::kDefaultDimensions;
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             MotionCommand{"settle"},
                             RobotConstraints{},
@@ -357,6 +379,7 @@ TEST(Planning, settle_random) {
                             0,
                             &world_state,
                             play_state,
+                            field_dimensions,
                             2,
                             nullptr};
         SettlePathPlanner planner;

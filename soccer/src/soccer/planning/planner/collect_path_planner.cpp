@@ -224,6 +224,7 @@ Trajectory CollectPathPlanner::coarse_approach(
                                  target_slow,
                                  static_obstacles,
                                  dynamic_obstacles,
+                                 plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position)};
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
@@ -282,6 +283,7 @@ Trajectory CollectPathPlanner::fine_approach(
                                  target_hit,
                                  static_obstacles,
                                  dynamic_obstacles,
+                                 plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position)};
     Trajectory path_hit = Replanner::create_plan(params, previous_);
@@ -376,6 +378,7 @@ Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotIns
                                  target,
                                  static_obstacles,
                                  dynamic_obstacles,
+                                 plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position)};
 
@@ -422,6 +425,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
     Replanner::PlanParams params{
         plan_request.start,       target,
         static_obstacles,         dynamic_obstacles,
+        plan_request.field_dimensions,
         plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position)};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");

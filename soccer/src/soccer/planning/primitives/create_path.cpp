@@ -79,7 +79,8 @@ static std::optional<std::tuple<double, double, double>> cached_intermediate_tup
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles) {
+                        const rj_geometry::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles, 
+                        const FieldDimensions field_dimensions) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -92,7 +93,9 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr))) {
+        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) && 
+        !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
+                                  nullptr))) {
         return straight_trajectory;
     }
 
@@ -108,21 +111,29 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
              t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
+
+
+            if ((abs((intermediate - field_dimensions.center_field_loc()).x()) > (field_dimensions.floor_border_width() / 2 - 0.5)) || 
+                (abs((intermediate - field_dimensions.center_field_loc()).y()) > (field_dimensions.floor_border_length() / 2 - 0.5))) {
+                    continue;
+            }
+
             Trajectory trajectory =
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 
             // If the trajectory does not hit an obstacle, it is valid
-            if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
+            if ((!trajectory_hits_static(trajectory, static_obstacles, trajectory.begin_time(), nullptr) && 
+                !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, trajectory.begin_time(), nullptr,
+                                  nullptr))) {
                 auto angle = (final_inter - start.position).angle();
-                cached_intermediate_tuple_ = {abs(angle), signbit(angle) ? -1 : 1,
-                                              (final_inter - start.position).mag()};
+                cached_intermediate_tuple_ = {abs(angle), (final_inter - start.position).mag(), signbit(angle) ? -1 : 1};
                 return trajectory;
             }
         }
     }
 
     // If all else fails, return the straight-line trajectory
-    return straight_trajectory;
+    return rrt(start, goal, motion_constraints, start_time, static_obstacles, dynamic_obstacles);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
@@ -149,7 +160,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         double scale = scale_dist(gen);
 
         // Generate random tuples of distances and angles
-        inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
+        inter_tuples.emplace_back(abs(angle), scale, signbit(angle) ? -1 : 1);
     }
 
     if (cached_intermediate_tuple_) {
@@ -162,8 +173,8 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     sort(inter_tuples.begin(), inter_tuples.end());
 
     for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
-        double angle = std::get<0>(inter_tuples[i]) * std::get<1>(inter_tuples[i]);
-        double scale = std::get<2>(inter_tuples[i]);
+        double angle = std::get<0>(inter_tuples[i]) * std::get<2>(inter_tuples[i]);
+        double scale = std::get<1>(inter_tuples[i]);
 
         double fin_angle = goal.position.angle_to(start.position) + angle;
         double fin_length = scale;
