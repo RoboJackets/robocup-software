@@ -33,8 +33,7 @@ double get_time(double distance, double path_length, double max_speed,
  * @return		true if the trapezoid is valid at the given time, false
  * otherwise
  */
-bool trapezoidal_motion(double path_length, double max_speed, double max_acc,
-                       double time_into_lap, double start_speed, double final_speed,
-                       double& pos_out, double& speed_out);
+bool trapezoidal_motion(double path_length, double max_speed, double max_acc, double time_into_lap,
+                        double start_speed, double final_speed, double& pos_out, double& speed_out);
 
 }  // namespace Trapezoidal
