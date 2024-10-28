@@ -88,7 +88,7 @@ SimRadio::SimRadio(bool blue_team)
     // file probably an issue with the hacky way I got param files to dynamically load
     std::string localhost = "127.0.0.1";
     this->get_parameter_or("interface", param_radio_interface_, localhost);
-    SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
+    // SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
@@ -144,12 +144,7 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
     /*     SPDLOG_ERROR("sim_robot: {} {} {} \n", sim_robot->id(), sim_robot->kick_speed(), */
     /*                  sim_robot->dribbler_speed()); */
     /* } */
-
-
-    if (robot_id = 2) {
-        SPDLOG_INFO("manip spee: {}", manipulator.dribbler_speed);
-        SPDLOG_INFO("dribbler speed: {}", sim_robot->dribbler_speed());
-    }
+    
     socket_.send_to(buffer(out), robot_control_endpoint_);
 }
 

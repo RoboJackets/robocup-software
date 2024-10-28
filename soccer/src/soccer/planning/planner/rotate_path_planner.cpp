@@ -43,20 +43,20 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     auto pivot_point = request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position();
     auto pivot_target = command.target.position;
 
-    SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
-    SPDLOG_INFO("Pivot point y is {}", pivot_point.y());
+    // SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
+    // SPDLOG_INFO("Pivot point y is {}", pivot_point.y());
 
-    double start_angle = 
+    double start_angle =
         request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.heading();
 
     double target_angle = pivot_point.angle_to(pivot_target);
     double angle_change = fix_angle_radians(target_angle - start_angle);
-    SPDLOG_INFO("current angle: {}", start_angle);
-    SPDLOG_INFO("cached_target_agne: {}", cached_target_angle_.value_or(0));
-    SPDLOG_INFO("target angle: {}", target_angle);
+    // SPDLOG_INFO("current angle: {}", start_angle);
+    // SPDLOG_INFO("cached_target_agne: {}", cached_target_angle_.value_or(0));
+    // SPDLOG_INFO("target angle: {}", target_angle);
 
     cached_angle_change_ = angle_change;
-    SPDLOG_INFO("cached angle change: {}", *cached_angle_change_);
+    // SPDLOG_INFO("cached angle change: {}", *cached_angle_change_);
 
 
     Trajectory path{};
@@ -66,13 +66,13 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
            path = cached_path_.value();
         }
         else {
-            SPDLOG_INFO("reset");
+            // SPDLOG_INFO("reset");
             plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
             path.stamp(RJ::now());
             cached_path_ = path;
-        }   
+        }
     } else {
-        SPDLOG_INFO("reset");
+        // SPDLOG_INFO("reset");
         cached_path_.reset();
         plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
         path.stamp(RJ::now());

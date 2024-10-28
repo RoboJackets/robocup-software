@@ -44,6 +44,9 @@ private:
 
     int marking_id_;
 
+    bool kick_ = false;
+    int counter_ = 0;
+
     /**
      * @return what the state should be right now. called on each get_task tick
      */
