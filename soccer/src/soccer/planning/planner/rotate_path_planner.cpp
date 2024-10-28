@@ -62,7 +62,7 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
     Trajectory path{};
 
-    if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(1)) {
+    if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
         if (cached_path_) {
             path = cached_path_.value();
         } else {
