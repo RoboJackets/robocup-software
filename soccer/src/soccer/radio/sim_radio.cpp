@@ -144,7 +144,7 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
     /*     SPDLOG_ERROR("sim_robot: {} {} {} \n", sim_robot->id(), sim_robot->kick_speed(), */
     /*                  sim_robot->dribbler_speed()); */
     /* } */
-    
+
     socket_.send_to(buffer(out), robot_control_endpoint_);
 }
 

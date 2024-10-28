@@ -96,7 +96,7 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    double radius = 0.1; // pivot::PARAM_radius_multiplier * command.pivot_radius;
+    double radius = 0.1;  // pivot::PARAM_radius_multiplier * command.pivot_radius;
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 
@@ -105,8 +105,8 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     // max_speed = max_radians * radius
     MotionConstraints new_constraints = request.constraints.mot;
-    new_constraints.max_speed = 
-         std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
+    new_constraints.max_speed =
+        std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
 
     double start_angle = pivot_point.angle_to(
         request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position());

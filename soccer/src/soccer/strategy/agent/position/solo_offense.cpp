@@ -51,8 +51,9 @@ SoloOffense::State SoloOffense::next_state() {
             return TO_BALL;
         }
         case TO_BALL: {
-            // SPDLOG_INFO("{}", (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag());
-            // if ((last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() < kRobotDiameter){
+            // SPDLOG_INFO("{}", (last_world_state_->get_robot(true, robot_id_).pose.position() -
+            // current_point).mag()); if ((last_world_state_->get_robot(true,
+            // robot_id_).pose.position() - current_point).mag() < kRobotDiameter){
             //     return ROTATE;
             // }
             if (check_is_done()) {
@@ -69,10 +70,13 @@ SoloOffense::State SoloOffense::next_state() {
             return ROTATE;
         }
         case KICK: {
-            // if (check_is_done() || (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() > kRobotDiameter * 3) {
+            // if (check_is_done() || (last_world_state_->get_robot(true, robot_id_).pose.position()
+            // - current_point).mag() > kRobotDiameter * 3) {
             //     return TO_BALL;
             // }
-            if (!kick_ || (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() > kRobotRadius * 5) {
+            if (!kick_ ||
+                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
+                        .mag() > kRobotRadius * 5) {
                 return TO_BALL;
             }
             return KICK;
@@ -96,32 +100,40 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TO_BALL: {
-            rj_geometry::Point robotToBall = (last_world_state_->ball.position - last_world_state_->get_robot(true, robot_id_).pose.position());
+            rj_geometry::Point robotToBall =
+                (last_world_state_->ball.position -
+                 last_world_state_->get_robot(true, robot_id_).pose.position());
             double slowDown = 1.0;
             double length = robotToBall.mag() - kRobotRadius * slowDown;
             robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            auto pivot_cmd = planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
+            planning::LinearMotionInstant target{
+                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            auto pivot_cmd =
+                planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255;
             return intent;
         }
         case ROTATE: {
             planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd = planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            auto pivot_cmd =
+                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255;
             return intent;
         }
         case KICK: {
             // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position - last_world_state_->get_robot(true, robot_id_).pose.position()).normalized(scaleFactor);
-            // point += last_world_state_->get_robot(true, robot_id_).pose.position();
+            // rj_geometry::Point point = (last_world_state_->ball.position -
+            // last_world_state_->get_robot(true,
+            // robot_id_).pose.position()).normalized(scaleFactor); point +=
+            // last_world_state_->get_robot(true, robot_id_).pose.position();
             // planning::LinearMotionInstant target{point};
             // SPDLOG_INFO("KICK KICK KICK");
             planning::LinearMotionInstant target{calculate_best_shot()};
             // planning::LinearMotionInstant target{last_world_state_->ball.position};
-            auto kick_cmd = planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
+            auto kick_cmd =
+                planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
             intent.motion_command = kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;

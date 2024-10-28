@@ -19,14 +19,15 @@ namespace planning {
 using namespace rj_geometry;
 
 Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
-    return pivot(request); // type is Trajectory
+    return pivot(request);  // type is Trajectory
 }
 
 bool RotatePathPlanner::is_done() const {
     if (!cached_angle_change_) {
         return false;
     }
-    return abs(cached_angle_change_.value()) < degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
+    return abs(cached_angle_change_.value()) <
+           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
 }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
@@ -40,7 +41,8 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    auto pivot_point = request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position();
+    auto pivot_point =
+        request.world_state->get_robot(true, static_cast<int>(request.shell_id)).pose.position();
     auto pivot_target = command.target.position;
 
     // SPDLOG_INFO("Pivot point x is {}", pivot_point.x());
@@ -58,23 +60,23 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     cached_angle_change_ = angle_change;
     // SPDLOG_INFO("cached angle change: {}", *cached_angle_change_);
 
-
     Trajectory path{};
 
     if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(1)) {
         if (cached_path_) {
-           path = cached_path_.value();
-        }
-        else {
+            path = cached_path_.value();
+        } else {
             // SPDLOG_INFO("reset");
-            plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+            plan_angles(&path, start_instant, AngleFns::face_point(pivot_target),
+                        request.constraints.rot);
             path.stamp(RJ::now());
             cached_path_ = path;
         }
     } else {
         // SPDLOG_INFO("reset");
         cached_path_.reset();
-        plan_angles(&path, start_instant, AngleFns::face_point(pivot_target), request.constraints.rot);
+        plan_angles(&path, start_instant, AngleFns::face_point(pivot_target),
+                    request.constraints.rot);
         path.stamp(RJ::now());
         cached_path_ = path;
     }
@@ -84,4 +86,4 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     return path;
 }
 
-}
+}  // namespace planning
