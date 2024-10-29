@@ -51,11 +51,6 @@ SoloOffense::State SoloOffense::next_state() {
             return TO_BALL;
         }
         case TO_BALL: {
-            // SPDLOG_INFO("{}", (last_world_state_->get_robot(true, robot_id_).pose.position() -
-            // current_point).mag()); if ((last_world_state_->get_robot(true,
-            // robot_id_).pose.position() - current_point).mag() < kRobotDiameter){
-            //     return ROTATE;
-            // }
             if (check_is_done()) {
                 return ROTATE;
             }
@@ -70,10 +65,6 @@ SoloOffense::State SoloOffense::next_state() {
             return ROTATE;
         }
         case KICK: {
-            // if (check_is_done() || (last_world_state_->get_robot(true, robot_id_).pose.position()
-            // - current_point).mag() > kRobotDiameter * 3) {
-            //     return TO_BALL;
-            // }
             if (!kick_ ||
                 (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
                         .mag() > kRobotRadius * 5) {
@@ -129,7 +120,6 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             // robot_id_).pose.position()).normalized(scaleFactor); point +=
             // last_world_state_->get_robot(true, robot_id_).pose.position();
             // planning::LinearMotionInstant target{point};
-            // SPDLOG_INFO("KICK KICK KICK");
             planning::LinearMotionInstant target{calculate_best_shot()};
             // planning::LinearMotionInstant target{last_world_state_->ball.position};
             auto kick_cmd =
