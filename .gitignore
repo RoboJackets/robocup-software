@@ -6,6 +6,7 @@
 
 # build directories
 /build
+/install
 /gmon.out
 *.swp
 /.settings
