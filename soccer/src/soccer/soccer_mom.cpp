@@ -13,6 +13,5 @@ SoccerMom::SoccerMom() : rclcpp::Node{"SoccerMom"} {
                 message.data = "bananas";
             }
             soccer_mom_pub_->publish(message);
-        }
-    );
+        });
 }
