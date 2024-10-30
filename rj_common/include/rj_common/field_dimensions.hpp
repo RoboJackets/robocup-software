@@ -7,13 +7,13 @@
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/composite_shape.hpp>
-#include <rj_geometry/stadium_shape.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_geometry/stadium_shape.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 
 using namespace std;
