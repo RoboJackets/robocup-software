@@ -48,12 +48,6 @@ void DebugDrawer::draw_circle(rj_geometry::Point center, float radius, const QCo
     dbg->set_color(color(qc));
 }
 
-// void DebugDrawer::draw_stadium(rj_geometry::StadiumShape& stadium, const QColor& qc, const QString& layer) {
-//     this->draw_circle(stadium.drawshapes()[0], qc, layer);
-//     this->draw_polygon(stadium.drawshapes()[1], qc, layer);
-//     this->draw_circle(stadium.drawshapes()[2], qc, layer);
-// }
-
 void DebugDrawer::draw_arc(const rj_geometry::Arc& arc, const QColor& qc, const QString& layer) {
     Packet::DebugArc* dbg = log_frame_.add_debug_arcs();
     dbg->set_layer(find_debug_layer(layer));

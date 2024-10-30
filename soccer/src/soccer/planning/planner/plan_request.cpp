@@ -84,10 +84,9 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             rj_geometry::Point bp_point = maybe_bp_point.value();
             rj_geometry::StadiumShape stadium = rj_geometry::StadiumShape{in.world_state->ball.position, bp_point, ball_obs.radius()};
 
-            // for some reason adding the shared pointer below to our static obstacles breaks it, so we add the shape set it has instead.
-            // std::shared_ptr<rj_geometry::Shape> track_obs_ptr = std::make_shared<rj_geometry::Shape>(stadium);
+            std::shared_ptr<rj_geometry::StadiumShape> track_obs_ptr = std::make_shared<rj_geometry::StadiumShape>(stadium);
 
-            out_static->add(stadium.drawshapes());
+            out_static->add(track_obs_ptr);
 
             if (in.debug_drawer != nullptr) {
                 QColor draw_color = Qt::red;

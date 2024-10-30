@@ -4,7 +4,6 @@
 
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/composite_shape.hpp>
-#include <rj_geometry/stadium_shape.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/segment.hpp>
@@ -78,10 +77,6 @@ public:
     void draw_segment(const rj_geometry::Segment& line,
                      const QColor& qw = Qt::black,
                      const QString& layer = QString());
-
-    // void draw_stadium(rj_geometry::StadiumShape& stadium, 
-    //                 const QColor& qc = Qt::black, 
-    //                 const QString& layer = QString());
 
     /**
      * Fill the given log frame with the current debug drawing information,
