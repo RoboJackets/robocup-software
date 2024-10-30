@@ -1,18 +1,20 @@
 #pragma once
 
-#include "point.hpp"
-#include "shape.hpp"
-#include "segment.hpp"
-#include "polygon.hpp"
-#include "shape_set.hpp"
-#include <vector>
 #include <memory>
 #include <set>
+#include <vector>
+
+#include "point.hpp"
+#include "polygon.hpp"
+#include "segment.hpp"
+#include "shape.hpp"
+#include "shape_set.hpp"
 
 namespace rj_geometry {
 
 /**
- * A rj_geometry::StadiumShape is a Shape that is made up of 2 circles and a polygon. It represents the shape of a track from track and field.
+ * A rj_geometry::StadiumShape is a Shape that is made up of 2 circles and a polygon. It represents
+ * the shape of a track from track and field.
  */
 class StadiumShape : public Shape {
 public:
@@ -20,9 +22,7 @@ public:
 
     StadiumShape() = default;
 
-    StadiumShape(Point c1, Point c2, float r) {
-        init(c1, c2, r);
-    }
+    StadiumShape(Point c1, Point c2, float r) { init(c1, c2, r); }
 
     StadiumShape(const StadiumShape& other) {
         for (const auto& shape : other.subshapes_) {
@@ -50,19 +50,13 @@ public:
         return subshapes_;
     }
 
-    [[nodiscard]] const rj_geometry::ShapeSet drawshapes() const {
-        return drawshapes_;
-    }
+    [[nodiscard]] const rj_geometry::ShapeSet drawshapes() const { return drawshapes_; }
 
-    std::shared_ptr<Shape> operator[](unsigned int index) {
-        return subshapes_[index];
-    }
+    std::shared_ptr<Shape> operator[](unsigned int index) { return subshapes_[index]; }
 
-    std::shared_ptr<const Shape> operator[](unsigned int index) const {
-        return subshapes_[index];
-    }
+    std::shared_ptr<const Shape> operator[](unsigned int index) const { return subshapes_[index]; }
 
-     template <typename T>
+    template <typename T>
     [[nodiscard]] bool hit(const T& obj) const {
         for (const auto& it : *this) {
             if (it->hit(obj)) {
@@ -75,11 +69,9 @@ public:
 
     [[nodiscard]] bool hit(Point pt) const override { return hit<Point>(pt); }
 
-    [[nodiscard]] bool hit(const Segment& seg) const override {
-        return hit<Segment>(seg);
-    }
+    [[nodiscard]] bool hit(const Segment& seg) const override { return hit<Segment>(seg); }
 
-     std::string to_string() override {
+    std::string to_string() override {
         std::stringstream str;
         str << "StadiumShape<";
         for (auto& subshape : subshapes_) {
@@ -98,4 +90,4 @@ private:
     rj_geometry::ShapeSet drawshapes_;
 };
 
-}
+}  // namespace rj_geometry
