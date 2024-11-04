@@ -84,6 +84,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/idle.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
+    strategy/agent/position/runner.cpp
     strategy/agent/position/seeker.cpp
     strategy/agent/position/marker.cpp
     strategy/agent/position/goal_kicker.cpp
@@ -94,7 +95,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
-
+    soccer_mom.cpp
         )
 
 set(SOCCER_TEST_SRC
@@ -135,6 +136,8 @@ set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
 
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
+set(SOCCER_MOM_NODE_SRC soccer_mom_node_main.cpp)
+
 set(MANUAL_CONTROL_NODE_SRC joystick/manual_control_node_main.cpp)
 
 set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
@@ -174,6 +177,9 @@ target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})
 
 # ---- sim_radio_node ----
 target_sources(network_radio_node PRIVATE ${NETWORK_RADIO_NODE_SRC})
+
+# ---- soccer_mom_node ----
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- manual_control_node ----
 target_sources(manual_control_node PRIVATE ${MANUAL_CONTROL_NODE_SRC})
