@@ -425,11 +425,14 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
     // programmatically
     LinearMotionInstant target{plan_request.start.position(), Point()};
 
-    Replanner::PlanParams params{
-        plan_request.start,       target,
-        static_obstacles,         dynamic_obstacles, plan_request.field_dimensions,
-        plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position),
-        plan_request.shell_id};
+    Replanner::PlanParams params{plan_request.start,
+                                 target,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.field_dimensions,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(plan_request.world_state->ball.position),
+                                 plan_request.shell_id};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");
 

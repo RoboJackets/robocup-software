@@ -13,8 +13,8 @@
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/tests/testing_utils.hpp"
 #include "planning/trajectory.hpp"
-#include "rj_geometry/pose.hpp"
 #include "rj_common/field_dimensions.hpp"
+#include "rj_geometry/pose.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure
@@ -221,7 +221,7 @@ TEST(Planning, collect_moving_ball_slow) {
 
 TEST(Planning, collect_moving_ball_slow_2) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions; 
+    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
     world_state.ball.position = Point{-1, 1};
     world_state.ball.velocity = Point{0.01, 0.05};
     world_state.ball.timestamp = RJ::now();

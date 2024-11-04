@@ -7,8 +7,8 @@
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
-#include "velocity_profiling.hpp"
 #include "rj_common/field_dimensions.hpp"
+#include "velocity_profiling.hpp"
 
 namespace planning {
 
