@@ -8,12 +8,10 @@
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<Idle>(robot_id_);
     }
 }
 
@@ -29,7 +27,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     process_play_state();
 
     // Every tick, update position based on PlayState
-    update_position();
+    //update_position();
 
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }

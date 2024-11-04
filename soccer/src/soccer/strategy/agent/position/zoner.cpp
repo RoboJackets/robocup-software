@@ -57,7 +57,7 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
             // Face ball
             planning::PathTargetFaceOption face_option{planning::FaceBall{}};
 
-            // Avoid ball
+            // Avof ball
             bool ignore_ball{true};
 
             // Create Motion Command

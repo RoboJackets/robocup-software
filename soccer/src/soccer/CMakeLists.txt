@@ -81,6 +81,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/goalie.cpp
     strategy/agent/position/line.cpp
     strategy/agent/position/offense.cpp
+    strategy/agent/position/runner.cpp
     strategy/agent/position/idle.cpp
     strategy/agent/position/defense.cpp
     strategy/agent/position/waller.cpp
@@ -94,6 +95,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
+    soccer_mom.cpp
 
         )
 
@@ -132,6 +134,8 @@ set(PLANNER_NODE_SRC planning/planner_node_main.cpp)
 set(CONTROL_NODE_SRC control/control_node_main.cpp)
 
 set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)
+
+set(SOCCER_MOM_NODE_SRC soccer_mom_node_main.cpp)
 
 set(NETWORK_RADIO_NODE_SRC radio/network_radio_node_main.cpp)
 
@@ -186,6 +190,8 @@ target_sources(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
+target_sources(soccer_mom_node PRIVATE ${SOCCER_MOM_NODE_SRC})
 
 # ---- testing ----
 if(BUILD_TESTING)
