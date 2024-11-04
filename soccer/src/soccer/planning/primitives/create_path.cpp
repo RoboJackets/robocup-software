@@ -79,7 +79,8 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles, 
+                        const rj_geometry::ShapeSet& static_obstacles,
+                        const std::vector<DynamicObstacle>& dynamic_obstacles,
                         const FieldDimensions field_dimensions, unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -115,7 +116,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             // Ignore out-of-bounds intermediate points
             // The offset 0.2m is chosen because the sim prevents you from moving
             // more than 0.2m away from the border lines
-            if (abs(offset.x()) > field_dimensions.width() / 2 + 0.2 || abs(offset.y()) > field_dimensions.length() / 2 + 0.2) {
+            if (abs(offset.x()) > field_dimensions.width() / 2 + 0.2 ||
+                abs(offset.y()) > field_dimensions.length() / 2 + 0.2) {
                 continue;
             }
 
@@ -125,18 +127,21 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
-                cached_intermediate_tuple_[robot_id] = {abs(angle), (final_inter - start.position).mag(), signbit(angle) ? -1 : 1};
+                cached_intermediate_tuple_[robot_id] = {
+                    abs(angle), (final_inter - start.position).mag(), signbit(angle) ? -1 : 1};
                 return trajectory;
             }
         }
     }
 
     // If all else fails, use rrt to ensure obstacle avoidance
-    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles, dynamic_obstacles);
+    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles,
+                           dynamic_obstacles);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
-                                                  const LinearMotionInstant& goal, unsigned int robot_id) {
+                                                  const LinearMotionInstant& goal,
+                                                  unsigned int robot_id) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
