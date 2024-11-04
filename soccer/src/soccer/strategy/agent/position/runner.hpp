@@ -27,13 +27,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-
-    enum State {
-        TOP_LEFT,
-        TOP_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_RIGHT
-    };
+    enum State { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
 
     State current_state_ = State::TOP_LEFT;
 
@@ -43,6 +37,5 @@ private:
     State next_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-
 };
 }  // namespace strategy

@@ -16,7 +16,7 @@ Runner::State Runner::next_state() {
     if (!check_is_done()) {
         return current_state_;
     }
-    switch(current_state_) {
+    switch (current_state_) {
         case TOP_LEFT:
             return TOP_RIGHT;
         case TOP_RIGHT:
@@ -52,7 +52,6 @@ std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     return state_to_task(intent);
 };
 
-
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     planning::LinearMotionInstant target;
     switch (current_state_) {
@@ -73,7 +72,6 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     planning::MotionCommand prep_command{"path_target", target, planning::FaceTarget{}};
     intent.motion_command = prep_command;
     return intent;
-
 }
 
 }  // namespace strategy
