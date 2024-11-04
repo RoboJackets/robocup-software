@@ -29,7 +29,7 @@ struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
-                unsigned shell_id, const WorldState* world_state, PlayState play_state,
+                unsigned shell_id, const WorldState* world_state, PlayState play_state, FieldDimensions field_dimensions,
                 int8_t priority = 0, rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
                 bool ball_sense = false, float min_dist_from_ball = 0, float dribbler_speed = 0)
         : start(start),
@@ -42,6 +42,7 @@ struct PlanRequest {
           world_state(world_state),
           priority(priority),
           play_state(play_state),
+          field_dimensions(field_dimensions),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
           min_dist_from_ball(min_dist_from_ball),
@@ -101,6 +102,11 @@ struct PlanRequest {
      * the current PlayState
      */
     PlayState play_state;
+
+    /**
+     * the Field Dimensions
+     */
+    FieldDimensions field_dimensions;
 
     /**
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
