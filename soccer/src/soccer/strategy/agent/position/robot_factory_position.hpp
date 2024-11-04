@@ -30,6 +30,8 @@
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
 
+#include "strategy/agent/position/runner.hpp"
+
 namespace strategy {
 
 /*
