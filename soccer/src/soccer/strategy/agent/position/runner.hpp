@@ -8,6 +8,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_msgs/action/robot_move.hpp>
+
 #include "marker.hpp"
 #include "planning/instant.hpp"
 #include "position.hpp"
@@ -26,6 +27,7 @@ public:
     Runner(const Position& other);
 
     std::string get_current_state() override;
+
 private:
     // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{
@@ -43,15 +45,14 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        RUNNING,// running along a line
-        TURNING // tuning 90 degrees
-        
+        RUNNING,  // running along a line
+        TURNING   // tuning 90 degrees
+
     };
 
     State next_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-
 
     State current_state_ = RUNNING;
 };

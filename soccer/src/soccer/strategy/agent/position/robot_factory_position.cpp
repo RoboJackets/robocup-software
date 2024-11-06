@@ -27,7 +27,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     process_play_state();
 
     // Every tick, update position based on PlayState
-    //update_position();
+    // update_position();
 
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }
