@@ -22,6 +22,7 @@
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/line.hpp"
 #include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/runner.hpp"
 #include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
 #include "strategy/agent/position/pivot_test.hpp"
