@@ -351,6 +351,7 @@ but here are some more hints.
 * The motion command for driving in a straight line is :cpp:`"path_target"`.
 * You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
 * The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
+* You will need to add the new file name you create to ``soccer/src/soccer/CMakeLists.txt``. See how this is done for other positions.
 
 Testing
 ~~~~~~~

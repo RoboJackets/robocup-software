@@ -10,14 +10,14 @@ if [ -z "$binary" ]; then
 fi
 
 # Run the binary in the background
-"$binary" &
+"$binary" -g 2020B --realism RC2021 &
 binary_pid=$!
-
-# Run "make run-our-stack" in the foreground
-make run-our-stack
 
 # Ensure that pressing Ctrl+C kills all subprocesses
 trap 'kill $binary_pid; exit' INT
+
+# Run "make run-our-stack" in the foreground
+make run-our-stack
 
 # Wait for the background process to complete
 wait $binary_pid

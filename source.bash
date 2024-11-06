@@ -9,3 +9,6 @@ if [[ $SHELL == *"zsh"* ]]; then
     source /opt/ros/humble/setup.zsh
     source install/setup.zsh
 fi
+
+source install/env.sh
+
