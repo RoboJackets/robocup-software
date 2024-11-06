@@ -13,7 +13,7 @@ std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     State new_state = next_state();
     // if (new_state != current_state_) {
     // }
-    SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     current_state_ = new_state;
 
     // Calculate task based on state
