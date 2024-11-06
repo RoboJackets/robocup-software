@@ -87,6 +87,10 @@ AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& reque
         return AngleFns::face_angle(std::get<FaceAngle>(face_option).target);
     }
 
+    if (std::holds_alternative<FaceTarget>(face_option)) {
+        return AngleFns::face_point(request.motion_command.target.position);
+    }
+
     // default to facing tangent to path
     // (rj_convert in motion_command.hpp also follows this default)
     return AngleFns::tangent;
