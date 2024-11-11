@@ -7,6 +7,9 @@ Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions
 Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
     position_name_ = "Defense";
     walling_robots_ = {};
+    marking_robots_ = {};
+    marked_robots_ = {};
+    kMaxMarkers = 1;
 }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
@@ -40,21 +43,63 @@ Defense::State Defense::update_state() {
             break;
         case JOINING_WALL:
             send_join_wall_request();
-            // SPDLOG_INFO("join wall {}", robot_id_);
+            SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
-        case WALLING:
+        case WALLING: {
             // If a wall is already full,
             // Remove the robot with the highest ID from a wall
             // and make them a marker instead.
             if (walling_robots_.size() > kMaxWallers &&
                 this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
-                send_leave_wall_request();
-                // SPDLOG_INFO("leave wall {}", robot_id_);
-                next_state = ENTERING_MARKING;
+
+                SPDLOG_INFO("back again");
+                int deepest_robot = 0;
+                for (int i = 0; i < kNumShells; i++) {
+                    // if (marked_robots_.find(i) != marked_robots_.end()) {
+                    //     continue;
+                    // }
+                    if (world_state->get_robot(false, i).pose.position().y() < world_state->get_robot(false, deepest_robot).pose.position().y() && world_state->get_robot(false, i).pose.position().y() > 0
+                    && world_state->get_robot(false, i).pose.position().x() > -3 && world_state->get_robot(false, i).pose.position().x() < 3) {
+                        deepest_robot = i;
+                    }
+                }
+
+                if (world_state->get_robot(false, deepest_robot).pose.position().y() < marking_y_bound) {
+                    SPDLOG_INFO("Target set to {}", deepest_robot);
+                    send_leave_wall_request();
+                    next_state = ENTERING_MARKING;
+                    marker_.set_target(deepest_robot);
+                }
             }
+
+            // For when I get communication working
+            // int deepest_robot = 0;
+            // for (int i = 0; i < kNumShells; i++) {
+            //     if (marked_robots_.find(i) != marked_robots_.end()) {
+            //         continue;
+            //     }
+            //     if (world_state->get_robot(false, i).pose.position().y() < world_state->get_robot(false, deepest_robot).pose.position().y()) {
+            //         deepest_robot = i;
+            //     }
+            // }
+
+            // if (marking_robots_.size() < kMaxMarkers && deepest_robot != -1 && world_state->get_robot(false, deepest_robot).pose.position().y() < marking_y_bound) {
+            //     SPDLOG_INFO("Marking robot size: {}", marking_robots_.size());
+            //     SPDLOG_INFO("Max markers: {}", kMaxMarkers);
+                
+            //     marker_.set_target(deepest_robot);
+            //     marked_robots_.insert(deepest_robot);
+            //     marking_robots_.push_back(robot_id_);
+
+            //     send_leave_wall_request();
+            //     next_state = ENTERING_MARKING;
+            // }
+
+
             break;
+        }
         case SEARCHING:
             break;
         case RECEIVING:
@@ -79,12 +124,15 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
+            // SPDLOG_INFO("Marking");
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
-                next_state = ENTERING_MARKING;
+                next_state = JOINING_WALL;
+                SPDLOG_INFO("Here");
+                // marking_robots_.erase(std::remove(marking_robots_.begin(), marking_robots_.end(), robot_id_), marking_robots_.end());
             }
             break;
         case ENTERING_MARKING:
-            marker_.choose_target(world_state);
+            // marker_.choose_target(world_state);
             int target_id = marker_.get_target();
             if (target_id == -1) {
                 next_state = ENTERING_MARKING;
@@ -92,6 +140,19 @@ Defense::State Defense::update_state() {
                 next_state = MARKING;
             }
     }
+
+    // SPDLOG_INFO("Size of marking robots: {}", marking_robots_.size());
+    if (marker_.get_target() != -1) {
+        SPDLOG_INFO("Target: {}", marker_.get_target());
+    }
+    // if (marking_robots_.size() > 0) {
+    //     SPDLOG_INFO("Marking robot: {}", marking_robots_[0]);
+    // }
+
+    // if (robot_id_ == 5) {
+    //     SPDLOG_INFO("My state is {}", current_state_);
+    // }
+    
 
     return next_state;
 }

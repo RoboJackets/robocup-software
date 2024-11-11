@@ -44,9 +44,13 @@ public:
     void revive() override;
 
 private:
-    // static constexpr int kMaxWallers{6};
-    static constexpr int kMaxWallers{
-        static_cast<int>(kNumShells)};  // This effectively turns off marking
+    static constexpr int kMaxWallers{3};
+    //static constexpr int kMaxWallers{
+    //    static_cast<int>(kNumShells)};  // This effectively turns off marking
+    
+    int kMaxMarkers = 1;
+    
+    float marking_y_bound{FieldDimensions::kDefaultDimensions.length() / 4};
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -114,6 +118,8 @@ private:
     void handle_join_wall_response(communication::JoinWallResponse join_response);
 
     std::vector<u_int8_t> walling_robots_ = {};
+    std::vector<u_int8_t> marking_robots_ = {};
+    std::set<u_int8_t> marked_robots_ = {};
     int waller_id_ = -1;
 
     // current state of the defense agent (state machine)

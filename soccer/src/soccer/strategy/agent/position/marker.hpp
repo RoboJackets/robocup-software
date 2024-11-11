@@ -22,7 +22,7 @@ private:
     // Calculated from field dimensions - Prevent the marker from
     // marking any enemies that are out of range; e. g. on the other
     // side of the field or the sidelines.
-    float y_bound{FieldDimensions::kDefaultDimensions.length() / 2};
+    float y_bound{FieldDimensions::kDefaultDimensions.length() / 4};
     float marker_follow_cutoff{FieldDimensions::kDefaultDimensions.width() / 2};
 
 public:
@@ -38,6 +38,7 @@ public:
 
     void choose_target(const WorldState* ws);
     int get_target();
+    void set_target(int robot_id);
     bool target_out_of_bounds(const WorldState* ws);
 };
 }  // namespace strategy
