@@ -81,7 +81,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles,
                         const std::vector<DynamicObstacle>& dynamic_obstacles,
-                        const FieldDimensions field_dimensions, unsigned int robot_id) {
+                        const FieldDimensions* field_dimensions, unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -111,13 +111,13 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
 
-            auto offset = intermediate - field_dimensions.center_point();
+            auto offset = intermediate - field_dimensions->center_point();
 
             // Ignore out-of-bounds intermediate points
             // The offset 0.2m is chosen because the sim prevents you from moving
             // more than 0.2m away from the border lines
-            if (abs(offset.x()) > field_dimensions.width() / 2 + 0.2 ||
-                abs(offset.y()) > field_dimensions.length() / 2 + 0.2) {
+            if (abs(offset.x()) > field_dimensions->width() / 2 + 0.2 ||
+                abs(offset.y()) > field_dimensions->length() / 2 + 0.2) {
                 continue;
             }
 

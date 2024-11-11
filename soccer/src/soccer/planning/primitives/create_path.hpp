@@ -32,7 +32,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles,
                         const std::vector<DynamicObstacle>& dynamic_obstacles,
-                        const FieldDimensions field_dimensions, unsigned int robot_id);
+                        const FieldDimensions* field_dimensions, unsigned int robot_id);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,

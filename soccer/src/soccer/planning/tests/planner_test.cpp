@@ -30,7 +30,7 @@ TEST(Planning, path_target_random) {
 
     WorldState world_state;
     PathTargetPathPlanner planner;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
 
     int failure_count = 0;
     for (int i = 0; i < 1000; i++) {
@@ -90,7 +90,7 @@ TEST(Planning, path_target_random) {
 
 TEST(Planning, collect_basic) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
@@ -114,7 +114,7 @@ TEST(Planning, collect_basic) {
 
 TEST(Planning, collect_obstructed) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
@@ -140,7 +140,7 @@ TEST(Planning, collect_obstructed) {
 
 TEST(Planning, collect_pointless_obs) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{0, 0};
     world_state.ball.timestamp = RJ::now();
@@ -169,7 +169,7 @@ TEST(Planning, collect_pointless_obs) {
 
 TEST(Planning, collect_moving_ball_quick) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{-1, 1};
     world_state.ball.velocity = Point{-0.03, 0.3};
     world_state.ball.timestamp = RJ::now();
@@ -195,7 +195,7 @@ TEST(Planning, collect_moving_ball_quick) {
 
 TEST(Planning, collect_moving_ball_slow) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{-1, 1};
     world_state.ball.velocity = Point{0, 0.1};
     world_state.ball.timestamp = RJ::now();
@@ -221,7 +221,7 @@ TEST(Planning, collect_moving_ball_slow) {
 
 TEST(Planning, collect_moving_ball_slow_2) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{-1, 1};
     world_state.ball.velocity = Point{0.01, 0.05};
     world_state.ball.timestamp = RJ::now();
@@ -248,7 +248,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
 TEST(Planning, collect_random) {
     std::mt19937 gen(1337);
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
 
     int failure_count = 0;
 
@@ -295,7 +295,7 @@ TEST(Planning, collect_random) {
 
 TEST(Planning, settle_basic) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     world_state.ball.position = Point{1, 1};
     world_state.ball.velocity = Point{-1, -1.5};
     world_state.ball.timestamp = RJ::now();
@@ -321,7 +321,7 @@ TEST(Planning, settle_basic) {
 
 TEST(Planning, settle_pointless_obs) {
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
     // Use some initial velocity, settle doesn't always work for non-moving
     // balls
     world_state.ball.position = Point{1, 3};
@@ -351,7 +351,7 @@ TEST(Planning, settle_pointless_obs) {
 TEST(Planning, settle_random) {
     std::mt19937 gen(1337);
     WorldState world_state;
-    FieldDimensions field_dimensions = FieldDimensions::current_dimensions;
+    FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
 
     int failure_count = 0;
 

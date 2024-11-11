@@ -34,7 +34,7 @@ public:
     [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const;
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const;
     [[nodiscard]] const WorldState* world_state() const;
-    [[nodiscard]] FieldDimensions field_dimensions() const;
+    [[nodiscard]] const FieldDimensions* field_dimensions() const;
 
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
