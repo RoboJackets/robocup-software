@@ -41,7 +41,8 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, static_obstacles, dynamic_obstacles,
-                              request.constraints, angle_function, RJ::Seconds(3.0)},
+                              request.field_dimensions, request.constraints, angle_function,
+                              request.shell_id, RJ::Seconds(3.0)},
         std::move(previous_));
 
     previous_ = trajectory;

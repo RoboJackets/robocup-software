@@ -75,11 +75,13 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
-static std::optional<std::tuple<double, double, double>> cached_intermediate_tuple_{};
+static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles) {
+                        const rj_geometry::ShapeSet& static_obstacles,
+                        const std::vector<DynamicObstacle>& dynamic_obstacles,
+                        const FieldDimensions* field_dimensions, unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -97,7 +99,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // Generate list of intermediate points
-    std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal);
+    std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal, robot_id);
 
     for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         rj_geometry::Point final_inter = intermediates[i];
@@ -108,25 +110,38 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
              t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
+
+            auto offset = intermediate - field_dimensions->center_point();
+
+            // Ignore out-of-bounds intermediate points
+            // The offset 0.2m is chosen because the sim prevents you from moving
+            // more than 0.2m away from the border lines
+            if (abs(offset.x()) > field_dimensions->width() / 2 + 0.2 ||
+                abs(offset.y()) > field_dimensions->length() / 2 + 0.2) {
+                continue;
+            }
+
             Trajectory trajectory =
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
-                cached_intermediate_tuple_ = {abs(angle), signbit(angle) ? -1 : 1,
-                                              (final_inter - start.position).mag()};
+                cached_intermediate_tuple_[robot_id] = {
+                    abs(angle), (final_inter - start.position).mag(), signbit(angle) ? -1 : 1};
                 return trajectory;
             }
         }
     }
 
-    // If all else fails, return the straight-line trajectory
-    return straight_trajectory;
+    // If all else fails, use rrt to ensure obstacle avoidance
+    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles,
+                           dynamic_obstacles);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
-                                                  const LinearMotionInstant& goal) {
+                                                  const LinearMotionInstant& goal,
+                                                  unsigned int robot_id) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
@@ -152,14 +167,15 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
     }
 
-    if (cached_intermediate_tuple_) {
-        inter_tuples.push_back(*cached_intermediate_tuple_);
-    }
 
     // Sort the list of tuples by the magnitude of angle
     // This ensures that we take paths with
     // smaller offsets from the simple path
     sort(inter_tuples.begin(), inter_tuples.end());
+
+    if (cached_intermediate_tuple_.find(robot_id) != cached_intermediate_tuple_.end()) {
+        inter_tuples.emplace(inter_tuples.begin(), cached_intermediate_tuple_[robot_id]);
+    }
 
     for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
         double angle = std::get<0>(inter_tuples[i]) * std::get<1>(inter_tuples[i]);

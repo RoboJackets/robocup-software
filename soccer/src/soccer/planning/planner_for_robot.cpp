@@ -217,6 +217,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        play_state,
+                       global_state_.field_dimensions(),
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
