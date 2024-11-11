@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <fstream>
 
 #include <gtest/gtest.h>
 
@@ -87,5 +88,180 @@ TEST(CreatePath, success_rate) {
     std::cout << "CreatePath::rrt() Success Rate: %.6f\n" << success_rate;
     EXPECT_GT(success_rate, 0.75);
 }
+
+TEST(CreatePath, intermediate_creation_time) {
+    std::mt19937 gen(1337);
+
+    constexpr int kIterations = 1000;
+    RobotConstraints constraints;
+    const FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
+
+    double average_time;
+    std::cout << "Saving to intermediate.out\n";
+    std::ofstream file("intermediate.out");
+
+    for (int i = 0; i < kIterations; i++) {
+        ShapeSet obstacles;
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
+            obstacles.add(std::make_shared<Circle>(
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
+                .2));
+        }
+
+        Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
+                          TestingUtils::random(&gen, 5.0, 5.5)};
+        Point start_velocity{TestingUtils::random(&gen, -.5, .5),
+                             TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant start{start_point, start_velocity};
+
+        Point end_point{TestingUtils::random(&gen, -3.0, 3.0),
+                        TestingUtils::random(&gen, 0.5, 1.0)};
+        Point end_velocity{TestingUtils::random(&gen, -.5, .5),
+                           TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant goal{end_point, end_velocity};
+
+        auto start_time = RJ::now();
+        Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(), obstacles, {}, field_dimensions, 0);
+        double nanos = (RJ::now() - start_time).count();
+        file << "CreatePath::intermediate() Time: " << nanos << " ns\n";
+        average_time += nanos;
+    }
+    file.close();
+
+    average_time /= kIterations;
+    std::cout << "CreatePath::intermediate() Average Time: " << average_time << " ns\n";
+    EXPECT_GT(average_time, 0);
+}
+
+TEST(CreatePath, rrt_creation_time) {
+    std::mt19937 gen(1337);
+
+    constexpr int kIterations = 1000;
+    RobotConstraints constraints;
+
+    double average_time;
+    std::cout << "Saving to rrt.out\n";
+    std::ofstream file("rrt.out");
+
+    for (int i = 0; i < kIterations; i++) {
+        ShapeSet obstacles;
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
+            obstacles.add(std::make_shared<Circle>(
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
+                .2));
+        }
+
+        Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
+                          TestingUtils::random(&gen, 5.0, 5.5)};
+        Point start_velocity{TestingUtils::random(&gen, -.5, .5),
+                             TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant start{start_point, start_velocity};
+
+        Point end_point{TestingUtils::random(&gen, -3.0, 3.0),
+                        TestingUtils::random(&gen, 0.5, 1.0)};
+        Point end_velocity{TestingUtils::random(&gen, -.5, .5),
+                           TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant goal{end_point, end_velocity};
+
+        auto start_time = RJ::now();
+        Trajectory traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
+        double nanos = (RJ::now() - start_time).count();
+        file << "CreatePath::rrt() Time: " << nanos << " ns\n";
+        average_time += nanos;
+    }
+    file.close();
+
+    average_time /= kIterations;
+    std::cout << "CreatePath::rrt() Average Time: " << average_time << " ns\n";
+    EXPECT_GT(average_time, 0);
+}
+
+TEST(CreatePath, intermediate_traversal_time) {
+    std::mt19937 gen(1337);
+
+    constexpr int kIterations = 10000;
+    RobotConstraints constraints;
+    const FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
+
+    double average_time;
+    std::cout << "Saving to intermediate.out\n";
+    std::ofstream file("intermediate.out");
+
+    for (int i = 0; i < kIterations; i++) {
+        ShapeSet obstacles;
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
+            obstacles.add(std::make_shared<Circle>(
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
+                .2));
+        }
+
+        Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
+                          TestingUtils::random(&gen, 5.0, 5.5)};
+        Point start_velocity{TestingUtils::random(&gen, -.5, .5),
+                             TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant start{start_point, start_velocity};
+
+        Point end_point{TestingUtils::random(&gen, -3.0, 3.0),
+                        TestingUtils::random(&gen, 0.5, 1.0)};
+        Point end_velocity{TestingUtils::random(&gen, -.5, .5),
+                           TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant goal{end_point, end_velocity};
+
+        Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(), obstacles, {}, field_dimensions, 0);
+        file << "CreatePath::intermediate() Time: " << traj.duration().count() << " s\n";
+        average_time += traj.duration().count();
+    }
+    file.close();
+
+    average_time /= kIterations;
+    std::cout << "CreatePath::intermediate() Average Time: " << average_time << " s\n";
+    EXPECT_GT(average_time, 0);
+}
+
+TEST(CreatePath, rrt_traversal_time) {
+    std::mt19937 gen(1337);
+
+    constexpr int kIterations = 10000;
+    RobotConstraints constraints;
+
+    double average_time;
+    std::cout << "Saving to rrt.out\n";
+    std::ofstream file("rrt.out");
+
+    for (int i = 0; i < kIterations; i++) {
+        ShapeSet obstacles;
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
+            obstacles.add(std::make_shared<Circle>(
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
+                .2));
+        }
+
+        Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
+                          TestingUtils::random(&gen, 5.0, 5.5)};
+        Point start_velocity{TestingUtils::random(&gen, -.5, .5),
+                             TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant start{start_point, start_velocity};
+
+        Point end_point{TestingUtils::random(&gen, -3.0, 3.0),
+                        TestingUtils::random(&gen, 0.5, 1.0)};
+        Point end_velocity{TestingUtils::random(&gen, -.5, .5),
+                           TestingUtils::random(&gen, -.5, .5)};
+        LinearMotionInstant goal{end_point, end_velocity};
+
+        Trajectory traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
+        file << "CreatePath::rrt() Time: " << traj.duration().count() << " s\n";
+        average_time += traj.duration().count();
+    }
+    file.close();
+
+    average_time /= kIterations;
+    std::cout << "CreatePath::rrt() Average Time: " << average_time << " s\n";
+    EXPECT_GT(average_time, 0);
+}
+
 
 }  // namespace planning
