@@ -169,12 +169,12 @@ TEST(TrapezoidalMotion2, more_tests) {
 }
 
 TEST(TrapezoidalMotion3, more_tests) {
-    double pos_out = 1.11101;
-    double path_length = 1.11101;
-    double max_speed = 2.2;
-    double max_acc = 1;
-    double start_speed = 0.901393;
-    double final_speed = 0;
+    [[maybe_unused]] double pos_out = 1.11101;
+    [[maybe_unused]] double path_length = 1.11101;
+    [[maybe_unused]] double max_speed = 2.2;
+    [[maybe_unused]] double max_acc = 1;
+    [[maybe_unused]] double start_speed = 0.901393;
+    [[maybe_unused]] double final_speed = 0;
 
     double result = Trapezoidal::get_time(2.03294, 2.03294, 2.2, 1, 0.176091, 0);
     EXPECT_FALSE(std::isnan(result));
