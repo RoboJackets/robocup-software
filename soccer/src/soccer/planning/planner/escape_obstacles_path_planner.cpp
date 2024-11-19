@@ -34,7 +34,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     Point unblocked =
         find_non_blocked_goal(start_instant.position(), previous_target_, obstacles, 300);
 
-    std::optional<Point> opt_prev_pt;
+    [[maybe_unused]] std::optional<Point> opt_prev_pt;
 
     LinearMotionInstant goal{unblocked, Point()};
     auto result = CreatePath::simple(start_instant.linear_motion(), goal, motion_constraints,

@@ -21,8 +21,8 @@ rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
 }
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                    Trajectory* out_ball_trajectory) {
+                    [[maybe_unused]] std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+                    [[maybe_unused]] Trajectory* out_ball_trajectory) {
     out_static->clear();
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);

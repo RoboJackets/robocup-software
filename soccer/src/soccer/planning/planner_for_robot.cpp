@@ -86,8 +86,8 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 }
 
 void PlannerForRobot::plan_hypothetical_robot_path(
-    const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
-    std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
+    [[maybe_unused]] const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
+    [[maybe_unused]] std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
     /* const auto intent = rj_convert::convert_from_ros(request->intent); */
     /* auto plan_request = make_request(intent); */
     /* auto trajectory = safe_plan_for_robot(plan_request); */
