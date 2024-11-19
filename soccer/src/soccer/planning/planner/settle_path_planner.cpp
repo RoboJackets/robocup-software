@@ -27,7 +27,7 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
 
     BallState ball = plan_request.world_state->ball;
 
-    const RJ::Time cur_time = plan_request.start.stamp;
+    [[maybe_unused]] const RJ::Time cur_time = plan_request.start.stamp;
 
     const MotionCommand& command = plan_request.motion_command;
 

@@ -83,7 +83,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
-void VisionReceiver::set_port(const std::string& interface, int port) {
+void VisionReceiver::set_port( [[maybe_unused]] const std::string& interface, int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
     if (socket_.is_open()) {

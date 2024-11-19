@@ -185,7 +185,7 @@ TEST(Trajectory, SubTrajectory) {
     {
         RJ::Time t0{4s};
         RJ::Time t1{6s};
-        RobotInstant bc = traj.evaluate(t0).value();
+        [[maybe_unused]] RobotInstant bc = traj.evaluate(t0).value();
 
         Trajectory sub = traj.sub_trajectory(t0, t1);
         EXPECT_TRUE(Trajectory::nearly_equal(sub, Trajectory{{c}}));
