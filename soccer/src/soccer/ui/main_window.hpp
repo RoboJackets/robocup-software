@@ -198,7 +198,6 @@ private Q_SLOTS:
     void on_positionReset_13_clicked();
     void on_positionReset_14_clicked();
     void on_positionReset_15_clicked();
-    
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
@@ -222,7 +221,7 @@ private:
     Processor* const _processor;
     bool _has_external_ref;
 
-    int current_goalie_num_ {0};
+    int current_goalie_num_{0};
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
