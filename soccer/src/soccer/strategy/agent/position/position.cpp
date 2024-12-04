@@ -13,7 +13,7 @@ Position::Position(int r_id, std::string position_name)
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions,
-                                              PlayState& play_state) {
+                                              [[maybe_unused]] PlayState& play_state) {
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;

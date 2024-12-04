@@ -8,7 +8,7 @@
 #include <vector>
 
 class LogViewer : public QMainWindow {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     LogViewer(QWidget* parent = nullptr);

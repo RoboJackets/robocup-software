@@ -25,7 +25,7 @@ static void fit_cubic_bezier(Point vi, Point vf, const std::vector<Point>& point
 
     int num_curves = static_cast<int>(points.size()) - 1;
 
-    if (ks.size() != num_curves) {
+    if (static_cast<int>(ks.size()) != num_curves) {
         throw std::invalid_argument("Expected ks.size() == points.size() - 1");
     }
 
