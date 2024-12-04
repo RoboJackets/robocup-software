@@ -30,19 +30,19 @@ void Ros2Sink<Mutex>::sink_it_(const spdlog::details::log_msg& msg) {
     switch (msg.level) {
         case spdlog::level::trace:
         case spdlog::level::debug:
-            RCLCPP_DEBUG(logger, string.c_str());  // NOLINT
+            RCLCPP_DEBUG(logger, "%s", string.c_str());  // NOLINT
             break;
         case spdlog::level::info:
-            RCLCPP_INFO(logger, string.c_str());  // NOLINT
+            RCLCPP_INFO(logger, "%s", string.c_str());  // NOLINT
             break;
         case spdlog::level::warn:
-            RCLCPP_WARN(logger, string.c_str());  // NOLINT
+            RCLCPP_WARN(logger, "%s", string.c_str());  // NOLINT
             break;
         case spdlog::level::err:
-            RCLCPP_ERROR(logger, string.c_str());  // NOLINT
+            RCLCPP_ERROR(logger, "%s", string.c_str());  // NOLINT
             break;
         case spdlog::level::critical:
-            RCLCPP_FATAL(logger, string.c_str());  // NOLINT
+            RCLCPP_FATAL(logger, "%s", string.c_str());  // NOLINT
             break;
         case spdlog::level::off:
             break;
