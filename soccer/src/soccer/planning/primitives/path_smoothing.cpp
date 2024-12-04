@@ -187,7 +187,7 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
 
     // This will only happen when s = 1 - in that case, we actually want to use
     // the last segment.
-    if (index == num_curves) {
+    if (index == (int) num_curves) {
         index--;
     }
 

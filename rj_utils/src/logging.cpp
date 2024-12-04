@@ -46,6 +46,8 @@ void Ros2Sink<Mutex>::sink_it_(const spdlog::details::log_msg& msg) {
             break;
         case spdlog::level::off:
             break;
+        default:
+            break;
     }
 }
 
