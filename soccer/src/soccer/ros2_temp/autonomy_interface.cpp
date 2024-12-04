@@ -15,7 +15,7 @@ AutonomyInterface::AutonomyInterface(Context* context, rclcpp::Executor* executo
 
     executor->add_node(node_);
     status_subs_.reserve(kNumShells);
-    for (int i = 0; i < kNumShells; i++) {
+    for (int i = 0; i < (int) kNumShells; i++) {
         status_subs_.emplace_back(node_->create_subscription<rj_msgs::msg::RobotStatus>(
             radio::topics::robot_status_topic(i), rclcpp::QoS(1),
             [this, i](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT

@@ -341,7 +341,7 @@ void MainWindow::updateViews() {
             QString("Log: %1 kiB").arg(QString::number((context_->logs.size_bytes + 512) / 1024)));
     }
 
-    auto value = _ui.logHistoryLocation->value();
+    [[maybe_unused]] auto value = _ui.logHistoryLocation->value();
 
     std::shared_ptr<LogFrame> live_frame;
     RJ::Time start_time;
@@ -521,7 +521,7 @@ void MainWindow::updateViews() {
             auto maybe_robot =
                 [&]() -> std::optional<std::reference_wrapper<const Packet::LogFrame_Robot>> {
                 for (int i = 0; i < currentFrame->self_size(); i++) {
-                    if (currentFrame->self(i).shell() == shell) {
+                    if ((currentFrame->self(i).shell() == (int) shell)) {
                         return currentFrame->self(i);
                     }
                 }
@@ -878,7 +878,7 @@ void MainWindow::on_actionNyanStyle_triggered() {
 
 // Manual control commands
 
-void MainWindow::on_actionDampedRotation_toggled(bool value) {
+void MainWindow::on_actionDampedRotation_toggled([[maybe_unused]] bool value) {
 #if MANUAL
     cout << "DampedRotation is ";
     if (value)
@@ -891,7 +891,7 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
 #endif
 }
 
-void MainWindow::on_actionDampedTranslation_toggled(bool value) {
+void MainWindow::on_actionDampedTranslation_toggled([[maybe_unused]] bool value) {
 #if MANUAL
     cout << "DampedTranslation is ";
     if (value)
@@ -1015,19 +1015,19 @@ void MainWindow::on_actionTeamYellow_triggered() {
     update_cache(_game_settings.request_blue_team, false, &_game_settings_valid);
 }
 
-void MainWindow::on_manualID_currentIndexChanged(int value) {
+void MainWindow::on_manualID_currentIndexChanged([[maybe_unused]] int value) {
 #if MANUAL
     context_->game_settings.joystick_config.manualID = value - 1;
 #endif
 }
 
-void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
+void MainWindow::on_actionUse_Field_Oriented_Controls_toggled([[maybe_unused]] bool value) {
 #if MANUAL
     context_->game_settings.joystick_config.useFieldOrientedDrive = value;
 #endif
 }
 
-void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
+void MainWindow::on_actionUse_Multiple_Joysticks_toggled([[maybe_unused]] bool value) {
     // TODO(Kyle): Reimplement multiple manual
 }
 

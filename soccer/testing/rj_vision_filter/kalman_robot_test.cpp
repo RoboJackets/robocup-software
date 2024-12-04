@@ -20,7 +20,7 @@ TEST(KalmanRobot, invalid_world_robot) {
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
-    double th = kb.get_theta();
+    [[maybe_unused]] double th = kb.get_theta();
     double om = kb.get_omega();
 
     EXPECT_EQ(rp.x(), pose.position().x());
@@ -95,9 +95,9 @@ TEST(KalmanRobot, predict) {
     kb.predict(t);
 
     rj_geometry::Point rp2 = kb.get_pos();
-    rj_geometry::Point rv2 = kb.get_vel();
+    [[maybe_unused]] rj_geometry::Point rv2 = kb.get_vel();
     double th2 = kb.get_theta();
-    double om2 = kb.get_omega();
+    [[maybe_unused]] double om2 = kb.get_omega();
 
     EXPECT_NEAR(rp2.x(), rp.x() + rv.y() * 0.01, 0.01);
     EXPECT_NEAR(rp2.y(), rp.y() + rv.y() * 0.01, 0.01);

@@ -197,7 +197,7 @@ void RobotFactoryPosition::start_kicker_picker() {
 bool RobotFactoryPosition::have_all_kicker_responses() {
     int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
 
-    return kicker_distances_.size() == num_alive - 1;  // Don't expect the goalie to respond
+    return (int) kicker_distances_.size() == num_alive - 1;  // Don't expect the goalie to respond
 }
 
 bool RobotFactoryPosition::am_closest_kicker() {

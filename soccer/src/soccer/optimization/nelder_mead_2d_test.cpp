@@ -11,7 +11,7 @@ static float eval_function1(rj_geometry::Point p) {
     return -1 * sqrt(p.x() * p.x() + p.y() * p.y());
 }
 
-static float eval_function2(rj_geometry::Point p) { return 1; }
+static float eval_function2([[maybe_unused]] rj_geometry::Point p) { return 1; }
 
 TEST(NelderMead2D, execute) {
     std::function<float(rj_geometry::Point)> f = &eval_function1;

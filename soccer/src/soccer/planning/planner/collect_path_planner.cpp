@@ -24,7 +24,7 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
-    const MotionCommand& command = plan_request.motion_command;
+    [[maybe_unused]] const MotionCommand& command = plan_request.motion_command;
 
     // Start state for specified robot
     RobotInstant start_instant = plan_request.start;
@@ -33,7 +33,7 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // All the max velocity / acceleration constraints for translation /
     // rotation
     RobotConstraints robot_constraints = plan_request.constraints;
-    MotionConstraints& motion_constraints = robot_constraints.mot;
+    [[maybe_unused]] MotionConstraints& motion_constraints = robot_constraints.mot;
 
     // The small beginning part of the previous path
     Trajectory partial_path;

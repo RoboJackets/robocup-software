@@ -176,7 +176,7 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 intersect_pt_reflection_vector.normalized();
 
             // Scale magnitude of velocity by a percentage
-            double dampen_lin_coeff = PARAM_robot_body_lin_dampen;
+            [[maybe_unused]] double dampen_lin_coeff = PARAM_robot_body_lin_dampen;
             double dampen_angle_coeff = PARAM_robot_body_angle_dampen;
 
             if (did_hit_mouth) {

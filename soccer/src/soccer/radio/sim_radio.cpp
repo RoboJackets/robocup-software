@@ -121,7 +121,7 @@ SimRadio::SimRadio(bool blue_team)
 
 void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
                                     const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                    strategy::Positions role) {
+                                    [[maybe_unused]] strategy::Positions role) {
     RobotControl sim_packet;
 
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
@@ -157,7 +157,7 @@ void SimRadio::start_receive() {
                           });
 }
 
-void SimRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
+void SimRadio::receive_packet([[maybe_unused]] const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
     std::string data(buffer_.begin(), buffer_.end());
     handle_receive(data);
     start_receive();

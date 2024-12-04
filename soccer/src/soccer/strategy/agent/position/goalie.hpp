@@ -37,7 +37,7 @@ private:
     const rj_geometry::Point clear_point_{0.0, 4.5};
 
     // temp
-    int send_idle_ct_ = 0;
+    [[maybe_unused]] int send_idle_ct_ = 0;
 
     // see Position superclass
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;

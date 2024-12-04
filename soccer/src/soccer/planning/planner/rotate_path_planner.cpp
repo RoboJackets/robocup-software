@@ -33,7 +33,7 @@ bool RotatePathPlanner::is_done() const {
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
     [[maybe_unused]] const auto& linear_constraints = request.constraints.mot;
-    [[maybe_unused]]const auto& rotation_constraints = request.constraints.rot;
+    [[maybe_unused]] const auto& rotation_constraints = request.constraints.rot;
 
     rj_geometry::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
