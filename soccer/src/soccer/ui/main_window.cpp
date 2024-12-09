@@ -1175,7 +1175,7 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
  * The following methods are event listeners for the manual position assignments.
  * In the QT5 event handling system, these methods are automatically connected to the
  * QObject with the relevant name due to their naming scheme and their labels as Q_SLOT functions.
- * 
+ *
  * For this reason, all of these methods are REQUIRED by the UI - Consolidating them into one method
  * produces unnecessary complications.
  */
@@ -1210,7 +1210,6 @@ void MainWindow::on_positionReset_13_clicked() { onResetButtonClicked(13); }
 void MainWindow::on_positionReset_14_clicked() { onResetButtonClicked(14); }
 
 void MainWindow::on_positionReset_15_clicked() { onResetButtonClicked(15); }
-
 
 void MainWindow::on_robotPosition_0_currentIndexChanged(int value) {
     onPositionDropdownChanged(0, value);
