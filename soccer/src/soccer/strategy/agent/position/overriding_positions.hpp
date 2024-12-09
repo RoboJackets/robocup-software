@@ -22,7 +22,8 @@ enum OverridingPositions {
     SMART_IDLE,
     ZONER,
     IDLE,
-    LENGTH,  // Do not remove - Placeholder to act as the "length" of the enum, or the number of elements it contains. Should always be at end of enum
+    LENGTH,  // Do not remove - Placeholder to act as the "length" of the enum, or the number of
+             // elements it contains. Should always be at end of enum
 };
 
 }  // namespace Strategy
