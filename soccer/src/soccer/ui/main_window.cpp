@@ -52,7 +52,6 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
     widget->setMinimumWidth(rect.width());
 }
 
-// TODO: Set up the UI objects and bind them to methods
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
