@@ -75,7 +75,6 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
-
 static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
