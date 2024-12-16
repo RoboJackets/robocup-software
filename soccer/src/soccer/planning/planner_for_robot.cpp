@@ -9,6 +9,7 @@
 #include "planning/planner/line_pivot_path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
+#include "planning/planner/rotate_path_planner.hpp"
 #include "planning/planner/settle_path_planner.hpp"
 
 namespace planning {
@@ -32,6 +33,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();
     path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
     path_planners_[LinePivotPathPlanner().name()] = std::make_unique<LinePivotPathPlanner>();
+    path_planners_[RotatePathPlanner().name()] = std::make_unique<RotatePathPlanner>();
     path_planners_[EscapeObstaclesPathPlanner().name()] =
         std::make_unique<EscapeObstaclesPathPlanner>();
 
@@ -215,6 +217,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        play_state,
+                       global_state_.field_dimensions(),
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,

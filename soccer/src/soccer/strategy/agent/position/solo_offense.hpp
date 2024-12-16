@@ -36,13 +36,16 @@ private:
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { TO_BALL, KICK, MARKER };
+    enum State { TO_BALL, KICK, MARKER, ROTATE };
 
     State current_state_ = TO_BALL;
 
     rj_geometry::Point target_;
 
     int marking_id_;
+
+    bool kick_ = false;
+    int counter_ = 0;
 
     /**
      * @return what the state should be right now. called on each get_task tick
