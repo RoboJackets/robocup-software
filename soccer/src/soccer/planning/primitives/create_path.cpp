@@ -110,7 +110,6 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
              t += intermediate::PARAM_step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
-
             auto offset = intermediate - field_dimensions->center_point();
 
             // Ignore out-of-bounds intermediate points
@@ -120,7 +119,6 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                 abs(offset.y()) > field_dimensions->length() / 2 + 0.2) {
                 continue;
             }
-
             Trajectory trajectory =
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 

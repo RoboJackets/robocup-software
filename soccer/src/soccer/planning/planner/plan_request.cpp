@@ -78,6 +78,23 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         }
 
         out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
+
+        auto maybe_bp_point = in.play_state.ball_placement_point();
+        if (maybe_bp_point.has_value() && in.play_state.is_their_restart()) {
+            rj_geometry::Point bp_point = maybe_bp_point.value();
+            rj_geometry::StadiumShape stadium = rj_geometry::StadiumShape{
+                in.world_state->ball.position, bp_point, ball_obs.radius()};
+
+            std::shared_ptr<rj_geometry::StadiumShape> track_obs_ptr =
+                std::make_shared<rj_geometry::StadiumShape>(stadium);
+
+            out_static->add(track_obs_ptr);
+
+            if (in.debug_drawer != nullptr) {
+                QColor draw_color = Qt::red;
+                in.debug_drawer->draw_stadium(stadium, draw_color);
+            }
+        }
     }
 }
 

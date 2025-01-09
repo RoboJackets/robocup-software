@@ -5,6 +5,7 @@ set(GEOMETRY2D_SRCS
     arc.cpp
     circle.cpp
     composite_shape.cpp
+    stadium_shape.cpp
     line.cpp
     point.cpp
     polygon.cpp
