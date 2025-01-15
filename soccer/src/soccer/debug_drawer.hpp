@@ -112,7 +112,7 @@ private:
     /// Debug layers in order by ID
     QStringList debug_layers_;
 
-    Context* context_;
+    [[maybe_unused]] Context* context_;
 
     // Keep an entire log frame, but only fill the parts related to debug
     // drawing. Then we can use protobuf's merge functionality to merge it into

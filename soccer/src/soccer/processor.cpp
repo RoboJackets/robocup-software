@@ -18,7 +18,7 @@ using namespace google::protobuf;
 // TODO: Remove this and just use the one in Context.
 FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
-Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
+Processor::Processor([[maybe_unused]] bool sim, [[maybe_unused]] bool blue_team, const std::string& read_log_file)
     : read_log_file_(read_log_file), loop_mutex_() {
     // Set the logger to ros2.
     rj_utils::set_spdlog_default_ros2("processor");
@@ -69,7 +69,7 @@ void Processor::stop() {
 void Processor::run() {
     Status cur_status;
 
-    bool first = true;
+    [[maybe_unused]] bool first = true;
     // main loop
     while (running_) {
         RJ::Time start_time = RJ::now();

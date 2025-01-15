@@ -2,11 +2,11 @@
 
 #include "referee_tab.moc"
 
-void command(char ch) {}
+void command([[maybe_unused]] char ch) {}
 
 RefereeTab::RefereeTab(QWidget* /*parent*/) { ui.setupUi(this); }
 
-void RefereeTab::on_externalReferee_toggled(bool value) {}
+void RefereeTab::on_externalReferee_toggled([[maybe_unused]] bool value) {}
 
 void RefereeTab::on_actionHalt_triggered() { command('H'); }
 
