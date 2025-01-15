@@ -42,6 +42,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 
+    
+
     previous_target_ = unblocked;
 
     result.stamp(RJ::now());
@@ -69,6 +71,19 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
             // if the new point is not blocked, it becomes the new goal
             if (new_node && !obstacles.hit(new_node->state())) {
                 new_goal = new_node->state();
+                
+                bool isBallOnPath(Point ball) {
+                    double xval = new_goal.x();
+                    double yval = new_goal.y();
+                    double xvalRobot = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position().x();
+                    double yvalRobot = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position().y();
+                    double slope = (yval - yvalRobot) / (xval - xvalRobot);
+                    double y = slope * (ball.x() - xval) + yval;
+                    if (y == ball.y())
+                        return true;
+                    else 
+                        return false;
+                }
                 break;
             }
         }
@@ -85,7 +100,7 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
             return *prev_goal;
         }
     }
-
+    plan_request.world_state->ball.position();
     return goal;
 }
 
