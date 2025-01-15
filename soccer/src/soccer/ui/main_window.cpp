@@ -521,7 +521,7 @@ void MainWindow::updateViews() {
             auto maybe_robot =
                 [&]() -> std::optional<std::reference_wrapper<const Packet::LogFrame_Robot>> {
                 for (int i = 0; i < currentFrame->self_size(); i++) {
-                    if ((currentFrame->self(i).shell() == (int) shell)) {
+                    if ((currentFrame->self(i).shell() == (int)shell)) {
                         return currentFrame->self(i);
                     }
                 }

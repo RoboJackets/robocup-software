@@ -56,7 +56,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
         }
 
         if ((target_point.x() < robot_pos.x() && waller_pos_ != 1) ||
-            (target_point.x() > robot_pos.x() && waller_pos_ != (int) num_wallers)) {
+            (target_point.x() > robot_pos.x() && waller_pos_ != (int)num_wallers)) {
             auto parent_point = world_state->get_robot(true, parent_id).pose.position();
             angle = (parent_point - goal_pos).angle();
             delta_angle = wall_spacing / min_wall_rad;

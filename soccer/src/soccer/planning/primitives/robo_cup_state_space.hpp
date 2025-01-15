@@ -43,9 +43,9 @@ public:
     }
 
     rj_geometry::Point intermediateState([[maybe_unused]] const rj_geometry::Point& source,
-                                        [[maybe_unused]] const rj_geometry::Point& target,
-                                        [[maybe_unused]] double min_step_size,
-                                        [[maybe_unused]] double max_step_size) const override {
+                                         [[maybe_unused]] const rj_geometry::Point& target,
+                                         [[maybe_unused]] double min_step_size,
+                                         [[maybe_unused]] double max_step_size) const override {
         throw std::runtime_error("Adaptive stepsize control not implemented");
     }
 
