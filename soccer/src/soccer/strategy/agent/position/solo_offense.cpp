@@ -123,7 +123,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant target{calculate_best_shot()};
             // planning::LinearMotionInstant target{last_world_state_->ball.position};
             auto kick_cmd =
-                planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
