@@ -41,15 +41,15 @@ private:
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start);
 
-    void process_state_transition(const PlanRequest& request, BallState ball, RobotInstant start_instant);
+    void process_state_transition(const PlanRequest& request, BallState ball,
+                                  RobotInstant start_instant);
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,
         const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
 
-    Trajectory intercept(const PlanRequest& plan_request,
-                         RobotInstant start_instant,
+    Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
                          const rj_geometry::ShapeSet& static_obstacles,
                          const std::vector<DynamicObstacle>& dynamic_obstacles,
                          rj_geometry::Point delta_pos, rj_geometry::Point face_pos);
@@ -70,8 +70,8 @@ private:
 
     // Calculate the delta position to get the robot in the correct location
     // And the face point to get the bounce right towards their goal
-    void calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant, rj_geometry::Point* delta_robot_pos,
-                            rj_geometry::Point* face_pos);
+    void calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
+                                rj_geometry::Point* delta_robot_pos, rj_geometry::Point* face_pos);
 
     Trajectory previous_;
 
