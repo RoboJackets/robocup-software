@@ -37,8 +37,14 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     std::optional<Point> opt_prev_pt;
 
     LinearMotionInstant goal{unblocked, Point()};
-    auto result = CreatePath::simple(start_instant.linear_motion(), goal, motion_constraints,
-                                     start_instant.stamp);
+
+    rj_geometry::ShapeSet path_obstacles;
+    rj_geometry::Circle ball{plan_request.world_state->ball.position, kBallRadius};
+    path_obstacles.add(std::make_shared<rj_geometry::Circle>(ball));
+
+    auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
+                                           start_instant.stamp, path_obstacles, {},
+                                           plan_request.field_dimensions, plan_request.shell_id);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 
@@ -85,7 +91,6 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
             return *prev_goal;
         }
     }
-
     return goal;
 }
 
