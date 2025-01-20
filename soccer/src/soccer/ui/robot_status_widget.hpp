@@ -4,7 +4,7 @@
 
 #include <QtWidgets>
 #include <string>
-
+#include <optional>
 #include "ui_RobotStatusWidget.h"
 
 /**

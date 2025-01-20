@@ -27,12 +27,12 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # don't add repositorie
     SYSTEM="debian"
     ADD_REPOS=false
 elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
-    if cat /etc/os-release | grep -iq '^VERSION=.*20.04'; then # Using Ubuntu 20.04
-        echo "Ubuntu 20.04 Detected..."
-        SYSTEM="ubuntu-20.04"
+    if cat /etc/os-release | grep -iq '^VERSION=.*22.04'; then # Using Ubuntu 20.04
+        echo "Ubuntu 22.04 Detected..."
+        SYSTEM="ubuntu-22.04"
         ADD_REPOS=false
     else
-        echo "Sorry, we only support 20.04 due to ROS2." >&2
+        echo "Sorry, we only support 22.04 due to ROS2." >&2
         echo "$DISTRO_STR" >&2
         exit 1
     fi
@@ -108,7 +108,7 @@ fi
 if $ADD_REPOS; then
     # add repo for backport of cmake3 from debian testing
     # TODO remove this once ubuntu ships cmake3
-    sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
+    # sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
 
     # for newer compilers
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -128,10 +128,10 @@ apt-get install $ARGS wget curl # Somehow we don't have wget
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
 # Install clang-format-10 using automatic llvm installation script
-if [ "$SYSTEM" = "ubuntu-20.04" ]; then
+if [ "$SYSTEM" = "ubuntu-22.04" ]; then
     wget https://apt.llvm.org/llvm.sh
     chmod +x llvm.sh
-    sudo ./llvm.sh 10
+    sudo ./llvm.sh 16
     rm llvm.sh
 fi
 
@@ -145,8 +145,8 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main
 sudo apt-get update
 
 # Install eloquent for 18.04, foxy for 20.04
-if [ "$SYSTEM" = "ubuntu-20.04" ]; then
-    sudo apt-get install -y ros-foxy-ros-base
+if [ "$SYSTEM" = "ubuntu-22.04" ]; then
+    sudo apt-get install -y ros-humble-ros-base
 fi
 
 MACH=$(uname -m)

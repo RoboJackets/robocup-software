@@ -11,9 +11,9 @@ SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
-    if (new_state != current_state_) {
-        // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
-    }
+    // if (new_state != current_state_) {
+    // }
+    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     current_state_ = new_state;
 
     // Calculate task based on state
@@ -52,14 +52,25 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case TO_BALL: {
             if (check_is_done()) {
-                target_ = calculate_best_shot();
+                return ROTATE;
+            }
+            return TO_BALL;
+        }
+        case ROTATE: {
+            if (check_is_done()) {
+                counter_ = 0;
+                kick_ = true;
                 return KICK;
             }
+            return ROTATE;
         }
         case KICK: {
-            if (check_is_done()) {
+            if (!kick_ ||
+                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
+                        .mag() > kRobotRadius * 5) {
                 return TO_BALL;
             }
+            return KICK;
         }
     }
     return current_state_;
@@ -80,21 +91,47 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TO_BALL: {
-            planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
-            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{},
-                                                     false, last_world_state_->ball.position};
-            pivot_cmd.pivot_radius = kRobotRadius * 2.5;
+            rj_geometry::Point robotToBall =
+                (last_world_state_->ball.position -
+                 last_world_state_->get_robot(true, robot_id_).pose.position());
+            double slowDown = 1.0;
+            double length = robotToBall.mag() - kRobotRadius * slowDown;
+            robotToBall = robotToBall.normalized(length);
+            planning::LinearMotionInstant target{
+                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            auto pivot_cmd =
+                planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 255;
+            return intent;
+        }
+        case ROTATE: {
+            planning::LinearMotionInstant target{calculate_best_shot()};
+            auto pivot_cmd =
+                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 255;
             return intent;
         }
         case KICK: {
-            auto line_kick_cmd =
-                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
-
-            intent.motion_command = line_kick_cmd;
+            // double scaleFactor = 0.1;
+            // rj_geometry::Point point = (last_world_state_->ball.position -
+            // last_world_state_->get_robot(true,
+            // robot_id_).pose.position()).normalized(scaleFactor); point +=
+            // last_world_state_->get_robot(true, robot_id_).pose.position();
+            // planning::LinearMotionInstant target{point};
+            planning::LinearMotionInstant target{calculate_best_shot()};
+            // planning::LinearMotionInstant target{last_world_state_->ball.position};
+            auto kick_cmd =
+                planning::MotionCommand{"path_target", target, planning::FaceTarget{}, true};
+            intent.motion_command = kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
             intent.kick_speed = 4.0;
+            counter_++;
+            if (counter_ > 15) {
+                kick_ = false;
+            }
 
             return intent;
         }

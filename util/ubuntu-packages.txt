@@ -9,7 +9,10 @@ cmake
 ccache
 
 # QT
-qt5-default
+qtbase5-dev
+qtchooser
+qt5-qmake
+qtbase5-dev-tools
 qttools5-dev-tools
 libqt5opengl5-dev
 libqt5svg5-dev
@@ -83,4 +86,4 @@ freeglut3-dev
 libfmt-dev
 
 # "everything else" (aka ros)
-ros-foxy-rqt*
+ros-humble-rqt*

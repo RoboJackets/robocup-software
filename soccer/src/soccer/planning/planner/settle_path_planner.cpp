@@ -221,9 +221,10 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Trajectory path = CreatePath::rrt(start_instant.linear_motion(), target_robot_intersection,
-                                          plan_request.constraints.mot, start_instant.stamp,
-                                          static_obstacles, dynamic_obstacles);
+        Trajectory path = CreatePath::intermediate(
+            start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
+            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            plan_request.shell_id);
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -332,9 +333,10 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         LinearMotionInstant target{closest_pt,
                                    settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
-        Trajectory shortcut =
-            CreatePath::rrt(start_instant.linear_motion(), target, plan_request.constraints.mot,
-                            start_instant.stamp, static_obstacles, dynamic_obstacles);
+        Trajectory shortcut = CreatePath::intermediate(
+            start_instant.linear_motion(), target, plan_request.constraints.mot,
+            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            plan_request.shell_id);
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
@@ -361,9 +363,14 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     LinearMotionInstant target_robot_intersection{
         path_intercept_target_, settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
 
-    Replanner::PlanParams params{
-        start_instant,     target_robot_intersection, static_obstacles,
-        dynamic_obstacles, plan_request.constraints,  AngleFns::face_point(face_pos)};
+    Replanner::PlanParams params{start_instant,
+                                 target_robot_intersection,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.field_dimensions,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(face_pos),
+                                 plan_request.shell_id};
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();
@@ -485,10 +492,14 @@ Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
     // programmatically
     LinearMotionInstant target{plan_request.start.position(), Point()};
 
-    Replanner::PlanParams params{
-        plan_request.start,       target,
-        static_obstacles,         dynamic_obstacles,
-        plan_request.constraints, AngleFns::face_point(plan_request.world_state->ball.position)};
+    Replanner::PlanParams params{plan_request.start,
+                                 target,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.field_dimensions,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(plan_request.world_state->ball.position),
+                                 plan_request.shell_id};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in settle");
     return path;
