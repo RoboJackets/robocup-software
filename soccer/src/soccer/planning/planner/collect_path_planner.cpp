@@ -142,16 +142,16 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
         case Intercept: {
             Point delta_pos;
             Point face_pos;
-            
+
             calc_delta_pos_for_dir(ball, start_instant, &delta_pos, &face_pos);
-            previous_ = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles, delta_pos, face_pos);
+            previous_ = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles,
+                                  delta_pos, face_pos);
             break;
         }
         default:
             previous_ = invalid(plan_request, static_obstacles, dynamic_obstacles);
             break;
     }
-
 
     return previous_;
 }
@@ -170,8 +170,8 @@ void CollectPathPlanner::check_solution_validity(BallState ball, RobotInstant st
     }
 }
 
-void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball, RobotInstant start_instant) {
-
+void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball,
+                                                  RobotInstant start_instant) {
     // If the ball is moving, intercept
     // if not, regularly approach
     if (current_state_ == CoarseApproach && average_ball_vel_.mag() > 0.2) {
@@ -243,14 +243,14 @@ Trajectory CollectPathPlanner::coarse_approach(
     LinearMotionInstant target_slow{path_coarse_target_, target_slow_vel};
 
     Replanner::PlanParams params{start,
-                                target_slow,
-                                static_obstacles,
-                                dynamic_obstacles,
-                                plan_request.field_dimensions,
-                                plan_request.constraints,
-                                AngleFns::face_point(ball.position),
-                                plan_request.shell_id};
-    
+                                 target_slow,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.field_dimensions,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(ball.position),
+                                 plan_request.shell_id};
+
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
     if (plan_request.debug_drawer != nullptr) {
@@ -267,8 +267,8 @@ Trajectory CollectPathPlanner::coarse_approach(
 }
 
 void CollectPathPlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
-                                               rj_geometry::Point* delta_robot_pos,
-                                               rj_geometry::Point* face_pos) {
+                                                rj_geometry::Point* delta_robot_pos,
+                                                rj_geometry::Point* face_pos) {
     // Get angle between target and normal hit
     Point normal_face_vector = ball.position - start_instant.position();
 
@@ -276,18 +276,18 @@ void CollectPathPlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant sta
     // possibilities
 
     *delta_robot_pos = Point(0, 0);
-    *face_pos = start_instant.position() +
-                Point::direction(normal_face_vector.angle()) * 10;
+    *face_pos = start_instant.position() + Point::direction(normal_face_vector.angle()) * 10;
 }
 
-Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                        const rj_geometry::ShapeSet& static_obstacles,
-                                        const std::vector<DynamicObstacle>& dynamic_obstacles,
-                                        rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
-
+Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
+                                         RobotInstant start_instant,
+                                         const rj_geometry::ShapeSet& static_obstacles,
+                                         const std::vector<DynamicObstacle>& dynamic_obstacles,
+                                         rj_geometry::Point delta_pos,
+                                         rj_geometry::Point face_pos) {
     const double max_ball_angle_change_for_path_reset =
         settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
-        
+
     BallState ball = plan_request.world_state->ball;
 
     // If the ball changed directions or magnitude really quickly, do a reset of
@@ -297,7 +297,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request, RobotI
         first_intercept_target_found_ = false;
         average_ball_vel_initialized_ = false;
     }
-    
+
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
     //

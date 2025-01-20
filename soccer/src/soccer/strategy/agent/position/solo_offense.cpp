@@ -99,8 +99,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             robotToBall = robotToBall.normalized(length);
             planning::LinearMotionInstant target{
                 last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            auto pivot_cmd =
-                planning::MotionCommand{"collect"};
+            auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
             intent.dribbler_speed = 255;
             return intent;

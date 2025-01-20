@@ -468,13 +468,14 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     LinearMotionInstant final_stopping_motion{final_stopping_point};
 
     Trajectory dampen_end;
-    
+
     if (previous_.empty()) {
         dampen_end = CreatePath::simple(start_instant.linear_motion(), final_stopping_motion,
-                                               plan_request.constraints.mot, start_instant.stamp);
+                                        plan_request.constraints.mot, start_instant.stamp);
     } else {
-        dampen_end = CreatePath::simple(previous_.instant_at(previous_.num_instants() - 1).linear_motion(), final_stopping_motion,
-                                               plan_request.constraints.mot, start_instant.stamp); 
+        dampen_end = CreatePath::simple(
+            previous_.instant_at(previous_.num_instants() - 1).linear_motion(),
+            final_stopping_motion, plan_request.constraints.mot, start_instant.stamp);
     }
 
     dampen_end.set_debug_text("Damping");
