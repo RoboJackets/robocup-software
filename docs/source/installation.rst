@@ -141,7 +141,7 @@ pre-installed with a desktop GUI. The Docker setup should work on any platform
 (Windows, Mac, ARM, x86, etc.).
 
 Before you start, make sure you have Docker installed on your computer. The steps for doing
-so can be found at https://docs.docker.com/engine/install/.
+so can be found `here <https://docs.docker.com/engine/install/>`_.
 
 Once you have Docker installed, please follow the steps for installing and using our RoboCup 
 image at `DockerHub
