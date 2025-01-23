@@ -31,10 +31,10 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     }
 
     Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
-    Trajectory post_trajectory =
-        CreatePath::rrt(pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
-                        pre_trajectory.end_time(), params.static_obstacles,
-                        params.dynamic_obstacles, bias_waypoints);
+    Trajectory post_trajectory = CreatePath::intermediate(
+        pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
+        pre_trajectory.end_time(), params.static_obstacles, params.dynamic_obstacles,
+        params.field_dimensions, params.robot_id);
 
     // If we couldn't profile such that velocity at the end of the partial replan period is valid,
     // do a full replan.
@@ -56,9 +56,10 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
 }
 
 Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
-    Trajectory path =
-        CreatePath::rrt(params.start.linear_motion(), params.goal, params.constraints.mot,
-                        params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+    Trajectory path = CreatePath::intermediate(params.start.linear_motion(), params.goal,
+                                               params.constraints.mot, params.start.stamp,
+                                               params.static_obstacles, params.dynamic_obstacles,
+                                               params.field_dimensions, params.robot_id);
 
     // if the initial path is empty, the goal must be blocked
     // try to shift the goal_point until it is no longer blocked
@@ -76,9 +77,10 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
         almost_goal.position += shift_dir * shift_size;
 
-        path =
-            CreatePath::rrt(params.start.linear_motion(), almost_goal, params.constraints.mot,
-                            params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
+        path = CreatePath::intermediate(params.start.linear_motion(), almost_goal,
+                                        params.constraints.mot, params.start.stamp,
+                                        params.static_obstacles, params.dynamic_obstacles,
+                                        params.field_dimensions, params.robot_id);
     }
 
     if (!path.empty()) {

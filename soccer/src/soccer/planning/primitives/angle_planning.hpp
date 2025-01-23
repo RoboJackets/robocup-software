@@ -5,6 +5,7 @@
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 
+#include "control/trapezoidal_motion.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
@@ -114,4 +115,5 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
+constexpr double TIME_STEP = 0.001;
 }  // namespace planning
