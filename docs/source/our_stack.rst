@@ -83,7 +83,7 @@ is a good start, and looking
 through the ``planning`` folder will give you more information about this topic.
 
 main.cpp & Processor
----------
+---------------------
 main.cpp is located in ``soccer/src/soccer/``. It is the entry point of soccer
 and starts the processor and the ui. It also takes in configuration values
 that may have been provided by the launch file (such as initial team color)

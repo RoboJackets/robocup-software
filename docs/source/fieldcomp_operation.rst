@@ -48,6 +48,7 @@ first terminal where you launched soccer.
 
 For keyboard control, keep focus on the small black window (as in, you should
 click on that window if you can't see it).
+
  - WASD to move
  - QE to pivot
  - K to kick
