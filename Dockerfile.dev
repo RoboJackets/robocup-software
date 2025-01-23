@@ -1,6 +1,3 @@
-# The image has been pushed to rishiso/robocup-software:latest on DockerHub
-# Please read https://hub.docker.com/repository/docker/rishiso/robocup-software/general for usage
-
 # Use the official Ubuntu 22.04 image
 FROM ubuntu:22.04
 
@@ -73,7 +70,8 @@ RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework
 
 # Use bash to source the ROS2 setup file and run make perf
 RUN bash -c "source /opt/ros/humble/setup.bash && \
-    cd /root/robocup-software && make perf && \
+    cd /root/robocup-software && \
+    make perf && \
     source install/setup.bash"
 
 # Install external ref (conditionally download the correct binary based on architecture)
