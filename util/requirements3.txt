@@ -14,7 +14,7 @@ mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is br
 
 yapf # python checker
 
-black == 21.12b0 # python style autoformatter, pinned to last stable release because current version (3/29/21) has a bug
+black
 
 isort # python import sorted
 typing-extensions # For TypedDict
