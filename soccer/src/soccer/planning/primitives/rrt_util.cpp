@@ -65,7 +65,7 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
     RRT::SmoothPath(points, *state_space);
     // return std::move(points);
     // allows copy elision by removing std::move()
-    return points; 
+    return points;
 }
 
 vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,

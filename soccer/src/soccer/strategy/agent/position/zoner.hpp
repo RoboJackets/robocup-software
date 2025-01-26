@@ -32,7 +32,7 @@ public:
     Zoner(Zoner&& other) = default;
     // Zoner& operator=(const Zoner& other) = default;
     Zoner& operator=(const Zoner& other) {
-        // copies base class's members except for const 
+        // copies base class's members except for const
         // values to fix implicit deletion compiler warning
         if (this != &other) {
             current_state_ = other.current_state_;
@@ -41,14 +41,13 @@ public:
     }
     // Zoner& operator=(Zoner&& other) = default;
     Zoner& operator=(Zoner&& other) {
-        // copies base class's members except for const 
+        // copies base class's members except for const
         // values to fix implicit deletion compiler warning
         if (this != &other) {
             current_state_ = other.current_state_;
         }
         return *this;
     }
-
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;

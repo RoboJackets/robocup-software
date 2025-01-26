@@ -157,7 +157,8 @@ void SimRadio::start_receive() {
                           });
 }
 
-void SimRadio::receive_packet([[maybe_unused]] const boost::system::error_code& error, [[maybe_unused]] std::size_t num_bytes) {
+void SimRadio::receive_packet([[maybe_unused]] const boost::system::error_code& error,
+                              [[maybe_unused]] std::size_t num_bytes) {
     std::string data(buffer_.begin(), buffer_.end());
     handle_receive(data);
     start_receive();
