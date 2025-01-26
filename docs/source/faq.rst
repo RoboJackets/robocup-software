@@ -204,7 +204,7 @@ tab.) The binary will output a message saying it has launched the UI at a
 specific URL--click that link to open the UI. 
 
 Using external referee in an M1 Mac (ARM64 architecture)
---------------------------------------------------
+----------------------------------------------------------
 The SSL game controller repo only provides the AMD64 release, which will not work with ARM64 architectures.
 We will need to compile the ssl-game-controller from the source ourselves.
 
