@@ -262,10 +262,10 @@ void RobotFactoryPosition::set_default_position() {
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 3) {
+        if (i <= 2) {
             set_current_position<Defense>();
         } else {
-            set_current_position<SoloOffense>();
+            set_current_position<Offense>();
         }
     } else {
         // Defensive mode
@@ -273,7 +273,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 3) {
             set_current_position<Defense>();
         } else {
-            set_current_position<SoloOffense>();
+            set_current_position<Offense>();
         }
     }
 }

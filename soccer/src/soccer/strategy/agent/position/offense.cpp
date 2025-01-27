@@ -60,9 +60,9 @@ Offense::State Offense::next_state() {
         case POSSESSION_START: {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
-            if (has_open_shot() || timed_out()) {
-                return SHOOTING_START;
-            }
+            // if (has_open_shot() || timed_out()) {
+            //     return SHOOTING_START;
+            // }
 
             // No open shot, try to pass.
             // This will trigger an automatic switch to passing if a pass is
@@ -75,9 +75,10 @@ Offense::State Offense::next_state() {
         case POSSESSION: {
             // If we can make a shot, make it.
             // If we need to stop possessing now, shoot.
-            if (has_open_shot() || timed_out()) {
-                return SHOOTING_START;
-            }
+            
+            // if (has_open_shot() || timed_out()) {
+            //     return SHOOTING_START;
+            // }
 
             return POSSESSION;
         }
@@ -294,7 +295,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.motion_command = settle_cmd;
             // intent.dribbler_speed = 255.0;
             // } else {
-            auto collect_cmd = planning::MotionCommand{"collect"};
+            auto collect_cmd = planning::MotionCommand{"settle"};
+            collect_cmd.target = planning::LinearMotionInstant{last_world_state_->ball.position};
             intent.motion_command = collect_cmd;
             intent.dribbler_speed = 255.0;
             // }

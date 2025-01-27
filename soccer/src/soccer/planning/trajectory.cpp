@@ -23,12 +23,11 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
 
     using rj_geometry::Point;
     if (!a_end.position().near_point(b_begin.position(), 1e-6) ||
-        !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
         SPDLOG_ERROR("points near? {}, vels near? {}, timestamps match? {}",
-                     !a_end.position().near_point(b_begin.position(), 1e-6),
-                     !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6),
-                     a_end.stamp != b_begin.stamp);
+                     a_end.position().near_point(b_begin.position(), 1e-6),
+                     a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6),
+                     a_end.stamp == b_begin.stamp);
         throw std::invalid_argument(
             "Cannot splice trajectories a and b, where a.last() != b.first()");
     }
