@@ -210,10 +210,10 @@ private:
      */
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
-    /**
-     * @brief Check if this agent could easily steal the ball
-     */
-    bool can_steal_ball() const;
+    // /**
+    //  * @brief Check if this agent could easily steal the ball
+    //  */
+    // bool can_steal_ball() const;
 
     /**
      * @return distance from this agent to ball
@@ -233,14 +233,15 @@ private:
      */
     rj_geometry::Point calculate_best_shot() const;
 
-    /**
-     * @return whether the ball is in an area that non-goalies cannot reach.
-     */
-    bool ball_in_red() const;
+    // /**
+    //  * @return whether the ball is in an area that non-goalies cannot reach.
+    //  */
+    // bool ball_in_red() const;
 
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
+
 
 }  // namespace strategy

@@ -44,6 +44,9 @@ public:
     void revive() override;
 
 private:
+
+    const rj_geometry::Point clear_point_{0.0, 4.5};
+    
     // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{
         static_cast<int>(kNumShells)};  // This effectively turns off marking
@@ -69,6 +72,8 @@ private:
         FACING,            // turning to face the passing robot
         MARKING,           // Following closely to an offense robot
         ENTERING_MARKING,  // Choosing/waiting for a robot to mark
+        STEALING,          // wall stealing
+        CLEARING,
     };
 
     State update_state();
@@ -80,10 +85,73 @@ private:
      */
     void send_join_wall_request();
 
+    
+
     /**
      * @brief Sends a LeaveWallRequest to each of the robots in walling_robots_.
      */
     void send_leave_wall_request();
+
+    /**
+     * @return if the current state has timed out
+     * wall steal
+     */
+    /*bool timed_out() const {
+        // Defined here so it can be inlined
+        using namespace std::chrono_literals;
+
+
+        return (max_time > 0s) && (last_time_ + max_time < RJ::now());
+    };*/
+
+    /**
+     * @return distance from this agent to ball
+     * wall steal
+     */
+    double distance_to_ball() const {
+        return last_world_state_->ball.position.dist_to(
+            last_world_state_->get_robot(true, robot_id_).pose.position());
+    };
+
+    /**
+     * @brief This FSM has timeouts for certain states.
+     * Ideally, these would not be necessary; as planners get more sophisticated
+     * they should not get "stuck". However, empirically, the offense FSM in particular
+     * has been observed to deadlock often.
+     *
+     * One common case is when waiting for a receiver to accept a pass; if no receiver responds,
+     * the timeout is necessary. In the future receivers may be able to respond in the negative
+     * instead of ignoring the request.
+     *
+     * The timeouts are a safety mechanism, and should not be the primary reason for a
+     * state transition. They are set relatively high for this reason.
+     *
+     * @return the maximum duration to stay in a given state, or -1 if there is no maximum.
+     *
+     */
+    static constexpr RJ::Seconds timeout(State s) {
+        switch (s) {
+            case PASSING:
+                return RJ::Seconds{5};
+            case STEALING:
+                return RJ::Seconds{10};
+        }
+    }
+
+    /**
+     * @return if the current state has timed out
+     */
+    bool timed_out() const {
+        // Defined here so it can be inlined
+        using namespace std::chrono_literals;
+
+        const auto max_time = timeout(current_state_);
+
+        return (max_time > 0s) && (last_time_ + max_time < RJ::now());
+    };
+
+    // The time at which the last state started.
+    RJ::Time last_time_;
 
     /**
      * @brief Adds the new waller to this robot's list of wallers and updates this robot's position

@@ -272,6 +272,11 @@ protected:
      */
     bool check_goal_canceled();
 
+    /**
+     * @brief Check if this agent could easily steal the ball
+     */
+    bool can_steal_ball() const;
+
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
@@ -290,6 +295,11 @@ protected:
     // set to true when the ball gets close to this robot
     bool chasing_ball = false;
 
+     /**
+     * @return whether the ball is in an area that non-goalies cannot reach.
+     */
+    bool ball_in_red() const;
+
     // farthest distance the robot is willing to go to receive a pass
     static constexpr double ball_receive_distance_ = 0.1;
 
@@ -307,6 +317,8 @@ protected:
 
     // Current goalie
     int goalie_id_;
+
+    
 
 private:
     /**

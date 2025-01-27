@@ -286,4 +286,54 @@ communication::Acknowledge Position::acknowledge_ball_in_transit(
     return acknowledge_response;
 }
 
+// Checks whether ball is out of range for stealing/receiving
+bool Position::ball_in_red() const {
+    auto& ball_pos = last_world_state_->ball.position;
+    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
+            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
+            !field_dimensions_.field_rect().contains_point(ball_pos));
+}
+
+bool Position::can_steal_ball() const {
+    // Ball in red zone or not
+    if (ball_in_red()) {
+        return false;
+    }
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    // Our robot is closest robot to ball
+    bool closest = true;
+
+    auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+    auto our_dist = (current_pos - ball_position).mag();
+    for (auto enemy : this->last_world_state_->their_robots) {
+        auto dist = (enemy.pose.position() - ball_position).mag();
+        if (dist < our_dist) {
+            closest = false;
+            break;
+        }
+    }
+
+    if (!closest) {
+        return closest;
+    }
+
+    for (auto pal : this->last_world_state_->our_robots) {
+        // if (pal.robot_id_ == robot_id_) {
+        // continue;
+        // }
+        auto dist = (pal.pose.position() - ball_position).mag();
+        if (dist < our_dist) {
+            closest = false;
+            break;
+        }
+    }
+
+    return closest;
+
+    // return distance_to_ball() < kStealBallRadius;
+}
+
 }  // namespace strategy
