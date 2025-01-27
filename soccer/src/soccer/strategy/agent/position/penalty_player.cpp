@@ -18,8 +18,20 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             // if penalty playing and restart penalty in playstate we switch to shooting
             if (current_play_state_.is_ready() &&
                 (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
-                return SHOOTING_START;
+                return DRIBBLING_START;
             }
+            break;
+        }
+        case DRIBBLING_START: {
+            if (distance_to_ball() < kOwnBallRadius) {
+                return DRIBBLING;
+            }
+            break;
+        }
+        case DRIBBLING: {
+            // if (distance_to_shooting() < kOwnBallRadius) {
+            //     return SHOOTING_START;
+            // }   
             break;
         }
         case SHOOTING_START: {
@@ -62,6 +74,38 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant goal{target_pt, target_vel};
             intent.motion_command =
                 planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            break;
+        }
+        case DRIBBLING_START: {
+            target_ = calculate_best_shot();
+            rj_geometry::Point ball_position = last_world_state_->ball.position;
+            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+            auto move_vector = (current_pos - ball_position).normalized(0.2);
+
+            planning::LinearMotionInstant target{ball_position};
+            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
+
+            intent.motion_command = prep_command;
+            intent.dribbler_speed = 255.0;
+
+            return intent;
+        }
+        case DRIBBLING: {
+            rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+            auto curr_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+            SPDLOG_INFO("GOAL POSITIONS ARE {} AND {}", their_goal_pos.x(), their_goal_pos.y());
+            // if (their_goal_pos.y() > 4.5) {
+            //     rj_geometry::Point target_pt{0, 6.75};
+            // } else {
+            //     rj_geometry::Point target_pt{0, 2.25};
+            // }
+            rj_geometry::Point target_pt{0, 6.75};
+            rj_geometry::Point target_vel{0.0, 0.0};
+            planning::LinearMotionInstant target{target_pt, target_vel};
+            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}, true};
+            intent.motion_command = prep_command;
+            intent.dribbler_speed = 255.0;
+            return intent;
             break;
         }
         case SHOOTING_START: {
