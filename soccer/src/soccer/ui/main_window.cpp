@@ -1050,7 +1050,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
     QString goalieNum = _ui.goalieID->currentText();
-    bool goalieNumIsInt{false};
+    bool goalieNumIsInt{false}; // TODO: Better type conversion? - QT5 Requires bool in its toInt.
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     current_goalie_num_ = goalieInt;
     if (goalieNumIsInt) {
