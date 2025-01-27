@@ -128,7 +128,9 @@ void RobotFactoryPosition::handle_ready() {
 
 void RobotFactoryPosition::update_position() {
     bool manual_position_set = check_for_position_override();
-    if (manual_position_set) return;
+    if (manual_position_set) {
+        return
+    };
 
     switch (current_play_state_.state()) {
         case PlayState::State::Playing: {
