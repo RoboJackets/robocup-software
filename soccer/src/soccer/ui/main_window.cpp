@@ -1053,10 +1053,11 @@ void MainWindow::on_goalieID_currentIndexChanged(int value) {
     bool goalieNumIsInt{false};
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     current_goalie_num_ = goalieInt;
-    if (goalieNumIsInt)
+    if (goalieNumIsInt) {
         setGoalieDropdown(goalieInt);
-    else
+    } else {
         setGoalieDropdown(-1);
+    }
 }
 
 ////////////////
