@@ -297,7 +297,7 @@ private:
     rclcpp::Node::SharedPtr _node;
     rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
     rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
-    rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr override_play_pub_;
+    std::vector<rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr> override_play_pubs_ {};
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
 

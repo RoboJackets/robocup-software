@@ -188,8 +188,12 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
-    override_play_pub_ =
-        _node->create_publisher<rj_msgs::msg::OverridePosition>("override_position_for_robot", 1);
+    // Publishers to signal when a manual position override is occurring
+    for (int i = 0; i < 16; ++i) {
+        override_play_pubs_.push_back(
+            _node->create_publisher<rj_msgs::msg::OverridePosition>("override_position_for_robot_" + std::to_string(i), 1)
+        );
+    }
 
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
@@ -1278,10 +1282,9 @@ void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
 
 void MainWindow::onResetButtonClicked(int robot) {
     rj_msgs::msg::OverridePosition message;
-    message.robot_id = robot;
     message.overriding_position = 0;
 
-    override_play_pub_->publish(message);
+    override_play_pubs_.at(robot)->publish(message);
     position_reset_buttons.at(robot)->setEnabled(false);
     robot_pos_selectors.at(robot)->setCurrentIndex(0);
 }
@@ -1289,10 +1292,9 @@ void MainWindow::onResetButtonClicked(int robot) {
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
     if (current_goalie_num_ != robot) {
         rj_msgs::msg::OverridePosition message;
-        message.robot_id = robot;
         message.overriding_position = position_number;
 
-        override_play_pub_->publish(message);
+        override_play_pubs_.at(robot)->publish(message);
         if (position_number != 0) {
             position_reset_buttons.at(robot)->setEnabled(true);
         } else {
