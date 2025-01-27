@@ -190,9 +190,8 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     // Publishers to signal when a manual position override is occurring
     for (int i = 0; i < 16; ++i) {
-        override_play_pubs_.push_back(
-            _node->create_publisher<rj_msgs::msg::OverridePosition>("override_position_for_robot_" + std::to_string(i), 1)
-        );
+        override_play_pubs_.push_back(_node->create_publisher<rj_msgs::msg::OverridePosition>(
+            "override_position_for_robot_" + std::to_string(i), 1));
     }
 
     _executor.add_node(_node);
@@ -1054,7 +1053,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
     QString goalieNum = _ui.goalieID->currentText();
-    bool goalieNumIsInt{false}; // TODO: Better type conversion? - QT5 Requires bool in its toInt.
+    bool goalieNumIsInt{false};  // TODO: Better type conversion? - QT5 Requires bool in its toInt.
     int goalieInt = goalieNum.toInt(&goalieNumIsInt);
     current_goalie_num_ = goalieInt;
     if (goalieNumIsInt) {
