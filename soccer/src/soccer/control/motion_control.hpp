@@ -12,6 +12,9 @@
 
 #include <rc-fshare/pid.hpp>
 
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/float64.hpp>
+
 namespace control {
 
 DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
@@ -95,6 +98,7 @@ private:
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
 };
 
 }  // namespace control

@@ -7,8 +7,10 @@
 #include <rj_geometry/util.hpp>
 #include <rj_utils/logging.hpp>
 
+
 #include "game_state.hpp"
 #include "planning/instant.hpp"
+
 
 namespace control {
 
@@ -74,6 +76,9 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
             play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
+
+    error_x_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_x", 10);
+
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -121,9 +126,18 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     // TODO(Kyle): Clamp acceleration
 
     Twist correction = Twist::zero();
+
     if (maybe_pose_target) {
         Pose error = maybe_pose_target.value() - state.pose;
         error.heading() = fix_angle_radians(error.heading());
+        SPDLOG_INFO("pose error: {}", error.position().x());
+
+        std_msgs::msg::Float64 error_x_msg;
+        error_x_msg.data = error.position().x();
+        error_x_pub_->publish(error_x_msg);
+
+        
+
         correction = Twist(position_x_controller_.run(static_cast<float>(error.position().x())),
                            position_y_controller_.run(static_cast<float>(error.position().y())),
                            angle_controller_.run(static_cast<float>(error.heading())));
