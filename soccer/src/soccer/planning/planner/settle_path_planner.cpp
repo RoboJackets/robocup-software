@@ -474,7 +474,7 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
                                         plan_request.constraints.mot, start_instant.stamp);
     } else {
         dampen_end = CreatePath::simple(previous_.last().linear_motion(), final_stopping_motion,
-                                               plan_request.constraints.mot, previous_.last().stamp); 
+                                        plan_request.constraints.mot, previous_.last().stamp);
     }
 
     dampen_end.set_debug_text("Damping");
