@@ -353,7 +353,8 @@ std::string RobotFactoryPosition::get_current_state() {
 
 void RobotFactoryPosition::test_play_callback(
     const rj_msgs::msg::OverridePosition::SharedPtr message) {
-    override_play_position_ = static_cast<Strategy::OverridingPositions>(message->overriding_position);
+    override_play_position_ =
+        static_cast<Strategy::OverridingPositions>(message->overriding_position);
 }
 
 /**
