@@ -191,7 +191,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     // Publishers to signal when a manual position override is occurring
     for (int i = 0; i < 16; ++i) {
         override_play_pubs_.push_back(_node->create_publisher<rj_msgs::msg::OverridePosition>(
-            "override_position_for_robot_" + std::to_string(i), 1));
+            "override_position/robot_" + std::to_string(i), 1));
     }
 
     _executor.add_node(_node);

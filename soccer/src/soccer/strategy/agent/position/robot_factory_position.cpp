@@ -19,7 +19,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
     std::string node_name{"robot_factory_position_"};
     _node = std::make_shared<rclcpp::Node>(node_name.append(std::to_string(robot_id_)));
     override_play_sub_ = _node->create_subscription<rj_msgs::msg::OverridePosition>(
-        "override_position_for_robot_" + std::to_string(robot_id_), 1,
+        "override_position/robot_" + std::to_string(robot_id_), 1,
         [this](const rj_msgs::msg::OverridePosition::SharedPtr msg) { test_play_callback(msg); });
     _executor.add_node(_node);
     _executor_thread = std::thread([this]() { _executor.spin(); });
