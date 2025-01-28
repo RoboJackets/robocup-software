@@ -1,6 +1,6 @@
-#include "straight_line_test.hpp"
 #include "global_params.hpp"
 #include "rj_utils/logging.hpp"
+#include "straight_line_test.hpp"
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

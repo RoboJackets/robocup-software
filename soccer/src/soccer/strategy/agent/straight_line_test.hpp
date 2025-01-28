@@ -1,27 +1,23 @@
 #pragma once
 
-#include "rj_constants/topic_names.hpp"
-
-#include "rj_msgs/msg/world_state.hpp"
-#include "rj_msgs/msg/field_dimensions.hpp"
-#include "rj_msgs/msg/game_settings.hpp"
-#include "rj_msgs/msg/agent_state.hpp"
-#include "rj_msgs/action/robot_move.hpp"
-#include "rj_msgs/msg/play_state.hpp"
-#include "rj_msgs/msg/alive_robots.hpp"
-
+#include "game_state.hpp"
+#include "position/line.hpp"
+#include "position/position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
-
-#include "game_state.hpp"
-#include "position/position.hpp"
-#include "position/line.hpp"
+#include "rj_constants/topic_names.hpp"
+#include "rj_msgs/action/robot_move.hpp"
+#include "rj_msgs/msg/agent_state.hpp"
+#include "rj_msgs/msg/alive_robots.hpp"
+#include "rj_msgs/msg/field_dimensions.hpp"
+#include "rj_msgs/msg/game_settings.hpp"
+#include "rj_msgs/msg/play_state.hpp"
+#include "rj_msgs/msg/world_state.hpp"
 #include "robot_intent.hpp"
 
 namespace strategy {
 
 class StraightLineTest : public rclcpp::Node {
-
 public:
     using AgentStateMsg = rj_msgs::msg::AgentState;
     using RobotMove = rj_msgs::action::RobotMove;
@@ -52,11 +48,11 @@ private:
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;
     void goal_response_callback(GoalHandleRobotMove::SharedPtr future);
     void feedback_callback(GoalHandleRobotMove::SharedPtr,
-        const std::shared_ptr<const RobotMove::Feedback> feedback);
+                           const std::shared_ptr<const RobotMove::Feedback> feedback);
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
 
     void send_new_goal();
-    
+
     std::unique_ptr<Position> current_position_;
 
     void get_task();
@@ -77,6 +73,6 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
-}; // class StraightLineTest
+};  // class StraightLineTest
 
-} // namespace strategy
+}  // namespace strategy
