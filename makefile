@@ -69,10 +69,17 @@ again:
 run-sim:
 	./launch/framework.bash
 
+# Run the line test in simulation
+run-sim-line-test:
+	./launch/framework.bash TRUE
+
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
 	ros2 launch rj_robocup soccer.launch.py run_sim:=True
+
+run-line-test-stack:
+	ros2 launch rj_robocup soccer.launch.py run_sim:=True run_line_test:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
@@ -92,6 +99,9 @@ run-real-ex:
 # use util/manual_control_connect.bash to connect
 run-manual:
 	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True use_sim_radio:=False
+
+run-real-line-test:
+	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False run_line_test:=True
 
 # same as run-real, with different server port
 run-alt-real:
