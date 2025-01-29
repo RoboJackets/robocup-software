@@ -48,7 +48,6 @@ def generate_launch_description():
 
     run_sim = LaunchConfiguration("run_sim")
     sim_flag = LaunchConfiguration("sim_flag")
-    run_line_test = LaunchConfiguration("run_line_test")
 
     use_internal_ref = LaunchConfiguration("use_internal_ref")
     ref_flag = LaunchConfiguration("ref_flag")
@@ -108,7 +107,6 @@ def generate_launch_description():
                     param_config,
                 ],
             ),
-            DeclareLaunchArgument("run_line_test", default_value="False"),
             stdout_linebuf_envvar,
             # Node spawns all of the ROS nodes, defined in main() of various
             # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
@@ -186,17 +184,9 @@ def generate_launch_description():
             # spawn internal_ref/external_ref based on internal_ref
             # LaunchArgument
             Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_robocup",
                 executable="agent_action_client_node",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                condition=IfCondition(PythonExpression([run_line_test])),
-                package="rj_robocup",
-                executable="straight_line_test_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

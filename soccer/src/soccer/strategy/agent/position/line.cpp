@@ -6,8 +6,6 @@ Line::Line(const Position& other) : Position{other} { position_name_ = "Line"; }
 
 Line::Line(int r_id) : Position{r_id, "Line"} {}
 
-Line::Line(int r_id, bool vertical) : Position{r_id, "Line"}, vertical_{vertical} {}
-
 std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     if (check_is_done()) {
         forward_ = !forward_;

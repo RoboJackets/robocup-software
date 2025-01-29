@@ -10,7 +10,6 @@ class Line : public Position {
 public:
     Line(const Position& other);
     Line(int r_id);
-    Line(int r_id, bool forward);
     ~Line() override = default;
     Line(const Line& other) = default;
     Line(Line&& other) = default;
