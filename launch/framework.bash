@@ -18,7 +18,7 @@ trap 'kill $binary_pid; exit' INT
 
 # Run "make run-our-stack" in the foreground
 echo "LINE_TEST: $1"
-if [[ "$1" == TRUE ]]; then
+if [[ "$1" == "line" ]]; then
     make run-line-test-stack
 else
     make run-our-stack

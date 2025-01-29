@@ -71,7 +71,7 @@ run-sim:
 
 # Run the line test in simulation
 run-sim-line-test:
-	./launch/framework.bash TRUE
+	./launch/framework.bash line
 
 # run our stack with default flags
 # TODO: actually name our software stack something
