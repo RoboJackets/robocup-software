@@ -14,6 +14,10 @@
 #include "rj_msgs/msg/play_state.hpp"
 #include "rj_msgs/msg/world_state.hpp"
 #include "robot_intent.hpp"
+#include "std_msgs/msg/bool.hpp"
+
+// Note: The direction of the line can be changed by running:
+// `ros2 topic pub -1 line_direction std_msgs/msg/Bool "{data: VERTICAL}"`
 
 namespace strategy {
 
@@ -34,6 +38,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr line_direction_sub_;
 
     // subscription callbacks
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -41,20 +46,36 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void line_direction_callback(const std_msgs::msg::Bool::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
     // Ros ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;
+    /**
+     * Send a new long term goal to the robot movement path planner
+     */
     void goal_response_callback(GoalHandleRobotMove::SharedPtr future);
+    /**
+     * Retrieve the amount of time left for the current trajectory goal
+     */
     void feedback_callback(GoalHandleRobotMove::SharedPtr,
                            const std::shared_ptr<const RobotMove::Feedback> feedback);
+    /**
+     * Tell the current line position whether it has finished moving
+     */
     void result_callback(const GoalHandleRobotMove::WrappedResult& result);
 
+    /**
+     * Send a new goal to the path planner
+     */
     void send_new_goal();
 
     std::unique_ptr<Position> current_position_;
 
+    /**
+     * Get the task the agent should be running (based on the current line position)
+     */
     void get_task();
     rclcpp::TimerBase::SharedPtr get_task_timer_;
 
@@ -66,6 +87,9 @@ private:
     bool is_simulated_ = false;
     static constexpr double field_padding_ = 0.3;
 
+    /**
+     * Check whether a given robot is alive
+     */
     bool check_robot_alive(uint8_t robot_id);
 
     const int robot_id_;
@@ -73,6 +97,7 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
+    bool vertical_ = false;
 };  // class StraightLineTest
 
 }  // namespace strategy

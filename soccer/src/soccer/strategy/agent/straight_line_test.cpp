@@ -40,6 +40,10 @@ StraightLineTest::StraightLineTest(int r_id)
         "config/game_settings", 1,
         [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
+    line_direction_sub_ = create_subscription<std_msgs::msg::Bool>(
+        "line_direction", 1,
+        [this](const std_msgs::msg::Bool::SharedPtr msg) { line_direction_callback(msg); });
+
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&StraightLineTest::get_task, this));
@@ -71,6 +75,13 @@ void StraightLineTest::alive_robots_callback(const rj_msgs::msg::AliveRobots::Sh
 
 void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
+}
+
+void StraightLineTest::line_direction_callback(const std_msgs::msg::Bool::SharedPtr& msg) {
+    if (msg->data != vertical_) {
+        vertical_ = msg->data;
+        current_position_ = std::make_unique<Line>(robot_id_, vertical_);
+    }
 }
 
 bool StraightLineTest::check_robot_alive(uint8_t robot_id) {
