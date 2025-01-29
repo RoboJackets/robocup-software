@@ -132,7 +132,6 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     if (maybe_pose_target) {
         Pose error = maybe_pose_target.value() - state.pose;
         error.heading() = fix_angle_radians(error.heading());
-        SPDLOG_INFO("pose error: {}", error.position().x());
 
         std_msgs::msg::Float64 error_x_msg;
         error_x_msg.data = error.position().x();
