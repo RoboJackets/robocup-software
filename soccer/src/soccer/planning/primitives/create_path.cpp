@@ -126,7 +126,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
                 cached_intermediate_tuple_[robot_id] = {
-                    abs(angle), (final_inter - start.position).mag(), signbit(angle) ? -1 : 1};
+                    abs(angle), signbit(angle) ? -1 : 1, (final_inter - start.position).mag()};
                 return trajectory;
             }
         }
