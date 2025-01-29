@@ -1,4 +1,4 @@
-# Contains two unsigned ints - The robot ID to override and the position
+# Contains unsigned int overriding_position -  the position
 # to set for that ID, based on the enum OverridingPositions,
 # which is contained in soccer/src/soccer/strategy/agent/position/overriding_positions.hpp
 

@@ -166,7 +166,7 @@ private:
         }
     }
 
-    bool check_for_position_override();
+    bool set_position_override_if_requested();
 };
 
 }  // namespace strategy

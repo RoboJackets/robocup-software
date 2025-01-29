@@ -127,7 +127,7 @@ void RobotFactoryPosition::handle_ready() {
 }
 
 void RobotFactoryPosition::update_position() {
-    bool manual_position_set = check_for_position_override();
+    bool manual_position_set = set_position_override_if_requested();
     if (manual_position_set) {
         return;
     }
@@ -361,7 +361,7 @@ void RobotFactoryPosition::test_play_callback(
  * Checks override_play_position_, which automatically updates when an override is set.
  * If it is anything but auto, set the current position to that position and return true.
  */
-bool RobotFactoryPosition::check_for_position_override() {
+bool RobotFactoryPosition::set_position_override_if_requested() {
     switch (override_play_position_) {
         case Strategy::OverridingPositions::OFFENSE: {
             set_current_position<Offense>();
