@@ -7,10 +7,8 @@
 #include <rj_geometry/util.hpp>
 #include <rj_utils/logging.hpp>
 
-
 #include "game_state.hpp"
 #include "planning/instant.hpp"
-
 
 namespace control {
 
@@ -77,10 +75,12 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
         });
 
-    error_x_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_x", 10);
-    error_y_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_y", 10);
-    error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_heading", 10);
-
+    error_x_pub_ =
+        node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_x", 10);
+    error_y_pub_ =
+        node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_y", 10);
+    error_heading_pub_ =
+        node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_heading", 10);
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -144,7 +144,6 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         std_msgs::msg::Float64 error_heading_msg;
         error_heading_msg.data = error.heading();
         error_heading_pub_->publish(error_heading_msg);
-        
 
         correction = Twist(position_x_controller_.run(static_cast<float>(error.position().x())),
                            position_y_controller_.run(static_cast<float>(error.position().y())),

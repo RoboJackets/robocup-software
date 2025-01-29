@@ -1,19 +1,19 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
+
 #include <context.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_param_utils/param.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include "control/motion_setpoint.hpp"
 #include "game_state.hpp"
 #include "ros_debug_drawer.hpp"
 
 #include <rc-fshare/pid.hpp>
-
-#include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/float64.hpp>
 
 namespace control {
 
