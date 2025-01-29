@@ -76,11 +76,6 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         target_angles.at(i) = angle_function(instant, target_angles.at(i - 1), &gradient);
         velocity.at(i) =
             trajectory->instant_at(i).linear_velocity().dot(rj_geometry::Point(gradient));
-        if (std::isnan(velocity.at(i))) {
-            SPDLOG_INFO("Linear Velocity: {}", trajectory->instant_at(i).linear_velocity().mag());
-            SPDLOG_INFO("Gradient: {}", rj_geometry::Point(gradient).mag());
-            SPDLOG_INFO("SDFSDFSDFSDFSDFSDF");
-        }
     }
 
     // TODO(#1506): Re-enable this. Currently the forward-tracking is disabled
