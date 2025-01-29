@@ -99,6 +99,8 @@ private:
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
 };
 
 }  // namespace control

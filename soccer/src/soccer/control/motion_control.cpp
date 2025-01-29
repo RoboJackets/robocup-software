@@ -78,6 +78,8 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         });
 
     error_x_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_x", 10);
+    error_y_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_y", 10);
+    error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>("motion_control/pose_error_heading", 10);
 
 }
 
@@ -136,6 +138,13 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         error_x_msg.data = error.position().x();
         error_x_pub_->publish(error_x_msg);
 
+        std_msgs::msg::Float64 error_y_msg;
+        error_y_msg.data = error.position().y();
+        error_y_pub_->publish(error_y_msg);
+
+        std_msgs::msg::Float64 error_heading_msg;
+        error_heading_msg.data = error.heading();
+        error_heading_pub_->publish(error_heading_msg);
         
 
         correction = Twist(position_x_controller_.run(static_cast<float>(error.position().x())),
