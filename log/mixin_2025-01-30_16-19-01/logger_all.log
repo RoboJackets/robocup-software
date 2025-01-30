@@ -1,2 +1,0 @@
-[0.048s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'mixin', 'remove', 'perf_flags']
-[0.048s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='mixin', subverb_name='remove', verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0xffff9a6ff190>, verb_extension=<colcon_mixin.subverb.remove.RemoveMixinSubverb object at 0xffff9a6ff610>, main=<bound method RemoveMixinSubverb.main of <colcon_mixin.subverb.remove.RemoveMixinSubverb object at 0xffff9a6ff610>>, name='perf_flags')
