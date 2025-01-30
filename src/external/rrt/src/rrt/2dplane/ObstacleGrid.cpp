@@ -1,5 +1,7 @@
 #include "ObstacleGrid.hpp"
+
 #include <stdlib.h>
+
 #include <iostream>
 
 using namespace Eigen;
@@ -28,7 +30,7 @@ Vector2i ObstacleGrid::gridSquareForLocation(const Vector2d& loc) const {
 }
 
 double ObstacleGrid::nearestObstacleDist(const Vector2d& state,
-                                        double maxDist) const {
+                                         double maxDist) const {
     // x and y are the indices of the cell that state is located in
     double x = (state.x() / (_width / _discretizedWidth));
     double y = (state.y() / (_height / _discretizedHeight));

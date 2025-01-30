@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <memory>
 #include <rrt/2dplane/2dplane.hpp>
 #include <rrt/2dplane/GridStateSpace.hpp>

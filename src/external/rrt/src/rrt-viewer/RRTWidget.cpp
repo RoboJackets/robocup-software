@@ -1,5 +1,6 @@
-#include <fstream>
 #include "RRTWidget.hpp"
+
+#include <fstream>
 #include <rrt/2dplane/2dplane.hpp>
 #include <rrt/2dplane/ObstacleGrid.hpp>
 #include <rrt/planning/Path.hpp>
@@ -241,9 +242,9 @@ void RRTWidget::paint(QPainter* p) {
                 Vector2d nextWaypoint = _previousSolution[i + 1];
                 controlLength = 0.5 * min((waypoint - prevWaypoint).norm(),
                                           (nextWaypoint - waypoint).norm());
-                controlDir =
-                    ((prevWaypoint - waypoint).normalized() -
-                     (nextWaypoint - waypoint).normalized()).normalized();
+                controlDir = ((prevWaypoint - waypoint).normalized() -
+                              (nextWaypoint - waypoint).normalized())
+                                 .normalized();
             }
 
             Vector2d controlDiff = controlDir * controlLength;
@@ -327,8 +328,8 @@ void RRTWidget::drawTree(QPainter& painter, const Tree<Vector2d>& rrt,
     if (solutionNode) {
         painter.setPen(QPen(solutionColor, 2));
 
-        const Node<Vector2d>* node = solutionNode,
-                              * parent = solutionNode->parent();
+        const Node<Vector2d>*node = solutionNode,
+              *parent = solutionNode->parent();
         while (parent) {
             //  draw the edge
             QPointF from = pointFromNode(node);

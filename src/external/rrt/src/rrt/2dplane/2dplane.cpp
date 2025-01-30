@@ -1,7 +1,8 @@
 
 #include <math.h>
-#include <memory>
+
 #include <functional>
+#include <memory>
 #include <rrt/2dplane/2dplane.hpp>
 
 using namespace Eigen;

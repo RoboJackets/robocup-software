@@ -44,7 +44,8 @@ public:
      * @return A state in the direction of @target from @source.state()
      */
     virtual T intermediateState(const T& source, const T& target,
-                                double minStepSize, double maxStepSize) const = 0;
+                                double minStepSize,
+                                double maxStepSize) const = 0;
 
     /**
      * @brief Calculate the distance between two states

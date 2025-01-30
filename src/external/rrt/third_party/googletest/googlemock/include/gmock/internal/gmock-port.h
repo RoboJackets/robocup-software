@@ -41,6 +41,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+
 #include <iostream>
 
 // Most of the utilities needed for porting Google Mock are also
@@ -50,9 +51,9 @@
 // portability utilities to Google Test's gtest-port.h instead of
 // here, as Google Mock depends on Google Test.  Only add a utility
 // here if it's truly specific to Google Mock.
+#include "gmock/internal/custom/gmock-port.h"
 #include "gtest/internal/gtest-linked_ptr.h"
 #include "gtest/internal/gtest-port.h"
-#include "gmock/internal/custom/gmock-port.h"
 
 // To avoid conditional compilation everywhere, we make it
 // gmock-port.h's responsibility to #include the header implementing
@@ -62,7 +63,7 @@
 // For MS Visual C++, check the compiler version. At least VS 2003 is
 // required to compile Google Mock.
 #if defined(_MSC_VER) && _MSC_VER < 1310
-# error "At least Visual C++ 2003 (7.1) is required to compile Google Mock."
+#error "At least Visual C++ 2003 (7.1) is required to compile Google Mock."
 #endif
 
 // Macro for referencing flags.  This is public as we want the user to
