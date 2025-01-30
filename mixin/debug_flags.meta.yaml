@@ -1,0 +1,5 @@
+debug_flags:
+  cmake-args:
+    - "-DCMAKE_BUILD_TYPE=Debug"
+    - "-DCMAKE_CXX_FLAGS_DEBUG=-Og -Werror=return-type -Werror=delete-non-virtual-dtor"
+    - "-DCCACHE_DISABLE=1"

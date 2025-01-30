@@ -1,0 +1,3 @@
+ci_silent:
+  cmake-args:
+    - "-DCMAKE_CXX_FLAGS=-w"

@@ -120,7 +120,7 @@ add_subdirectory(rj_config)
 add_subdirectory(rj_common)
 
 add_subdirectory(rj_vision_receiver)
-add_subdirectory(soccer)
+add_subdirectory(rj_ai)
 
 add_subdirectory(docs)
 

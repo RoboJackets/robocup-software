@@ -1,56 +1,30 @@
-# ======================================================================
-# Preamble
-# ======================================================================
 cmake_minimum_required(VERSION 3.16)
-project(rj_convert LANGUAGES CXX)
+project(rj_convert)
 
-# ======================================================================
-# Find package
-# ======================================================================
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# ======================================================================
-# Define Targets
-# ======================================================================
+# Declare header-only library
 add_library(rj_convert INTERFACE)
-
-if(BUILD_TESTING)
-  add_executable(test_rj_convert)
-endif()
-
-add_subdirectory(testing)
-
-# ======================================================================
-# Dependencies List
-# ======================================================================
-set(RJ_CONVERT_DEPS_SYSTEM_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS})
-
-set(RJ_CONVERT_DEPS_INCLUDE_DIRS include)
-
-# ======================================================================
-# Include and Linking
-# ======================================================================
-target_include_directories(rj_convert SYSTEM INTERFACE ${RJ_CONVERT_DEPS_SYSTEM_INCLUDE_DIRS})
-target_include_directories(rj_convert INTERFACE ${RJ_CONVERT_DEPS_INCLUDE_DIRS})
-
+target_include_directories(rj_convert INTERFACE include)
 ament_target_dependencies(rj_convert INTERFACE rclcpp)
 
-# Add a test runner target "test_rj_convert" to run all tests in this directory
+ament_export_targets(rj_convert HAS_LIBRARY_TARGET)
+ament_export_dependencies(rclcpp)
+
 if(BUILD_TESTING)
-  target_link_libraries(test_rj_convert PRIVATE rj_convert gtest gtest_main)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+  add_subdirectory(test)
 endif()
 
-# ======================================================================
-# Packaging
-# ======================================================================
+# Install headers
 install(DIRECTORY include/ DESTINATION include/)
 
+# Install the target
 install(
   TARGETS rj_convert
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin)
+  INCLUDES DESTINATION include
+)
 
-if(BUILD_TESTING)
-  install(TARGETS test_rj_convert DESTINATION lib/${CMAKE_PROJECT_NAME})
-endif()
+ament_package()

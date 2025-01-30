@@ -1,0 +1,6 @@
+default_env:
+  cmake-args:
+    - "-DCMAKE_C_COMPILER=clang-16"
+    - "-DCMAKE_CXX_COMPILER=clang++-16"
+    - "-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld-16"
+    - "-DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld-16"
