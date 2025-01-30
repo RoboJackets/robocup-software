@@ -5,7 +5,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_constants/topic_names.hpp>
-#include <rj_convert/testing/ros_convert_testing.hpp>
+#include <rj_convert/test/ros_convert_testing.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>

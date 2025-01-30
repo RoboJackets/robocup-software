@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <rj_common/time.hpp>
-#include <rj_convert/testing/ros_convert_testing.hpp>
+#include <rj_convert/test/ros_convert_testing.hpp>
 
 TEST(ROSConvert, time_lossless_convert) {
     test_lossless_convert_ros_value(builtin_interfaces::msg::Time(rclcpp::Time(123456)));

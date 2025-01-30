@@ -1,0 +1,2 @@
+Invoking command in '/root/robocup-software/build/rj_convert': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/robocup-software/src/rj_convert -DCMAKE_INSTALL_PREFIX=/root/robocup-software/install/rj_convert
+Invoked command in '/root/robocup-software/build/rj_convert' returned '1': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/robocup-software/src/rj_convert -DCMAKE_INSTALL_PREFIX=/root/robocup-software/install/rj_convert

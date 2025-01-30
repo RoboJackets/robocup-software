@@ -1,0 +1,8 @@
+source;share/rj_convert/hook/cmake_prefix_path.ps1
+source;share/rj_convert/hook/cmake_prefix_path.dsv
+source;share/rj_convert/hook/cmake_prefix_path.sh
+source;share/rj_convert/local_setup.bash
+source;share/rj_convert/local_setup.dsv
+source;share/rj_convert/local_setup.ps1
+source;share/rj_convert/local_setup.sh
+source;share/rj_convert/local_setup.zsh

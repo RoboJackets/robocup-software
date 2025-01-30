@@ -1,0 +1,7 @@
+[01m[K/root/robocup-software/src/rj_convert/test/ros_convert_test.cpp:5:10:[m[K [01;31m[Kfatal error: [m[Krj_convert/testing/ros_convert_testing.hpp: No such file or directory
+    5 | #include [01;31m[K<rj_convert/testing/ros_convert_testing.hpp>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+gmake[2]: *** [CMakeFiles/test_rj_convert.dir/build.make:76: CMakeFiles/test_rj_convert.dir/test/ros_convert_test.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:156: CMakeFiles/test_rj_convert.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

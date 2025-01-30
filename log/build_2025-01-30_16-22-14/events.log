@@ -1,0 +1,78 @@
+[0.000000] (-) TimerEvent: {}
+[0.001396] (-) JobUnselected: {'identifier': 'external'}
+[0.001425] (-) JobUnselected: {'identifier': 'geometry2d'}
+[0.001440] (-) JobUnselected: {'identifier': 'rj_common'}
+[0.001448] (-) JobUnselected: {'identifier': 'rj_config'}
+[0.001456] (-) JobUnselected: {'identifier': 'rj_constants'}
+[0.001464] (-) JobUnselected: {'identifier': 'rj_drawing_msgs'}
+[0.001473] (-) JobUnselected: {'identifier': 'rj_geometry_msgs'}
+[0.001484] (-) JobUnselected: {'identifier': 'rj_msgs'}
+[0.001492] (-) JobUnselected: {'identifier': 'rj_param_utils'}
+[0.001500] (-) JobUnselected: {'identifier': 'rj_protos'}
+[0.001507] (-) JobUnselected: {'identifier': 'rj_robocup_docs'}
+[0.001515] (-) JobUnselected: {'identifier': 'rj_topic_utils'}
+[0.001522] (-) JobUnselected: {'identifier': 'rj_utils'}
+[0.001532] (-) JobUnselected: {'identifier': 'rj_vision_receiver'}
+[0.001543] (-) JobUnselected: {'identifier': 'soccer'}
+[0.001552] (rj_convert) JobQueued: {'identifier': 'rj_convert', 'dependencies': OrderedDict()}
+[0.001563] (rj_convert) JobStarted: {'identifier': 'rj_convert'}
+[0.003974] (rj_convert) JobProgress: {'identifier': 'rj_convert', 'progress': 'cmake'}
+[0.004259] (rj_convert) Command: {'cmd': ['/usr/bin/cmake', '/root/robocup-software/src/rj_convert', '-DCMAKE_INSTALL_PREFIX=/root/robocup-software/install/rj_convert'], 'cwd': '/root/robocup-software/build/rj_convert', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'root'), ('HOSTNAME', '883453f99e27'), ('GIT_ASKPASS', '/root/.vscode-server/bin/cd4ee3b1c348a13bafd8f9ad8060705f6d4b9cba/extensions/git/dist/askpass.sh'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('BROWSER', '/root/.vscode-server/bin/cd4ee3b1c348a13bafd8f9ad8060705f6d4b9cba/bin/helpers/browser.sh'), ('HOME', '/root'), ('TERM_PROGRAM_VERSION', '1.96.4'), ('VSCODE_IPC_HOOK_CLI', '/tmp/vscode-ipc-0f19b725-94e1-4be6-974b-9e834c3e0ec8.sock'), ('ROS_PYTHON_VERSION', '3'), ('VSCODE_GIT_ASKPASS_MAIN', '/root/.vscode-server/bin/cd4ee3b1c348a13bafd8f9ad8060705f6d4b9cba/extensions/git/dist/askpass-main.js'), ('VSCODE_GIT_ASKPASS_NODE', '/root/.vscode-server/bin/cd4ee3b1c348a13bafd8f9ad8060705f6d4b9cba/node'), ('COLORTERM', 'truecolor'), ('REMOTE_CONTAINERS', 'true'), ('ROS_DISTRO', 'humble'), ('REMOTE_CONTAINERS_IPC', '/tmp/vscode-remote-containers-ipc-974ebaf1-9881-4728-bbe2-98f00819a2b0.sock'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('COLCON_MIXIN_PATH', '/root/robocup-software/mixin'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/root/.vscode-server/bin/cd4ee3b1c348a13bafd8f9ad8060705f6d4b9cba/bin/remote-cli:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.vscode-server/data/User/globalStorage/github.copilot-chat/debugCommand'), ('REMOTE_CONTAINERS_SOCKETS', '["/tmp/vscode-ssh-auth-974ebaf1-9881-4728-bbe2-98f00819a2b0.sock"]'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('VSCODE_GIT_IPC_HANDLE', '/tmp/vscode-git-d1d340e128.sock'), ('TERM_PROGRAM', 'vscode'), ('SSH_AUTH_SOCK', '/tmp/vscode-ssh-auth-974ebaf1-9881-4728-bbe2-98f00819a2b0.sock'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('DEBIAN_FRONTEND', 'noninteractive'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('VSCODE_GIT_ASKPASS_EXTRA_ARGS', ''), ('PWD', '/root/robocup-software/build/rj_convert'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('TZ', 'America/New_York'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.035497] (rj_convert) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.063834] (rj_convert) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.067976] (rj_convert) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.099047] (rj_convert) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.100218] (-) TimerEvent: {}
+[0.103912] (rj_convert) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.104090] (rj_convert) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.105450] (rj_convert) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.107460] (rj_convert) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.145210] (rj_convert) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.150211] (rj_convert) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.150395] (rj_convert) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.150717] (rj_convert) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.151963] (rj_convert) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.201282] (-) TimerEvent: {}
+[0.225571] (rj_convert) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.264347] (rj_convert) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.286913] (rj_convert) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.289144] (rj_convert) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.293328] (rj_convert) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.299814] (rj_convert) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.301710] (-) TimerEvent: {}
+[0.308363] (rj_convert) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.332503] (rj_convert) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.333602] (rj_convert) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.371561] (rj_convert) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.384435] (rj_convert) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.402496] (-) TimerEvent: {}
+[0.403464] (rj_convert) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.408020] (rj_convert) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[0.445389] (rj_convert) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[0.445564] (rj_convert) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[0.479395] (rj_convert) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[0.480039] (rj_convert) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[0.503002] (-) TimerEvent: {}
+[0.519331] (rj_convert) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[0.565250] (rj_convert) StderrLine: {'line': b'\x1b[31mCMake Error at test/CMakeLists.txt:3 (find_package):\n'}
+[0.565381] (rj_convert) StderrLine: {'line': b'  By not providing "Findrj_convert.cmake" in CMAKE_MODULE_PATH this project\n'}
+[0.565419] (rj_convert) StderrLine: {'line': b'  has asked CMake to find a package configuration file provided by\n'}
+[0.565448] (rj_convert) StderrLine: {'line': b'  "rj_convert", but CMake did not find one.\n'}
+[0.565476] (rj_convert) StderrLine: {'line': b'\n'}
+[0.565503] (rj_convert) StderrLine: {'line': b'  Could not find a package configuration file provided by "rj_convert" with\n'}
+[0.565529] (rj_convert) StderrLine: {'line': b'  any of the following names:\n'}
+[0.565556] (rj_convert) StderrLine: {'line': b'\n'}
+[0.565581] (rj_convert) StderrLine: {'line': b'    rj_convertConfig.cmake\n'}
+[0.565607] (rj_convert) StderrLine: {'line': b'    rj_convert-config.cmake\n'}
+[0.565634] (rj_convert) StderrLine: {'line': b'\n'}
+[0.565666] (rj_convert) StderrLine: {'line': b'  Add the installation prefix of "rj_convert" to CMAKE_PREFIX_PATH or set\n'}
+[0.565693] (rj_convert) StderrLine: {'line': b'  "rj_convert_DIR" to a directory containing one of the above files.  If\n'}
+[0.565720] (rj_convert) StderrLine: {'line': b'  "rj_convert" provides a separate development package or SDK, be sure it has\n'}
+[0.565748] (rj_convert) StderrLine: {'line': b'  been installed.\n'}
+[0.565775] (rj_convert) StderrLine: {'line': b'\n'}
+[0.565803] (rj_convert) StderrLine: {'line': b'\x1b[0m\n'}
+[0.566415] (rj_convert) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[0.566472] (rj_convert) StdoutLine: {'line': b'See also "/root/robocup-software/build/rj_convert/CMakeFiles/CMakeOutput.log".\n'}
+[0.570965] (rj_convert) CommandEnded: {'returncode': 1}
+[0.580050] (rj_convert) JobEnded: {'identifier': 'rj_convert', 'rc': 1}
+[0.580667] (-) EventReactorShutdown: {}

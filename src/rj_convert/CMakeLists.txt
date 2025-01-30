@@ -9,22 +9,31 @@ add_library(rj_convert INTERFACE)
 target_include_directories(rj_convert INTERFACE include)
 ament_target_dependencies(rj_convert INTERFACE rclcpp)
 
-ament_export_targets(rj_convert HAS_LIBRARY_TARGET)
 ament_export_dependencies(rclcpp)
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-  add_subdirectory(test)
-endif()
 
 # Install headers
 install(DIRECTORY include/ DESTINATION include/)
 
-# Install the target
+# Install the target (without EXPORT)
 install(
   TARGETS rj_convert
   INCLUDES DESTINATION include
 )
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_rj_convert test/ros_convert_test.cpp)
+
+  # Ensure tests find headers
+  target_include_directories(test_rj_convert PRIVATE include)
+
+  # Link test with rj_convert and rclcpp
+  target_link_libraries(test_rj_convert rj_convert)
+  ament_target_dependencies(test_rj_convert rclcpp)
+
+endif()
 
 ament_package()

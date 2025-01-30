@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 #include <rj_convert/ros_convert.hpp>
-#include <rj_convert/testing/ros_convert_testing.hpp>
+#include <rj_convert/test/ros_convert_testing.hpp>
 
 struct MockTime {
     using Msg = builtin_interfaces::msg::Time;

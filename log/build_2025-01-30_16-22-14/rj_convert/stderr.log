@@ -1,0 +1,17 @@
+[31mCMake Error at test/CMakeLists.txt:3 (find_package):
+  By not providing "Findrj_convert.cmake" in CMAKE_MODULE_PATH this project
+  has asked CMake to find a package configuration file provided by
+  "rj_convert", but CMake did not find one.
+
+  Could not find a package configuration file provided by "rj_convert" with
+  any of the following names:
+
+    rj_convertConfig.cmake
+    rj_convert-config.cmake
+
+  Add the installation prefix of "rj_convert" to CMAKE_PREFIX_PATH or set
+  "rj_convert_DIR" to a directory containing one of the above files.  If
+  "rj_convert" provides a separate development package or SDK, be sure it has
+  been installed.
+
+[0m

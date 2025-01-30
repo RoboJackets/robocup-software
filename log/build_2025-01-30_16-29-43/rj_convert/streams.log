@@ -1,0 +1,48 @@
+[0.004s] Invoking command in '/root/robocup-software/build/rj_convert': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/robocup-software/src/rj_convert -DCMAKE_INSTALL_PREFIX=/root/robocup-software/install/rj_convert
+[0.041s] -- The C compiler identification is GNU 11.4.0
+[0.071s] -- The CXX compiler identification is GNU 11.4.0
+[0.075s] -- Detecting C compiler ABI info
+[0.111s] -- Detecting C compiler ABI info - done
+[0.115s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.116s] -- Detecting C compile features
+[0.116s] -- Detecting C compile features - done
+[0.118s] -- Detecting CXX compiler ABI info
+[0.157s] -- Detecting CXX compiler ABI info - done
+[0.162s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.162s] -- Detecting CXX compile features
+[0.163s] -- Detecting CXX compile features - done
+[0.164s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.236s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.273s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[0.294s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.297s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.301s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.307s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.316s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.340s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.341s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.380s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.391s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.410s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.415s] -- Looking for pthread.h
+[0.453s] -- Looking for pthread.h - found
+[0.453s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.489s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.490s] -- Found Threads: TRUE  
+[0.525s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[0.566s] -- Found gtest sources under '/opt/ros/humble/src/gtest_vendor': C++ tests using 'Google Test' will be built
+[0.572s] -- Added test 'copyright' to check source files copyright and LICENSE
+[0.573s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[0.573s] -- Configured cppcheck include dirs: /root/robocup-software/src/rj_convert/include
+[0.573s] -- Configured cppcheck exclude dirs and/or files: 
+[0.573s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[0.573s] -- Configured cpplint exclude dirs and/or files: 
+[0.574s] -- Added test 'lint_cmake' to check CMake code style
+[0.574s] -- Added test 'uncrustify' to check C / C++ code style
+[0.574s] -- Configured uncrustify additional arguments: 
+[0.574s] -- Added test 'xmllint' to check XML markup files
+[0.575s] -- Configuring done
+[0.580s] [0mCMake Error: INSTALL(EXPORT) given unknown export "rj_convert"[0m
+[0.582s] -- Generating done
+[0.583s] [0mCMake Generate step failed.  Build files cannot be regenerated correctly.[0m
+[0.588s] Invoked command in '/root/robocup-software/build/rj_convert' returned '1': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /root/robocup-software/src/rj_convert -DCMAKE_INSTALL_PREFIX=/root/robocup-software/install/rj_convert
