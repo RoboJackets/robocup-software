@@ -1,0 +1,6 @@
+build/
+
+include/rc-fshare/rtp/target/**
+
+**/.vscode/*
+**/Cargo.lock
