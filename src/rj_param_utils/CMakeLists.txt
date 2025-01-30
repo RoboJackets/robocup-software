@@ -1,51 +1,47 @@
-# ======================================================================
-# Preamble
-# ======================================================================
 cmake_minimum_required(VERSION 3.16)
 project(rj_param_utils)
 
-# ======================================================================
-# Find package
-# ======================================================================
-find_package(rclcpp REQUIRED)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)  # Ensure rclcpp is found
 
-# ======================================================================
-# Define Targets
-# ======================================================================
+# Define shared library
 add_library(rj_param_utils SHARED)
 
-add_subdirectory(src)
+# Add source files
+target_sources(rj_param_utils PRIVATE
+    src/param.cpp
+    src/ros2_param_provider.cpp
+    src/ros2_local_param_provider.cpp
+    src/ros2_global_param_provider.cpp
+)
 
-# ======================================================================
-# Dependencies List
-# ======================================================================
-set(RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS include)
+# Include directories
+target_include_directories(rj_param_utils PUBLIC include)
 
-# ======================================================================
-# Include and Linking
-# ======================================================================
-target_include_directories(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
-
-target_link_libraries(rj_param_utils PUBLIC ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
-
+# Link dependencies properly
 ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
 
-# ======================================================================
-# Testing
-# ======================================================================
-if(BUILD_TESTING)
-  enable_testing()
+# Install headers
+install(DIRECTORY include/ DESTINATION include/)
 
-  add_library(rj_param_utils_testing STATIC)
-  add_subdirectory(testing)
-  target_link_libraries(rj_param_utils_testing PUBLIC rj_param_utils gtest)
-endif()
-
-# ======================================================================
-# Packaging
-# ======================================================================
+# Install the library
 install(
   TARGETS rj_param_utils
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  RUNTIME DESTINATION bin
+)
+
+# Testing
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_rj_param_utils
+    test/declare_test.cpp
+    test/param_test.cpp
+    test/global_param_provider_test.cpp
+  )
+  target_include_directories(test_rj_param_utils PUBLIC include)
+  target_link_libraries(test_rj_param_utils rj_param_utils)
+endif()
+
+ament_package()
