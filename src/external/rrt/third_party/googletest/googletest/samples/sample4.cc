@@ -31,16 +31,12 @@
 //
 // Author: wan@google.com (Zhanyong Wan)
 
-#include <stdio.h>
-
 #include "sample4.h"
 
+#include <stdio.h>
+
 // Returns the current counter value, and increments it.
-int Counter::Increment() {
-  return counter_++;
-}
+int Counter::Increment() { return counter_++; }
 
 // Prints the current counter value to STDOUT.
-void Counter::Print() const {
-  printf("%d", counter_);
-}
+void Counter::Print() const { printf("%d", counter_); }

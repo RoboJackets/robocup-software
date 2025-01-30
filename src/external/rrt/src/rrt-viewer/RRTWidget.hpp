@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <memory>
 #include <QQuickPaintedItem>
 #include <QtQuick>
 #include <QtWidgets>
+#include <memory>
 #include <rrt/2dplane/GridStateSpace.hpp>
 #include <rrt/BiRRT.hpp>
 

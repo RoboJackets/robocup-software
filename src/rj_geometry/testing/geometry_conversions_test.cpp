@@ -1,5 +1,5 @@
-#include <rj_geometry/geometry_conversions.hpp>
 #include <rj_convert/test/ros_convert_testing.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
 
 static rj_geometry_msgs::msg::Point make_ros_point() {
     return rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);

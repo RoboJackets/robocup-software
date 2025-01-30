@@ -2,8 +2,8 @@
 
 #include <gtest/gtest.h>
 
-#include <world_state.hpp>
 #include <rj_convert/test/ros_convert_testing.hpp>
+#include <world_state.hpp>
 
 RobotState get_random_robot_state() {
     std::random_device rd;

@@ -29,7 +29,7 @@ public:
      * search for obstacles
      */
     double nearestObstacleDist(const Eigen::Vector2d& state,
-                              double maxDist) const;
+                               double maxDist) const;
     void clear();
     bool& obstacleAt(int x, int y);
     bool obstacleAt(int x, int y) const;

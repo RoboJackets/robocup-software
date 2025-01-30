@@ -52,20 +52,19 @@ using testing::internal::ShouldUseColor;
 // created before main() is entered, and thus that ShouldUseColor()
 // works the same way as in a real Google-Test-based test.  We don't actual
 // run the TEST itself.
-TEST(GTestColorTest, Dummy) {
-}
+TEST(GTestColorTest, Dummy) {}
 
 int main(int argc, char** argv) {
-  testing::InitGoogleTest(&argc, argv);
+    testing::InitGoogleTest(&argc, argv);
 
-  if (ShouldUseColor(true)) {
-    // Google Test decides to use colors in the output (assuming it
-    // goes to a TTY).
-    printf("YES\n");
-    return 1;
-  } else {
-    // Google Test decides not to use colors in the output.
-    printf("NO\n");
-    return 0;
-  }
+    if (ShouldUseColor(true)) {
+        // Google Test decides to use colors in the output (assuming it
+        // goes to a TTY).
+        printf("YES\n");
+        return 1;
+    } else {
+        // Google Test decides not to use colors in the output.
+        printf("NO\n");
+        return 0;
+    }
 }

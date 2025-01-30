@@ -1,6 +1,6 @@
 
-#include <boost/functional/hash.hpp>
 #include <Eigen/Dense>
+#include <boost/functional/hash.hpp>
 #include <rrt/StateSpace.hpp>
 #include <rrt/Tree.hpp>
 

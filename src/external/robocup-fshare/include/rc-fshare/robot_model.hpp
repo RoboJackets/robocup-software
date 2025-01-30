@@ -3,30 +3,29 @@
 #ifndef EIGEN_HAS_CXX11_MATH
 #define EIGEN_HAS_CXX11_MATH 0
 #endif
-#include <Eigen/Dense>
 #include <array>
 #include <cmath>
 
+#include <Eigen/Dense>
 
 /// Model parameters for a robot.  Used by the controls system.
 class RobotModel {
-
-static constexpr double DegreesToRadians(double val) { return val * M_PI / 180.0; }
+    static constexpr double DegreesToRadians(double val) { return val * M_PI / 180.0; }
 
 private:
     RobotModel() {
         WheelRadius = 0.02786;
-        
+
         RearWheelDist = 0.077874;
         FrontWheelDist = 0.078089;
-        
+
         FrontAngle = 30;
         BackAngle = 45;
-        
+
         WheelAngles = {
             DegreesToRadians(180 - FrontAngle),  // M1
-            DegreesToRadians(180 + BackAngle),  // M2
-            DegreesToRadians(360 - BackAngle),  // M3
+            DegreesToRadians(180 + BackAngle),   // M2
+            DegreesToRadians(360 - BackAngle),   // M3
             DegreesToRadians(0 + FrontAngle),    // M4
         };
 
@@ -35,7 +34,7 @@ private:
 
         recalculateBotToWheel();
     }
-    
+
     double RearWheelDist;
     double FrontWheelDist;
     int BackAngle;
@@ -44,7 +43,7 @@ private:
 public:
     // singleton pattern
     static RobotModel& get() {
-        static RobotModel instance; // Guaranteed to be destroyed.
+        static RobotModel instance;  // Guaranteed to be destroyed.
         // Instantiated on first use.
         return instance;
     }

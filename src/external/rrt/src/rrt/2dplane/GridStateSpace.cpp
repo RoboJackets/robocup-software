@@ -1,4 +1,5 @@
 #include <math.h>
+
 #include <rrt/2dplane/GridStateSpace.hpp>
 #include <rrt/util.hpp>
 #include <stdexcept>
@@ -10,8 +11,8 @@ using namespace std;
 
 namespace RRT {
 
-GridStateSpace::GridStateSpace(double width, double height, int discretizedWidth,
-                               int discretizedHeight)
+GridStateSpace::GridStateSpace(double width, double height,
+                               int discretizedWidth, int discretizedHeight)
     : PlaneStateSpace(width, height),
       _obstacleGrid(width, height, discretizedWidth, discretizedHeight) {}
 

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rclcpp/time.hpp>
 #include <type_traits>
+
+#include <rclcpp/time.hpp>
 
 namespace rj_convert {
 
@@ -80,8 +81,7 @@ struct RosConverter<std::vector<CppItem>, std::vector<RosItem>> {
     static std::vector<RosItem> to_ros(const std::vector<CppItem>& value) {
         std::vector<RosItem> result;
         result.reserve(value.size());
-        std::transform(std::begin(value), std::end(value),
-                       std::back_inserter(result),
+        std::transform(std::begin(value), std::end(value), std::back_inserter(result),
                        RosConverter<CppItem, RosItem>::to_ros);
         return result;
     }
@@ -89,8 +89,7 @@ struct RosConverter<std::vector<CppItem>, std::vector<RosItem>> {
     static std::vector<CppItem> from_ros(const std::vector<RosItem>& value) {
         std::vector<CppItem> result;
         result.reserve(value.size());
-        std::transform(std::begin(value), std::end(value),
-                       std::back_inserter(result),
+        std::transform(std::begin(value), std::end(value), std::back_inserter(result),
                        RosConverter<CppItem, RosItem>::from_ros);
         return result;
     }
@@ -108,16 +107,14 @@ struct AssociatedCppType<std::array<RosItem, size>> {
 
 template <typename CppItem, typename RosItem, size_t size>
 struct RosConverter<std::array<CppItem, size>, std::array<RosItem, size>> {
-    static std::array<RosItem, size> to_ros(
-        const std::array<CppItem, size>& value) {
+    static std::array<RosItem, size> to_ros(const std::array<CppItem, size>& value) {
         std::array<RosItem, size> result;
         std::transform(std::begin(value), std::end(value), std::begin(result),
                        RosConverter<CppItem, RosItem>::to_ros);
         return result;
     }
 
-    static std::array<CppItem, size> from_ros(
-        const std::array<RosItem, size>& value) {
+    static std::array<CppItem, size> from_ros(const std::array<RosItem, size>& value) {
         std::array<CppItem, size> result;
         std::transform(std::begin(value), std::end(value), std::begin(result),
                        RosConverter<CppItem, RosItem>::from_ros);
@@ -125,26 +122,22 @@ struct RosConverter<std::array<CppItem, size>, std::array<RosItem, size>> {
     }
 };
 
-template <typename CppType,
-          typename RosType = typename AssociatedRosType<CppType>::T>
+template <typename CppType, typename RosType = typename AssociatedRosType<CppType>::T>
 void convert_to_ros(const CppType& from, RosType* to) {
     *to = RosConverter<CppType, RosType>::to_ros(from);
 }
 
-template <typename CppType,
-          typename RosType = typename AssociatedRosType<CppType>::T>
+template <typename CppType, typename RosType = typename AssociatedRosType<CppType>::T>
 RosType convert_to_ros(const CppType& from) {
     return RosConverter<CppType, RosType>::to_ros(from);
 }
 
-template <typename RosType,
-          typename CppType = typename AssociatedCppType<RosType>::T>
+template <typename RosType, typename CppType = typename AssociatedCppType<RosType>::T>
 void convert_from_ros(const RosType& from, CppType* to) {
     *to = RosConverter<CppType, RosType>::from_ros(from);
 }
 
-template <typename RosType,
-          typename CppType = typename AssociatedCppType<RosType>::T>
+template <typename RosType, typename CppType = typename AssociatedCppType<RosType>::T>
 CppType convert_from_ros(const RosType& from) {
     return RosConverter<CppType, RosType>::from_ros(from);
 }
