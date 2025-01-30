@@ -1,0 +1,329 @@
+digraph "rj_robocup" {
+node [
+  fontsize = "12"
+];
+subgraph clusterLegend {
+  label = "Legend";
+  color = black;
+  edge [ style = invis ];
+  legendNode0 [ label = "Executable", shape = egg ];
+  legendNode1 [ label = "Static Library", shape = octagon ];
+  legendNode2 [ label = "Shared Library", shape = doubleoctagon ];
+  legendNode3 [ label = "Module Library", shape = tripleoctagon ];
+  legendNode4 [ label = "Interface Library", shape = pentagon ];
+  legendNode5 [ label = "Object Library", shape = hexagon ];
+  legendNode6 [ label = "Unknown Library", shape = septagon ];
+  legendNode7 [ label = "Custom Target", shape = box ];
+  legendNode0 -> legendNode1 [ style = solid ];
+  legendNode0 -> legendNode2 [ style = solid ];
+  legendNode0 -> legendNode3;
+  legendNode1 -> legendNode4 [ label = "Interface", style = dashed ];
+  legendNode2 -> legendNode5 [ label = "Private", style = dotted ];
+  legendNode3 -> legendNode6 [ style = solid ];
+  legendNode0 -> legendNode7;
+}
+    "node0" [ label = "RRT", shape = octagon ];
+    "node1" [ label = "/usr/lib/x86_64-linux-gnu/libflann.so", shape = septagon ];
+    "node0" -> "node1"  // RRT -> /usr/lib/x86_64-linux-gnu/libflann.so
+    "node2" [ label = "/usr/lib/x86_64-linux-gnu/liblz4.so", shape = septagon ];
+    "node0" -> "node2"  // RRT -> /usr/lib/x86_64-linux-gnu/liblz4.so
+    "node3" [ label = "Flann", shape = octagon ];
+    "node0" -> "node3"  // RRT -> Flann
+    "node4" [ label = "Qt5::moc", shape = egg ];
+    "node0" -> "node4"  // RRT -> Qt5::moc
+    "node5" [ label = "agent_action_client_node", shape = egg ];
+    "node5" -> "node4"  // agent_action_client_node -> Qt5::moc
+    "node6" [ label = "Qt5::uic", shape = egg ];
+    "node5" -> "node6"  // agent_action_client_node -> Qt5::uic
+    "node7" [ label = "robocup", shape = doubleoctagon ];
+    "node8" [ label = "/usr/lib/x86_64-linux-gnu/libpython3.10.so", shape = septagon ];
+    "node7" -> "node8"  // robocup -> /usr/lib/x86_64-linux-gnu/libpython3.10.so
+    "node9" [ label = "Boost::system", shape = doubleoctagon ];
+    "node10" [ label = "Boost::headers", shape = pentagon ];
+    "node9" -> "node10" [ style = dashed ] // Boost::system -> Boost::headers
+    "node7" -> "node9"  // robocup -> Boost::system
+    "node11" [ label = "GL", shape = septagon ];
+    "node7" -> "node11"  // robocup -> GL
+    "node12" [ label = "GLU", shape = septagon ];
+    "node7" -> "node12"  // robocup -> GLU
+    "node13" [ label = "Qt5::Core", shape = doubleoctagon ];
+    "node7" -> "node13"  // robocup -> Qt5::Core
+    "node14" [ label = "Qt5::Network", shape = doubleoctagon ];
+    "node14" -> "node13" [ style = dashed ] // Qt5::Network -> Qt5::Core
+    "node7" -> "node14"  // robocup -> Qt5::Network
+    "node15" [ label = "Qt5::OpenGL", shape = doubleoctagon ];
+    "node15" -> "node13" [ style = dashed ] // Qt5::OpenGL -> Qt5::Core
+    "node16" [ label = "Qt5::Gui", shape = doubleoctagon ];
+    "node16" -> "node13" [ style = dashed ] // Qt5::Gui -> Qt5::Core
+    "node15" -> "node16" [ style = dashed ] // Qt5::OpenGL -> Qt5::Gui
+    "node17" [ label = "Qt5::Widgets", shape = doubleoctagon ];
+    "node17" -> "node13" [ style = dashed ] // Qt5::Widgets -> Qt5::Core
+    "node17" -> "node16" [ style = dashed ] // Qt5::Widgets -> Qt5::Gui
+    "node15" -> "node17" [ style = dashed ] // Qt5::OpenGL -> Qt5::Widgets
+    "node7" -> "node15"  // robocup -> Qt5::OpenGL
+    "node18" [ label = "Qt5::Svg", shape = doubleoctagon ];
+    "node18" -> "node13" [ style = dashed ] // Qt5::Svg -> Qt5::Core
+    "node18" -> "node16" [ style = dashed ] // Qt5::Svg -> Qt5::Gui
+    "node18" -> "node17" [ style = dashed ] // Qt5::Svg -> Qt5::Widgets
+    "node7" -> "node18"  // robocup -> Qt5::Svg
+    "node7" -> "node17"  // robocup -> Qt5::Widgets
+    "node19" [ label = "Qt5::Xml", shape = doubleoctagon ];
+    "node19" -> "node13" [ style = dashed ] // Qt5::Xml -> Qt5::Core
+    "node7" -> "node19"  // robocup -> Qt5::Xml
+    "node7" -> "node4"  // robocup -> Qt5::moc
+    "node20" [ label = "Qt5::rcc", shape = egg ];
+    "node7" -> "node20"  // robocup -> Qt5::rcc
+    "node7" -> "node6"  // robocup -> Qt5::uic
+    "node7" -> "node0"  // robocup -> RRT
+    "node21" [ label = "SDL2", shape = septagon ];
+    "node7" -> "node21"  // robocup -> SDL2
+    "node22" [ label = "Threads::Threads", shape = pentagon ];
+    "node7" -> "node22"  // robocup -> Threads::Threads
+    "node23" [ label = "ament_index_cpp::ament_index_cpp", shape = doubleoctagon ];
+    "node7" -> "node23"  // robocup -> ament_index_cpp::ament_index_cpp
+    "node24" [ label = "config_client", shape = octagon ];
+    "node25" [ label = "fmt", shape = septagon ];
+    "node24" -> "node25"  // config_client -> fmt
+    "node26" [ label = "rclcpp::rclcpp", shape = doubleoctagon ];
+    "node26" -> "node23" [ style = dashed ] // rclcpp::rclcpp -> ament_index_cpp::ament_index_cpp
+    "node27" [ label = "rcutils::rcutils", shape = doubleoctagon ];
+    "node28" [ label = "dl", shape = septagon ];
+    "node27" -> "node28" [ style = dashed ] // rcutils::rcutils -> dl
+    "node29" [ label = "fastcdr", shape = doubleoctagon ];
+    "node30" [ label = "rmw::rmw", shape = doubleoctagon ];
+    "node30" -> "node27" [ style = dashed ] // rmw::rmw -> rcutils::rcutils
+    "node31" [ label = "libstatistics_collector::libstatistics_collector", shape = doubleoctagon ];
+    "node32" [ label = "rcl::rcl", shape = doubleoctagon ];
+    "node33" [ label = "rcl_logging_interface::rcl_logging_interface", shape = doubleoctagon ];
+    "node33" -> "node27" [ style = dashed ] // rcl_logging_interface::rcl_logging_interface -> rcutils::rcutils
+    "node32" -> "node33" [ style = dashed ] // rcl::rcl -> rcl_logging_interface::rcl_logging_interface
+    "node34" [ label = "rcl_logging_spdlog::rcl_logging_spdlog", shape = doubleoctagon ];
+    "node34" -> "node33" [ style = dashed ] // rcl_logging_spdlog::rcl_logging_spdlog -> rcl_logging_interface::rcl_logging_interface
+    "node32" -> "node34" [ style = dashed ] // rcl::rcl -> rcl_logging_spdlog::rcl_logging_spdlog
+    "node35" [ label = "rcl_yaml_param_parser::rcl_yaml_param_parser", shape = doubleoctagon ];
+    "node35" -> "node27" [ style = dashed ] // rcl_yaml_param_parser::rcl_yaml_param_parser -> rcutils::rcutils
+    "node35" -> "node30" [ style = dashed ] // rcl_yaml_param_parser::rcl_yaml_param_parser -> rmw::rmw
+    "node36" [ label = "yaml", shape = doubleoctagon ];
+    "node35" -> "node36" [ style = dashed ] // rcl_yaml_param_parser::rcl_yaml_param_parser -> yaml
+    "node32" -> "node35" [ style = dashed ] // rcl::rcl -> rcl_yaml_param_parser::rcl_yaml_param_parser
+    "node32" -> "node27" [ style = dashed ] // rcl::rcl -> rcutils::rcutils
+    "node32" -> "node30" [ style = dashed ] // rcl::rcl -> rmw::rmw
+    "node37" [ label = "rmw_implementation::rmw_implementation", shape = doubleoctagon ];
+    "node37" -> "node30" [ style = dashed ] // rmw_implementation::rmw_implementation -> rmw::rmw
+    "node32" -> "node37" [ style = dashed ] // rcl::rcl -> rmw_implementation::rmw_implementation
+    "node38" [ label = "tracetools::tracetools", shape = doubleoctagon ];
+    "node32" -> "node38" [ style = dashed ] // rcl::rcl -> tracetools::tracetools
+    "node31" -> "node32" [ style = dashed ] // libstatistics_collector::libstatistics_collector -> rcl::rcl
+    "node39" [ label = "rcpputils::rcpputils", shape = doubleoctagon ];
+    "node39" -> "node27" [ style = dashed ] // rcpputils::rcpputils -> rcutils::rcutils
+    "node31" -> "node39" [ style = dashed ] // libstatistics_collector::libstatistics_collector -> rcpputils::rcpputils
+    "node26" -> "node31" [ style = dashed ] // rclcpp::rclcpp -> libstatistics_collector::libstatistics_collector
+    "node26" -> "node32" [ style = dashed ] // rclcpp::rclcpp -> rcl::rcl
+    "node26" -> "node35" [ style = dashed ] // rclcpp::rclcpp -> rcl_yaml_param_parser::rcl_yaml_param_parser
+    "node26" -> "node39" [ style = dashed ] // rclcpp::rclcpp -> rcpputils::rcpputils
+    "node26" -> "node27" [ style = dashed ] // rclcpp::rclcpp -> rcutils::rcutils
+    "node26" -> "node38" [ style = dashed ] // rclcpp::rclcpp -> tracetools::tracetools
+    "node24" -> "node26"  // config_client -> rclcpp::rclcpp
+    "node40" [ label = "rj_common", shape = octagon ];
+    "node40" -> "node13"  // rj_common -> Qt5::Core
+    "node40" -> "node14"  // rj_common -> Qt5::Network
+    "node40" -> "node17"  // rj_common -> Qt5::Widgets
+    "node41" [ label = "geometry2d", shape = octagon ];
+    "node41" -> "node13"  // geometry2d -> Qt5::Core
+    "node42" [ label = "rj_constants", shape = pentagon ];
+    "node41" -> "node42"  // geometry2d -> rj_constants
+    "node43" [ label = "rj_convert", shape = pentagon ];
+    "node43" -> "node26" [ style = dashed ] // rj_convert -> rclcpp::rclcpp
+    "node41" -> "node43"  // geometry2d -> rj_convert
+    "node44" [ label = "rj_protos", shape = octagon ];
+    "node45" [ label = "/usr/lib/x86_64-linux-gnu/libprotobuf.so", shape = septagon ];
+    "node44" -> "node45"  // rj_protos -> /usr/lib/x86_64-linux-gnu/libprotobuf.so
+    "node46" [ label = "protobuf::protoc", shape = egg ];
+    "node44" -> "node46"  // rj_protos -> protobuf::protoc
+    "node41" -> "node44"  // geometry2d -> rj_protos
+    "node40" -> "node41"  // rj_common -> geometry2d
+    "node40" -> "node26"  // rj_common -> rclcpp::rclcpp
+    "node47" [ label = "rclcpp_action::rclcpp_action", shape = doubleoctagon ];
+    "node48" [ label = "rcl_action::rcl_action", shape = doubleoctagon ];
+    "node48" -> "node32" [ style = dashed ] // rcl_action::rcl_action -> rcl::rcl
+    "node48" -> "node27" [ style = dashed ] // rcl_action::rcl_action -> rcutils::rcutils
+    "node48" -> "node30" [ style = dashed ] // rcl_action::rcl_action -> rmw::rmw
+    "node47" -> "node48" [ style = dashed ] // rclcpp_action::rclcpp_action -> rcl_action::rcl_action
+    "node47" -> "node26" [ style = dashed ] // rclcpp_action::rclcpp_action -> rclcpp::rclcpp
+    "node47" -> "node39" [ style = dashed ] // rclcpp_action::rclcpp_action -> rcpputils::rcpputils
+    "node40" -> "node47"  // rj_common -> rclcpp_action::rclcpp_action
+    "node49" [ label = "rclcpp_components::component", shape = pentagon ];
+    "node50" [ label = "class_loader::class_loader", shape = doubleoctagon ];
+    "node51" [ label = "console_bridge::console_bridge", shape = doubleoctagon ];
+    "node50" -> "node51" [ style = dashed ] // class_loader::class_loader -> console_bridge::console_bridge
+    "node50" -> "node39" [ style = dashed ] // class_loader::class_loader -> rcpputils::rcpputils
+    "node49" -> "node50" [ style = dashed ] // rclcpp_components::component -> class_loader::class_loader
+    "node49" -> "node26" [ style = dashed ] // rclcpp_components::component -> rclcpp::rclcpp
+    "node40" -> "node49"  // rj_common -> rclcpp_components::component
+    "node52" [ label = "rclcpp_components::component_manager", shape = doubleoctagon ];
+    "node52" -> "node23" [ style = dashed ] // rclcpp_components::component_manager -> ament_index_cpp::ament_index_cpp
+    "node52" -> "node50" [ style = dashed ] // rclcpp_components::component_manager -> class_loader::class_loader
+    "node52" -> "node26" [ style = dashed ] // rclcpp_components::component_manager -> rclcpp::rclcpp
+    "node52" -> "node39" [ style = dashed ] // rclcpp_components::component_manager -> rcpputils::rcpputils
+    "node40" -> "node52"  // rj_common -> rclcpp_components::component_manager
+    "node40" -> "node42"  // rj_common -> rj_constants
+    "node40" -> "node43"  // rj_common -> rj_convert
+    "node24" -> "node40"  // config_client -> rj_common
+    "node24" -> "node42"  // config_client -> rj_constants
+    "node53" [ label = "rj_utils", shape = octagon ];
+    "node53" -> "node26"  // rj_utils -> rclcpp::rclcpp
+    "node53" -> "node43"  // rj_utils -> rj_convert
+    "node53" -> "node44"  // rj_utils -> rj_protos
+    "node24" -> "node53"  // config_client -> rj_utils
+    "node7" -> "node24"  // robocup -> config_client
+    "node7" -> "node25"  // robocup -> fmt
+    "node54" [ label = "glut", shape = septagon ];
+    "node7" -> "node54"  // robocup -> glut
+    "node55" [ label = "rc-fshare", shape = octagon ];
+    "node7" -> "node55"  // robocup -> rc-fshare
+    "node7" -> "node40"  // robocup -> rj_common
+    "node56" [ label = "rj_param_utils", shape = doubleoctagon ];
+    "node56" -> "node26"  // rj_param_utils -> rclcpp::rclcpp
+    "node7" -> "node56"  // robocup -> rj_param_utils
+    "node7" -> "node44"  // robocup -> rj_protos
+    "node57" [ label = "rj_topic_utils", shape = pentagon ];
+    "node57" -> "node26" [ style = dashed ] // rj_topic_utils -> rclcpp::rclcpp
+    "node7" -> "node57"  // robocup -> rj_topic_utils
+    "node7" -> "node53"  // robocup -> rj_utils
+    "node58" [ label = "spdlog", shape = septagon ];
+    "node7" -> "node58"  // robocup -> spdlog
+    "node59" [ label = "spnav", shape = septagon ];
+    "node7" -> "node59"  // robocup -> spnav
+    "node5" -> "node7" [ style = dotted ] // agent_action_client_node -> robocup
+    "node60" [ label = "config_server", shape = egg ];
+    "node60" -> "node25" [ style = dotted ] // config_server -> fmt
+    "node60" -> "node26" [ style = dotted ] // config_server -> rclcpp::rclcpp
+    "node60" -> "node40" [ style = dotted ] // config_server -> rj_common
+    "node60" -> "node42" [ style = dotted ] // config_server -> rj_constants
+    "node60" -> "node53" [ style = dotted ] // config_server -> rj_utils
+    "node61" [ label = "control_node", shape = egg ];
+    "node61" -> "node4"  // control_node -> Qt5::moc
+    "node61" -> "node6"  // control_node -> Qt5::uic
+    "node61" -> "node7" [ style = dotted ] // control_node -> robocup
+    "node62" [ label = "external_referee_node", shape = egg ];
+    "node62" -> "node4"  // external_referee_node -> Qt5::moc
+    "node62" -> "node6"  // external_referee_node -> Qt5::uic
+    "node62" -> "node7" [ style = dotted ] // external_referee_node -> robocup
+    "node63" [ label = "geometry2d_testing", shape = octagon ];
+    "node63" -> "node41"  // geometry2d_testing -> geometry2d
+    "node64" [ label = "gtest\n(GTest::gtest)", shape = octagon ];
+    "node64" -> "node22"  // gtest -> Threads::Threads
+    "node63" -> "node64"  // geometry2d_testing -> gtest
+    "node65" [ label = "git-version-test", shape = egg ];
+    "node65" -> "node55" [ style = dotted ] // git-version-test -> rc-fshare
+    "node66" [ label = "global_param_server_node", shape = egg ];
+    "node66" -> "node4"  // global_param_server_node -> Qt5::moc
+    "node66" -> "node6"  // global_param_server_node -> Qt5::uic
+    "node66" -> "node7" [ style = dotted ] // global_param_server_node -> robocup
+    "node67" [ label = "gmock\n(GTest::gmock)", shape = octagon ];
+    "node67" -> "node22"  // gmock -> Threads::Threads
+    "node67" -> "node64"  // gmock -> gtest
+    "node68" [ label = "gmock_main\n(GTest::gmock_main)", shape = octagon ];
+    "node68" -> "node22"  // gmock_main -> Threads::Threads
+    "node68" -> "node67"  // gmock_main -> gmock
+    "node69" [ label = "gtest_main\n(GTest::gtest_main)", shape = octagon ];
+    "node69" -> "node22"  // gtest_main -> Threads::Threads
+    "node69" -> "node64"  // gtest_main -> gtest
+    "node70" [ label = "internal_referee_node", shape = egg ];
+    "node70" -> "node4"  // internal_referee_node -> Qt5::moc
+    "node70" -> "node6"  // internal_referee_node -> Qt5::uic
+    "node70" -> "node7" [ style = dotted ] // internal_referee_node -> robocup
+    "node71" [ label = "log_viewer", shape = egg ];
+    "node71" -> "node13" [ style = dotted ] // log_viewer -> Qt5::Core
+    "node71" -> "node15" [ style = dotted ] // log_viewer -> Qt5::OpenGL
+    "node71" -> "node18" [ style = dotted ] // log_viewer -> Qt5::Svg
+    "node71" -> "node17" [ style = dotted ] // log_viewer -> Qt5::Widgets
+    "node71" -> "node19" [ style = dotted ] // log_viewer -> Qt5::Xml
+    "node71" -> "node4"  // log_viewer -> Qt5::moc
+    "node71" -> "node20"  // log_viewer -> Qt5::rcc
+    "node71" -> "node6"  // log_viewer -> Qt5::uic
+    "node71" -> "node7" [ style = dotted ] // log_viewer -> robocup
+    "node72" [ label = "manual_control_node", shape = egg ];
+    "node72" -> "node4"  // manual_control_node -> Qt5::moc
+    "node72" -> "node6"  // manual_control_node -> Qt5::uic
+    "node72" -> "node7" [ style = dotted ] // manual_control_node -> robocup
+    "node73" [ label = "network_radio_node", shape = egg ];
+    "node73" -> "node4"  // network_radio_node -> Qt5::moc
+    "node73" -> "node6"  // network_radio_node -> Qt5::uic
+    "node73" -> "node7" [ style = dotted ] // network_radio_node -> robocup
+    "node74" [ label = "planner_node", shape = egg ];
+    "node74" -> "node4"  // planner_node -> Qt5::moc
+    "node74" -> "node6"  // planner_node -> Qt5::uic
+    "node74" -> "node7" [ style = dotted ] // planner_node -> robocup
+    "node75" [ label = "rj_param_utils_testing", shape = octagon ];
+    "node75" -> "node64"  // rj_param_utils_testing -> gtest
+    "node75" -> "node56"  // rj_param_utils_testing -> rj_param_utils
+    "node76" [ label = "rj_vision_filter", shape = egg ];
+    "node76" -> "node4"  // rj_vision_filter -> Qt5::moc
+    "node76" -> "node6"  // rj_vision_filter -> Qt5::uic
+    "node76" -> "node23" [ style = dotted ] // rj_vision_filter -> ament_index_cpp::ament_index_cpp
+    "node76" -> "node56" [ style = dotted ] // rj_vision_filter -> rj_param_utils
+    "node76" -> "node7" [ style = dotted ] // rj_vision_filter -> robocup
+    "node76" -> "node58" [ style = dotted ] // rj_vision_filter -> spdlog
+    "node77" [ label = "rrt-viewer", shape = egg ];
+    "node78" [ label = "Qt5::Qml", shape = doubleoctagon ];
+    "node78" -> "node13" [ style = dashed ] // Qt5::Qml -> Qt5::Core
+    "node78" -> "node14" [ style = dashed ] // Qt5::Qml -> Qt5::Network
+    "node77" -> "node78" [ style = dotted ] // rrt-viewer -> Qt5::Qml
+    "node79" [ label = "Qt5::Quick", shape = doubleoctagon ];
+    "node79" -> "node13" [ style = dashed ] // Qt5::Quick -> Qt5::Core
+    "node79" -> "node16" [ style = dashed ] // Qt5::Quick -> Qt5::Gui
+    "node79" -> "node78" [ style = dashed ] // Qt5::Quick -> Qt5::Qml
+    "node80" [ label = "Qt5::QmlModels", shape = doubleoctagon ];
+    "node80" -> "node13" [ style = dashed ] // Qt5::QmlModels -> Qt5::Core
+    "node80" -> "node78" [ style = dashed ] // Qt5::QmlModels -> Qt5::Qml
+    "node79" -> "node80" [ style = dashed ] // Qt5::Quick -> Qt5::QmlModels
+    "node77" -> "node79" [ style = dotted ] // rrt-viewer -> Qt5::Quick
+    "node77" -> "node17" [ style = dotted ] // rrt-viewer -> Qt5::Widgets
+    "node77" -> "node4"  // rrt-viewer -> Qt5::moc
+    "node77" -> "node20"  // rrt-viewer -> Qt5::rcc
+    "node77" -> "node0" [ style = dotted ] // rrt-viewer -> RRT
+    "node81" [ label = "sim_radio_node", shape = egg ];
+    "node81" -> "node4"  // sim_radio_node -> Qt5::moc
+    "node81" -> "node6"  // sim_radio_node -> Qt5::uic
+    "node81" -> "node7" [ style = dotted ] // sim_radio_node -> robocup
+    "node82" [ label = "soccer", shape = egg ];
+    "node82" -> "node13" [ style = dotted ] // soccer -> Qt5::Core
+    "node82" -> "node14" [ style = dotted ] // soccer -> Qt5::Network
+    "node82" -> "node15" [ style = dotted ] // soccer -> Qt5::OpenGL
+    "node82" -> "node18" [ style = dotted ] // soccer -> Qt5::Svg
+    "node82" -> "node17" [ style = dotted ] // soccer -> Qt5::Widgets
+    "node82" -> "node19" [ style = dotted ] // soccer -> Qt5::Xml
+    "node82" -> "node4"  // soccer -> Qt5::moc
+    "node82" -> "node6"  // soccer -> Qt5::uic
+    "node82" -> "node7" [ style = dotted ] // soccer -> robocup
+    "node83" [ label = "test-soccer", shape = egg ];
+    "node84" [ label = "-Wl,--whole-archive -L/home/robojackets/robocup-software/build-debug/rj_geometry -lgeometry2d_testing -Wl,--no-whole-archive", shape = septagon ];
+    "node83" -> "node84" [ style = dotted ] // test-soccer -> -Wl,--whole-archive -L/home/robojackets/robocup-software/build-debug/rj_geometry -lgeometry2d_testing -Wl,--no-whole-archive
+    "node85" [ label = "-Wl,--whole-archive -L/home/robojackets/robocup-software/build-debug/rj_param_utils -lrj_param_utils_testing -Wl,--no-whole-archive", shape = septagon ];
+    "node83" -> "node85" [ style = dotted ] // test-soccer -> -Wl,--whole-archive -L/home/robojackets/robocup-software/build-debug/rj_param_utils -lrj_param_utils_testing -Wl,--no-whole-archive
+    "node83" -> "node13" [ style = dotted ] // test-soccer -> Qt5::Core
+    "node83" -> "node17" [ style = dotted ] // test-soccer -> Qt5::Widgets
+    "node83" -> "node19" [ style = dotted ] // test-soccer -> Qt5::Xml
+    "node83" -> "node4"  // test-soccer -> Qt5::moc
+    "node83" -> "node6"  // test-soccer -> Qt5::uic
+    "node83" -> "node63" [ style = dotted ] // test-soccer -> geometry2d_testing
+    "node83" -> "node64" [ style = dotted ] // test-soccer -> gtest
+    "node83" -> "node69" [ style = dotted ] // test-soccer -> gtest_main
+    "node83" -> "node75" [ style = dotted ] // test-soccer -> rj_param_utils_testing
+    "node83" -> "node7" [ style = dotted ] // test-soccer -> robocup
+    "node86" [ label = "test_rj_common", shape = egg ];
+    "node86" -> "node64" [ style = dotted ] // test_rj_common -> gtest
+    "node86" -> "node69" [ style = dotted ] // test_rj_common -> gtest_main
+    "node86" -> "node40" [ style = dotted ] // test_rj_common -> rj_common
+    "node87" [ label = "test_rj_convert", shape = egg ];
+    "node87" -> "node64" [ style = dotted ] // test_rj_convert -> gtest
+    "node87" -> "node69" [ style = dotted ] // test_rj_convert -> gtest_main
+    "node87" -> "node43" [ style = dotted ] // test_rj_convert -> rj_convert
+    "node88" [ label = "vision_receiver", shape = egg ];
+    "node88" -> "node24" [ style = dotted ] // vision_receiver -> config_client
+    "node88" -> "node26" [ style = dotted ] // vision_receiver -> rclcpp::rclcpp
+    "node88" -> "node40" [ style = dotted ] // vision_receiver -> rj_common
+    "node88" -> "node56" [ style = dotted ] // vision_receiver -> rj_param_utils
+    "node88" -> "node53" [ style = dotted ] // vision_receiver -> rj_utils
+}
