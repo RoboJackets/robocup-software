@@ -1,36 +1,23 @@
-# ======================================================================
-# Preamble
-# ======================================================================
 cmake_minimum_required(VERSION 3.16)
 project(rj_topic_utils)
 
-# ======================================================================
-# Find package
-# ======================================================================
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# ======================================================================
-# Define Targets
-# ======================================================================
+# Declare header-only library
 add_library(rj_topic_utils INTERFACE)
-
-# ======================================================================
-# Dependencies List
-# ======================================================================
-set(RJ_TOPIC_UTILS_DEPS_INCLUDE_DIRS include)
-
-# ======================================================================
-# Include and Linking
-# ======================================================================
-target_include_directories(rj_topic_utils INTERFACE ${RJ_TOPIC_UTILS_DEPS_INCLUDE_DIRS})
-
+target_include_directories(rj_topic_utils INTERFACE include)
 ament_target_dependencies(rj_topic_utils INTERFACE rclcpp)
 
-# ======================================================================
-# Packaging
-# ======================================================================
+ament_export_dependencies(rclcpp)
+
+# Install headers
+install(DIRECTORY include/ DESTINATION include/)
+
+# Install the target
 install(
   TARGETS rj_topic_utils
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  INCLUDES DESTINATION include
+)
+
+ament_package()
