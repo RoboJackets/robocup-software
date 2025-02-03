@@ -1,10 +1,11 @@
+#include "planning/primitives/create_path.hpp"
+
+#include <fstream>
 #include <iostream>
 #include <random>
-#include <fstream>
 
 #include <gtest/gtest.h>
 
-#include "planning/primitives/create_path.hpp"
 #include "planning/tests/testing_utils.hpp"
 #include "planning/trajectory_utils.hpp"
 
@@ -135,16 +136,19 @@ TEST(CreatePath, intermediate_creation_time) {
         }
 
         auto start_time = RJ::now();
-        Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(), obstacles, {}, field_dimensions, 0);
+        Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(),
+                                                   obstacles, {}, field_dimensions, 0);
         double nanos = (RJ::now() - start_time).count();
         file << "CreatePath::intermediate() Time: " << nanos / 1e6 << " ms\n";
-        tfile << "CreatePath::intermediate() Time: " << (traj.end_time() - traj.begin_time()).count() / 1e9 << " s\n";
+        tfile << "CreatePath::intermediate() Time: "
+              << (traj.end_time() - traj.begin_time()).count() / 1e9 << " s\n";
 
         start_time = RJ::now();
         traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
         nanos = (RJ::now() - start_time).count();
         rfile << "CreatePath::rrt() Time: " << nanos / 1e6 << " ms\n";
-        rtfile << "CreatePath::rrt() Time: " << (traj.end_time() - traj.begin_time()).count() / 1e9 << " s\n";
+        rtfile << "CreatePath::rrt() Time: " << (traj.end_time() - traj.begin_time()).count() / 1e9
+               << " s\n";
 
         average_time += nanos;
     }
