@@ -246,7 +246,6 @@ void RobotFactoryPosition::set_default_position() {
     // Checking whether we have possesion or if the ball is on their half
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
-        
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
         if (i <= 1) {
