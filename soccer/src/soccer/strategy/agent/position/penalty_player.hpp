@@ -40,7 +40,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { LINE_UP, SHOOTING_START, SHOOTING, SMALL_KICK_START, SMALL_KICK, LINE_UP_2 };
+    enum State { LINE_UP, SHOOTING_START, SHOOTING, SMALL_KICK, LINE_UP_2 };
 
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
