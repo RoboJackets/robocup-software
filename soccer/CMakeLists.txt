@@ -86,6 +86,7 @@ add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(agent_action_client_node)
+add_executable(config_server_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -187,6 +188,9 @@ set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
 set(AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES)
 set(AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES robocup)
 
+set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -208,6 +212,11 @@ ament_target_dependencies(rj_vision_filter PUBLIC ament_index_cpp)
 
 # ---- Soccer ----
 target_link_libraries(soccer PUBLIC ${SOCCER_DEPS_SYSTEM_LIBRARIES} ${SOCCER_DEPS_LIBRARIES})
+
+# --- rj_param_servers ----
+# target_link_libraries(rj_param_servers PUBLIC ${RJ_PARAM_SERVERS_DEPS_SYSTEM_LIBRARIES} ${RJ_PARAM_SERVERS_DEPS_LIBRARIES})
+# target_link_libraries(rj_param_servers PRIVATE robocup ${RJ_PARAM_SERVERS_DEPS_LIBRARIES} ${RJ_PARAM_SERVERS_DEPS_SYSTEM_LIBRARIES})
+# ament_target_dependencies(rj_param_servers PUBLIC ament_index_cpp)
 
 # ---- log_viewer ----
 target_link_libraries(log_viewer PRIVATE ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
@@ -248,6 +257,10 @@ target_link_libraries(global_param_server_node PRIVATE ${GLOBAL_PARAM_SERVER_NOD
 # -- agent_action_client_node --
 target_link_libraries(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES}
     ${AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES})
+
+# -- config_server_param_provider --
+target_link_libraries(config_server_param_provider PRIVATE ${CONFIG_SERVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES})
 
 # ======================================================================
 # Testing
@@ -293,6 +306,7 @@ install(
         manual_control_node
         global_param_server_node
         agent_action_client_node
+        config_server_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

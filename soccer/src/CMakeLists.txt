@@ -1,2 +1,3 @@
 add_subdirectory(soccer)
 add_subdirectory(rj_vision_filter)
+add_subdirectory(rj_param_servers)
