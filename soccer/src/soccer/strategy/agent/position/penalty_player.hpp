@@ -40,7 +40,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { LINE_UP, SHOOTING_START, SHOOTING, DRIBBLING, DRIBBLING_START };
+    enum State { LINE_UP, SHOOTING_START, SHOOTING, SMALL_KICK_START, SMALL_KICK, LINE_UP_2 };
 
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
@@ -56,9 +56,9 @@ private:
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
 
-    double distance_to_shooting() const {
+    double distance_from_enemy_goal() const {
         return last_world_state_->get_robot(true, robot_id_).pose.position().dist_to(
-            rj_geometry::Point(0,6.75));
+            field_dimensions_.their_goal_loc());
     };
 
     /**

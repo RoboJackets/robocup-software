@@ -18,30 +18,35 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             // if penalty playing and restart penalty in playstate we switch to shooting
             if (current_play_state_.is_ready() &&
                 (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
-                return DRIBBLING_START;
+                return SMALL_KICK_START;
             }
             break;
         }
-        case DRIBBLING_START: {
+        case SMALL_KICK_START: {
+            if (distance_to_ball() < kOwnBallRadius || check_is_done()) {
+                return SMALL_KICK;
+            }
+            break;
+        }
+        case SMALL_KICK: {
+            if (check_is_done() || distance_from_enemy_goal() < 3.5) {
+                return LINE_UP_2;
+            }   
+            break;
+        }
+        case LINE_UP_2: {
+            if (check_is_done()) {
+                return SHOOTING_START;
+            }
             if (distance_to_ball() < kOwnBallRadius) {
-                return DRIBBLING;
+                return SHOOTING_START;
             }
-            break;
-        }
-        case DRIBBLING: {
-            // if (distance_to_shooting() < kOwnBallRadius) {
-            //     return SHOOTING_START;
-            // }   
             break;
         }
         case SHOOTING_START: {
             if (check_is_done()) {
                 return SHOOTING;
             }
-            if (distance_to_ball() < kOwnBallRadius) {
-                return SHOOTING;
-            }
-            break;
         }
         case SHOOTING: {
             if (check_is_done()) {
@@ -55,14 +60,9 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
 
 std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
-        case LINE_UP: {
+        case LINE_UP: { // First, gets the robot to the ball to begin penalty dribbling-shooting
             double y_pos = last_world_state_->ball.position.y();
-            // if ball is above goal, increase y_pos, else decrease
-            // if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
-            // y_pos += kRobotRadius - 0.15;
-            // } else {
             y_pos -= kRobotRadius + 0.3;
-            // }
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
@@ -76,37 +76,48 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
                 planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             break;
         }
-        case DRIBBLING_START: {
-            target_ = calculate_best_shot();
+        case SMALL_KICK_START: {
             rj_geometry::Point ball_position = last_world_state_->ball.position;
             auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
             auto move_vector = (current_pos - ball_position).normalized(0.2);
 
-            planning::LinearMotionInstant target{ball_position};
+            planning::LinearMotionInstant target{ball_position + move_vector};
             planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
 
             intent.motion_command = prep_command;
-            intent.dribbler_speed = 255.0;
 
             return intent;
         }
-        case DRIBBLING: {
-            rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-            auto curr_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-            SPDLOG_INFO("GOAL POSITIONS ARE {} AND {}", their_goal_pos.x(), their_goal_pos.y());
-            // if (their_goal_pos.y() > 4.5) {
-            //     rj_geometry::Point target_pt{0, 6.75};
-            // } else {
-            //     rj_geometry::Point target_pt{0, 2.25};
-            // }
-            rj_geometry::Point target_pt{0, 6.75};
-            rj_geometry::Point target_vel{0.0, 0.0};
-            planning::LinearMotionInstant target{target_pt, target_vel};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}, true};
-            intent.motion_command = prep_command;
-            intent.dribbler_speed = 255.0;
+        case SMALL_KICK: {
+            rj_geometry::Point center_goal{0,9};
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{center_goal}};
+
+            intent.motion_command = line_kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 0.05;
+
             return intent;
             break;
+        }
+        case LINE_UP_2: {
+            double y_pos = last_world_state_->ball.position.y();
+            y_pos -= kRobotRadius + 0.3;
+            rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
+            rj_geometry::Point target_vel{0.0, 0.0};
+            // Face ball
+            planning::PathTargetFaceOption face_option{planning::FaceBall{}};
+            // Avoid ball
+            bool ignore_ball{false};
+
+            // Create Motion Command
+            planning::LinearMotionInstant goal{target_pt, target_vel};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            break;
+
+            return intent;
         }
         case SHOOTING_START: {
             target_ = calculate_best_shot();
@@ -173,6 +184,8 @@ rj_geometry::Point PenaltyPlayer::calculate_best_shot() const {
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
+    // Iterates across 19 possible shot locations along the goal width in 0.05-meter increments. 
+    // For each location, it calculates the clearance distance from opponent robots and updates the best shot position if a better (less obstructed) option is found.
     rj_geometry::Point best_shot = their_goal_pos;
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
