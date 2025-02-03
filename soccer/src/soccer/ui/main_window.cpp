@@ -1158,6 +1158,14 @@ void MainWindow::on_fastYellow_clicked() {
     send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
 }
 
+void MainWindow::on_fastPenaltyBlue_clicked() {
+    send_quick_command(PlayState::ready_penalty(context_->blue_team));
+}
+
+void MainWindow::on_fastPenaltyYellow_clicked() {
+    send_quick_command(PlayState::ready_penalty(!context_->blue_team));
+}
+
 bool MainWindow::live() { return !_playbackRate; }
 void MainWindow::updateDebugLayers(const LogFrame& frame) {
     // Check if any debug layers have been added
