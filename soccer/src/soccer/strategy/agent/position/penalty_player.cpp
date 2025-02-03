@@ -18,18 +18,12 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             // if penalty playing and restart penalty in playstate we switch to shooting
             if (current_play_state_.is_ready() &&
                 (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
-                return SMALL_KICK_START;
-            }
-            break;
-        }
-        case SMALL_KICK_START: {
-            if (distance_to_ball() < kOwnBallRadius || check_is_done()) {
                 return SMALL_KICK;
             }
             break;
         }
         case SMALL_KICK: {
-            if (check_is_done() || distance_from_enemy_goal() < 3.5) {
+            if (distance_from_enemy_goal() < 3.5) {
                 return LINE_UP_2;
             }   
             break;
@@ -62,33 +56,20 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
         case LINE_UP: { // First, gets the robot to the ball to begin penalty dribbling-shooting
             double y_pos = last_world_state_->ball.position.y();
-            y_pos -= kRobotRadius + 0.3;
+            y_pos -= kRobotRadius + 0.3; // added the 0.01 as a buffer space
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
             planning::PathTargetFaceOption face_option{planning::FaceBall{}};
-            // Avoid ball
-            bool ignore_ball{false};
 
             // Create Motion Command
             planning::LinearMotionInstant goal{target_pt, target_vel};
             intent.motion_command =
-                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+                planning::MotionCommand{"path_target", goal, planning::FaceBall{}};
             break;
         }
-        case SMALL_KICK_START: {
-            rj_geometry::Point ball_position = last_world_state_->ball.position;
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-            auto move_vector = (current_pos - ball_position).normalized(0.2);
-
-            planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
-
-            intent.motion_command = prep_command;
-
-            return intent;
-        }
-        case SMALL_KICK: {
+        case SMALL_KICK: { //less of a kick, more of a "follow" ball closely
+            
             rj_geometry::Point center_goal{0,9};
             auto line_kick_cmd =
                 planning::MotionCommand{"line_kick", planning::LinearMotionInstant{center_goal}};
@@ -96,14 +77,15 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 0.05;
+            intent.kick_speed = 0.0; 
+            // the point of making a 0 kick speed is to fake dribble since we cannot get the vaccum behavior to work
 
             return intent;
             break;
         }
-        case LINE_UP_2: {
+        case LINE_UP_2: { // gets the robot behind the ball with a certain distance
             double y_pos = last_world_state_->ball.position.y();
-            y_pos -= kRobotRadius + 0.3;
+            y_pos -= kRobotRadius + 0.1;
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
@@ -119,7 +101,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
             return intent;
         }
-        case SHOOTING_START: {
+        case SHOOTING_START: { 
             target_ = calculate_best_shot();
             rj_geometry::Point ball_position = last_world_state_->ball.position;
             auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
