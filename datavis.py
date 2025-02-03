@@ -14,7 +14,7 @@ def extract_times(file_path):
     with open(file_path, 'r') as f:
         for line in f:
             # Use regex to extract the time value and its unit (ns or s)
-            match = re.search(r'Time:\s*([\d\.]+)\s*(ns|s)', line)
+            match = re.search(r'Time:\s*([\d\.]+)\s*(ms|s)', line)
             if match:
                 time_value = float(match.group(1))
                 unit = match.group(2)
@@ -24,6 +24,13 @@ def extract_times(file_path):
                 units.append(unit)
     
     return times, units
+
+def truncate_times(times, threshold=0.5):
+    """
+    Truncates times that are greater than the specified threshold.
+    Default threshold is set to 400,000.
+    """
+    return [time for time in times if time <= threshold]
 
 def calculate_stats(times):
     """
@@ -38,9 +45,10 @@ def calculate_stats(times):
     
     return mean, median, std_dev, min_val, max_val
 
-def plot_distribution(times, units, title, subplot_idx):
+def plot_distribution(times, units, title, subplot_idx, x_min, x_max):
     """
     Plots the distribution of the times using a histogram.
+    Now the x-axis is scaled consistently for both plots.
     """
     plt.subplot(1, 2, subplot_idx)  # Create a subplot (1 row, 2 columns)
     
@@ -50,9 +58,12 @@ def plot_distribution(times, units, title, subplot_idx):
     # Plot histogram
     density, bins, _ = plt.hist(times, bins=bins, density=True, color='blue', alpha=0.7, edgecolor='black')
     
+    # Set the x-axis limits to be the same for both plots
+    plt.xlim(x_min, x_max)
+    
     # Determine the unit for x-axis label
-    if units[0] == 'ns':
-        x_label = "Time (ns)"
+    if units[0] == 'ms':
+        x_label = "Time (ms)"
     elif units[0] == 's':
         x_label = "Time (s)"
     
@@ -68,7 +79,7 @@ def print_stats(title, times, units):
     mean, median, std_dev, min_val, max_val = calculate_stats(times)
     
     # Display the unit (ns or s) for reference
-    unit_str = "ns" if units[0] == 'ns' else "s"
+    unit_str = "ms" if units[0] == 'ms' else "s"
     
     print(f"Statistics for {title}:")
     print(f"  Mean: {mean:.2f} {unit_str}")
@@ -80,26 +91,39 @@ def print_stats(title, times, units):
 
 def main():
     # File paths
-    file_path_intermediate = 'intermediate.out'
-    file_path_rrt = 'rrt.out'
+    file_path_intermediate = 'intermediate_creation.out'
+    file_path_rrt = 'rrt_creation.out'
     
     # Extract times and units from both files
     times_intermediate, units_intermediate = extract_times(file_path_intermediate)
     times_rrt, units_rrt = extract_times(file_path_rrt)
+    
+    if (units_intermediate[0] == 'ms'):
+    # Truncate times greater than 400000
+        times_intermediate = truncate_times(times_intermediate)
+        times_rrt = truncate_times(times_rrt)
+    
+    # If both files have valid times, determine the common x-axis limits
+    if times_intermediate and times_rrt:
+        # Find the global min and max values across both time datasets
+        x_min = min(min(times_intermediate), min(times_rrt))
+        x_max = max(max(times_intermediate), max(times_rrt))
+    else:
+        x_min, x_max = 0, 1  # Default values if no valid data found
     
     # Create a figure for the two plots
     plt.figure(figsize=(14, 6))
     
     # Plot and calculate statistics for intermediate.out
     if times_intermediate:
-        plot_distribution(times_intermediate, units_intermediate, "Distribution of intermediate.out", 1)
+        plot_distribution(times_intermediate, units_intermediate, f"Distribution of {file_path_intermediate}", 1, x_min, x_max)
         print_stats("intermediate.out", times_intermediate, units_intermediate)
     else:
         print(f"No valid times found in {file_path_intermediate}.")
     
     # Plot and calculate statistics for rrt.out
     if times_rrt:
-        plot_distribution(times_rrt, units_rrt, "Distribution of rrt.out", 2)
+        plot_distribution(times_rrt, units_rrt, f"Distribution of {file_path_rrt}", 2, x_min, x_max)
         print_stats("rrt.out", times_rrt, units_rrt)
     else:
         print(f"No valid times found in {file_path_rrt}.")

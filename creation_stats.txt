@@ -1,0 +1,13 @@
+Statistics for intermediate.out:
+  Mean: 0.08 ms
+  Median: 0.06 ms
+  Standard Deviation: 0.05 ms
+  Min: 0.007012 ms
+  Max: 0.420355 ms
+--------------------------------------------------
+Statistics for rrt.out:
+  Mean: 0.20 ms
+  Median: 0.17 ms
+  Standard Deviation: 0.07 ms
+  Min: 0.006336 ms
+  Max: 0.499003 ms
