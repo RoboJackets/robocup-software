@@ -14,7 +14,7 @@ std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
 
 PenaltyPlayer::State PenaltyPlayer::update_state() {
     switch (latest_state_) {
-        case LINE_UP: {
+        case START: {
             // if penalty playing and restart penalty in playstate we switch to shooting
             if (current_play_state_.is_ready() &&
                 (current_play_state_.is_penalty() || current_play_state_.is_kickoff())) {
@@ -23,12 +23,12 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             break;
         }
         case SMALL_KICK: {
-            if (distance_from_enemy_goal() < 3.5) {
-                return LINE_UP_2;
+            if (distance_from_enemy_goal() < kDistanceToGoalThreshold) {
+                return LINE_UP;
             }   
             break;
         }
-        case LINE_UP_2: {
+        case LINE_UP: {
             if (check_is_done()) {
                 return SHOOTING_START;
             }
@@ -41,10 +41,12 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             if (check_is_done()) {
                 return SHOOTING;
             }
+
+            break;
         }
         case SHOOTING: {
             if (check_is_done()) {
-                return LINE_UP;
+                return START;
             }
             break;
         }
@@ -54,7 +56,8 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
 
 std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
-        case LINE_UP: { // First, gets the robot to the ball to begin penalty dribbling-shooting
+        case START: { // First, gets the robot to the ball to begin penalty dribbling-shooting
+            SPDLOG_INFO("START");
             double y_pos = last_world_state_->ball.position.y();
             y_pos -= kRobotRadius + 0.3; // added the 0.01 as a buffer space
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
@@ -69,8 +72,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             break;
         }
         case SMALL_KICK: { //less of a kick, more of a "follow" ball closely
-            
-            rj_geometry::Point center_goal{0,9};
+            //SPDLOG_INFO("SMALL_KICK");
+            rj_geometry::Point center_goal = field_dimensions_.their_goal_loc();
             auto line_kick_cmd =
                 planning::MotionCommand{"line_kick", planning::LinearMotionInstant{center_goal}};
 
@@ -81,9 +84,9 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             // the point of making a 0 kick speed is to fake dribble since we cannot get the vaccum behavior to work
 
             return intent;
-            break;
         }
-        case LINE_UP_2: { // gets the robot behind the ball with a certain distance
+        case LINE_UP: { // gets the robot behind the ball with a certain distance (usually immediatly skipped if the robot is already close)
+            //SPDLOG_INFO("LINE_UP");
             double y_pos = last_world_state_->ball.position.y();
             y_pos -= kRobotRadius + 0.1;
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
@@ -101,7 +104,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
             return intent;
         }
-        case SHOOTING_START: { 
+        case SHOOTING_START: { // Positions the robot behind the ball at a certain angle so that it has a straight shot towards the goal
+            //SPDLOG_INFO("SHOOTING_START");
             target_ = calculate_best_shot();
             rj_geometry::Point ball_position = last_world_state_->ball.position;
             auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
@@ -114,7 +118,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
 
             return intent;
         }
-        case SHOOTING: {
+        case SHOOTING: { // Kicks the ball with a now much higher speed (basically SMALL_KICK but power set to 4)
+            //SPDLOG_INFO("SHOOTING");
             auto line_kick_cmd =
                 planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
 
@@ -124,7 +129,6 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             intent.kick_speed = 4.0;
 
             return intent;
-            break;
         }
     }
 
@@ -161,7 +165,7 @@ double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail,
 rj_geometry::Point PenaltyPlayer::calculate_best_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters // BALL SEEMS TO OCCASIONALLY MISS SHOT ON EDGE, CONSIDER CHANGING THIS?
 
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
