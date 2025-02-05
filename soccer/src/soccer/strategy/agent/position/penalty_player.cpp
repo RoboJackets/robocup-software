@@ -100,7 +100,6 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             planning::LinearMotionInstant goal{target_pt, target_vel};
             intent.motion_command =
                 planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
-            break;
 
             return intent;
         }
