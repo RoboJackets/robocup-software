@@ -24,8 +24,6 @@ public:
         INTERCEPT,
         // From the slow part of the approach to the touching of the ball
         FINE_APPROACH,
-        // From touching the ball to stopped with the ball in the mouth
-        CONTROL
     };
 
     CollectPathPlanner()
@@ -58,11 +56,6 @@ private:
         const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
 
-    Trajectory control(const PlanRequest& plan_request, RobotInstant start,
-                       const Trajectory& partial_path,
-                       const rj_geometry::ShapeSet& static_obstacles,
-                       const std::vector<DynamicObstacle>& dynamic_obstacles);
-
     Trajectory invalid(const PlanRequest& plan_request,
                        const rj_geometry::ShapeSet& static_obstacles,
                        const std::vector<DynamicObstacle>& dynamic_obstacles);
@@ -76,9 +69,6 @@ private:
     bool average_ball_vel_initialized_ = false;
 
     rj_geometry::Point approach_direction_;
-    bool approach_direction_created_ = false;
-
-    bool control_path_created_ = false;
 
     rj_geometry::Point path_coarse_target_;
     bool path_coarse_target_initialized_ = false;
@@ -94,6 +84,7 @@ private:
     std::optional<LinearMotionInstant> cached_start_instant_;
     std::optional<rj_geometry::Point> cached_robot_pos_;
     std::optional<rj_geometry::Point> cached_ball_pos_;
+    bool is_ball_sense_ = false;
 
     // The direction to bounce the intercept to
     rj_geometry::Point target_bounce_direction_;

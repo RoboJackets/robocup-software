@@ -294,8 +294,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.motion_command = settle_cmd;
             // intent.dribbler_speed = 255.0;
             // } else {
-            auto collect_cmd = planning::MotionCommand{"settle"};
-            collect_cmd.target = planning::LinearMotionInstant{last_world_state_->ball.position};
+            auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
             intent.dribbler_speed = 255.0;
             // }
