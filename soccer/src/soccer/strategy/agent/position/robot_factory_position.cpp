@@ -121,7 +121,7 @@ void RobotFactoryPosition::handle_ready() {
         if (current_position_->get_name() == "Offense" ||
             current_position_->get_name() == "PenaltyPlayer" ||
             current_position_->get_name() == "GoalKicker") {
-            set_current_position<Idle>();
+            set_current_position<SmartIdle>();
         }
     }
 }
@@ -229,19 +229,6 @@ bool RobotFactoryPosition::am_closest_kicker() {
 }
 
 void RobotFactoryPosition::set_default_position() {
-    // zoner defense testing
-    // if (robot_id_ == goalie_id_) {
-    //     return;
-    // }
-    // if (robot_id_ == 1) {
-    //     set_current_position<Zoner>();
-    // } else {
-    //     set_current_position<Defense>();
-    // }
-    // return;
-    // end zoner defense testing
-
-    // TODO (Rishi and Jack): Make this synchronized across all robots to avoid race conditions
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
@@ -269,16 +256,15 @@ void RobotFactoryPosition::set_default_position() {
     }
 
     // Assigning new position
-    // Checking whether we have possesion or if the ball is on their half (using 1.99 to avoid
-    // rounding issues on midline)
+    // Checking whether we have possesion or if the ball is on their half
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 3) {
+        if (i <= 1) {
             set_current_position<Defense>();
         } else {
-            set_current_position<SoloOffense>();
+            set_current_position<Offense>();
         }
     } else {
         // Defensive mode
@@ -286,7 +272,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 3) {
             set_current_position<Defense>();
         } else {
-            set_current_position<SoloOffense>();
+            set_current_position<Offense>();
         }
     }
 }

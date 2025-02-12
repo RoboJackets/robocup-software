@@ -152,11 +152,6 @@ private:
      */
     template <class Pos>
     void set_current_position() {
-        // If we are not currently playing Pos
-        // if (current_position_->get_name() == "Defense") {
-        //     SPDLOG_INFO("we are never leaving defense :)");
-        //     return;
-        // }
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
