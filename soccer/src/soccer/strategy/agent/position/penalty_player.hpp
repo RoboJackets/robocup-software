@@ -59,8 +59,9 @@ private:
     };
 
     double distance_from_enemy_goal() const {
-        return last_world_state_->get_robot(true, robot_id_).pose.position().dist_to(
-            field_dimensions_.their_goal_loc());
+        return last_world_state_->get_robot(true, robot_id_)
+            .pose.position()
+            .dist_to(field_dimensions_.their_goal_loc());
     };
 
     /**
