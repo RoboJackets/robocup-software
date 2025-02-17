@@ -7,10 +7,7 @@ public:
     ConfigServerParamProvider() : Node("config_server_param_provider",
                                 rclcpp::NodeOptions()
                                        .allow_undeclared_parameters(true)
-                                       .automatically_declare_parameters_from_overrides(true)) {
-
-        declare_parameter("be_goofy", 1.5);
-    }
+                                       .automatically_declare_parameters_from_overrides(true)) {}
 private:
 };
 int main(int argc, char **argv)

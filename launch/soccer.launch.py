@@ -217,13 +217,13 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
-            # Node(
-            #     package="rj_robocup",
-            #     executable="config_server_param_provider",
-            #     output="screen",
-            #     parameters=[param_config_filepath],
-            #     on_exit=Shutdown(),
-            # ),
+            Node(
+                package="rj_robocup",
+                executable="config_server_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
             Node(
                 package="rj_robocup",
                 executable="control_param_provider",
