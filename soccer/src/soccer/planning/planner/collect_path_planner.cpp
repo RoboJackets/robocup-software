@@ -197,8 +197,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
         bool in_front_of_ball =
             average_ball_vel_.angle_between(start_instant->position() - ball.position) < 3.14 / 2;
 
-        if (in_front_of_ball && inline_with_ball &&
-            current_state_ == INTERCEPT) {
+        if (in_front_of_ball && inline_with_ball && current_state_ == INTERCEPT) {
             // Start the next section of the path from the end of our current
             // path
             *start_instant = path_so_far.last();
@@ -469,8 +468,10 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         path_intercept_target_ = avg_instantaneous_intercept_target_;
     }
 
-    if (start_instant.position().dist_to(ball.position) < start_instant.position().dist_to(path_intercept_target_) && 
-        average_ball_vel_.angle_between(ball.position - start_instant.position()) < degrees_to_radians(kChaseAngleThreshold)) {
+    if (start_instant.position().dist_to(ball.position) <
+            start_instant.position().dist_to(path_intercept_target_) &&
+        average_ball_vel_.angle_between(ball.position - start_instant.position()) <
+            degrees_to_radians(kChaseAngleThreshold)) {
         path_intercept_target_ = ball.position;
     }
 
@@ -504,8 +505,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 }
 
 Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                     const rj_geometry::ShapeSet& static_obstacles,
-                                     const std::vector<DynamicObstacle>& dynamic_obstacles) {
+                                      const rj_geometry::ShapeSet& static_obstacles,
+                                      const std::vector<DynamicObstacle>& dynamic_obstacles) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -523,7 +524,9 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     // Save vector and use that?
     BallState ball = plan_request.world_state->ball;
 
-    rj_geometry::Point face_pos = start_instant.position() + Point::direction((ball.position - start_instant.position()).angle()) * 10;
+    rj_geometry::Point face_pos =
+        start_instant.position() +
+        Point::direction((ball.position - start_instant.position()).angle()) * 10;
 
     if (plan_request.debug_drawer != nullptr) {
         plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
@@ -554,8 +557,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     // to move down
     // Accounts for weird targets
     Point ball_movement_dir(average_ball_vel_.normalized());
-    Line ball_movement_line(ball.position,
-                            ball.position + ball_movement_dir);
+    Line ball_movement_line(ball.position, ball.position + ball_movement_dir);
     Point nearest_point_to_robot = ball_movement_line.nearest_point(start_instant.position());
     double dist_to_ball_movement_line = (start_instant.position() - nearest_point_to_robot).mag();
 
@@ -591,14 +593,14 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
 
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
-                                        plan_request.constraints.mot, start_instant.stamp,
-                                        static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-                                        plan_request.shell_id);
+                                              plan_request.constraints.mot, start_instant.stamp,
+                                              static_obstacles, dynamic_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
     } else {
-        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(), final_stopping_motion,
-                                        plan_request.constraints.mot, previous_.last().stamp,
-                                        static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-                                        plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            plan_request.field_dimensions, plan_request.shell_id);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -706,8 +708,6 @@ void CollectPathPlanner::reset() {
     is_ball_sense_ = false;
 }
 
-bool CollectPathPlanner::is_done() const {
-    return is_ball_sense_;
-}
+bool CollectPathPlanner::is_done() const { return is_ball_sense_; }
 
 }  // namespace planning
