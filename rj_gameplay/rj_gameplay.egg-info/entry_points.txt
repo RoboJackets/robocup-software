@@ -1,3 +1,0 @@
-[console_scripts]
-gameplay_node = rj_gameplay.gameplay_node:main
-
