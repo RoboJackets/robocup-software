@@ -91,7 +91,7 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
                                delta_pos, face_pos);
             break;
         case SettlePathPlannerStates::Dampen:
-            result = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles, 
+            result = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles,
                             delta_pos, face_pos);
             break;
         default:
@@ -475,14 +475,14 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
 
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
-                                        plan_request.constraints.mot, start_instant.stamp,
-                                        static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-                                        plan_request.shell_id);
+                                              plan_request.constraints.mot, start_instant.stamp,
+                                              static_obstacles, dynamic_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
     } else {
-        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(), final_stopping_motion,
-                                        plan_request.constraints.mot, previous_.last().stamp,
-                                        static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-                                        plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            plan_request.field_dimensions, plan_request.shell_id);
     }
 
     dampen_end.set_debug_text("Damping");

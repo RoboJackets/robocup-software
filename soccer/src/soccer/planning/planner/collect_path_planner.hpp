@@ -86,7 +86,7 @@ private:
 
     // Only change the target of the path if it changes significantly
     rj_geometry::Point path_intercept_target_;
-    
+
     // Have we already made a dampen path
     bool path_created_for_dampen_ = false;
 
