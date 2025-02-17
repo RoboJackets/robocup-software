@@ -104,14 +104,7 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // List of obstacles
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
-
-    // If we are intercepting, do add the ball as an obstacle
-    if (current_state_ == INTERCEPT) {
-        fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, true);
-    } else {
-        Trajectory ball;
-        fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false, &ball);
-    }
+    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
 
     // Return an empty trajectory if the ball is hitting static obstacles
     // or it is in the goalie area.
@@ -163,8 +156,6 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
 
     // Do the transitions
     double dist = (start_instant->position() - ball.position).mag() - kRobotMouthRadius;
-    double speed_diff = (start_instant->linear_velocity() - average_ball_vel_).mag() -
-                        collect::PARAM_touch_delta_speed;
 
     // If we are in range to the slow dist
     if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
@@ -195,7 +186,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
         // Within X seconds of the end of path
         bool inline_with_ball = bot_dist_to_ball_movement_line < kRobotMouthRadius / 2;
         bool in_front_of_ball =
-            average_ball_vel_.angle_between(start_instant->position() - ball.position) < 3.14 / 2;
+            average_ball_vel_.angle_between(start_instant->position() - ball.position) < M_PI / 2;
 
         if (in_front_of_ball && inline_with_ball && current_state_ == INTERCEPT) {
             // Start the next section of the path from the end of our current

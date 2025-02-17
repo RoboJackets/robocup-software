@@ -94,13 +94,13 @@ private:
     bool is_ball_sense_ = false;
 
     // Threshold for switching from dampen to fine approach
-    double kDampenBallSpeedThreshold = 0.75;
+    static constexpr double kDampenBallSpeedThreshold{0.75};
 
     // Threshold for ball velocity to try to intercept;
-    double kInterceptVelocityThreshold = 0.2;
+    static constexpr double kInterceptVelocityThreshold{0.2};
 
     // Threshold for chasing after the ball instead of intercepting (deg)
-    double kChaseAngleThreshold = 45;
+    static constexpr double kChaseAngleThreshold{45};
 };
 
 }  // namespace planning
