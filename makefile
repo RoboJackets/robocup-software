@@ -118,9 +118,9 @@ tests: test-cpp test-python
 test-cpp: test-soccer
 test-soccer:
 	$(call cmake_build_target, test-soccer)
-	./install/lib/rj_robocup/test-soccer --gtest_filter=CreatePath.*
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 test-soccer-nobuild:
-	./install/lib/rj_robocup/test-soccer --gtest_filter=${Tests}
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
 test-python: perf
 	python3 -m pytest --cov rj_gameplay --cov stp rj_gameplay --cov-report xml
