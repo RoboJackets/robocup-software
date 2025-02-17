@@ -153,9 +153,11 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
                                                   RobotInstant* start_instant) {
     // If the ball is moving, intercept
     // if not, regularly approach
-    if (current_state_ == COARSE_APPROACH && average_ball_vel_.mag() > kInterceptVelocityThreshold) {
+    if (current_state_ == COARSE_APPROACH &&
+        average_ball_vel_.mag() > kInterceptVelocityThreshold) {
         current_state_ = INTERCEPT;
-    } else if (current_state_ == INTERCEPT && average_ball_vel_.mag() < kInterceptVelocityThreshold) {
+    } else if (current_state_ == INTERCEPT &&
+               average_ball_vel_.mag() < kInterceptVelocityThreshold) {
         current_state_ = COARSE_APPROACH;
     }
 
@@ -283,7 +285,9 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 
     BallState ball = plan_request.world_state->ball;
 
-    rj_geometry::Point face_pos = start_instant.position() + Point::direction((ball.position - start_instant.position()).angle()) * 10;
+    rj_geometry::Point face_pos =
+        start_instant.position() +
+        Point::direction((ball.position - start_instant.position()).angle()) * 10;
 
     // If the ball changed directions or magnitude really quickly, do a reset of
     // target
@@ -302,7 +306,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-    for (double dist = settle::PARAM_search_start_dist; dist < settle::PARAM_search_end_dist; dist += settle::PARAM_search_inc_dist) {
+    for (double dist = settle::PARAM_search_start_dist; dist < settle::PARAM_search_end_dist;
+         dist += settle::PARAM_search_inc_dist) {
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
 
@@ -314,8 +319,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 
         // Account for the target point causing a slight offset in robot
         // position since we want the ball to still hit the mouth
-        Point ball_vel_intercept =
-            ball.position + average_ball_vel_.normalized() * dist;
+        Point ball_vel_intercept = ball.position + average_ball_vel_.normalized() * dist;
 
         if (!field_rect.contains_point(ball_vel_intercept)) {
             break;
