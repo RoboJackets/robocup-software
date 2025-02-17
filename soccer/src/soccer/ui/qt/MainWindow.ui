@@ -20,7 +20,7 @@
    <string>RoboJackets - Soccer</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+   <iconset resource="main_icons.qrc">
     <normaloff>:/icons/SoccerBall.png</normaloff>:/icons/SoccerBall.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -73,7 +73,7 @@
             <string>Halt</string>
            </property>
            <property name="icon">
-            <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+            <iconset resource="main_icons.qrc">
              <normaloff>:/icons/halt.svg</normaloff>:/icons/halt.svg</iconset>
            </property>
            <property name="iconSize">
@@ -115,7 +115,7 @@
             <string>Stop</string>
            </property>
            <property name="icon">
-            <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+            <iconset resource="main_icons.qrc">
              <normaloff>:/icons/stop.svg</normaloff>:/icons/stop.svg</iconset>
            </property>
            <property name="iconSize">
@@ -157,7 +157,7 @@
             <string>Ready</string>
            </property>
            <property name="icon">
-            <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+            <iconset resource="main_icons.qrc">
              <normaloff>:/icons/ready.svg</normaloff>:/icons/ready.svg</iconset>
            </property>
            <property name="iconSize">
@@ -196,7 +196,7 @@
             <string>Force Start</string>
            </property>
            <property name="icon">
-            <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+            <iconset resource="main_icons.qrc">
              <normaloff>:/icons/force_start.svg</normaloff>:/icons/force_start.svg</iconset>
            </property>
            <property name="iconSize">
@@ -268,7 +268,7 @@
            <item>
             <widget class="QPushButton" name="fastPenaltyBlue">
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/penalty_blue.svg</normaloff>:/icons/penalty_blue.svg</iconset>
              </property>
              <property name="iconSize">
@@ -288,7 +288,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/penalty_yellow.svg</normaloff>:/icons/penalty_yellow.svg</iconset>
              </property>
              <property name="iconSize">
@@ -315,7 +315,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/kickoff_blue.svg</normaloff>:/icons/kickoff_blue.svg</iconset>
              </property>
              <property name="iconSize">
@@ -338,7 +338,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/kickoff_yellow.svg</normaloff>:/icons/kickoff_yellow.svg</iconset>
              </property>
              <property name="iconSize">
@@ -365,7 +365,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/direct_blue.svg</normaloff>:/icons/direct_blue.svg</iconset>
              </property>
              <property name="iconSize">
@@ -388,7 +388,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/direct_yellow.svg</normaloff>:/icons/direct_yellow.svg</iconset>
              </property>
              <property name="iconSize">
@@ -560,7 +560,7 @@
               <string>Play log backwards quickly</string>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/rewind.svg</normaloff>:/icons/rewind.svg</iconset>
              </property>
              <property name="iconSize">
@@ -596,7 +596,7 @@
               <string>Play log backwards</string>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/prev-frame.svg</normaloff>:/icons/prev-frame.svg</iconset>
              </property>
              <property name="iconSize">
@@ -638,7 +638,7 @@
               <string notr="true">background-color: red</string>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/pause.svg</normaloff>:/icons/pause.svg</iconset>
              </property>
              <property name="iconSize">
@@ -677,7 +677,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/next-frame.svg</normaloff>:/icons/next-frame.svg</iconset>
              </property>
              <property name="iconSize">
@@ -713,7 +713,7 @@
               <string>Play log forwards quickly</string>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/play.svg</normaloff>:/icons/play.svg</iconset>
              </property>
              <property name="iconSize">
@@ -749,7 +749,7 @@
               <string>Show live feed</string>
              </property>
              <property name="icon">
-              <iconset resource="//wsl.localhost/Ubuntu-22.04/home/james/robocup-software/soccer/src/soccer/ui/qt/main_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/live.svg</normaloff>:/icons/live.svg</iconset>
              </property>
              <property name="iconSize">
