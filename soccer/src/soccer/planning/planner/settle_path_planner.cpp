@@ -18,6 +18,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
+// Do not use anymore, use collect
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     const auto state = plan_request.play_state.state();
     if (state == PlayState::Stop || state == PlayState::Halt) {

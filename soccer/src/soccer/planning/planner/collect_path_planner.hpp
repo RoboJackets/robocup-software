@@ -22,6 +22,8 @@ public:
         COARSE_APPROACH,
         // Intercepts a moving ball
         INTERCEPT,
+        // Slows down the velocity of an intercepted ball
+        DAMPEN,
         // From the slow part of the approach to the touching of the ball
         FINE_APPROACH,
     };
@@ -40,7 +42,7 @@ private:
     void check_solution_validity(BallState ball, RobotInstant start);
 
     void process_state_transition(const PlanRequest& request, BallState ball,
-                                  RobotInstant start_instant);
+                                  RobotInstant* start_instant);
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,
@@ -50,6 +52,11 @@ private:
     Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
                          const rj_geometry::ShapeSet& static_obstacles,
                          const std::vector<DynamicObstacle>& dynamic_obstacles);
+
+    // Dampen doesn't need to take obstacles into account.
+    Trajectory dampen(const PlanRequest& plan_request, RobotInstant start_instant,
+                      const rj_geometry::ShapeSet& static_obstacles,
+                      const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory fine_approach(
         const PlanRequest& plan_request, RobotInstant start_instant,
@@ -79,18 +86,21 @@ private:
 
     // Only change the target of the path if it changes significantly
     rj_geometry::Point path_intercept_target_;
+    
+    // Have we already made a dampen path
+    bool path_created_for_dampen_ = false;
 
-    // is_done vars
-    std::optional<LinearMotionInstant> cached_start_instant_;
-    std::optional<rj_geometry::Point> cached_robot_pos_;
-    std::optional<rj_geometry::Point> cached_ball_pos_;
+    // Do we have the ball in the robot
     bool is_ball_sense_ = false;
 
-    // The direction to bounce the intercept to
-    rj_geometry::Point target_bounce_direction_;
+    // Threshold for switching from dampen to fine approach
+    double kDampenBallSpeedThreshold = 0.75;
 
     // Threshold for ball velocity to try to intercept;
     double kInterceptVelocityThreshold = 0.2;
+
+    // Threshold for chasing after the ball instead of intercepting (deg)
+    double kChaseAngleThreshold = 45;
 };
 
 }  // namespace planning
