@@ -44,9 +44,8 @@ public:
     void revive() override;
 
 private:
-
     const rj_geometry::Point clear_point_{0.0, 4.5};
-    
+
     // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{
         static_cast<int>(kNumShells)};  // This effectively turns off marking
@@ -84,8 +83,6 @@ private:
      * @brief Sends a JoinWallRequest in broadcast to the other robots
      */
     void send_join_wall_request();
-
-    
 
     /**
      * @brief Sends a LeaveWallRequest to each of the robots in walling_robots_.

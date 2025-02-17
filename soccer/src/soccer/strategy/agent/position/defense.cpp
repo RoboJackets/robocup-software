@@ -36,15 +36,17 @@ Defense::State Defense::update_state() {
     }
 
     switch (current_state_) {
-        case IDLING:{
-            break;}
-        case JOINING_WALL:{
+        case IDLING: {
+            break;
+        }
+        case JOINING_WALL: {
             send_join_wall_request();
             // SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
-            break;}
-        case WALLING:{
+            break;
+        }
+        case WALLING: {
             // If a wall is already full,
             // Remove the robot with the highest ID from a wall
             // and make them a marker instead.
@@ -54,37 +56,43 @@ Defense::State Defense::update_state() {
                 // SPDLOG_INFO("leave wall {}", robot_id_);
                 next_state = ENTERING_MARKING;
             }
-            //wall stealing
-            if(can_steal_ball()) {
+            // wall stealing
+            if (can_steal_ball()) {
                 send_leave_wall_request();
                 next_state = STEALING;
             }
-            break;}
-        case SEARCHING:{
-            break;}
-        case RECEIVING:{
+            break;
+        }
+        case SEARCHING: {
+            break;
+        }
+        case RECEIVING: {
             // transition to idling if we are close enough to the ball
             if (distance_to_ball < ball_receive_distance_) {
                 next_state = IDLING;
             }
-            break;}
-        case PASSING:{
+            break;
+        }
+        case PASSING: {
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
             if (check_is_done() || distance_to_ball > ball_lost_distance_) {
                 next_state = JOINING_WALL;
             }
-            break;}
-        case FACING:{
+            break;
+        }
+        case FACING: {
             if (check_is_done()) {
                 next_state = IDLING;
-            }}
-        case MARKING:{
+            }
+        }
+        case MARKING: {
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
                 next_state = ENTERING_MARKING;
             }
-            break;}
-        case ENTERING_MARKING:{
+            break;
+        }
+        case ENTERING_MARKING: {
             marker_.choose_target(world_state);
             int target_id = marker_.get_target();
             if (target_id == -1) {
@@ -92,8 +100,9 @@ Defense::State Defense::update_state() {
             } else {
                 next_state = MARKING;
             }
-            break;}
-        case STEALING: // wall steal
+            break;
+        }
+        case STEALING:  // wall steal
         {
             // Go to passing if successful
             if (check_is_done()) {
@@ -108,12 +117,11 @@ Defense::State Defense::update_state() {
             /*if (timed_out()) {
                 // If we timed out and the ball is close, assume we have it
                 // (because is_done for settle/collect are not great)
-                next_state = IDLING;                
+                next_state = IDLING;
             }*/
         }
-        case CLEARING: 
-        {
-            if(check_is_done()) {
+        case CLEARING: {
+            if (check_is_done()) {
                 next_state = JOINING_WALL;
             }
         }
@@ -171,7 +179,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
-        }  
+        }
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
             last_world_state_->get_robot(true, robot_id_).pose.position();
@@ -190,12 +198,12 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     } else if (current_state_ == MARKING) {
         // Marker marker = Marker((u_int8_t) robot_id_);
         return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
-    } else if(current_state_ == STEALING) { //wall stealer
+    } else if (current_state_ == STEALING) {  // wall stealer
         auto collect_cmd = planning::MotionCommand{"collect"};
         intent.motion_command = collect_cmd;
         intent.dribbler_speed = 255.0;
         return intent;
-    } else if(current_state_ == CLEARING) {  
+    } else if (current_state_ == CLEARING) {
         planning::LinearMotionInstant target{clear_point_};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
         intent.motion_command = line_kick_cmd;
