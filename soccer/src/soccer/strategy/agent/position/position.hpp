@@ -295,7 +295,7 @@ protected:
     // set to true when the ball gets close to this robot
     bool chasing_ball = false;
 
-     /**
+    /**
      * @return whether the ball is in an area that non-goalies cannot reach.
      */
     bool ball_in_red() const;
@@ -317,8 +317,6 @@ protected:
 
     // Current goalie
     int goalie_id_;
-
-    
 
 private:
     /**
