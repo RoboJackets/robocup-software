@@ -1,10 +1,13 @@
+#include "planning/primitives/create_path.hpp"
+
+#include <fstream>
 #include <iostream>
 #include <random>
 
 #include <gtest/gtest.h>
 
-#include "planning/primitives/create_path.hpp"
 #include "planning/tests/testing_utils.hpp"
+#include "planning/trajectory_utils.hpp"
 
 using namespace rj_geometry;
 
@@ -86,6 +89,74 @@ TEST(CreatePath, success_rate) {
     double success_rate = (double)(kIterations) / (kIterations + fails);
     std::cout << "CreatePath::rrt() Success Rate: %.6f\n" << success_rate;
     EXPECT_GT(success_rate, 0.75);
+}
+
+TEST(CreatePath, intermediate_creation_time) {
+    std::mt19937 gen(1337);
+
+    constexpr int kIterations = 10000;
+    RobotConstraints constraints;
+    const FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
+
+    double average_time;
+    std::cout << "Saving to intermediate_creation.out and intermediate_traversal.out\n";
+    std::ofstream file("intermediate_creation.out");
+    std::ofstream tfile("intermediate_traversal.out");
+    std::ofstream rfile("rrt_creation.out");
+    std::ofstream rtfile("rrt_traversal.out");
+
+    for (int i = 0; i < kIterations; i++) {
+        Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
+                          TestingUtils::random(&gen, 5.0, 5.5)};
+        Point start_velocity{};
+        LinearMotionInstant start{start_point, start_velocity};
+
+        Point end_point{TestingUtils::random(&gen, -3.0, 3.0),
+                        TestingUtils::random(&gen, 0.5, 1.0)};
+        Point end_velocity{};
+        LinearMotionInstant goal{end_point, end_velocity};
+
+        ShapeSet obstacles;
+        int num_obstacles = 5;
+        double obst_size = 0.2;
+        for (int j = 0; j < num_obstacles; j++) {
+            auto direction = end_point - start_point;
+            auto length = direction.mag();
+            auto t = TestingUtils::random(&gen, 0.4 / length, 1 - 0.4 / length);
+
+            auto base_point = start_point + t * direction.normalized();
+            auto perp_direction = direction.rotate(degrees_to_radians(90.));
+            auto random_distance = TestingUtils::random(&gen, 0., obst_size - 0.01);
+            auto offset = perp_direction.normalized() * random_distance;
+            auto random_sign = TestingUtils::random(&gen, 0., 1.) > 0.5 ? 1 : -1;
+            offset *= random_sign;
+            auto obst_center = base_point + offset;
+
+            obstacles.add(std::make_shared<Circle>(obst_center, obst_size));
+        }
+
+        auto start_time = RJ::now();
+        Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(),
+                                                   obstacles, {}, field_dimensions, 0);
+        double nanos = (RJ::now() - start_time).count();
+        file << "CreatePath::intermediate() Time: " << nanos / 1e6 << " ms\n";
+        tfile << "CreatePath::intermediate() Time: "
+              << (traj.end_time() - traj.begin_time()).count() / 1e9 << " s\n";
+
+        start_time = RJ::now();
+        traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
+        nanos = (RJ::now() - start_time).count();
+        rfile << "CreatePath::rrt() Time: " << nanos / 1e6 << " ms\n";
+        rtfile << "CreatePath::rrt() Time: " << (traj.end_time() - traj.begin_time()).count() / 1e9
+               << " s\n";
+
+        average_time += nanos;
+    }
+    file.close();
+
+    average_time /= kIterations;
+    std::cout << "CreatePath::intermediate() Average Time: " << average_time << " ns\n";
+    EXPECT_GT(average_time, 0);
 }
 
 }  // namespace planning
