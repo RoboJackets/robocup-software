@@ -57,7 +57,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             double y_pos = last_world_state_->ball.position.y();
             // Add 0.3 buffer space to the y_pos of the ball to ensure the robot does not
             // hit the ball before being properly lined up behind it
-            y_pos -= kRobotRadius + 0.3;  
+            y_pos -= kRobotRadius + 0.3;
             rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
             rj_geometry::Point target_vel{0.0, 0.0};
             // Face ball
@@ -159,21 +159,22 @@ double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail,
     return min_angle;
 }
 /**
- * @brief Iterates across 19 possible shot target locations along the goal width in 0.05-meter increments.
- *      For each location, it calculates the clearance distance from opponent robots and updates the
- *      best shot position if a better (less obstructed) option is found.
- * @return The best target position (farthest from obstacles) found after considering all 19 possibilities.
+ * @brief Iterates across 19 possible shot target locations along the goal width in 0.05-meter
+ * increments. For each location, it calculates the clearance distance from opponent robots and
+ * updates the best shot position if a better (less obstructed) option is found.
+ * @return The best target position (farthest from obstacles) found after considering all 19
+ * possibilities.
  */
 rj_geometry::Point PenaltyPlayer::calculate_best_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    // TODO: Consider reducing goal width variable to reduce the possibility of the shot missing at edges
-    double goal_width =
-        field_dimensions_.goal_width();  // 1.0 meters 
+    // TODO: Consider reducing goal width variable to reduce the possibility of the shot missing at
+    // edges
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-    // Sets initial target shot at the middle of their goal 
+    // Sets initial target shot at the middle of their goal
     rj_geometry::Point best_shot = their_goal_pos;
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
