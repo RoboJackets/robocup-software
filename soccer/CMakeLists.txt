@@ -87,6 +87,7 @@ add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(agent_action_client_node)
 add_executable(config_server_param_provider)
+add_executable(control_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -191,6 +192,9 @@ set(AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES robocup)
 set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
+set(CONTROL_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -262,6 +266,10 @@ target_link_libraries(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NOD
 target_link_libraries(config_server_param_provider PRIVATE ${CONFIG_SERVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
     ${CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES})
 
+# -- control_param_provider --
+target_link_libraries(control_param_provider PRIVATE ${CONTROL_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES})
+
 # ======================================================================
 # Testing
 # ======================================================================
@@ -307,6 +315,7 @@ install(
         global_param_server_node
         agent_action_client_node
         config_server_param_provider
+        control_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

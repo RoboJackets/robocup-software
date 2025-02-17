@@ -2,6 +2,10 @@
   ros__parameters:
     use_sim_time: false
 
+/control_param_provider:
+  ros__parameters:
+    test_param: false
+
 /control:
   ros__parameters:
     max_acceleration: 1.5
