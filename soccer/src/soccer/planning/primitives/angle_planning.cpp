@@ -78,9 +78,10 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
             trajectory->instant_at(i).linear_velocity().dot(rj_geometry::Point(gradient));
         if (std::isnan(velocity.at(i))) {
             SPDLOG_INFO("SFSFSFS");
-            SPDLOG_INFO("1: {}, {}", trajectory->instant_at(i).linear_velocity().x(), trajectory->instant_at(i).linear_velocity().y());
-            SPDLOG_INFO("2: {}, {}", rj_geometry::Point(gradient).x(), rj_geometry::Point(gradient).y());
-
+            SPDLOG_INFO("1: {}, {}", trajectory->instant_at(i).linear_velocity().x(),
+                        trajectory->instant_at(i).linear_velocity().y());
+            SPDLOG_INFO("2: {}, {}", rj_geometry::Point(gradient).x(),
+                        rj_geometry::Point(gradient).y());
         }
     }
 

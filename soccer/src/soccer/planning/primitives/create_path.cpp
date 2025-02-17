@@ -125,8 +125,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             // If the trajectory does not hit an obstacle, it is valid
             if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
-                cached_intermediate_tuple_[robot_id] = {
-                    abs(angle), signbit(angle) ? -1 : 1, (final_inter - start.position).mag()};
+                cached_intermediate_tuple_[robot_id] = {abs(angle), signbit(angle) ? -1 : 1,
+                                                        (final_inter - start.position).mag()};
                 return trajectory;
             }
         }
