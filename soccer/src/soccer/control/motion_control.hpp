@@ -1,10 +1,13 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
+
 #include <context.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_param_utils/param.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include "control/motion_setpoint.hpp"
 #include "game_state.hpp"
@@ -95,6 +98,9 @@ private:
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
 };
 
 }  // namespace control
