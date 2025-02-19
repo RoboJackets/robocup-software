@@ -18,6 +18,7 @@ using namespace rj_geometry;
 
 namespace planning {
 
+// Do not use anymore, use collect
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     const auto state = plan_request.play_state.state();
     if (state == PlayState::Stop || state == PlayState::Halt) {
@@ -90,7 +91,8 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
                                delta_pos, face_pos);
             break;
         case SettlePathPlannerStates::Dampen:
-            result = dampen(plan_request, start_instant, delta_pos, face_pos);
+            result = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles,
+                            delta_pos, face_pos);
             break;
         default:
             result = invalid(plan_request, static_obstacles, dynamic_obstacles);
@@ -387,6 +389,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 }
 
 Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
+                                     const rj_geometry::ShapeSet& static_obstacles,
+                                     const std::vector<DynamicObstacle>& dynamic_obstacles,
                                      rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     // Only run once if we can
 
@@ -467,8 +471,19 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     // Target stopping point with 0 speed.
     LinearMotionInstant final_stopping_motion{final_stopping_point};
 
-    Trajectory dampen_end = CreatePath::simple(start_instant.linear_motion(), final_stopping_motion,
-                                               plan_request.constraints.mot, start_instant.stamp);
+    Trajectory dampen_end;
+
+    if (previous_.empty()) {
+        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
+                                              plan_request.constraints.mot, start_instant.stamp,
+                                              static_obstacles, dynamic_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
+    } else {
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            plan_request.field_dimensions, plan_request.shell_id);
+    }
 
     dampen_end.set_debug_text("Damping");
 

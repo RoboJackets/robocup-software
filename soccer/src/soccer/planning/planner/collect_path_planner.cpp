@@ -50,10 +50,6 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // How much of the previous path to steal
     const RJ::Seconds partial_replan_lead_time(Replanner::partial_replan_lead_time());
 
-    // Check and see if we should reset the entire thing if we are super far off
-    // coarse or the ball state changes significantly
-    check_solution_validity(ball, start_instant);
-
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
     // before
@@ -102,8 +98,8 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
         approach_direction_ = -average_ball_vel_.norm();
     }
 
-    // Check if we should transition to control from approach
-    process_state_transition(ball, start_instant);
+    // Process the state transitions
+    process_state_transition(plan_request, ball, &start_instant);
 
     // List of obstacles
     ShapeSet static_obstacles;
@@ -113,27 +109,31 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     // Return an empty trajectory if the ball is hitting static obstacles
     // or it is in the goalie area.
     // Check the robot for the same conditions.
-    if (static_obstacles.hit(ball.position) ||
-        static_obstacles.hit(start_instant.pose.position())) {
+    if (static_obstacles.hit(start_instant.pose.position())) {
         return Trajectory{};
     }
 
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
-        case CoarseApproach:
+        case COARSE_APPROACH:
             previous_ =
                 coarse_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
-        case FineApproach:
+        case FINE_APPROACH:
             previous_ =
                 fine_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
             break;
-        // Move through the ball and stop
-        case Control:
-            previous_ = control(plan_request, partial_start_instant, partial_path, static_obstacles,
-                                dynamic_obstacles);
+        // Intercept a moving ball
+        case INTERCEPT: {
+            previous_ = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles);
             break;
+        }
+        // Dampen a moving ball
+        case DAMPEN: {
+            previous_ = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+            break;
+        }
         default:
             previous_ = invalid(plan_request, static_obstacles, dynamic_obstacles);
             break;
@@ -142,45 +142,67 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     return previous_;
 }
 
-void CollectPathPlanner::check_solution_validity(BallState ball, RobotInstant start) {
-    bool near_ball = (ball.position - start.position()).mag() <
-                     collect::PARAM_dist_cutoff_to_approach + collect::PARAM_dist_cutoff_to_control;
-
-    // Check if we need to go back into approach
-    //
-    // See if we are not near the ball and both almost stopped
-    if (!near_ball && current_state_ == Control) {
-        current_state_ = CoarseApproach;
-        approach_direction_created_ = false;
-        control_path_created_ = false;
+void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball,
+                                                  RobotInstant* start_instant) {
+    // If the ball is moving, intercept
+    // if not, regularly approach
+    if (current_state_ == COARSE_APPROACH &&
+        average_ball_vel_.mag() > kInterceptVelocityThreshold) {
+        current_state_ = INTERCEPT;
+    } else if (current_state_ == INTERCEPT &&
+               average_ball_vel_.mag() < kInterceptVelocityThreshold) {
+        current_state_ = COARSE_APPROACH;
     }
-}
 
-void CollectPathPlanner::process_state_transition(BallState ball, RobotInstant start_instant) {
     // Do the transitions
-    double dist = (start_instant.position() - ball.position).mag() - kRobotMouthRadius;
-    double speed_diff = (start_instant.linear_velocity() - average_ball_vel_).mag() -
-                        collect::PARAM_touch_delta_speed;
+    double dist = (start_instant->position() - ball.position).mag() - kRobotMouthRadius;
 
     // If we are in range to the slow dist
     if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
-        current_state_ == CoarseApproach) {
-        current_state_ = FineApproach;
+        (current_state_ == COARSE_APPROACH)) {
+        current_state_ = FINE_APPROACH;
     }
 
     // If the ball gets knocked far away, go back to CoarseApproach
     if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
-        current_state_ == FineApproach) {
-        current_state_ = CoarseApproach;
+        current_state_ == FINE_APPROACH) {
+        current_state_ = COARSE_APPROACH;
     }
 
-    // If we are close enough to the target point near the ball
-    // and almost the same speed we want, start slowing down
-    // TODO(#1518): Check for ball sense?
-    if (dist < collect::PARAM_dist_cutoff_to_control &&
-        speed_diff < collect::PARAM_vel_cutoff_to_control && current_state_ == FineApproach) {
-        current_state_ = Control;
+    // Intercept -> Dampen, PrevPath and almost at the end of the path
+    if (!previous_.empty() && start_instant->stamp > previous_.begin_time() &&
+        start_instant->stamp <= previous_.end_time()) {
+        rj_geometry::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
+
+        Trajectory path_so_far =
+            previous_.sub_trajectory(previous_.begin_time(), start_instant->stamp);
+        double bot_dist_to_ball_movement_line =
+            ball_movement_line.dist_to(path_so_far.last().position());
+
+        // Intercept -> Dampen
+        // Almost intersecting the ball path and
+        // Almost at end of the target path or
+        // Already in line with the ball
+        // Within X seconds of the end of path
+        bool inline_with_ball = bot_dist_to_ball_movement_line < kRobotMouthRadius / 2;
+        bool in_front_of_ball =
+            average_ball_vel_.angle_between(start_instant->position() - ball.position) < M_PI / 2;
+
+        if (in_front_of_ball && inline_with_ball && current_state_ == INTERCEPT) {
+            // Start the next section of the path from the end of our current
+            // path
+            *start_instant = path_so_far.last();
+            current_state_ = DAMPEN;
+        }
     }
+
+    // Dampen -> Fine Approach if ball is sufficiently slow
+    if (average_ball_vel_.mag() < kDampenBallSpeedThreshold && current_state_ == DAMPEN) {
+        current_state_ = FINE_APPROACH;
+    }
+
+    // If we are in FineApproach and we have the ball, terminate
+    is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
 }
 
 Trajectory CollectPathPlanner::coarse_approach(
@@ -228,6 +250,7 @@ Trajectory CollectPathPlanner::coarse_approach(
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id};
+
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
     if (plan_request.debug_drawer != nullptr) {
@@ -241,6 +264,346 @@ Trajectory CollectPathPlanner::coarse_approach(
     coarse_path.set_debug_text("coarse");
 
     return coarse_path;
+}
+
+Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
+                                         RobotInstant start_instant,
+                                         const rj_geometry::ShapeSet& static_obstacles,
+                                         const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    const double max_ball_angle_change_for_path_reset =
+        settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
+
+    BallState ball = plan_request.world_state->ball;
+
+    rj_geometry::Point face_pos =
+        start_instant.position() +
+        Point::direction((ball.position - start_instant.position()).angle()) * 10;
+
+    // If the ball changed directions or magnitude really quickly, do a reset of
+    // target
+    if (average_ball_vel_.angle_between(ball.velocity) > max_ball_angle_change_for_path_reset ||
+        (average_ball_vel_ - ball.velocity).mag() > settle::PARAM_max_ball_vel_for_path_reset) {
+        first_intercept_target_found_ = false;
+        average_ball_vel_initialized_ = false;
+    }
+
+    // Try find best point to intercept using brute force method
+    // where we check ever X distance along the ball velocity vector
+    //
+    // Disallow points outside the field
+    const Rect& field_rect = FieldDimensions::current_dimensions.field_rect();
+
+    std::optional<Point> ball_intercept_maybe;
+    RJ::Seconds best_buffer = RJ::Seconds(-1.0);
+
+    for (double dist = settle::PARAM_search_start_dist; dist < settle::PARAM_search_end_dist;
+         dist += settle::PARAM_search_inc_dist) {
+        // Time for ball to reach the target point
+        std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
+
+        if (!maybe_ball_time.has_value()) {
+            break;
+        }
+
+        RJ::Seconds ball_time = maybe_ball_time.value();
+
+        // Account for the target point causing a slight offset in robot
+        // position since we want the ball to still hit the mouth
+        Point ball_vel_intercept = ball.position + average_ball_vel_.normalized() * dist;
+
+        if (!field_rect.contains_point(ball_vel_intercept)) {
+            break;
+        }
+
+        // Use the mouth to center vector, rotate by X degrees
+        // Take the delta between old and new mouth vector and move
+        // target_robot_intersection by that amount
+        // It should be about stopped at that location.
+        // Could add a little backwards motion, but it isn't as clean in the
+        // planning side
+        LinearMotionInstant target_robot_intersection{ball_vel_intercept, Point()};
+
+        // Plan a path from our partial path start location to the intercept
+        // test location
+        Trajectory path = CreatePath::intermediate(
+            start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
+            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            plan_request.shell_id);
+
+        // Calculate the
+        RJ::Seconds buffer_duration = ball_time - path.duration();
+        if (!path.empty() && buffer_duration > best_buffer) {
+            ball_intercept_maybe = ball_vel_intercept;
+            best_buffer = buffer_duration;
+        }
+
+        // If valid path to location
+        // and we can reach the target point before ball
+        //
+        // Don't do the average here so we can project the intercept point
+        // inside the field
+        if (!path.empty() && best_buffer > RJ::Seconds(settle::PARAM_intercept_buffer_time)) {
+            break;
+        }
+    }
+
+    rj_geometry::Point ball_vel_intercept;
+    // If we still haven't found a valid intercept point, just target the stop
+    // point.
+    if (ball_intercept_maybe.has_value()) {
+        ball_vel_intercept = ball_intercept_maybe.value();
+    } else {
+        ball_vel_intercept = ball.query_stop_position();
+    }
+
+    // Make sure target_robot_intersection is inside the field
+    // If not, project it into the field
+    if (!field_rect.contains_point(ball_vel_intercept)) {
+        auto intersect_return = field_rect.intersects(Segment(ball.position, ball_vel_intercept));
+
+        bool valid_intersect = std::get<0>(intersect_return);
+        std::vector<Point> intersect_pts = std::get<1>(intersect_return);
+
+        // If the ball intersects the field at some point
+        // Just get the intersect point as the new target
+        if (valid_intersect) {
+            // Sorts based on distance to intercept target
+            // The closest one is the intercept point which the ball moves
+            // through leaving the field Not the one on the other side of the
+            // field
+            sort(intersect_pts.begin(), intersect_pts.end(),
+                 [ball_vel_intercept](Point a, Point b) {
+                     return (a - ball_vel_intercept).mag() < (b - ball_vel_intercept).mag();
+                 });
+
+            // Choose a point just inside the field
+            ball_vel_intercept = intersect_pts.at(0);
+
+            // Doesn't intersect
+            // project the ball into the field
+        } else {
+            // Simple projection
+            ball_vel_intercept.x() = std::max(ball_vel_intercept.x(), (double)field_rect.minx());
+            ball_vel_intercept.x() = std::min(ball_vel_intercept.x(), (double)field_rect.maxx());
+
+            ball_vel_intercept.y() = std::max(ball_vel_intercept.y(), (double)field_rect.miny());
+            ball_vel_intercept.y() = std::min(ball_vel_intercept.y(), (double)field_rect.maxy());
+        }
+    }
+
+    // Could not find a valid path that reach the point first
+    // Just go for the farthest point and recalc next time
+    if (!first_intercept_target_found_) {
+        avg_instantaneous_intercept_target_ = ball_vel_intercept;
+        path_intercept_target_ = ball_vel_intercept;
+
+        first_intercept_target_found_ = true;
+    } else {
+        avg_instantaneous_intercept_target_ =
+            apply_low_pass_filter<Point>(avg_instantaneous_intercept_target_, ball_vel_intercept,
+                                         settle::PARAM_target_point_gain);
+    }
+
+    // Shortcuts the crazy path planner to just move into the path of the ball
+    // if we are very close Only shortcuts if the target point is further up the
+    // path than we are going to hit AKA only shortcut if we have to move
+    // backwards along the path to capture the ball
+    //
+    // Still want to do the math in case the best point changes
+    // which happens a lot when the ball is first kicked
+
+    // If we are within a single radius of the ball path
+    // and in front of it
+    // just move directly to the path location
+    Segment ball_line = Segment(
+        ball.position, ball.position + average_ball_vel_.norm() * settle::PARAM_search_end_dist);
+    Point closest_pt = ball_line.nearest_point(start_instant.position());
+
+    Point ball_to_pt_dir = closest_pt - ball.position;
+    bool in_front_of_ball = average_ball_vel_.angle_between(ball_to_pt_dir) < 3.14 / 2;
+
+    // Only force a direct movement if we are within a small range AND
+    // we have run the algorithm at least once AND
+    // the target point found in the algorithm is further than we are or just
+    // about equal
+    if (in_front_of_ball &&
+        (closest_pt - start_instant.position()).mag() < settle::PARAM_shortcut_dist &&
+        first_intercept_target_found_ &&
+        (closest_pt - ball.position).mag() -
+                (avg_instantaneous_intercept_target_ - ball.position).mag() <
+            settle::PARAM_shortcut_dist) {
+        LinearMotionInstant target{closest_pt,
+                                   settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
+
+        Trajectory shortcut = CreatePath::intermediate(
+            start_instant.linear_motion(), target, plan_request.constraints.mot,
+            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            plan_request.shell_id);
+
+        if (!shortcut.empty()) {
+            plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
+                        plan_request.constraints.rot);
+            shortcut.stamp(RJ::now());
+            return shortcut;
+        }
+    }
+
+    // There's some major problems with repeatedly changing the target for the
+    // path planner To alleviate this problem, we only change the target point
+    // when it moves over X amount from the previous path target
+    //
+    // This combined with the shortcut is guaranteed to get in front of the ball
+    // correctly If not, add some sort of distance scale that changes based on
+    // how close the robot is to the target
+    if ((path_intercept_target_ - avg_instantaneous_intercept_target_).mag() > kRobotMouthRadius) {
+        path_intercept_target_ = avg_instantaneous_intercept_target_;
+    }
+
+    if (start_instant.position().dist_to(ball.position) <
+            start_instant.position().dist_to(path_intercept_target_) &&
+        average_ball_vel_.angle_between(ball.position - start_instant.position()) <
+            degrees_to_radians(kChaseAngleThreshold)) {
+        path_intercept_target_ = ball.position;
+    }
+
+    // Build a new path with the target
+    // Since the replanner exists, we don't have to deal with partial paths,
+    // just use the interface
+    LinearMotionInstant target_robot_intersection{
+        path_intercept_target_, settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
+
+    Replanner::PlanParams params{start_instant,
+                                 target_robot_intersection,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.field_dimensions,
+                                 plan_request.constraints,
+                                 AngleFns::face_point(face_pos),
+                                 plan_request.shell_id};
+    Trajectory new_target_path = Replanner::create_plan(params, previous_);
+
+    RJ::Seconds time_of_arrival = new_target_path.duration();
+    new_target_path.set_debug_text(std::to_string(time_of_arrival.count()) + " s");
+
+    if (new_target_path.empty()) {
+        return previous_;
+    }
+
+    plan_angles(&new_target_path, start_instant, AngleFns::face_point(face_pos),
+                plan_request.constraints.rot);
+    new_target_path.stamp(RJ::now());
+    return new_target_path;
+}
+
+Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
+                                      const rj_geometry::ShapeSet& static_obstacles,
+                                      const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    // Only run once if we can
+
+    // Intercept ends with a % ball velocity in the direction of the ball
+    // movement Slow down once ball is nearby to 0 m/s
+
+    // Try to slow down as fast as possible to 0 m/s along the ball path
+    // We have to do position control since we want to stay in the line of the
+    // ball while we do this. If we did velocity, we have very little control of
+    // where on the field it is without some other position controller.
+
+    // Uses constant acceleration to create a linear velocity profile
+
+    // TODO(Kyle): Realize the ball will probably bounce off the robot
+    // so we can use that vector to stop
+    // Save vector and use that?
+    BallState ball = plan_request.world_state->ball;
+
+    rj_geometry::Point face_pos =
+        start_instant.position() +
+        Point::direction((ball.position - start_instant.position()).angle()) * 10;
+
+    if (plan_request.debug_drawer != nullptr) {
+        plan_request.debug_drawer->draw_text("Damping", ball.position + Point(.1, .1),
+                                             QColor(255, 255, 255));
+    }
+
+    if (path_created_for_dampen_ && !previous_.empty()) {
+        return previous_;
+    }
+
+    path_created_for_dampen_ = true;
+
+    if (!previous_.empty()) {
+        start_instant = previous_.last();
+    }
+
+    // Using the current velocity
+    // Calculate stopping point along the ball path
+    double max_accel = plan_request.constraints.mot.max_acceleration;
+    double current_speed = start_instant.linear_velocity().mag();
+
+    // Assuming const accel going to zero velocity
+    // speed / accel gives time to stop
+    // speed / 2 is average time over the entire operation
+    double stopping_dist = current_speed * current_speed / (2 * max_accel);
+
+    // Offset entire ball line to just be the line we want the robot
+    // to move down
+    // Accounts for weird targets
+    Point ball_movement_dir(average_ball_vel_.normalized());
+    Line ball_movement_line(ball.position, ball.position + ball_movement_dir);
+    Point nearest_point_to_robot = ball_movement_line.nearest_point(start_instant.position());
+    double dist_to_ball_movement_line = (start_instant.position() - nearest_point_to_robot).mag();
+
+    // Default to just moving to the closest point on the line
+    Point final_stopping_point(nearest_point_to_robot);
+
+    // Make sure we are actually moving before we start trying to optimize stuff
+    if (stopping_dist >= 0.01f) {
+        // The closer we are to the line, the less we should move into the line
+        // to stop overshoot
+        double percent_stopping_dist_to_ball_movement_line =
+            dist_to_ball_movement_line / stopping_dist;
+
+        // 0% should be just stopping at stopping_dist down the ball movement
+        // line from the nearest_point_to_robot 100% or more should just be trying
+        // to get to the nearest_point_to_robot (Default case)
+        if (percent_stopping_dist_to_ball_movement_line < 1) {
+            // c^2 - a^2 = b^2
+            // c is stopping dist, a is dist to ball line
+            // b is dist down ball line
+            double dist_down_ball_movement_line =
+                std::sqrt(stopping_dist * stopping_dist -
+                          dist_to_ball_movement_line * dist_to_ball_movement_line);
+            final_stopping_point =
+                nearest_point_to_robot + dist_down_ball_movement_line * ball_movement_dir;
+        }
+    }
+
+    // Target stopping point with 0 speed.
+    LinearMotionInstant final_stopping_motion{final_stopping_point};
+
+    Trajectory dampen_end;
+
+    if (previous_.empty()) {
+        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
+                                              plan_request.constraints.mot, start_instant.stamp,
+                                              static_obstacles, dynamic_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
+    } else {
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            plan_request.field_dimensions, plan_request.shell_id);
+    }
+
+    dampen_end.set_debug_text("Damping");
+
+    if (!previous_.empty()) {
+        dampen_end = Trajectory(previous_, dampen_end);
+    }
+
+    plan_angles(&dampen_end, start_instant, AngleFns::face_point(face_pos),
+                plan_request.constraints.rot);
+    dampen_end.stamp(RJ::now());
+    return dampen_end;
 }
 
 Trajectory CollectPathPlanner::fine_approach(
@@ -279,7 +642,6 @@ Trajectory CollectPathPlanner::fine_approach(
     // acceleration in the trapezoid
     motion_constraints_hit.max_speed =
         std::min(target_hit_vel.mag(), motion_constraints_hit.max_speed);
-
     Replanner::PlanParams params{start_instant,
                                  target_hit,
                                  static_obstacles,
@@ -289,8 +651,8 @@ Trajectory CollectPathPlanner::fine_approach(
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id};
     Trajectory path_hit = Replanner::create_plan(params, previous_);
-
     path_hit.set_debug_text("fine");
+
     plan_angles(&path_hit, start_instant, AngleFns::face_point(ball.position),
                 plan_request.constraints.rot);
     path_hit.stamp(RJ::now());
@@ -306,120 +668,10 @@ Trajectory CollectPathPlanner::fine_approach(
     return path_hit;
 }
 
-Trajectory CollectPathPlanner::control(const PlanRequest& plan_request, RobotInstant start,
-                                       const Trajectory& /* partial_path */,
-                                       const rj_geometry::ShapeSet& static_obstacles,
-                                       const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    BallState ball = plan_request.world_state->ball;
-    RobotConstraints robot_constraints = plan_request.constraints;
-    MotionConstraints& motion_constraints = robot_constraints.mot;
-
-    // Only plan the path once and run through it
-    // Otherwise it will basically push the ball across the field
-    if (control_path_created_ && !previous_.empty()) {
-        return previous_;
-    }
-
-    control_path_created_ = true;
-
-    // Scale the max acceleration so we don't stop too quickly
-    // Set the max speed to the current speed so it stays constant as
-    //  we touch the ball and allows the dribbler to get some time to
-    //  spin it up to speed
-    // Make sure we don't go over our current max speed
-    // Shouldn't happen (tm)
-    //
-    // If the ball is moving towards us (like receiving a pass) just move
-    // forward at touch_delta_speed
-    double current_speed = average_ball_vel_.mag() + collect::PARAM_touch_delta_speed;
-
-    double velocity_scale = collect::PARAM_velocity_control_scale;
-
-    // Moving at us
-    if (average_ball_vel_.angle_between((ball.position - start.position())) > 3.14 / 2) {
-        current_speed = collect::PARAM_touch_delta_speed;
-        velocity_scale = 0;
-    }
-
-    motion_constraints.max_acceleration *= collect::PARAM_control_accel_scale;
-    motion_constraints.max_speed = std::min(current_speed, motion_constraints.max_speed);
-
-    // Using the current velocity
-    // Calculate stopping distance given the acceleration
-    double max_accel = motion_constraints.max_acceleration;
-
-    double non_zero_vel_time_delta =
-        collect::PARAM_approach_dist_target / collect::PARAM_touch_delta_speed;
-
-    // Assuming const accel going to zero velocity
-    // speed / accel gives time to stop
-    // speed / 2 is average speed over entire operation
-    double stopping_dist =
-        collect::PARAM_approach_dist_target + current_speed * current_speed / (2 * max_accel);
-
-    // Move through the ball some distance
-    // The initial part will be at a constant speed, then it will decelerate to
-    // 0 m/s
-    double dist_from_ball = collect::PARAM_stop_dist_scale * stopping_dist;
-
-    Point target_pos = start.position() + dist_from_ball * (ball.position - start.position() +
-                                                            velocity_scale * average_ball_vel_ *
-                                                                non_zero_vel_time_delta)
-                                                               .norm();
-    LinearMotionInstant target{target_pos};
-
-    // save for is_done()
-    cached_robot_pos_ = start.position();
-    cached_ball_pos_ = ball.position;
-
-    // Try to use the RRTPathPlanner to generate the path first
-    // It reaches the target better for some reason
-    std::vector<Point> start_end_points{start.position(), target.position};
-
-    Replanner::PlanParams params{start,
-                                 target,
-                                 static_obstacles,
-                                 dynamic_obstacles,
-                                 plan_request.field_dimensions,
-                                 plan_request.constraints,
-                                 AngleFns::face_point(ball.position),
-                                 plan_request.shell_id};
-
-    Trajectory path = Replanner::create_plan(params, previous_);
-
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_segment(
-            Segment(start.position(), start.position() + (target.position - start.position()) * 10),
-            QColor(255, 255, 255));
-    }
-
-    if (path.empty()) {
-        return Trajectory{};
-    }
-
-    path.set_debug_text("stopping");
-
-    // Make sure that when the path ends, we don't end up spinning around
-    // because we hit go past the ball position at the time of path creation
-    Point face_pt = start.position() + 10 * (target.position - start.position()).norm();
-
-    plan_angles(&path, start, AngleFns::face_point(face_pt), robot_constraints.rot);
-
-    if (plan_request.debug_drawer != nullptr) {
-        plan_request.debug_drawer->draw_segment(
-            Segment(start.position(),
-                    start.position() + Point::direction(AngleFns::face_point(face_pt)(
-                                           start.linear_motion(), start.heading(), nullptr))));
-    }
-
-    path.stamp(RJ::now());
-    return path;
-}
-
 Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                        const rj_geometry::ShapeSet& static_obstacles,
                                        const std::vector<DynamicObstacle>& dynamic_obstacles) {
-    current_state_ = CoarseApproach;
+    current_state_ = COARSE_APPROACH;
 
     // Stop movement until next frame since it's the safest option
     // programmatically
@@ -441,32 +693,12 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
 
 void CollectPathPlanner::reset() {
     previous_ = Trajectory();
-    current_state_ = CollectPathPathPlannerStates::CoarseApproach;
+    current_state_ = CollectPathPathPlannerStates::COARSE_APPROACH;
     average_ball_vel_initialized_ = false;
-    approach_direction_created_ = false;
-    control_path_created_ = false;
     path_coarse_target_initialized_ = false;
+    is_ball_sense_ = false;
 }
 
-bool CollectPathPlanner::is_done() const {
-    // FSM: CoarseApproach -> FineApproach -> Control
-    // (see process_state_transition())
-    if (current_state_ != Control) {
-        return false;
-    }
-
-    // control state is done when the ball is slowed AND in mouth
-    // TODO(Kevin): make these into ROS planning params
-    double ball_slow_cutoff = 0.01;  // m/s = ~10% robot radius/s
-    bool ball_is_slow = average_ball_vel_initialized_ && average_ball_vel_.mag() < ball_slow_cutoff;
-
-    // ideal ball-mouth distance = 1 kRobotRadius + 1 kBallRadius
-    // give some leeway with ball_in_mouth_cutoff
-    double ball_in_mouth_cutoff = 0.01;
-    double dist_to_ball = (cached_robot_pos_.value() - cached_ball_pos_.value()).mag();
-    bool ball_in_mouth = dist_to_ball - (kRobotRadius + kBallRadius) < ball_in_mouth_cutoff;
-
-    return ball_is_slow && ball_in_mouth;
-}
+bool CollectPathPlanner::is_done() const { return is_ball_sense_; }
 
 }  // namespace planning
