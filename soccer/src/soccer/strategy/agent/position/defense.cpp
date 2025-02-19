@@ -38,14 +38,16 @@ Defense::State Defense::update_state() {
     switch (current_state_) {
         case IDLING: {
             break;
-            }
+        }
+
         case JOINING_WALL: {
             send_join_wall_request();
             // SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
-            }
+        }
+
         case WALLING: {
             // If a wall is already full,
             // Remove the robot with the highest ID from a wall
@@ -62,17 +64,20 @@ Defense::State Defense::update_state() {
                 next_state = STEALING;
             }
             break;
-            }
+        }
+
         case SEARCHING: {
             break;
-            }
+        }
+
         case RECEIVING: {
             // transition to idling if we are close enough to the ball
             if (distance_to_ball < ball_receive_distance_) {
                 next_state = IDLING;
             }
             break;
-            }
+        }
+
         case PASSING: {
             // transition to idling if we no longer have the ball (i.e. it was passed or it was
             // stolen)
@@ -80,18 +85,21 @@ Defense::State Defense::update_state() {
                 next_state = JOINING_WALL;
             }
             break;
-            }
+        }
+
         case FACING: {
             if (check_is_done()) {
                 next_state = IDLING;
             }
-            }
+        }
+
         case MARKING: {
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
                 next_state = ENTERING_MARKING;
             }
             break;
-            }
+        }
+
         case ENTERING_MARKING: {
             marker_.choose_target(world_state);
             int target_id = marker_.get_target();
@@ -101,7 +109,8 @@ Defense::State Defense::update_state() {
                 next_state = MARKING;
             }
             break;
-            }
+        }
+
         case STEALING: {// wall steal
             // Go to passing if successful
             if (check_is_done()) {
@@ -112,13 +121,8 @@ Defense::State Defense::update_state() {
             if (!can_steal_ball()) {
                 next_state = JOINING_WALL;
             }
-
-            /*if (timed_out()) {
-                // If we timed out and the ball is close, assume we have it
-                // (because is_done for settle/collect are not great)
-                next_state = IDLING;
-            }*/
         }
+        
         case CLEARING: {
             if (check_is_done()) {
                 next_state = JOINING_WALL;
