@@ -5,3 +5,5 @@ TestResponse[<=1] test_response
 JoinWallResponse[<=1] join_wall_response
 Acknowledge[<=1] acknowledge
 LeaveWallResponse[<=1] leave_wall_response
+LeaveMarkingResponse[<=1] leave_marking_response
+JoinMarkingResponse[<=1] join_marking_response

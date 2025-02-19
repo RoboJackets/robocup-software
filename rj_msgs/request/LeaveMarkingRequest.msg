@@ -1,5 +1,5 @@
 # 
-#   @brief request sent by an agent when it wants to leave the wall.
+#   @brief request sent by an agent when it wants to leave the marking robots.
 #  
 #  /
 uint32 request_uid

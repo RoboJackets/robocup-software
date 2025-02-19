@@ -31,6 +31,8 @@
 #include "join_wall_response.hpp"
 #include "acknowledge.hpp"
 #include "leave_wall_response.hpp"
+#include "leave_marking_response.hpp"
+#include "join_marking_response.hpp"
 
 namespace strategy::communication {
 
@@ -42,7 +44,7 @@ using AgentRequest = std::variant<IncomingBallRequest, PassRequest, KickerReques
 /**
 * @brief a conglomeration of the different response types.
 */
-using AgentResponseVariant = std::variant<ScorerResponse, PositionResponse, PassResponse, TestResponse, JoinWallResponse, Acknowledge, LeaveWallResponse>;
+using AgentResponseVariant = std::variant<ScorerResponse, PositionResponse, PassResponse, TestResponse, JoinWallResponse, Acknowledge, LeaveWallResponse, LeaveMarkingResponse, JoinMarkingResponse>;
 
 /**
 * @brief response message that is sent from the receiver of the request to the
@@ -217,6 +219,10 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
 			result.response.acknowledge.emplace_back(convert_to_ros(*acknowledge));
 		} else if (const auto* leave_wall_response = std::get_if<strategy::communication::LeaveWallResponse>(&(from.response))) {
 			result.response.leave_wall_response.emplace_back(convert_to_ros(*leave_wall_response));
+		} else if (const auto* leave_marking_response = std::get_if<strategy::communication::LeaveMarkingResponse>(&(from.response))) {
+			result.response.leave_marking_response.emplace_back(convert_to_ros(*leave_marking_response));
+		} else if (const auto* join_marking_response = std::get_if<strategy::communication::JoinMarkingResponse>(&(from.response))) {
+			result.response.join_marking_response.emplace_back(convert_to_ros(*join_marking_response));
 		} else {
 			throw std::runtime_error("Invalid variant of AgentResponse");
 		}
@@ -240,6 +246,10 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
 			result.response = convert_from_ros(from.response.acknowledge.front());
 		} else if (!from.response.leave_wall_response.empty()) {
 			result.response = convert_from_ros(from.response.leave_wall_response.front());
+		} else if (!from.response.leave_marking_response.empty()) {
+			result.response = convert_from_ros(from.response.leave_marking_response.front());
+		} else if (!from.response.join_marking_response.empty()) {
+			result.response = convert_from_ros(from.response.join_marking_response.front());
 		} else {
 			throw std::runtime_error("Invalid variant of AgentResponse");
 		}

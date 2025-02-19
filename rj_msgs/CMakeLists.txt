@@ -81,6 +81,8 @@ rosidl_generate_interfaces(
   response/JoinWallResponse.msg
   response/Acknowledge.msg
   response/LeaveWallResponse.msg
+  response/LeaveMarkingResponse.msg
+  response/JoinMarkingResponse.msg
 
   # Services
   srv/AgentCommunication.srv

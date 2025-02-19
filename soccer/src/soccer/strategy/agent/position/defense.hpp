@@ -44,11 +44,12 @@ public:
     void revive() override;
 
 private:
-    static constexpr int kMaxWallers{3};
+    static constexpr int kMaxWallers{2};
     //static constexpr int kMaxWallers{
     //    static_cast<int>(kNumShells)};  // This effectively turns off marking
     
-    int kMaxMarkers = 1;
+    int kMaxMarkers = 3;
+
     
     float marking_y_bound{FieldDimensions::kDefaultDimensions.length() / 4};
 
@@ -79,6 +80,12 @@ private:
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
+
+    /**
+     * @brief Sends a JoinMarkingRequest in broadcast to the other robots
+     */
+    void send_join_mark_request(int mark_id);
+
     /**
      * @brief Sends a JoinWallRequest in broadcast to the other robots
      */
@@ -88,6 +95,11 @@ private:
      * @brief Sends a LeaveWallRequest to each of the robots in walling_robots_.
      */
     void send_leave_wall_request();
+
+    /**
+     * @brief Sends a LeaveMarkingRequest in broadcast to the other robots
+     */
+    void send_leave_mark_request(int mark_id);
 
     /**
      * @brief Adds the new waller to this robot's list of wallers and updates this robot's position
@@ -100,6 +112,17 @@ private:
     communication::JoinWallResponse handle_join_wall_request(
         communication::JoinWallRequest join_request);
 
+     /**
+     * @brief Adds the new marker to this robot's list of marker and updates this robot's position
+     * in the marker. Also adds the robot it is marking to the list of robots being marked.
+     *
+     * @param join_request the request received from another robot about joining the marker
+     * @return communication::JoinWallResponse A confirmation for the other robot to join the markers
+     * with this robot's ID
+     */
+    communication::JoinMarkingResponse handle_join_marking_request(
+        communication::JoinMarkingRequest join_request);
+
     /**
      * @brief Removes a given robot from this robot's list of wallers.
      *
@@ -108,6 +131,15 @@ private:
      */
     communication::Acknowledge handle_leave_wall_request(
         communication::LeaveWallRequest leave_request);
+
+    /**
+     * @brief Removes a given robot from this robot's list of markers and what it is marking from the list of markees.
+     *
+     * @param leave_request the request from the robot who is leaving the marking
+     * @return communication::Acknowledge acknowledgement of the other robot's communication
+     */
+    communication::Acknowledge handle_leave_marking_request(
+        communication::LeaveMarkingRequest leave_request);
 
     /**
      * @brief Handles the response from the currently walling robots to find this robot's place in
@@ -119,11 +151,13 @@ private:
 
     std::vector<u_int8_t> walling_robots_ = {};
     std::vector<u_int8_t> marking_robots_ = {};
-    std::set<u_int8_t> marked_robots_ = {};
+    std::vector<u_int8_t> marked_robots_ = {};
     int waller_id_ = -1;
+    int marker_id_ = -1;
 
     // current state of the defense agent (state machine)
     int get_waller_id();
+    int get_marker_id();
     State current_state_ = JOINING_WALL;
 
     int get_marker_target_id();

@@ -88,6 +88,14 @@ bool operator==(const LeaveWallResponse& a, const LeaveWallResponse& b) {
 	return a.response_uid == b.response_uid;
 }
 
+bool operator==(const LeaveMarkingResponse& a, const LeaveMarkingResponse& b) {
+	return a.response_uid == b.response_uid;
+}
+
+bool operator==(const JoinMarkingResponse& a, const JoinMarkingResponse& b) {
+	return a.response_uid == b.response_uid;
+}
+
 bool operator==(const AgentResponse& a, const AgentResponse& b) {
 	return (a.associated_request == b.associated_request) && (a.response == b.response);
 }
@@ -226,6 +234,20 @@ void generate_uid(Acknowledge& response) {
 }
 
 void generate_uid(LeaveWallResponse& response) {
+	response_uid_mutex.lock();
+	response.response_uid = response_uid;
+	response_uid++;
+	response_uid_mutex.unlock();
+}
+
+void generate_uid(LeaveMarkingResponse& response) {
+	response_uid_mutex.lock();
+	response.response_uid = response_uid;
+	response_uid++;
+	response_uid_mutex.unlock();
+}
+
+void generate_uid(JoinMarkingResponse& response) {
 	response_uid_mutex.lock();
 	response.response_uid = response_uid;
 	response_uid++;
