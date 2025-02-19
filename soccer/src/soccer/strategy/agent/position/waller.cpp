@@ -28,7 +28,6 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     auto num_wallers = walling_robots_.size();
 
 
-
     // Find ball_direction unit vector
     rj_geometry::Point ball_dir_vector{(ball_pos - goal_pos)};
 

@@ -521,48 +521,6 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
     return min_angle;
 }
 
-// bool Offense::can_steal_ball() const {
-//     // Ball in red zone or not
-//     if (ball_in_red()) {
-//         return false;
-//     }
-//     // Ball location
-//     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-
-//     // Our robot is closest robot to ball
-//     bool closest = true;
-
-//     auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-
-//     auto our_dist = (current_pos - ball_position).mag();
-//     for (auto enemy : this->last_world_state_->their_robots) {
-//         auto dist = (enemy.pose.position() - ball_position).mag();
-//         if (dist < our_dist) {
-//             closest = false;
-//             break;
-//         }
-//     }
-
-//     if (!closest) {
-//         return closest;
-//     }
-
-//     for (auto pal : this->last_world_state_->our_robots) {
-//         // if (pal.robot_id_ == robot_id_) {
-//         // continue;
-//         // }
-//         auto dist = (pal.pose.position() - ball_position).mag();
-//         if (dist < our_dist) {
-//             closest = false;
-//             break;
-//         }
-//     }
-
-//     return closest;
-
-//     // return distance_to_ball() < kStealBallRadius;
-// }
-
 rj_geometry::Point Offense::calculate_best_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
@@ -587,13 +545,6 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
-// // Checks whether ball is out of range for stealing/receiving
-// bool Offense::ball_in_red() const {
-//     auto& ball_pos = last_world_state_->ball.position;
-//     return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
-//             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-//             !field_dimensions_.field_rect().contains_point(ball_pos));
-// }
 void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
     communication::SeekerRequest seeker_request{};
     communication::generate_uid(seeker_request);
