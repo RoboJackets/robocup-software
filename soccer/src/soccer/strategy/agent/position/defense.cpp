@@ -111,7 +111,7 @@ Defense::State Defense::update_state() {
             break;
         }
 
-        case STEALING: {// wall steal
+        case STEALING: { // wall steal
             // Go to passing if successful
             if (check_is_done()) {
                 send_leave_wall_request();
