@@ -243,5 +243,4 @@ private:
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
 
-
 }  // namespace strategy
