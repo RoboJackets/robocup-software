@@ -153,7 +153,7 @@ void RobotFactoryPosition::update_position() {
                             set_current_position<PenaltyPlayer>();
                         }
                     } else {
-                        if (current_play_state_.is_kickoff()) {
+                        if (current_play_state_.is_kickoff()) { // TODO: Change to update position such that a formation is created
                             set_current_position<Defense>();
                         } else if (current_play_state_.is_penalty()) {
                             // set_current_position<SmartIdle>();
@@ -173,7 +173,7 @@ void RobotFactoryPosition::update_position() {
                 }
 
             } else {  // Their restart
-                if (current_play_state_.is_kickoff()) {
+                if (current_play_state_.is_kickoff()) { // TODO: Possibly change to create a formation. May not be necessary; ball is not ours
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();
