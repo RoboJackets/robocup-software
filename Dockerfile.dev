@@ -10,6 +10,12 @@ ENV DISPLAY=:1
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
 
+RUN if [ -z TARGETARCH] then \
+    echo "****************************** ERROR ******************************"; \
+    echo "No target architecture was given. TARGETARCH is a required argument."; \
+    exit 1; \
+    fi
+
 # Update the package list and install necessary packages, including the missing ones
 RUN apt-get update && \
     apt-get install -y \
@@ -67,6 +73,14 @@ RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework
     mkdir build && cd build && \
     cmake .. && \
     make simulator-cli
+
+# Clone, build ER-Force's autoref
+RUN git clone https://github.com/robotics-erlangen/autoref.git /root/autoref && \
+    cd /root/autoref && \
+    git submodule update --init && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make
 
 # Use bash to source the ROS2 setup file and run make perf
 RUN bash -c "source /opt/ros/humble/setup.bash && \
