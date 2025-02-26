@@ -69,6 +69,9 @@ inline AngleFunction face_point(const rj_geometry::Point point) {
                Eigen::Vector2d* jacobian) -> double {
 	
         if ((instant.position - point).mag() < kRobotRadius) {
+            if (jacobian != nullptr) {
+                *jacobian = Eigen::Vector2d::Zero();
+            }
             return previous_angle;
         }
 
