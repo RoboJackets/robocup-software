@@ -150,7 +150,7 @@ void RobotFactoryPosition::update_position() {
                         if (current_play_state_.is_free_kick()) {
                             set_current_position<FreeKicker>();
                         } else if (current_play_state_.ball_placement_point().has_value()) {
-                            set_current_position<SmartIdle>();
+                            set_current_position<BallPlacer>();
                         } else {
                             set_current_position<PenaltyPlayer>();
                         }

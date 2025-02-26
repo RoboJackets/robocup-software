@@ -40,29 +40,19 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { START, SMALL_KICK, LINE_UP, SHOOTING_START, SHOOTING };
+    enum State { COLLECT, TRANSPORT};
 
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
-    static constexpr double kDistanceToGoalThreshold{3.5};
 
     State update_state();
 
-    /**
-     * @brief Calculates the distance of vector from other team's closest robot
-     */
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
     double distance_to_ball() const {
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
 
-    double distance_from_enemy_goal() const {
-        return last_world_state_->get_robot(true, robot_id_)
-            .pose.position()
-            .dist_to(field_dimensions_.their_goal_loc());
-    };
 
     /**
      * @return the target (within the goal) that would be the most clear shot
@@ -73,7 +63,7 @@ private:
     rj_geometry::Point target_;
 
     /*
-     * Based on the Goalie's current state, send a motion_command
+     * Based on the Ball Placer's current state, send a motion_command
      * to the planner node.
      *
      * @param intent RobotIntent to add the desired motion_command
@@ -84,8 +74,8 @@ private:
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    // current state of Goalie (state machine)
-    State latest_state_ = START;
+    // current state of Ball Placer (state machine)
+    State latest_state_ = COLLECT;
 };
 
 }  // namespace strategy
