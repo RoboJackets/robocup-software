@@ -3,16 +3,16 @@
 namespace strategy {
 
 // ALSO USED AS KickoffKicker
-Ball_Placer::Ball_Placer(int r_id) : Position(r_id, "Ball_Placer") {}
+BallPlacer::BallPlacer(int r_id) : Position(r_id, "BallPlacer") {}
 
-Ball_Placer::Ball_Placer(const Position& other) : Position{other} {}
+BallPlacer::BallPlacer(const Position& other) : Position{other} {}
 
-std::optional<RobotIntent> Ball_Placer::derived_get_task(RobotIntent intent) {
+std::optional<RobotIntent> BallPlacer::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
     return state_to_task(intent);
 }
 
-Ball_Placer::State Ball_Placer::update_state() {
+BallPlacer::State BallPlacer::update_state() {
     switch (latest_state_) {
         case COLLECT: {
             if (check_is_done()) {
@@ -30,7 +30,7 @@ Ball_Placer::State Ball_Placer::update_state() {
     return latest_state_;
 }
 
-std::optional<RobotIntent> Ball_Placer::state_to_task(RobotIntent intent) {
+std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
         case COLLECT: {  
             intent.motion_command =
@@ -39,10 +39,18 @@ std::optional<RobotIntent> Ball_Placer::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TRANSPORT: {  
-            planning::LinearMotionInstant goal{target_pt, target_vel};
-            intent.motion_command =
-                planning::MotionCommand{"path_target", ball_placement_point_, face_option, ignore_ball};
-            intent.dribbler_speed = 255.0;
+            auto ballPlacement = current_play_state_.ball_placement_point();
+            intent.motion_command = planning::MotionCommand{};
+            if(ballPlacement.has_value()) {
+                rj_geometry::Point target_vel{0.0, 0.0};
+                planning::LinearMotionInstant target{ballPlacement.value(), target_vel};
+                //something is wrong with the linker
+                intent.motion_command =
+                    planning::MotionCommand{"path_target", target,planning::FaceBall{}};
+                intent.dribbler_speed = 255.0;
+            } else {
+                SPDLOG_ERROR("Ball position was not retrieved from PlayState");
+            }
             return intent;
         }
     }
@@ -50,12 +58,12 @@ std::optional<RobotIntent> Ball_Placer::state_to_task(RobotIntent intent) {
     return intent;
 }
 
-std::string Ball_Placer::get_current_state() { return "Ball_Placer"; }
+std::string BallPlacer::get_current_state() { return "BallPlacer"; }
 
-void Ball_Placer::derived_acknowledge_pass() {}
+void BallPlacer::derived_acknowledge_pass() {}
 
-void Ball_Placer::derived_pass_ball() {}
+void BallPlacer::derived_pass_ball() {}
 
-void Ball_Placer::derived_acknowledge_ball_in_transit() {}
+void BallPlacer::derived_acknowledge_ball_in_transit() {}
 
 }  // namespace strategy

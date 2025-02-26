@@ -20,6 +20,7 @@
 #include "rj_msgs/msg/override_position.hpp"
 #include "strategy/agent/position/defense.hpp"
 #include "strategy/agent/position/free_kicker.hpp"
+#include "strategy/agent/position/ball_placer.hpp"
 #include "strategy/agent/position/goal_kicker.hpp"
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/line.hpp"

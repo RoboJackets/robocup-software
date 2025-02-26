@@ -10,17 +10,17 @@
 #include "rj_constants/constants.hpp"
 #include "rj_geometry/point.hpp"
 #include "role_interface.hpp"
-
+#include "game_state.hpp"
 namespace strategy {
 
 /**
  * This position stays 0.15 meters behind the ball at all times.
  */
-class Ball_Placer : public Position {
+class BallPlacer : public Position {
 public:
-    Ball_Placer(int r_id);
-    ~Ball_Placer() = default;
-    Ball_Placer(const Position& other);
+    BallPlacer(int r_id);
+    ~BallPlacer() = default;
+    BallPlacer(const Position& other);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -52,15 +52,13 @@ private:
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
-
-
     /**
      * @return the target (within the goal) that would be the most clear shot
      */
     rj_geometry::Point calculate_best_shot() const;
 
-    // where to kick to
-    rj_geometry::Point target_;
+    // where to move to
+
 
     /*
      * Based on the Ball Placer's current state, send a motion_command
