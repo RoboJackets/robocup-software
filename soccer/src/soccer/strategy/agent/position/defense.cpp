@@ -32,24 +32,24 @@ Defense::State Defense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-    if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
-        // SPDLOG_INFO("WE ARE LEAVING THE WALL");
-        send_leave_wall_request();
-        walling_robots_ = {(u_int8_t)robot_id_};
-        waller_id_ = -1;
-    }
+    // if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
+    //     // SPDLOG_INFO("WE ARE LEAVING THE WALL");
+    //     send_leave_wall_request();
+    //     walling_robots_ = {(u_int8_t)robot_id_};
+    //     waller_id_ = -1;
+    // }
 
-    if (current_state_ != MARKING && current_state_ != ENTERING_MARKING && marker_id_ != -1) {
-        send_leave_mark_request(marker_.get_target());
-        marker_id_ = -1;
-    }
+    // if (current_state_ != MARKING && current_state_ != ENTERING_MARKING && marker_id_ != -1) {
+    //     send_leave_mark_request(marker_.get_target());
+    //     marker_id_ = -1;
+    // }
 
     switch (current_state_) {
         case IDLING:
             break;
         case JOINING_WALL:
             send_join_wall_request();
-            SPDLOG_INFO("join wall {}", robot_id_);
+            // SPDLOG_INFO("join wall {}", robot_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
             break;
@@ -84,12 +84,16 @@ Defense::State Defense::update_state() {
 
             // For when I get communication working
             int deepest_robot = 0;
-            for (int i = 0; i < kNumShells; i++) {
+            bool deep_set = false;
+            for (int i = 0; i < 6; i++) {
                 if (std::find(marked_robots_.begin(), marked_robots_.end(), i) != marked_robots_.end()) {
+                    // SPDLOG_INFO("We already are marking you {}", i);
                     continue;
                 }
-                if (world_state->get_robot(false, i).pose.position().y() < world_state->get_robot(false, deepest_robot).pose.position().y() && world_state->get_robot(false, i).pose.position().y() > 0
-                && world_state->get_robot(false, i).pose.position().x() > -3 && world_state->get_robot(false, i).pose.position().x() < 3) {
+                if (world_state->get_robot(false, i).pose.position().y() <= world_state->get_robot(false, deepest_robot).pose.position().y() && world_state->get_robot(false, i).pose.position().y() >= 0
+                && world_state->get_robot(false, i).pose.position().x() >= -3 && world_state->get_robot(false, i).pose.position().x() <= 3) {
+                    // SPDLOG_INFO("Change is good");
+                    deep_set = true;
                     deepest_robot = i;
                 }
             }
@@ -98,23 +102,23 @@ Defense::State Defense::update_state() {
             // SPDLOG_INFO("Marking robots is less than max markers: {}", marking_robots_.size());
             // SPDLOG_INFO("Walling robots is at least max: {}", walling_robots_.size() >= kMaxWallers);
 
-            if (walling_robots_.size() >= kMaxWallers && marking_robots_.size() < kMaxMarkers && world_state->get_robot(false, deepest_robot).pose.position().y() < marking_y_bound) {
-                SPDLOG_INFO("Wallers currently: {}", walling_robots_.size());
-                SPDLOG_INFO("Marking robot size: {}", marking_robots_.size());
+            if (deep_set && walling_robots_.size() >= kMaxWallers && marking_robots_.size() < kMaxMarkers && world_state->get_robot(false, deepest_robot).pose.position().y() < marking_y_bound) {
+                // SPDLOG_INFO("Wallers currently: {}", walling_robots_.size());
+                // SPDLOG_INFO("Marking robot size: {}", marking_robots_.size());
                 // SPDLOG_INFO("Max markers: {}", kMaxMarkers);
                 
                 marker_.set_target(deepest_robot);
-                marked_robots_.push_back(deepest_robot);
-                marking_robots_.push_back(robot_id_);
+                // marked_robots_.push_back(deepest_robot);
+                // marking_robots_.push_back(robot_id_);
 
-                SPDLOG_INFO("I am currently marking {}", marker_.get_target());
-
+                // SPDLOG_INFO("I am currently marking {}", marker_.get_target());
+               
                 send_leave_wall_request();
 
-                SPDLOG_INFO("I am {}", robot_id_);
-                for (int i = 0; i < walling_robots_.size(); i++) {
-                    SPDLOG_INFO("Robot {} is walling as of now", walling_robots_[i]);
-                }
+                // SPDLOG_INFO("I am {}", robot_id_);
+                // for (int i = 0; i < walling_robots_.size(); i++) {
+                //     SPDLOG_INFO("Robot {} is walling as of now", walling_robots_[i]);
+                // }
 
                 next_state = ENTERING_MARKING;
             }
@@ -148,7 +152,9 @@ Defense::State Defense::update_state() {
         case MARKING:
             // if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
             if (marker_.target_out_of_bounds(world_state)) {
+                SPDLOG_INFO("The target was {}", marker_.get_target());
                 next_state = JOINING_WALL;
+                send_leave_mark_request(marker_.get_target());
                 // SPDLOG_INFO("Number of markers currently is {}", marking_robots_.size());
                 // marking_robots_.erase(std::remove(marking_robots_.begin(), marking_robots_.end(), robot_id_), marking_robots_.end());
             }
@@ -169,7 +175,17 @@ Defense::State Defense::update_state() {
             if (target_id == -1) {
                 next_state = ENTERING_MARKING;
             } else {
+                marked_robots_.push_back(marker_.get_target());
+                marking_robots_.push_back(robot_id_);
+
+                SPDLOG_INFO("My marking robots list: {}", fmt::join(marking_robots_, ", "));
+                SPDLOG_INFO("My marked robots list: {}", fmt::join(marked_robots_, ", "));
+
                 send_join_mark_request(target_id);
+
+                SPDLOG_INFO("Updated marking robots list: {}", fmt::join(marking_robots_, ", "));
+                SPDLOG_INFO("Updated marked robots list: {}", fmt::join(marked_robots_, ", "));
+                
                 next_state = MARKING;
             }
     }
@@ -183,7 +199,7 @@ Defense::State Defense::update_state() {
     // }
 
     // if (robot_id_ == 5) {
-    //     SPDLOG_INFO("My state is {}", current_state_);
+    // SPDLOG_INFO("I am {} and my state is {}", robot_id_, current_state_);
     // }
     
 
@@ -282,7 +298,7 @@ void Defense::receive_communication_response(communication::AgentPosResponseWrap
 communication::PosAgentResponseWrapper Defense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     
-    SPDLOG_INFO("Received a communication request of type: {}", request.request.index());
+    // SPDLOG_INFO("Received a communication request of type: {}", request.request.index());
     
     // Call to super
     communication::PosAgentResponseWrapper response =
@@ -302,11 +318,9 @@ communication::PosAgentResponseWrapper Defense::receive_communication_request(
 
     if (const communication::JoinMarkingRequest* join_mark_request = 
                     std::get_if<communication::JoinMarkingRequest>(&request.request)) {
-        SPDLOG_INFO("We are here");
         response.response = handle_join_marking_request(*join_mark_request);
     } else if (const communication::LeaveMarkingRequest* leave_mark_request =
                     std::get_if<communication::LeaveMarkingRequest>(&request.request)) {
-        SPDLOG_INFO("How?");
         response.response = handle_leave_marking_request(*leave_mark_request);
     }
 
@@ -326,16 +340,15 @@ void Defense::send_join_wall_request() {
     communication_request.broadcast = true;
 
     communication_requests_.push_back(communication_request);
-    SPDLOG_INFO("Communication request size is (in walling) {}", communication_requests_.size());
+    // SPDLOG_INFO("Communication request size is (in walling) {}", communication_requests_.size());
 
     current_state_ = WALLING;
 }
 
 void Defense::send_join_mark_request(int mark_id) {
 
-    // SPDLOG_INFO("Step 1");
-
     communication::JoinMarkingRequest join_request{};
+    SPDLOG_INFO("Robot id in the join request is {}", robot_id_);
     join_request.robot_id = robot_id_;
     join_request.marked_robot_id = mark_id;
     communication::generate_uid(join_request);
@@ -346,12 +359,8 @@ void Defense::send_join_mark_request(int mark_id) {
     communication_request.urgent = false;
     communication_request.broadcast = true;
 
-    SPDLOG_INFO("Communication request type: {}",communication_request.request.index());
+    // SPDLOG_INFO("Communication request type: {}",communication_request.request.index());
     communication_requests_.push_back(communication_request);
-    SPDLOG_INFO("Communication request size is {}", communication_requests_.size());
-    SPDLOG_INFO("Front of communication requests is of type {}", communication_requests_[0].request.index());
-    SPDLOG_INFO("Communication request type confirmation: {}",communication_requests_.back().request.index());
-
     current_state_ = MARKING;
 }
 
@@ -374,6 +383,8 @@ void Defense::send_leave_mark_request(int mark_id) {
     leave_request.robot_id = robot_id_;
     leave_request.marked_robot_id = mark_id;
     communication::generate_uid(leave_request);
+
+    SPDLOG_INFO("Robot id is {} and leaving mark id is {}", robot_id_, mark_id);
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = leave_request;
@@ -411,24 +422,12 @@ communication::JoinMarkingResponse Defense::handle_join_marking_request(
     communication::JoinMarkingRequest join_request) {
     SPDLOG_INFO("Handling join marking request for robot {}", join_request.robot_id);
 
-    // If the list is empty, simply add the robot
-    if (marking_robots_.empty()) {
+    if (!(std::find(marking_robots_.begin(), marking_robots_.end(), join_request.robot_id) != marking_robots_.end()) && !(std::find(marked_robots_.begin(), marked_robots_.end(), join_request.marked_robot_id) != marked_robots_.end())) {
         marking_robots_.push_back(join_request.robot_id);
         marked_robots_.push_back(join_request.marked_robot_id);
-    } else {
-        // Ensure robots are stored in ascending order
-        auto it = std::lower_bound(marking_robots_.begin(), marking_robots_.end(), join_request.robot_id);
-        size_t index = std::distance(marking_robots_.begin(), it);
-        
-        // Insert at correct position
-        marking_robots_.insert(it, join_request.robot_id);
-        marked_robots_.insert(marked_robots_.begin() + index, join_request.marked_robot_id);
-    }
-
-    marker_id_ = get_marker_id();
     
-    SPDLOG_INFO("Updated marking robots list: {}", fmt::join(marking_robots_, ", "));
-    SPDLOG_INFO("Updated marked robots list: {}", fmt::join(marked_robots_, ", "));
+        marker_id_ = get_marker_id();
+    }
 
     communication::JoinMarkingResponse join_response{};
     join_response.robot_id = robot_id_;
@@ -440,7 +439,7 @@ communication::JoinMarkingResponse Defense::handle_join_marking_request(
 communication::Acknowledge Defense::handle_leave_wall_request(
     communication::LeaveWallRequest leave_request) {
     if (robot_id_ != leave_request.robot_id) {
-        for (int i = walling_robots_.size() - 1; i > 0; i--) {
+        for (int i = walling_robots_.size() - 1; i >= 0; i--) {
             if (walling_robots_[i] == leave_request.robot_id) {
                 walling_robots_.erase(walling_robots_.begin() + i);
                 waller_id_ = get_waller_id();
@@ -459,9 +458,11 @@ communication::Acknowledge Defense::handle_leave_wall_request(
 
 communication::Acknowledge Defense::handle_leave_marking_request(
     communication::LeaveMarkingRequest leave_request) {
+    SPDLOG_INFO("Leave robot is {}", leave_request.robot_id);
     if (robot_id_ != leave_request.robot_id) {
-        for (int i = marking_robots_.size() - 1; i > 0; i--) {
+        for (int i = marking_robots_.size() - 1; i >= 0; i--) {
             if (marking_robots_[i] == leave_request.robot_id) {
+                SPDLOG_INFO("removing {} from marking list", marking_robots_[i]);
                 marking_robots_.erase(marking_robots_.begin() + i);
                 marked_robots_.erase(marked_robots_.begin() + i);
                 marker_id_ = get_marker_id();

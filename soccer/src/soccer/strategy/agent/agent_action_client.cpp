@@ -320,7 +320,7 @@ void AgentActionClient::receive_communication_callback(
         agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back
-        SPDLOG_INFO("Agent request id is {}", agent_request.request.index());
+        // SPDLOG_INFO("Agent request id is {}", agent_request.request.index());
         communication::PosAgentResponseWrapper pos_to_agent_response =
             current_position_->receive_communication_request(agent_request);
 

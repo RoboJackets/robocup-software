@@ -25,7 +25,6 @@ void Marker::choose_target(const WorldState* ws) {
     // If we ever use multiple Markers, they should choose different
     // robots to track from each other. Logic for this operation must be
     // added because multiple markers currently mark the same robot.
-    SPDLOG_INFO("We here");
     for (int i = 0; i < kNumShells; i++) {
         if (std::fabs(ws->get_robot(false, i).pose.position().x()) < marker_follow_cutoff &&
             ws->get_robot(false, i).pose.position().y() < y_bound &&
