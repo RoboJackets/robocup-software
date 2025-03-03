@@ -93,6 +93,8 @@ add_executable(global_param_provider)
 add_executable(internal_referee_param_provider)
 add_executable(planner_param_provider)
 add_executable(vision_receiver_param_provider)
+add_executable(radio_param_provider)
+add_executable(vision_filter_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -212,11 +214,14 @@ set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 set(PLANNER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
-set(PLANNER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
 set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(RADIO_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(RADIO_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(VISION_FILTER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(VISION_FILTER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
 # ======================================================================
 # Include and Linking
@@ -312,6 +317,13 @@ target_link_libraries(planner_param_provider PRIVATE ${PLANNER_PARAM_PROVIDER_SY
 # -- vision_receiver_param_provider --
 target_link_libraries(vision_receiver_param_provider PRIVATE ${VISION_RECEIVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
         ${VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES})
+# -- radio_param_provider --
+target_link_libraries(radio_param_provider PRIVATE ${RADIO_PARAM_PROVIDER_SYSTEM_LIBARIES}
+        ${RADIO_PARAM_PROVIDER_DEPS_LIBRARIES})
+
+# -- vision_filter_param_provider --
+target_link_libraries(vision_filter_param_provider PRIVATE ${VISION_FILTER_PROVIDER_SYSTEM_LIBARIES}
+        ${VISION_FILTER_PARAM_PROVIDER_DEPS_LIBRARIES})
 
 # ======================================================================
 # Testing
@@ -364,6 +376,8 @@ install(
         internal_referee_param_provider
         planner_param_provider
         vision_receiver_param_provider
+        radio_param_provider
+        vision_filter_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

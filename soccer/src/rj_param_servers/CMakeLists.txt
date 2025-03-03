@@ -25,3 +25,11 @@ target_sources(planner_param_provider PRIVATE ${PLANNER_PARAM_PROVIDER_SRC})
 # ---- vision_receiver_param_provider ----
 set(VISION_RECEIVER_PARAM_PROVIDER_SRC vision_receiver_param_provider.cpp)
 target_sources(vision_receiver_param_provider PRIVATE ${PLANNER_PARAM_PROVIDER_SRC})
+
+# ---- radio_param_provider ----
+set(RADIO_PARAM_PROVIDER_SRC radio_param_provider.cpp)
+target_sources(radio_param_provider PRIVATE ${RADIO_PARAM_PROVIDER_SRC})
+
+# ---- vision_filter_param_provider ----
+set(VISION_FILTER_PARAM_PROVIDER_SRC vision_filter_param_provider.cpp)
+target_sources(vision_filter_param_provider PRIVATE ${VISION_FILTER_PARAM_PROVIDER_SRC})

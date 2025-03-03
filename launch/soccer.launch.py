@@ -258,10 +258,31 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
+                executable="radio_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
                 executable="planner_param_provider",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
-            )
+            ),
+            Node(
+                package="rj_robocup"
+                executable="vision_filter_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup"
+                executable="vision_receiver_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
         ]
     )
