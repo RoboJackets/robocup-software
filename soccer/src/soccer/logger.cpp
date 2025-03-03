@@ -198,14 +198,14 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
         if (RJ::now() - status.timestamp > RJ::Seconds(0.5)) {
             continue;
         }
-        const auto& intent = context->robot_intents.at(shell);
+        const auto& trajectory = context->trajectories.at(shell);
         const auto& setpoint = context->motion_setpoints.at(shell);
 
         RadioRx* rx = log_frame->add_radio_rx();
         ConvertRx::status_to_proto(status, rx);
 
         Packet::Robot* tx = log_frame->mutable_radio_tx()->add_robots();
-        ConvertTx::to_proto(intent, setpoint, shell, tx);
+        ConvertTx::to_proto(trajectory, setpoint, shell, tx);
     }
 
     // Opponent robots

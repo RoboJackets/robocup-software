@@ -603,6 +603,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     plan_angles(&dampen_end, start_instant, AngleFns::face_point(face_pos),
                 plan_request.constraints.rot);
     dampen_end.stamp(RJ::now());
+    dampen_end.dribbler_speed = 255;
     return dampen_end;
 }
 
@@ -663,7 +664,11 @@ Trajectory CollectPathPlanner::fine_approach(
                     start_instant.position() +
                         Point::direction(AngleFns::face_point(ball.position)(
                             start_instant.linear_motion(), start_instant.heading(), nullptr))));
+        plan_request.debug_drawer->draw_text("Fine Approach", start_instant.position() + Point(.1, .1),
+                                             QColor(255, 255, 255));
     }
+
+    path_hit.dribbler_speed = 255;
 
     return path_hit;
 }

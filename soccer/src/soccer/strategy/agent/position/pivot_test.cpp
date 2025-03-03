@@ -55,7 +55,7 @@ std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
                                                      false, last_world_state_->ball.position};
             pivot_cmd.pivot_radius = 1;
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255.0;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case OPP_GOAL: {
@@ -65,7 +65,7 @@ std::optional<RobotIntent> Pivot::state_to_task(RobotIntent intent) {
             pivot_cmd.pivot_radius = 1;
 
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255.0;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case IDLE: {

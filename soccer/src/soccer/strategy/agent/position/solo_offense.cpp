@@ -101,7 +101,6 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
             auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255;
             return intent;
         }
         case ROTATE: {
@@ -109,7 +108,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             auto pivot_cmd =
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case KICK: {
