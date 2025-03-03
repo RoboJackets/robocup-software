@@ -88,6 +88,9 @@ add_executable(global_param_server_node)
 add_executable(agent_action_client_node)
 add_executable(config_server_param_provider)
 add_executable(control_param_provider)
+add_executable(gameplay_node_param_provider)
+add_executable(global_param_provider)
+add_executable(internal_referee_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -195,6 +198,15 @@ set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 set(CONTROL_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
+set(GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(GLOBAL_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(GLOBAL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -270,6 +282,18 @@ target_link_libraries(config_server_param_provider PRIVATE ${CONFIG_SERVER_PARAM
 target_link_libraries(control_param_provider PRIVATE ${CONTROL_PARAM_PROVIDER_SYSTEM_LIBARIES}
     ${CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES})
 
+# -- gameplay_node_param_provider --
+target_link_libraries(gameplay_node_param_provider PRIVATE ${GAMEPLAY_NODE_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_LIBRARIES})
+
+# -- global_param_provider --
+target_link_libraries(global_param_provider PRIVATE ${GLOBAL_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${GLOBAL_PARAM_PROVIDER_DEPS_LIBRARIES})
+
+# -- internal_referee_param_provider --
+target_link_libraries(internal_referee_param_provider PRIVATE ${INTERNAL_REFEREE_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES})
+
 # ======================================================================
 # Testing
 # ======================================================================
@@ -316,6 +340,9 @@ install(
         agent_action_client_node
         config_server_param_provider
         control_param_provider
+        gameplay_node_param_provider
+        global_param_provider
+        internal_referee_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

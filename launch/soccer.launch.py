@@ -122,6 +122,8 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+            # NOTE: config server seems essential atm. I cannot get the robots in sim to appear
+            # without having this node still active.
             Node(
                 package="rj_robocup",
                 executable="config_server",
@@ -158,14 +160,14 @@ def generate_launch_description():
                 ],
                 on_exit=Shutdown(),
             ),
-            Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-                package="rj_robocup",
-                executable="control_node",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
+            # Node(
+            #     condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+            #     package="rj_robocup",
+            #     executable="control_node",
+            #     output="screen",
+            #     parameters=[param_config_filepath],
+            #     on_exit=Shutdown(),
+            # ),
             Node(
                 package="rj_robocup",
                 executable="planner_node",
@@ -225,11 +227,34 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_robocup",
                 executable="control_param_provider",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+            Node(
+                package="rj_robocup",
+                executable="gameplay_node_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="global_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            # Node(
+            #     condition=IfCondition(PythonExpression([use_internal_ref])),
+            #     package="rj_robocup",
+            #     executable="internal_referee_param_provider",
+            #     output="screen",
+            #     parameters=[param_config_filepath],
+            #     on_exit=Shutdown(),
+            # ),
         ]
     )
