@@ -86,15 +86,7 @@ add_executable(network_radio_node)
 add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(agent_action_client_node)
-add_executable(config_server_param_provider)
-add_executable(control_param_provider)
-add_executable(gameplay_node_param_provider)
 add_executable(global_param_provider)
-add_executable(internal_referee_param_provider)
-add_executable(planner_param_provider)
-add_executable(vision_receiver_param_provider)
-add_executable(radio_param_provider)
-add_executable(vision_filter_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -196,32 +188,8 @@ set(GLOBAL_PARAM_SERVER_NODE_DEPS_LIBRARIES robocup)
 set(AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES)
 set(AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES robocup)
 
-set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(CONTROL_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
 set(GLOBAL_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(GLOBAL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(PLANNER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(RADIO_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(RADIO_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
-
-set(VISION_FILTER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
-set(VISION_FILTER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
 # ======================================================================
 # Include and Linking
@@ -290,40 +258,9 @@ target_link_libraries(global_param_server_node PRIVATE ${GLOBAL_PARAM_SERVER_NOD
 target_link_libraries(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_DEPS_SYSTEM_LIBRARIES}
     ${AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES})
 
-# -- config_server_param_provider --
-target_link_libraries(config_server_param_provider PRIVATE ${CONFIG_SERVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
-    ${CONFIG_SERVER_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- control_param_provider --
-target_link_libraries(control_param_provider PRIVATE ${CONTROL_PARAM_PROVIDER_SYSTEM_LIBARIES}
-    ${CONTROL_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- gameplay_node_param_provider --
-target_link_libraries(gameplay_node_param_provider PRIVATE ${GAMEPLAY_NODE_PARAM_PROVIDER_SYSTEM_LIBARIES}
-    ${GAMEPLAY_NODE_PARAM_PROVIDER_DEPS_LIBRARIES})
-
 # -- global_param_provider --
 target_link_libraries(global_param_provider PRIVATE ${GLOBAL_PARAM_PROVIDER_SYSTEM_LIBARIES}
     ${GLOBAL_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- internal_referee_param_provider --
-target_link_libraries(internal_referee_param_provider PRIVATE ${INTERNAL_REFEREE_PARAM_PROVIDER_SYSTEM_LIBARIES}
-    ${INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- internal_referee_param_provider --
-target_link_libraries(planner_param_provider PRIVATE ${PLANNER_PARAM_PROVIDER_SYSTEM_LIBARIES}
-    ${PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- vision_receiver_param_provider --
-target_link_libraries(vision_receiver_param_provider PRIVATE ${VISION_RECEIVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
-        ${VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES})
-# -- radio_param_provider --
-target_link_libraries(radio_param_provider PRIVATE ${RADIO_PARAM_PROVIDER_SYSTEM_LIBARIES}
-        ${RADIO_PARAM_PROVIDER_DEPS_LIBRARIES})
-
-# -- vision_filter_param_provider --
-target_link_libraries(vision_filter_param_provider PRIVATE ${VISION_FILTER_PROVIDER_SYSTEM_LIBARIES}
-        ${VISION_FILTER_PARAM_PROVIDER_DEPS_LIBRARIES})
 
 # ======================================================================
 # Testing
@@ -369,15 +306,7 @@ install(
         manual_control_node
         global_param_server_node
         agent_action_client_node
-        config_server_param_provider
-        control_param_provider
-        gameplay_node_param_provider
         global_param_provider
-        internal_referee_param_provider
-        planner_param_provider
-        vision_receiver_param_provider
-        radio_param_provider
-        vision_filter_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(
