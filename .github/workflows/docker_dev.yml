@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Dev Image Deployment
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         run: |
           docker push robojackets/robocup-software-dev:amd64
   
-  build-and-push-arm64:
+  build-and-push-dev-arm64:
     runs-on: ubuntu-24.04-arm
 
     steps:
