@@ -86,9 +86,21 @@ SimRadio::SimRadio(bool blue_team)
      */
     // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
     // file probably an issue with the hacky way I got param files to dynamically load
-    std::string localhost = "127.0.0.1";
-    this->get_parameter_or("interface", param_radio_interface_, localhost);
+
+    // std::string localhost = "127.0.0.1";
+    // this->get_parameter_or("interface", param_radio_interface_, localhost);
+    // SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
+
+    // getting parameter
+    std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client =
+        std::make_shared<rclcpp::AsyncParametersClient>(this, "/global_param_provider");
+        parameters_client->wait_for_service();
+
+    auto parameters_future = parameters_client->get_parameters({"radio/interface"});
+    auto result = parameters_future.get();  // This will block until the result is available
+    param_radio_interface_ = result.at(0).as_string();
     SPDLOG_INFO("SimRadio param_radio_interface_ {}", param_radio_interface_);
+
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
