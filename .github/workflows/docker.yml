@@ -5,10 +5,7 @@ on:
     branches: [ "ros2" ]
     paths:
       - 'Dockerfile.dev'
-  pull_request:
-    branches: [ "ros2" ]
-    paths:
-      - 'Dockerfile.dev'
+  workflow_dispatch: 
 
 jobs:
   build-and-push-amd64:
