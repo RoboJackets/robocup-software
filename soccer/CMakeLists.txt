@@ -91,6 +91,8 @@ add_executable(control_param_provider)
 add_executable(gameplay_node_param_provider)
 add_executable(global_param_provider)
 add_executable(internal_referee_param_provider)
+add_executable(planner_param_provider)
+add_executable(vision_receiver_param_provider)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -207,6 +209,15 @@ set(GLOBAL_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
 set(INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
 
+set(PLANNER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(PLANNER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
+set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_SYSTEM_LIBRARIES)
+set(VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -294,6 +305,14 @@ target_link_libraries(global_param_provider PRIVATE ${GLOBAL_PARAM_PROVIDER_SYST
 target_link_libraries(internal_referee_param_provider PRIVATE ${INTERNAL_REFEREE_PARAM_PROVIDER_SYSTEM_LIBARIES}
     ${INTERNAL_REFEREE_PARAM_PROVIDER_DEPS_LIBRARIES})
 
+# -- internal_referee_param_provider --
+target_link_libraries(planner_param_provider PRIVATE ${PLANNER_PARAM_PROVIDER_SYSTEM_LIBARIES}
+    ${PLANNER_PARAM_PROVIDER_DEPS_LIBRARIES})
+
+# -- vision_receiver_param_provider --
+target_link_libraries(vision_receiver_param_provider PRIVATE ${VISION_RECEIVER_PARAM_PROVIDER_SYSTEM_LIBARIES}
+        ${VISION_RECEIVER_PARAM_PROVIDER_DEPS_LIBRARIES})
+
 # ======================================================================
 # Testing
 # ======================================================================
@@ -343,6 +362,8 @@ install(
         gameplay_node_param_provider
         global_param_provider
         internal_referee_param_provider
+        planner_param_provider
+        vision_receiver_param_provider
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(

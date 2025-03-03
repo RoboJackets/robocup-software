@@ -248,13 +248,20 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
-            # Node(
-            #     condition=IfCondition(PythonExpression([use_internal_ref])),
-            #     package="rj_robocup",
-            #     executable="internal_referee_param_provider",
-            #     output="screen",
-            #     parameters=[param_config_filepath],
-            #     on_exit=Shutdown(),
-            # ),
+            Node(
+                condition=IfCondition(PythonExpression([use_internal_ref])),
+                package="rj_robocup",
+                executable="internal_referee_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_robocup",
+                executable="planner_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            )
         ]
     )
