@@ -271,14 +271,14 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup"
+                package="rj_robocup",
                 executable="vision_filter_param_provider",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup"
+                package="rj_robocup",
                 executable="vision_receiver_param_provider",
                 output="screen",
                 parameters=[param_config_filepath],
