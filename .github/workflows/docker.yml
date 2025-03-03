@@ -1,0 +1,48 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "ros2" ]
+    paths:
+      - 'Dockerfile.dev'
+  pull_request:
+    branches: [ "ros2" ]
+    paths:
+      - 'Dockerfile.dev'
+
+jobs:
+  build-and-push-amd64:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build the Docker image
+        run: |
+          docker build . --file Dockerfile.dev --tag robojackets/robocup-software-dev:amd64
+
+      - name: Push the Docker image
+        run: |
+          docker push robojackets/robocup-software-dev:amd64
+  
+  build-and-push-arm64:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Build the Docker image
+        run: |
+          docker build . --file Dockerfile.dev --tag robojackets/robocup-software-dev:arm64
+
+      - name: Push the Docker image
+        run: |
+          docker push robojackets/robocup-software-dev:arm64
