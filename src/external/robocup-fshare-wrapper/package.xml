@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rj_convert</name>
+  <version>0.1.0</version>
+  <description> </description>
+  <maintainer email="hello@robojackets.org">RoboCup Software Team, RoboJackets</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- Build system -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Dependencies -->
+  <depend>rclcpp</depend>
+  <depend>eigen3_cmake_module</depend>
+  <depend>eigen</depend>
+
+  <!-- Test dependencies -->
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
