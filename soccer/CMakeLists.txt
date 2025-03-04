@@ -87,6 +87,7 @@ add_executable(manual_control_node)
 add_executable(global_param_server_node)
 add_executable(agent_action_client_node)
 add_executable(straight_line_test_node)
+add_executable(kicker_picker_node)
 
 if(BUILD_TESTING)
   add_executable(test-soccer)
@@ -191,6 +192,9 @@ set(AGENT_ACTION_CLIENT_NODE_DEPS_LIBRARIES robocup)
 set(STRAIGHT_LINE_TEST_NODE_DEPS_SYSTEM_LIBRARIES)
 set(STRAIGHT_LINE_TEST_NODE_DEPS_LIBRARIES robocup)
 
+set(KICKER_PICKER_NODE_DEPS_SYSTEM_LIBRARIES)
+set(KICKER_PICKER_NODE_DEPS_LIBRARIES robocup)
+
 # ======================================================================
 # Include and Linking
 # ======================================================================
@@ -257,6 +261,9 @@ target_link_libraries(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NOD
 target_link_libraries(straight_line_test_node PRIVATE ${STRAIGHT_LINE_TEST_NODE_DEPS_SYSTEM_LIBRARIES}
     ${STRAIGHT_LINE_TEST_NODE_DEPS_LIBRARIES})
 
+# -- kicker_picker_node --
+target_link_libraries(kicker_picker_node PUBLIC ${KICKER_PICKER_NODE_DEPS_SYSTEM_LIBRARIES} ${KICKER_PICKER_NODE_DEPS_LIBRARIES})
+
 # ======================================================================
 # Testing
 # ======================================================================
@@ -302,6 +309,7 @@ install(
         global_param_server_node
         agent_action_client_node
         straight_line_test_node
+        kicker_picker_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(
