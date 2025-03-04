@@ -1,3 +1,5 @@
-uint8 robot_id
---
-bool success
+# Request a robot to be added to or removed from the kicker selection group
+uint8 robot_id     # ID of the robot (0 to kNumShells-1)
+bool wants_to_kick # True to add robot to kicker group, false to remove it
+---
+bool success      # Always true

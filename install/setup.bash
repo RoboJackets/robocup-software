@@ -34,12 +34,13 @@ _pythonpath_add() {
 # No direct replacement for the command exists, and in Ubuntu 22.04,
 # this script will produce a warning about this. We may need to find a
 # replacement library in the future.
-_PYTHON_LIB_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))")
-_pythonpath_add "${_PYTHON_LIB_PATH}"
-unset _PYTHON_LIB_PATH
+# _PYTHON_LIB_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+_pythonpath_add "${_INSTALL_PATH}/local/lib/python3.10/dist-packages"
+# unset _PYTHON_LIB_PATH
 
 _path_add "${_INSTALL_PATH}/bin"
 _ld_library_path_add "${_INSTALL_PATH}/lib"
+echo "${_INSTALL_PATH}"
 _ament_prefix_path_add "${_INSTALL_PATH}"
 
 unset _pathadd

@@ -96,7 +96,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/zoner.cpp
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
-
+    strategy/coordinator/kicker_picker.cpp
         )
 
 set(SOCCER_TEST_SRC
@@ -145,6 +145,8 @@ set(AGENT_ACTION_CLIENT_NODE_SRC strategy/agent/agent_action_client_main.cpp)
 
 set(STRAIGHT_LINE_TEST_NODE_SRC strategy/agent/straight_line_test_main.cpp)
 
+set(KICKER_PICKER_NODE_SRC strategy/coordinator/kicker_picker_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -190,6 +192,9 @@ target_sources(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_SRC})
 
 # --- straight_line_test_node ----
 target_sources(straight_line_test_node PRIVATE ${STRAIGHT_LINE_TEST_NODE_SRC})
+
+# ---- kicker_picker_node ----
+target_sources(kicker_picker_node PRIVATE ${KICKER_PICKER_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
