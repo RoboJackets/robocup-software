@@ -87,7 +87,16 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                     break;
             }
         }
-        
+
+        switch (intent.shoot_mode) {
+            case RobotIntent::ShootMode::CHIP:
+                trajectory.shoot_mode = planning::Trajectory::ShootMode::CHIP;
+                break;
+            case RobotIntent::ShootMode::KICK:
+                trajectory.shoot_mode = planning::Trajectory::ShootMode::KICK;
+                break;
+        }
+
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                       .shoot_mode(trajectory.shoot_mode)
