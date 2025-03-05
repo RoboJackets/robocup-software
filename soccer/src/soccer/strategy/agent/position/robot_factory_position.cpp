@@ -154,7 +154,23 @@ void RobotFactoryPosition::update_position() {
                         }
                     } else {
                         if (current_play_state_.is_kickoff()) { // TODO: Change to update position such that a formation is created
-                            set_current_position<Defense>();
+                            if (robot_id_ == 5) {
+                                set_current_position<Offense>();
+                                Position* base_pos = current_position_.get();
+                                if (dynamic_cast<Offense*>(base_pos) != nullptr) {
+                                    Offense* offense_pos = dynamic_cast<Offense*>(base_pos);
+                                    offense_pos->join_kickoff_formation({1.8, 3.5});
+                                }
+                            } else if (robot_id_ == 4) {
+                                set_current_position<Offense>();
+                                Position* base_pos = current_position_.get();
+                                if (dynamic_cast<Offense*>(base_pos) != nullptr) {
+                                    Offense* offense_pos = dynamic_cast<Offense*>(base_pos);
+                                    offense_pos->join_kickoff_formation({-1.8, 3.5});
+                                }
+                            } else {
+                                set_current_position<Defense>();
+                            }
                         } else if (current_play_state_.is_penalty()) {
                             // set_current_position<SmartIdle>();
                             set_current_position<PenaltyNonKicker>();
@@ -173,7 +189,7 @@ void RobotFactoryPosition::update_position() {
                 }
 
             } else {  // Their restart
-                if (current_play_state_.is_kickoff()) { // TODO: Possibly change to create a formation. May not be necessary; ball is not ours
+                if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();

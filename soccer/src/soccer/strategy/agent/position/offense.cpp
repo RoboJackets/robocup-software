@@ -177,6 +177,23 @@ Offense::State Offense::next_state() {
 
             return SHOOTING;
         }
+
+        case KICKOFF_FORMATION_START: {
+            if (current_play_state_.is_kickoff() && !check_is_done()) {
+                return KICKOFF_FORMATION_START;
+            } else if (current_play_state_.is_kickoff()) {
+                return KICKOFF_FORMATION;
+            } else {
+                return DEFAULT;
+            }
+        }
+
+        case KICKOFF_FORMATION: {
+            if (!current_play_state_.is_kickoff()) {
+                return DEFAULT;
+            }
+            return KICKOFF_FORMATION;
+        }
     }
 }
 
@@ -336,6 +353,16 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
             intent.kick_speed = 4.0;
 
+            return intent;
+        }
+
+        case KICKOFF_FORMATION_START: {
+            rj_geometry::Point formation_pos = 
+                rj_geometry::Point(formation_point_.at(0), formation_point_.at(1));
+            planning::LinearMotionInstant target {formation_pos};
+            auto go_to_cmd = planning::MotionCommand{"path_target", target, planning::FaceBall{}};
+
+            intent.motion_command = go_to_cmd;
             return intent;
         }
     }
@@ -607,5 +634,17 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_request.urgent = false;
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
+}
+
+// NOTE: If the kickoff formation implementation changes this method will also need to
+void Offense::join_kickoff_formation(std::vector<double> point) {
+    if (point.size() != 2) {
+        SPDLOG_INFO("Invalid point for kickoff formation.");
+    }
+
+    formation_point_ = point;
+
+    current_state_ = Offense::State::KICKOFF_FORMATION_START;
+
 }
 }  // namespace strategy
