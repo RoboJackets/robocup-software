@@ -198,8 +198,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     }
 }
 
-void to_proto(const planning::Trajectory& trajectory, const MotionSetpoint& setpoint, int shell,
-              Packet::Robot* proto) {
+void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
+              const MotionSetpoint& setpoint, int shell, Packet::Robot* proto) {
     if (proto == nullptr) {
         return;
     }
@@ -212,7 +212,7 @@ void to_proto(const planning::Trajectory& trajectory, const MotionSetpoint& setp
     control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
     control->set_avelocity(static_cast<float>(setpoint.avelocity));
     control->set_dvelocity(trajectory.dribbler_speed);
-    control->set_kcstrength(kicker_speed_to_strength(trajectory.kick_speed));
+    control->set_kcstrength(kicker_speed_to_strength(intent.kick_speed));
 
     switch (trajectory.shoot_mode) {
         case RobotIntent::ShootMode::KICK:
@@ -266,7 +266,7 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     command->set_angular(static_cast<float>(setpoint.avelocity));
 
     sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * 
-        (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 1.0 : 0.0)));
+        (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 255.0 : 0.0)));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,

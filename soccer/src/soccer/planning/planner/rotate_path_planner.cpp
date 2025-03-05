@@ -19,15 +19,28 @@ namespace planning {
 using namespace rj_geometry;
 
 Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
-    return pivot(request);  // type is Trajectory
+    update_state();
+    switch (current_state_) {
+        case PIVOT:
+            return pivot(request);
+        case KICK:
+            return kick(request);
+    }
+    return {};
+}
+
+void RotatePathPlanner::update_state() {
+    if (!cached_angle_change_) {
+        current_state_ = PIVOT;
+        return;
+    }
+    current_state_ = abs(cached_angle_change_.value()) <
+           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh)) ? 
+           KICK : PIVOT;
 }
 
 bool RotatePathPlanner::is_done() const {
-    if (!cached_angle_change_) {
-        return false;
-    }
-    return abs(cached_angle_change_.value()) <
-           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
+    return current_state_ == KICK;
 }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
@@ -55,7 +68,8 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
     Trajectory path{};
 
-    if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
+    if (cached_target_angle_.has_value() &&
+     (*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
         if (cached_path_) {
             path = cached_path_.value();
         } else {
@@ -75,6 +89,17 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     cached_target_angle_ = target_angle;
 
     return path;
+}
+
+Trajectory RotatePathPlanner::kick(const PlanRequest& request) {
+    auto trajectory = Trajectory{};
+    trajectory.append_instant(request.start);
+    trajectory.mark_angles_valid();
+    trajectory.stamp(RJ::now());
+    if (request.trigger_mode == RobotIntent::TriggerMode::AT_END) {
+        trajectory.trigger_mode = Trajectory::TriggerMode::ON_BREAK_BEAM;
+    }
+    return trajectory;
 }
 
 }  // namespace planning

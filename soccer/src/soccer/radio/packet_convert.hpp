@@ -57,8 +57,8 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
                 strategy::Positions role, bool blue_team);
 
-void to_proto(const planning::Trajectory& trajectory, const MotionSetpoint& setpoint,
-              int shell, Packet::Robot* proto);
+void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
+              const MotionSetpoint& setpoint, int shell, Packet::Robot* proto);
 
 void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, RobotCommand* sim);

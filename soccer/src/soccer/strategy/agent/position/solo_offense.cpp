@@ -60,7 +60,7 @@ SoloOffense::State SoloOffense::next_state() {
             if (check_is_done()) {
                 counter_ = 0;
                 kick_ = true;
-                return KICK;
+                return MARKER;
             }
             return ROTATE;
         }
@@ -109,6 +109,8 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
+            intent.kick_speed = 4.0;
             return intent;
         }
         case KICK: {

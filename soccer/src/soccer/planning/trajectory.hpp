@@ -438,7 +438,6 @@ public:
     Trajectory::ShootMode shoot_mode = Trajectory::ShootMode::KICK;
     Trajectory::TriggerMode trigger_mode = Trajectory::TriggerMode::STAND_DOWN;
     float dribbler_speed = 0;
-    float kick_speed = 0;
 private:
     // A sorted array of RobotInstants (by timestamp)
     RobotInstantSequence instants_;

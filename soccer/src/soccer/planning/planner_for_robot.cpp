@@ -71,14 +71,28 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 
         if (intent.dribbler_mode != RobotIntent::DribblerMode::NEUTRAL) {
             trajectory.dribbler_speed = 
-                (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 1.0 : 0.0;
+                (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
         }
-
+        
+        if (intent.trigger_mode != RobotIntent::TriggerMode::AT_END) {
+            switch (intent.trigger_mode) {
+                case RobotIntent::TriggerMode::STAND_DOWN:
+                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::STAND_DOWN;
+                    break;
+                case RobotIntent::TriggerMode::IMMEDIATE:
+                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::IMMEDIATE;
+                    break;
+                case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::ON_BREAK_BEAM;
+                    break;
+            }
+        }
+        
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
                                       .shoot_mode(trajectory.shoot_mode)
                                       .trigger_mode(trajectory.trigger_mode)
-                                      .kick_speed(trajectory.kick_speed)
+                                      .kick_speed(intent.kick_speed)
                                       .dribbler_speed(trajectory.dribbler_speed));
 
         /*
@@ -271,9 +285,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     Trajectory trajectory;
     try {
         trajectory = unsafe_plan_for_robot(request);
-        SPDLOG_INFO("Dribbler {} Speed: {}", robot_id_, trajectory.dribbler_speed);
     } catch (std::runtime_error exception) {
-        // SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
         // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = default_path_planner_.get();
@@ -314,7 +327,11 @@ bool PlannerForRobot::is_done() const {
         return false;
     }
 
-    return current_path_planner_->is_done();
+    if (current_path_planner_->is_done()) {
+        current_path_planner_->reset();
+        return true;
+    }
+    return false;
 }
 
 }  // namespace planning
