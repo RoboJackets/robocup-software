@@ -432,12 +432,13 @@ public:
      * @return The robot instants forming the keypoints of this trajectory, sequenced by time.
      */
     [[nodiscard]] const RobotInstantSequence& instants() const { return instants_; }
-    
+
     enum ShootMode { KICK, CHIP };
     enum TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
     Trajectory::ShootMode shoot_mode = Trajectory::ShootMode::KICK;
     Trajectory::TriggerMode trigger_mode = Trajectory::TriggerMode::STAND_DOWN;
     float dribbler_speed = 0;
+
 private:
     // A sorted array of RobotInstants (by timestamp)
     RobotInstantSequence instants_;

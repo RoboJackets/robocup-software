@@ -14,9 +14,9 @@
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory_collection.hpp"
+#include "robot_intent.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
-#include "robot_intent.hpp"
 
 namespace planning {
 

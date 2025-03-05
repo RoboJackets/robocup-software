@@ -13,9 +13,9 @@
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 #include <robot_intent.hpp>
 
+#include "planning/trajectory.hpp"
 #include "robot_status.hpp"
 #include "strategy/agent/position/positions.hpp"
-#include "planning/trajectory.hpp"
 
 #include "rc-fshare/rtp.hpp"
 
