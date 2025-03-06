@@ -664,8 +664,8 @@ Trajectory CollectPathPlanner::fine_approach(
                     start_instant.position() +
                         Point::direction(AngleFns::face_point(ball.position)(
                             start_instant.linear_motion(), start_instant.heading(), nullptr))));
-        plan_request.debug_drawer->draw_text("Fine Approach", start_instant.position() + Point(.1, .1),
-                                             QColor(255, 255, 255));
+        plan_request.debug_drawer->draw_text(
+            "Fine Approach", start_instant.position() + Point(.1, .1), QColor(255, 255, 255));
     }
 
     path_hit.dribbler_speed = 255;

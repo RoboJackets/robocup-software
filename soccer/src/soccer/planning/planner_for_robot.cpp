@@ -70,10 +70,10 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
         if (intent.dribbler_mode != RobotIntent::DribblerMode::NEUTRAL) {
-            trajectory.dribbler_speed = 
+            trajectory.dribbler_speed =
                 (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
         }
-        
+
         if (intent.trigger_mode != RobotIntent::TriggerMode::AT_END) {
             switch (intent.trigger_mode) {
                 case RobotIntent::TriggerMode::STAND_DOWN:

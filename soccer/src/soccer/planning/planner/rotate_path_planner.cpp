@@ -35,13 +35,12 @@ void RotatePathPlanner::update_state() {
         return;
     }
     current_state_ = abs(cached_angle_change_.value()) <
-           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh)) ? 
-           KICK : PIVOT;
+                             degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh))
+                         ? KICK
+                         : PIVOT;
 }
 
-bool RotatePathPlanner::is_done() const {
-    return current_state_ == KICK;
-}
+bool RotatePathPlanner::is_done() const { return current_state_ == KICK; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
@@ -69,7 +68,7 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     Trajectory path{};
 
     if (cached_target_angle_.has_value() &&
-     (*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
+        (*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
         if (cached_path_) {
             path = cached_path_.value();
         } else {
