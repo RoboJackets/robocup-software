@@ -16,14 +16,18 @@ public:
     static constexpr uint8_t kInvalidRobotId = kNumShells;
 
     KickerPicker();
-    ~KickerPicker() = default;
+    ~KickerPicker() override = default;
+    KickerPicker(const KickerPicker&) = delete;
+    KickerPicker& operator=(const KickerPicker&) = delete;
+    KickerPicker(KickerPicker&&) = delete;
+    KickerPicker& operator=(KickerPicker&&) = delete;
 
     void service_callback(RequestPtr request, ResponsePtr response);
 
 private:
     void publish_selected_kicker();
 
-    std::array<bool, kNumShells> kicker_group_members_ = {false};  // All elements initialized to false
+    std::array<bool, kNumShells> wants_to_kick_by_id_ = {false};  // All elements initialized to false
     WorldState last_world_state_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     uint8_t last_published_kicker_ = kInvalidRobotId;  // Track last published kicker

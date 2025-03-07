@@ -19,16 +19,12 @@ KickerPicker::KickerPicker()
 }
 
 void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
-    bool membership_changed = false;
-    if (request->wants_to_kick) {
-        membership_changed = !kicker_group_members_[request->robot_id];
-        kicker_group_members_[request->robot_id] = true;
-    } else {
-        membership_changed = kicker_group_members_[request->robot_id];
-        kicker_group_members_[request->robot_id] = false;
-    }
+    bool membership_changed = wants_to_kick_by_id_[request->robot_id] != request->wants_to_kick;
+
+    wants_to_kick_by_id_[request->robot_id] = request->wants_to_kick;
 
     if (membership_changed) {
+        // Potential concern: this slows down the callback. Will agents be busy-waiting on a response?
         publish_selected_kicker();
     }
 
@@ -38,12 +34,12 @@ void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
 void KickerPicker::publish_selected_kicker() {
     // Find closest robot to ball among group members
     double min_distance = std::numeric_limits<double>::infinity();
-    uint8_t selected_kicker = kInvalidRobotId; // 
+    uint8_t selected_kicker = kInvalidRobotId;
 
     const auto& ball_pos = last_world_state_.ball.position;
 
     for (uint8_t i = 0; i < kNumShells; ++i) {
-        if (kicker_group_members_[i]) {
+        if (wants_to_kick_by_id_[i]) {
             const auto& robot = last_world_state_.get_robot(true, i);
             double distance = ball_pos.dist_to(robot.pose.position());
             if (distance < min_distance) {
