@@ -163,12 +163,7 @@ private:
     // us to set this once initially
     const int robot_id_;
 
-    /*
-     * @return thread-safe ptr to most recent world_state
-     */
-    [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
-    mutable std::mutex world_state_mutex_;
 };  // class AgentActionClient
 
 }  // namespace strategy

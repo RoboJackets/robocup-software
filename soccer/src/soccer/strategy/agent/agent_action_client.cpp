@@ -84,9 +84,6 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     }
 
     WorldState world_state = rj_convert::convert_from_ros(*msg);
-    // avoid mutex issues w/ world state (probably not an issue in AC, but
-    // already here so why not)
-    auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
 }
 
@@ -132,21 +129,18 @@ void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings:
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
         return alive_robots_.at(robot_id);
-    } else {
-        if (this->world_state()->get_robot(true, robot_id).visible) {
-            rj_geometry::Point robot_position =
-                this->world_state()->get_robot(true, robot_id).pose.position();
-            rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
-            padded_field_rect.pad(field_padding_);
-            return padded_field_rect.contains_point(robot_position);
-        }
-        return false;
     }
+    if (last_world_state_.get_robot(true, robot_id).visible) {
+        rj_geometry::Point robot_position =
+            last_world_state_.get_robot(true, robot_id).pose.position();
+        rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
+        padded_field_rect.pad(field_padding_);
+        return padded_field_rect.contains_point(robot_position);
+    }
+    return false;
 }
 
 void AgentActionClient::get_task() {
-    auto lock = std::lock_guard(world_state_mutex_);
-
     auto optional_task =
         current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
 
@@ -177,31 +171,19 @@ void AgentActionClient::send_new_goal() {
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
-    send_goal_options.goal_response_callback = [this](auto arg) {
-        goal_response_callback(arg);
-    };
+    send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
     send_goal_options.feedback_callback = [this](auto arg1, auto arg2) {
         feedback_callback(arg1, arg2);
     };
-    send_goal_options.result_callback = [this](auto arg) {
-        result_callback(arg);
-    };
+    send_goal_options.result_callback = [this](auto arg) { result_callback(arg); };
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
-}
-
-[[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
 }
 
 // With the get_task function deleted, we need to initialize the new class once
 // in the initializer. This will call the class which will analyze the
 // situation based on the current tick.
 
-void AgentActionClient::goal_response_callback(
-    GoalHandleRobotMove::SharedPtr goal_handle) {
-
+void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr goal_handle) {
     if (!goal_handle) {
         current_position_->set_goal_canceled();
     }
