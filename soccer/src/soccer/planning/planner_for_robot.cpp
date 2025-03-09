@@ -73,7 +73,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
             trajectory.dribbler_speed =
                 (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
         }
-        
+
         switch (intent.trigger_mode) {
             case RobotIntent::TriggerMode::STAND_DOWN:
                 trajectory.trigger_mode = planning::Trajectory::TriggerMode::STAND_DOWN;
