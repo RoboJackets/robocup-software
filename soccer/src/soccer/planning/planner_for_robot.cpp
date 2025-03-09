@@ -73,19 +73,19 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
             trajectory.dribbler_speed =
                 (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
         }
-
-        if (intent.trigger_mode != RobotIntent::TriggerMode::AT_END) {
-            switch (intent.trigger_mode) {
-                case RobotIntent::TriggerMode::STAND_DOWN:
-                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::STAND_DOWN;
-                    break;
-                case RobotIntent::TriggerMode::IMMEDIATE:
-                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::IMMEDIATE;
-                    break;
-                case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-                    trajectory.trigger_mode = planning::Trajectory::TriggerMode::ON_BREAK_BEAM;
-                    break;
-            }
+        
+        switch (intent.trigger_mode) {
+            case RobotIntent::TriggerMode::STAND_DOWN:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::STAND_DOWN;
+                break;
+            case RobotIntent::TriggerMode::IMMEDIATE:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::IMMEDIATE;
+                break;
+            case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::ON_BREAK_BEAM;
+                break;
+            default:
+                break;
         }
 
         switch (intent.shoot_mode) {

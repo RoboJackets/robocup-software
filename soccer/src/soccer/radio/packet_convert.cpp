@@ -172,10 +172,10 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp_message->body_w =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->dribbler_speed = std::clamp<uint16_t>(
-        static_cast<uint16_t>((intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 1.0 : 0.0) *
-                              kMaxDribble),
-        0, 255);
+    rtp_message->dribbler_speed =
+        std::clamp<uint16_t>(static_cast<uint16_t>((
+            intent.dribbler_mode == RobotIntent::DribblerMode::ON ? kMaxDribble : 0.0
+        )), 0, 255);
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
         rtp_message->shoot_mode = 1;
