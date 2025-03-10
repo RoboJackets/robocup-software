@@ -9,128 +9,153 @@ SoloOffense::SoloOffense(const Position& other) : Position{other} {
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
-    // Get next state, and if different, reset clock
-    State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    // Get next state.
+    State new_state = DEFAULT;
+    if (!timed_out()) { // on timeout, move to DEFAULT
+        new_state = next_state();
+    }
+
+    // Check if a transition occurred.
+    if (new_state != current_state_) {
+        SPDLOG_INFO("Robot {}: Transitioned from {} -> {}", robot_id_,  state_to_name(current_state_),  state_to_name(new_state));
+        reset_timeout();
+    }
     current_state_ = new_state;
 
     // Calculate task based on state
     return state_to_task(intent);
 }
 
+/**
+ * @brief A richer to_string.
+ */
 std::string SoloOffense::get_current_state() {
-    return std::string{"Solo Offense"} + std::to_string(static_cast<int>(current_state_));
+    return std::string("SoloOffense-") + std::string(state_to_name(current_state_)); // SoloOffense-MARKER, e.g.
 }
 
+/**
+ * @brief State transitions.
+ */
 SoloOffense::State SoloOffense::next_state() {
-    // handle transitions between current state
-    double closest_dist = std::numeric_limits<double>::infinity();
-    auto current_point = last_world_state_->ball.position;
+    rj_geometry::Point ball_pose = last_world_state_->ball.position;
+    rj_geometry::Point our_pose = last_world_state_->get_robot(true, robot_id_).pose.position();
+    double our_dist = our_pose.dist_to(ball_pose);
 
-    for (int i = 0; i < 6; i++) {
-        RobotState robot = last_world_state_->get_robot(false, i);
-        rj_geometry::Point opp_pos = robot.pose.position();
-        auto robot_dist = opp_pos.dist_to(current_point);
-        if (robot_dist < closest_dist) {
+
+    // Scan opponent positions to determine transition.
+    double closest_dist = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < 6; i++) { // TODO: replace 6 with number of opponent robots (to be proper)
+        RobotState opp = last_world_state_->get_robot(false, i);
+        rj_geometry::Point opp_pose = opp.pose.position();
+        double opp_dist = opp_pose.dist_to(ball_pose); // distance from opp to ball
+        if (opp_dist < closest_dist) {
             marking_id_ = i;
-            closest_dist = robot_dist;
+            closest_dist = opp_dist;
         }
     }
+    // marking_id_ contains the shell id of the opponent robot closest to the ball
+    // closest_dist contains the distance from the robot to the ball
 
-    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
-
-    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
-        field_dimensions_.their_defense_area().contains_point(current_point) ||
-        !field_dimensions_.field_coordinates().contains_point(current_point)) {
+    // UNCONDITIONAL TRANSITIONS
+    if (!field_dimensions_.field_coordinates().contains_point(ball_pose)) { // Ball OOB.
+        return DEFAULT;
+    }
+    if ((our_dist > closest_dist) && (closest_dist < kPosessionRadius)) { // Opponent vaguely has possession.
         return MARKER;
     }
+    // CONDITIONAL TRANSITIONS
     switch (current_state_) {
+        case DEFAULT:
+            return SHOOTING_START;
         case MARKER: {
-            return TO_BALL;
+            return SHOOTING_START;
         }
-        case TO_BALL: {
-            if (check_is_done()) {
-                return ROTATE;
-            }
-            return TO_BALL;
+        case SHOOTING_START: {
+            if (check_is_done()) { return SHOOTING_PIVOT; } // ball is collected
+            return SHOOTING_START;
         }
-        case ROTATE: {
-            if (check_is_done()) {
-                counter_ = 0;
-                kick_ = true;
-                return KICK;
-            }
-            return ROTATE;
+        case SHOOTING_PIVOT: {
+            if (check_is_done()) { return SHOOTING_KICK; } // is facing target
+            return SHOOTING_PIVOT;
         }
-        case KICK: {
-            if (!kick_ ||
-                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
-                        .mag() > kRobotRadius * 5) {
-                return TO_BALL;
-            }
-            return KICK;
+        case SHOOTING_KICK: {
+            if (our_pose.dist_to(ball_pose) > kPosessionRadius) { return DEFAULT; } // ball is kicked (or we've been robbed)
+            return SHOOTING_KICK;
         }
     }
     return current_state_;
 }
 
+/**
+ * @brief State behaviors.
+ */
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
-        case MARKER: {
-            auto marker_target_pos =
-                last_world_state_->get_robot(false, marking_id_).pose.position();
-            auto target =
-                marker_target_pos +
-                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
-            auto mark_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
-            intent.motion_command = mark_cmd;
+        case DEFAULT: {
+            auto cmd = planning::MotionCommand{"halt"};
 
+            intent.motion_command = cmd;
             return intent;
         }
-        case TO_BALL: {
+        case MARKER: {
+            auto mark_pose = last_world_state_->get_robot(false, marking_id_).pose.position();
+            auto mark_defend_pose = mark_pose + (field_dimensions_.our_goal_loc() - mark_pose).normalized(kMarkDistance);
+            // Move in between the mark and the goal.
+
+            auto cmd = planning::MotionCommand{
+                "path_target",
+                planning::LinearMotionInstant{mark_defend_pose},
+                planning::FaceBall{},
+                true
+            };
+
+            intent.motion_command = cmd;
+            return intent;
+        }
+        case SHOOTING_START: {
+            // TODO: coconut.vtf (deleting this section causes the simulator to crash)
             rj_geometry::Point robotToBall =
                 (last_world_state_->ball.position -
                  last_world_state_->get_robot(true, robot_id_).pose.position());
             double slowDown = 1.0;
             double length = robotToBall.mag() - kRobotRadius * slowDown;
             robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{
-                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            auto pivot_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = pivot_cmd;
+            planning::LinearMotionInstant target{last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            // END TODO
+
+            auto cmd = planning::MotionCommand{"collect"};
+
+            intent.motion_command = cmd;
             intent.dribbler_speed = 255;
             return intent;
         }
-        case ROTATE: {
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
-            intent.motion_command = pivot_cmd;
+        case SHOOTING_PIVOT: {
+            shot_target_ = calculate_best_shot();
+
+            auto cmd = planning::MotionCommand{
+                "rotate",
+                planning::LinearMotionInstant{shot_target_},
+                planning::FaceTarget{}, 
+                false
+            };
+
+            intent.motion_command = cmd;
             intent.dribbler_speed = 255;
             return intent;
         }
-        case KICK: {
-            // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position -
-            // last_world_state_->get_robot(true,
-            // robot_id_).pose.position()).normalized(scaleFactor); point +=
-            // last_world_state_->get_robot(true, robot_id_).pose.position();
-            // planning::LinearMotionInstant target{point};
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            // planning::LinearMotionInstant target{last_world_state_->ball.position};
-            auto kick_cmd =
-                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
-            intent.motion_command = kick_cmd;
+        case SHOOTING_KICK: {
+            auto cmd = planning::MotionCommand{
+                "path_target",
+                planning::LinearMotionInstant{shot_target_}, // target obtained from pivot
+                planning::FaceTarget{},
+                true
+            };
+
+            intent.motion_command = cmd;
+            intent.dribbler_speed = 255;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
-            counter_++;
-            if (counter_ > 15) {
-                kick_ = false;
-            }
+            intent.trigger_mode = RobotIntent::TriggerMode::IMMEDIATE;
+            intent.kick_speed = 4.0; // TODO: what's the best value for this?
 
             return intent;
         }
@@ -162,8 +187,7 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
     return best_shot;
 }
 
-double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
-                                               rj_geometry::Point head) const {
+double SoloOffense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 
@@ -186,4 +210,5 @@ double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
     }
     return min_angle;
 }
+
 }  // namespace strategy

@@ -302,7 +302,7 @@ protected:
     // true if this robot is alive
     bool alive = false;
 
-    // protected to allow WorldState to be accessed directly by deriveed
+    // protected to allow WorldState to be accessed directly by derivees
     WorldState* last_world_state_;
 
     // Current goalie

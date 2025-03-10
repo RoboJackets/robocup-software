@@ -16,6 +16,15 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
 
+    // Override for testing SoloOffense on branch solo-pivot-kick
+    if (robot_id_ == 0) {
+        current_position_ = std::make_unique<Goalie>(robot_id_);
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<SoloOffense>(robot_id_);
+    } else {
+        current_position_ = std::make_unique<Defense>(robot_id_);
+    }
+
     std::string node_name{"robot_factory_position_"};
     _node = std::make_shared<rclcpp::Node>(node_name.append(std::to_string(robot_id_)));
     override_play_sub_ = _node->create_subscription<rj_msgs::msg::OverridePosition>(
@@ -242,6 +251,9 @@ void RobotFactoryPosition::set_default_position() {
             robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
         }
     }
+
+    // Override for testing SoloOffense on branch solo-pivot-kick
+    return;
 
     std::sort(robots_copy.begin(), robots_copy.end(),
               [](RobotPos const& a, RobotPos const& b) { return a.second < b.second; });
