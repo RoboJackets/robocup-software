@@ -113,16 +113,6 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case SHOOTING_START: {
-            // TODO: coconut.vtf (deleting this section causes the simulator to crash)
-            rj_geometry::Point robotToBall =
-                (last_world_state_->ball.position -
-                 last_world_state_->get_robot(true, robot_id_).pose.position());
-            double slowDown = 1.0;
-            double length = robotToBall.mag() - kRobotRadius * slowDown;
-            robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            // END TODO
-
             auto cmd = planning::MotionCommand{"collect"};
 
             intent.motion_command = cmd;
