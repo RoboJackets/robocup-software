@@ -15,7 +15,7 @@ std::optional<RobotIntent> BallPlacer::derived_get_task(RobotIntent intent) {
 BallPlacer::State BallPlacer::update_state() {
     switch (latest_state_) {
         case COLLECT: {
-            if (check_is_done()) {
+            if (distance_to_ball() < kOwnBallRadius+0.1) {
                 return TRANSPORT;
             }
             break;
@@ -32,19 +32,20 @@ BallPlacer::State BallPlacer::update_state() {
 
 std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
-        case COLLECT: {  
-            intent.motion_command =
-                planning::MotionCommand{"collect"};
+        case COLLECT: { 
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
             intent.dribbler_speed = 255.0;
             return intent;
         }
         case TRANSPORT: {  
+            SPDLOG_INFO("TRANSPORT");
             auto ballPlacement = current_play_state_.ball_placement_point();
             intent.motion_command = planning::MotionCommand{};
             if(ballPlacement.has_value()) {
                 rj_geometry::Point target_vel{0.0, 0.0};
                 planning::LinearMotionInstant target{ballPlacement.value(), target_vel};
-                //something is wrong with the linker
+                
                 intent.motion_command =
                     planning::MotionCommand{"path_target", target,planning::FaceBall{}};
                 intent.dribbler_speed = 255.0;
