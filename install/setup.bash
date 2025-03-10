@@ -40,7 +40,6 @@ _pythonpath_add "${_INSTALL_PATH}/local/lib/python3.10/dist-packages"
 
 _path_add "${_INSTALL_PATH}/bin"
 _ld_library_path_add "${_INSTALL_PATH}/lib"
-echo "${_INSTALL_PATH}"
 _ament_prefix_path_add "${_INSTALL_PATH}"
 
 unset _pathadd
