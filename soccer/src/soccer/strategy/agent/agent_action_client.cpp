@@ -79,6 +79,7 @@ AgentActionClient::AgentActionClient(int r_id)
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+    SPDLOG_INFO("WorldStateCallback Start");
     if (current_position_ == nullptr) {
         return;
     }
@@ -88,9 +89,11 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     // already here so why not)
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
+    SPDLOG_INFO("WorldStateCallback Ran Successfully");
 }
 
 void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+    SPDLOG_INFO("PlayStateCallback Start");
     if (current_position_ == nullptr) {
         return;
     }
@@ -98,10 +101,12 @@ void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::Share
     PlayState play_state = rj_convert::convert_from_ros(*msg);
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
+    SPDLOG_INFO("PlayStateCallback");
 }
 
 void AgentActionClient::field_dimensions_callback(
     const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    SPDLOG_INFO("FieldDimensionsCallback start");
     if (current_position_ == nullptr) {
         return;
     }
@@ -109,35 +114,45 @@ void AgentActionClient::field_dimensions_callback(
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
+    SPDLOG_INFO("FieldDimsCallback");
 }
 
 void AgentActionClient::goalie_id_callback(int goalie_id) {
+    SPDLOG_INFO("Goalie Id Callback Start");
     if (current_position_) {
         current_position_->set_goalie_id(goalie_id);
     }
 
     goalie_id_ = goalie_id;
+    SPDLOG_INFO("Goalie ID Callback");
 }
 
 void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
+    SPDLOG_INFO("Alive Robots Callback Start");
     alive_robots_ = msg->alive_robots;
 
     current_position_->update_alive_robots(alive_robots_);
+    SPDLOG_INFO("Alive Robots Callback");
 }
 
 void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+    SPDLOG_INFO("Game Settings callback start");
     is_simulated_ = msg->simulation;
+    SPDLOG_INFO("Game Settings Callback");
 }
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
+    SPDLOG_INFO("check robot alive start");
     if (!is_simulated_) {
         return alive_robots_.at(robot_id);
+        SPDLOG_INFO("Check Robot Alive NoSim");
     } else {
         if (this->world_state()->get_robot(true, robot_id).visible) {
             rj_geometry::Point robot_position =
                 this->world_state()->get_robot(true, robot_id).pose.position();
             rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
             padded_field_rect.pad(field_padding_);
+            SPDLOG_INFO("Check Robot Alive Sim");
             return padded_field_rect.contains_point(robot_position);
         }
         return false;
@@ -145,28 +160,33 @@ bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
 }
 
 void AgentActionClient::get_task() {
+    SPDLOG_INFO("get_task Start");
     auto lock = std::lock_guard(world_state_mutex_);
 
     auto optional_task =
         current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
-
+    SPDLOG_INFO("optional_task set");
     if (optional_task.has_value()) {
+        SPDLOG_INFO("Get Task If Statement");
         RobotIntent task = optional_task.value();
 
         // note that because these are our RobotIntent structs, this comparison
         // uses our custom struct overloads
         if (task != last_task_) {
+            SPDLOG_INFO("Get Task Nested If Statement");
             last_task_ = task;
             send_new_goal();
         }
     }
-
+    SPDLOG_INFO("Get Task Before Publisher");
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
         rj_convert::convert_to_ros(current_position_->get_current_state())));
+    SPDLOG_INFO("Get Task");
 }
 
 void AgentActionClient::send_new_goal() {
     using namespace std::placeholders;
+    SPDLOG_INFO("Send New Goal Start");
 
     if (!client_ptr_->wait_for_action_server()) {
         SPDLOG_ERROR("Action server not available after waiting");
@@ -187,11 +207,14 @@ void AgentActionClient::send_new_goal() {
         result_callback(arg);
     };
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
+    SPDLOG_INFO("Send New Goal");
 }
 
 [[nodiscard]] WorldState* AgentActionClient::world_state() {
+    SPDLOG_INFO("world_state start");
     // thread-safe getter for world_state
     auto lock = std::lock_guard(world_state_mutex_);
+    SPDLOG_INFO("world_state");
     return &last_world_state_;
 }
 
@@ -231,6 +254,7 @@ void AgentActionClient::result_callback(const GoalHandleRobotMove::WrappedResult
 }
 
 void AgentActionClient::get_communication() {
+    SPDLOG_INFO("get_communication start");
     // Don't even humor requests from robots that aren't alive
     if (!check_robot_alive(robot_id_)) {
         return;
@@ -297,12 +321,14 @@ void AgentActionClient::get_communication() {
         buffered_response.urgent = communication_request.urgent;
         buffered_response.created = RJ::now();
         buffered_responses_.push_back(buffered_response);
+        SPDLOG_INFO("get_communication");
     }
 }
 
 void AgentActionClient::receive_communication_callback(
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
     const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
+    SPDLOG_INFO("receive_communication_callback start");
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
@@ -328,11 +354,13 @@ void AgentActionClient::receive_communication_callback(
                                                     pos_to_agent_response.response};
         response->agent_response = rj_convert::convert_to_ros(agent_response);
     }
+    SPDLOG_INFO("receive_communication_callback");
 }
 
 void AgentActionClient::receive_response_callback(
     const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
     u_int8_t robot_id) {
+    SPDLOG_INFO("receive_response_callback start");
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =
         rj_convert::convert_from_ros(response.get()->agent_response);
@@ -370,19 +398,23 @@ void AgentActionClient::receive_response_callback(
                  buffered_responses_[i].to_robot_ids.size())) {
                 current_position_->receive_communication_response(buffered_responses_[i]);
                 buffered_responses_.erase(buffered_responses_.begin() + i);
+                SPDLOG_INFO("receive_response_callback");
                 return;
             }
         }
     }
+    SPDLOG_INFO("receive_response_callback");
 }
 
 void AgentActionClient::check_communication_timeout() {
+    SPDLOG_INFO("check_comms_timeout start");
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (RJ::now() - buffered_responses_[i].created > timeout_duration_) {
             current_position_->receive_communication_response(buffered_responses_[i]);
             buffered_responses_.erase(buffered_responses_.begin() + i);
         }
     }
+    SPDLOG_INFO("check_comms_timeout");
 }
 
 }  // namespace strategy

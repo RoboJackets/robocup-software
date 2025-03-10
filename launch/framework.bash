@@ -20,10 +20,11 @@ trap 'kill $binary_pid; exit' INT
 echo "LINE_TEST: $1"
 if [[ "$1" == "line" ]]; then
     make run-line-test-stack
+elif [[ "$1" == "gdb" ]]; then
+    make run-our-stack-debug
 else
     make run-our-stack
 fi
 
 # Wait for the background process to complete
 wait $binary_pid
-
