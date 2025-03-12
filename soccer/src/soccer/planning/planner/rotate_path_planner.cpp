@@ -40,7 +40,8 @@ void RotatePathPlanner::update_state() {
                          : PIVOT;
 }
 
-// Assumes that we have called plan at least once while in the END state (this assumption should be always true given our current planning setup)
+// Assumes that we have called plan at least once while in the END state (this assumption should be
+// always true given our current planning setup)
 bool RotatePathPlanner::is_done() const { return current_state_ == END; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
