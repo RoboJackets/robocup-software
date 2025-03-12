@@ -206,7 +206,7 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
         ConvertRx::status_to_proto(status, rx);
 
         Packet::Robot* tx = log_frame->mutable_radio_tx()->add_robots();
-        ConvertTx::to_proto(trajectory, intent, setpoint, shell, tx);
+        ConvertTx::to_proto(trajectory, intent, setpoint, static_cast<int>(shell), tx);
     }
 
     // Opponent robots

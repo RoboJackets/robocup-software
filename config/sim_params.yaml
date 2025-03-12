@@ -47,7 +47,7 @@
   ros__parameters:
     collect:
       approach_accel_scale: 0.7
-      approach_dist_target: 0.5
+      approach_dist_target: 0.1
       ball_speed_approach_direction_cutoff: 0.1
       control_accel_scale: 0.5
       dist_cutoff_to_approach: 1.0

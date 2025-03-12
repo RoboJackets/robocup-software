@@ -35,7 +35,7 @@ struct PlanRequest {
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float kick_speed = 0,
                 RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN,
-                RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::NEUTRAL)
+                RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -134,7 +134,7 @@ struct PlanRequest {
     float kick_speed = 0;
 
     RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
-    RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::NEUTRAL;
+    RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT;
 };
 
 /**

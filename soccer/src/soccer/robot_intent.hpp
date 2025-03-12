@@ -13,8 +13,8 @@ struct RobotIntent {
 
     using Msg = rj_msgs::msg::RobotIntent;
     enum ShootMode { KICK, CHIP };
-    enum TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM, AT_END };
-    enum DribblerMode { OFF, ON, NEUTRAL };
+    enum TriggerMode { STAND_DOWN = 0, IMMEDIATE, ON_BREAK_BEAM, AT_END };
+    enum DribblerMode { OFF = 0, ON, DEFAULT };
 
     planning::MotionCommand motion_command;
 
@@ -23,7 +23,7 @@ struct RobotIntent {
 
     ShootMode shoot_mode = ShootMode::KICK;
     TriggerMode trigger_mode = TriggerMode::STAND_DOWN;
-    DribblerMode dribbler_mode = DribblerMode::NEUTRAL;
+    DribblerMode dribbler_mode = DribblerMode::DEFAULT;
     float kick_speed = 0;
 
     bool is_active = false;

@@ -69,7 +69,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto trajectory = safe_plan_for_robot(plan_request);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
-        if (intent.dribbler_mode != RobotIntent::DribblerMode::NEUTRAL) {
+        if (intent.dribbler_mode != RobotIntent::DribblerMode::DEFAULT) {
             trajectory.dribbler_speed =
                 (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
         }
