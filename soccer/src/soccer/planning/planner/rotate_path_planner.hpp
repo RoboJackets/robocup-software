@@ -41,10 +41,10 @@ private:
     PathTargetPathPlanner path_target_{};
 
     Trajectory pivot(const PlanRequest& request);
-    Trajectory kick(const PlanRequest& request);
+    Trajectory end(const PlanRequest& request);
     void update_state();
 
-    enum State { PIVOT, KICK };
+    enum State { PIVOT, END };
     RotatePathPlanner::State current_state_ = RotatePathPlanner::State::PIVOT;
 
     static constexpr double kIsDoneAngleChangeThresh{1.0};

@@ -23,8 +23,8 @@ Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
     switch (current_state_) {
         case PIVOT:
             return pivot(request);
-        case KICK:
-            return kick(request);
+        case END:
+            return end(request);
     }
     return {};
 }
@@ -36,11 +36,12 @@ void RotatePathPlanner::update_state() {
     }
     current_state_ = abs(cached_angle_change_.value()) <
                              degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh))
-                         ? KICK
+                         ? END
                          : PIVOT;
 }
 
-bool RotatePathPlanner::is_done() const { return current_state_ == KICK; }
+// Assumes that we have called plan at least once while in the END state (this assumption should be always true given our current planning setup)
+bool RotatePathPlanner::is_done() const { return current_state_ == END; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
@@ -90,7 +91,7 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     return path;
 }
 
-Trajectory RotatePathPlanner::kick(const PlanRequest& request) {
+Trajectory RotatePathPlanner::end(const PlanRequest& request) {
     auto trajectory = Trajectory{};
     trajectory.append_instant(request.start);
     trajectory.mark_angles_valid();
