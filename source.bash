@@ -1,6 +1,6 @@
 if [[ $SHELL == *"bash"* ]]; then
     echo "bash detected, sourcing bash"
-    source ~/tracing_ws/install/setup.bash
+    source /opt/ros/humble/setup.bash
     source install/setup.bash
 fi
 

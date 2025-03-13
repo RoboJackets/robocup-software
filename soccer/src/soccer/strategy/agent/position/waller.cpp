@@ -43,8 +43,8 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     SPDLOG_INFO("Waller Checkpoint 3");
     rj_geometry::Point target_point{};
     auto angle = (mid_point - goal_pos).angle();
-    auto delta_angle = (wall_spacing * (waller_pos_ - num_wallers / 2. - 0.5)) / min_wall_rad;
-    auto target_angle = angle - delta_angle;
+    auto delta_angle = (wall_spacing * (waller_pos_ - num_wallers / 2. - 0.5)) / min_wall_rad; // Why are we making this calculation and why change it
+    auto target_angle = angle - delta_angle;                                                   // when distance to the goal - min_wall_rad < krobotradius
 
     target_point =
         (goal_pos + rj_geometry::Point{1, 0}).normalized(min_wall_rad).rotated(target_angle);
