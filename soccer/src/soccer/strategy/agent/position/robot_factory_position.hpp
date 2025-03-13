@@ -32,6 +32,7 @@
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
+#include "strategy/coordinator/kicker_picker_client.hpp"
 
 namespace strategy {
 
@@ -41,7 +42,7 @@ namespace strategy {
  */
 class RobotFactoryPosition : public Position {
 public:
-    RobotFactoryPosition(int r_id);
+    RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node);
     ~RobotFactoryPosition() override = default;
 
     // Copy and move for this class is really annoying because it contains
@@ -120,6 +121,7 @@ private:
     void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr message);
     Strategy::OverridingPositions override_play_position_{Strategy::OverridingPositions::AUTO};
     rclcpp::Node::SharedPtr _node;
+    KickerPickerClient kicker_picker_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
