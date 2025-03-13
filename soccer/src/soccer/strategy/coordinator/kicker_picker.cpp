@@ -8,7 +8,7 @@
 namespace strategy {
 
 KickerPicker::KickerPicker() 
-    : Coordinator("kicker_picker_srv", "kicker_picker_data") {
+    : Coordinator("kicker_picker_srv", "kicker_picker_data", "kicker_picker_node") {
     // Subscribe to world state
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),

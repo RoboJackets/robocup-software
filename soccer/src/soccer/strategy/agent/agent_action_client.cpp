@@ -11,10 +11,10 @@ namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
-AgentActionClient::AgentActionClient() : AgentActionClient(0) {
-    // unclear why I need to explicitly create a default constructor, but compiler throws error when
-    // not here https://stackoverflow.com/questions/47704900/error-use-of-deleted-function
-}
+// AgentActionClient::AgentActionClient() : AgentActionClient(0) {
+//     // unclear why I need to explicitly create a default constructor, but compiler throws error when
+//     // not here https://stackoverflow.com/questions/47704900/error-use-of-deleted-function
+// }
 
 AgentActionClient::AgentActionClient(int r_id)
     : rclcpp::Node(::fmt::format("agent_{}_action_client_node", r_id),

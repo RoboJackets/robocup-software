@@ -57,7 +57,7 @@ release: all-release
 # run if build-release-debug/ exists from a previous build
 # and no CMake files or launch.py files have been changed
 again:
-	(cd build-release-debug/ && ninja install)
+	(cd build-debug/ && ninja install)
 
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim

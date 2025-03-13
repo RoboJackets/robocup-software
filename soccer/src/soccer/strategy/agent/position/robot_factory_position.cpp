@@ -7,7 +7,8 @@
 
 namespace strategy {
 
-RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFactoryPosition") {
+RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node) : Position(r_id, "RobotFactoryPosition"),
+    kicker_picker_(std::move(node), r_id) {
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
@@ -102,7 +103,7 @@ void RobotFactoryPosition::handle_setup() {
         // Set up our restart
 
         if (current_play_state_.is_kickoff() || current_play_state_.is_penalty()) {
-            start_kicker_picker();
+            kicker_picker_.join_group();
         } else {
             SPDLOG_WARN("Invalid restart setup!");
         }
@@ -115,7 +116,7 @@ void RobotFactoryPosition::handle_ready() {
 
     if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
-        start_kicker_picker();
+        kicker_picker_.join_group();
 
     } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
         if (current_position_->get_name() == "Offense" ||
