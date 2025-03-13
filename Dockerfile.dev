@@ -10,12 +10,6 @@ ENV DISPLAY=:1
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
 
-# Warn and exit if build arguments are not given
-RUN if [ -z TARGETARCH] then \
-    echo "****************************** ERROR ******************************"; \
-    echo "No target architecture was given. TARGETARCH is a required argument."; \
-    exit 1; \
-    fi
 
 # Update the package list and install necessary packages, including the missing ones
 RUN apt-get update && \
