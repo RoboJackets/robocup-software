@@ -191,7 +191,6 @@ def generate_launch_description():
                 executable="agent_action_client_node",
                 output="screen",
                 parameters=[param_config_filepath],
-                prefix=['xterm -e gdb -ex run --args'],
                 on_exit=Shutdown(),
             ),
             Node(

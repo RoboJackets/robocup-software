@@ -14,7 +14,6 @@ Position::Position(int r_id, std::string position_name)
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions,
                                               PlayState& play_state) {
-                                                SPDLOG_INFO("In Position::get_task");
     // Point class variables to parameter references
     // TODO (Prabhanjan): Don't copy references into local vars
     field_dimensions_ = field_dimensions;
@@ -26,11 +25,9 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
 
     // if world_state invalid, return empty MotionCommand (equivalent to HALT)
     if (!assert_world_state_valid()) {
-        SPDLOG_INFO("Position::get_task if world state invalid");
         intent.motion_command = planning::MotionCommand{};
         return intent;
     }
-    SPDLOG_INFO("Position::get_task running derived_get_task");
     // delegate to derived class to complete behavior
     return derived_get_task(intent);
 }

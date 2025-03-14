@@ -27,7 +27,6 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id) : Position(r_id, "RobotFact
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
-        SPDLOG_INFO("In RobotFactoryPosition::derived_get_task");
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
