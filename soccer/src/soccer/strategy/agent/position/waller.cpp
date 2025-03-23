@@ -47,15 +47,18 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
 
     if (abs(robot_pos.dist_to(goal_pos) - min_wall_rad) < kRobotRadius &&
         robot_pos.dist_to(target_point) > kRobotRadius) {
-        uint8_t parent_id = robot_id; // Assigning a value to avoid any undefined behavior; will be changed
-
-        if (target_point.x() < robot_pos.x() && waller_pos_ > 1 && waller_pos_ <= num_wallers) {
-            parent_id = walling_robots_[waller_pos_ - 2];
-        } else if (target_point.x() >= robot_pos.x() && waller_pos_ >= 1 && waller_pos_ < num_wallers) {
-            parent_id = walling_robots_[waller_pos_];
-        } else {
-            parent_id = robot_id;
-        }
+        uint8_t parent_id =
+            [&]() {  // Assigning a value to avoid any undefined behavior; will be changed
+                if (target_point.x() < robot_pos.x() && waller_pos_ > 1 &&
+                    waller_pos_ <= num_wallers) {
+                    return static_cast<uint8_t>(walling_robots_[waller_pos_ - 2]);
+                } else if (target_point.x() >= robot_pos.x() && waller_pos_ >= 1 &&
+                           waller_pos_ < num_wallers) {
+                    return static_cast<uint8_t>(walling_robots_[waller_pos_]);
+                } else {
+                    return static_cast<uint8_t>(robot_id);
+                }
+            }();
 
         if ((target_point.x() < robot_pos.x() && waller_pos_ != 1) ||
             (target_point.x() > robot_pos.x() && waller_pos_ != num_wallers)) {
