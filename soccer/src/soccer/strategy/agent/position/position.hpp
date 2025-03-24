@@ -20,6 +20,7 @@
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
+#include "overriding_positions.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -230,7 +231,7 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
-    virtual void set_override_position(const rj_msgs::msg::OverridePosition::SharedPtr message) {};
+    virtual void set_override_position(const strategy::OverridingPositions overriding_position) {};
 
 protected:
     Position(int r_id, std::string position_name);

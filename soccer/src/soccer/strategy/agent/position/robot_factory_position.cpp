@@ -330,9 +330,8 @@ std::string RobotFactoryPosition::get_current_state() {
 }
 
 void RobotFactoryPosition::set_override_position(
-    const rj_msgs::msg::OverridePosition::SharedPtr message) {
-    override_play_position_ =
-        static_cast<Strategy::OverridingPositions>(message->overriding_position);
+    const strategy::OverridingPositions overriding_position) {
+    override_play_position_ = overriding_position;
 }
 
 /**
@@ -341,39 +340,39 @@ void RobotFactoryPosition::set_override_position(
  */
 bool RobotFactoryPosition::set_position_override_if_requested() {
     switch (override_play_position_) {
-        case Strategy::OverridingPositions::OFFENSE: {
+        case strategy::OverridingPositions::OFFENSE: {
             set_current_position<Offense>();
             return true;
         }
-        case Strategy::OverridingPositions::DEFENSE: {
+        case strategy::OverridingPositions::DEFENSE: {
             set_current_position<Defense>();
             return true;
         }
-        case Strategy::OverridingPositions::FREE_KICKER: {
+        case strategy::OverridingPositions::FREE_KICKER: {
             set_current_position<FreeKicker>();
             return true;
         }
-        case Strategy::OverridingPositions::PENALTY_PLAYER: {
+        case strategy::OverridingPositions::PENALTY_PLAYER: {
             set_current_position<PenaltyPlayer>();
             return true;
         }
-        case Strategy::OverridingPositions::PENALTY_NON_KICKER: {
+        case strategy::OverridingPositions::PENALTY_NON_KICKER: {
             set_current_position<PenaltyNonKicker>();
             return true;
         }
-        case Strategy::OverridingPositions::SMART_IDLE: {
+        case strategy::OverridingPositions::SMART_IDLE: {
             set_current_position<SmartIdle>();
             return true;
         }
-        case Strategy::OverridingPositions::SOLO_OFFENSE: {
+        case strategy::OverridingPositions::SOLO_OFFENSE: {
             set_current_position<SoloOffense>();
             return true;
         }
-        case Strategy::OverridingPositions::ZONER: {
+        case strategy::OverridingPositions::ZONER: {
             set_current_position<Zoner>();
             return true;
         }
-        case Strategy::OverridingPositions::IDLE: {
+        case strategy::OverridingPositions::IDLE: {
             set_current_position<Idle>();
             return true;
         }

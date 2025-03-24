@@ -118,7 +118,7 @@ void AgentActionClient::field_dimensions_callback(
 void AgentActionClient::test_play_callback(
     const rj_msgs::msg::OverridePosition::SharedPtr message) {
     if (current_position_) {
-        current_position_->set_override_position(message);
+        current_position_->set_override_position(static_cast<strategy::OverridingPositions>(message->overriding_position));
     }
 }
 
