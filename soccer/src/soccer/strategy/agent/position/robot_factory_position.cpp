@@ -153,8 +153,9 @@ void RobotFactoryPosition::update_position() {
                             set_current_position<PenaltyPlayer>();
                         }
                     } else {
-                        if (current_play_state_.is_kickoff()) { // TODO: Change to update position such that a formation is created
-                            if (robot_id_ == 5) {
+                        if (current_play_state_.is_kickoff()) {  // Sets up a kickoff formation
+                            if (robot_id_ ==
+                                5) {  // NOTE: Will be replaced when Coordinators are added
                                 set_current_position<Offense>();
                                 Position* base_pos = current_position_.get();
                                 if (dynamic_cast<Offense*>(base_pos) != nullptr) {

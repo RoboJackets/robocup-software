@@ -50,20 +50,19 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        DEFAULT,                   // Decide what to do
-        SEEKING_START,             // Calculate seeking point
-        SEEKING,                   // Get open
-        POSSESSION_START,          // Try to shoot and send pass request
-        POSSESSION,                // Holding the ball
-        PASSING_START,             // Prepare to pass
-        PASSING,                   // Getting rid of it
-        STEALING,                  // Getting the ball
-        RECEIVING_START,           // Facing the ball
-        RECEIVING,                 // Getting the ball from a pass
-        SHOOTING_START,            // Calculate shot
-        SHOOTING,                  // Winning the game
-        KICKOFF_FORMATION_START,   // Joining formation, i.e. going to a point
-        KICKOFF_FORMATION,         // Holding the point and facing the ball while in current game state
+        DEFAULT,            // Decide what to do
+        SEEKING_START,      // Calculate seeking point
+        SEEKING,            // Get open
+        POSSESSION_START,   // Try to shoot and send pass request
+        POSSESSION,         // Holding the ball
+        PASSING_START,      // Prepare to pass
+        PASSING,            // Getting rid of it
+        STEALING,           // Getting the ball
+        RECEIVING_START,    // Facing the ball
+        RECEIVING,          // Getting the ball from a pass
+        SHOOTING_START,     // Calculate shot
+        SHOOTING,           // Winning the game
+        KICKOFF_FORMATION,  // Going to pre-determined location for kickoff
     };
 
     /**
@@ -247,7 +246,7 @@ private:
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 
     // Spot that a robot in a formation must assume.
-    std::vector<double> formation_point_ {{0, 0}};
+    std::vector<double> formation_point_{{0, 0}};
 };
 
 }  // namespace strategy

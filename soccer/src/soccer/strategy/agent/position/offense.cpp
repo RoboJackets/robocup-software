@@ -178,21 +178,12 @@ Offense::State Offense::next_state() {
             return SHOOTING;
         }
 
-        case KICKOFF_FORMATION_START: {
-            if (current_play_state_.is_kickoff() && !check_is_done()) {
-                return KICKOFF_FORMATION_START;
-            } else if (current_play_state_.is_kickoff()) {
+        case KICKOFF_FORMATION: {
+            if (current_play_state_.is_kickoff()) {
                 return KICKOFF_FORMATION;
             } else {
                 return DEFAULT;
             }
-        }
-
-        case KICKOFF_FORMATION: {
-            if (!current_play_state_.is_kickoff()) {
-                return DEFAULT;
-            }
-            return KICKOFF_FORMATION;
         }
     }
 }
@@ -290,7 +281,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
-        case KICKOFF_FORMATION:
         case RECEIVING_START: {
             // Turn to face the ball
 
@@ -357,16 +347,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
-        case KICKOFF_FORMATION_START: {
-            rj_geometry::Point formation_pos = 
+        case KICKOFF_FORMATION: {
+            rj_geometry::Point formation_pos =
                 rj_geometry::Point(formation_point_.at(0), formation_point_.at(1));
-            planning::LinearMotionInstant target {formation_pos};
+            planning::LinearMotionInstant target{formation_pos};
             auto go_to_cmd = planning::MotionCommand{"path_target", target, planning::FaceBall{}};
 
             intent.motion_command = go_to_cmd;
             return intent;
         }
-
     }
 }
 
@@ -647,6 +636,5 @@ void Offense::join_kickoff_formation(std::vector<double> point) {
     formation_point_ = point;
 
     current_state_ = Offense::State::KICKOFF_FORMATION_START;
-
 }
 }  // namespace strategy
