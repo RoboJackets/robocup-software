@@ -15,12 +15,12 @@
 #include <rj_msgs/msg/alive_robots.hpp>
 
 #include "game_state.hpp"
+#include "overriding_positions.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rj_msgs/action/robot_move.hpp"
 #include "robot_intent.hpp"
 #include "world_state.hpp"
-#include "overriding_positions.hpp"
 
 // Communication
 #include "../communication/communication.hpp"
@@ -29,10 +29,10 @@
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
 #include <rj_msgs/msg/incoming_ball_request.hpp>
 #include <rj_msgs/msg/kicker_request.hpp>
+#include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
-#include <rj_msgs/msg/override_position.hpp>
 
 // Responses
 #include <rj_msgs/msg/acknowledge.hpp>
@@ -231,7 +231,7 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
-    virtual void set_override_position(const strategy::OverridingPositions overriding_position) {};
+    virtual void set_override_position(const strategy::OverridingPositions overriding_position){};
 
 protected:
     Position(int r_id, std::string position_name);

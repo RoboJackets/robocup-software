@@ -56,7 +56,7 @@ AgentActionClient::AgentActionClient(int r_id)
     override_play_sub_ = create_subscription<rj_msgs::msg::OverridePosition>(
         "override_position/robot_" + std::to_string(r_id), 1,
         [this](rj_msgs::msg::OverridePosition::SharedPtr msg) { test_play_callback(msg); });
-        
+
     robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
@@ -118,7 +118,8 @@ void AgentActionClient::field_dimensions_callback(
 void AgentActionClient::test_play_callback(
     const rj_msgs::msg::OverridePosition::SharedPtr message) {
     if (current_position_) {
-        current_position_->set_override_position(static_cast<strategy::OverridingPositions>(message->overriding_position));
+        current_position_->set_override_position(
+            static_cast<strategy::OverridingPositions>(message->overriding_position));
     }
 }
 
