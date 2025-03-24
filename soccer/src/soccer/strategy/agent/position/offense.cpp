@@ -627,7 +627,10 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_requests_.push_back(communication_request);
 }
 
-// NOTE: If the kickoff formation implementation changes this method will also need to
+// NOTE: This method will change when coordinators are added
+/**
+ * Joins a kickoff formation given a point as a vector of doubles.
+ */
 void Offense::join_kickoff_formation(std::vector<double> point) {
     if (point.size() != 2) {
         SPDLOG_INFO("Invalid point for kickoff formation.");
@@ -635,6 +638,6 @@ void Offense::join_kickoff_formation(std::vector<double> point) {
 
     formation_point_ = point;
 
-    current_state_ = Offense::State::KICKOFF_FORMATION_START;
+    current_state_ = Offense::State::KICKOFF_FORMATION;
 }
 }  // namespace strategy
