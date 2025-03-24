@@ -125,9 +125,9 @@ Offense::State Offense::next_state() {
                 // (because is_done for settle/collect are not great)
                 if (distance_to_ball() < kOwnBallRadius) {
                     return POSSESSION_START;
-                } else {
-                    return DEFAULT;
-                }
+                } 
+                return DEFAULT;
+                
             }
 
             return STEALING;
