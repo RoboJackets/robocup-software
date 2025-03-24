@@ -163,6 +163,8 @@ private Q_SLOTS:
     void on_fastKickoffYellow_clicked();
     void on_fastBlue_clicked();
     void on_fastYellow_clicked();
+    void on_fastPenaltyBlue_clicked();
+    void on_fastPenaltyYellow_clicked();
 
     // Robot Position Dropdowns and Reset Buttons
     void on_robotPosition_0_currentIndexChanged(int value);

@@ -142,7 +142,7 @@ public:
     }
     static PlayState playing() { return PlayState(State::Playing, Restart::None, false, {}); }
     static PlayState penalty_playing(bool ours) {
-        return PlayState(State::PenaltyPlaying, Restart::Penalty, ours, {});
+        return PlayState(State::PenaltyPlaying, Restart::None, ours, {});
     }
 
     bool operator==(const PlayState& other) const {

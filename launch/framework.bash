@@ -26,4 +26,3 @@ fi
 
 # Wait for the background process to complete
 wait $binary_pid
-

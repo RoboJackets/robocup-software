@@ -264,6 +264,47 @@
           </spacer>
          </item>
          <item>
+          <layout class="QVBoxLayout" name="Penalties">
+           <item>
+            <widget class="QPushButton" name="fastPenaltyBlue">
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/penalty_blue.svg</normaloff>:/icons/penalty_blue.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="fastPenaltyYellow">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/penalty_yellow.svg</normaloff>:/icons/penalty_yellow.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <layout class="QVBoxLayout" name="Kickoffs">
            <item>
             <widget class="QPushButton" name="fastKickoffBlue">
@@ -1813,7 +1854,6 @@
            </item>
           </layout>
          </widget>
-
          <widget class="QWidget" name="joystickTab">
           <attribute name="title">
            <string>Joystick</string>
@@ -1975,7 +2015,7 @@
              <height>671</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="positions_gridLayout" rowstretch="0" columnstretch="0,0,0,0" rowminimumheight="0">
+           <layout class="QGridLayout" name="positions_gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
             <property name="leftMargin">
              <number>11</number>
             </property>
@@ -2058,7 +2098,6 @@
               </property>
              </widget>
             </item>
-
             <item row="1" column="1">
              <widget class="QLabel" name="positionsLabel_1">
               <property name="text">
@@ -2129,7 +2168,6 @@
               </property>
              </widget>
             </item>
-
             <item row="2" column="1">
              <widget class="QLabel" name="positionsLabel_2">
               <property name="text">
@@ -2200,7 +2238,6 @@
               </property>
              </widget>
             </item>
-
             <item row="3" column="1">
              <widget class="QLabel" name="positionsLabel_3">
               <property name="text">
@@ -2271,7 +2308,6 @@
               </property>
              </widget>
             </item>
-
             <item row="4" column="1">
              <widget class="QLabel" name="positionsLabel_4">
               <property name="text">
@@ -2342,7 +2378,6 @@
               </property>
              </widget>
             </item>
-
             <item row="5" column="1">
              <widget class="QLabel" name="positionsLabel_5">
               <property name="text">
@@ -2413,7 +2448,6 @@
               </property>
              </widget>
             </item>
-
             <item row="6" column="1">
              <widget class="QLabel" name="positionsLabel_6">
               <property name="text">
@@ -2484,7 +2518,6 @@
               </property>
              </widget>
             </item>
-
             <item row="7" column="1">
              <widget class="QLabel" name="positionsLabel_7">
               <property name="text">
@@ -2555,7 +2588,6 @@
               </property>
              </widget>
             </item>
-
             <item row="8" column="1">
              <widget class="QLabel" name="positionsLabel_8">
               <property name="text">
@@ -2626,7 +2658,6 @@
               </property>
              </widget>
             </item>
-
             <item row="9" column="1">
              <widget class="QLabel" name="positionsLabel_9">
               <property name="text">
@@ -2697,7 +2728,6 @@
               </property>
              </widget>
             </item>
-
             <item row="10" column="1">
              <widget class="QLabel" name="positionsLabel_10">
               <property name="text">
@@ -2768,7 +2798,6 @@
               </property>
              </widget>
             </item>
-
             <item row="11" column="1">
              <widget class="QLabel" name="positionsLabel_11">
               <property name="text">
@@ -2839,7 +2868,6 @@
               </property>
              </widget>
             </item>
-
             <item row="12" column="1">
              <widget class="QLabel" name="positionsLabel_12">
               <property name="text">
@@ -2910,7 +2938,6 @@
               </property>
              </widget>
             </item>
-
             <item row="13" column="1">
              <widget class="QLabel" name="positionsLabel_13">
               <property name="text">
@@ -2981,7 +3008,6 @@
               </property>
              </widget>
             </item>
-
             <item row="14" column="1">
              <widget class="QLabel" name="positionsLabel_14">
               <property name="text">
@@ -3052,7 +3078,6 @@
               </property>
              </widget>
             </item>
-
             <item row="15" column="1">
              <widget class="QLabel" name="positionsLabel_15">
               <property name="text">
@@ -3123,7 +3148,6 @@
               </property>
              </widget>
             </item>
-
            </layout>
           </widget>
          </widget>
@@ -3140,7 +3164,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
