@@ -290,6 +290,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
+        case KICKOFF_FORMATION:
         case RECEIVING_START: {
             // Turn to face the ball
 
@@ -365,6 +366,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             intent.motion_command = go_to_cmd;
             return intent;
         }
+
     }
 }
 
