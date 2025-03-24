@@ -30,9 +30,9 @@ _pythonpath_add() {
     fi
 }
 
-_PYTHON_LIB_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))")
-_pythonpath_add "${_PYTHON_LIB_PATH}"
-unset _PYTHON_LIB_PATH
+# _PYTHON_LIB_PATH=$(python3 -c "import sysconfig; print(sysconfig.get_path('purelib'))")
+_pythonpath_add "${_INSTALL_PATH}/local/lib/python3.10/dist-packages"
+# unset _PYTHON_LIB_PATH
 
 _path_add "${_INSTALL_PATH}/bin"
 _ld_library_path_add "${_INSTALL_PATH}/lib"
