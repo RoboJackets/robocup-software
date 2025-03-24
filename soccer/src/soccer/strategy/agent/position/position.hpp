@@ -31,6 +31,7 @@
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_request.hpp>
+#include <rj_msgs/msg/override_position.hpp>
 
 // Responses
 #include <rj_msgs/msg/acknowledge.hpp>
@@ -228,6 +229,8 @@ public:
      * @brief setter for goalie id
      */
     virtual void set_goalie_id(int goalie_id);
+
+    virtual void set_override_position(const rj_msgs::msg::OverridePosition::SharedPtr message) {};
 
 protected:
     Position(int r_id, std::string position_name);
