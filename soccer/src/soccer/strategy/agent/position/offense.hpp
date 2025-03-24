@@ -41,7 +41,7 @@ public:
 
     std::string get_current_state() override;
 
-    void join_kickoff_formation(std::vector<double> point);
+    void join_kickoff_formation(rj_geometry::Point point);
 
 private:
     /**
@@ -246,7 +246,7 @@ private:
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 
     // Spot that a robot in a formation must assume.
-    std::vector<double> formation_point_{{0, 0}};
+    rj_geometry::Point formation_point_{0, 0};
 };
 
 }  // namespace strategy

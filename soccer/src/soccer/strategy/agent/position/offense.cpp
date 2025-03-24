@@ -348,9 +348,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case KICKOFF_FORMATION: {
-            rj_geometry::Point formation_pos =
-                rj_geometry::Point(formation_point_.at(0), formation_point_.at(1));
-            planning::LinearMotionInstant target{formation_pos};
+            planning::LinearMotionInstant target{formation_point_};
             auto go_to_cmd = planning::MotionCommand{"path_target", target, planning::FaceBall{}};
 
             intent.motion_command = go_to_cmd;
@@ -631,11 +629,7 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
 /**
  * Joins a kickoff formation given a point as a vector of doubles.
  */
-void Offense::join_kickoff_formation(std::vector<double> point) {
-    if (point.size() != 2) {
-        SPDLOG_INFO("Invalid point for kickoff formation.");
-    }
-
+void Offense::join_kickoff_formation(rj_geometry::Point point) {
     formation_point_ = point;
 
     current_state_ = Offense::State::KICKOFF_FORMATION;
