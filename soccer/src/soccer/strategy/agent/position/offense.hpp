@@ -117,6 +117,8 @@ private:
                 return RJ::Seconds{3};
             case SHOOTING:
                 return RJ::Seconds{-1};
+            case KICKOFF_FORMATION:
+                return RJ::Seconds{-1};
         }
     }
 
@@ -147,6 +149,8 @@ private:
                 return "SHOOTING_START";
             case SHOOTING:
                 return "SHOOTING";
+            case KICKOFF_FORMATION:
+                return "KICKOFF_FORMATION";
         }
     }
 
