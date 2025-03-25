@@ -172,8 +172,10 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp_message->body_w =
         static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->dribbler_speed =
-        std::clamp<uint16_t>(static_cast<uint16_t>(intent.dribbler_speed * kMaxDribble), 0, 255);
+    rtp_message->dribbler_speed = std::clamp<uint16_t>(
+        static_cast<uint16_t>(
+            (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? kMaxDribble : 0.0)),
+        0, 255);
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
         rtp_message->shoot_mode = 1;
@@ -196,8 +198,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     }
 }
 
-void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-              Packet::Robot* proto) {
+void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
+              const MotionSetpoint& setpoint, int shell, Packet::Robot* proto) {
     if (proto == nullptr) {
         return;
     }
@@ -209,10 +211,10 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
     control->set_xvelocity(static_cast<float>(setpoint.xvelocity));
     control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
     control->set_avelocity(static_cast<float>(setpoint.avelocity));
-    control->set_dvelocity(intent.dribbler_speed);
+    control->set_dvelocity(trajectory.dribbler_speed);
     control->set_kcstrength(kicker_speed_to_strength(intent.kick_speed));
 
-    switch (intent.shoot_mode) {
+    switch (trajectory.shoot_mode) {
         case RobotIntent::ShootMode::KICK:
             control->set_shootmode(Packet::Control_ShootMode_KICK);
             break;
@@ -221,7 +223,7 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int she
             break;
     }
 
-    switch (intent.trigger_mode) {
+    switch (trajectory.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
             control->set_triggermode(Packet::Control_TriggerMode_STAND_DOWN);
             break;
@@ -263,7 +265,9 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     command->set_left(-static_cast<float>(setpoint.xvelocity));
     command->set_angular(static_cast<float>(setpoint.avelocity));
 
-    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * intent.dribbler_speed));
+    sim->set_dribbler_speed(
+        static_cast<float>(PARAM_max_dribbler_speed *
+                           (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 255.0 : 0.0)));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, rtp::ControlMessage* rtp,
