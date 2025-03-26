@@ -48,7 +48,7 @@ private:
     //static constexpr int kMaxWallers{
     //    static_cast<int>(kNumShells)};  // This effectively turns off marking
     
-    int kMaxMarkers = 3;
+    int kMaxMarkers = 2;
 
     
     float marking_y_bound{FieldDimensions::kDefaultDimensions.length() / 4};
