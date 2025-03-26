@@ -117,3 +117,70 @@ uint8_t KickerPickerClient::selected_kicker() const { return selected_kicker_; }
 bool KickerPickerClient::is_selected() const { return selected_kicker_ == robot_id_; }
 
 }  // namespace strategy
+
+
+// class Position {
+
+//     void state_to_task() {
+
+//         //  I want to kicker-pick
+//         // option 1:
+//         client.join_group() // blocking
+//         if (client.am_i_member()) {
+//             // advance state
+//         }
+
+//         // option 2:
+//         client.join_group([](bool am_i_member){
+//             if (am_i_member) {
+//                 // am kicking member
+//                 state_ = BLAH;
+//             }
+//         });
+//         // advance state
+//         // state WAITING:
+//         // ??? hang out
+//         // state AM_KICKING_MEMBER:
+//         if (client.is_kicker()) {
+//             // kick
+//         } else {
+//             // hangout
+//         }
+
+//         // option 3:
+//         client.join_group();
+//         // advance state
+//         // state WAITING:
+//         if (client.am_i_member()) {
+//             // advance state
+//             // am kicking member
+//         }
+
+//         // option 4:
+//         client.join_group([](std::optional<int> wall_position){
+//             if (wall_position.has_value()) {
+//                 // wall in position;
+//             } else {
+//                 // sub was never made; do something else
+//             }
+//         });
+//         // state WAITING
+
+
+
+//         // inside state_to_task() function
+
+//         if current_state_ == SEEKING:
+//             if client.is_kicker(): 
+//                 state = STEALING;
+//             else if !client.am_i_member() && i_think_i_want_to_steal():
+//                 client.join_group()... ??
+
+//         // next_state():
+        
+        
+
+//         client.join_group();
+//     }
+
+// }
