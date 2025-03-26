@@ -33,6 +33,10 @@ BallPlacer::State BallPlacer::update_state() {
 std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
         case COLLECT: { 
+            SPDLOG_INFO("COLLECT");
+            // issue here relates to obstacle making within collect
+            // the ball has an obstacle around it when it's in STOP playstate
+            // go to plan_request.cpp check if(in.min_dist_from_ball....)
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
             intent.dribbler_speed = 255.0;
@@ -53,6 +57,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
                 SPDLOG_ERROR("Ball position was not retrieved from PlayState");
             }
             return intent;
+            break;
         }
     }
 

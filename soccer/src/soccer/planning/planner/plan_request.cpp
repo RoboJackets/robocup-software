@@ -65,7 +65,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
-    if (in.min_dist_from_ball > 0 || avoid_ball) {
+    if ((in.min_dist_from_ball > 0 && !in.play_state.ball_placement_point().has_value())|| avoid_ball) {
+        // COMMENT RELATING TO BALL PLACER THIS IS THE IF TO MODIFY !
         auto ball_obs =
             make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity,
                                      kBallRadius + kAvoidBallDistance);

@@ -147,9 +147,7 @@ void RobotFactoryPosition::update_position() {
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_our_restart()) {
                 if (have_all_kicker_responses()) {
-                    SPDLOG_INFO("have all kicker responses is true");
                     if (am_closest_kicker()) {
-                        SPDLOG_INFO("Amclosest() entered");
                         if (current_play_state_.is_free_kick()) {
                             set_current_position<FreeKicker>();
                         } else {
@@ -161,17 +159,14 @@ void RobotFactoryPosition::update_position() {
                         } else if (current_play_state_.is_penalty()) {
                             // set_current_position<SmartIdle>();
                             set_current_position<PenaltyNonKicker>();
-                        } else if (current_play_state_.ball_placement_point().has_value() || current_play_state_.is_free_kick()) {
+                        } else if (current_play_state_.is_free_kick()) {
                             // do what it was doing before foul
-                            if (robot_id_ == 1) {
-                                set_current_position<BallPlacer>();
-                                SPDLOG_INFO("SET BALL PLACER TO ROBOT 1");
-                            }
+                            set_default_position();
                             // don't want a player on offense to try to kick the
                             // ball instead of free kicker
-                            
-                            set_current_position<SmartIdle>();
-                            
+                            if (current_position_->get_name() == "Offense") {
+                                set_current_position<SmartIdle>();
+                            }
                         }
                     }
                 } else {
@@ -197,6 +192,7 @@ void RobotFactoryPosition::update_position() {
 
             break;
         }
+
 
         case PlayState::State::PenaltyPlaying:
         case PlayState::State::Stop: {

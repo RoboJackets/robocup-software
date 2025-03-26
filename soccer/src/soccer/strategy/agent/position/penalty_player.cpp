@@ -38,7 +38,6 @@ PenaltyPlayer::State PenaltyPlayer::update_state() {
             if (check_is_done()) {
                 return SHOOTING;
             }
-
             break;
         }
         case SHOOTING: {
