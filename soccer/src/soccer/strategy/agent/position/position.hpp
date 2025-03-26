@@ -231,8 +231,6 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
-    virtual void set_override_position(const strategy::OverridingPositions overriding_position){};
-
 protected:
     Position(int r_id, std::string position_name);
 

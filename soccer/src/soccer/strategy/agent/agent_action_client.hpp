@@ -68,12 +68,12 @@ private:
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
-    void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr message);
+    void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
-    std::unique_ptr<Position> current_position_;
+    std::unique_ptr<RobotFactoryPosition> current_position_;
 
     // ROS ActionClient spec, for calls to planning ActionServer
     rclcpp_action::Client<RobotMove>::SharedPtr client_ptr_;

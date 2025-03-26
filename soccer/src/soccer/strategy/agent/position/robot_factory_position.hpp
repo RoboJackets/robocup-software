@@ -110,12 +110,12 @@ public:
         current_position_->send_pass_confirmation(target_robot);
     }
 
-    void set_override_position(const strategy::OverridingPositions overriding_position) override;
+    void set_override_position(const OverridingPositions& overriding_position);
 
 private:
     std::unique_ptr<Position> current_position_;
 
-    strategy::OverridingPositions override_play_position_{strategy::OverridingPositions::AUTO};
+    OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 

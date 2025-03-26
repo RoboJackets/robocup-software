@@ -330,7 +330,7 @@ std::string RobotFactoryPosition::get_current_state() {
 }
 
 void RobotFactoryPosition::set_override_position(
-    const strategy::OverridingPositions overriding_position) {
+    const strategy::OverridingPositions& overriding_position) {
     override_play_position_ = overriding_position;
 }
 
