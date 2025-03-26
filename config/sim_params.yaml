@@ -1,3 +1,14 @@
+/gameplay_node:
+  ros__parameters:
+    use_sim_time: false
+
+/vision_receiver:
+  ros__parameters:
+    port: 10020  # ER-Force sim uses this port
+    hz: 120.0
+    use_sim_time: false
+    vision_interface: "127.0.0.1"
+
 /global_param_provider:
   ros__parameters:
     use_sim_time: false
@@ -19,6 +30,7 @@
     control:
       max_acceleration: 1.5
       max_velocity: 2.0
+      max_angular_velocity: 5.0
       rotation_kd: 0.0
       rotation_ki: 0.0
       rotation_kp: 8.0
