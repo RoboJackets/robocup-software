@@ -44,9 +44,9 @@ private:
     enum State {
         DEFAULT,
         MARKER,
-        SHOOTING_START, // collect
-        SHOOTING_PIVOT, // face goal
-        SHOOTING_KICK, // score
+        SHOOTING_START,  // collect
+        SHOOTING_PIVOT,  // face goal
+        SHOOTING_KICK,   // score
     };
 
     State current_state_ = State::DEFAULT;
@@ -73,7 +73,7 @@ private:
      * @brief This FSM has timeouts for certain states.
      * Ideally, these would not be necessary; as planners get more sophisticated
      * they should not get "stuck".
-     * 
+     *
      * The timeouts are a safety mechanism, and should not be the primary reason for a
      * state transition. They are set relatively high for this reason. Here, they're
      * currently used for debugging.
