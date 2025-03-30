@@ -26,6 +26,7 @@ public:
     void reset() override {
         cached_target_angle_ = std::nullopt;
         cached_angle_change_ = std::nullopt;
+        current_state_ = PIVOT;
     }
     [[nodiscard]] bool is_done() const override;
 
@@ -40,6 +41,11 @@ private:
     PathTargetPathPlanner path_target_{};
 
     Trajectory pivot(const PlanRequest& request);
+    Trajectory end(const PlanRequest& request);
+    void update_state();
+
+    enum State { PIVOT, END };
+    RotatePathPlanner::State current_state_ = RotatePathPlanner::State::PIVOT;
 
     static constexpr double kIsDoneAngleChangeThresh{1.0};
 };

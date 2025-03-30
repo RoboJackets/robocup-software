@@ -131,6 +131,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
 
             intent.motion_command = cmd;
             intent.dribbler_speed = 255;
+
             return intent;
         }
         case SHOOTING_KICK: {

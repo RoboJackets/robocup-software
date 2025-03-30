@@ -13,7 +13,8 @@ struct RobotIntent {
 
     using Msg = rj_msgs::msg::RobotIntent;
     enum ShootMode { KICK, CHIP };
-    enum TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
+    enum TriggerMode { STAND_DOWN = 0, IMMEDIATE, ON_BREAK_BEAM, AT_END };
+    enum DribblerMode { OFF = 0, ON, DEFAULT };
 
     planning::MotionCommand motion_command;
 
@@ -22,8 +23,8 @@ struct RobotIntent {
 
     ShootMode shoot_mode = ShootMode::KICK;
     TriggerMode trigger_mode = TriggerMode::STAND_DOWN;
+    DribblerMode dribbler_mode = DribblerMode::DEFAULT;
     float kick_speed = 0;
-    float dribbler_speed = 0;
 
     bool is_active = false;
 
@@ -47,8 +48,8 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
             .local_obstacles(convert_to_ros(from.local_obstacles))
             .shoot_mode(static_cast<uint8_t>(from.shoot_mode))
             .trigger_mode(static_cast<uint8_t>(from.trigger_mode))
+            .dribbler_mode(static_cast<uint8_t>(from.dribbler_mode))
             .kick_speed(convert_to_ros(from.kick_speed))
-            .dribbler_speed(convert_to_ros(from.dribbler_speed))
             .is_active(convert_to_ros(from.is_active))
             .priority(convert_to_ros(from.priority));
     }
@@ -60,8 +61,8 @@ struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
         result.local_obstacles = convert_from_ros(from.local_obstacles);
         result.shoot_mode = static_cast<RobotIntent::ShootMode>(from.shoot_mode);
         result.trigger_mode = static_cast<RobotIntent::TriggerMode>(from.trigger_mode);
+        result.dribbler_mode = static_cast<RobotIntent::DribblerMode>(from.dribbler_mode);
         result.kick_speed = convert_from_ros(from.kick_speed);
-        result.dribbler_speed = convert_from_ros(from.dribbler_speed);
         result.is_active = convert_from_ros(from.is_active);
         result.priority = convert_from_ros(from.priority);
         return result;

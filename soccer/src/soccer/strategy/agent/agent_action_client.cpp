@@ -149,7 +149,6 @@ void AgentActionClient::get_task() {
 
     auto optional_task =
         current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
-
     if (optional_task.has_value()) {
         RobotIntent task = optional_task.value();
 
@@ -160,7 +159,6 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
-
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
         rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
