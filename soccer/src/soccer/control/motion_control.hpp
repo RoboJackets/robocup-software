@@ -14,17 +14,6 @@
 
 namespace control {
 
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
-
 namespace testing {
 
 class MotionControlTest;
@@ -70,7 +59,7 @@ private:
      */
     void update_params();
 
-    static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
+    static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel, double max_velocity, double max_angular_velocity);
 
     int shell_id_;
 
@@ -95,6 +84,19 @@ private:
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
     rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
+
+    // params
+    double param_max_acceleration_; // 3.0 // not used
+    double param_max_velocity_; // 2.4
+    double param_max_angular_velocity_; // 5.0
+    double param_rotation_kp_; // 10.0
+    double param_rotation_ki_; // 0.0
+    double param_rotation_kd_; // 0.0
+    double param_rotation_windup_; // 0
+    double param_translation_kp_; // 0.6
+    double param_translation_ki_; // 0.0
+    double param_translation_kd_; // 0.3
+    double param_translation_windup_; // 0
 };
 
 }  // namespace control
