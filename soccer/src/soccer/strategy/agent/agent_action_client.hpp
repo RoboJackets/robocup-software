@@ -67,6 +67,7 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
     void goalie_id_callback(int goalie_id);
+    void callbackGlobalParam(std::shared_future<std::vector<rclcpp::Parameter>> parameters_future);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 

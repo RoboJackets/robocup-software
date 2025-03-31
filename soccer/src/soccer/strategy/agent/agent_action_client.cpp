@@ -76,6 +76,26 @@ AgentActionClient::AgentActionClient(int r_id)
             get_communication();
             check_communication_timeout();
         });
+
+    std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client =
+    std::make_shared<rclcpp::AsyncParametersClient>(this, "/global_param_provider");
+    parameters_client->wait_for_service();
+
+    auto parameters_future = parameters_client->get_parameters({"control/max_acceleration", "control/max_velocity",
+        "control/max_angular_velocity", "control/rotation_kp", "control/rotation_ki", "control/rotation_kd", "control/rotation_windup",
+        "control/translation_kp", "control/translation_ki", "control/translation_kd", "control/translation_windup"});
+    callbackGlobalParam(parameters_future);
+    //auto result = parameters_future.get();  // This will block until the result is available
+    //double param_max_acceleration_ = result.at(0).as_double();
+    //SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
+
+    SPDLOG_INFO("HELLO THERE");
+}
+
+void AgentActionClient::callbackGlobalParam(std::shared_future<std::vector<rclcpp::Parameter>> parameters_future) {
+    auto result = parameters_future.get();  // This will block until the result is available
+    double param_max_acceleration_ = result.at(0).as_double();
+    SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
