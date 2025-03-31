@@ -15,13 +15,25 @@ std::optional<RobotIntent> BallPlacer::derived_get_task(RobotIntent intent) {
 BallPlacer::State BallPlacer::update_state() {
     switch (latest_state_) {
         case COLLECT: {
-            if (distance_to_ball() < kOwnBallRadius+0.1) {
+            if (check_is_done()) {
+                return ROTATE;
+            }
+            break;
+        }
+        case ROTATE: {
+            if (check_is_done()) {
                 return TRANSPORT;
             }
             break;
         }
         case TRANSPORT: {
             if (check_is_done()) {
+                return STAND_BY;
+            }
+            break;
+        }
+        case STAND_BY: {
+            if (ball_to_point_distance() > 0.15) {
                 return COLLECT;
             }
             break;
@@ -32,7 +44,7 @@ BallPlacer::State BallPlacer::update_state() {
 
 std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
-        case COLLECT: { 
+        case COLLECT: { // MAKE SURE TO REMOVE GOAL KEEPER OBSTACLE!!!
             SPDLOG_INFO("COLLECT");
             // issue here relates to obstacle making within collect
             // the ball has an obstacle around it when it's in STOP playstate
@@ -40,6 +52,16 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
             intent.dribbler_speed = 255.0;
+            return intent;
+        }
+        case ROTATE: { // Phase causes immediate crash of simulator, suspicious of target setting
+            SPDLOG_INFO("ROTATE");
+            rj_geometry::Point target_vel{0.0, 0.0};
+            planning::LinearMotionInstant target{current_play_state_.ball_placement_point().value(), target_vel};
+            auto pivot_cmd =
+                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_speed = 255;
             return intent;
         }
         case TRANSPORT: {  
@@ -56,6 +78,23 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             } else {
                 SPDLOG_ERROR("Ball position was not retrieved from PlayState");
             }
+            return intent;
+            break;
+        }
+        case STAND_BY: {
+            SPDLOG_INFO("STAND BY");
+            double y_pos = last_world_state_->ball.position.y();
+            // Add 0.3 buffer space to the y_pos of the ball to ensure the robot does not
+            // hit the ball before being properly lined up behind it
+            y_pos -= kRobotRadius + 0.2;
+            rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
+            rj_geometry::Point target_vel{0.0, 0.0};
+            planning::PathTargetFaceOption face_option{planning::FaceBall{}};
+
+            // Create Motion Command
+            planning::LinearMotionInstant goal{target_pt, target_vel};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, planning::FaceBall{}};
             return intent;
             break;
         }

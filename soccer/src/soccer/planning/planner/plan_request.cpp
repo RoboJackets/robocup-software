@@ -65,20 +65,20 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
-    if ((in.min_dist_from_ball > 0 && !in.play_state.ball_placement_point().has_value())|| avoid_ball) {
-        // COMMENT RELATING TO BALL PLACER THIS IS THE IF TO MODIFY !
+    if (in.min_dist_from_ball > 0 || avoid_ball) {
         auto ball_obs =
             make_inflated_static_obs(in.world_state->ball.position, in.world_state->ball.velocity,
                                      kBallRadius + kAvoidBallDistance);
         ball_obs.radius(ball_obs.radius() + in.min_dist_from_ball);
 
-        // Draw ball obstacle in simulator
-        if (in.debug_drawer != nullptr) {
-            QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(ball_obs, draw_color);
+        if (!in.play_state.ball_placement_point().has_value()) { // LOOK OVER CONDITIONAL, CHECK WITH JACK
+            // Draw ball obstacle in simulator
+            if (in.debug_drawer != nullptr) {
+                QColor draw_color = Qt::red;
+                in.debug_drawer->draw_circle(ball_obs, draw_color);
+            }
+            out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
         }
-
-        out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
 
         auto maybe_bp_point = in.play_state.ball_placement_point();
         if (maybe_bp_point.has_value() && in.play_state.is_their_restart()) {

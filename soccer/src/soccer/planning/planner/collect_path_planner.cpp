@@ -15,11 +15,11 @@ namespace planning {
 
 Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     const auto state = plan_request.play_state.state();
-    if (state == PlayState::Stop || state == PlayState::Halt) {
+    if ((state == PlayState::Stop && plan_request.play_state.ball_placement_point().has_value() && plan_request.play_state.is_their_restart()) 
+        || state == PlayState::Halt) { // ALSO CHECK IF STATEMENT WITH JACK
         // This planner automatically fails if the robot is prohibited from touching the ball.
         return Trajectory{};
     }
-
     BallState ball = plan_request.world_state->ball;
 
     const RJ::Time cur_time = plan_request.start.stamp;
