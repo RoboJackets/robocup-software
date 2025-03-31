@@ -321,9 +321,6 @@ bool Position::can_steal_ball() const {
     }
 
     for (auto pal : this->last_world_state_->our_robots) {
-        // if (pal.robot_id_ == robot_id_) {
-        // continue;
-        // }
         auto dist = (pal.pose.position() - ball_position).mag();
         if (dist < our_dist) {
             closest = false;

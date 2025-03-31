@@ -210,11 +210,6 @@ private:
      */
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
-    // /**
-    //  * @brief Check if this agent could easily steal the ball
-    //  */
-    // bool can_steal_ball() const;
-
     /**
      * @return distance from this agent to ball
      */
