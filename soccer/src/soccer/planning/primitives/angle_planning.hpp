@@ -5,6 +5,7 @@
 #include <rj_common/utils.hpp>
 #include <rj_constants/constants.hpp>
 
+#include "control/trapezoidal_motion.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
@@ -68,6 +69,9 @@ inline AngleFunction face_point(const rj_geometry::Point point) {
                Eigen::Vector2d* jacobian) -> double {
 	
         if ((instant.position - point).mag() < kRobotRadius) {
+            if (jacobian != nullptr) {
+                *jacobian = Eigen::Vector2d::Zero();
+            }
             return previous_angle;
         }
 
@@ -114,4 +118,5 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
+constexpr double TIME_STEP = 0.001;
 }  // namespace planning

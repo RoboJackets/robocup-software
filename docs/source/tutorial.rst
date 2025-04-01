@@ -394,6 +394,7 @@ You can find the team color by subscribing to the relevant topic (this should
 become obvious after looking at the list of topics). To "pick a fruit", publish
 a standard `String Msg`_ 
 to a new topic ``/team_fruit``.
+
  * When our team color is yellow, publish "banana" to ``/team_fruit``.
  * When our team color is blue, publish "blueberries" to ``/team_fruit``.
 

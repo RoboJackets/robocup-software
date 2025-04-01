@@ -135,7 +135,7 @@ against the team's repository.
     pull request.
 
 Pull Requests (PR)
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 Pull requests are how we are able to review each others changes to the master
 branch. It helps you communicate your changes to ``ros2``. You can choose to
 create a pull request that is ready for review or draft a pull request. Draft

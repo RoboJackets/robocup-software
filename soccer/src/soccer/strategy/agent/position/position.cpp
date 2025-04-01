@@ -28,7 +28,6 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
         intent.motion_command = planning::MotionCommand{};
         return intent;
     }
-
     // delegate to derived class to complete behavior
     return derived_get_task(intent);
 }

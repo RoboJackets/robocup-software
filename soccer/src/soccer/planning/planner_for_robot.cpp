@@ -9,6 +9,7 @@
 #include "planning/planner/line_pivot_path_planner.hpp"
 #include "planning/planner/path_target_path_planner.hpp"
 #include "planning/planner/pivot_path_planner.hpp"
+#include "planning/planner/rotate_path_planner.hpp"
 #include "planning/planner/settle_path_planner.hpp"
 
 namespace planning {
@@ -32,6 +33,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();
     path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
     path_planners_[LinePivotPathPlanner().name()] = std::make_unique<LinePivotPathPlanner>();
+    path_planners_[RotatePathPlanner().name()] = std::make_unique<RotatePathPlanner>();
     path_planners_[EscapeObstaclesPathPlanner().name()] =
         std::make_unique<EscapeObstaclesPathPlanner>();
 
@@ -67,12 +69,40 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto trajectory = safe_plan_for_robot(plan_request);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
+        if (intent.dribbler_mode != RobotIntent::DribblerMode::DEFAULT) {
+            trajectory.dribbler_speed =
+                (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
+        }
+
+        switch (intent.trigger_mode) {
+            case RobotIntent::TriggerMode::STAND_DOWN:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::STAND_DOWN;
+                break;
+            case RobotIntent::TriggerMode::IMMEDIATE:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::IMMEDIATE;
+                break;
+            case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+                trajectory.trigger_mode = planning::Trajectory::TriggerMode::ON_BREAK_BEAM;
+                break;
+            default:
+                break;
+        }
+
+        switch (intent.shoot_mode) {
+            case RobotIntent::ShootMode::CHIP:
+                trajectory.shoot_mode = planning::Trajectory::ShootMode::CHIP;
+                break;
+            case RobotIntent::ShootMode::KICK:
+                trajectory.shoot_mode = planning::Trajectory::ShootMode::KICK;
+                break;
+        }
+
         // send the kick/dribble commands to the radio
         manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
-                                      .shoot_mode(intent.shoot_mode)
-                                      .trigger_mode(intent.trigger_mode)
+                                      .shoot_mode(trajectory.shoot_mode)
+                                      .trigger_mode(trajectory.trigger_mode)
                                       .kick_speed(intent.kick_speed)
-                                      .dribbler_speed(plan_request.dribbler_speed));
+                                      .dribbler_speed(trajectory.dribbler_speed));
 
         /*
         // TODO (PR #1970): fix TrajectoryCollection
@@ -118,6 +148,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     float min_dist_from_ball{};
     float max_robot_speed{};
     float max_dribbler_speed{};
+    float max_kick_speed{};
 
     // Global Overrides
     switch (play_state.state()) {
@@ -125,11 +156,13 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0;
             max_robot_speed = 0;
             max_dribbler_speed = 0;
+            max_kick_speed = 0;
             break;
         case PlayState::State::Stop:
             min_dist_from_ball = 0.5;
             max_robot_speed = 1.5;
             max_dribbler_speed = 0;
+            max_kick_speed = 0;
             break;
         case PlayState::State::Setup:
             // TODO(jacksherling): this is a hacky solution for us to stop kicking the ball by
@@ -137,6 +170,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0.2;
             max_robot_speed = 10.0;
             max_dribbler_speed = 255;
+            max_kick_speed = 6.5;
             break;
         case PlayState::State::Playing:
         default:
@@ -146,6 +180,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // number instead.
             max_robot_speed = 10.0;
             max_dribbler_speed = 255;
+            max_kick_speed = 6.5;
             break;
     }
 
@@ -203,8 +238,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         constraints.mot.max_speed = max_robot_speed;
     }
 
-    float dribble_speed =
-        std::min(static_cast<float>(intent.dribbler_speed), static_cast<float>(max_dribbler_speed));
+    float kick_speed = min(intent.kick_speed, max_kick_speed);
 
     return PlanRequest{start,
                        motion_command,
@@ -215,11 +249,14 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        static_cast<unsigned int>(robot_id_),
                        world_state,
                        play_state,
+                       global_state_.field_dimensions(),
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
                        min_dist_from_ball,
-                       dribble_speed};
+                       kick_speed,
+                       intent.trigger_mode,
+                       intent.dribbler_mode};
 }
 
 Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& request) {
@@ -258,7 +295,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     try {
         trajectory = unsafe_plan_for_robot(request);
     } catch (std::runtime_error exception) {
-        // SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
         // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = default_path_planner_.get();
@@ -299,7 +336,11 @@ bool PlannerForRobot::is_done() const {
         return false;
     }
 
-    return current_path_planner_->is_done();
+    if (current_path_planner_->is_done()) {
+        current_path_planner_->reset();
+        return true;
+    }
+    return false;
 }
 
 }  // namespace planning

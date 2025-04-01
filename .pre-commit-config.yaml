@@ -1,14 +1,10 @@
 repos:
-- repo: https://github.com/pycqa/isort
-  rev: 5.10.1
+# info at https://black.readthedocs.io/en/stable/integrations/source_version_control.html
+- repo: https://github.com/psf/black-pre-commit-mirror
+  rev: 24.8.0
   hooks:
-  - id: isort
-    name: isort (python)
-    args: ["--profile","black"]
-- repo: https://github.com/psf/black
-  rev: 22.3.0
-  hooks:
-  -   id: black
+    - id: black
+      language-version: python3.10
 - repo: local
   hooks:
   -   id: pretty-lines

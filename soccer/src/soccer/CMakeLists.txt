@@ -40,6 +40,7 @@ set(ROBOCUP_LIB_SRC
     planning/planner/path_target_path_planner.cpp
     planning/planner/pivot_path_planner.cpp
     planning/planner/line_pivot_path_planner.cpp
+    planning/planner/rotate_path_planner.cpp
     planning/planner/plan_request.cpp
     planning/planner/settle_path_planner.cpp
     planning/planner/goalie_idle_path_planner.cpp
@@ -75,6 +76,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/autonomy_interface.cpp
     ros2_temp/debug_draw_interface.cpp
     strategy/agent/agent_action_client.cpp
+    strategy/agent/straight_line_test.cpp
     strategy/agent/communication/communication.cpp
     strategy/agent/position/position.cpp
     strategy/agent/position/robot_factory_position.cpp
@@ -141,6 +143,8 @@ set(GLOBAL_PARAMETER_SERVER_NODE_SRC global_param_server.cpp)
 
 set(AGENT_ACTION_CLIENT_NODE_SRC strategy/agent/agent_action_client_main.cpp)
 
+set(STRAIGHT_LINE_TEST_NODE_SRC strategy/agent/straight_line_test_main.cpp)
+
 # ======================================================================
 # Add sources
 # ======================================================================
@@ -183,6 +187,9 @@ target_sources(global_param_server_node PRIVATE ${GLOBAL_PARAMETER_SERVER_NODE_S
 
 # ---- agent_action_client_node ----
 target_sources(agent_action_client_node PRIVATE ${AGENT_ACTION_CLIENT_NODE_SRC})
+
+# --- straight_line_test_node ----
+target_sources(straight_line_test_node PRIVATE ${STRAIGHT_LINE_TEST_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})

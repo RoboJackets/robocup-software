@@ -14,6 +14,7 @@
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory_collection.hpp"
+#include "robot_intent.hpp"
 #include "ros_debug_drawer.hpp"
 #include "world_state.hpp"
 
@@ -30,8 +31,11 @@ struct PlanRequest {
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
                 unsigned shell_id, const WorldState* world_state, PlayState play_state,
-                int8_t priority = 0, rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
-                bool ball_sense = false, float min_dist_from_ball = 0, float dribbler_speed = 0)
+                const FieldDimensions* field_dimensions, int8_t priority = 0,
+                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
+                float min_dist_from_ball = 0, float kick_speed = 0,
+                RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN,
+                RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -42,10 +46,13 @@ struct PlanRequest {
           world_state(world_state),
           priority(priority),
           play_state(play_state),
+          field_dimensions(field_dimensions),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
           min_dist_from_ball(min_dist_from_ball),
-          dribbler_speed(dribbler_speed) {}
+          kick_speed(kick_speed),
+          trigger_mode(trigger_mode),
+          dribbler_mode(dribbler_mode) {}
 
     /**
      * The robot's starting state.
@@ -103,6 +110,11 @@ struct PlanRequest {
     PlayState play_state;
 
     /**
+     * the Field Dimensions
+     */
+    const FieldDimensions* field_dimensions;
+
+    /**
      * Allows debug drawing in the world. If this is nullptr, no debug drawing
      * should be performed.
      */
@@ -117,9 +129,12 @@ struct PlanRequest {
     float min_dist_from_ball = 0;
 
     /**
-     * Dribbler Speed
+     * Kick Speed
      */
-    float dribbler_speed = 0;
+    float kick_speed = 0;
+
+    RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
+    RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT;
 };
 
 /**

@@ -19,11 +19,13 @@ public:
     enum CollectPathPathPlannerStates {
         // From start of subbehavior to the start of the slow part of the
         // approach
-        CoarseApproach,
+        COARSE_APPROACH,
+        // Intercepts a moving ball
+        INTERCEPT,
+        // Slows down the velocity of an intercepted ball
+        DAMPEN,
         // From the slow part of the approach to the touching of the ball
-        FineApproach,
-        // From touching the ball to stopped with the ball in the mouth
-        Control
+        FINE_APPROACH,
     };
 
     CollectPathPlanner()
@@ -39,22 +41,27 @@ private:
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start);
 
-    void process_state_transition(BallState ball, RobotInstant start_instant);
+    void process_state_transition(const PlanRequest& request, BallState ball,
+                                  RobotInstant* start_instant);
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,
         const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
 
+    Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
+                         const rj_geometry::ShapeSet& static_obstacles,
+                         const std::vector<DynamicObstacle>& dynamic_obstacles);
+
+    // Dampen doesn't need to take obstacles into account.
+    Trajectory dampen(const PlanRequest& plan_request, RobotInstant start_instant,
+                      const rj_geometry::ShapeSet& static_obstacles,
+                      const std::vector<DynamicObstacle>& dynamic_obstacles);
+
     Trajectory fine_approach(
         const PlanRequest& plan_request, RobotInstant start_instant,
         const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
-
-    Trajectory control(const PlanRequest& plan_request, RobotInstant start,
-                       const Trajectory& partial_path,
-                       const rj_geometry::ShapeSet& static_obstacles,
-                       const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory invalid(const PlanRequest& plan_request,
                        const rj_geometry::ShapeSet& static_obstacles,
@@ -62,24 +69,38 @@ private:
 
     Trajectory previous_;
 
-    CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::CoarseApproach;
+    CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::COARSE_APPROACH;
 
     // Ball Velocity Filtering Variables
     rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
 
     rj_geometry::Point approach_direction_;
-    bool approach_direction_created_ = false;
-
-    bool control_path_created_ = false;
 
     rj_geometry::Point path_coarse_target_;
     bool path_coarse_target_initialized_ = false;
 
-    // is_done vars
-    std::optional<LinearMotionInstant> cached_start_instant_;
-    std::optional<rj_geometry::Point> cached_robot_pos_;
-    std::optional<rj_geometry::Point> cached_ball_pos_;
+    // Intercept Target Filtering Variables
+    rj_geometry::Point avg_instantaneous_intercept_target_;
+    bool first_intercept_target_found_ = false;
+
+    // Only change the target of the path if it changes significantly
+    rj_geometry::Point path_intercept_target_;
+
+    // Have we already made a dampen path
+    bool path_created_for_dampen_ = false;
+
+    // Do we have the ball in the robot
+    bool is_ball_sense_ = false;
+
+    // Threshold for switching from dampen to fine approach
+    static constexpr double kDampenBallSpeedThreshold{0.75};
+
+    // Threshold for ball velocity to try to intercept;
+    static constexpr double kInterceptVelocityThreshold{0.2};
+
+    // Threshold for chasing after the ball instead of intercepting (deg)
+    static constexpr double kChaseAngleThreshold{45};
 };
 
 }  // namespace planning

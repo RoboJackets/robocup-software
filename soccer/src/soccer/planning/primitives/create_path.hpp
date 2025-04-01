@@ -6,6 +6,7 @@
 #include "planning/motion_constraints.hpp"
 #include "planning/primitives/path_smoothing.hpp"
 #include "planning/trajectory.hpp"
+#include "rj_common/field_dimensions.hpp"
 
 namespace planning::CreatePath {
 
@@ -29,8 +30,11 @@ Trajectory simple(
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles);
+                        const rj_geometry::ShapeSet& static_obstacles,
+                        const std::vector<DynamicObstacle>& dynamic_obstacles,
+                        const FieldDimensions* field_dimensions, unsigned int robot_id);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
-                                                  const LinearMotionInstant& goal);
+                                                  const LinearMotionInstant& goal,
+                                                  unsigned int robot_id);
 }  // namespace planning::CreatePath

@@ -51,6 +51,7 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
     double vel = plan_request.world_state->get_robot(true, static_cast<int>(plan_request.shell_id))
                      .velocity.linear()
                      .mag();
+
     if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3) &&
         (!plan_request.play_state.is_stop())) {
         return PIVOT;
