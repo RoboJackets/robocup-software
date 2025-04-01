@@ -29,6 +29,12 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 
 void KickerPickerClient::join_group(StatusCallback callback) {
     if (am_i_member_) {
+<<<<<<< HEAD
+=======
+        if (callback) {
+            callback(MembershipStatus{true});
+        }
+>>>>>>> 914c7b5210ff964f5904c288d84e5f0f386f6076
         return;
     }
 
