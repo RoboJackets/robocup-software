@@ -29,16 +29,13 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 
 void KickerPickerClient::join_group(StatusCallback callback) {
     if (am_i_member_) {
-        if (callback) {
-            callback(MembershipStatus{true});
-        }
         return;
     }
 
     if (!client_->wait_for_service(std::chrono::seconds(1))) {
         SPDLOG_ERROR("KickerPicker service not available.");
         if (callback) {
-            callback(MembershipStatus{false});
+            callback(Result{false});
         }
         return;
     }
@@ -53,7 +50,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
                                                  // ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
-                    callback(MembershipStatus{false});
+                    callback(Result{false});
                 }
                 return;
             }
@@ -63,12 +60,13 @@ void KickerPickerClient::join_group(StatusCallback callback) {
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::KickerPicker>(
                 "kicker_picker_data", rclcpp::QoS(1).best_effort().transient_local(),
-                [this](const rj_msgs::msg::KickerPicker::SharedPtr& msg) {
+                [this, callback](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
+                    callback(Result{true, selected_kicker_});
                 });
 
             if (callback) {
-                callback(MembershipStatus{true});
+                callback(Result{true});
             }
         });
 }
@@ -76,7 +74,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
 void KickerPickerClient::leave_group(StatusCallback callback) {
     if (!am_i_member_) {
         if (callback) {
-            callback(MembershipStatus{false});
+            callback(Result{false});
         }
         return;
     }
@@ -91,7 +89,7 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
                                                  // ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
-                    callback(MembershipStatus{am_i_member_});
+                    callback(Result{am_i_member_});
                 }
                 return;
             }
@@ -105,7 +103,7 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
             selected_kicker_ = KickerPicker::kInvalidRobotId;
 
             if (callback) {
-                callback(MembershipStatus{false});
+                callback(Result{false});
             }
         });
 }

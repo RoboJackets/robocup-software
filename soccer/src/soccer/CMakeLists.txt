@@ -97,6 +97,7 @@ set(ROBOCUP_LIB_SRC
     strategy/agent/position/pivot_test.cpp
     strategy/agent/position/solo_offense.cpp
     strategy/coordinator/kicker_picker.cpp
+    strategy/coordinator/kicker_picker_client.cpp
         )
 
 set(SOCCER_TEST_SRC

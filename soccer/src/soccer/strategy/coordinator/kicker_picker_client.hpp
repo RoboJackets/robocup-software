@@ -14,11 +14,12 @@ namespace strategy {
  */
 class KickerPickerClient {
 public:
-    struct MembershipStatus {
+    struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the kicker group.
+        int kicker_id{0};  // ID of Kicker id
     };
 
-    using StatusCallback = std::function<void(MembershipStatus)>;
+    using StatusCallback = std::function<void(Result)>;
 
     explicit KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
     ~KickerPickerClient() = default;
