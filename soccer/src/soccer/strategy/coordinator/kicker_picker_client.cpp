@@ -29,12 +29,6 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 
 void KickerPickerClient::join_group(StatusCallback callback) {
     if (am_i_member_) {
-<<<<<<< HEAD
-=======
-        if (callback) {
-            callback(MembershipStatus{true});
-        }
->>>>>>> 914c7b5210ff964f5904c288d84e5f0f386f6076
         return;
     }
 
@@ -68,12 +62,10 @@ void KickerPickerClient::join_group(StatusCallback callback) {
                 "kicker_picker_data", rclcpp::QoS(1).best_effort().transient_local(),
                 [this, callback](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
-                    callback(Result{true, selected_kicker_});
+                    if (callback) {
+                        callback(Result{true, selected_kicker_});
+                    }
                 });
-
-            if (callback) {
-                callback(Result{true});
-            }
         });
 }
 

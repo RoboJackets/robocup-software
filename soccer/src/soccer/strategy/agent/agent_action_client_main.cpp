@@ -9,17 +9,10 @@ int main(int argc, char** argv) {
     
     // spin up one action client for each robot
     // (must be added to a vector so shared_ptrs aren't deleted when they go out of scope)
-    std::vector<rclcpp::Node::SharedPtr> nodes;
-    for (int i = 0; i < 6;
-        i++) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
-        SPDLOG_INFO("HERE 1");
-        auto agent = std::make_shared<strategy::AgentActionClient>(i);
-        start_global_param_provider(agent.get()->node().get(), kGlobalParamServerNode);
-        nodes.push_back(agent.get()->node());
-        SPDLOG_INFO("HERE 2");
-    }
-    for (const auto& node : nodes) {
-        executor.add_node(node);
+    strategy::AgentActionClient agents[6] = {strategy::AgentActionClient(0), strategy::AgentActionClient(1), strategy::AgentActionClient(2), strategy::AgentActionClient(3), strategy::AgentActionClient(4), strategy::AgentActionClient(5)};
+    for (const auto& agent : agents) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
+        start_global_param_provider(agent.node().get(), kGlobalParamServerNode);
+        executor.add_node(agent.node());
     }
     executor.spin();
 }

@@ -28,34 +28,34 @@ AgentActionClient::AgentActionClient(int r_id)
      
     current_position_ = std::make_unique<RobotFactoryPosition>(r_id, node_);
 
-    current_state_publisher_ = node_.get()->create_publisher<AgentStateMsg>(
+    current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_.get()->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_.get()->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<rj_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_.get()->create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
-    alive_robots_sub_ = node_.get()->create_subscription<rj_msgs::msg::AliveRobots>(
+    alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_.get()->create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<rj_msgs::msg::GameSettings>(
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    goalie_id_sub_ = node_.get()->create_subscription<rj_msgs::msg::Goalie>(
+    goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
-    robot_communication_srv_ = node_.get()->create_service<rj_msgs::srv::AgentCommunication>(
+    robot_communication_srv_ = node_->create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
                std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
@@ -65,22 +65,22 @@ AgentActionClient::AgentActionClient(int r_id)
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
         robot_communication_cli_[i] =
-        node_.get()->create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
+        node_->create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
     }
 
     int hz = 10;
-    get_task_timer_ = node_.get()->create_wall_timer(std::chrono::milliseconds(1000 / hz),
+    get_task_timer_ = node_->create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&AgentActionClient::get_task, this));
 
     int agent_communication_hz = 60;
     get_communication_timer_ =
-        node_.get()->create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
+        node_->create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
             get_communication();
             check_communication_timeout();
         });
 }
 
-rclcpp::Node::SharedPtr AgentActionClient::node() {
+rclcpp::Node::SharedPtr AgentActionClient::node() const {
     return node_;
 }
 

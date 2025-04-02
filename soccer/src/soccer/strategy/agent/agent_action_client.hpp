@@ -50,7 +50,7 @@ public:
     AgentActionClient(int r_id);
     ~AgentActionClient() = default;
     
-    rclcpp::Node::SharedPtr node();
+    rclcpp::Node::SharedPtr node() const;
 
 private:
     // ROS pub/subs

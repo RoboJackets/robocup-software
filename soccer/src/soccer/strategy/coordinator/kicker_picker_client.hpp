@@ -16,7 +16,7 @@ class KickerPickerClient {
 public:
     struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the kicker group.
-        int kicker_id{0};  // ID of Kicker id
+        std::optional<int> kicker_id{0};  // ID of Kicker id
     };
 
     using StatusCallback = std::function<void(Result)>;
