@@ -52,13 +52,14 @@ private:
         return last_world_state_->ball.position.dist_to(
             last_world_state_->get_robot(true, robot_id_).pose.position());
     };
-    double ball_to_point_distance() const { //TO DO FIX
-        // auto ballPlacement = current_play_state_.ball_placement_point();
-        // if (ballPlacement.has_value()) {
-        //     return last_world_state_->ball.position.dist_to(
-        //         ballPlacement);
-        // }
-        // SPDLOG_ERROR("Ball placement does not have value in ball_placer.hpp");
+
+    float ball_to_point_distance() const { //TO DO FIX
+        auto ballPlacement = current_play_state_.ball_placement_point();
+        if (ballPlacement.has_value()) {
+            return last_world_state_->ball.position.dist_to(
+                ballPlacement.value());
+        }
+        SPDLOG_ERROR("Ball placement does not have value in ball_placer.hpp");
         return 0;
     };
     /**

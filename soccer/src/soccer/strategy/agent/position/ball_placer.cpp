@@ -57,7 +57,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
         case ROTATE: { // Phase causes immediate crash of simulator, suspicious of target setting
             SPDLOG_INFO("ROTATE");
             rj_geometry::Point target_vel{0.0, 0.0};
-            planning::LinearMotionInstant target{current_play_state_.ball_placement_point().value(), target_vel};
+            planning::LinearMotionInstant target{current_play_state_.ball_placement_point().value()};
             auto pivot_cmd =
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
