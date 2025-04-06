@@ -52,9 +52,7 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Playing: {
                 // We just became regular playing.
                 // set_default_position();
-                if (kicker_picker_.am_i_member()) {
-                    kicker_picker_.leave_group();
-                }
+                kicker_picker_.leave_group();
                 break;
             }
 
