@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace Strategy {
+namespace strategy {
 /*
     OverridingPositions refers to the positions that can be manually set in the UI.
     Normally, all robots are set to Auto. If you want to add a new position, add a new value
@@ -24,4 +24,4 @@ enum OverridingPositions {
     IDLE,
 };
 
-}  // namespace Strategy
+}  // namespace strategy
