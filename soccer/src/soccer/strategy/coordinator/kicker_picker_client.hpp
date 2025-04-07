@@ -1,7 +1,9 @@
 #pragma once
 
 #include <functional>
+
 #include <rclcpp/rclcpp.hpp>
+
 #include <rj_msgs/msg/kicker_picker.hpp>
 #include <rj_msgs/srv/kicker_picker.hpp>
 
@@ -29,15 +31,15 @@ public:
     KickerPickerClient& operator=(KickerPickerClient&&) = delete;
 
     /**
-    * @brief Join the kicker group.
-    * @param callback Called with current membership status after attempt to join.
-    */
+     * @brief Join the kicker group.
+     * @param callback Called with current membership status after attempt to join.
+     */
     void join_group(StatusCallback callback = nullptr);
 
     /**
-    * @brief Leave the kicker group.
-    * @param callback Called with current membership status after attempt to leave.
-    */
+     * @brief Leave the kicker group.
+     * @param callback Called with current membership status after attempt to leave.
+     */
     void leave_group(StatusCallback callback = nullptr);
 
     /**

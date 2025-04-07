@@ -12,20 +12,21 @@ using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
 // AgentActionClient::AgentActionClient() : AgentActionClient(0) {
-//     // unclear why I need to explicitly create a default constructor, but compiler throws error when
+//     // unclear why I need to explicitly create a default constructor, but compiler throws error
+//     when
 //     // not here https://stackoverflow.com/questions/47704900/error-use-of-deleted-function
 // }
 
-AgentActionClient::AgentActionClient(int r_id)
-    : robot_id_{r_id} {
-    node_ = std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id),
-                rclcpp::NodeOptions{}
-                    .automatically_declare_parameters_from_overrides(true)
-                    .allow_undeclared_parameters(true));
+AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
+    node_ =
+        std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id),
+                                       rclcpp::NodeOptions{}
+                                           .automatically_declare_parameters_from_overrides(true)
+                                           .allow_undeclared_parameters(true));
 
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(node_, "robot_move");
-     
+
     current_position_ = std::make_unique<RobotFactoryPosition>(r_id, node_);
 
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
@@ -70,25 +71,23 @@ AgentActionClient::AgentActionClient(int r_id)
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
-        robot_communication_cli_[i] =
-        node_->create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
+        robot_communication_cli_[i] = node_->create_client<rj_msgs::srv::AgentCommunication>(
+            fmt::format("agent_{}_incoming", i));
     }
 
     int hz = 10;
     get_task_timer_ = node_->create_wall_timer(std::chrono::milliseconds(1000 / hz),
-                                        std::bind(&AgentActionClient::get_task, this));
+                                               std::bind(&AgentActionClient::get_task, this));
 
     int agent_communication_hz = 60;
-    get_communication_timer_ =
-        node_->create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
+    get_communication_timer_ = node_->create_wall_timer(
+        std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
             get_communication();
             check_communication_timeout();
         });
 }
 
-rclcpp::Node::SharedPtr AgentActionClient::node() const {
-    return node_;
-}
+rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {

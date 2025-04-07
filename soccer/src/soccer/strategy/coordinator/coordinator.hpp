@@ -41,14 +41,16 @@ public:
     template <typename... Args>
     Coordinator(const std::string& service_name, const std::string& topic_name, Args&&... node_args)
         : rclcpp::Node(std::forward<Args>(node_args)...),
-          service_(this->create_service<ServiceT>(
-              service_name, [this](RequestPtr request, ResponsePtr response) {
-                  static_cast<Derived*>(this)->service_callback(request, response);
-              })),
-          publisher_(this->create_publisher<TopicT>(topic_name, rclcpp::QoS(1).best_effort().transient_local())) {}
+          service_(this->create_service<ServiceT>(service_name,
+                                                  [this](RequestPtr request, ResponsePtr response) {
+                                                      static_cast<Derived*>(this)->service_callback(
+                                                          request, response);
+                                                  })),
+          publisher_(this->create_publisher<TopicT>(
+              topic_name, rclcpp::QoS(1).best_effort().transient_local())) {}
 
     ~Coordinator() override = default;
-    
+
     // In general, nodes are neither copyable nor moveable.
     Coordinator(const Coordinator&) = delete;
     Coordinator& operator=(const Coordinator&) = delete;
