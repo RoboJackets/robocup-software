@@ -111,17 +111,13 @@ public:
         current_position_->send_pass_confirmation(target_robot);
     }
 
+    void set_override_position(const OverridingPositions& overriding_position);
+
 private:
     std::unique_ptr<Position> current_position_;
 
-    // subscription for test mode - Allows position overriding
-    rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
-    rclcpp::executors::SingleThreadedExecutor _executor;
-    std::thread _executor_thread;
-    void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr message);
-    Strategy::OverridingPositions override_play_position_{Strategy::OverridingPositions::AUTO};
-    rclcpp::Node::SharedPtr _node;
     KickerPickerClient kicker_picker_;
+    OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
