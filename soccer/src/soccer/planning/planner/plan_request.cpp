@@ -24,20 +24,14 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
                     std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory) {
     out_static->clear();
-    out_static->add(in.field_obstacles);
-    out_static->add(in.virtual_obstacles);
-
-    // Add their robots as static obstacles (inflated based on velocity).
-    // See calc_static_robot_obs() docstring for more info.
-    for (size_t shell = 0; shell < kNumShells; shell++) {
-        const RobotState& their_robot = in.world_state->their_robots.at(shell);
-
-        if (their_robot.visible) {
-            out_static->add(
-                std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
-        }
+    
+    //Add obstacles for physical goal (robot can't ever cross through a goal)
+    out_static->add(std::make_shared<rj_geometry::Rect>(rj_geometry::Point(0.5, 9.0), rj_geometry::Point(-0.5, 9.2)));
+    out_static->add(std::make_shared<rj_geometry::Rect>(rj_geometry::Point(0.5, 0.0), rj_geometry::Point(-0.5, -0.2)));
+    if (in.debug_drawer != nullptr) {
+        QColor draw_color = Qt::red;
+        in.debug_drawer->draw_circle(ball_obs, draw_color);
     }
-
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned. In both cases, radius is based on velocity like
     // above for opp robots.
@@ -62,7 +56,22 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         // Static obstacle
         out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
     }
+    
+    if (in.play_state.ball_placement_point().has_value()) {
+        return;
+    }
+    out_static->add(in.field_obstacles);
+    out_static->add(in.virtual_obstacles);
+    // Add their robots as static obstacles (inflated based on velocity).
+    // See calc_static_robot_obs() docstring for more info.
+    for (size_t shell = 0; shell < kNumShells; shell++) {
+        const RobotState& their_robot = in.world_state->their_robots.at(shell);
 
+        if (their_robot.visible) {
+            out_static->add(
+                std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
+        }
+    }
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
     if (in.min_dist_from_ball > 0 || avoid_ball) {
