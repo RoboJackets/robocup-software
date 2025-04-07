@@ -28,10 +28,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     //Add obstacles for physical goal (robot can't ever cross through a goal)
     out_static->add(std::make_shared<rj_geometry::Rect>(rj_geometry::Point(0.5, 9.0), rj_geometry::Point(-0.5, 9.2)));
     out_static->add(std::make_shared<rj_geometry::Rect>(rj_geometry::Point(0.5, 0.0), rj_geometry::Point(-0.5, -0.2)));
-    if (in.debug_drawer != nullptr) {
-        QColor draw_color = Qt::red;
-        in.debug_drawer->draw_circle(ball_obs, draw_color);
-    }
+
     // Add our robots, either static or dynamic depending on whether they have
     // already been planned. In both cases, radius is based on velocity like
     // above for opp robots.
