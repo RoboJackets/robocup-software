@@ -267,7 +267,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
             // }
 
             return intent;
@@ -296,7 +295,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // } else {
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
             // }
 
             return intent;

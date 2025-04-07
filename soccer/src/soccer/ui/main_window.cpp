@@ -1141,13 +1141,15 @@ void MainWindow::on_fastReady_clicked() {
 void MainWindow::on_fastForceStart_clicked() { send_quick_command(PlayState::playing()); }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    send_quick_command(PlayState::setup_kickoff(context_->blue_team));
-    queued_command_ = PlayState::ready_kickoff(context_->blue_team);
+    PlayState setup_kickoff_state = PlayState::setup_kickoff(context_->blue_team);
+    send_quick_command(setup_kickoff_state);
+    queued_command_ = setup_kickoff_state.advanced_from_normal_start();
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    send_quick_command(PlayState::setup_kickoff(!context_->blue_team));
-    queued_command_ = PlayState::ready_kickoff(context_->blue_team);
+    PlayState setup_kickoff_state = PlayState::setup_kickoff(!context_->blue_team);
+    send_quick_command(setup_kickoff_state);
+    queued_command_ = setup_kickoff_state.advanced_from_normal_start();
 }
 
 void MainWindow::on_fastBlue_clicked() {
@@ -1156,6 +1158,18 @@ void MainWindow::on_fastBlue_clicked() {
 
 void MainWindow::on_fastYellow_clicked() {
     send_quick_command(PlayState::ready_free_kick(!context_->blue_team));
+}
+
+void MainWindow::on_fastPenaltyBlue_clicked() {
+    PlayState setup_penalty_state = PlayState::setup_penalty(context_->blue_team);
+    send_quick_command(setup_penalty_state);
+    queued_command_ = setup_penalty_state.advanced_from_normal_start();
+}
+
+void MainWindow::on_fastPenaltyYellow_clicked() {
+    PlayState setup_penalty_state = PlayState::setup_penalty(!context_->blue_team);
+    send_quick_command(setup_penalty_state);
+    queued_command_ = setup_penalty_state.advanced_from_normal_start();
 }
 
 bool MainWindow::live() { return !_playbackRate; }

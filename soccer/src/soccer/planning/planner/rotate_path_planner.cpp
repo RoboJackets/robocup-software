@@ -19,16 +19,30 @@ namespace planning {
 using namespace rj_geometry;
 
 Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
-    return pivot(request);  // type is Trajectory
+    update_state();
+    switch (current_state_) {
+        case PIVOT:
+            return pivot(request);
+        case END:
+            return end(request);
+    }
+    return {};
 }
 
-bool RotatePathPlanner::is_done() const {
+void RotatePathPlanner::update_state() {
     if (!cached_angle_change_) {
-        return false;
+        current_state_ = PIVOT;
+        return;
     }
-    return abs(cached_angle_change_.value()) <
-           degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh));
+    current_state_ = abs(cached_angle_change_.value()) <
+                             degrees_to_radians(static_cast<float>(kIsDoneAngleChangeThresh))
+                         ? END
+                         : PIVOT;
 }
+
+// Assumes that we have called plan at least once while in the END state (this assumption should be
+// always true given our current planning setup)
+bool RotatePathPlanner::is_done() const { return current_state_ == END; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
@@ -55,7 +69,8 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
 
     Trajectory path{};
 
-    if (abs(*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
+    if (cached_target_angle_.has_value() &&
+        (*cached_target_angle_ - target_angle) < degrees_to_radians(kIsDoneAngleChangeThresh)) {
         if (cached_path_) {
             path = cached_path_.value();
         } else {
@@ -75,6 +90,17 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     cached_target_angle_ = target_angle;
 
     return path;
+}
+
+Trajectory RotatePathPlanner::end(const PlanRequest& request) {
+    auto trajectory = Trajectory{};
+    trajectory.append_instant(request.start);
+    trajectory.mark_angles_valid();
+    trajectory.stamp(RJ::now());
+    if (request.trigger_mode == RobotIntent::TriggerMode::AT_END) {
+        trajectory.trigger_mode = Trajectory::TriggerMode::ON_BREAK_BEAM;
+    }
+    return trajectory;
 }
 
 }  // namespace planning
