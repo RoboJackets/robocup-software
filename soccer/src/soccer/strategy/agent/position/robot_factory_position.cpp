@@ -74,6 +74,7 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Halt: {
                 // The game has been stopped or halted. In this case, we typically want to keep
                 // our current position. The rules for movement should be handled at a lower level.
+                kicker_picker_.leave_group();
                 handle_stop();
                 break;
             }
@@ -97,13 +98,23 @@ void RobotFactoryPosition::handle_setup() {
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !kicker_picker_.am_i_member()) {
+            SPDLOG_INFO("Join Group: {}", robot_id_);
             kicker_picker_.join_group([this](KickerPickerClient::Result result) {
-                if (result.am_i_member && result.kicker_id == robot_id_) {
+                if (result.am_i_member && result.kicker_id == robot_id_ && current_play_state_.is_kickoff()) {
+                    SPDLOG_INFO("Free Kicker: {}", robot_id_);
                     set_current_position<FreeKicker>();
-                } else if (current_play_state_.is_penalty()) {
+                } else if (result.am_i_member && result.kicker_id == robot_id_) {
+                    SPDLOG_INFO("Penalty Kicker: {}", robot_id_);
+                    set_current_position<PenaltyPlayer>();
+                }
+                else if (current_play_state_.is_penalty()) {
+                    SPDLOG_INFO("Penalty Non Kicker: {}", robot_id_);
                     set_current_position<PenaltyNonKicker>();
-                } else {
+                } else if (current_play_state_.is_free_kick()) {
+                    SPDLOG_INFO("Set default position: {}", robot_id_);
                     set_default_position();
+                } else {
+                    SPDLOG_INFO("WTF: {}", robot_id_);
                 }
             });
         } else {
@@ -154,8 +165,9 @@ void RobotFactoryPosition::update_position() {
             // Currently in setup
 
             // This is the only case where we have to do something on every tick
-            if (!current_play_state_.is_our_restart()) {  // Their restart
+            if (current_play_state_.is_their_restart()) { // Their restart
                 if (current_play_state_.is_kickoff()) {
+                    SPDLOG_INFO("their kickoff");
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();

@@ -28,7 +28,6 @@
 // Requests
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
 #include <rj_msgs/msg/incoming_ball_request.hpp>
-#include <rj_msgs/msg/kicker_request.hpp>
 #include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/msg/pass_request.hpp>
 #include <rj_msgs/msg/position_request.hpp>
@@ -141,8 +140,6 @@ public:
     virtual void send_direct_pass_request(std::vector<u_int8_t> target_robots);
 
     virtual void broadcast_direct_pass_request();
-
-    void broadcast_kicker_request();
 
     std::unordered_map<int, double> kicker_distances_;
 

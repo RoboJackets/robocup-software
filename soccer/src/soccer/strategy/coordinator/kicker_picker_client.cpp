@@ -77,6 +77,8 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
         return;
     }
 
+    SPDLOG_INFO("Leave Group: {}", robot_id_);
+
     auto request = std::make_shared<rj_msgs::srv::KickerPicker::Request>();
     request->robot_id = robot_id_;
     request->wants_to_kick = false;
