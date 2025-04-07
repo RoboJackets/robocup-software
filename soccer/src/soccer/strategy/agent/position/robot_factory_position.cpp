@@ -154,7 +154,7 @@ void RobotFactoryPosition::update_position() {
             // Currently in setup
 
             // This is the only case where we have to do something on every tick
-            if (!current_play_state_.is_our_restart()) { // Their restart
+            if (!current_play_state_.is_our_restart()) {  // Their restart
                 if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
