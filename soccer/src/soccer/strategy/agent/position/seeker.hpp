@@ -54,10 +54,11 @@ public:
 private:
     // The seeker's id
     int robot_id_;
-    // The taret point to move to
+    // The target point to move to
     rj_geometry::Point target_pt_{0.0, 0.0};
 
     bool target_valid_{false};
+    static constexpr float border_buffer{0.2f};
 
     /**
      * @brief Returns the point which is most 'open'

@@ -273,6 +273,80 @@ void Position::pass_ball(int robot_id) {
     derived_pass_ball();
 }
 
+double Position::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+    rj_geometry::Point vec = head - tail;
+    auto& their_robots = this->last_world_state_->their_robots;
+
+    double min_angle = -0.5;
+    for (auto enemy : their_robots) {
+        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
+        if (enemy_vec.dot(vec) < 0) {
+            continue;
+        }
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
+        double distance = enemy_vec.mag();
+        if (distance < (kRobotRadius + kBallRadius)) {
+            return -1.0;
+        }
+        double angle = distance / projection;
+        if ((min_angle < 0) || (angle < min_angle)) {
+            min_angle = angle;
+        }
+    }
+    return min_angle;
+}
+
+rj_geometry::Point Position::calculate_best_shot() const {
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+
+    return their_goal_pos;
+
+    double goal_width = field_dimensions_.goal_width();
+    double goal_y = their_goal_pos.y();
+    rj_geometry::Point left_goal_post = field_dimensions_.their_left_goal_post_coordinate();
+    rj_geometry::Point right_goal_post = field_dimensions_.their_right_goal_post_coordinate();
+
+    // Using robot position since the ball might be pivoted
+    rj_geometry::Point ball_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+    // Compute angles from the ball to the posts relative to vertical
+    double phi_left  = std::atan2(left_goal_post.x() - ball_position.x(), goal_y - ball_position.y());
+    double phi_right = std::atan2(right_goal_post.x() - ball_position.x(), goal_y - ball_position.y());
+
+    // Calculate distances from the ball to each post
+    double d_left  = (ball_position - left_goal_post).mag();
+    double d_right = (ball_position - right_goal_post).mag();
+
+    // Adjust the angles to account for the ball's radius (x2 for extra margin)
+    double safe_phi_left  = phi_left + std::asin((2 * kBallRadius) / d_left);
+    double safe_phi_right = phi_right - std::asin((2 * kBallRadius) / d_right);
+
+    // Project the safe angles onto the goal line to determine safe x–coordinates
+    double safe_x_left  = ball_position.x() + (goal_y - ball_position.y()) * std::tan(safe_phi_left);
+    double safe_x_right = ball_position.x() + (goal_y - ball_position.y()) * std::tan(safe_phi_right);
+    
+    // Set up the safe interval along the goal line and iterate through candidate shot points
+    rj_geometry::Point start_point(safe_x_left, goal_y);
+    rj_geometry::Point end_point(safe_x_right, goal_y);
+    rj_geometry::Point best_shot = their_goal_pos;
+    double best_distance = -std::numeric_limits<double>::infinity();
+    rj_geometry::Point increment = (end_point - start_point) / (kShotPoints - 1);
+
+    SPDLOG_INFO("Robot {}: range: {} to {}", robot_id_, safe_x_left, safe_x_right);
+
+    for (int i = 0; i < kShotPoints; i++) {
+        rj_geometry::Point curr_point = start_point + i * increment;
+        double distance = distance_from_their_robots(ball_position, curr_point);
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = curr_point;
+        }
+    }
+    SPDLOG_INFO("Robot {}: best shot: {}, {}", robot_id_, best_shot.x(), best_shot.y());
+    return best_shot;
+}
+
 communication::Acknowledge Position::acknowledge_ball_in_transit(
     communication::BallInTransitRequest ball_in_transit_request) {
     communication::Acknowledge acknowledge_response{};

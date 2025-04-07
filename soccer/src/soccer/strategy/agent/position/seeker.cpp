@@ -80,7 +80,6 @@ rj_geometry::Point Seeker::calculate_open_point(double current_prec, double min_
 
 rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
                                          const FieldDimensions& field_dimensions) const {
-    double border_buffer = .2;
     double x = p.x();
     double y = p.y();
 
@@ -98,18 +97,23 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
         y = field_dimensions.our_goal_loc().y() + border_buffer;
     }
 
-    // Goalie Boxes
-    if ((y < 1.2 || y > 7.8) && fabs(x) < 1.2) {
-        if (y > 4.5) {
-            y = 8.0 - border_buffer;
-        } else {
-            y = 1.0 + border_buffer;
-        }
+    // Defense Area
+    if (field_dimensions.their_defense_area().contains_point(p)){
+        vector<rj_geometry::Point> safe_points = {
+            rj_geometry::Point(x, field_dimensions.their_defense_area().miny() - border_buffer),
+            rj_geometry::Point(field_dimensions.their_defense_area().maxx() + border_buffer, y),
+            rj_geometry::Point(field_dimensions.their_defense_area().minx() + border_buffer, y)
+        };
 
-        if (x > .5) {
-            x = 1.0 + border_buffer;
-        } else {
-            x = -1.0 - border_buffer;
+        // Choose closest safe point
+        double min_dist = std::numeric_limits<double>::infinity();
+        for (const auto& safe_point : safe_points) {
+            double dist = p.dist_to(safe_point);
+            if (dist < min_dist) {
+                min_dist = dist;
+                x = safe_point.x();
+                y = safe_point.y();
+            }
         }
     }
 
@@ -121,12 +125,6 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
                           const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
-
-    // Does not go into the goalie boxes
-    rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
-    if (goal_box.contains_point(current_point)) {
-        return std::numeric_limits<double>::infinity();
-    }
 
     // Line of Sight Heuristic
     double max = 0;

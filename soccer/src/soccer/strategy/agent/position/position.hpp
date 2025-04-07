@@ -272,6 +272,20 @@ protected:
      */
     bool check_goal_canceled();
 
+    /**
+     * @brief Calculates the distance of vector from other team's closest robot
+     */
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
+
+    /**
+     * @brief Iterates across kShotPoint possible shot target locations along the goal width. 
+     * For each location, it calculates the clearance distance from opponent robots and
+     * updates the best shot position if a better (less obstructed) option is found.
+     * @return The best target position (farthest from obstacles) found after considering all
+     * possibilities.
+     */
+    rj_geometry::Point calculate_best_shot() const;
+
     // const because should never be changed, but initializer list will allow
     // us to set this once initially
     const int robot_id_;
@@ -307,6 +321,9 @@ protected:
 
     // Current goalie
     int goalie_id_;
+
+    // The number of points to check for the best shot
+    static constexpr int kShotPoints{20};
 
 private:
     /**

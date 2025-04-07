@@ -47,6 +47,6 @@ private:
     enum State { PIVOT, END };
     RotatePathPlanner::State current_state_ = RotatePathPlanner::State::PIVOT;
 
-    static constexpr double kIsDoneAngleChangeThresh{1.0};
+    static constexpr double kIsDoneAngleChangeThresh{0.1};
 };
 }  // namespace planning

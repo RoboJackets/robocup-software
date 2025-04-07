@@ -51,14 +51,11 @@ private:
         DEFAULT,           // Decide what to do
         SEEKING_START,     // Calculate seeking point
         SEEKING,           // Get open
-        POSSESSION_START,  // Try to shoot and send pass request
-        POSSESSION,        // Holding the ball
-        PASSING_START,     // Prepare to pass
+        POSSESSION,        // Holding the ball and broadcasting pass request
         PASSING,           // Getting rid of it
         STEALING,          // Getting the ball
         RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
-        SHOOTING_START,    // Calculate shot
         SHOOTING,          // Winning the game
     };
 
@@ -98,10 +95,6 @@ private:
                 return RJ::Seconds{-1};
             case POSSESSION:
                 return RJ::Seconds{-1};
-            case POSSESSION_START:
-                return RJ::Seconds{-1};
-            case PASSING_START:
-                return RJ::Seconds(-1);
             case PASSING:
                 return RJ::Seconds{5};
             case STEALING:
@@ -110,8 +103,6 @@ private:
                 return RJ::Seconds{5};
             case RECEIVING:
                 return RJ::Seconds{5};
-            case SHOOTING_START:
-                return RJ::Seconds{3};
             case SHOOTING:
                 return RJ::Seconds{-1};
         }
@@ -128,10 +119,6 @@ private:
                 return "SEEKING";
             case POSSESSION:
                 return "POSSESSION";
-            case POSSESSION_START:
-                return "POSSESSION_START";
-            case PASSING_START:
-                return "PASSING_START";
             case PASSING:
                 return "PASSING";
             case STEALING:
@@ -140,8 +127,6 @@ private:
                 return "RECEIVING_START";
             case RECEIVING:
                 return "RECEIVING";
-            case SHOOTING_START:
-                return "SHOOTING_START";
             case SHOOTING:
                 return "SHOOTING";
         }
@@ -177,9 +162,6 @@ private:
     /* RoleInterface Members */
     Seeker seeker_;
 
-    // Used to cache targets between states
-    rj_geometry::Point target_;
-
     /* Constants for State or Task Calculation */
 
     // These variables are for calculating ball speed when passing
@@ -206,11 +188,6 @@ private:
     bool has_open_shot() const;
 
     /**
-     * @brief Calculates the distance of vector from other team's closest robot
-     */
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
-
-    /**
      * @brief Check if this agent could easily steal the ball
      */
     bool can_steal_ball() const;
@@ -228,10 +205,6 @@ private:
      * @param target_robot_shell the robot shell to check if open
      */
     bool check_if_open(int target_robot_shell);
-    /**
-     * @return the target (within the goal) that would be the most clear shot
-     */
-    rj_geometry::Point calculate_best_shot() const;
 
     /**
      * @return whether the ball is in an area that non-goalies cannot reach.
