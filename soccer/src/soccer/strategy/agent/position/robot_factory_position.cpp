@@ -85,7 +85,7 @@ void RobotFactoryPosition::process_play_state() {
 void RobotFactoryPosition::handle_stop() { set_default_position(); }
 
 void RobotFactoryPosition::handle_penalty_playing() {
-    if (!am_closest_kicker()) {
+    if (!(kicker_picker_.am_i_member() && kicker_picker_.is_selected())) {
         set_current_position<SmartIdle>();
     }
 }
@@ -100,6 +100,8 @@ void RobotFactoryPosition::handle_setup() {
             kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_) {
                     set_current_position<FreeKicker>();
+                } else if (current_play_state_.is_penalty()) {
+                    set_current_position<PenaltyNonKicker>();
                 } else {
                     set_default_position();
                 }
@@ -152,35 +154,7 @@ void RobotFactoryPosition::update_position() {
             // Currently in setup
 
             // This is the only case where we have to do something on every tick
-            if (current_play_state_.is_our_restart()) {
-                // if (have_all_kicker_responses()) {
-                //     if (am_closest_kicker()) {
-                //         if (current_play_state_.is_free_kick()) {
-                //             set_current_position<FreeKicker>();
-                //         } else {
-                //             set_current_position<PenaltyPlayer>();
-                //         }
-                //     } else {
-                //         if (current_play_state_.is_kickoff()) {
-                //             set_current_position<Defense>();
-                //         } else if (current_play_state_.is_penalty()) {
-                //             // set_current_position<SmartIdle>();
-                //             set_current_position<PenaltyNonKicker>();
-                //         } else if (current_play_state_.is_free_kick()) {
-                //             // do what it was doing before foul
-                //             set_default_position();
-                //             // don't want a player on offense to try to kick the
-                //             // ball instead of free kicker
-                //             if (current_position_->get_name() == "Offense") {
-                //                 set_current_position<SmartIdle>();
-                //             }
-                //         }
-                //     }
-                // } else {
-                //     set_current_position<SmartIdle>();
-                // }
-
-            } else {  // Their restart
+            if (!current_play_state_.is_our_restart()) { // Their restart
                 if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
@@ -207,33 +181,6 @@ void RobotFactoryPosition::update_position() {
             break;
         }
     }
-}
-
-void RobotFactoryPosition::start_kicker_picker() {
-    // SPDLOG_INFO("robot {} has cleared", robot_id_);
-    kicker_distances_.clear();
-    broadcast_kicker_request();
-}
-
-bool RobotFactoryPosition::have_all_kicker_responses() {
-    int num_alive = std::count(alive_robots_.begin(), alive_robots_.end(), true);
-
-    return kicker_distances_.size() == num_alive - 1;  // Don't expect the goalie to respond
-}
-
-bool RobotFactoryPosition::am_closest_kicker() {
-    // Return the max, comparing by distances only
-    auto closest =
-        std::min_element(kicker_distances_.begin(), kicker_distances_.end(),
-                         [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                             if (a.second == b.second) {
-                                 return a.first < b.first;
-                             }
-                             return a.second < b.second;
-                         });
-
-    // Closest is an iterator to the pair (robot_id, distance)
-    return closest->first == robot_id_;
 }
 
 void RobotFactoryPosition::set_default_position() {
@@ -310,17 +257,6 @@ void RobotFactoryPosition::receive_communication_response(
 
 communication::PosAgentResponseWrapper RobotFactoryPosition::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
-    if (const communication::KickerRequest* kicker_request =
-            std::get_if<communication::KickerRequest>(&request.request)) {
-        if (kicker_distances_.size() >= 1 && !have_all_kicker_responses() &&
-            current_position_->get_name() != "GoalKicker") {
-            bool prev = kicker_distances_.count(kicker_request->robot_id) >= 1;
-            if (!prev) {
-                kicker_distances_[kicker_request->robot_id] = kicker_request->distance;
-                broadcast_kicker_request();
-            }
-        }
-    }
     // Return the response
     return current_position_->receive_communication_request(request);
 }

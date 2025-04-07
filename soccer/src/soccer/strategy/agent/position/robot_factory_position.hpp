@@ -121,8 +121,6 @@ private:
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    bool am_closest_kicker();
-
     void set_default_position();
 
     PlayState last_play_state_{PlayState::halt()};
@@ -130,10 +128,6 @@ private:
     void process_play_state();
 
     void update_position();
-
-    void start_kicker_picker();
-
-    bool have_all_kicker_responses();
 
     void handle_stop();
 
