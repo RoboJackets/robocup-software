@@ -59,11 +59,15 @@ Offense::State Offense::next_state() {
         }
 
         case POSSESSION: {
+            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
             // If we can make a shot, make it.
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
                 return SHOOTING;
             }
+            */
+            // TESTING: hard await a pass recipient instead of shootings
+            if (timed_out()) { return DEFAULT; }
 
             // No open shot, try to pass.
             // This will trigger an automatic switch to passing if a pass is
@@ -80,10 +84,14 @@ Offense::State Offense::next_state() {
                 return DEFAULT;
             }
 
+            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
             // If we didn't successfully pass in time, take a shot
             if (timed_out()) {
                 return SHOOTING;
             }
+            */
+            // TESTING: no shooting
+            if (timed_out()) { return DEFAULT; }
 
             // If we lost the ball completely, give up
             if (distance_to_ball() > kBallTooFarDist) {
@@ -138,10 +146,14 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
+            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
             // If we either succeed or fail, it's time to start over.
             if (check_is_done() || timed_out()) {
                 return DEFAULT;
             }
+            */
+            // TESTING: making this an absorptive state so I can be certain that it's never reached
+            SPDLOG_INFO("stuck in shooting");
 
             return SHOOTING;
         }
