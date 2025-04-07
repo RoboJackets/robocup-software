@@ -7,8 +7,8 @@
 
 namespace strategy {
 
-RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node) : Position(r_id, "RobotFactoryPosition"),
-    kicker_picker_(std::move(node), r_id) {
+RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
+    : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
@@ -95,8 +95,9 @@ void RobotFactoryPosition::handle_setup() {
     if (current_play_state_.is_our_restart()) {
         // Set up our restart
 
-        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) && !kicker_picker_.am_i_member()) {
-            kicker_picker_.join_group([this] (KickerPickerClient::Result result) {
+        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
+            !kicker_picker_.am_i_member()) {
+            kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_) {
                     set_current_position<FreeKicker>();
                 } else {
@@ -113,9 +114,10 @@ void RobotFactoryPosition::handle_ready() {
     // Ready stage for a restart
     // Time to kick
 
-    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() && !kicker_picker_.am_i_member()) {
+    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
+        !kicker_picker_.am_i_member()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
-        kicker_picker_.join_group([this] (KickerPickerClient::Result result) {
+        kicker_picker_.join_group([this](KickerPickerClient::Result result) {
             if (result.am_i_member && result.kicker_id == robot_id_) {
                 set_current_position<FreeKicker>();
             } else {

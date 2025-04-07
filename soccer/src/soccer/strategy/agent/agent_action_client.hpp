@@ -49,7 +49,7 @@ public:
     // AgentActionClient();
     AgentActionClient(int r_id);
     ~AgentActionClient() = default;
-    
+
     rclcpp::Node::SharedPtr node() const;
 
 private:

@@ -1,4 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
+
 #include "kicker_picker.hpp"
 
 int main(int argc, char* argv[]) {

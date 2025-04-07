@@ -114,7 +114,6 @@ bool KickerPickerClient::is_selected() const { return selected_kicker_ == robot_
 
 }  // namespace strategy
 
-
 // class Position {
 
 //     void state_to_task() {
@@ -162,19 +161,15 @@ bool KickerPickerClient::is_selected() const { return selected_kicker_ == robot_
 //         });
 //         // state WAITING
 
-
-
 //         // inside state_to_task() function
 
 //         if current_state_ == SEEKING:
-//             if client.is_kicker(): 
+//             if client.is_kicker():
 //                 state = STEALING;
 //             else if !client.am_i_member() && i_think_i_want_to_steal():
 //                 client.join_group()... ??
 
 //         // next_state():
-        
-        
 
 //         client.join_group();
 //     }

@@ -1,13 +1,15 @@
 #include "kicker_picker.hpp"
+
 #include <algorithm>  // for std::any_of
 #include <limits>
+
+#include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/kicker_picker.hpp>
-#include <rj_constants/topic_names.hpp>
 
 namespace strategy {
 
-KickerPicker::KickerPicker() 
+KickerPicker::KickerPicker()
     : Coordinator("kicker_picker_srv", "kicker_picker_data", "kicker_picker_node") {
     // Subscribe to world state
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
@@ -24,7 +26,8 @@ void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
     wants_to_kick_by_id_[request->robot_id] = request->wants_to_kick;
 
     if (membership_changed) {
-        // Potential concern: this slows down the callback. Will agents be busy-waiting on a response?
+        // Potential concern: this slows down the callback. Will agents be busy-waiting on a
+        // response?
         publish_selected_kicker();
     }
 
@@ -48,7 +51,7 @@ void KickerPicker::publish_selected_kicker() {
             }
         }
     }
-    
+
     // Only publish if the selected kicker has changed
     if (selected_kicker != last_published_kicker_) {
         publisher_->publish(rj_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
@@ -56,4 +59,4 @@ void KickerPicker::publish_selected_kicker() {
     }
 }
 
-} // namespace strategy
+}  // namespace strategy
