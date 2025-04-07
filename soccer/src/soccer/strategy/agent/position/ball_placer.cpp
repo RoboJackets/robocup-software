@@ -51,7 +51,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             // go to plan_request.cpp check if(in.min_dist_from_ball....)
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case ROTATE: { // Phase causes immediate crash of simulator, suspicious of target setting
@@ -61,7 +61,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             auto pivot_cmd =
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case TRANSPORT: {  
@@ -74,7 +74,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
                 
                 intent.motion_command =
                     planning::MotionCommand{"path_target", target,planning::FaceBall{}};
-                intent.dribbler_speed = 255.0;
+                intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             } else {
                 SPDLOG_ERROR("Ball position was not retrieved from PlayState");
             }
