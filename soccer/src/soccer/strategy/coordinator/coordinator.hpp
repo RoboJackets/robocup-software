@@ -47,7 +47,7 @@ public:
                                                           request, response);
                                                   })),
           publisher_(this->create_publisher<TopicT>(
-              topic_name, rclcpp::QoS(1).best_effort().transient_local())) {}
+              topic_name, rclcpp::QoS(1).transient_local())) {}
 
     ~Coordinator() override = default;
 

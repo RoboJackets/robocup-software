@@ -98,23 +98,16 @@ void RobotFactoryPosition::handle_setup() {
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !kicker_picker_.am_i_member()) {
-            SPDLOG_INFO("Join Group: {}", robot_id_);
             kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ && current_play_state_.is_kickoff()) {
-                    SPDLOG_INFO("Free Kicker: {}", robot_id_);
                     set_current_position<FreeKicker>();
-                } else if (result.am_i_member && result.kicker_id == robot_id_) {
-                    SPDLOG_INFO("Penalty Kicker: {}", robot_id_);
+                } else if (result.am_i_member && result.kicker_id == robot_id_ && current_play_state_.is_penalty()) {
                     set_current_position<PenaltyPlayer>();
                 }
                 else if (current_play_state_.is_penalty()) {
-                    SPDLOG_INFO("Penalty Non Kicker: {}", robot_id_);
                     set_current_position<PenaltyNonKicker>();
                 } else if (current_play_state_.is_free_kick()) {
-                    SPDLOG_INFO("Set default position: {}", robot_id_);
-                    set_default_position();
-                } else {
-                    SPDLOG_INFO("WTF: {}", robot_id_);
+                    set_current_position<Defense>();
                 }
             });
         } else {
@@ -135,6 +128,10 @@ void RobotFactoryPosition::handle_ready() {
                 set_current_position<FreeKicker>();
             } else {
                 set_default_position();
+
+                if (current_position_->get_name() == "Offense") {
+                    set_current_position<SmartIdle>();
+                }
             }
         });
 
@@ -167,7 +164,6 @@ void RobotFactoryPosition::update_position() {
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_their_restart()) { // Their restart
                 if (current_play_state_.is_kickoff()) {
-                    SPDLOG_INFO("their kickoff");
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();

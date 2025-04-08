@@ -28,6 +28,7 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 }
 
 void KickerPickerClient::join_group(StatusCallback callback) {
+    
     if (am_i_member_) {
         return;
     }
@@ -46,7 +47,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
 
     client_->async_send_request(
         request, [this, callback](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
-                                      future) {  // NOLINT(performance-unnecessary-value-param) --
+                                      future) {  //6 NOLINT(performance-unnecessary-value-param) --
                                                  // ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
@@ -59,7 +60,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
 
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::KickerPicker>(
-                "kicker_picker_data", rclcpp::QoS(1).best_effort().transient_local(),
+                "kicker_picker_data", rclcpp::QoS(1).transient_local(),
                 [this, callback](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
                     if (callback) {
@@ -76,8 +77,6 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
         }
         return;
     }
-
-    SPDLOG_INFO("Leave Group: {}", robot_id_);
 
     auto request = std::make_shared<rj_msgs::srv::KickerPicker::Request>();
     request->robot_id = robot_id_;
@@ -115,65 +114,3 @@ uint8_t KickerPickerClient::selected_kicker() const { return selected_kicker_; }
 bool KickerPickerClient::is_selected() const { return selected_kicker_ == robot_id_; }
 
 }  // namespace strategy
-
-// class Position {
-
-//     void state_to_task() {
-
-//         //  I want to kicker-pick
-//         // option 1:
-//         client.join_group() // blocking
-//         if (client.am_i_member()) {
-//             // advance state
-//         }
-
-//         // option 2:
-//         client.join_group([](bool am_i_member){
-//             if (am_i_member) {
-//                 // am kicking member
-//                 state_ = BLAH;
-//             }
-//         });
-//         // advance state
-//         // state WAITING:
-//         // ??? hang out
-//         // state AM_KICKING_MEMBER:
-//         if (client.is_kicker()) {
-//             // kick
-//         } else {
-//             // hangout
-//         }
-
-//         // option 3:
-//         client.join_group();
-//         // advance state
-//         // state WAITING:
-//         if (client.am_i_member()) {
-//             // advance state
-//             // am kicking member
-//         }
-
-//         // option 4:
-//         client.join_group([](std::optional<int> wall_position){
-//             if (wall_position.has_value()) {
-//                 // wall in position;
-//             } else {
-//                 // sub was never made; do something else
-//             }
-//         });
-//         // state WAITING
-
-//         // inside state_to_task() function
-
-//         if current_state_ == SEEKING:
-//             if client.is_kicker():
-//                 state = STEALING;
-//             else if !client.am_i_member() && i_think_i_want_to_steal():
-//                 client.join_group()... ??
-
-//         // next_state():
-
-//         client.join_group();
-//     }
-
-// }
