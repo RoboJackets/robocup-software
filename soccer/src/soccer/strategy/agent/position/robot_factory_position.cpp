@@ -99,12 +99,13 @@ void RobotFactoryPosition::handle_setup() {
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !kicker_picker_.am_i_member()) {
             kicker_picker_.join_group([this](KickerPickerClient::Result result) {
-                if (result.am_i_member && result.kicker_id == robot_id_ && current_play_state_.is_kickoff()) {
+                if (result.am_i_member && result.kicker_id == robot_id_ &&
+                    current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();
-                } else if (result.am_i_member && result.kicker_id == robot_id_ && current_play_state_.is_penalty()) {
+                } else if (result.am_i_member && result.kicker_id == robot_id_ &&
+                           current_play_state_.is_penalty()) {
                     set_current_position<PenaltyPlayer>();
-                }
-                else if (current_play_state_.is_penalty()) {
+                } else if (current_play_state_.is_penalty()) {
                     set_current_position<PenaltyNonKicker>();
                 } else if (current_play_state_.is_free_kick()) {
                     set_current_position<Defense>();
@@ -162,7 +163,7 @@ void RobotFactoryPosition::update_position() {
             // Currently in setup
 
             // This is the only case where we have to do something on every tick
-            if (current_play_state_.is_their_restart()) { // Their restart
+            if (current_play_state_.is_their_restart()) {  // Their restart
                 if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 } else if (current_play_state_.is_penalty()) {

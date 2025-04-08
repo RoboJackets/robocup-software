@@ -28,7 +28,6 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 }
 
 void KickerPickerClient::join_group(StatusCallback callback) {
-    
     if (am_i_member_) {
         return;
     }
@@ -47,8 +46,8 @@ void KickerPickerClient::join_group(StatusCallback callback) {
 
     client_->async_send_request(
         request, [this, callback](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
-                                      future) {  //6 NOLINT(performance-unnecessary-value-param) --
-                                                 // ROS2 async callbacks require value capture.
+                                      future) {  // 6 NOLINT(performance-unnecessary-value-param) --
+                                                 //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
                     callback(Result{false});
