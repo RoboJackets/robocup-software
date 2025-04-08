@@ -46,8 +46,8 @@ public:
                                                       static_cast<Derived*>(this)->service_callback(
                                                           request, response);
                                                   })),
-          publisher_(this->create_publisher<TopicT>(
-              topic_name, rclcpp::QoS(1).transient_local())) {}
+          publisher_(this->create_publisher<TopicT>(topic_name, rclcpp::QoS(1).transient_local())) {
+    }
 
     ~Coordinator() override = default;
 
