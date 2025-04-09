@@ -19,6 +19,11 @@ namespace planning {
 using namespace rj_geometry;
 
 Trajectory RotatePathPlanner::plan(const PlanRequest& request) {
+    if (!cached_angle_change_ && request.trigger_mode == RobotIntent::TriggerMode::AT_END) {
+        double target_distance = 
+            (request.motion_command.target.position - request.start.pose.position()).mag();
+        kIsDoneAngleChangeThresh = max(pow(2, -target_distance), 0.01);
+    }
     update_state();
     switch (current_state_) {
         case PIVOT:
