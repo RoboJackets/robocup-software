@@ -26,8 +26,6 @@ void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
     wants_to_kick_by_id_[request->robot_id] = request->wants_to_kick;
 
     if (membership_changed) {
-        // Potential concern: this slows down the callback. Will agents be busy-waiting on a
-        // response?
         publish_selected_kicker(membership_changed);
     }
 
