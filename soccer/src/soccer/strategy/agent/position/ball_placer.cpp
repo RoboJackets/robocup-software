@@ -21,7 +21,7 @@ BallPlacer::State BallPlacer::update_state() {
             break;
         }
         case ROTATE: {
-            if (check_is_done()) {
+            if (check_is_done() && (distance_to_ball() < kRobotRadius + 0.1)) {
                 return TRANSPORT;
             }
             break;
@@ -44,24 +44,33 @@ BallPlacer::State BallPlacer::update_state() {
 
 std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
-        case COLLECT: { // MAKE SURE TO REMOVE GOAL KEEPER OBSTACLE!!!
+        case COLLECT: { 
             SPDLOG_INFO("COLLECT");
             // issue here relates to obstacle making within collect
             // the ball has an obstacle around it when it's in STOP playstate
             // go to plan_request.cpp check if(in.min_dist_from_ball....)
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            intent.dribbler_speed = 255.0;
+            rj_geometry::Point robotToBall =
+                (last_world_state_->ball.position -
+                 last_world_state_->get_robot(true, robot_id_).pose.position());
+            double slowDown = 1.0;
+            double length = robotToBall.mag() - kRobotRadius * slowDown;
+            robotToBall = robotToBall.normalized(length);
+            planning::LinearMotionInstant target{
+                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            auto pivot_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
-        case ROTATE: { // Phase causes immediate crash of simulator, suspicious of target setting
+        case ROTATE: { 
             SPDLOG_INFO("ROTATE");
-            rj_geometry::Point target_vel{0.0, 0.0};
+
             planning::LinearMotionInstant target{current_play_state_.ball_placement_point().value()};
             auto pivot_cmd =
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_speed = 255;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+
             return intent;
         }
         case TRANSPORT: {  
@@ -74,7 +83,8 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
                 
                 intent.motion_command =
                     planning::MotionCommand{"path_target", target,planning::FaceBall{}};
-                intent.dribbler_speed = 255.0;
+                    intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+
             } else {
                 SPDLOG_ERROR("Ball position was not retrieved from PlayState");
             }

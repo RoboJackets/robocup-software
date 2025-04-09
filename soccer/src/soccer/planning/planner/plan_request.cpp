@@ -54,9 +54,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
     }
     
-    if (in.play_state.ball_placement_point().has_value()) {
-        return;
-    }
+    
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);
     // Add their robots as static obstacles (inflated based on velocity).
@@ -68,6 +66,10 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             out_static->add(
                 std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
         }
+    }
+    // All obstacles after this if won't be created in teh case that it is our ball placement
+    if (in.play_state.ball_placement_point().has_value()) {
+        return;
     }
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
     // Only added when STOP state is enabled
