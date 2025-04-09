@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 
     // spin up one action client for each robot
     // (must be added to a vector so shared_ptrs aren't deleted when they go out of scope)
-    std::list<strategy::AgentActionClient> agents;  // Linked List becaue no move operator in AAC
+    std::list<strategy::AgentActionClient> agents;  // Linked List because no move operator in AAC
     for (int i = 0; i < 6;
          ++i) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
         agents.emplace_back(i);
