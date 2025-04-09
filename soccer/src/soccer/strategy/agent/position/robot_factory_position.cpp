@@ -107,7 +107,7 @@ void RobotFactoryPosition::handle_setup() {
                     set_current_position<PenaltyPlayer>();
                 } else if (current_play_state_.is_penalty()) {
                     set_current_position<PenaltyNonKicker>();
-                } else if (current_play_state_.is_free_kick()) {
+                } else if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 }
             });
@@ -130,16 +130,16 @@ void RobotFactoryPosition::handle_ready() {
             } else {
                 set_default_position();
 
-                if (current_position_->get_name() == "Offense") {
+                if (dynamic_cast<Offense*>(current_position_.get()) != nullptr) {
                     set_current_position<SmartIdle>();
                 }
             }
         });
 
     } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
-        if (current_position_->get_name() == "Offense" ||
-            current_position_->get_name() == "PenaltyPlayer" ||
-            current_position_->get_name() == "GoalKicker") {
+        if (dynamic_cast<Offense*>(current_position_.get()) != nullptr ||
+            dynamic_cast<PenaltyPlayer*>(current_position_.get()) != nullptr ||
+            dynamic_cast<FreeKicker*>(current_position_.get()) != nullptr) {
             set_current_position<SmartIdle>();
         }
     }
@@ -174,7 +174,7 @@ void RobotFactoryPosition::update_position() {
                     set_default_position();
                     // don't want a player on offense to try to kick the
                     // ball instead of free kicker
-                    if (current_position_->get_name() == "Offense") {
+                    if (dynamic_cast<Offense*>(current_position_.get()) != nullptr) {
                         set_current_position<SmartIdle>();
                     }
                 }
