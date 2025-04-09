@@ -46,7 +46,6 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
     using AgentStateMsg = rj_msgs::msg::AgentState;
 
-    // AgentActionClient();
     AgentActionClient(int r_id);
     ~AgentActionClient() = default;
 
