@@ -26,7 +26,8 @@ namespace strategy {
  *     MyCoordinator() : Coordinator("my_service", "my_topic") {}
  *
  *     void service_callback(RequestPtr request, ResponsePtr response) {
- *         // Handle the service request
+ *         // Handle the service request by editing the response directly
+ *         // for example:
  *         response->success = true;
  *     }
  * };
