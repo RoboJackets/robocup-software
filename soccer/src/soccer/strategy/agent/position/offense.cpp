@@ -35,104 +35,85 @@ Offense::State Offense::next_state() {
     // handle transitions between current state
     switch (current_state_) {
         case DEFAULT: {
+            // Unconditional transition.
+            // Recovery state. When you know nothing about the state of Offense, start by seeking an open position.
             return SEEKING_START;
         }
 
         case SEEKING_START: {
-            // Unconditionally only stay in this state for one tick.
+            // Unconditional transition.
+            // This state sets the seeking targeting for SEEKING.
             return SEEKING;
         }
 
         case SEEKING: {
-            // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball()) {
-                return STEALING;
-            }
+            // If the ball seems "stealable", steal it.
+            if (can_steal_ball()) { return STEALING; }
 
-            // If we need to get a new seeking target, restart seeking
-            if (check_is_done() ||
-                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-                return SEEKING_START;
-            }
+            // Target reached, get new target
+            if (check_is_done()) { return SEEKING_START; }
+
+            // Robot is functionally stationary, get new target.
+            // TODO: when is this useful? why is this useful?
+            bool is_stationary = (last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01);
+            if (is_stationary) { return SEEKING_START; }
 
             return SEEKING;
         }
 
         case POSSESSION: {
-            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
-            // If we can make a shot, make it.
-            // If we need to stop possessing now, shoot.
-            if (has_open_shot() || timed_out()) {
-                return SHOOTING;
-            }
-            */
-            // TESTING: hard await a pass recipient instead of shootings
-            if (timed_out()) { return DEFAULT; }
+            // If we can make a shot, take it.
+            // TODO: this calculation is way overconfident
+            if (has_open_shot()) { return SHOOTING; }
 
-            // No open shot, try to pass.
-            // This will trigger an automatic switch to passing if a pass is
-            // accepted.
+            // Try a pass, internally transitions to PASSING if successful.
+            // TODO: internal transition is unfavorable for readability
             broadcast_direct_pass_request();
 
             return POSSESSION;
         }
 
         case PASSING: {
-            // If we've finished passing, cool!
+            // Upon deadlock/timeout, just punt it.
+            if (timed_out()) { return SHOOTING; }
+
+            // If we've finished passing, restart logic chain.
+            // TODO: in sim, they sometimes think they've kicked, but haven't
             if (check_is_done()) {
                 pass_ball(pass_to_robot_id_);
                 return DEFAULT;
             }
 
-            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
-            // If we didn't successfully pass in time, take a shot
-            if (timed_out()) {
-                return SHOOTING;
-            }
-            */
-            // TESTING: no shooting
-            if (timed_out()) { return DEFAULT; }
-
-            // If we lost the ball completely, give up
-            if (distance_to_ball() > kBallTooFarDist) {
-                return DEFAULT;
-            }
+            // Since the derived task is a rotate, if we drop the dribble, give up on the pass.
+            // TODO: add a check for whether the ball is in front of the robot
+            if (distance_to_ball() > kOwnBallRadius) { return DEFAULT; }
 
             return PASSING;
         }
 
         case STEALING: {
-            // Go to possession if successful
-            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
-                return POSSESSION;
-            }
+            // Upon deadlock/timeout, give up.
+            if (timed_out()) { return DEFAULT; }
 
-            // If another robot becomes closer, leave state
-            if (!can_steal_ball()) {
-                return SEEKING;
-            }
+            // If the ball is collected, begin a possession.
+            if (check_is_done() && distance_to_ball() < kOwnBallRadius) { return POSSESSION; }
 
-            if (timed_out()) {
-                return DEFAULT;
-            }
+            // If the ball becomes "unstealable", give up on the steal.
+            if (!can_steal_ball()) { return SEEKING; }
 
             return STEALING;
         }
 
         case RECEIVING: {
-            // If we got it, cool, we have it!
-            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
-                return POSSESSION;
-            }
+            // Upon deadlock/timeout, give up.
+            if (timed_out()) { return DEFAULT; }
 
-            if (ball_in_red()) {
-                return DEFAULT;
-            }
+            // If the ball is collected, begin a possession.
+            if (check_is_done() && distance_to_ball() < kOwnBallRadius) { return POSSESSION; }
 
-            // If we failed to get it in time
-            if (timed_out()) {
-                return DEFAULT;
-            }
+            // If the ball is in an invalid zone, give up.
+            // TODO: this is a bad check, cross passes can plausibly go through invalid zones.
+            if (ball_in_red()) { return DEFAULT; }
 
             return RECEIVING;
         }
@@ -146,14 +127,8 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
-            /* TESTING TESTING TESTING REMOVE REMOVE REMOVE
             // If we either succeed or fail, it's time to start over.
-            if (check_is_done() || timed_out()) {
-                return DEFAULT;
-            }
-            */
-            // TESTING: making this an absorptive state so I can be certain that it's never reached
-            SPDLOG_INFO("stuck in shooting");
+            if (check_is_done() || timed_out()) { return DEFAULT; }
 
             return SHOOTING;
         }
@@ -243,6 +218,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
             // }
+
+            // TODO: it is entirely reasonable that, in a possession, an Offense member chooses to neither pass nor shoot.
+            // Possession should assume the ball is already collected, and the derived task should be a random dribbling.
 
             return intent;
         }
