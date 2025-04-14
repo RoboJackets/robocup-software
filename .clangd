@@ -1,2 +1,2 @@
 CompileFlags:
-    CompilationDatabase: build-debug/
+    CompilationDatabase: build-release-debug/
