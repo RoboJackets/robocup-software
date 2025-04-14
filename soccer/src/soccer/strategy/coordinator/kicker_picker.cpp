@@ -16,7 +16,7 @@ KickerPicker::KickerPicker()
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
-            publish_selected_kicker(false);
+            publish_selected_kicker();
         });
 }
 
@@ -26,13 +26,13 @@ void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
     wants_to_kick_by_id_[request->robot_id] = request->wants_to_kick;
 
     if (membership_changed) {
-        publish_selected_kicker(membership_changed);
+        publish_selected_kicker();
     }
 
     response->success = true;
 }
 
-void KickerPicker::publish_selected_kicker(bool membership_changed) {
+void KickerPicker::publish_selected_kicker() {
     // Find closest robot to ball among group members
     double min_distance = std::numeric_limits<double>::infinity();
     uint8_t selected_kicker = kInvalidRobotId;
@@ -51,7 +51,7 @@ void KickerPicker::publish_selected_kicker(bool membership_changed) {
     }
 
     // Only publish if the selected kicker has changed
-    if (selected_kicker != last_published_kicker_ || membership_changed) {
+    if (selected_kicker != last_published_kicker_) {
         publisher_->publish(rj_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
         last_published_kicker_ = selected_kicker;
     }

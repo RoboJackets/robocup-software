@@ -18,8 +18,6 @@ namespace strategy {
  * @brief Client for interacting with the KickerPicker coordinator.
  *
  * Manages membership in the kicker group and tracks the currently selected kicker.
- * All callbacks are executed in the node's callback group, so no mutex is needed
- * for thread safety in single-threaded execution.
  */
 
 KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
@@ -45,7 +43,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
     request->wants_to_kick = true;
 
     client_->async_send_request(
-        request, [this, callback](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+        request, [this, callback = std::move(callback)](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
                                       future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                                  //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
@@ -60,7 +58,7 @@ void KickerPickerClient::join_group(StatusCallback callback) {
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::KickerPicker>(
                 "kicker_picker_data", rclcpp::QoS(1).transient_local(),
-                [this, callback](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
+                [this, callback = std::move(callback)](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
                     if (callback) {
                         callback(Result{true, selected_kicker_});
@@ -82,7 +80,7 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
     request->wants_to_kick = false;
 
     client_->async_send_request(
-        request, [this, callback](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+        request, [this, callback = std::move(callback)](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
                                       future) {  // NOLINT(performance-unnecessary-value-param) --
                                                  // ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {

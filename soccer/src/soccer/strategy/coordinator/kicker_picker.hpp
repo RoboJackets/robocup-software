@@ -29,7 +29,7 @@ public:
     void service_callback(RequestPtr request, ResponsePtr response);
 
 private:
-    void publish_selected_kicker(bool membership_changed);
+    void publish_selected_kicker();
 
     std::array<bool, kNumShells> wants_to_kick_by_id_{};  // Zero-initialized
     WorldState last_world_state_;
