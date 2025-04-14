@@ -34,8 +34,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
     path_planners_[LinePivotPathPlanner().name()] = std::make_unique<LinePivotPathPlanner>();
     path_planners_[RotatePathPlanner().name()] = std::make_unique<RotatePathPlanner>();
-    path_planners_[EscapeObstaclesPathPlanner().name()] =
-        std::make_unique<EscapeObstaclesPathPlanner>();
+    path_planners_[EscapeObstaclesPathPlanner().name()] = std::make_unique<EscapeObstaclesPathPlanner>();
 
     // publish paths to control
     trajectory_topic_ = node_->create_publisher<Trajectory::Msg>(

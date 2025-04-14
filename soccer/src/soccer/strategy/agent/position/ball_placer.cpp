@@ -21,19 +21,24 @@ BallPlacer::State BallPlacer::update_state() {
             break;
         }
         case ROTATE: {
-            if (check_is_done() && (distance_to_ball() < kRobotRadius + 0.1)) {
+            // If we successfully rotate while the ball is still within possession 
+            if (check_is_done() && (distance_to_ball() < kRobotPossessionRadius)) {
                 return TRANSPORT;
             }
             break;
         }
         case TRANSPORT: {
-            if (check_is_done()) {
+            // If we make it to the point 0.3 meters away, stop and go to STANDBY (the ball will roll to a stop at that distance)
+            if (check_is_done() || ball_to_point_distance() < 0.3) {
                 return STAND_BY;
+            } else if (distance_to_ball() > kRobotPossessionRadius) { // If we lose possession, return to COLLECT
+                return COLLECT;
             }
             break;
         }
         case STAND_BY: {
-            if (ball_to_point_distance() > 0.15) {
+            // If the ball rolls 0.15m away from the designated spot, return to COLLECT
+            if (ball_to_point_distance() > kBallPlacementDeadzoneRadius) {
                 return COLLECT;
             }
             break;
@@ -44,11 +49,11 @@ BallPlacer::State BallPlacer::update_state() {
 
 std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
+        // Runs "collect" command to go-to and grab the ball
         case COLLECT: { 
             SPDLOG_INFO("COLLECT");
-            // issue here relates to obstacle making within collect
-            // the ball has an obstacle around it when it's in STOP playstate
-            // go to plan_request.cpp check if(in.min_dist_from_ball....)
+
+            // How does this work? And wouldn't this replace "collect"? -Cameron
             rj_geometry::Point robotToBall =
                 (last_world_state_->ball.position -
                  last_world_state_->get_robot(true, robot_id_).pose.position());
@@ -57,11 +62,14 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             robotToBall = robotToBall.normalized(length);
             planning::LinearMotionInstant target{
                 last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            
+            
             auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
+        // Rotates the ball to ensure we have possession
         case ROTATE: { 
             SPDLOG_INFO("ROTATE");
 
@@ -73,17 +81,20 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
 
             return intent;
         }
+        // Runs a straight line to the ball_placement_point() given
         case TRANSPORT: {  
             SPDLOG_INFO("TRANSPORT");
             auto ballPlacement = current_play_state_.ball_placement_point();
             intent.motion_command = planning::MotionCommand{};
             if(ballPlacement.has_value()) {
                 rj_geometry::Point target_vel{0.0, 0.0};
+                
+
                 planning::LinearMotionInstant target{ballPlacement.value(), target_vel};
                 
                 intent.motion_command =
-                    planning::MotionCommand{"path_target", target,planning::FaceBall{}};
-                    intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+                    planning::MotionCommand{"path_target", target, planning::FacePoint{ballPlacement.value()}};
+                intent.dribbler_mode = RobotIntent::DribblerMode::ON;
 
             } else {
                 SPDLOG_ERROR("Ball position was not retrieved from PlayState");
@@ -91,6 +102,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             return intent;
             break;
         }
+        // Stands behind the ball and waits until ball_placement ends or another condition is triggered
         case STAND_BY: {
             SPDLOG_INFO("STAND BY");
             double y_pos = last_world_state_->ball.position.y();
