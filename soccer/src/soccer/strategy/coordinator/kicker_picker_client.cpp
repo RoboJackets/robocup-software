@@ -43,9 +43,10 @@ void KickerPickerClient::join_group(StatusCallback callback) {
     request->wants_to_kick = true;
 
     client_->async_send_request(
-        request, [this, callback = std::move(callback)](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
-                                      future) {  // 6 NOLINT(performance-unnecessary-value-param) --
-                                                 //  ROS2 async callbacks require value capture.
+        request, [this, callback = std::move(callback)](
+                     rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+                         future) {  // 6 NOLINT(performance-unnecessary-value-param) --
+                                    //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
                     callback(Result{false});
@@ -58,7 +59,8 @@ void KickerPickerClient::join_group(StatusCallback callback) {
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::KickerPicker>(
                 "kicker_picker_data", rclcpp::QoS(1).transient_local(),
-                [this, callback = std::move(callback)](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
+                [this,
+                 callback = std::move(callback)](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
                     if (callback) {
                         callback(Result{true, selected_kicker_});
@@ -79,29 +81,31 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
     request->robot_id = robot_id_;
     request->wants_to_kick = false;
 
-    client_->async_send_request(
-        request, [this, callback = std::move(callback)](rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
-                                      future) {  // NOLINT(performance-unnecessary-value-param) --
-                                                 // ROS2 async callbacks require value capture.
-            if (!future.valid() || !future.get()->success) {
-                if (callback) {
-                    callback(Result{am_i_member_});
-                }
-                return;
-            }
+    client_->async_send_request(request,
+                                [this, callback = std::move(callback)](
+                                    rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+                                        future) {  // NOLINT(performance-unnecessary-value-param) --
+                                                   // ROS2 async callbacks require value capture.
+                                    if (!future.valid() || !future.get()->success) {
+                                        if (callback) {
+                                            callback(Result{am_i_member_});
+                                        }
+                                        return;
+                                    }
 
-            am_i_member_ = false;
+                                    am_i_member_ = false;
 
-            // Resetting the shared ptr releases our pointer to the subscription.
-            // ROS only keeps a weak_ptr, so this will deallocate the subscription.
-            // The callback will no longer be called.
-            subscription_.reset();
-            selected_kicker_ = KickerPicker::kInvalidRobotId;
+                                    // Resetting the shared ptr releases our pointer to the
+                                    // subscription. ROS only keeps a weak_ptr, so this will
+                                    // deallocate the subscription. The callback will no longer be
+                                    // called.
+                                    subscription_.reset();
+                                    selected_kicker_ = KickerPicker::kInvalidRobotId;
 
-            if (callback) {
-                callback(Result{false});
-            }
-        });
+                                    if (callback) {
+                                        callback(Result{false});
+                                    }
+                                });
 }
 
 bool KickerPickerClient::am_i_member() const { return am_i_member_; }
