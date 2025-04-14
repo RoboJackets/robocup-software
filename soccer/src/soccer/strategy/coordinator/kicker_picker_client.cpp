@@ -81,31 +81,31 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
     request->robot_id = robot_id_;
     request->wants_to_kick = false;
 
-    client_->async_send_request(request,
-                                [this, callback = std::move(callback)](
-                                    rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
-                                        future) {  // NOLINT(performance-unnecessary-value-param) --
-                                                   // ROS2 async callbacks require value capture.
-                                    if (!future.valid() || !future.get()->success) {
-                                        if (callback) {
-                                            callback(Result{am_i_member_});
-                                        }
-                                        return;
-                                    }
+    client_->async_send_request(
+        request, [this, callback = std::move(callback)](
+                    rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+                        future) {  // NOLINT(performance-unnecessary-value-param) --
+                                    // ROS2 async callbacks require value capture.
+        if (!future.valid() || !future.get()->success) {
+            if (callback) {
+                callback(Result{am_i_member_});
+            }
+            return;
+        }
 
-                                    am_i_member_ = false;
+        am_i_member_ = false;
 
-                                    // Resetting the shared ptr releases our pointer to the
-                                    // subscription. ROS only keeps a weak_ptr, so this will
-                                    // deallocate the subscription. The callback will no longer be
-                                    // called.
-                                    subscription_.reset();
-                                    selected_kicker_ = KickerPicker::kInvalidRobotId;
+        // Resetting the shared ptr releases our pointer to the
+        // subscription. ROS only keeps a weak_ptr, so this will
+        // deallocate the subscription. The callback will no longer be
+        // called.
+        subscription_.reset();
+        selected_kicker_ = KickerPicker::kInvalidRobotId;
 
-                                    if (callback) {
-                                        callback(Result{false});
-                                    }
-                                });
+        if (callback) {
+            callback(Result{false});
+        }
+    });
 }
 
 bool KickerPickerClient::am_i_member() const { return am_i_member_; }
