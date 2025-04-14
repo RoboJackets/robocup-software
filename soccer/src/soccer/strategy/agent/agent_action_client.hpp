@@ -40,15 +40,16 @@ namespace strategy {
  * class. The goal is for this class to handle the ROS minutia, and for Position
  * to implement the strategy. See position.hpp for more details.
  */
-class AgentActionClient : public rclcpp::Node {
+class AgentActionClient {
 public:
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
     using AgentStateMsg = rj_msgs::msg::AgentState;
 
-    AgentActionClient();
     AgentActionClient(int r_id);
     ~AgentActionClient() = default;
+
+    rclcpp::Node::SharedPtr node() const;
 
 private:
     // ROS pub/subs
@@ -166,12 +167,9 @@ private:
     // us to set this once initially
     const int robot_id_;
 
-    /*
-     * @return thread-safe ptr to most recent world_state
-     */
-    [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
-    mutable std::mutex world_state_mutex_;
+
+    rclcpp::Node::SharedPtr node_;
 };  // class AgentActionClient
 
 }  // namespace strategy

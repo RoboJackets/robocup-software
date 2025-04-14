@@ -32,6 +32,7 @@
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
+#include "strategy/coordinator/kicker_picker_client.hpp"
 
 namespace strategy {
 
@@ -41,7 +42,7 @@ namespace strategy {
  */
 class RobotFactoryPosition : public Position {
 public:
-    RobotFactoryPosition(int r_id);
+    RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node);
     ~RobotFactoryPosition() override = default;
 
     // Copy and move for this class is really annoying because it contains
@@ -115,11 +116,10 @@ public:
 private:
     std::unique_ptr<Position> current_position_;
 
+    KickerPickerClient kicker_picker_;
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-
-    bool am_closest_kicker();
 
     void set_default_position();
 
@@ -128,10 +128,6 @@ private:
     void process_play_state();
 
     void update_position();
-
-    void start_kicker_picker();
-
-    bool have_all_kicker_responses();
 
     void handle_stop();
 
@@ -151,9 +147,9 @@ private:
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
-            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
             current_position_->die();
             current_position_ = std::make_unique<Pos>(*current_position_);
+            SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }
 

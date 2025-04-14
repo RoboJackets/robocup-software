@@ -11,55 +11,52 @@ namespace strategy {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
-AgentActionClient::AgentActionClient() : AgentActionClient(0) {
-    // unclear why I need to explicitly create a default constructor, but compiler throws error when
-    // not here https://stackoverflow.com/questions/47704900/error-use-of-deleted-function
-}
+AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
+    node_ =
+        std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id),
+                                       rclcpp::NodeOptions{}
+                                           .automatically_declare_parameters_from_overrides(true)
+                                           .allow_undeclared_parameters(true));
 
-AgentActionClient::AgentActionClient(int r_id)
-    : rclcpp::Node(::fmt::format("agent_{}_action_client_node", r_id),
-                   rclcpp::NodeOptions{}
-                       .automatically_declare_parameters_from_overrides(true)
-                       .allow_undeclared_parameters(true)),
-      current_position_{std::make_unique<RobotFactoryPosition>(r_id)},
-      robot_id_{r_id} {
     // create a ptr to ActionClient
-    client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
+    client_ptr_ = rclcpp_action::create_client<RobotMove>(node_, "robot_move");
 
-    current_state_publisher_ = create_publisher<AgentStateMsg>(
+    current_position_ = std::make_unique<RobotFactoryPosition>(r_id, node_);
+
+    current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<rj_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
         [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<rj_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
         [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<rj_msgs::msg::FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
-    alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
+    alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<rj_msgs::msg::GameSettings>(
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    goalie_id_sub_ = create_subscription<rj_msgs::msg::Goalie>(
+    goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
-    override_play_sub_ = create_subscription<rj_msgs::msg::OverridePosition>(
+    override_play_sub_ = node_->create_subscription<rj_msgs::msg::OverridePosition>(
         "override_position/robot_" + std::to_string(r_id), 1,
         [this](rj_msgs::msg::OverridePosition::SharedPtr msg) {
             test_play_callback(msg);
         });  // NOLINT
 
-    robot_communication_srv_ = create_service<rj_msgs::srv::AgentCommunication>(
+    robot_communication_srv_ = node_->create_service<rj_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
         [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
                std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
@@ -68,21 +65,23 @@ AgentActionClient::AgentActionClient(int r_id)
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
-        robot_communication_cli_[i] =
-            create_client<rj_msgs::srv::AgentCommunication>(fmt::format("agent_{}_incoming", i));
+        robot_communication_cli_[i] = node_->create_client<rj_msgs::srv::AgentCommunication>(
+            fmt::format("agent_{}_incoming", i));
     }
 
     int hz = 10;
-    get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
-                                        std::bind(&AgentActionClient::get_task, this));
+    get_task_timer_ = node_->create_wall_timer(std::chrono::milliseconds(1000 / hz),
+                                               std::bind(&AgentActionClient::get_task, this));
 
     int agent_communication_hz = 60;
-    get_communication_timer_ =
-        create_wall_timer(std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
+    get_communication_timer_ = node_->create_wall_timer(
+        std::chrono::milliseconds(1000 / agent_communication_hz), [this]() {
             get_communication();
             check_communication_timeout();
         });
 }
+
+rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
@@ -90,9 +89,6 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     }
 
     WorldState world_state = rj_convert::convert_from_ros(*msg);
-    // avoid mutex issues w/ world state (probably not an issue in AC, but
-    // already here so why not)
-    auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
 }
 
@@ -146,21 +142,18 @@ void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings:
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
     if (!is_simulated_) {
         return alive_robots_.at(robot_id);
-    } else {
-        if (this->world_state()->get_robot(true, robot_id).visible) {
-            rj_geometry::Point robot_position =
-                this->world_state()->get_robot(true, robot_id).pose.position();
-            rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
-            padded_field_rect.pad(field_padding_);
-            return padded_field_rect.contains_point(robot_position);
-        }
-        return false;
     }
+    if (last_world_state_.get_robot(true, robot_id).visible) {
+        rj_geometry::Point robot_position =
+            last_world_state_.get_robot(true, robot_id).pose.position();
+        rj_geometry::Rect padded_field_rect = field_dimensions_.field_coordinates();
+        padded_field_rect.pad(field_padding_);
+        return padded_field_rect.contains_point(robot_position);
+    }
+    return false;
 }
 
 void AgentActionClient::get_task() {
-    auto lock = std::lock_guard(world_state_mutex_);
-
     auto optional_task =
         current_position_->get_task(last_world_state_, field_dimensions_, play_state_);
     if (optional_task.has_value()) {
@@ -189,31 +182,19 @@ void AgentActionClient::send_new_goal() {
     goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
-    send_goal_options.goal_response_callback = [this](auto arg) {
-        goal_response_callback(arg);
-    };
+    send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
     send_goal_options.feedback_callback = [this](auto arg1, auto arg2) {
         feedback_callback(arg1, arg2);
     };
-    send_goal_options.result_callback = [this](auto arg) {
-        result_callback(arg);
-    };
+    send_goal_options.result_callback = [this](auto arg) { result_callback(arg); };
     client_ptr_->async_send_goal(goal_msg, send_goal_options);
-}
-
-[[nodiscard]] WorldState* AgentActionClient::world_state() {
-    // thread-safe getter for world_state
-    auto lock = std::lock_guard(world_state_mutex_);
-    return &last_world_state_;
 }
 
 // With the get_task function deleted, we need to initialize the new class once
 // in the initializer. This will call the class which will analyze the
 // situation based on the current tick.
 
-void AgentActionClient::goal_response_callback(
-    GoalHandleRobotMove::SharedPtr goal_handle) {
-
+void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr goal_handle) {
     if (!goal_handle) {
         current_position_->set_goal_canceled();
     }

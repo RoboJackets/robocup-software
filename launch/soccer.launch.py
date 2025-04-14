@@ -227,5 +227,12 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+            Node(
+                package="rj_robocup",
+                executable="kicker_picker_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            )
         ]
     )
