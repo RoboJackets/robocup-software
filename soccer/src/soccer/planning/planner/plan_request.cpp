@@ -67,7 +67,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
                 std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
         }
     }
-    // All obstacles after this if won't be created in teh case that it is our ball placement
+    // All obstacles after this if won't be created in the case that it is our ball placement
     if (in.play_state.ball_placement_point().has_value()) {
         return;
     }

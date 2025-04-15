@@ -42,8 +42,8 @@ private:
 
     enum State {COLLECT, TRANSPORT, STAND_BY, ROTATE};
 
-    static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
-
+    static constexpr double kRobotPossessionRadius{kRobotRadius + 0.1};
+    static constexpr double kBallPlacementDeadzoneRadius{0.15};
 
     State update_state();
 
