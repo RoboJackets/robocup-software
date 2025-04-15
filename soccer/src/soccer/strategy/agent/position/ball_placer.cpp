@@ -70,7 +70,6 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-
             return intent;
         }
         case TRANSPORT: {  
