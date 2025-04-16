@@ -77,25 +77,57 @@ AgentActionClient::AgentActionClient(int r_id)
             check_communication_timeout();
         });
 
-    std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client =
-    std::make_shared<rclcpp::AsyncParametersClient>(this, "/global_param_provider");
-    parameters_client->wait_for_service();
+    // // Create the parameters client
+    // std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client =
+    //     std::make_shared<rclcpp::AsyncParametersClient>(this, "/global_param_provider");
 
-    auto parameters_future = parameters_client->get_parameters({"control/max_acceleration", "control/max_velocity",
-        "control/max_angular_velocity", "control/rotation_kp", "control/rotation_ki", "control/rotation_kd", "control/rotation_windup",
-        "control/translation_kp", "control/translation_ki", "control/translation_kd", "control/translation_windup"});
-    callbackGlobalParam(parameters_future);
-    //auto result = parameters_future.get();  // This will block until the result is available
-    //double param_max_acceleration_ = result.at(0).as_double();
-    //SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
+    // // Wait for the service to be available
+    // if (!parameters_client->wait_for_service(std::chrono::seconds(5))) {
+    //     SPDLOG_ERROR("Parameter service not available after waiting");
+    //     return;
+    // }
 
-    SPDLOG_INFO("HELLO THERE");
+    // auto parameters_future = parameters_client->get_parameters(
+    //     {"control.max_acceleration"},  // Use dot notation for nested parameters
+    //     std::bind(&AgentActionClient::callbackGlobalParam, this, std::placeholders::_1)
+    // );
+
+    // SPDLOG_INFO("Parameter request sent");
+
+    std::shared_ptr<rclcpp::SyncParametersClient> parameters_client =
+        std::make_shared<rclcpp::SyncParametersClient>(this, "/global_param_provider");
+
+    if (!parameters_client->wait_for_service(std::chrono::seconds(5))) {
+        SPDLOG_ERROR("Parameter service not available after waiting");
+        return;
+    }
+
+    try {
+        auto params = parameters_client->get_parameters({"control.max_acceleration"});
+        if (!params.empty()) {
+            double param_max_acceleration_ = params.at(0).as_double();
+            SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
+        } else {
+            SPDLOG_ERROR("Parameter not found");
+        }
+    } catch (const std::exception& e) {
+        SPDLOG_ERROR("Error getting parameter: {}", e.what());
+    }
+
 }
 
 void AgentActionClient::callbackGlobalParam(std::shared_future<std::vector<rclcpp::Parameter>> parameters_future) {
-    auto result = parameters_future.get();  // This will block until the result is available
-    double param_max_acceleration_ = result.at(0).as_double();
-    SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
+    try {
+        auto result = parameters_future.get();
+        if (!result.empty()) {
+            double param_max_acceleration_ = result.at(0).as_double();
+            SPDLOG_INFO("Max acceleration param: {}", param_max_acceleration_);
+        } else {
+            SPDLOG_ERROR("Parameter result is empty");
+        }
+    } catch (const std::exception& e) {
+        SPDLOG_ERROR("Error getting parameter: {}", e.what());
+    }
 }
 
 void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -183,6 +215,7 @@ void AgentActionClient::get_task() {
 
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
         rj_convert::convert_to_ros(current_position_->get_current_state())));
+    
 }
 
 void AgentActionClient::send_new_goal() {

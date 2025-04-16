@@ -1,6 +1,6 @@
 #include <global_params.hpp>
 
-DEFINE_BOOL(kGlobalParamModule, use_sim_time, false, "Use sim time.")
+DEFINE_BOOL(kGlobalParamModule, use_sim_time, true, "Use sim time.")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::physics, ball_decay_constant, 0.180,
                   "Ball decay constant.")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_speed, 2.0, "Maximum robot speed, m/s.")

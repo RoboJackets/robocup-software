@@ -194,6 +194,13 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                package="rj_robocup",
+                executable="global_param_provider",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
                 package="rj_robocup",
                 executable="internal_referee_node",
@@ -215,13 +222,6 @@ def generate_launch_description():
             Node(
                 package="rj_robocup",
                 executable="rj_vision_filter",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                package="rj_robocup",
-                executable="global_param_provider",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
