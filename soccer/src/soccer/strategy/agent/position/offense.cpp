@@ -117,7 +117,7 @@ Offense::State Offense::next_state() {
                 return POSSESSION;
             }
 
-            if (ball_in_red()) {
+            if (ball_in_red() && last_world_state_->ball.velocity.mag() <= 0.1) {
                 return DEFAULT;
             }
 
@@ -343,6 +343,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
+    return false; //TESTING REMOVE TESTING REMOVE TESTING REMOVE
     // Ball position
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
