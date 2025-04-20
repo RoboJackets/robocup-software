@@ -135,17 +135,6 @@ private:
         }
     }
 
-    /**
-     * @return if the current state has timed out
-     */
-    bool timed_out() const {
-        // Defined here so it can be inlined
-        using namespace std::chrono_literals;
-
-        const auto max_time = timeout(current_state_);
-
-        return (max_time > 0s) && (last_time_ + max_time < RJ::now());
-    };
 
     // The time at which the last state started.
     RJ::Time last_time_;
