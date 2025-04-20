@@ -56,9 +56,6 @@ private:
      * @return the task to execute. called on each get_task tick AFTER next_state()
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-
-    rj_geometry::Point calculate_best_shot() const;
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 };
 
 }  // namespace strategy

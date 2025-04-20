@@ -25,7 +25,7 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         double time = Trapezoidal::get_time(abs(delta_angle), abs(delta_angle),
                                             constraints.max_speed, constraints.max_accel, 0, 0);
 
-        for (int i = 1; i < time / TIME_STEP; i++) {
+        for (int i = 1; i <= time / TIME_STEP; i++) {
             double pos_out = 0;
             double speed_out = 0;
             Trapezoidal::trapezoidal_motion(abs(delta_angle), constraints.max_speed,

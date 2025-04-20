@@ -242,6 +242,97 @@ void Position::pass_ball(int robot_id) {
     derived_pass_ball();
 }
 
+double Position::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+    rj_geometry::Point vec = head - tail;
+    auto& their_robots = this->last_world_state_->their_robots;
+
+    double min_angle = -0.5;
+    for (auto enemy : their_robots) {
+        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
+        if (enemy_vec.dot(vec) < 0) {
+            continue;
+        }
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
+        double distance = enemy_vec.mag();
+        if (distance < (kRobotRadius + kBallRadius)) {
+            return -1.0;
+        }
+        double angle = distance / projection;
+        if ((min_angle < 0) || (angle < min_angle)) {
+            min_angle = angle;
+        }
+    }
+    return min_angle;
+}
+
+rj_geometry::Point Position::calculate_best_shot() const {
+
+    // 1) Grab all the key points
+    auto goal_center       = field_dimensions_.their_goal_loc();
+    auto left_post         = field_dimensions_.their_left_goal_post_coordinate();
+    auto right_post        = field_dimensions_.their_right_goal_post_coordinate();
+    auto ball_pos          = last_world_state_->get_robot(true, robot_id_).pose.position();
+    double half_goal_width = field_dimensions_.goal_width() * 0.5;
+
+    // 2) Compute the angles from ball -> each post
+    double ang_left  = std::atan2(goal_center.y() - ball_pos.y(),
+                                    left_post.x()   - ball_pos.x());
+    double ang_right = std::atan2(goal_center.y() - ball_pos.y(),
+                                    right_post.x()  - ball_pos.x());
+    
+    // make sure ang_right > ang_left
+    if (ang_right < ang_left) std::swap(ang_left, ang_right);
+
+    // 3) Angular span available at this position
+    double current_span = ang_right - ang_left;  
+
+    // 4) Nominal span if the ball were shooting from an optimal position
+    double vshooter_y = goal_center.y() + 1.0;
+    double nom_ang_l = std::atan2(goal_center.y() - vshooter_y,
+                                    left_post.x()   - goal_center.x());
+    double nom_ang_r = std::atan2(goal_center.y() - vshooter_y,
+                                    right_post.x()  - goal_center.x());
+    double nominal_span = nom_ang_r - nom_ang_l;
+
+    // 5) Scale factor [1 - max_margin,1] of how "tight" angle is
+    double open_ratio = current_span / nominal_span * max_margin + (1 - max_margin);
+
+    // 6) Compute an effective half‑width of the goal we can aim at
+    double effective_half_width = half_goal_width * open_ratio;
+    // always leave at least ball‐radius clearance from each post:
+    effective_half_width = std::max<double>(effective_half_width, kBallRadius);
+
+    // 7) Build the safe interval on the goal line
+    double safe_x_left  = goal_center.x() - effective_half_width;
+    double safe_x_right = goal_center.x() + effective_half_width;
+
+    SPDLOG_INFO(
+        "Robot {}: ratio = {:.2f}, [{:.3f},{:.3f}]",
+        robot_id_,
+        open_ratio,
+        safe_x_left,
+        safe_x_right
+    );
+
+    // 8) Sample and pick the best shot
+    rj_geometry::Point start_pt(safe_x_left,  goal_center.y());
+    rj_geometry::Point end_pt(  safe_x_right, goal_center.y());
+    rj_geometry::Point best_shot = goal_center;
+    double best_score = -std::numeric_limits<double>::infinity();
+    rj_geometry::Point increment = (end_pt - start_pt) / (kShotPoints - 1);
+
+    for (int i = 0; i < kShotPoints; ++i) {
+        auto candidate = start_pt + i * increment;
+        double score = distance_from_their_robots(ball_pos, candidate);
+        if (score > best_score) {
+            best_score  = score;
+            best_shot   = candidate;
+        }
+    }
+    return best_shot;
+}
+
 communication::Acknowledge Position::acknowledge_ball_in_transit(
     communication::BallInTransitRequest ball_in_transit_request) {
     communication::Acknowledge acknowledge_response{};
