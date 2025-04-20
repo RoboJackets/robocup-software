@@ -54,7 +54,7 @@ Offense::State Offense::next_state() {
             if (check_is_done()) { return SEEKING_START; }
 
             // Robot is functionally stationary, get new target.
-            // TODO: when is this useful? why is this useful?
+            // TODO: this seems bad. is it supposed to be a deadlock break?
             bool is_stationary = (last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01);
             if (is_stationary) { return SEEKING_START; }
 
@@ -63,11 +63,9 @@ Offense::State Offense::next_state() {
 
         case POSSESSION: {
             // If we can make a shot, take it.
-            // TODO: this calculation is way overconfident
             if (has_open_shot()) { return SHOOTING; }
 
             // Try a pass, internally transitions to PASSING if successful.
-            // TODO: internal transition is unfavorable for readability
             broadcast_direct_pass_request();
 
             return POSSESSION;
