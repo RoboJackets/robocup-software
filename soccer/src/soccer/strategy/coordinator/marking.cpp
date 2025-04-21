@@ -12,6 +12,8 @@ namespace strategy {
 Marking::Marking()
     : Coordinator("marking_srv", "marking_data", "marking_node") {
     // Subscribe to world state
+    marking_list.fill(kInvalidRobotId); // initializes to no valid markers
+    dangeruss_score.fill(std::numeric_limits<double>::infinity()); // everyone starts with an infinite danger score
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT

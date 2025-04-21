@@ -31,8 +31,8 @@ public:
 private:
     void publish_marking_list();
 
-    std::array<int, kNumShells> marking_list{};  // TODO: Initialize it to invalid robot id
-    std::array<bool, kNumShells> valid_targets{}; // 0 initialized, no one is a valid target initially
+    std::array<int, kNumShells> marking_list{};  // Initialize it to invalid robot id in constructor
+    std::array<int, kNumShells> dangeruss_score{}; // infinity initialized in constructor, no one is a valid target initially
     WorldState last_world_state_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 };
