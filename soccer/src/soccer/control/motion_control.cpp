@@ -58,9 +58,9 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         std::make_shared<rclcpp::AsyncParametersClient>(node, "/global_param_provider");
         parameters_client->wait_for_service();
 
-        auto parameters_future = parameters_client->get_parameters({"control/max_acceleration", "control/max_velocity",
-            "control/max_angular_velocity", "control/rotation_kp", "control/rotation_ki", "control/rotation_kd", "control/rotation_windup",
-            "control/translation_kp", "control/translation_ki", "control/translation_kd", "control/translation_windup"});
+        auto parameters_future = parameters_client->get_parameters({"control.max_acceleration", "control.max_velocity",
+            "control.max_angular_velocity", "control.rotation_kp", "control.rotation_ki", "control.rotation_kd", "control.rotation_windup",
+            "control.translation_kp", "control.translation_ki", "control.translation_kd", "control.translation_windup"});
         auto result = parameters_future.get();  // This will block until the result is available
         param_max_acceleration_ = result.at(0).as_double();
         param_max_velocity_ = result.at(1).as_double();

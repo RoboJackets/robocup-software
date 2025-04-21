@@ -215,7 +215,7 @@ void AgentActionClient::get_task() {
 
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
         rj_convert::convert_to_ros(current_position_->get_current_state())));
-    
+
 }
 
 void AgentActionClient::send_new_goal() {

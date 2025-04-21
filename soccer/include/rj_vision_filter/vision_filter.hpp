@@ -115,5 +115,40 @@ private:
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
 
     ::params::LocalROS2ParamProvider param_provider_;
+
+    double param_ball_init_covariance_;
+    double param_ball_observation_noise_;
+    double param_ball_process_noise_;
+    double param_camera_max_num_kalman_balls_;
+    double param_camera_max_num_kalman_robots_;
+    double param_camera_mhkf_radius_cutoff_;
+    bool param_camera_use_mhkf_;
+    int param_filter_health_dec_;
+    int param_filter_health_inc_;
+    int param_filter_health_init_;
+    int param_filter_health_max_;
+    int param_filter_health_min_;
+    double param_kalman_ball_max_time_outside_vision_;
+    double param_kalman_robot_max_time_outside_vision_;
+    double param_kick_detector_fast_acceleration_trigger_;
+    double param_kick_detector_fast_kick_hist_length_;
+    double param_kick_detector_fast_kick_timeout_;
+    double param_kick_detector_same_kick_timeout_;
+    double param_kick_detector_slow_any_robot_past_dist_;
+    double param_kick_detector_slow_kick_hist_length_;
+    double param_kick_detector_slow_kick_timeout_;
+    double param_kick_detector_slow_max_kick_angle_;
+    double param_kick_detector_slow_min_ball_speed_;
+    double param_kick_detector_slow_one_robot_within_dist_;
+    double param_kick_detector_slow_robot_dist_filter_cutoff_;
+    int param_max_num_cameras_;
+    double param_publish_hz_;
+    double param_robot_init_covariance_;
+    double param_robot_observation_noise_;
+    double param_robot_orientation_scale_;
+    double param_robot_process_noise_;
+    double param_vision_loop_dt_;
+    double param_world_ball_ball_merger_power_;
+    double param_world_robot_robot_merger_power_;
 };
 }  // namespace vision_filter

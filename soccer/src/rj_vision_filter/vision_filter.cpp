@@ -42,6 +42,90 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 
     // Create publishers.
     world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStateTopic, 10);
+
+    SPDLOG_INFO("Hello in vision filter");
+
+    std::shared_ptr<rclcpp::AsyncParametersClient> parameters_client =
+    std::make_shared<rclcpp::AsyncParametersClient>(this, "/global_param_provider");
+    parameters_client->wait_for_service();
+
+    SPDLOG_INFO("Hello in vision filter after creating parameters_client");
+
+
+    auto parameters_future = parameters_client->get_parameters({
+        "vision_filter.ball.init_covariance",
+        "vision_filter.ball.observation_noise",
+        "vision_filter.ball.process_noise",
+        "vision_filter.camera.max_num_kalman_balls",
+        "vision_filter.camera.max_num_kalman_robots",
+        "vision_filter.camera.mhkf_radius_cutoff",
+        "vision_filter.camera.use_mhkf",
+        "vision_filter.filter.health.dec",
+        "vision_filter.filter.health.inc",
+        "vision_filter.filter.health.init",
+        "vision_filter.filter.health.max",
+        "vision_filter.filter.health.min",
+        "vision_filter.kalman.ball.max_time_outside_vision",
+        "vision_filter.kalman.robot.max_time_outside_vision",
+        "vision_filter.kick.detector.fast_acceleration_trigger",
+        "vision_filter.kick.detector.fast_kick_hist_length",
+        "vision_filter.kick.detector.fast_kick_timeout",
+        "vision_filter.kick.detector.same_kick_timeout",
+        "vision_filter.kick.detector.slow_any_robot_past_dist",
+        "vision_filter.kick.detector.slow_kick_hist_length",
+        "vision_filter.kick.detector.slow_kick_timeout",
+        "vision_filter.kick.detector.slow_max_kick_angle",
+        "vision_filter.kick.detector.slow_min_ball_speed",
+        "vision_filter.kick.detector.slow_one_robot_within_dist",
+        "vision_filter.kick.detector.slow_robot_dist_filter_cutoff",
+        "vision_filter.max_num_cameras",
+        "vision_filter.publish_hz",
+        "vision_filter.robot.init_covariance",
+        "vision_filter.robot.observation_noise",
+        "vision_filter.robot.orientation_scale",
+        "vision_filter.robot.process_noise",
+        "vision_filter.vision_loop_dt",
+        "vision_filter.world.ball.ball_merger_power",
+        "vision_filter.world.robot.robot_merger_power"
+    });
+    SPDLOG_INFO("Hello in vision filter after making parameters list");
+    auto result = parameters_future.get();  // This will block until the result is available
+    SPDLOG_INFO("Hello in vision filter after getting parameters");
+    param_ball_init_covariance_ = result.at(0).as_double();
+    param_ball_observation_noise_ = result.at(1).as_double();
+    param_ball_process_noise_ = result.at(2).as_double();
+    param_camera_max_num_kalman_balls_ = result.at(3).as_double();
+    param_camera_max_num_kalman_robots_ = result.at(4).as_double();
+    param_camera_mhkf_radius_cutoff_ = result.at(5).as_double();
+    param_camera_use_mhkf_ = result.at(6).as_bool();
+    param_filter_health_dec_ = result.at(7).as_int();
+    param_filter_health_inc_ = result.at(8).as_int();
+    param_filter_health_init_ = result.at(9).as_int();
+    param_filter_health_max_ = result.at(10).as_int();
+    param_filter_health_min_ = result.at(11).as_int();
+    param_kalman_ball_max_time_outside_vision_ = result.at(12).as_double();
+    param_kalman_robot_max_time_outside_vision_ = result.at(13).as_double();
+    param_kick_detector_fast_acceleration_trigger_ = result.at(14).as_double();
+    param_kick_detector_fast_kick_hist_length_ = result.at(15).as_double();
+    param_kick_detector_fast_kick_timeout_ = result.at(16).as_double();
+    param_kick_detector_same_kick_timeout_ = result.at(17).as_double();
+    param_kick_detector_slow_any_robot_past_dist_ = result.at(18).as_double();
+    param_kick_detector_slow_kick_hist_length_ = result.at(19).as_double();
+    param_kick_detector_slow_kick_timeout_ = result.at(20).as_double();
+    param_kick_detector_slow_max_kick_angle_ = result.at(21).as_double();
+    param_kick_detector_slow_min_ball_speed_ = result.at(22).as_double();
+    param_kick_detector_slow_one_robot_within_dist_ = result.at(23).as_double();
+    param_kick_detector_slow_robot_dist_filter_cutoff_ = result.at(24).as_double();
+    param_max_num_cameras_ = result.at(25).as_int();
+    param_publish_hz_ = result.at(26).as_double();
+    param_robot_init_covariance_ = result.at(27).as_double();
+    param_robot_observation_noise_ = result.at(28).as_double();
+    param_robot_orientation_scale_ = result.at(29).as_double();
+    param_robot_process_noise_ = result.at(30).as_double();
+    param_vision_loop_dt_ = result.at(31).as_double();
+    param_world_ball_ball_merger_power_ = result.at(32).as_double();
+    param_world_robot_robot_merger_power_ = result.at(33).as_double();
+    SPDLOG_INFO("Hello in vision filter, world_robot_robot_merger_power_: {}", param_world_robot_robot_merger_power_);
 }
 
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
