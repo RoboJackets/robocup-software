@@ -103,7 +103,6 @@ Offense::State Offense::next_state() {
 
             // A deadlock should not be possible here.
             if (timed_out()) {
-                SPDLOG_INFO("Deadlock occurred in STEALING?");
                 return DEFAULT;
             }
 
@@ -120,7 +119,6 @@ Offense::State Offense::next_state() {
 
             // If called by a passer, but the pass never comes, give up.
             if (timed_out()) {
-                SPDLOG_INFO("Receiver was deadlocked.");
                 return DEFAULT;
             }
 
@@ -339,7 +337,6 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
-    return false; //TESTING REMOVE TESTING REMOVE TESTING REMOVE
     // Ball position
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
