@@ -35,40 +35,43 @@ Offense::State Offense::next_state() {
     // handle transitions between current state
     switch (current_state_) {
         case DEFAULT: {
+            // When we have no known tasks, begin seeking. Unconditionally transition.
             return SEEKING_START;
         }
 
         case SEEKING_START: {
-            // Unconditionally only stay in this state for one tick.
+            // This state is merely to get a seeking target. Unconditionally transition.
             return SEEKING;
         }
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
-            if (can_steal_ball()) {
-                return STEALING;
-            }
+            if (can_steal_ball()) { return STEALING; }
 
-            // If we need to get a new seeking target, restart seeking
-            if (check_is_done() ||
-                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-                return SEEKING_START;
-            }
+            // If we need to get a new seeking target, restart SEEKING
+            if (check_is_done()) { return SEEKING_START; }
+
+            // If deadlocked, restart SEEKING
+            bool is_stationary = last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01;
+            if (is_stationary) { return SEEKING_START; }
 
             return SEEKING;
         }
 
         case POSSESSION: {
             // If we can make a shot, make it.
-            // If we need to stop possessing now, shoot.
-            if (has_open_shot() || timed_out()) {
-                return SHOOTING;
-            }
+            if (has_open_shot()) { return SHOOTING; }
+
+            // If deadlocked (or cornered), try a shot.
+            if (timed_out()) { return SHOOTING; }
 
             // No open shot, try to pass.
-            // This will trigger an automatic switch to passing if a pass is
-            // accepted.
+            // This will internally transition to PASSING.
             broadcast_direct_pass_request();
+
+            // If we lose possession, give up.
+            bool ball_in_range = distance_to_ball() > kBallTooFarDist;
+            if (ball_in_range) { return DEFAULT; }
 
             return POSSESSION;
         }
@@ -80,31 +83,27 @@ Offense::State Offense::next_state() {
                 return DEFAULT;
             }
 
-            // If we didn't successfully pass in time, take a shot
-            if (timed_out()) {
-                return SHOOTING;
-            }
+            // If deadlocked, try a shot.
+            if (timed_out()) { return SHOOTING; }
 
-            // If we lost the ball completely, give up
-            if (distance_to_ball() > kBallTooFarDist) {
-                return DEFAULT;
-            }
+            // If we lose possession, give up.
+            bool ball_in_range = distance_to_ball() > kBallTooFarDist;
+            if (ball_in_range) { return DEFAULT; }
 
             return PASSING;
         }
 
         case STEALING: {
-            // Go to possession if successful
-            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
-                return POSSESSION;
-            }
+            // If successful, go to POSSESSION.
+            bool ball_in_possession = distance_to_ball() < kOwnBallRadius;
+            if (check_is_done() && ball_in_possession) { return POSSESSION; }
 
-            // If another robot becomes closer, leave state
-            if (!can_steal_ball()) {
-                return SEEKING;
-            }
+            // If stealing becomes infeasible, leave state.
+            if (!can_steal_ball()) { return SEEKING; }
 
+            // A deadlock should not be possible here.
             if (timed_out()) {
+                SPDLOG_INFO("Deadlock occurred in STEALING?");
                 return DEFAULT;
             }
 
@@ -112,17 +111,16 @@ Offense::State Offense::next_state() {
         }
 
         case RECEIVING: {
-            // If we got it, cool, we have it!
-            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
-                return POSSESSION;
-            }
+            // If successful, go to POSSESSION.
+            if (check_is_done() && distance_to_ball() < kOwnBallRadius) { return POSSESSION; }
 
-            if (ball_in_red() && last_world_state_->ball.velocity.mag() <= 0.1) {
-                return DEFAULT;
-            }
+            // If ball is non-recoverable, give up.
+            bool ball_is_stationary = last_world_state_->ball.velocity.mag() <= 0.1;
+            if (ball_in_red() && ball_is_stationary) { return DEFAULT; }
 
-            // If we failed to get it in time
+            // If called by a passer, but the pass never comes, give up.
             if (timed_out()) {
+                SPDLOG_INFO("Receiver was deadlocked.");
                 return DEFAULT;
             }
 
@@ -139,9 +137,7 @@ Offense::State Offense::next_state() {
 
         case SHOOTING: {
             // If we either succeed or fail, it's time to start over.
-            if (check_is_done() || timed_out()) {
-                return DEFAULT;
-            }
+            if (check_is_done() || timed_out()) { return DEFAULT; }
 
             return SHOOTING;
         }
