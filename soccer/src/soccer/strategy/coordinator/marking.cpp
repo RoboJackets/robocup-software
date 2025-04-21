@@ -20,7 +20,7 @@ Marking::Marking()
         });
 }
 
-void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
+void Marking::service_callback(RequestPtr request, ResponsePtr response) {
     // complete logic
     // bool membership_changed = wants_to_kick_by_id_[request->robot_id] != request->wants_to_kick;
 
@@ -33,29 +33,34 @@ void KickerPicker::service_callback(RequestPtr request, ResponsePtr response) {
     // response->success = true;
 }
 
-void KickerPicker::publish_selected_kicker() {
-    // Find closest robot to ball among group members
-    double min_distance = std::numeric_limits<double>::infinity();
-    uint8_t selected_kicker = kInvalidRobotId;
+void Marking::publish_marking_list() {
+    // Find all eligible targets and update the list
+    // Formula, closer to 0 is more priority:
+    // Danger value = 0.2 * distance to goal + 0.4 * distance to ball + 0.7 * distance to closest RJ robot
+    // Danger value <= 5 gets you onto the eligible target list (subject to change)
 
-    const auto& ball_pos = last_world_state_.ball.position;
 
-    for (uint8_t i = 0; i < kNumShells; ++i) {
-        if (wants_to_kick_by_id_[i]) {
-            const auto& robot = last_world_state_.get_robot(true, i);
-            double distance = ball_pos.dist_to(robot.pose.position());
-            if (distance < min_distance) {
-                min_distance = distance;
-                selected_kicker = i;
-            }
-        }
-    }
+    // double min_distance = std::numeric_limits<double>::infinity();
+    // uint8_t selected_kicker = kInvalidRobotId;
 
-    // Only publish if the selected kicker has changed
-    if (selected_kicker != last_published_kicker_) {
-        publisher_->publish(rj_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
-        last_published_kicker_ = selected_kicker;
-    }
+    // const auto& ball_pos = last_world_state_.ball.position;
+
+    // for (uint8_t i = 0; i < kNumShells; ++i) {
+    //     if (wants_to_kick_by_id_[i]) {
+    //         const auto& robot = last_world_state_.get_robot(true, i);
+    //         double distance = ball_pos.dist_to(robot.pose.position());
+    //         if (distance < min_distance) {
+    //             min_distance = distance;
+    //             selected_kicker = i;
+    //         }
+    //     }
+    // }
+
+    // // Only publish if the selected kicker has changed
+    // if (selected_kicker != last_published_kicker_) {
+    //     publisher_->publish(rj_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
+    //     last_published_kicker_ = selected_kicker;
+    // }
 }
 
 }  // namespace strategy
