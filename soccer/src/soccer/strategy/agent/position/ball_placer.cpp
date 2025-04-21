@@ -22,14 +22,16 @@ BallPlacer::State BallPlacer::update_state() {
         }
         case ROTATE: {
             // If we successfully rotate while the ball is still within possession 
-            if (check_is_done() && (distance_to_ball() < kRobotPossessionRadius)) {
+            if (check_is_done()) { 
                 return TRANSPORT;
-            }
+            } //else if (distance_to_ball() > kRobotPossessionRadius) {
+            //     return COLLECT;
+            // }
             break;
         }
         case TRANSPORT: {
             // If we make it to the point 0.3 meters away, stop and go to STANDBY (the ball will roll to a stop at that distance)
-            if (check_is_done() || ball_to_point_distance() < 0.3) {
+            if (check_is_done()) {
                 return STAND_BY;
             } else if (distance_to_ball() > kRobotPossessionRadius) { // If we lose possession, return to COLLECT
                 return COLLECT;
@@ -86,10 +88,14 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             auto ballPlacement = current_play_state_.ball_placement_point();
             intent.motion_command = planning::MotionCommand{};
             if(ballPlacement.has_value()) {
-                rj_geometry::Point target_vel{0.0, 0.0};
-                
-
-                planning::LinearMotionInstant target{ballPlacement.value(), target_vel};
+                rj_geometry::Point robotToPoint =
+                    (last_world_state_->ball.position -
+                        ballPlacement.value());
+                double slowDown = 2.0;
+                double length = robotToPoint.mag() - kRobotRadius * slowDown;
+                robotToPoint = -robotToPoint.normalized(length);
+                planning::LinearMotionInstant target{
+                    last_world_state_->get_robot(true, robot_id_).pose.position() + robotToPoint}; 
                 
                 intent.motion_command =
                     planning::MotionCommand{"path_target", target, planning::FacePoint{ballPlacement.value()}};
@@ -101,21 +107,11 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             return intent;
             break;
         }
-        // Stands behind the ball and waits until ball_placement ends or another condition is triggered
+        // Stops where it is
         case STAND_BY: {
             SPDLOG_INFO("STAND BY");
-            double y_pos = last_world_state_->ball.position.y();
-            // Add 0.3 buffer space to the y_pos of the ball to ensure the robot does not
-            // hit the ball before being properly lined up behind it
-            y_pos -= kRobotRadius + 0.2;
-            rj_geometry::Point target_pt{last_world_state_->ball.position.x(), y_pos};
-            rj_geometry::Point target_vel{0.0, 0.0};
-            planning::PathTargetFaceOption face_option{planning::FaceBall{}};
-
-            // Create Motion Command
-            planning::LinearMotionInstant goal{target_pt, target_vel};
             intent.motion_command =
-                planning::MotionCommand{"path_target", goal, planning::FaceBall{}};
+                planning::MotionCommand{"halt"}; // Maybe STANDBY not even needed?
             return intent;
             break;
         }

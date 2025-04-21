@@ -28,7 +28,7 @@ void SmartIdle::derived_pass_ball(){
 void SmartIdle::derived_acknowledge_ball_in_transit() {}
 
 std::optional<RobotIntent> SmartIdle::derived_get_task(RobotIntent intent) {
-    intent.motion_command = planning::MotionCommand{"escape_obstacles"};
+    intent.motion_command = planning::MotionCommand{"halt"};
     return intent;
 };
 
