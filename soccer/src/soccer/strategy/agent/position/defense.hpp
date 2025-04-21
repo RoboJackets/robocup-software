@@ -135,7 +135,6 @@ private:
         }
     }
 
-
     // The time at which the last state started.
     RJ::Time last_time_;
 
