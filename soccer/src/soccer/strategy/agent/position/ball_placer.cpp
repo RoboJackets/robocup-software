@@ -53,18 +53,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
     switch (latest_state_) {
         // Runs "collect" command to go-to and grab the ball
         case COLLECT: { 
-            SPDLOG_INFO("COLLECT");
-
-            // How does this work? And wouldn't this replace "collect"? -Cameron
-            rj_geometry::Point robotToBall =
-                (last_world_state_->ball.position -
-                 last_world_state_->get_robot(true, robot_id_).pose.position());
-            double slowDown = 1.0;
-            double length = robotToBall.mag() - kRobotRadius * slowDown;
-            robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{
-                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            
+            SPDLOG_INFO("COLLECT");            
             
             auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
@@ -89,7 +78,7 @@ std::optional<RobotIntent> BallPlacer::state_to_task(RobotIntent intent) {
             intent.motion_command = planning::MotionCommand{};
             if(ballPlacement.has_value()) {
                 rj_geometry::Point robotToPoint =
-                    (last_world_state_->ball.position -
+                    (last_world_state_->get_robot(true, robot_id_).pose.position() -
                         ballPlacement.value());
                 double slowDown = 2.0;
                 double length = robotToPoint.mag() - kRobotRadius * slowDown;
