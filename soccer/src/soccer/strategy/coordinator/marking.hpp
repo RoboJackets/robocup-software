@@ -6,6 +6,7 @@
 
 #include <rj_msgs/msg/marking.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_common/field_dimensions.hpp>
 #include <rj_msgs/srv/marking.hpp>
 
 #include "coordinator.hpp"
@@ -30,10 +31,12 @@ public:
 
 private:
     void publish_marking_list();
+    void update_danger_scores();
 
     std::array<int, kNumShells> marking_list{};  // Initialize it to invalid robot id in constructor
     std::array<int, kNumShells> dangeruss_score{}; // infinity initialized in constructor, no one is a valid target initially
     WorldState last_world_state_;
+    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 };
 

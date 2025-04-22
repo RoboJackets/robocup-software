@@ -7,6 +7,7 @@
 /// all weights in kilograms
 
 // Number of identifiable robots on one team
+// IF U CHANGE THIS NUMBER CHECK Marking.msg
 constexpr size_t kNumShells = 16;
 
 // Number of playing robots on one team

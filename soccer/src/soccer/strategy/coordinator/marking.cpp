@@ -65,4 +65,14 @@ void Marking::publish_marking_list() {
     // }
 }
 
+void Marking::update_danger_scores() {
+    rj_geometry::Point ball_pos = last_world_state_.ball.position;
+
+
+    for (uint8_t i = 0; i < kNumShells; i++) {
+        const auto& robot = last_world_state_.get_robot(true, i);
+    }
+}
+
+
 }  // namespace strategy
