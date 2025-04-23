@@ -118,8 +118,8 @@ private:
     rj_geometry::Point target_;
     rj_geometry::Point calculate_best_shot() const;
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
-    bool ball_in_red();
-    bool we_in_red();
+    bool ball_in_red() const;
+    bool we_in_red() const;
 
     int get_marker_target_id();
     Marker marker_;
