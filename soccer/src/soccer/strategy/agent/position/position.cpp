@@ -307,13 +307,13 @@ rj_geometry::Point Position::calculate_best_shot() const {
     double safe_x_left  = goal_center.x() - effective_half_width;
     double safe_x_right = goal_center.x() + effective_half_width;
 
-    SPDLOG_INFO(
-        "Robot {}: ratio = {:.2f}, [{:.3f},{:.3f}]",
-        robot_id_,
-        open_ratio,
-        safe_x_left,
-        safe_x_right
-    );
+    // SPDLOG_INFO(
+    //     "Robot {}: ratio = {:.2f}, [{:.3f},{:.3f}]",
+    //     robot_id_,
+    //     open_ratio,
+    //     safe_x_left,
+    //     safe_x_right
+    // );
 
     // 8) Sample and pick the best shot
     rj_geometry::Point start_pt(safe_x_left,  goal_center.y());

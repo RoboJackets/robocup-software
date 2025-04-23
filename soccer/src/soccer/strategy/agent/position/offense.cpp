@@ -96,16 +96,20 @@ Offense::State Offense::next_state() {
         case STEALING: {
             // If successful, go to POSSESSION.
             bool ball_in_possession = distance_to_ball() < kOwnBallRadius;
-            if (check_is_done() && ball_in_possession) { return POSSESSION; }
+            if (check_is_done() && ball_in_possession) { 
+                return POSSESSION; 
+            }
 
             // If stealing becomes infeasible, leave state.
-            if (!can_steal_ball()) { return SEEKING; }
+            if (!can_steal_ball()) { 
+                return SEEKING;
+            }
 
             // A deadlock should not be possible here.
             if (timed_out()) {
                 return DEFAULT;
             }
-
+            
             return STEALING;
         }
 
@@ -226,8 +230,8 @@ bool Offense::check_if_open(int target_robot_shell) {
     rj_geometry::Point from_robot_position =
         last_world_state_->get_robot(true, target_robot_shell).pose.position();
     rj_geometry::Segment pass_path{from_robot_position, robot_position};
-    double min_robot_dist = 10000;
-    float min_path_dist = 10000;
+    double min_robot_dist = std::numeric_limits<double>::infinity();
+    float min_path_dist = std::numeric_limits<float>::infinity();
 
     // Calculates the minimum distance from the current robot to all other robots
     // Also calculates the minimum distance from another robot to the passing line

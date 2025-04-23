@@ -100,11 +100,11 @@ private:
             case STEALING:
                 return RJ::Seconds{5};
             case RECEIVING_START:
-                return RJ::Seconds{5};
+                return RJ::Seconds{3};
             case RECEIVING:
                 return RJ::Seconds{5};
             case SHOOTING:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{10};
         }
     }
 
