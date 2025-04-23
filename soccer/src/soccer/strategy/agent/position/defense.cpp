@@ -2,7 +2,9 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
+Defense::Defense(int r_id, KickerPickerClient &kp) : Position(r_id, "Defense"), marker_{field_dimensions_} {
+    kicker_picker_ = kp;
+}
 
 Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
     position_name_ = "Defense";
@@ -48,11 +50,16 @@ Defense::State Defense::update_state() {
             // If a wall is already full,
             // Remove the robot with the highest ID from a wall
             // and make them a marker instead.
-            if (walling_robots_.size() > kMaxWallers &&
-                this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
-                send_leave_wall_request();
-                // SPDLOG_INFO("leave wall {}", robot_id_);
+            // if (walling_robots_.size() > kMaxWallers &&
+            //     this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
+            //     // send_leave_wall_request();
+            //     // SPDLOG_INFO("leave wall {}", robot_id_);
+            // }
+            double min_dist = 1000;
+            for (int i = 0; i < kNumShells; i++) {
+                
             }
+
             break;
         case WALLER_STEAL:
             break;

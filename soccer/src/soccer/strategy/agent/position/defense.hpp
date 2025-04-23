@@ -29,7 +29,7 @@ namespace strategy {
  */
 class Defense : public Position {
 public:
-    Defense(int r_id);
+    Defense(int r_id, KickerPickerClient kp);
     ~Defense() override = default;
     Defense(const Position& other);
 
@@ -50,7 +50,7 @@ private:
     static constexpr int kMaxWallers{
         static_cast<int>(kNumShells)};  // This effectively turns off marking
 
-    KickerPickerClient kicker_picker_;
+    KickerPickerClient &kicker_picker_;
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
