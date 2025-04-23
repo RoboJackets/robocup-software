@@ -37,8 +37,8 @@ Defense::State Defense::update_state() {
     }
 
     bool we_are_closest;
-    auto& our_robots = world_state_->our_robots;;
-    auto& their_robots = world_state_->their_robots;;
+    auto& our_robots = this->last_world_state_->our_robots;;
+    auto& their_robots = this->last_world_state_->their_robots;;
     double min_dist;
     switch (current_state_) {
         case IDLING:
@@ -59,7 +59,6 @@ Defense::State Defense::update_state() {
             //     // SPDLOG_INFO("leave wall {}", robot_id_);
             // }
             we_are_closest = true;
-            our_robots = world_state_->our_robots;
 
             for (size_t i = 0; i < our_robots.size(); ++i) {
                 if (i == robot_id_) {
@@ -76,7 +75,6 @@ Defense::State Defense::update_state() {
 
 
             if (we_are_closest) {
-                their_robots = world_state_->their_robots;
                 min_dist = 1000;
                 for (auto enemy : their_robots) {
                     rj_geometry::Point enemypos = enemy.pose.position();
@@ -94,7 +92,6 @@ Defense::State Defense::update_state() {
 
             break;
         case WALLER_STEAL:
-            their_robots = this->world_state_->their_robots;
             min_dist = 1000;
             for (auto enemy : their_robots) {
                 rj_geometry::Point enemypos = enemy.pose.position();
@@ -337,14 +334,14 @@ double Defense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Defense::ball_in_red() const {
-    auto& ball_pos = world_state_->ball.position;
+    auto& ball_pos = this->last_world_state_->ball.position;
     return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
             !field_dimensions_.field_rect().contains_point(ball_pos));
 }
 
 bool Defense::we_in_red() const {
-    auto& our_pos = world_state_->get_robot(true, robot_id_).pose.position();
+    auto& our_pos = this->last_world_state_->get_robot(true, robot_id_).pose.position();
     return (field_dimensions_.our_defense_area().contains_point(our_pos) ||
             field_dimensions_.their_defense_area().contains_point(our_pos) ||
             !field_dimensions_.field_rect().contains_point(our_pos));
