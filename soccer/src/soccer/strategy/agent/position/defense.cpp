@@ -37,8 +37,8 @@ Defense::State Defense::update_state() {
     }
 
     bool we_are_closest;
-    auto& our_robots;
-    auto& their_robots;
+    auto& our_robots = this->last_world_state_->our_robots;;
+    auto& their_robots = this->last_world_state_->their_robots;;
     double min_dist;
     switch (current_state_) {
         case IDLING:
