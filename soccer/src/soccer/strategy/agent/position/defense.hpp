@@ -29,7 +29,7 @@ namespace strategy {
  */
 class Defense : public Position {
 public:
-    Defense(int r_id, KickerPickerClient kp);
+    Defense(int r_id);
     ~Defense() override = default;
     Defense(const Position& other);
 
@@ -62,7 +62,8 @@ private:
         IDLING,            // simply staying in place
         JOINING_WALL,      // send message to find its place in the wall
         WALLING,           // participating in the wall
-        WALLER_STEAL
+        WALLER_STEAL,
+        KICK
     };
 
     State update_state();
@@ -113,6 +114,10 @@ private:
     // current state of the defense agent (state machine)
     int get_waller_id();
     State current_state_ = JOINING_WALL;
+
+    rj_geometry::Point target_;
+    rj_geometry::Point calculate_best_shot() const;
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
     int get_marker_target_id();
     Marker marker_;

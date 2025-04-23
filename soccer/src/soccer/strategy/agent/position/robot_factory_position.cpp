@@ -10,11 +10,11 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
     if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Defense>(robot_id_, kicker_picker_);
+        current_position_ = std::make_unique<Defense>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Defense>(robot_id_, kicker_picker_);
+        current_position_ = std::make_unique<Defense>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_, kicker_picker_);
+        current_position_ = std::make_unique<Defense>(robot_id_);
     }
 }
 

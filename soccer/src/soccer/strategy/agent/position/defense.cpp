@@ -36,6 +36,7 @@ Defense::State Defense::update_state() {
         waller_id_ = -1;
     }
 
+    bool we_are_closest;
     switch (current_state_) {
         case IDLING:
             break;
@@ -54,7 +55,7 @@ Defense::State Defense::update_state() {
             //     // send_leave_wall_request();
             //     // SPDLOG_INFO("leave wall {}", robot_id_);
             // }
-            bool we_are_closest = true;
+            we_are_closest = true;
 
             for (size_t i = 0; i < alive_robots_.size(); ++i) {
                 if (i == robot_id_) {
@@ -89,7 +90,17 @@ Defense::State Defense::update_state() {
 
             break;
         case WALLER_STEAL:
+            if (check_is_done()) {
+                target_ = calculate_best_shot();
+                next_state = KICK;
+            }
             break;
+        case KICK:
+            if (check_is_done()) {
+                next_state = JOINING_WALL;
+            }
+            break;
+            
     }
 
     return next_state;
@@ -106,6 +117,21 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             Waller waller{waller_id_, walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
+    } else if (current_state_ == WALLER_STEAL) {
+        planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+        auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
+        pivot_cmd.pivot_radius = kRobotRadius * 2.5;
+        intent.motion_command = pivot_cmd;
+        
+        return intent;
+    } else if (current_state_ == KICK) {
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+        intent.motion_command = line_kick_cmd;
+        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 4.0;
+        
+        return intent;
     }
 
     return std::nullopt;
@@ -245,5 +271,52 @@ void Defense::die() {
 }
 
 void Defense::revive() { current_state_ = JOINING_WALL; }
+
+rj_geometry::Point Defense::calculate_best_shot() const {
+    // Goal location
+    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
+
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    rj_geometry::Point best_shot = their_goal_pos;
+    double best_distance = -1.0;
+    rj_geometry::Point increment(0.05, 0);
+    rj_geometry::Point curr_point =
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    for (int i = 0; i < 19; i++) {
+        double distance = distance_from_their_robots(ball_position, curr_point);
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = curr_point;
+        }
+        curr_point = curr_point + increment;
+    }
+    return best_shot;
+}
+double Defense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+    rj_geometry::Point vec = head - tail;
+    auto& their_robots = this->last_world_state_->their_robots;
+
+    double min_angle = -0.5;
+    for (auto enemy : their_robots) {
+        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
+        if (enemy_vec.dot(vec) < 0) {
+            continue;
+        }
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
+        double distance = enemy_vec.mag();
+        if (distance < (kRobotRadius + kBallRadius)) {
+            return -1.0;
+        }
+        double angle = distance / projection;
+        if ((min_angle < 0) || (angle < min_angle)) {
+            min_angle = angle;
+        }
+    }
+    return min_angle;
+}
 
 }  // namespace strategy
