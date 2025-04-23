@@ -22,142 +22,140 @@ std::string Defense::get_current_state() {
 }
 
 Defense::State Defense::update_state() {
-    State next_state = current_state_;
-    // handle transitions between states
-    WorldState* world_state = last_world_state_;
-
-    rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
-    rj_geometry::Point ball_position = world_state->ball.position;
-    double distance_to_ball = robot_position.dist_to(ball_position);
-
+    // Waller comms
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
     }
 
-    bool we_are_closest;
+    // General 
+    rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+    double my_distance_to_ball = my_robot_position.dist_to(ball_position);
+
+
     auto& our_robots = this->last_world_state_->our_robots;;
     auto& their_robots = this->last_world_state_->their_robots;;
     double min_dist;
     switch (current_state_) {
-        case IDLING:
-            break;
-        case JOINING_WALL:
+        case IDLING: { // Dead state
+            return IDLING;
+        }
+        case JOINING_WALL: { // Unconditional skip state, just sends a join request.
             send_join_wall_request();
-            // SPDLOG_INFO("join wall {}", robot_id_);
-            next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
-            break;
-        case WALLING:
-            // If a wall is already full,
-            // Remove the robot with the highest ID from a wall
-            // and make them a marker instead.
-            // if (walling_robots_.size() > kMaxWallers &&
-            //     this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
-            //     // send_leave_wall_request();
-            //     // SPDLOG_INFO("leave wall {}", robot_id_);
-            // }
-            we_are_closest = true;
+            return WALLING;
+        }
+        case WALLING: { // Wall defense
+            if (ball_in_red() || we_in_red()) { // BAD BAD FIX
+                return WALLING;
+            }
 
+            // Check if we can break from the wall to steal the ball.
+            // Only consider a break if we are the closest teammate to the ball.
+            bool we_are_closest = true;
             for (size_t i = 0; i < our_robots.size(); ++i) {
-                if (i == robot_id_) {
-                    continue;
-                }
-
-                rj_geometry::Point uspos = our_robots[i].pose.position();
-
-                if (uspos.dist_to(ball_position) < distance_to_ball) {
+                if (i == robot_id_) { continue; }
+                if (our_robots[i].pose.position().dist_to(ball_position) < my_distance_to_ball) {
                     we_are_closest = false;
                     break;
                 }
             }
-
-
-            if (we_are_closest) {
-                min_dist = 1000;
-                for (auto enemy : their_robots) {
-                    rj_geometry::Point enemypos = enemy.pose.position();
-
-                    if (enemypos.dist_to(ball_position) < min_dist) {
-                        min_dist = enemypos.dist_to(ball_position);
-                    }
+            if (!we_are_closest) {
+                return WALLING;
+            }
+            // If we're the closest teammate, only break if we're closer to the ball than all opponents.
+            bool we_can_steal = true;
+            for (auto enemy : their_robots) {
+                double enemy_dist_to_ball = enemy.pose.position().dist_to(ball_position);
+                if (enemy_dist_to_ball < my_distance_to_ball) {
+                    we_can_steal = false;
+                    break;
                 }
-
-                if (distance_to_ball < min_dist) {
-                    next_state = WALLER_STEAL;
-                }
+            }
+            if (we_can_steal) {
+                return WALLER_STEAL;
             }
         
-            if (ball_in_red() || we_in_red()) { // BAD BAD FIX
-                next_state = WALLING;
-            }
-
-            break;
-        case WALLER_STEAL:
-            min_dist = 1000;
-            for (auto enemy : their_robots) {
-                rj_geometry::Point enemypos = enemy.pose.position();
-
-                if (enemypos.dist_to(ball_position) < min_dist) {
-                    min_dist = enemypos.dist_to(ball_position);
+            return WALLING;
+        }
+        case WALLER_STEAL: { // Breaking from the wall to position behind the ball.
+            // If our fast break fails and we're no longer the closest, go back to the wall.
+            bool we_are_closest = true;
+            for (size_t i = 0; i < our_robots.size(); ++i) {
+                if (i == robot_id_) { continue; }
+                if (our_robots[i].pose.position().dist_to(ball_position) < my_distance_to_ball) {
+                    we_are_closest = false;
+                    break;
                 }
             }
+            if (!we_are_closest) {
+                return JOINING_WALL;
+            }
 
-            if (distance_to_ball >= min_dist) {
-                next_state = JOINING_WALL;
+            // If ball is inaccessible (or we have chased it to an illegal pose), go back to wall.
+            if (ball_in_red() || we_in_red()) { 
+                return JOINING_WALL;
             }
-            if (check_is_done()) {
-                target_ = calculate_best_shot();
-                next_state = KICK;
+
+            // If the pivot is complete, fire away.
+            if (check_is_done()) { 
+                shot_target_ = calculate_best_shot();
+                return KICK;
             }
-            if (ball_in_red() || we_in_red()) {
-                next_state = JOINING_WALL;
-            }
-            break;
-        case KICK:
+
+            return WALLER_STEAL;
+        }   
+        case KICK: { // Doing a line kick through the ball.
             if (ball_in_red() || we_in_red() || check_is_done()) {
-                next_state = JOINING_WALL;
+                return JOINING_WALL;
             }
-            break;
             
+            return KICK;
+        }
     }
 
-    return next_state;
+    // Failthrough (shouldn't happen)
+    return current_state_;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
-    if (current_state_ == IDLING) {
-        SPDLOG_INFO("IDLING {}", robot_id_);
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
-        return intent;
-        // DO NOTHING
-    } else if (current_state_ == WALLING) {
-        SPDLOG_INFO("WALLING {}", robot_id_);
-        if (!walling_robots_.empty() && waller_id_ != -1) {
-            Waller waller{waller_id_, walling_robots_};
-            return waller.get_task(intent, last_world_state_, this->field_dimensions_);
+    switch (current_state_) {
+        case IDLING: {
+            auto empty_motion_cmd = planning::MotionCommand{};
+            intent.motion_command = empty_motion_cmd;
+            return intent;
         }
-    } else if (current_state_ == WALLER_STEAL) {
-        SPDLOG_INFO("WALLER_STEAL {}", robot_id_);
-        planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
-        auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
-        pivot_cmd.pivot_radius = kRobotRadius * 2.5;
-        intent.motion_command = pivot_cmd;
-        
-        return intent;
-    } else if (current_state_ == KICK) {
-        SPDLOG_INFO("KICK {}", robot_id_);
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
-        
-        return intent;
+        case JOINING_WALL: { // comms only state
+            return std::nullopt;
+        }
+        case WALLING: {
+            if (!walling_robots_.empty() && waller_id_ != -1) {
+                Waller waller{waller_id_, walling_robots_};
+                return waller.get_task(intent, this->last_world_state_, this->field_dimensions_);
+            }
+        }
+        case WALLER_STEAL: {
+            planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+            auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, this->last_world_state_->ball.position};
+            pivot_cmd.pivot_radius = kRobotRadius * 2.0;
+            intent.motion_command = pivot_cmd;
+            
+            return intent;
+        }
+        case KICK: {
+            auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target_}};
+            intent.motion_command = line_kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 5.0;
+            
+            return intent;
+        }
     }
 
+    // Failthrough (shouldn't happen)
     return std::nullopt;
 }
 

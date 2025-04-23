@@ -115,7 +115,7 @@ private:
     int get_waller_id();
     State current_state_ = JOINING_WALL;
 
-    rj_geometry::Point target_;
+    rj_geometry::Point shot_target_;
     rj_geometry::Point calculate_best_shot() const;
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
     bool ball_in_red() const;
