@@ -2,8 +2,7 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id, KickerPickerClient &kp) : Position(r_id, "Defense"), marker_{field_dimensions_} {
-    kicker_picker_ = kp;
+Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {
 }
 
 Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
@@ -55,10 +54,38 @@ Defense::State Defense::update_state() {
             //     // send_leave_wall_request();
             //     // SPDLOG_INFO("leave wall {}", robot_id_);
             // }
-            double min_dist = 1000;
-            for (int i = 0; i < kNumShells; i++) {
-                
+            bool we_are_closest = true;
+
+            for (size_t i = 0; i < alive_robots_.size(); ++i) {
+                if (i == robot_id_) {
+                    continue;
+                }
+
+                rj_geometry::Point uspos = alive_robots_[i].pose.position();
+
+                if (uspos.dist_to(ball_position) < distance_to_ball) {
+                    we_are_closest = false;
+                    break;
+                }
             }
+
+
+            if (we_are_closest) {
+                auto& their_robots = this->last_world_state_->their_robots;
+                double min_dist = 1000;
+                for (auto enemy : their_robots) {
+                    rj_geometry::Point enemypos = enemy.pose.position();
+
+                    if (enemypos.dist_to(ball_position) < min_dist) {
+                        min_dist = enemypos.dist_to(ball_position);
+                    }
+                }
+
+                if (distance_to_ball < min_dist) {
+                    next_state = WALLER_STEAL;
+                }
+            }
+        
 
             break;
         case WALLER_STEAL:
@@ -204,15 +231,6 @@ void Defense::handle_join_wall_response(communication::JoinWallResponse join_res
             waller_id_ = get_waller_id();
         }
     }
-}
-
-void Defense::derived_acknowledge_pass() { current_state_ = FACING; }
-
-void Defense::derived_pass_ball() { current_state_ = PASSING; }
-
-void Defense::derived_acknowledge_ball_in_transit() {
-    current_state_ = RECEIVING;
-    chasing_ball = false;
 }
 
 int Defense::get_waller_id() {

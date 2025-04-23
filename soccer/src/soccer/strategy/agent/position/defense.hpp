@@ -37,9 +37,6 @@ public:
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
-    void derived_acknowledge_pass() override;
-    void derived_pass_ball() override;
-    void derived_acknowledge_ball_in_transit() override;
     std::string get_current_state() override;
 
     void die() override;
@@ -49,8 +46,6 @@ private:
     // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{
         static_cast<int>(kNumShells)};  // This effectively turns off marking
-
-    KickerPickerClient &kicker_picker_;
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
