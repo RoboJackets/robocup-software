@@ -121,6 +121,9 @@ private:
     bool ball_in_red() const;
     bool we_in_red() const;
 
+    bool we_are_closer_than_enemies() const;
+    bool we_are_closer_than_teammates() const;
+
     int get_marker_target_id();
     Marker marker_;
 };

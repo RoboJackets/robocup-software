@@ -27,22 +27,19 @@ Defense::State Defense::update_state() {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
-    }
+    } // I'm pretty sure some of our changes don't respect waller_id_, but it seems to work :/
 
-    // General 
+    // General
     rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
     double my_distance_to_ball = my_robot_position.dist_to(ball_position);
 
 
-    auto& our_robots = this->last_world_state_->our_robots;;
-    auto& their_robots = this->last_world_state_->their_robots;;
-    double min_dist;
     switch (current_state_) {
         case IDLING: { // Dead state
             return IDLING;
         }
-        case JOINING_WALL: { // Unconditional skip state, just sends a join request.
+        case JOINING_WALL: { // Unconditional comms skip state
             send_join_wall_request();
             walling_robots_ = {(u_int8_t)robot_id_};
             return WALLING;
@@ -52,54 +49,28 @@ Defense::State Defense::update_state() {
                 return WALLING;
             }
 
-            // Check if we can break from the wall to steal the ball.
-            // Only consider a break if we are the closest teammate to the ball.
-            bool we_are_closest = true;
-            for (size_t i = 0; i < our_robots.size(); ++i) {
-                if (i == robot_id_) { continue; }
-                if (our_robots[i].pose.position().dist_to(ball_position) < my_distance_to_ball) {
-                    we_are_closest = false;
-                    break;
-                }
-            }
-            if (!we_are_closest) {
-                return WALLING;
-            }
-            // If we're the closest teammate, only break if we're closer to the ball than all opponents.
-            bool we_can_steal = true;
-            for (auto enemy : their_robots) {
-                double enemy_dist_to_ball = enemy.pose.position().dist_to(ball_position);
-                if (enemy_dist_to_ball < my_distance_to_ball) {
-                    we_can_steal = false;
-                    break;
-                }
-            }
-            if (we_can_steal) {
+            // If we are the closest robot on the field to the ball, break from the wall and go for a shot.
+            if (we_are_closer_than_teammates() && we_are_closer_than_enemies()) {
+                SPDLOG_INFO("Robot {} moving on the attack.", robot_id_);
                 return WALLER_STEAL;
             }
         
             return WALLING;
         }
-        case WALLER_STEAL: { // Breaking from the wall to position behind the ball.
+        case WALLER_STEAL: { // Begin approach
             // If our fast break fails and we're no longer the closest, go back to the wall.
-            bool we_are_closest = true;
-            for (size_t i = 0; i < our_robots.size(); ++i) {
-                if (i == robot_id_) { continue; }
-                if (our_robots[i].pose.position().dist_to(ball_position) < my_distance_to_ball) {
-                    we_are_closest = false;
-                    break;
-                }
-            }
-            if (!we_are_closest) {
+            if (!we_are_closer_than_enemies()) {
                 return JOINING_WALL;
             }
-
+            // If, for some reason, two teammates are both chasing the ball and we're further, go back to the wall.
+            if (!we_are_closer_than_teammates()) {
+                return JOINING_WALL;
+            }
             // If ball is inaccessible (or we have chased it to an illegal pose), go back to wall.
             if (ball_in_red() || we_in_red()) { 
                 return JOINING_WALL;
             }
-
-            // If the pivot is complete, fire away.
+            // If in position, fire away.
             if (check_is_done()) { 
                 shot_target_ = calculate_best_shot();
                 return KICK;
@@ -107,7 +78,7 @@ Defense::State Defense::update_state() {
 
             return WALLER_STEAL;
         }   
-        case KICK: { // Doing a line kick through the ball.
+        case KICK: { // Kick that ball
             if (ball_in_red() || we_in_red() || check_is_done()) {
                 return JOINING_WALL;
             }
@@ -353,6 +324,37 @@ bool Defense::we_in_red() const {
     return (field_dimensions_.our_defense_area().contains_point(our_pos) ||
             field_dimensions_.their_defense_area().contains_point(our_pos) ||
             !field_dimensions_.field_rect().contains_point(our_pos));
+}
+
+bool Defense::we_are_closer_than_enemies() const {
+    auto& their_robots = this->last_world_state_->their_robots;
+
+    rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+    double my_distance_to_ball = my_robot_position.dist_to(ball_position);
+
+    for (auto enemy : their_robots) {
+        if (enemy.pose.position().dist_to(ball_position) < my_distance_to_ball) {
+            return false; // AN ENEMY IS CLOSER
+        }
+    }
+    return true;
+}
+
+bool Defense::we_are_closer_than_teammates() const {
+    auto& our_robots = this->last_world_state_->our_robots;
+
+    rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+    double my_distance_to_ball = my_robot_position.dist_to(ball_position);
+
+    for (size_t i = 0; i < our_robots.size(); ++i) {
+        if (i == robot_id_) { continue; } // don't count urself
+        if (our_robots[i].pose.position().dist_to(ball_position) < my_distance_to_ball) {
+            return false; // A TEAMMATE IS CLOSER
+        }
+    }
+    return true;
 }
 
 }  // namespace strategy
