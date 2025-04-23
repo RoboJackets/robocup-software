@@ -52,22 +52,13 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case TO_BALL: {
             if (check_is_done()) {
-                return ROTATE;
+                kick_ = true;
+                return KICK;
             }
             return TO_BALL;
         }
-        case ROTATE: {
-            if (check_is_done()) {
-                counter_ = 0;
-                kick_ = true;
-                return MARKER;
-            }
-            return ROTATE;
-        }
         case KICK: {
-            if (!kick_ ||
-                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
-                        .mag() > kRobotRadius * 5) {
+            if ((last_world_state_->get_robot(true, robot_id_).pose.position() - current_point).mag() > kRobotRadius * 5) {
                 return TO_BALL;
             }
             return KICK;
@@ -91,26 +82,10 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TO_BALL: {
-            rj_geometry::Point robotToBall =
-                (last_world_state_->ball.position -
-                 last_world_state_->get_robot(true, robot_id_).pose.position());
-            double slowDown = 1.0;
-            double length = robotToBall.mag() - kRobotRadius * slowDown;
-            robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{
-                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            auto pivot_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = pivot_cmd;
-            return intent;
-        }
-        case ROTATE: {
             planning::LinearMotionInstant target{calculate_best_shot()};
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position, 0.15};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = 4.0;
             return intent;
         }
         case KICK: {
