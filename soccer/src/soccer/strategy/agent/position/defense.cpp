@@ -29,12 +29,6 @@ Defense::State Defense::update_state() {
         waller_id_ = -1;
     } // I'm pretty sure some of our changes don't respect waller_id_, but it seems to work :/
 
-    // General
-    rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-    double my_distance_to_ball = my_robot_position.dist_to(ball_position);
-
-
     switch (current_state_) {
         case IDLING: { // Dead state
             return IDLING;
@@ -45,7 +39,9 @@ Defense::State Defense::update_state() {
             return WALLING;
         }
         case WALLING: { // Wall defense
-            if (ball_in_red() || we_in_red()) { // BAD BAD FIX
+            // Our system makes no assumptions about the state of the field, BUT
+            // if the ball or we are invalid, there's no point in attempting break for an attack
+            if (ball_in_red() || we_in_red()) {
                 return WALLING;
             }
 
@@ -82,6 +78,15 @@ Defense::State Defense::update_state() {
             if (ball_in_red() || we_in_red() || check_is_done()) {
                 return JOINING_WALL;
             }
+
+            // This fix is required bc check_is_done() does not seem to care about line_kick MotionCommands.
+            rj_geometry::Point my_robot_position = this->last_world_state_->get_robot(true, robot_id_).pose.position();
+            rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+            double my_distance_to_ball = my_robot_position.dist_to(ball_position);
+
+            if (my_distance_to_ball > 10.0*kRobotRadius) { // distance at which we must have either successfully kicked or totally failed
+                return JOINING_WALL;
+            } // Note: on a totally open field, the robot will trigger this check, and then simply cycle back to this state again, since after 10 radii, the ball will not have gotten closer to any non-present enemies
             
             return KICK;
         }
