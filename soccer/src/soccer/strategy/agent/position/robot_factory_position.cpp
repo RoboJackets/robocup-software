@@ -193,39 +193,44 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
-    // Get sorted positions of all friendly robots
-    using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
+    bool winning = last_world_state_->our_robots.size() == 2;
+    bool possession = true;
 
-    std::vector<RobotPos> robots_copy;
-    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
-        // Ignore goalie
-        if (i == goalie_id_) {
-            continue;
-        }
-        if (alive_robots_[i]) {
-            robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
-        }
-    }
-
-    std::sort(robots_copy.begin(), robots_copy.end(),
-              [](RobotPos const& a, RobotPos const& b) { return a.second < b.second; });
-
-    // Find relative location of current robot
-    int i = 0;
-    for (RobotPos r : robots_copy) {
-        if (r.first == robot_id_) {
+    for (auto& robot : last_world_state_->their_robots) {
+        if (last_world_state_->ball.position.dist_to(robot.pose.position()) < kRobotRadius + 0.1) {
+            possession = false;
             break;
         }
-        i++;
     }
 
-    // Assigning new position
-    if (i == 0) {
-        set_current_position<SoloOffense>();
-    } else if (i == 1) {
-        set_current_position<Defense>();
+    if (winning) {
+        if (robot_id_ == goalie_id_) {
+            set_current_position<Goalie>();
+        } else {
+            set_current_position<SoloOffense>();
+        }
     } else {
-        set_current_position<SmartIdle>();
+        if (possession) {
+            if (robot_id_ == goalie_id_) {
+                set_current_position<GoalieOffense>();
+            } else if (robot_id_ == 1) {
+                set_current_position<LeftOffense>();
+            } else if (robot_id_ == 2) {
+                set_current_position<RightOffense>();
+            } else {
+                set_current_position<SoloOffense>();
+            }
+        } else {
+            if (robot_id_ == goalie_id_) {
+                set_current_position<Goalie>();
+            } else if (robot_id_ == 1) {
+                set_current_position<SoloOffense>();
+            } else if (robot_id_ == 2) {
+                set_current_position<Defense>(); // Force to wall
+            } else {
+                set_current_position<Defense>(); // Force to wall
+            }
+        }
     }
 }
 

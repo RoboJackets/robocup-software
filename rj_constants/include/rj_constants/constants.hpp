@@ -10,7 +10,7 @@
 constexpr size_t kNumShells = 16;
 
 // Number of playing robots on one team
-constexpr size_t kRobotsPerTeam = 6;
+constexpr size_t kRobotsPerTeam = 3;
 
 constexpr size_t kMaxDribble = 128;
 constexpr size_t kMaxKick = 255;
