@@ -37,6 +37,9 @@ Defense::State Defense::update_state() {
     }
 
     bool we_are_closest;
+    auto& our_robots;
+    auto& their_robots;
+    double min_dist;
     switch (current_state_) {
         case IDLING:
             break;
@@ -56,7 +59,7 @@ Defense::State Defense::update_state() {
             //     // SPDLOG_INFO("leave wall {}", robot_id_);
             // }
             we_are_closest = true;
-            auto& our_robots = this->last_world_state_->our_robots;
+            our_robots = this->last_world_state_->our_robots;
 
             for (size_t i = 0; i < our_robots.size(); ++i) {
                 if (i == robot_id_) {
@@ -73,8 +76,8 @@ Defense::State Defense::update_state() {
 
 
             if (we_are_closest) {
-                auto& their_robots = this->last_world_state_->their_robots;
-                double min_dist = 1000;
+                their_robots = this->last_world_state_->their_robots;
+                min_dist = 1000;
                 for (auto enemy : their_robots) {
                     rj_geometry::Point enemypos = enemy.pose.position();
 
@@ -91,8 +94,8 @@ Defense::State Defense::update_state() {
 
             break;
         case WALLER_STEAL:
-            auto& their_robots = this->last_world_state_->their_robots;
-            double min_dist = 1000;
+            their_robots = this->last_world_state_->their_robots;
+            min_dist = 1000;
             for (auto enemy : their_robots) {
                 rj_geometry::Point enemypos = enemy.pose.position();
 
