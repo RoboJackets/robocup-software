@@ -89,6 +89,9 @@ Defense::State Defense::update_state() {
                 }
             }
         
+            if (ball_in_red() || we_in_red()) { // BAD BAD FIX
+                next_state = WALLING;
+            }
 
             break;
         case WALLER_STEAL:
@@ -108,6 +111,9 @@ Defense::State Defense::update_state() {
                 target_ = calculate_best_shot();
                 next_state = KICK;
             }
+            if (ball_in_red() || we_in_red()) {
+                next_state = JOINING_WALL;
+            }
             break;
         case KICK:
             if (ball_in_red() || we_in_red() || check_is_done()) {
@@ -122,16 +128,19 @@ Defense::State Defense::update_state() {
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     if (current_state_ == IDLING) {
+        SPDLOG_INFO("IDLING {}", robot_id_);
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
         return intent;
         // DO NOTHING
     } else if (current_state_ == WALLING) {
+        SPDLOG_INFO("WALLING {}", robot_id_);
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
     } else if (current_state_ == WALLER_STEAL) {
+        SPDLOG_INFO("WALLER_STEAL {}", robot_id_);
         planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
         auto pivot_cmd = planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, last_world_state_->ball.position};
         pivot_cmd.pivot_radius = kRobotRadius * 2.5;
@@ -139,6 +148,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         
         return intent;
     } else if (current_state_ == KICK) {
+        SPDLOG_INFO("KICK {}", robot_id_);
         auto line_kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
         intent.motion_command = line_kick_cmd;
         intent.shoot_mode = RobotIntent::ShootMode::KICK;
