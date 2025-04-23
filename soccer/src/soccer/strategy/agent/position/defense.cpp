@@ -56,13 +56,14 @@ Defense::State Defense::update_state() {
             //     // SPDLOG_INFO("leave wall {}", robot_id_);
             // }
             we_are_closest = true;
+            auto& our_robots = this->last_world_state_->our_robots;
 
-            for (size_t i = 0; i < alive_robots_.size(); ++i) {
+            for (size_t i = 0; i < our_robots.size(); ++i) {
                 if (i == robot_id_) {
                     continue;
                 }
 
-                rj_geometry::Point uspos = alive_robots_[i].pose.position();
+                rj_geometry::Point uspos = our_robots[i].pose.position();
 
                 if (uspos.dist_to(ball_position) < distance_to_ball) {
                     we_are_closest = false;
@@ -90,6 +91,19 @@ Defense::State Defense::update_state() {
 
             break;
         case WALLER_STEAL:
+            auto& their_robots = this->last_world_state_->their_robots;
+            double min_dist = 1000;
+            for (auto enemy : their_robots) {
+                rj_geometry::Point enemypos = enemy.pose.position();
+
+                if (enemypos.dist_to(ball_position) < min_dist) {
+                    min_dist = enemypos.dist_to(ball_position);
+                }
+            }
+
+            if (distance_to_ball >= min_dist) {
+                next_state = JOINING_WALL;
+            }
             if (check_is_done()) {
                 target_ = calculate_best_shot();
                 next_state = KICK;
