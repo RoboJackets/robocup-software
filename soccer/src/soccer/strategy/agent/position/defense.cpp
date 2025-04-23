@@ -52,118 +52,26 @@ Defense::State Defense::update_state() {
                 this->robot_id_ == *max_element(walling_robots_.begin(), walling_robots_.end())) {
                 send_leave_wall_request();
                 // SPDLOG_INFO("leave wall {}", robot_id_);
-                next_state = ENTERING_MARKING;
             }
             break;
-        case SEARCHING:
+        case WALLER_STEAL:
             break;
-        case RECEIVING:
-            // transition to idling if we are close enough to the ball
-            if (distance_to_ball < ball_receive_distance_) {
-                next_state = IDLING;
-            }
-            break;
-        case PASSING:
-            // transition to idling if we no longer have the ball (i.e. it was passed or it was
-            // stolen)
-            if (check_is_done()) {
-                next_state = IDLING;
-            }
-
-            if (distance_to_ball > ball_lost_distance_) {
-                next_state = IDLING;
-            }
-            break;
-        case FACING:
-            if (check_is_done()) {
-                next_state = IDLING;
-            }
-        case MARKING:
-            if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
-                next_state = ENTERING_MARKING;
-            }
-            break;
-        case ENTERING_MARKING:
-            marker_.choose_target(world_state);
-            int target_id = marker_.get_target();
-            if (target_id == -1) {
-                next_state = ENTERING_MARKING;
-            } else {
-                next_state = MARKING;
-            }
     }
 
     return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
-    // if (robot_id_ == 2) {
-    //     SPDLOG_INFO("{} current state of 2", current_state_);
-    // }
     if (current_state_ == IDLING) {
         auto empty_motion_cmd = planning::MotionCommand{};
         intent.motion_command = empty_motion_cmd;
         return intent;
         // DO NOTHING
-    } else if (current_state_ == SEARCHING) {
-        // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
-    } else if (current_state_ == RECEIVING) {
-        // check how far we are from the ball
-        // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
-        rj_geometry::Point robot_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Point ball_position = last_world_state_->ball.position;
-        double distance_to_ball = robot_position.dist_to(ball_position);
-        if (distance_to_ball > max_receive_distance && !chasing_ball) {
-            auto motion_instance =
-                planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-            auto face_ball = planning::FaceBall{};
-            auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
-            intent.motion_command = face_ball_cmd;
-        } else {
-            // intercept the ball
-            chasing_ball = true;
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-        }
-        return intent;
-    } else if (current_state_ == PASSING) {
-        // attempt to pass the ball to the target robot
-        rj_geometry::Point target_robot_pos =
-            last_world_state_->get_robot(true, target_robot_id).pose.position();
-        planning::LinearMotionInstant target{target_robot_pos};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = line_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        // NOTE: Check we can actually use break beams
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
-        intent.is_active = true;
-        return intent;
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             return waller.get_task(intent, last_world_state_, this->field_dimensions_);
         }
-    } else if (current_state_ == FACING) {
-        rj_geometry::Point robot_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        auto current_location_instant =
-            planning::LinearMotionInstant{robot_position, rj_geometry::Point{0.0, 0.0}};
-        auto face_ball = planning::FaceBall{};
-        auto face_ball_cmd =
-            planning::MotionCommand{"path_target", current_location_instant, face_ball};
-        intent.motion_command = face_ball_cmd;
-        return intent;
-    } else if (current_state_ == ENTERING_MARKING) {
-        // Prepares a robot for marking. NOTE: May update to add move to center of field
-        auto empty_motion_cmd = planning::MotionCommand{};
-        intent.motion_command = empty_motion_cmd;
-        return intent;
-    } else if (current_state_ == MARKING) {
-        // Marker marker = Marker((u_int8_t) robot_id_);
-        return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
     }
 
     return std::nullopt;
