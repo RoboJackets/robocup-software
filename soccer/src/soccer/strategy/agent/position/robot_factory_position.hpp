@@ -31,6 +31,7 @@
 #include "strategy/agent/position/position.hpp"
 #include "strategy/agent/position/smartidling.hpp"
 #include "strategy/agent/position/solo_offense.hpp"
+#include "strategy/agent/position/goalie_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
 #include "strategy/coordinator/kicker_picker_client.hpp"
 

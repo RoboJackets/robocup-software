@@ -197,7 +197,7 @@ void RobotFactoryPosition::set_default_position() {
     bool possession = true;
 
     for (auto& robot : last_world_state_->their_robots) {
-        if (last_world_state_->ball.position.dist_to(robot.pose.position()) < kRobotRadius + 0.1) {
+        if (last_world_state_->ball.position.dist_to(robot.pose.position()) < kRobotRadius + 0.5) {
             possession = false;
             break;
         }
@@ -214,11 +214,13 @@ void RobotFactoryPosition::set_default_position() {
             if (robot_id_ == goalie_id_) {
                 set_current_position<GoalieOffense>();
             } else if (robot_id_ == 1) {
-                set_current_position<LeftOffense>();
+                // set_current_position<LeftOffense>();
+                set_current_position<Offense>();
             } else if (robot_id_ == 2) {
-                set_current_position<RightOffense>();
+                // set_current_position<RightOffense>();
+                set_current_position<Offense>();
             } else {
-                set_current_position<SoloOffense>();
+                set_current_position<Defense>();
             }
         } else {
             if (robot_id_ == goalie_id_) {
