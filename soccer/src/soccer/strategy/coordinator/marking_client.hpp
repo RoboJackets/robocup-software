@@ -4,8 +4,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_msgs/msg/kicker_picker.hpp>
-#include <rj_msgs/srv/kicker_picker.hpp>
+#include <rj_msgs/msg/marking.hpp>
+#include <rj_msgs/srv/marking.hpp>
+#include "rj_constants/constants.hpp"
 
 namespace strategy {
 
@@ -16,9 +17,11 @@ namespace strategy {
  */
 class MarkingClient {
 public:
+    static constexpr uint8_t kInvalidRobotId = kNumShells;
     struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the kicker group.
-        std::optional<int> kicker_id{0};  // ID of Kicker id
+        std::optional<bool> am_i_marking{false};
+        std::optional<uint8_t> who_i_am_marking{kInvalidRobotId};  // ID of Kicker id
     };
 
     using StatusCallback = std::function<void(Result)>;
@@ -43,20 +46,20 @@ public:
     void leave_group(StatusCallback callback = nullptr);
 
     /**
-     * @brief Check if this robot is a member of the kicker group.
+     * @brief Check if this robot is a member of the marker group.
      */
     [[nodiscard]] bool am_i_member() const;
 
     /**
-     * @brief Get the currently selected kicker.
-     * @return robot ID of selected kicker, or kInvalidRobotId if none selected.
+     * @brief Get the currently selected enemey robot id marking.
+     * @return robot ID of selected robot, or kInvalidRobotId if none selected.
      */
-    [[nodiscard]] uint8_t selected_kicker() const;
+    [[nodiscard]] uint8_t who_am_i_marking() const;
 
     /**
-     * @brief Check if this robot is currently selected as the kicker.
+     * @brief Check if this robot is currently marking.
      */
-    [[nodiscard]] bool is_selected() const;
+    [[nodiscard]] bool am_i_marking() const;
 
 private:
     rclcpp::Node::SharedPtr node_;
@@ -64,9 +67,9 @@ private:
                               // isn't move/copy-able anyway
     rclcpp::Client<rj_msgs::srv::Marking>::SharedPtr client_;
     rclcpp::Subscription<rj_msgs::msg::Marking>::SharedPtr subscription_;
-
     bool am_i_member_{false};
-    uint8_t selected_kicker_;
+    bool am_i_marking_{false};
+    uint8_t selected_robot_marking_id_{kInvalidRobotId};
 };
 
 }  // namespace strategy
