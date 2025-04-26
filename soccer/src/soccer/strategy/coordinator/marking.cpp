@@ -12,7 +12,7 @@ namespace strategy {
 Marking::Marking()
     : Coordinator("marking_srv", "marking_data", "marking_node") {
     // Subscribe to world state
-    marking_list.fill(kInvalidRobotId); // initializes to no valid markers
+    marking_list_.fill(kInvalidRobotId); // initializes to no valid markers
     enemey_to_friends_.fill(kInvalidRobotId);
     danger_score_.fill(std::numeric_limits<double>::infinity()); // everyone starts with an infinite danger score
     num_markers_ = 0;
@@ -32,15 +32,15 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             if (enemey_to_friends_[i] != kInvalidRobotId) {
                 continue;
             }
-            if (danger_score[i] < min) {
+            if (danger_score_[i] < min) {
                 most_dangerous = i;
-                min = danger_score[i];
+                min = danger_score_[i];
             }
         }
         if (most_dangerous != kInvalidRobotId) {
             enemey_to_friends_[most_dangerous] = request->robot_id;
             marking_list_[request->robot_id] = most_dangerous;
-            num_markers++;
+            num_markers_++;
         }
     } else {
         // should we kick someone out
@@ -52,7 +52,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 int enemey_id = marking_list_[i];
                 const auto& i_robot = last_world_state_.get_robot(true, i);
                 const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
-                double dist = (i_robot.pose.position().dist_to(enemey_robot.pose.position())) - (robot_requesting.pose.position().dist_to(enemey_robot.pose.position());
+                double dist = (i_robot.pose.position().dist_to(enemey_robot.pose.position())) - (robot_requesting.pose.position().dist_to(enemey_robot.pose.position()));
                 if (dist > better_distance) {
                     better_distance = dist;
                     kick_out_this_robot_id = i;
@@ -81,9 +81,9 @@ void Marking::publish_marking_list() {
         if (enemey_to_friends_[i] != kInvalidRobotId) {
             continue;
         }
-        if (danger_score[i] < min) {
+        if (danger_score_[i] < min) {
             most_dangerous = i;
-            min = danger_score[i];
+            min = danger_score_[i];
         }
     }
     if (most_dangerous != kInvalidRobotId) {
@@ -92,7 +92,7 @@ void Marking::publish_marking_list() {
         for (size_t i = 0; i < marking_list_.size(); ++i) {
             if (marking_list_[i] != kInvalidRobotId) {
                 int enemey_id = marking_list_[i];
-                double danger_sub = danger_score[enemey_id] - danger_score[most_dangerous];
+                double danger_sub = danger_score_[enemey_id] - danger_score_[most_dangerous];
                 if (danger_sub > max_danger_sub) {
                     max_danger_sub = danger_sub;
                     not_dangerous_robot_id = enemey_id;
