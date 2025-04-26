@@ -1,4 +1,5 @@
 # Request a robot to be added to or removed from the marking group
 uint8 robot_id     # ID of the robot (0 to kNumShells-1)
+bool join
 ---
 bool success      # Always true

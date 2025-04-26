@@ -25,6 +25,37 @@ Marking::Marking()
 }
 
 void Marking::service_callback(RequestPtr request, ResponsePtr response) {
+    if (request->join == false) {
+        bool marking = (marking_list_[request->robot_id] != kInvalidRobotId);
+        if (marking) {
+            int enemey_id = marking_list_[request->robot_id];
+            marking_list_[request->robot_id] = kInvalidRobotId;
+            enemey_to_friends_[enemey_id] = kInvalidRobotId;
+            num_markers--;
+            // replace if possible
+            const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
+            double min = std::numeric_limits<double>::infinity();
+            int waiting_robot_id = kInvalidRobotId;
+            for (size_t i = 0; i < queue_.size(); ++i) {
+                const auto& i_robot = last_world_state_.get_robot(true, queue_[i]);
+                double distance = i_robot.pose.position().dist_to(enemey_robot.pose.position());
+                if (distance < min) {
+                    min = distance;
+                    waiting_robot_id = queue_[i];
+                }
+            }
+            if (kInvalidRobotId != waiting_robot_id) {
+                queue_.erase(std::remove(queue_.begin(), queue_.end(), waiting_robot_id), queue_.end());
+                marking_list_[waiting_robot_id] = enemey_id;
+                enemey_to_friends_[enemey_id] = waiting_robot_id;
+                num_markers++;
+            }
+        } else {
+            queue_.erase(std::remove(queue_.begin(), queue_.end(), request->robot_id), queue_.end());
+        }
+        response->success = true;
+        return;
+    }
     if (num_markers_ < kMaxMarkers) {
         int most_dangerous = kInvalidRobotId;
         double min = std::numeric_limits<double>::infinity();
@@ -40,7 +71,9 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         if (most_dangerous != kInvalidRobotId) {
             enemey_to_friends_[most_dangerous] = request->robot_id;
             marking_list_[request->robot_id] = most_dangerous;
-            num_markers_++;
+            num_markers++;
+        } else {
+            queue_.push_back(request->robot_id);
         }
     } else {
         // should we kick someone out
@@ -64,6 +97,8 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             marking_list_[kick_out_this_robot_id] = kInvalidRobotId;
             enemey_to_friends_[enemey_id] = request->robot_id;
             marking_list_[request->robot_id] = enemey_id;
+        } else {
+            queue_.push_back(request->robot_id);
         }
     }
 
@@ -113,9 +148,12 @@ void Marking::publish_marking_list() {
 void Marking::update_danger_scores() {
     // const auto& ball_pos = last_world_state_.ball.position;
 
-    for (uint8_t i = 0; i < kNumShells; i++) {
-        const auto& robot = last_world_state_.get_robot(true, i);
-    }
+    // for (uint8_t i = 0; i < kNumShells; i++) {
+    //     const auto& robot = last_world_state_.get_robot(false, i);
+    //     double dist_to_ball_ = ball_pos.dist_to(robot.pose.position());
+    //     //double dist_to_goal_ = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+
+    // }
 }
 
 

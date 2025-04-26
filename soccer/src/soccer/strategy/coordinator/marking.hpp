@@ -40,6 +40,7 @@ private:
     std::array<int, kNumShells> marking_list_{};  // Initialize it to invalid robot id in constructor
     std::array<int, kNumShells> danger_score_{}; // infinity initialized in constructor, no one is a valid target initially
     std::array<int, kNumShells> enemey_to_friends_{};
+    std::vector<int> queue_;
     WorldState last_world_state_;
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
