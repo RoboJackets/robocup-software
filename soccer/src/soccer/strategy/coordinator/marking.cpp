@@ -28,14 +28,14 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
     if (request->join == false) {
         bool marking = (marking_list_[request->robot_id] != kInvalidRobotId);
         if (marking) {
-            int enemey_id = marking_list_[request->robot_id];
+            uint8_t enemey_id = marking_list_[request->robot_id];
             marking_list_[request->robot_id] = kInvalidRobotId;
             enemey_to_friends_[enemey_id] = kInvalidRobotId;
-            num_markers--;
+            num_markers_--;
             // replace if possible
             const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
             double min = std::numeric_limits<double>::infinity();
-            int waiting_robot_id = kInvalidRobotId;
+            uint8_t waiting_robot_id = kInvalidRobotId;
             for (size_t i = 0; i < queue_.size(); ++i) {
                 const auto& i_robot = last_world_state_.get_robot(true, queue_[i]);
                 double distance = i_robot.pose.position().dist_to(enemey_robot.pose.position());
@@ -48,7 +48,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 queue_.erase(std::remove(queue_.begin(), queue_.end(), waiting_robot_id), queue_.end());
                 marking_list_[waiting_robot_id] = enemey_id;
                 enemey_to_friends_[enemey_id] = waiting_robot_id;
-                num_markers++;
+                num_markers_++;
             }
         } else {
             queue_.erase(std::remove(queue_.begin(), queue_.end(), request->robot_id), queue_.end());
@@ -57,7 +57,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         return;
     }
     if (num_markers_ < kMaxMarkers) {
-        int most_dangerous = kInvalidRobotId;
+        uint8_t most_dangerous = kInvalidRobotId;
         double min = std::numeric_limits<double>::infinity();
         for (size_t i = 0; i < danger_score_.size(); ++i) {
             if (enemey_to_friends_[i] != kInvalidRobotId) {
@@ -71,18 +71,18 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         if (most_dangerous != kInvalidRobotId) {
             enemey_to_friends_[most_dangerous] = request->robot_id;
             marking_list_[request->robot_id] = most_dangerous;
-            num_markers++;
+            num_markers_++;
         } else {
             queue_.push_back(request->robot_id);
         }
     } else {
         // should we kick someone out
         double better_distance = 0;
-        int kick_out_this_robot_id = kInvalidRobotId;
+        uint8_t kick_out_this_robot_id = kInvalidRobotId;
         const auto& robot_requesting = last_world_state_.get_robot(true, request->robot_id);
         for (size_t i = 0; i < marking_list_.size(); ++i) {
             if (marking_list_[i] != kInvalidRobotId) {
-                int enemey_id = marking_list_[i];
+                uint8_t enemey_id = marking_list_[i];
                 const auto& i_robot = last_world_state_.get_robot(true, i);
                 const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
                 double dist = (i_robot.pose.position().dist_to(enemey_robot.pose.position())) - (robot_requesting.pose.position().dist_to(enemey_robot.pose.position()));
@@ -93,7 +93,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             }
         }
         if (kick_out_this_robot_id != kInvalidRobotId) {
-            int enemey_id = marking_list_[kick_out_this_robot_id];
+            uint8_t enemey_id = marking_list_[kick_out_this_robot_id];
             marking_list_[kick_out_this_robot_id] = kInvalidRobotId;
             enemey_to_friends_[enemey_id] = request->robot_id;
             marking_list_[request->robot_id] = enemey_id;
@@ -110,7 +110,7 @@ void Marking::publish_marking_list() {
     update_danger_scores();
 
     // reshuffle, only change one because on timer so will get others later
-    int most_dangerous = kInvalidRobotId;
+    uint8_t most_dangerous = kInvalidRobotId;
     double min = std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < danger_score_.size(); ++i) {
         if (enemey_to_friends_[i] != kInvalidRobotId) {
@@ -122,11 +122,11 @@ void Marking::publish_marking_list() {
         }
     }
     if (most_dangerous != kInvalidRobotId) {
-        int not_dangerous_robot_id = kInvalidRobotId;
+        uint8_t not_dangerous_robot_id = kInvalidRobotId;
         double max_danger_sub = 0.0;
         for (size_t i = 0; i < marking_list_.size(); ++i) {
             if (marking_list_[i] != kInvalidRobotId) {
-                int enemey_id = marking_list_[i];
+                uint8_t enemey_id = marking_list_[i];
                 double danger_sub = danger_score_[enemey_id] - danger_score_[most_dangerous];
                 if (danger_sub > max_danger_sub) {
                     max_danger_sub = danger_sub;
@@ -135,7 +135,7 @@ void Marking::publish_marking_list() {
             }
         }
         if (not_dangerous_robot_id != kInvalidRobotId) {
-            int friend_id = enemey_to_friends_[not_dangerous_robot_id];
+            uint8_t friend_id = enemey_to_friends_[not_dangerous_robot_id];
             enemey_to_friends_[not_dangerous_robot_id] = kInvalidRobotId;
             marking_list_[friend_id] = most_dangerous;
             enemey_to_friends_[most_dangerous] = friend_id;
