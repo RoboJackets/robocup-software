@@ -203,6 +203,19 @@ void RobotFactoryPosition::set_default_position() {
         }
     }
 
+    // if (robot_id_ == goalie_id_) {
+    //     set_current_position<Goalie>();
+    //     //set_current_position<GoalieOffense>();
+    // } else if (robot_id_ == 1) {
+    //     set_current_position<OffenseLeft>();
+    //     //set_current_position<Offense>();
+    // } else if (robot_id_ == 2) {
+    //     set_current_position<OffenseRight>();
+    //     //set_current_position<Offense>();
+    // } else {
+    //     set_current_position<Defense>();
+    // }
+
     if (winning) {
         if (robot_id_ == goalie_id_) {
             set_current_position<Goalie>();
@@ -212,13 +225,14 @@ void RobotFactoryPosition::set_default_position() {
     } else {
         if (possession) {
             if (robot_id_ == goalie_id_) {
+                //set_current_position<Goalie>();
                 set_current_position<GoalieOffense>();
             } else if (robot_id_ == 1) {
-                // set_current_position<LeftOffense>();
-                set_current_position<Offense>();
+                set_current_position<OffenseLeft>();
+                //set_current_position<Offense>();
             } else if (robot_id_ == 2) {
-                // set_current_position<RightOffense>();
-                set_current_position<Offense>();
+                set_current_position<OffenseRight>();
+                //set_current_position<Offense>();
             } else {
                 set_current_position<Defense>();
             }
@@ -232,7 +246,7 @@ void RobotFactoryPosition::set_default_position() {
             } else {
                 set_current_position<Defense>(); // Force to wall
             }
-        }
+       }
     }
 }
 

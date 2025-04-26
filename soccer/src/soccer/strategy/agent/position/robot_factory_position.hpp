@@ -24,6 +24,8 @@
 #include "strategy/agent/position/goalie.hpp"
 #include "strategy/agent/position/line.hpp"
 #include "strategy/agent/position/offense.hpp"
+#include "strategy/agent/position/offense_right.hpp"
+#include "strategy/agent/position/offense_left.hpp"
 #include "strategy/agent/position/overriding_positions.hpp"
 #include "strategy/agent/position/penalty_non_kicker.hpp"
 #include "strategy/agent/position/penalty_player.hpp"
@@ -34,6 +36,7 @@
 #include "strategy/agent/position/goalie_offense.hpp"
 #include "strategy/agent/position/zoner.hpp"
 #include "strategy/coordinator/kicker_picker_client.hpp"
+
 
 namespace strategy {
 
