@@ -192,7 +192,7 @@ private:
     static constexpr double kStealBallRadius{0.5};
 
     // Used to assume we are capable of manipulating the ball
-    static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
+    static constexpr double kOwnBallRadius{kRobotRadius + 0.25};
 
     // Used to tell if an enemy is close enough to block a shot
     static constexpr double kEnemyTooCloseRadius{kStealBallRadius};
@@ -241,7 +241,7 @@ private:
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
-    rj_geometry::Point seeker_point{};
+    rj_geometry::Point seeker_point{0, 5};
 };
 
 }  // namespace strategy

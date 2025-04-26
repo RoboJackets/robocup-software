@@ -35,7 +35,7 @@ GoalieOffense::State GoalieOffense::next_state() {
     // handle transitions between current state
     switch (current_state_) {
         case DEFAULT: {
-            return SEEKING_START;
+            return SEEKING;
         }
 
         case SEEKING_START: {
@@ -52,7 +52,7 @@ GoalieOffense::State GoalieOffense::next_state() {
             // If we need to get a new seeking target, restart seeking
             if (check_is_done() ||
                 last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-                return SEEKING_START;
+                return SEEKING;
             }
 
             return SEEKING;
@@ -111,7 +111,7 @@ GoalieOffense::State GoalieOffense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done()) {
+            if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
             }
 
