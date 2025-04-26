@@ -34,7 +34,7 @@ private:
     void update_danger_scores();
 
     std::array<int, kNumShells> marking_list{};  // Initialize it to invalid robot id in constructor
-    std::array<int, kNumShells> dangeruss_score{}; // infinity initialized in constructor, no one is a valid target initially
+    std::array<int, kNumShells> danger_score{}; // infinity initialized in constructor, no one is a valid target initially
     WorldState last_world_state_;
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;

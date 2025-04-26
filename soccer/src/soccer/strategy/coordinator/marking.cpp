@@ -13,7 +13,7 @@ Marking::Marking()
     : Coordinator("marking_srv", "marking_data", "marking_node") {
     // Subscribe to world state
     marking_list.fill(kInvalidRobotId); // initializes to no valid markers
-    dangeruss_score.fill(std::numeric_limits<double>::infinity()); // everyone starts with an infinite danger score
+    danger_score.fill(std::numeric_limits<double>::infinity()); // everyone starts with an infinite danger score
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
@@ -66,12 +66,14 @@ void Marking::publish_marking_list() {
 }
 
 void Marking::update_danger_scores() {
-    rj_geometry::Point ball_pos = last_world_state_.ball.position;
+    // const auto& ball_pos = last_world_state_.ball.position;
 
-
-    for (uint8_t i = 0; i < kNumShells; i++) {
-        const auto& robot = last_world_state_.get_robot(true, i);
-    }
+    // for (uint8_t i = 0; i < kNumShells; i++) {
+    //     const auto& robot = last_world_state_.get_robot(false, i);
+    //     double dist_to_ball_ = ball_pos.dist_to(robot.pose.position());
+    //     //double dist_to_goal_ = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+        
+    // }
 }
 
 
