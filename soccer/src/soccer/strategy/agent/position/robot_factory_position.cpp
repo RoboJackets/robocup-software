@@ -197,24 +197,11 @@ void RobotFactoryPosition::set_default_position() {
     bool possession = true;
 
     for (auto& robot : last_world_state_->their_robots) {
-        if (last_world_state_->ball.position.dist_to(robot.pose.position()) < kRobotRadius + 0.5) {
+        if (last_world_state_->ball.position.dist_to(robot.pose.position()) < kRobotRadius + 0.2) {
             possession = false;
             break;
         }
     }
-
-    // if (robot_id_ == goalie_id_) {
-    //     set_current_position<Goalie>();
-    //     //set_current_position<GoalieOffense>();
-    // } else if (robot_id_ == 1) {
-    //     set_current_position<OffenseLeft>();
-    //     //set_current_position<Offense>();
-    // } else if (robot_id_ == 2) {
-    //     set_current_position<OffenseRight>();
-    //     //set_current_position<Offense>();
-    // } else {
-    //     set_current_position<Defense>();
-    // }
 
     if (winning) {
         if (robot_id_ == goalie_id_) {
