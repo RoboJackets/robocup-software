@@ -110,6 +110,8 @@ void Marking::publish_marking_list() {
     update_danger_scores();
 
     // reshuffle, only change one because on timer so will get others later
+
+    // finding most dangerous of non-marked robots
     uint8_t most_dangerous = kInvalidRobotId;
     double min = std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < danger_score_.size(); ++i) {
@@ -134,7 +136,8 @@ void Marking::publish_marking_list() {
                 }
             }
         }
-        if (not_dangerous_robot_id != kInvalidRobotId) {
+        // seeing if most dangerous of non-marked robots is significantly more dangerous than any marked robot
+        if (max_danger_sub > kSuperDangerSub && not_dangerous_robot_id != kInvalidRobotId) {
             uint8_t friend_id = enemey_to_friends_[not_dangerous_robot_id];
             enemey_to_friends_[not_dangerous_robot_id] = kInvalidRobotId;
             marking_list_[friend_id] = most_dangerous;
@@ -146,14 +149,23 @@ void Marking::publish_marking_list() {
 }
 
 void Marking::update_danger_scores() {
-    // const auto& ball_pos = last_world_state_.ball.position;
 
-    // for (uint8_t i = 0; i < kNumShells; i++) {
-    //     const auto& robot = last_world_state_.get_robot(false, i);
-    //     double dist_to_ball_ = ball_pos.dist_to(robot.pose.position());
-    //     //double dist_to_goal_ = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+    // danger score calculation is distance_to_ball * constant + distance_to_goal * constant - distance_from_our_closest_robot * constant - danger_angle * constant
+    // lower danger score is more dangerous
 
-    // }
+    const auto& ball_pos = last_world_state_.ball.position;
+
+    for (uint8_t i = 0; i < kNumShells; i++) {
+        const auto& robot = last_world_state_.get_robot(false, i);
+        if (!robot.visible) {
+            continue;
+        }
+        double dist_to_ball_ = ball_pos.dist_to(robot.pose.position());
+        double dist_to_goal_ = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+
+
+
+    }
 }
 
 
