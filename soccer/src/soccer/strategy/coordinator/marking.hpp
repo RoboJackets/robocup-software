@@ -35,6 +35,10 @@ private:
 
     static constexpr int kMaxMarkers = 2;
     static constexpr double kSuperDangerSub = 3.1415926535;
+    static constexpr double kDangerDistToBall = 1.0;
+    static constexpr double kDangerDistToGoal = 2.0;
+    static constexpr double kDangerDistToOurRobots = 3.0;
+    static constexpr double kDangerAngle = 2.0;
     int num_markers_;
 
     std::array<uint8_t, kNumShells> marking_list_{};  // Initialize it to invalid robot id in constructor

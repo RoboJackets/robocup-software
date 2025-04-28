@@ -34,13 +34,13 @@ public:
     MarkingClient& operator=(MarkingClient&&) = delete;
 
     /**
-     * @brief Join the kicker group.
+     * @brief Join the marking group.
      * @param callback Called with current membership status after attempt to join.
      */
     void join_group(StatusCallback callback = nullptr);
 
     /**
-     * @brief Leave the kicker group.
+     * @brief Leave the marking group.
      * @param callback Called with current membership status after attempt to leave.
      */
     void leave_group(StatusCallback callback = nullptr);

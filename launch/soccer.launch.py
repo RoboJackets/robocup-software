@@ -240,7 +240,7 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_robocup",
-                executable="marking_node"
+                executable="marking_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

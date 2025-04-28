@@ -160,11 +160,31 @@ void Marking::update_danger_scores() {
         if (!robot.visible) {
             continue;
         }
-        double dist_to_ball_ = ball_pos.dist_to(robot.pose.position());
-        double dist_to_goal_ = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+        double dist_to_ball = ball_pos.dist_to(robot.pose.position());
+        double dist_to_goal = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
 
+        double min = std::numeric_limits<double>::infinity();
+        for (uint8_t j = 0; j < kNumShells; j++) {
+            const auto& i_friend = last_world_state_.get_robot(true, j);
+            if (!robot.visible) {
+                continue;
+            }
+            double dist = robot.pose.position().dist_to(i_friend.pose.position());
+            if (dist < min) {
+                min = dist;
+            }
+        }
+        const auto& goal_to_ball =  ball_pos - field_dimensions_.our_goal_loc();
+        const auto& goal_to_robot = robot.pose.position() - field_dimensions_.our_goal_loc();
+        double cosTheta = goal_to_ball.dot(goal_to_robot) / (goal_to_ball.mag() * goal_to_robot.mag());
+        // Clamp value to [-1, 1] to avoid domain errors due to floating point precision
+        if (cosTheta > 1.0) cosTheta = 1.0;
+        if (cosTheta < -1.0) cosTheta = -1.0;
+        double angle_between = std::acos(cosTheta); // returns radians
+        angle_between = std::abs(angle_between);
 
-
+        double danger_score = dist_to_ball * kDangerDistToBall + dist_to_goal * kDangerDistToGoal - min * kDangerDistToOurRobots - angle_between * kDangerAngle;
+        danger_score_[i] = danger_score;
     }
 }
 
