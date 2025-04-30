@@ -26,6 +26,8 @@ public:
     ~Pivot() override = default;
     Pivot(const Pivot& other) = default;
     Pivot(Pivot&& other) = default;
+    Pivot(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    Pivot(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
 
     Pivot& operator=(const Pivot& other) = delete;
     Pivot& operator=(Pivot&& other) = delete;

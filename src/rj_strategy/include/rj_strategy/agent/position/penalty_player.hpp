@@ -23,6 +23,8 @@ public:
     PenaltyPlayer(int r_id);
     ~PenaltyPlayer() = default;
     PenaltyPlayer(const Position& other);
+    PenaltyPlayer(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    PenaltyPlayer(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -88,6 +90,8 @@ private:
 
     // current state of Goalie (state machine)
     State latest_state_ = START;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

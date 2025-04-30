@@ -32,6 +32,8 @@ public:
     Zoner(Zoner&& other) = default;
     Zoner& operator=(const Zoner& other) = default;
     Zoner& operator=(Zoner&& other) = default;
+    Zoner(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    Zoner(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
@@ -56,6 +58,8 @@ private:
     std::string get_current_state() override;
 
     static constexpr double kZonerRadius = 1.5;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

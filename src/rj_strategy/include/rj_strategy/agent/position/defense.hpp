@@ -28,6 +28,8 @@ namespace strategy {
 class Defense : public Position {
 public:
     Defense(int r_id);
+    Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
     ~Defense() override = default;
     Defense(const Position& other);
 
@@ -122,6 +124,8 @@ private:
 
     int get_marker_target_id();
     Marker marker_;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

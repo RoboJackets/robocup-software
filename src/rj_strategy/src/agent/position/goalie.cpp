@@ -6,6 +6,10 @@ Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {}
 
 Goalie::Goalie(const Position& other) : Position{other} {}
 
+Goalie::Goalie(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Goalie"), clientHandles_{clientHandles} {}
+
+Goalie::Goalie(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} { }
+
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
     return state_to_task(intent);

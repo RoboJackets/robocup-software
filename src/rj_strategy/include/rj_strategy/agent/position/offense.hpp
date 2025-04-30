@@ -30,6 +30,8 @@ public:
     Offense(int r_id);
     ~Offense() override = default;
     Offense(const Position& other);
+    Offense(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    Offense(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
@@ -241,6 +243,8 @@ private:
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

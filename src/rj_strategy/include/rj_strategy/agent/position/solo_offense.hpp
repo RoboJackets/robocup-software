@@ -27,6 +27,8 @@ public:
     ~SoloOffense() override = default;
     SoloOffense(const SoloOffense& other) = default;
     SoloOffense(SoloOffense&& other) = default;
+    SoloOffense(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    SoloOffense(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
 
     std::string get_current_state() override;
 
@@ -59,6 +61,8 @@ private:
 
     rj_geometry::Point calculate_best_shot() const;
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

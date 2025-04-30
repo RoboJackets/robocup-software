@@ -21,6 +21,7 @@ class GoalKicker : public Position {
 public:
     GoalKicker(int r_id);
     ~GoalKicker() = default;
+    GoalKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -39,6 +40,8 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

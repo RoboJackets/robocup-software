@@ -3,6 +3,8 @@
 namespace strategy {
 
 Seeker::Seeker(int robot_id) { robot_id_ = robot_id; }
+Seeker::Seeker(int r_id, std::shared_ptr<ClientHandles> clientHandles) : clientHandles_{clientHandles} { robot_id_ = r_id; }
+Seeker::Seeker(const Position& other, std::shared_ptr<ClientHandles> clientHandles) {}
 
 std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState* last_world_state,
                                             FieldDimensions field_dimensions) {

@@ -9,6 +9,13 @@ Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensi
     walling_robots_ = {};
 }
 
+Defense::Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Defense"), marker_{field_dimensions_}, clientHandles_{clientHandles} {}
+
+Defense::Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, marker_{field_dimensions_}, clientHandles_{clientHandles} {
+    position_name_ = "Defense";
+    walling_robots_ = {};
+}
+
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     // SPDLOG_INFO("waller length (sus) {}, {}", walling_robots_.size(), robot_id_);
     current_state_ = update_state();

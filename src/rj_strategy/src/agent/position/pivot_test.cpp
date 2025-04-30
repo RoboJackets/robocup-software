@@ -3,6 +3,8 @@
 namespace strategy {
 
 Pivot::Pivot(int r_id) : Position{r_id, "Pivot"} {}
+Pivot::Pivot(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position{r_id, "Pivot"} {}
+Pivot::Pivot(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other} {}
 
 std::optional<RobotIntent> Pivot::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock

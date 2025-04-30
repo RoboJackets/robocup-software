@@ -40,10 +40,19 @@
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_response.hpp>
 
+// Coordinators
+#include "strategy/coordinator/kicker_picker_client.hpp"
+#include "strategy/coordinator/marking_client.hpp"
+
 // tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
 
 namespace strategy {
+
+struct ClientHandles {
+    std::unique_ptr<KickerPickerClient> kickerPickerClient;
+    std::unique_ptr<MarkingClient> markingClient;
+};
 
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.

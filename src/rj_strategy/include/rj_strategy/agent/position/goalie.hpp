@@ -23,6 +23,8 @@ namespace strategy {
 class Goalie : public Position {
 public:
     Goalie(int r_id);
+    Goalie(int r_id, std::shared_ptr<ClientHandles> clientHandles);
+    Goalie(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
     ~Goalie() override = default;
     Goalie(const Position& other);
 
@@ -87,6 +89,8 @@ private:
     State latest_state_ = IDLING;
 
     rj_geometry::Point penalty_location();
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

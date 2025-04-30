@@ -6,6 +6,10 @@ Idle::Idle(int r_id) : Position{r_id, "Idle"} {}
 
 Idle::Idle(const Position& other) : Position{other} {}
 
+Idle::Idle(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Idle"), clientHandles_{clientHandles} {}
+
+Idle::Idle(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {}
+
 std::string Idle::get_current_state() { return "Idle"; }
 
 /**
