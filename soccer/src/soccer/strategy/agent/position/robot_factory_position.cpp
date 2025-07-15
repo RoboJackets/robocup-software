@@ -2,7 +2,9 @@
 
 #include <algorithm>
 
+#include "defense.hpp"
 #include "idle.hpp"
+#include "overriding_positions.hpp"
 #include "penalty_non_kicker.hpp"
 #include "solo_offense.hpp"
 
@@ -175,7 +177,7 @@ void RobotFactoryPosition::update_position() {
                     set_default_position();
                     // don't want a player on offense to try to kick the
                     // ball instead of free kicker
-                    if (dynamic_cast<Offense*>(current_position_.get()) != nullptr) {
+                    if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr) {
                         set_current_position<SmartIdle>();
                     }
                 }
@@ -232,7 +234,7 @@ void RobotFactoryPosition::set_default_position() {
 
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 4) {
+        if (i <= 3) {
             set_current_position<Defense>();
         } else {
             set_current_position<SoloOffense>();
