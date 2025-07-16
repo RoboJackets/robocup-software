@@ -62,6 +62,7 @@ private:
     // Where to send control messages to
     boost::asio::ip::udp::endpoint control_message_endpoint_ = boost::asio::ip::udp::endpoint(
         boost::asio::ip::address::from_string(kBaseStationAddress), kControlMessageSocketPort);
+    // Publisher for each robot's current statxdhixdxdhixd
     // Buffer to send a set of control messages
     std::vector<std::array<uint8_t, sizeof(rtp::ControlMessage)>> send_buffers_{};
 

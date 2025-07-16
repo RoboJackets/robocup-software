@@ -1,0 +1,512 @@
+velocity_x_mps: -0.5228241236898767
+velocity_y_mps: -0.15765104428922866
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5586640146653634
+velocity_y_mps: -0.17759079409216283
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6027450673682243
+velocity_y_mps: -0.19059965177807156
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6416932061372107
+velocity_y_mps: -0.20861406837975346
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7249844726719612
+velocity_y_mps: -0.22619210027844527
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7661893728628656
+velocity_y_mps: -0.23382781754899892
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8092809889568243
+velocity_y_mps: -0.24165944499750114
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8504825719337146
+velocity_y_mps: -0.2510204176387911
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8857966969353107
+velocity_y_mps: -0.2846867723483282
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9255431702427034
+velocity_y_mps: -0.3052485489954612
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0075092778371968
+velocity_y_mps: -0.328830152590656
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.16770711324395368
+velocity_y_mps: -0.058709901621514515
+velocity_z_radps: 0.03544766348000398
+---
+velocity_x_mps: -0.2548421975846458
+velocity_y_mps: -0.08183675770500302
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.28976779956704557
+velocity_y_mps: -0.09628601685605769
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.33250993005582413
+velocity_y_mps: -0.1042102953297015
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3738302937068928
+velocity_y_mps: -0.11814432450176639
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4539247318641285
+velocity_y_mps: -0.14899470505703982
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.49271141368577764
+velocity_y_mps: -0.16488451647192634
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5325315115834982
+velocity_y_mps: -0.18005941232670752
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5729372038283296
+velocity_y_mps: -0.19381709092061222
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6163705267208167
+velocity_y_mps: -0.2063555950871116
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6577981743045719
+velocity_y_mps: -0.21699988560531047
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7387119532008617
+velocity_y_mps: -0.23949772052873272
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7832196826838933
+velocity_y_mps: -0.24231510068890177
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8216686043604822
+velocity_y_mps: -0.26279621414502147
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8611871301953293
+velocity_y_mps: -0.2771579864298795
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9007346876767209
+velocity_y_mps: -0.29871557540747573
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.938713243482757
+velocity_y_mps: -0.3241322717446961
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0199070100205203
+velocity_y_mps: -0.34543432697201026
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.2611031170682224
+velocity_y_mps: -0.08161268397343678
+velocity_z_radps: -0.006169106941260134
+---
+velocity_x_mps: -0.3012196910178113
+velocity_y_mps: -0.09713082241849016
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3394518449337209
+velocity_y_mps: -0.11117178795303086
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.37895016123891145
+velocity_y_mps: -0.13214486563304337
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.41925845894966723
+velocity_y_mps: -0.14924051018386308
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4980298247578902
+velocity_y_mps: -0.17832403900888255
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5400475713121001
+velocity_y_mps: -0.18756736214496503
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5802177332018468
+velocity_y_mps: -0.20313055536650623
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6196347868905887
+velocity_y_mps: -0.21789225193981698
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.664334805672798
+velocity_y_mps: -0.22812008562036232
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7047833069828054
+velocity_y_mps: -0.2384502244969264
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.779901448366477
+velocity_y_mps: -0.28212081744874107
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.820738598699363
+velocity_y_mps: -0.29356923783348
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8627331258006654
+velocity_y_mps: -0.3055573778240902
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9069580614230105
+velocity_y_mps: -0.3052471384866397
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9478817584866737
+velocity_y_mps: -0.3245791968126993
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9908383044062257
+velocity_y_mps: -0.3341151944402704
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.2923503379468076
+velocity_y_mps: -0.09534695041279768
+velocity_z_radps: -0.022268555186565828
+---
+velocity_x_mps: -0.37385159835711623
+velocity_y_mps: -0.12204576096683552
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4145655322830252
+velocity_y_mps: -0.13252002605987037
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4554806919390777
+velocity_y_mps: -0.14116336194397058
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4971670361770985
+velocity_y_mps: -0.1554804274676079
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5365759656963413
+velocity_y_mps: -0.1731995570517278
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.577522741793863
+velocity_y_mps: -0.18161764429893534
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6616623635650265
+velocity_y_mps: -0.20049872153795667
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7039558916915143
+velocity_y_mps: -0.2128998068770272
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7418885792981105
+velocity_y_mps: -0.23035704522361958
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7869672812889326
+velocity_y_mps: -0.23785926533052518
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8267336121866291
+velocity_y_mps: -0.25045843726798794
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9125817499405781
+velocity_y_mps: -0.2665586088727555
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9453766877332251
+velocity_y_mps: -0.2970505484695018
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9856739149113128
+velocity_y_mps: -0.31449620275718637
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0246865579004438
+velocity_y_mps: -0.3298324792164403
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0666256749326546
+velocity_y_mps: -0.34588817693137003
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.2997521092194528
+velocity_y_mps: -0.06773515658987508
+velocity_z_radps: 0.009971277704659394
+---
+velocity_x_mps: -0.38126191115258556
+velocity_y_mps: -0.09534471958059822
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.42140120724355695
+velocity_y_mps: -0.11151281310347132
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4610858939105341
+velocity_y_mps: -0.12594466095489323
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5006245729660193
+velocity_y_mps: -0.1398652993941704
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5424312264757306
+velocity_y_mps: -0.15518517334530424
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5849481474361138
+velocity_y_mps: -0.16304273338220862
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6643550771669995
+velocity_y_mps: -0.19232337325781448
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7042963830395607
+velocity_y_mps: -0.20640931696655557
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7042963830395607
+velocity_y_mps: -0.20640931696655557
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7886792736911451
+velocity_y_mps: -0.23944589314443693
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8225982331433894
+velocity_y_mps: -0.2598755774879822
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8646544650915818
+velocity_y_mps: -0.27692467278774124
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9068736389582397
+velocity_y_mps: -0.28468978792767047
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9800208738169935
+velocity_y_mps: -0.3304388733073157
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0198913688917484
+velocity_y_mps: -0.3457345663614973
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.2509723944140358
+velocity_y_mps: -0.058328801156323
+velocity_z_radps: 0.008534928933833922
+---
+velocity_x_mps: -0.2925464319495481
+velocity_y_mps: -0.07229666039493712
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3322862871504461
+velocity_y_mps: -0.08583322256172915
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.41317288024388893
+velocity_y_mps: -0.11610453850534551
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.452634361842026
+velocity_y_mps: -0.12551302957909463
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.4944835048919574
+velocity_y_mps: -0.14010633653380622
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5325000476457558
+velocity_y_mps: -0.15764523343904574
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5714701081366956
+velocity_y_mps: -0.17862291859584167
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6146949569369018
+velocity_y_mps: -0.18947959323220345
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6953012900711376
+velocity_y_mps: -0.2126126941077048
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7362358730319335
+velocity_y_mps: -0.22443575850912056
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7760590547890708
+velocity_y_mps: -0.24242828029390429
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8153382907198266
+velocity_y_mps: -0.2568785177640537
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8613837844296428
+velocity_y_mps: -0.25547601107540746
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9021736220338124
+velocity_y_mps: -0.27367878157273534
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9814289802776593
+velocity_y_mps: -0.3011666240850511
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0228440922942477
+velocity_y_mps: -0.3127592985956589
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.29794538006244736
+velocity_y_mps: -0.1279907168986863
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3373329124390272
+velocity_y_mps: -0.14158262823380696
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3820468218259469
+velocity_y_mps: -0.14702291177697369
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.423015308995542
+velocity_y_mps: -0.16296968687869712
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5041659327238963
+velocity_y_mps: -0.18653825195210944
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.546167808590099
+velocity_y_mps: -0.19468172271604536
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5877968514761371
+velocity_y_mps: -0.20700504855041948
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6304952312764027
+velocity_y_mps: -0.20978956948763178
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.676557404142531
+velocity_y_mps: -0.21148242694615949
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7182548919887636
+velocity_y_mps: -0.22684359603063792
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7986903492401267
+velocity_y_mps: -0.24903993704429828
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8389303230565732
+velocity_y_mps: -0.2602544422755282
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8809712534434153
+velocity_y_mps: -0.27164280404726127
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9247783268550399
+velocity_y_mps: -0.2735328545890078
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9675540820508742
+velocity_y_mps: -0.2858155176386764
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0072007708533328
+velocity_y_mps: -0.304912064037365
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -1.0910289867393064
+velocity_y_mps: -0.3196959284862223
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.2613558836600246
+velocity_y_mps: -0.12465605920746892
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.3062664441670969
+velocity_y_mps: -0.12942901509518662
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.34635527819333795
+velocity_y_mps: -0.13743655942024147
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.38829116454204116
+velocity_y_mps: -0.1491486126318629
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.42994242556594886
+velocity_y_mps: -0.1600718649257337
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5134838097621226
+velocity_y_mps: -0.18069187322943783
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.5521921916047933
+velocity_y_mps: -0.19324795381317336
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.595527625733959
+velocity_y_mps: -0.20060653261309402
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.6341903901724764
+velocity_y_mps: -0.2139573809881582
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.680160801190431
+velocity_y_mps: -0.21661844181100418
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.7211517863691572
+velocity_y_mps: -0.2301032559552499
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.761995108146922
+velocity_y_mps: -0.23814495758812126
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8441138253924969
+velocity_y_mps: -0.2599872673762126
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.8893509962431954
+velocity_y_mps: -0.26687915440814325
+velocity_z_radps: 0.0
+---
+velocity_x_mps: -0.9256444747502478
+velocity_y_mps: -0.2854795974580937
+velocity_z_radps: 0.0
+---

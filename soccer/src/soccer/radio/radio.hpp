@@ -92,7 +92,7 @@ private:
      */
     void tick();
     // Time between consecutive calls to tick().
-    std::chrono::milliseconds tick_period_ = std::chrono::milliseconds(100);
+    std::chrono::milliseconds tick_period_ = std::chrono::milliseconds(50);
     // Ros timer to trigger tick every tick_period
     rclcpp::TimerBase::SharedPtr tick_timer_;
 
@@ -113,6 +113,8 @@ private:
     std::array<RJ::Time, kNumShells> last_updates_ = {};
     // Cached last velocity command
     std::array<rj_msgs::msg::MotionSetpoint::SharedPtr, kNumShells> motions_;
+    std::array<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr, kNumShells> motion_pubs_;
+    // 
 
     // Ros subscribers to receive auxillary control (i.e. shoot_mode, trigger_mode, kick_speed, and
     // dribbler_speed) which are stored and sent to the robot

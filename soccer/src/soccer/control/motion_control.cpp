@@ -159,7 +159,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     }
 
     // Apply the correction and rotate into the world frame.
-    Twist result_world = velocity_target + correction;
+    Twist result_world = velocity_target ;//+ correction;
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 

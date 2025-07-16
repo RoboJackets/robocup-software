@@ -46,11 +46,13 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     // Disable curvature limiting. Our Bezier implementation has some
     // issues when the initial or final velocity is small: it places
     // two keypoints directly on top of one another, which makes very large
-    // curvature near the endpoints.
+    // curvature mathematicallynear the endpoints.
     // TODO(#1539): Switch to Hermite splines and minimize
     //  sum-squared-acceleration instead of solving for Bezier curves.
     double max_centripetal_acceleration = constraints.max_acceleration;
     bool limit_curvature = true;
+
+    SPDLOG_INFO("max accel is {}", constraints.max_acceleration);
 
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
@@ -102,7 +104,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         speed[n + 1] =
             limit_acceleration(speed[n], speed[n + 1], distance, max_tangential_acceleration);
     }
-
+   
     // Deceleration pass: calculate maximum velocity at each point based on
     // acceleration limits backwards in time.
     for (int n = num_points - 1; n > 1; n--) {

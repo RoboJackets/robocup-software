@@ -1,0 +1,352 @@
+velocity_x_mps: 0.021266414190433642
+velocity_y_mps: -0.46566865068264307
+velocity_z_radps: 0.13099639117717743
+---
+velocity_x_mps: 0.017445106330681276
+velocity_y_mps: -0.5489845464509358
+velocity_z_radps: 0.0607888326048851
+---
+velocity_x_mps: 0.018762219203211472
+velocity_y_mps: -0.5896321953934512
+velocity_z_radps: 0.11270101368427277
+---
+velocity_x_mps: 0.018928594231409607
+velocity_y_mps: -0.6348020159495813
+velocity_z_radps: 0.13462752103805542
+---
+velocity_x_mps: 0.010098440322222969
+velocity_y_mps: -0.6767754685989235
+velocity_z_radps: 0.013513298705220222
+---
+velocity_x_mps: -0.004343892891598673
+velocity_y_mps: -0.7225833305892405
+velocity_z_radps: -0.16316187381744385
+---
+velocity_x_mps: -0.011575870225658993
+velocity_y_mps: -0.8124089494860499
+velocity_z_radps: -0.19407784938812256
+---
+velocity_x_mps: -0.01639371287316902
+velocity_y_mps: -0.8596649459450129
+velocity_z_radps: -0.22317838668823242
+---
+velocity_x_mps: -0.025223422892013986
+velocity_y_mps: -0.9051254193212172
+velocity_z_radps: -0.27474963665008545
+---
+velocity_x_mps: -0.025570235029987225
+velocity_y_mps: -0.9478751122187324
+velocity_z_radps: -0.2589069902896881
+---
+velocity_x_mps: -0.023899849986754686
+velocity_y_mps: -0.9933597147150642
+velocity_z_radps: -0.21234369277954102
+---
+velocity_x_mps: -0.014321355839851595
+velocity_y_mps: -1.0690411419848327
+velocity_z_radps: -0.08106690645217896
+---
+velocity_x_mps: -0.04722703504499283
+velocity_y_mps: -1.1355706533356178
+velocity_z_radps: -0.3392992913722992
+---
+velocity_x_mps: -0.05039993944344687
+velocity_y_mps: -1.186184449588152
+velocity_z_radps: -0.3365967869758606
+---
+velocity_x_mps: -0.04040374282194138
+velocity_y_mps: -1.233651252703236
+velocity_z_radps: -0.2349535971879959
+---
+velocity_x_mps: -0.03159951352849133
+velocity_y_mps: -1.2868278148078605
+velocity_z_radps: -0.14674589037895203
+---
+velocity_x_mps: -0.03453931815527149
+velocity_y_mps: -1.3358121284722047
+velocity_z_radps: -0.14531153440475464
+---
+velocity_x_mps: -0.048356002046566315
+velocity_y_mps: -1.3893084526821853
+velocity_z_radps: -0.22995448112487793
+---
+velocity_x_mps: -0.010255324651710081
+velocity_y_mps: -0.3956750102408794
+velocity_z_radps: -0.0576162151992321
+---
+velocity_x_mps: -0.01306281371747246
+velocity_y_mps: -0.4769787716569119
+velocity_z_radps: -0.09559247642755508
+---
+velocity_x_mps: -0.008919346635142846
+velocity_y_mps: -0.5198805377430367
+velocity_z_radps: 0.012911960482597351
+---
+velocity_x_mps: -0.017109765286251865
+velocity_y_mps: -0.5642341540130225
+velocity_z_radps: -0.11327457427978516
+---
+velocity_x_mps: -0.02221509939941261
+velocity_y_mps: -0.610259344475751
+velocity_z_radps: -0.1830001175403595
+---
+velocity_x_mps: -0.027950746085298447
+velocity_y_mps: -0.6557706277597078
+velocity_z_radps: -0.24531103670597076
+---
+velocity_x_mps: -0.03524600857640109
+velocity_y_mps: -0.7232519286586663
+velocity_z_radps: -0.3076219856739044
+---
+velocity_x_mps: -0.016578602189255873
+velocity_y_mps: -0.7987958941768809
+velocity_z_radps: -0.01898529753088951
+---
+velocity_x_mps: -0.012702500528811186
+velocity_y_mps: -0.8457115176111744
+velocity_z_radps: 0.03750533238053322
+---
+velocity_x_mps: -0.018396517126892033
+velocity_y_mps: -0.897028946788418
+velocity_z_radps: -0.016983970999717712
+---
+velocity_x_mps: -0.017768443461900197
+velocity_y_mps: -0.9441353551347096
+velocity_z_radps: -0.003518785582855344
+---
+velocity_x_mps: -0.00486943776614461
+velocity_y_mps: -0.9964359709426415
+velocity_z_radps: 0.13592922687530518
+---
+velocity_x_mps: -0.007756602934224473
+velocity_y_mps: -1.0484229506588545
+velocity_z_radps: 0.10311010479927063
+---
+velocity_x_mps: -0.021399935489633922
+velocity_y_mps: -1.1484621600406382
+velocity_z_radps: -0.004544940311461687
+---
+velocity_x_mps: -0.030387282432383
+velocity_y_mps: -1.1942410124937906
+velocity_z_radps: -0.07513526827096939
+---
+velocity_x_mps: -0.006755868366152051
+velocity_y_mps: -0.21987732980430802
+velocity_z_radps: -0.10817746818065643
+---
+velocity_x_mps: -0.01240665052723873
+velocity_y_mps: -0.3006808220840368
+velocity_z_radps: -0.22568804025650024
+---
+velocity_x_mps: -0.0143687481684963
+velocity_y_mps: -0.3467034830148262
+velocity_z_radps: -0.23119212687015533
+---
+velocity_x_mps: -0.022237951117616048
+velocity_y_mps: -0.42901687417266643
+velocity_z_radps: -0.33394691348075867
+---
+velocity_x_mps: -0.018336203167429482
+velocity_y_mps: -0.4732560409877229
+velocity_z_radps: -0.19428028166294098
+---
+velocity_x_mps: -0.023028506839330394
+velocity_y_mps: -0.5169886036256737
+velocity_z_radps: -0.2500871419906616
+---
+velocity_x_mps: -0.02742123817637135
+velocity_y_mps: -0.5605048937158701
+velocity_z_radps: -0.2844352722167969
+---
+velocity_x_mps: -0.03117160047491184
+velocity_y_mps: -0.6032600393191545
+velocity_z_radps: -0.31353071331977844
+---
+velocity_x_mps: -0.04312792922502227
+velocity_y_mps: -0.6498632064207032
+velocity_z_radps: -0.44902491569519043
+---
+velocity_x_mps: -0.049091179290318386
+velocity_y_mps: -0.7384502618456988
+velocity_z_radps: -0.45012593269348145
+---
+velocity_x_mps: -0.058560734703198336
+velocity_y_mps: -0.7840325756641991
+velocity_z_radps: -0.5357862114906311
+---
+velocity_x_mps: -0.06040844535575554
+velocity_y_mps: -0.8297694447814075
+velocity_z_radps: -0.5057858228683472
+---
+velocity_x_mps: -0.05927336887389824
+velocity_y_mps: -0.8778835088814655
+velocity_z_radps: -0.4669063091278076
+---
+velocity_x_mps: -0.04379128705301695
+velocity_y_mps: -0.9255476243951509
+velocity_z_radps: -0.267539918422699
+---
+velocity_x_mps: -0.03845320184639452
+velocity_y_mps: -0.980527657310183
+velocity_z_radps: -0.1902560293674469
+---
+velocity_x_mps: -0.04343491240758772
+velocity_y_mps: -1.0786430012514205
+velocity_z_radps: -0.1940097063779831
+---
+velocity_x_mps: -0.05229945855534097
+velocity_y_mps: -1.1261047331481893
+velocity_z_radps: -0.2584158182144165
+---
+velocity_x_mps: -0.041662237961389695
+velocity_y_mps: -1.175867674944039
+velocity_z_radps: -0.14956456422805786
+---
+velocity_x_mps: -0.03592118508392488
+velocity_y_mps: -1.2313904060986907
+velocity_z_radps: -0.08437833189964294
+---
+velocity_x_mps: -0.041199505094144384
+velocity_y_mps: -1.278754251889422
+velocity_z_radps: -0.1250607669353485
+---
+velocity_x_mps: -0.029191138367471996
+velocity_y_mps: -0.25318879461900995
+velocity_z_radps: -0.13412165641784668
+---
+velocity_x_mps: -0.039282259996163485
+velocity_y_mps: -0.3370776800980865
+velocity_z_radps: -0.34698486328125
+---
+velocity_x_mps: -0.03985470000537661
+velocity_y_mps: -0.423179364021846
+velocity_z_radps: -0.2730638086795807
+---
+velocity_x_mps: -0.036916688095226934
+velocity_y_mps: -0.465697553525043
+velocity_z_radps: -0.19195975363254547
+---
+velocity_x_mps: -0.03941887740714681
+velocity_y_mps: -0.509984837603577
+velocity_z_radps: -0.2366083711385727
+---
+velocity_x_mps: -0.04825520647662182
+velocity_y_mps: -0.5505784953950674
+velocity_z_radps: -0.3799899220466614
+---
+velocity_x_mps: -0.05301733887845567
+velocity_y_mps: -0.5950917830865988
+velocity_z_radps: -0.4144836962223053
+---
+velocity_x_mps: -0.0520573214697056
+velocity_y_mps: -0.6431692701131836
+velocity_z_radps: -0.34966301918029785
+---
+velocity_x_mps: -0.04627172180424517
+velocity_y_mps: -0.7324833750116513
+velocity_z_radps: -0.2163984179496765
+---
+velocity_x_mps: -0.04595621291050016
+velocity_y_mps: -0.7741557903367767
+velocity_z_radps: -0.20524975657463074
+---
+velocity_x_mps: -0.045588427949263766
+velocity_y_mps: -0.8213182521986966
+velocity_z_radps: -0.18475082516670227
+---
+velocity_x_mps: -0.0536672584708425
+velocity_y_mps: -0.864431674142025
+velocity_z_radps: -0.2732484042644501
+---
+velocity_x_mps: -0.06260608867623897
+velocity_y_mps: -0.9108546091275564
+velocity_z_radps: -0.3488064110279083
+---
+velocity_x_mps: -0.0586280627686592
+velocity_y_mps: -0.9578562635615945
+velocity_z_radps: -0.2907845973968506
+---
+velocity_x_mps: -0.07071611775806894
+velocity_y_mps: -1.05501499194678
+velocity_z_radps: -0.3706800937652588
+---
+velocity_x_mps: -0.0608319764846134
+velocity_y_mps: -1.1019227071547126
+velocity_z_radps: -0.2613052725791931
+---
+velocity_x_mps: -0.06310973557130935
+velocity_y_mps: -1.153919207071839
+velocity_z_radps: -0.2627476751804352
+---
+velocity_x_mps: -0.05650755209238563
+velocity_y_mps: -1.2037219427327839
+velocity_z_radps: -0.19884636998176575
+---
+velocity_x_mps: -0.05663062295531239
+velocity_y_mps: -1.2555039295168784
+velocity_z_radps: -0.18625810742378235
+---
+velocity_x_mps: -0.06990107926546338
+velocity_y_mps: -1.3085598284411049
+velocity_z_radps: -0.2789245843887329
+---
+velocity_x_mps: -0.07160151166186085
+velocity_y_mps: -1.4144974285317702
+velocity_z_radps: -0.2641266882419586
+---
+velocity_x_mps: -0.01007663955902311
+velocity_y_mps: -0.3280086227815553
+velocity_z_radps: -0.21080417931079865
+---
+velocity_x_mps: -0.016242058098976733
+velocity_y_mps: -0.4173522808988876
+velocity_z_radps: -0.22205501794815063
+---
+velocity_x_mps: -0.01819965829408385
+velocity_y_mps: -0.45839177255427127
+velocity_z_radps: -0.23007753491401672
+---
+velocity_x_mps: -0.019951441655406122
+velocity_y_mps: -0.5066954246145616
+velocity_z_radps: -0.20022231340408325
+---
+velocity_x_mps: -0.025997323222585557
+velocity_y_mps: -0.590785759992087
+velocity_z_radps: -0.22125943005084991
+---
+velocity_x_mps: -0.05141192774414656
+velocity_y_mps: -0.6327695928117595
+velocity_z_radps: -0.5519288778305054
+---
+velocity_x_mps: -0.05153014768593477
+velocity_y_mps: -0.6759551933503812
+velocity_z_radps: -0.5058313608169556
+---
+velocity_x_mps: -0.04295624773899413
+velocity_y_mps: -0.7225467357261469
+velocity_z_radps: -0.33645185828208923
+---
+velocity_x_mps: -0.04934544519263168
+velocity_y_mps: -0.7669130464518599
+velocity_z_radps: -0.37977102398872375
+---
+velocity_x_mps: -0.05500781179556785
+velocity_y_mps: -0.814907011202566
+velocity_z_radps: -0.40786242485046387
+---
+velocity_x_mps: -0.03940351868114403
+velocity_y_mps: -0.8609869482526435
+velocity_z_radps: -0.18954703211784363
+---
+velocity_x_mps: -0.05290054752932832
+velocity_y_mps: -0.9613636718328205
+velocity_z_radps: -0.27266359329223633
+---
+velocity_x_mps: -0.049476837828763234
+velocity_y_mps: -0.9967818025339328
+velocity_z_radps: -0.215286523103714
+---
+velocity_x_mps: -0.04536355164059526
+velocity_y_mps: -1.047947451613585
+velocity_z_radps: -0.15194089710712433
+---

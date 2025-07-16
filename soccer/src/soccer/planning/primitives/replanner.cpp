@@ -1,6 +1,7 @@
 #include "replanner.hpp"
 
 #include <vector>
+#include <spdlog/spdlog.h>
 
 #include <rj_constants/constants.hpp>
 
@@ -41,6 +42,7 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     if (post_trajectory.empty() ||
         !Pose::nearly_equals(pre_trajectory.last().pose, post_trajectory.first().pose) ||
         !Twist::nearly_equals(pre_trajectory.last().velocity, post_trajectory.first().velocity)) {
+            SPDLOG_INFO("full replan due to bad velocity");
         return full_replan(params);
     }
 
@@ -125,10 +127,11 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
+            SPDLOG_INFO("full replan due to veered off path");
         return full_replan(params);
     }
 
-    // If we get here, we definitely should have a valid previous trajectory
+    // If; we get here, we definitely should have a valid previous trajectory
     // and so it should have a valid creation time (or we would have thrown).
     RJ::Time previous_created_time = previous.time_created().value();
 
@@ -149,6 +152,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
+            SPDLOG_INFO("full replan due to time difference");
             return full_replan(params);
         }
         return partial_replan(params, previous_trajectory);
@@ -160,6 +164,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         std::optional<RobotInstant> now_instant = previous_trajectory.evaluate(now);
         if (now_instant) {
             params.start = *now_instant;
+            SPDLOG_INFO("full replan due to fine corrections something or anohter");
             return full_replan(params);
         }
     }
