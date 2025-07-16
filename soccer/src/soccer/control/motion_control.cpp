@@ -92,12 +92,6 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(
         "debug/motion_control/pose_error_heading", 10);
-
-    vel_timer_ =  node->create_wall_timer(
-        std::chrono::milliseconds(2000), [this]() {
-            forward_ = !forward_;
-        }
-    );
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -176,7 +170,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
     }
 
     // Apply the correction and rotate into the world frame.
-    Twist result_world = velocity_target ;//+ correction;
+    Twist result_world = velocity_target + correction;
     Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
                       result_world.angular());
 
@@ -202,10 +196,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
         drawer_.publish();
     }
-    double speed = forward_ ? 1.0 : -1.0;
-    Twist fixed(speed, 0.0, 0.0);
-    set_velocity(setpoint, fixed);
-
+   
     if (maybe_target) {
         RobotState desired_state;
         desired_state.pose = maybe_target->pose;

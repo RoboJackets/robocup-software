@@ -52,8 +52,6 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     double max_centripetal_acceleration = constraints.max_acceleration;
     bool limit_curvature = true;
 
-    SPDLOG_INFO("max accel is {}", constraints.max_acceleration);
-
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
     for (int n = 0; n < num_points; n++) {
