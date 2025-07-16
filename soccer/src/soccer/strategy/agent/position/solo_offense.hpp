@@ -36,7 +36,13 @@ private:
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { TO_BALL, KICK, MARKER, ROTATE };
+    enum State {
+        TO_BALL,
+        GATHER_STEP,
+        SIDE_STEP,
+        AIM_AND_SHOOT,
+        MARKER,
+    };
 
     State current_state_ = TO_BALL;
 
@@ -44,8 +50,13 @@ private:
 
     int marking_id_;
 
-    bool kick_ = false;
-    int counter_ = 0;
+    static constexpr double kGatherLength = 0.1;
+    rj_geometry::Point gather_target_;
+    rj_geometry::Point calculate_gather() const;
+    rj_geometry::Point juke_target_;
+    rj_geometry::Point calculate_juke() const;
+    rj_geometry::Point shot_target_;
+    rj_geometry::Point calculate_best_shot() const;
 
     /**
      * @return what the state should be right now. called on each get_task tick
@@ -57,7 +68,6 @@ private:
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    rj_geometry::Point calculate_best_shot() const;
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 };
 

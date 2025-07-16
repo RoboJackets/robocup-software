@@ -11,9 +11,9 @@ SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    if (new_state != current_state_) {
+        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    }
     current_state_ = new_state;
 
     // Calculate task based on state
@@ -51,26 +51,31 @@ SoloOffense::State SoloOffense::next_state() {
             return TO_BALL;
         }
         case TO_BALL: {
-            if (check_is_done()) {
-                return ROTATE;
+            if (check_is_done()) { // TODO: better checking. we should only go to gather step if the ball is in front of us. if TO_BALL has somehow catastrophically failed, it should go back to TO_BALL
+                gather_target_ = calculate_gather(); // TODO: need to check if gather_target_ is in bounds
+                return GATHER_STEP;
             }
             return TO_BALL;
         }
-        case ROTATE: {
+        case GATHER_STEP: {
+            if (check_is_done()) { // TODO: same thing, only go to side step if we have the ball
+                juke_target_ = calculate_juke(); // TODO: need to check if juke_target_ is in bounds
+                return SIDE_STEP;
+            }
+            return GATHER_STEP;
+        }
+        case SIDE_STEP: {
+            if (check_is_done()) { // TODO: make a timeout, in case defenders make it annoying to path to our shooting point
+                shot_target_ = calculate_best_shot();
+                return AIM_AND_SHOOT;
+            }
+            return SIDE_STEP;
+        }
+        case AIM_AND_SHOOT: {
             if (check_is_done()) {
-                counter_ = 0;
-                kick_ = true;
                 return MARKER;
             }
-            return ROTATE;
-        }
-        case KICK: {
-            if (!kick_ ||
-                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
-                        .mag() > kRobotRadius * 5) {
-                return TO_BALL;
-            }
-            return KICK;
+            return AIM_AND_SHOOT;
         }
     }
     return current_state_;
@@ -101,42 +106,61 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
             auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
+
             return intent;
         }
-        case ROTATE: {
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+        case GATHER_STEP: {
+            // move a little bit forward to snag the ball in the dribbler, in case collect fumbles it
+            // TODO: is there a better motion command to use to just go in a straight line with kicker off and dribbler on?
+            auto mark_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{gather_target_}, planning::FaceBall{}, true};
+            intent.motion_command = mark_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+
+            return intent;
+        }
+        case SIDE_STEP: {
+            // rotate to some direction vaguely facing the goal
+            auto juke_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{juke_target_}, planning::FaceTarget{}, true};
+            intent.motion_command = juke_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+
+            return intent;
+        }
+        case AIM_AND_SHOOT: {
+            auto pivot_cmd = planning::MotionCommand{"rotate", planning::LinearMotionInstant{shot_target_}, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
             intent.kick_speed = 4.0;
             return intent;
         }
-        case KICK: {
-            // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position -
-            // last_world_state_->get_robot(true,
-            // robot_id_).pose.position()).normalized(scaleFactor); point +=
-            // last_world_state_->get_robot(true, robot_id_).pose.position();
-            // planning::LinearMotionInstant target{point};
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            // planning::LinearMotionInstant target{last_world_state_->ball.position};
-            auto kick_cmd =
-                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
-            intent.motion_command = kick_cmd;
-            intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
-            counter_++;
-            if (counter_ > 15) {
-                kick_ = false;
-            }
-
-            return intent;
-        }
     }
     return intent;
+}
+
+rj_geometry::Point SoloOffense::calculate_gather() const {
+    // move a little bit forward to snag the ball in the dribbler, in case collect fumbles it
+    rj_geometry::Pose robot_pose = last_world_state_->get_robot(true, robot_id_).pose;
+    return robot_pose.position() + rj_geometry::Point{
+        kGatherLength * std::cos(robot_pose.heading()),
+        kGatherLength * std::sin(robot_pose.heading())
+    };
+}
+
+rj_geometry::Point SoloOffense::calculate_juke() const {
+    // rotate to some direction vaguely facing the goal
+    rj_geometry::Point robo = last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point gol = calculate_best_shot();
+    rj_geometry::Point shot_direction = (gol - robo).normalized();
+    rj_geometry::Point perp_direction(-shot_direction.y(), shot_direction.x());
+    
+    double side_step_dist = 0.3; // TODO: random float in (0, 0.9)
+    double left_or_right = 1; // TODO: random pick 1 or -1
+
+    rj_geometry::Point forward_offset = shot_direction * 0.1;
+    rj_geometry::Point lateral_offset = perp_direction * left_or_right * side_step_dist;
+
+    return robo + forward_offset + lateral_offset;
 }
 
 rj_geometry::Point SoloOffense::calculate_best_shot() const {

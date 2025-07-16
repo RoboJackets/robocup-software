@@ -12,7 +12,6 @@ Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensi
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
     //waller_id_ = get_waller_id();
-    SPDLOG_INFO("I am: {}, my state: {}, wall position: {}", robot_id_, get_current_state(), waller_id_);
     return state_to_task(intent);
 }
 
