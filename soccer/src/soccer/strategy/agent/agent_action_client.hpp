@@ -100,7 +100,7 @@ private:
     RobotIntent last_task_;
 
     // Robot Communication //
-    /**
+    /*Timer*
      * @brief the callback that handles receiving and dealing with received agent communication
      *
      * @param request the robot communication request from the other robot

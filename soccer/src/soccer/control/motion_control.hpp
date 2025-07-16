@@ -101,6 +101,11 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
+    rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr motion_mag_pub_;
+
+
+    rclcpp::TimerBase::SharedPtr vel_timer_;
+    bool forward_ = true;
 };
 
 }  // namespace control

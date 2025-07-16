@@ -1,5 +1,6 @@
 #include "motion_control.hpp"
 
+#include <chrono>
 #include <optional>
 
 #include <context.hpp>
@@ -55,6 +56,9 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
         });
+    motion_mag_pub_ = node->create_publisher<std_msgs::msg::Float64>(
+        "debug/speed/robot_" + std::to_string(shell_id_), rclcpp::QoS(1)
+    );
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldState::Msg::SharedPtr world_state_msg) {  // NOLINT
@@ -68,6 +72,13 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             MotionSetpoint setpoint;
             run(state, trajectory_, play_state_, is_joystick_controlled, &setpoint);
             motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
+
+            if (motion_mag_pub_->get_subscription_count() > 0) {
+                double mag = state.velocity.linear().mag();
+                std_msgs::msg::Float64 msg;
+                msg.data = mag;
+                motion_mag_pub_->publish(msg);
+            }
         });
     play_state_sub_ = node->create_subscription<PlayState::Msg>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1).transient_local(),
@@ -81,6 +92,12 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(
         "debug/motion_control/pose_error_heading", 10);
+
+    vel_timer_ =  node->create_wall_timer(
+        std::chrono::milliseconds(2000), [this]() {
+            forward_ = !forward_;
+        }
+    );
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -185,6 +202,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
         drawer_.publish();
     }
+    double speed = forward_ ? 1.0 : -1.0;
+    Twist fixed(speed, 0.0, 0.0);
+    set_velocity(setpoint, fixed);
 
     if (maybe_target) {
         RobotState desired_state;
