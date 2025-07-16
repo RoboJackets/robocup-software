@@ -12,13 +12,12 @@ namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    if (robot_id_ == 1) {
+        current_position_ = std::make_unique<PenaltyPlayer>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<Idle>(robot_id_);
     }
+    
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
@@ -202,9 +201,9 @@ void RobotFactoryPosition::set_default_position() {
     std::vector<RobotPos> robots_copy;
     for (int i = 0; i < static_cast<int>(kNumShells); i++) {
         // Ignore goalie
-        if (i == goalie_id_) {
-            continue;
-        }
+        // if (i == goalie_id_) {
+        //     continue;
+        // }
         if (alive_robots_[i]) {
             robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
         }
@@ -222,31 +221,11 @@ void RobotFactoryPosition::set_default_position() {
         i++;
     }
 
-    // Assigning new position
-    // Checking whether we have possesion or if the ball is on their half
-    if (our_possession_ || last_world_state_->ball.position.y() >
-                               field_dimensions_.center_field_loc().y() - kBallDiameter) {
-
-        /**
-            Salvador comp - temporarily changed to solo offense. revert this commit
-         */
-
-
-        // Offensive mode
-        // Closest 2 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
-        } else {
-            set_current_position<SoloOffense>();
-        }
+    // Assigning ID 0 as our obstacle avoidance player:
+    if (i == 1) {
+        set_current_position<PenaltyPlayer>();
     } else {
-        // Defensive mode
-        // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
-        } else {
-            set_current_position<SoloOffense>();
-        }
+        set_current_position<Idle>();
     }
 }
 

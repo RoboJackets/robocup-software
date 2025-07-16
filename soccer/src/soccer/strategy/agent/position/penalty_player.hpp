@@ -40,7 +40,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { START, SMALL_KICK, LINE_UP, SHOOTING_START, SHOOTING };
+    enum State { START, STOP };
 
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
@@ -85,7 +85,7 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // current state of Goalie (state machine)
-    State latest_state_ = START;
+    State latest_state_ = STOP;
 };
 
 }  // namespace strategy
