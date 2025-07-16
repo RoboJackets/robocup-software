@@ -122,6 +122,8 @@ private:
 
     int get_marker_target_id();
     Marker marker_;
+
+    bool is_alive(u_int8_t concerned_id);
 };
 
 }  // namespace strategy
