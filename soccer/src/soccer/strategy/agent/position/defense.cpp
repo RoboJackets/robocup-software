@@ -154,8 +154,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         }
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
-            return waller.get_task(intent, last_world_state_, this->field_dimensions_);
-            // return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pose);
+            // return waller.get_task(intent, last_world_state_, this->field_dimensions_);
+            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pose);
         }
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =

@@ -83,7 +83,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     return intent;
 }
 
-std::optional<RobotIntent> get_task_with_ball(RobotIntent intent, const WorldState* world_state, FieldDimensions field_dimensions, rj_geometry::Point ball_pose) {
+std::optional<RobotIntent> Waller::get_task_with_ball(RobotIntent intent, const WorldState* world_state, FieldDimensions field_dimensions, rj_geometry::Point ball_pose) {
 
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
