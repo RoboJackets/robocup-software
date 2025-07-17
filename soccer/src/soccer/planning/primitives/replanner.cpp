@@ -179,7 +179,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 }
 
 bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
-    std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
+    std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now - RJ::Seconds(0.25));
 
     // If we don't have an instant, assume we're past the end of the path.
     if (!maybe_instant.has_value()) {
