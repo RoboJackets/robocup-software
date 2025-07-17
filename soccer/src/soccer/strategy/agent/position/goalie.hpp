@@ -26,10 +26,6 @@ public:
     ~Goalie() override = default;
     Goalie(const Position& other);
 
-    void derived_acknowledge_pass() override;
-    void derived_pass_ball() override;
-    void derived_acknowledge_ball_in_transit() override;
-
     std::string get_current_state() override;
 
 private:

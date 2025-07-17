@@ -148,11 +148,6 @@ bool Goalie::shot_on_goal_detected(WorldState* world_state) {
     return ball_is_fast && shot_on_target && in_direction;
 }
 
-void Goalie::derived_acknowledge_pass() { latest_state_ = FACING; }
-
-void Goalie::derived_pass_ball() { latest_state_ = PASSING; }
-
-void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; }
 
 rj_geometry::Point Goalie::penalty_location() {
     // be dumb: center of baseline
