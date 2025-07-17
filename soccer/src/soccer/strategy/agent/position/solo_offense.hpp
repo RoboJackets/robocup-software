@@ -40,6 +40,11 @@ private:
 
     State current_state_ = TO_BALL;
 
+    rj_geometry::Point calculate_best_shot() const;
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
+
+
+
     rj_geometry::Point target_;
 
     int marking_id_;
@@ -57,8 +62,6 @@ private:
      */
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    rj_geometry::Point calculate_best_shot() const;
-    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 };
 
 }  // namespace strategy
