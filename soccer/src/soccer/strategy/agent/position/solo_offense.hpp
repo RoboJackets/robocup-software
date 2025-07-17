@@ -49,7 +49,10 @@ private:
 
     RJ::Time last_time_;
     void reset_timeout() { last_time_ = RJ::now(); }
-    bool timed_out() const { using namespace std::chrono_literals; return last_time_ + 4s < RJ::now(); };
+    bool timed_out() const {
+        using namespace std::chrono_literals;
+        return last_time_ + 4s < RJ::now();
+    };
 
     /**
      * @return a good point to shoot at
@@ -68,7 +71,7 @@ private:
     rj_geometry::Point get_ball_pos() const;
 
     rj_geometry::Point shot_target_;
-    static constexpr double kBackOffset = 4*kRobotRadius;
+    static constexpr double kBackOffset = 4 * kRobotRadius;
 };
 
 }  // namespace strategy

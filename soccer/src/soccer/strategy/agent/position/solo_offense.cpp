@@ -40,7 +40,7 @@ SoloOffense::State SoloOffense::next_state() {
         case TO_BALL: {
             if (check_is_done()) {
                 shot_target_ = calculate_best_shot();
-                return KICK; // TODO: should we check if the ball is in front of us?
+                return KICK;  // TODO: should we check if the ball is in front of us?
             }
         }
         case KICK: {
@@ -55,7 +55,9 @@ SoloOffense::State SoloOffense::next_state() {
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case DEFAULT: {
-            auto pivot_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{rj_geometry::Point{0, 2.5}}, planning::FaceBall{}, false};
+            auto pivot_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{rj_geometry::Point{0, 2.5}},
+                planning::FaceBall{}, false};
 
             intent.motion_command = pivot_cmd;
 
@@ -68,7 +70,9 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             rj_geometry::Point shot_dir = (goal_pos - ball_pos).normalized();
             rj_geometry::Point shot_dot = ball_pos - shot_dir * kBackOffset;
 
-            auto pivot_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{shot_dot}, planning::FaceBall{}, false};
+            auto pivot_cmd =
+                planning::MotionCommand{"path_target", planning::LinearMotionInstant{shot_dot},
+                                        planning::FaceBall{}, false};
 
             intent.motion_command = pivot_cmd;
 

@@ -1,6 +1,7 @@
 #include "replanner.hpp"
 
 #include <vector>
+
 #include <spdlog/spdlog.h>
 
 #include <rj_constants/constants.hpp>
@@ -126,7 +127,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
-            // SPDLOG_INFO("full replan due to veered off path");
+        // SPDLOG_INFO("full replan due to veered off path");
         return full_replan(params);
     }
 
@@ -192,10 +193,11 @@ bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actua
     double path_error_now = (instant.position() - actual.position()).mag();
     double path_error_prev = (prev.position() - actual.position()).mag();
 
-    if( path_error_now > replanner::PARAM_off_path_threshold && path_error_prev > replanner::PARAM_off_path_threshold){
+    if (path_error_now > replanner::PARAM_off_path_threshold &&
+        path_error_prev > replanner::PARAM_off_path_threshold) {
         // SPDLOG_INFO("full replan due to bad velocity");
         return true;
-    } 
+    }
     return false;
 }
 

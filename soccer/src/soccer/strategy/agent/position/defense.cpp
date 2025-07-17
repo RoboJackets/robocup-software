@@ -11,7 +11,7 @@ Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensi
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
-    //waller_id_ = get_waller_id();
+    // waller_id_ = get_waller_id();
     return state_to_task(intent);
 }
 
@@ -28,7 +28,8 @@ Defense::State Defense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-    if (!Defense::is_alive(robot_id_) || (current_state_ == WALLING && waller_id_ == -1)) { // deadlock band-aid :(
+    if (!Defense::is_alive(robot_id_) ||
+        (current_state_ == WALLING && waller_id_ == -1)) {  // deadlock band-aid :(
         Defense::die();
         return IDLING;
     }
@@ -41,7 +42,7 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
-            next_state = JOINING_WALL; // deadlock band-aid :(]
+            next_state = JOINING_WALL;  // deadlock band-aid :(]
             break;
         case JOINING_WALL:
             send_join_wall_request();
@@ -154,7 +155,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             // return waller.get_task(intent, last_world_state_, this->field_dimensions_);
-            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pose);
+            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_,
+                                             cached_ball_pose);
         }
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =

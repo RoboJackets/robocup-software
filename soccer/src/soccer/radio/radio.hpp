@@ -114,7 +114,7 @@ private:
     // Cached last velocity command
     std::array<rj_msgs::msg::MotionSetpoint::SharedPtr, kNumShells> motions_;
     std::array<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr, kNumShells> motion_pubs_;
-    // 
+    //
 
     // Ros subscribers to receive auxillary control (i.e. shoot_mode, trigger_mode, kick_speed, and
     // dribbler_speed) which are stored and sent to the robot

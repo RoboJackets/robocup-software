@@ -14,9 +14,6 @@ MotionControlNode::MotionControlNode()
     for (int i = 0; i < kNumShells; i++) {
         controllers_.emplace_back(i, this);
     }
-
-
-
 }
 
 }  // namespace control
