@@ -37,6 +37,7 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
+        SOURCE,
         TO_BALL,
         GATHER_STEP,
         SIDE_STEP,
@@ -44,19 +45,44 @@ private:
         MARKER,
     };
 
-    State current_state_ = TO_BALL;
+    State current_state_ = SOURCE;
+
+    rj_geometry::Point cached_ball_pos_;
+    rj_geometry::Point get_ball_pos() const;
 
     rj_geometry::Point target_;
 
     int marking_id_;
 
-    static constexpr double kGatherLength = 0.1;
+    static constexpr double kGatherLength = kRobotRadius;
     rj_geometry::Point gather_target_;
     rj_geometry::Point calculate_gather() const;
     rj_geometry::Point juke_target_;
     rj_geometry::Point calculate_juke() const;
     rj_geometry::Point shot_target_;
     rj_geometry::Point calculate_best_shot() const;
+
+    /**
+     * @return whether the ball is likely to be in the dribbler
+     */
+    bool ball_in_dribbler() const;
+    static constexpr double kDribblerTolerance = 0.1;  // Tight region such that ball is probably in the dribbler (and thus the robot has possession)
+    static constexpr double kWideRobotTolerance = 3*kRobotRadius; // Wide region about robot center where posession is loosely assumed
+
+    /**
+     * @return whether to go for an attack (don't if another teammate is touching ball)
+     */
+    bool teammate_attacking() const;
+
+    /**
+     * @return the id of the opponent to mark, if any
+     */
+    int find_mark() const;
+    
+    /**
+     * @return whether the point is in an area that non-goalies cannot reach.
+     */
+    bool point_in_red(rj_geometry::Point concerned_point) const;
 
     /**
      * @return what the state should be right now. called on each get_task tick

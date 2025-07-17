@@ -1,4 +1,28 @@
 #include "solo_offense.hpp"
+#include <random>
+
+namespace {
+/// Thread‑local PRNG seeded once per thread.
+inline std::mt19937& rng() {
+    // `std::random_device` is usually sufficient for seeding here.
+    static thread_local std::mt19937 gen{std::random_device{}()};
+    return gen;
+}
+
+/// Uniform real in (low, high).  End‑points are *open* if low/high are finite.
+inline double uniform_real(double low, double high) {
+    std::uniform_real_distribution<double> dist(low, high);
+    return dist(rng());
+}
+
+/// Uniformly returns ‑1 or +1.
+inline int random_sign() {
+    // Bernoulli is a bit clearer for a two‑way choice.
+    static thread_local std::bernoulli_distribution flip(0.5);
+    return flip(rng()) ? 1 : -1;
+}
+}  // namespace
+// Random my beloved
 
 namespace strategy {
 
@@ -9,8 +33,13 @@ SoloOffense::SoloOffense(const Position& other) : Position{other} {
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
+    // Cache ball position
+    cached_ball_pos_ = get_ball_pos();
+
     // Get next state, and if different, reset clock
     State new_state = next_state();
+
+    // Debug logging
     if (new_state != current_state_) {
         SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     }
@@ -25,47 +54,58 @@ std::string SoloOffense::get_current_state() {
 }
 
 SoloOffense::State SoloOffense::next_state() {
-    // handle transitions between current state
-    double closest_dist = std::numeric_limits<double>::infinity();
-    auto current_point = last_world_state_->ball.position;
-
-    for (int i = 0; i < 6; i++) {
-        RobotState robot = last_world_state_->get_robot(false, i);
-        rj_geometry::Point opp_pos = robot.pose.position();
-        auto robot_dist = opp_pos.dist_to(current_point);
-        if (robot_dist < closest_dist) {
-            marking_id_ = i;
-            closest_dist = robot_dist;
-        }
+    if (teammate_attacking()) { // Short-circuit: if a friendly has possession, chill out
+        return SOURCE; // TODO: replace this with the seeker sub-position instead of doing nothing
     }
-
-    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
-
-    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
-        field_dimensions_.their_defense_area().contains_point(current_point) ||
-        !field_dimensions_.field_coordinates().contains_point(current_point)) {
+    marking_id_ = find_mark();
+    if (marking_id_ != -1) { // Short-circuit: if an enemy has possession, mark them
         return MARKER;
     }
+
+    // Otherwise, follow the state machine:
     switch (current_state_) {
+        case SOURCE: {
+            return TO_BALL;
+        }
         case MARKER: {
             return TO_BALL;
         }
         case TO_BALL: {
-            if (check_is_done()) { // TODO: better checking. we should only go to gather step if the ball is in front of us. if TO_BALL has somehow catastrophically failed, it should go back to TO_BALL
-                gather_target_ = calculate_gather(); // TODO: need to check if gather_target_ is in bounds
-                return GATHER_STEP;
+            if (check_is_done()) {
+                gather_target_ = calculate_gather();
+                if (!point_in_red(gather_target_)) {
+                    return GATHER_STEP;
+                }
+                juke_target_ = calculate_juke();
+                if (!point_in_red(juke_target_)) {
+                    return SIDE_STEP;
+                }
+                shot_target_ = calculate_best_shot();
+                return AIM_AND_SHOOT;
             }
             return TO_BALL;
         }
         case GATHER_STEP: {
-            if (check_is_done()) { // TODO: same thing, only go to side step if we have the ball
-                juke_target_ = calculate_juke(); // TODO: need to check if juke_target_ is in bounds
-                return SIDE_STEP;
+            if (check_is_done()) {
+                if (!ball_in_dribbler()) { // we *should* have the ball
+                    return SOURCE;
+                }
+                
+                juke_target_ = calculate_juke();
+                if (!point_in_red(juke_target_)) {
+                    return SIDE_STEP;
+                }
+                shot_target_ = calculate_best_shot();
+                return AIM_AND_SHOOT;
             }
             return GATHER_STEP;
         }
         case SIDE_STEP: {
             if (check_is_done()) { // TODO: make a timeout, in case defenders make it annoying to path to our shooting point
+                if (!ball_in_dribbler()) { // we *should* have the ball
+                    return SOURCE;
+                }
+    
                 shot_target_ = calculate_best_shot();
                 return AIM_AND_SHOOT;
             }
@@ -73,7 +113,7 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case AIM_AND_SHOOT: {
             if (check_is_done()) {
-                return MARKER;
+                return SOURCE;
             }
             return AIM_AND_SHOOT;
         }
@@ -83,7 +123,11 @@ SoloOffense::State SoloOffense::next_state() {
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
+        case SOURCE: {
+            return std::nullopt;
+        }
         case MARKER: {
+            if (marking_id_ == -1) { return std::nullopt; } // guard against weird races that cause index OOB crashes
             auto marker_target_pos =
                 last_world_state_->get_robot(false, marking_id_).pose.position();
             auto target =
@@ -110,9 +154,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case GATHER_STEP: {
-            // move a little bit forward to snag the ball in the dribbler, in case collect fumbles it
-            // TODO: is there a better motion command to use to just go in a straight line with kicker off and dribbler on?
-            auto mark_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{gather_target_}, planning::FaceBall{}, true};
+            auto mark_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{gather_target_}, planning::FaceBall{}, true}; // TODO: try to set a slower velocity on the gather step by adding a default value to the path_target command that overrides max velocity
             intent.motion_command = mark_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
 
@@ -120,7 +162,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
         }
         case SIDE_STEP: {
             // rotate to some direction vaguely facing the goal
-            auto juke_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{juke_target_}, planning::FaceTarget{}, true};
+            auto juke_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{juke_target_}, planning::FaceTarget{}, true}; // TODO: facing the target will not suffice, we need to face in a particular angle to make sure dribbling sticks irl
             intent.motion_command = juke_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
 
@@ -153,9 +195,9 @@ rj_geometry::Point SoloOffense::calculate_juke() const {
     rj_geometry::Point gol = calculate_best_shot();
     rj_geometry::Point shot_direction = (gol - robo).normalized();
     rj_geometry::Point perp_direction(-shot_direction.y(), shot_direction.x());
-    
-    double side_step_dist = 0.3; // TODO: random float in (0, 0.9)
-    double left_or_right = 1; // TODO: random pick 1 or -1
+
+    double side_step_dist = uniform_real(0.3, 0.8);
+    double left_or_right  = static_cast<double>(random_sign());
 
     rj_geometry::Point forward_offset = shot_direction * 0.1;
     rj_geometry::Point lateral_offset = perp_direction * left_or_right * side_step_dist;
@@ -185,6 +227,68 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
         curr_point = curr_point + increment;
     }
     return best_shot;
+}
+
+bool SoloOffense::point_in_red(rj_geometry::Point concerned_point) const {
+    return (field_dimensions_.our_defense_area().contains_point(concerned_point) ||
+            field_dimensions_.their_defense_area().contains_point(concerned_point) ||
+            !field_dimensions_.field_rect().contains_point(concerned_point));
+}
+
+rj_geometry::Point SoloOffense::get_ball_pos() const {
+    if (last_world_state_->ball.visible) {
+        return last_world_state_->ball.position;
+    } else {
+        return cached_ball_pos_;
+    }
+}
+
+bool SoloOffense::ball_in_dribbler() const {
+    if (!last_world_state_->ball.visible) {
+        return true;
+    }
+    rj_geometry::Pose robo_pose = last_world_state_->get_robot(true, robot_id_).pose;
+    rj_geometry::Point dribbler_pos = robo_pose.position() + rj_geometry::Point::direction(robo_pose.heading()) * kRobotMouthRadius;
+    // Check if ball is within tolerance of dribbler target
+    return (get_ball_pos() - dribbler_pos).mag() <= kDribblerTolerance;
+}
+
+bool SoloOffense::teammate_attacking() const {
+    // Don't go for an attack if a teammate has possession.
+    float my_dist = last_world_state_->get_robot(true, robot_id_).pose.position().dist_to(get_ball_pos());
+    for (int i = 0; i < kNumShells; i++) {
+        if (i == robot_id_) { continue; } // obviously, don't consider yourself in this check
+        RobotState teamy = last_world_state_->get_robot(true, i);
+        if (!teamy.visible) { continue; }
+        rj_geometry::Point teamy_pos = teamy.pose.position();
+        float curr_dist = teamy_pos.dist_to(get_ball_pos());
+        if (curr_dist < kWideRobotTolerance && curr_dist < my_dist) {
+            return true; // a teammate has it handled, stand down
+        }
+    }
+    return false; // ur good to go
+}
+
+int SoloOffense::find_mark() const {
+    int candidate = 0;
+    double closest_dist = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < kNumShells; i++) {
+        RobotState opp = last_world_state_->get_robot(false, i);
+        if (!opp.visible) { continue; }
+        rj_geometry::Point opp_pos = opp.pose.position();
+        if (point_in_red(opp_pos)) { continue; } // do NOT mark people in red zones, since the the marking intent will ignore that and edge the red zone
+        float curr_dist = opp_pos.dist_to(get_ball_pos());
+        if (curr_dist < closest_dist) { // TODO: if there are 2 solo offenses, they will mark the same opponent; this is probably bad
+            candidate = i;
+            closest_dist = curr_dist;
+        }
+    }
+
+    if (closest_dist < kWideRobotTolerance || point_in_red(get_ball_pos())) {
+        return candidate;
+    } else {
+        return -1;
+    }
 }
 
 double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
