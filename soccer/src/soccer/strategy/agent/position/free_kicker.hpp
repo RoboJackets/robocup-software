@@ -21,6 +21,17 @@ public:
     ~FreeKicker() = default;
 
     /**
+     * @return a good point to shoot at
+     */
+    rj_geometry::Point calculate_best_shot() const;
+    /**
+     * @return distance from shot line (head, tail) to nearest opponent
+     */
+    double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
+
+
+
+    /**
      * @brief Does nothing; this position is a special case
      */
     void derived_acknowledge_pass() override;
