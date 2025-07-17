@@ -61,15 +61,6 @@ Goalie::State Goalie::update_state() {
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     double distance_to_ball = robot_position.dist_to(ball_pt);
-    if (latest_state_ == PASSING) {
-        if (!ball_in_box) {
-            return IDLING;
-        }
-    } else if (latest_state_ == RECEIVING) {
-        if (distance_to_ball < 0.1) {
-            return IDLING;
-        }
-    }
 
     return latest_state_;
 }
@@ -83,19 +74,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
     } else if (latest_state_ == IDLING) {
         auto goalie_idle_cmd = planning::MotionCommand{"goalie_idle"};
         intent.motion_command = goalie_idle_cmd;
-        return intent;
-    } else if (latest_state_ == PREPARING_SHOT) {
-        // pivot around ball...
-        auto ball_pt = last_world_state_->ball.position;
-
-        // ...to face their goal
-        planning::LinearMotionInstant target_instant{clear_point_};
-
-        auto pivot_cmd = planning::MotionCommand{"pivot"};
-        pivot_cmd.target = target_instant;
-        pivot_cmd.pivot_point = ball_pt;
-        intent.motion_command = pivot_cmd;
-        intent.dribbler_mode = RobotIntent::DribblerMode::ON;
         return intent;
     } else if (latest_state_ == CLEARING) {
         planning::LinearMotionInstant target{clear_point_};
@@ -125,29 +103,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         planning::LinearMotionInstant target{target_pt, target_vel};
         intent.motion_command =
             planning::MotionCommand{"path_target", target, face_option, ignore_ball};
-        return intent;
-    } else if (latest_state_ == RECEIVING) {
-        // TODO(https://app.clickup.com/t/8677rrgjn): Convert RECEIVING state into role_interface
-        // intercept the bal
-        rj_geometry::Point current_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        planning::LinearMotionInstant target{current_position};
-        auto receive_intercept_cmd = planning::MotionCommand{"intercept", target};
-        intent.motion_command = receive_intercept_cmd;
-        return intent;
-    } else if (latest_state_ == PASSING) {
-        // TODO(https://app.clickup.com/t/8677rrgjn): Convert PASSING state into role_interface
-        // attempt to pass the ball to the target robot
-        rj_geometry::Point target_robot_pos =
-            last_world_state_->get_robot(true, target_robot_id).pose.position();
-        planning::LinearMotionInstant target{target_robot_pos};
-        auto pass_kick_cmd = planning::MotionCommand{"line_kick", target};
-        intent.motion_command = pass_kick_cmd;
-        intent.shoot_mode = RobotIntent::ShootMode::KICK;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
-        intent.is_active = true;
         return intent;
     } else if (latest_state_ == PENALTY) {
         // stay on baseline

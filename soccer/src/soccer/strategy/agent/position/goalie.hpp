@@ -47,11 +47,7 @@ private:
         IDLING,          // doing nothing
         BLOCKING,        // blocking the ball from reaching the goal
         CLEARING,        // clearing the ball out of the goal box
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
         BALL_NOT_FOUND,  // the ball is not in play
-        RECEIVING,       // physically intercepting the ball from a pass
-        PASSING,         // physically kicking the ball at another robot
-        FACING,          // turning to face the passing robot
         PENALTY,         // stay on baseline for penalty kick
     };
 
