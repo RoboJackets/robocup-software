@@ -110,7 +110,7 @@ bool SoloOffense::point_in_red(rj_geometry::Point concerned_point) const {
 
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
     // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location
