@@ -59,7 +59,7 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     auto shot_target = calculate_best_shot();
     auto kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target}};
 
-    intent.motion_command = line_kick_cmd;
+    intent.motion_command = kick_cmd;
     intent.shoot_mode = RobotIntent::ShootMode::KICK;
     intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
     intent.kick_speed = 4.0;
