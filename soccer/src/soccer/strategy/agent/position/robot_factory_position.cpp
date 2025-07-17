@@ -133,7 +133,8 @@ void RobotFactoryPosition::handle_ready() {
             } else {
                 set_default_position();
 
-                if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr) { // TODO(sanat): why is this check necessary. smells of a broken FSM
+                if (dynamic_cast<SoloOffense*>(current_position_.get()) !=
+                    nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken FSM
                     set_current_position<SmartIdle>();
                 }
             }
@@ -143,7 +144,8 @@ void RobotFactoryPosition::handle_ready() {
         if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr ||
             dynamic_cast<PenaltyPlayer*>(current_position_.get()) != nullptr ||
             dynamic_cast<FreeKicker*>(current_position_.get()) != nullptr) {
-            set_current_position<SmartIdle>(); // TODO(sanat): why would we do nothing? we should play defense, esp. marking. 
+            set_current_position<SmartIdle>();  // TODO(sanat): why would we do nothing? we should
+                                                // play defense, esp. marking.
         }
     }
 }
@@ -226,11 +228,9 @@ void RobotFactoryPosition::set_default_position() {
     // Checking whether we have possesion or if the ball is on their half
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
-
         /**
             Salvador comp - temporarily changed to solo offense. revert this commit
          */
-
 
         // Offensive mode
         // Closest 2 robots on defense, rest on offense

@@ -30,7 +30,7 @@ SoloOffense::State SoloOffense::next_state() {
     auto current_point = last_world_state_->ball.position;
 
     // quick comp fix - make sure that when STOP is issue we do not kick
-    if(current_play_state_ == PlayState::stop()) {
+    if (current_play_state_ == PlayState::stop()) {
         return MARKER;
     }
 
