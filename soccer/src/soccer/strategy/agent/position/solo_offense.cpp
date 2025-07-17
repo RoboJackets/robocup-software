@@ -92,12 +92,18 @@ SoloOffense::State SoloOffense::next_state() {
                 
                 juke_target_ = calculate_juke();
                 if (!point_in_red(juke_target_)) {
-                    return SIDE_STEP;
+                    return PIVOT;
                 }
                 shot_target_ = calculate_best_shot();
                 return AIM_AND_SHOOT;
             }
             return GATHER_STEP;
+        }
+        case PIVOT: {
+            if (check_is_done()) {
+                return SIDE_STEP;
+            }
+            return PIVOT;
         }
         case SIDE_STEP: {
             if (check_is_done() || timed_out()) {
@@ -157,6 +163,12 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             intent.motion_command = mark_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
 
+            return intent;
+        }
+        case PIVOT: {
+            auto pivot_cmd = planning::MotionCommand{"rotate", planning::LinearMotionInstant{juke_target_}, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             return intent;
         }
         case SIDE_STEP: {

@@ -40,6 +40,7 @@ private:
         DEFAULT,
         TO_BALL,
         GATHER_STEP,
+        PIVOT,
         SIDE_STEP,
         AIM_AND_SHOOT,
         MARKER,
@@ -60,6 +61,7 @@ private:
             case DEFAULT: return RJ::Seconds{-1};
             case TO_BALL: return RJ::Seconds{-1};
             case GATHER_STEP: return RJ::Seconds{3};
+            case PIVOT: return RJ::Seconds{-1};
             case SIDE_STEP: return RJ::Seconds{5};
             case AIM_AND_SHOOT: return RJ::Seconds{-1};
             case MARKER: return RJ::Seconds{-1};
