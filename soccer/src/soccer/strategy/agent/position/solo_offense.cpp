@@ -29,6 +29,11 @@ SoloOffense::State SoloOffense::next_state() {
     double closest_dist = std::numeric_limits<double>::infinity();
     auto current_point = last_world_state_->ball.position;
 
+    // quick comp fix - make sure that when STOP is issue we do not kick
+    if(current_play_state_ == PlayState::stop()) {
+        return MARKER;
+    }
+
     for (int i = 0; i < 6; i++) {
         RobotState robot = last_world_state_->get_robot(false, i);
         rj_geometry::Point opp_pos = robot.pose.position();
@@ -141,7 +146,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
 
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
     // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
+    rj_geometry::Point their_goal_pos = field_dimensions_.our_goal_loc();
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
 
     // Ball location

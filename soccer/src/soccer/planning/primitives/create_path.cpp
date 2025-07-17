@@ -187,6 +187,29 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             if (dot(intermediate - start.position, goal.position - start.position) <= 0) {
                 continue;
             }
+
+            // candidate intermediate point t meters toward final_inter
+            rj_geometry::Point cand =
+                (final_inter - start.position).normalized(t) + start.position;
+
+            // reject if behind start relative to goal
+            if (dot(cand - start.position, goal.position - start.position) <= 0) {
+                continue;
+            }
+
+            // --- clearance: skip if cand is too close to any static Circle (robot) ---
+            bool too_close = false;
+
+            for (const auto& shp : static_obstacles.shapes()) {
+                auto circ = std::dynamic_pointer_cast<rj_geometry::Circle>(shp);
+                if (!circ) continue;
+                double min_ok = circ->radius() + kIntermediateClearance;
+                if (cand.dist_to(circ->center) < min_ok) {
+                    too_close = true;
+                    break;
+                }
+            }
+
             // Ignore out-of-bounds intermediate points
             // The offset 0.2m is chosen because the sim prevents you from moving
             // more than 0.2m away from the border lines

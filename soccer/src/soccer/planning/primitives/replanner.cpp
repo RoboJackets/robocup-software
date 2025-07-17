@@ -123,7 +123,12 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     RJ::Time now = params.start.stamp;
 
-    if (previous.empty() || veered_off_path(previous, params.start, now) ||
+    // if (previous.empty() || veered_off_path(previous, params.start, now) ||
+    //     goal_changed(previous.last().linear_motion(), params.goal)) {
+    //     return full_replan(params);
+    // }
+
+    if (previous.empty() ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
         return full_replan(params);
     }
@@ -148,10 +153,13 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
                                 &hit_time);
 
     if (should_partial_replan) {
-        if (hit_time - start_time < partial_replan_lead_time() * 2) {
-            return full_replan(params);
-        }
-        return partial_replan(params, previous_trajectory);
+        // if (hit_time - start_time < partial_replan_lead_time() * 2) {
+        //     SPDLOG_INFO("PLAN RESET, OBSTACLE HIT INCOMING");
+        //     return full_replan(params);
+        // }
+        // return partial_replan(params, previous_trajectory);
+        SPDLOG_INFO("PLAN RESET, OBSTACLE HIT INCOMING");
+        return full_replan(params);
     }
 
     // Make fine corrections when we are close to the target
