@@ -38,10 +38,9 @@ std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
 
     // Get next state, and if different, reset clock
     State new_state = next_state();
-
-    // Debug logging
-    if (new_state != current_state_) {
-        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+    if (current_state_ != new_state) {
+        reset_timeout();
+        SPDLOG_INFO("Robot {}: {} -> {}", robot_id_, std::to_string(static_cast<int>(current_state_)), std::to_string(static_cast<int>(new_state)));
     }
     current_state_ = new_state;
 
@@ -55,7 +54,7 @@ std::string SoloOffense::get_current_state() {
 
 SoloOffense::State SoloOffense::next_state() {
     if (teammate_attacking()) { // Short-circuit: if a friendly has possession, chill out
-        return SOURCE; // TODO: replace this with the seeker sub-position instead of doing nothing
+        return DEFAULT; // TODO: replace this with the seeker sub-position instead of doing nothing
     }
     marking_id_ = find_mark();
     if (marking_id_ != -1) { // Short-circuit: if an enemy has possession, mark them
@@ -64,7 +63,7 @@ SoloOffense::State SoloOffense::next_state() {
 
     // Otherwise, follow the state machine:
     switch (current_state_) {
-        case SOURCE: {
+        case DEFAULT: {
             return TO_BALL;
         }
         case MARKER: {
@@ -86,9 +85,9 @@ SoloOffense::State SoloOffense::next_state() {
             return TO_BALL;
         }
         case GATHER_STEP: {
-            if (check_is_done()) {
+            if (check_is_done() || timed_out()) {
                 if (!ball_in_dribbler()) { // we *should* have the ball
-                    return SOURCE;
+                    return DEFAULT;
                 }
                 
                 juke_target_ = calculate_juke();
@@ -101,9 +100,9 @@ SoloOffense::State SoloOffense::next_state() {
             return GATHER_STEP;
         }
         case SIDE_STEP: {
-            if (check_is_done()) { // TODO: make a timeout, in case defenders make it annoying to path to our shooting point
+            if (check_is_done() || timed_out()) {
                 if (!ball_in_dribbler()) { // we *should* have the ball
-                    return SOURCE;
+                    return DEFAULT;
                 }
     
                 shot_target_ = calculate_best_shot();
@@ -113,7 +112,7 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case AIM_AND_SHOOT: {
             if (check_is_done()) {
-                return SOURCE;
+                return DEFAULT;
             }
             return AIM_AND_SHOOT;
         }
@@ -123,7 +122,7 @@ SoloOffense::State SoloOffense::next_state() {
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
-        case SOURCE: {
+        case DEFAULT: {
             return std::nullopt;
         }
         case MARKER: {

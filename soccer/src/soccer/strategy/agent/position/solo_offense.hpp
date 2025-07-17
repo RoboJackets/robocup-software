@@ -37,20 +37,61 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        SOURCE,
+        DEFAULT,
         TO_BALL,
         GATHER_STEP,
         SIDE_STEP,
         AIM_AND_SHOOT,
         MARKER,
     };
+    State current_state_ = DEFAULT;
 
-    State current_state_ = SOURCE;
+    /**
+     * @brief This FSM has timeouts for certain states.
+     *
+     * These timeouts are a safety mechanism against unpredictable enemy behavior.
+     * In blind, fixed-target motion commands, we may be denied by opponents. 
+     * These timeouts explicitly act as give up points (at which point the attacker progresses to the next phase).
+     *
+     * @return the maximum duration to stay in a given state, or -1 if there is no maximum.
+     */
+    static constexpr RJ::Seconds timeout(State s) {
+        switch (s) {
+            case DEFAULT: return RJ::Seconds{-1};
+            case TO_BALL: return RJ::Seconds{-1};
+            case GATHER_STEP: return RJ::Seconds{3};
+            case SIDE_STEP: return RJ::Seconds{5};
+            case AIM_AND_SHOOT: return RJ::Seconds{-1};
+            case MARKER: return RJ::Seconds{-1};
+        }
+    }
+    // The time at which the last state started.
+    RJ::Time last_time_;
+    /**
+     * @brief Reset the timeout for the current state
+     */
+    void reset_timeout() {
+        // Defined here so it can be inlined
+        last_time_ = RJ::now();
+    }
+    /**
+     * @return if the current state has timed out
+     */
+    bool timed_out() const {
+        // Defined here so it can be inlined
+        using namespace std::chrono_literals;
 
+        const auto max_time = timeout(current_state_);
+
+        return (max_time > 0s) && (last_time_ + max_time < RJ::now());
+    };
+
+
+    
     rj_geometry::Point cached_ball_pos_;
     rj_geometry::Point get_ball_pos() const;
 
-    rj_geometry::Point target_;
+    // rj_geometry::Point target_;
 
     int marking_id_;
 
