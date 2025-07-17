@@ -25,25 +25,52 @@ std::string SoloOffense::get_current_state() {
 }
 
 SoloOffense::State SoloOffense::next_state() {
+    // handle transitions between current state
+    double closest_dist = std::numeric_limits<double>::infinity();
+    auto current_point = last_world_state_->ball.position;
 
+    for (int i = 0; i < 6; i++) {
+        RobotState robot = last_world_state_->get_robot(false, i);
+        rj_geometry::Point opp_pos = robot.pose.position();
+        auto robot_dist = opp_pos.dist_to(current_point);
+        if (robot_dist < closest_dist) {
+            marking_id_ = i;
+            closest_dist = robot_dist;
+        }
+    }
+
+    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
+
+    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
+        field_dimensions_.their_defense_area().contains_point(current_point) ||
+        !field_dimensions_.field_coordinates().contains_point(current_point)) {
+        return MARKER;
+    }
     switch (current_state_) {
-        case START: {
-            if (check_is_done()) {
-                return POINT_US;
-            }
-            return START;
+        case MARKER: {
+            return TO_BALL;
         }
-        case POINT_US: {
+        case TO_BALL: {
             if (check_is_done()) {
-                return POINT_THEM;
+                return ROTATE;
             }
-            return POINT_US;
+            return TO_BALL;
         }
-        case POINT_THEM: {
+        case ROTATE: {
             if (check_is_done()) {
-                return POINT_US;
+                counter_ = 0;
+                kick_ = true;
+                return MARKER;
             }
-            return POINT_THEM;
+            return ROTATE;
+        }
+        case KICK: {
+            if (!kick_ ||
+                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
+                        .mag() > kRobotRadius * 5) {
+                return TO_BALL;
+            }
+            return KICK;
         }
     }
     return current_state_;
@@ -51,25 +78,61 @@ SoloOffense::State SoloOffense::next_state() {
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
-        case START: {
-            rj_geometry::Point target{0.0, 4.5};
+        case MARKER: {
+            auto marker_target_pos =
+                last_world_state_->get_robot(false, marking_id_).pose.position();
+            auto target =
+                marker_target_pos +
+                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
             auto mark_cmd = planning::MotionCommand{
                 "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
             intent.motion_command = mark_cmd;
+
             return intent;
         }
-        case POINT_US: {
-            planning::LinearMotionInstant target{field_dimensions_.our_goal_loc()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+        case TO_BALL: {
+            rj_geometry::Point robotToBall =
+                (last_world_state_->ball.position -
+                 last_world_state_->get_robot(true, robot_id_).pose.position());
+            double slowDown = 1.0;
+            double length = robotToBall.mag() - kRobotRadius * slowDown;
+            robotToBall = robotToBall.normalized(length);
+            planning::LinearMotionInstant target{
+                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
+            auto pivot_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = pivot_cmd;
             return intent;
         }
-        case POINT_THEM: { 
-            planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+        case ROTATE: {
+            planning::LinearMotionInstant target{calculate_best_shot()};
             auto pivot_cmd =
                 planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
+            intent.kick_speed = 4.0;
+            return intent;
+        }
+        case KICK: {
+            // double scaleFactor = 0.1;
+            // rj_geometry::Point point = (last_world_state_->ball.position -
+            // last_world_state_->get_robot(true,
+            // robot_id_).pose.position()).normalized(scaleFactor); point +=
+            // last_world_state_->get_robot(true, robot_id_).pose.position();
+            // planning::LinearMotionInstant target{point};
+            planning::LinearMotionInstant target{calculate_best_shot()};
+            // planning::LinearMotionInstant target{last_world_state_->ball.position};
+            auto kick_cmd =
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+            intent.motion_command = kick_cmd;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 4.0;
+            counter_++;
+            if (counter_ > 15) {
+                kick_ = false;
+            }
+
             return intent;
         }
     }

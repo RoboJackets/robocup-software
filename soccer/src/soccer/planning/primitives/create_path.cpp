@@ -8,6 +8,30 @@
 
 using namespace rj_geometry;
 
+namespace {
+
+// 2‑D dot for rj_geometry::Point
+inline double dot(const rj_geometry::Point& a, const rj_geometry::Point& b) {
+    return a.x() * b.x() + a.y() * b.y();
+}
+
+// Unit dir start→target (returns length; dir_out=(0,0) if degenerate)
+inline double dir_to(const rj_geometry::Point& start,
+                     const rj_geometry::Point& target,
+                     rj_geometry::Point* dir_out) {
+    rj_geometry::Point d = target - start;
+    double m = d.mag();
+    if (m < 1e-6) {
+        *dir_out = {0, 0};
+        return 0.0;
+    }
+    *dir_out = d / m;
+    return m;
+}
+
+}  // namespace
+
+
 namespace planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
@@ -19,9 +43,28 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
         points.push_back(pt);
     }
     points.push_back(goal.position);
-    BezierPath bezier(points, start.velocity, goal.velocity, motion_constraints);
-    Trajectory path = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
-                                       motion_constraints, start_time);
+    // pick first target the path heads toward
+    const rj_geometry::Point& first_target =
+        intermediate_points.empty() ? goal.position : intermediate_points.front();
+
+    // forward dir
+    rj_geometry::Point dir;
+    dir_to(start.position, first_target, &dir);
+
+    // shape tangents
+    rj_geometry::Point start_vel_shape = dir * std::max(0.0, dot(start.velocity, dir));
+    rj_geometry::Point goal_vel_shape{0, 0};  // stop at goal
+
+    BezierPath bezier(points, start_vel_shape, goal_vel_shape, motion_constraints);
+
+    // time profile: keep *actual* start speed magnitude so replans don't force stop.
+    // (If you prefer forward-only speed, swap to std::max(0.0, dot(start.velocity, dir)).)
+    double start_speed = start.velocity.mag();
+    double goal_speed = 0.0;
+
+    Trajectory path = profile_velocity(bezier, start_speed, goal_speed,
+                                    motion_constraints, start_time);
+
     return path;
 }
 
@@ -55,10 +98,35 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         std::vector<Point> points =
             generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
 
-        BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
+        // ensure at least start+goal
+        if (points.size() < 2) {
+            points = {start.position, goal.position};
+        }
 
-        path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
+        // drop first waypoint if it's behind start relative to goal
+        if (points.size() > 2) {
+            if (dot(points[1] - start.position, goal.position - start.position) <= 0) {
+                points.erase(points.begin() + 1);
+            }
+        }
+
+        // forward dir start→first segment (or goal)
+        const rj_geometry::Point& first_target = (points.size() > 1) ? points[1] : goal.position;
+        rj_geometry::Point dir;
+        dir_to(start.position, first_target, &dir);
+
+        // tangents
+        rj_geometry::Point start_vel_shape = dir * std::max(0.0, dot(start.velocity, dir));
+        rj_geometry::Point goal_vel_shape{0, 0};  // stop
+
+        BezierPath post_bezier(points, start_vel_shape, goal_vel_shape, motion_constraints);
+
+        // profile (keep actual start speed mag; goal zero)
+        double start_speed = start.velocity.mag();
+        double goal_speed = 0.0;
+        path = profile_velocity(post_bezier, start_speed, goal_speed,
                                 motion_constraints, start_time);
+
 
         Circle hit_circle;
         if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle,
@@ -108,10 +176,17 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
         // and test each point on that path as an intermediate point
         for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position);
              t += intermediate::PARAM_step_size) {
+            
+
+
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             auto offset = intermediate - field_dimensions->center_point();
 
+            // reject if behind start relative to goal
+            if (dot(intermediate - start.position, goal.position - start.position) <= 0) {
+                continue;
+            }
             // Ignore out-of-bounds intermediate points
             // The offset 0.2m is chosen because the sim prevents you from moving
             // more than 0.2m away from the border lines
@@ -122,13 +197,23 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             Trajectory trajectory =
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 
-            // If the trajectory does not hit an obstacle, it is valid
-            if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
+            bool static_hit =
+                trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr);
+
+            constexpr float kDynInflation = 1.2f;  // 20% bigger
+            bool dynamic_hit =
+                trajectory_hits_dynamic(trajectory, dynamic_obstacles,
+                                        trajectory.begin_time(),  // or start_time; either ok
+                                        nullptr, nullptr);
+
+            // Accept only if no static *and* no dynamic collisions.
+            if (!static_hit && !dynamic_hit) {
                 auto angle = (final_inter - start.position).angle();
                 cached_intermediate_tuple_[robot_id] = {abs(angle), signbit(angle) ? -1 : 1,
                                                         (final_inter - start.position).mag()};
                 return trajectory;
             }
+
         }
     }
 
@@ -179,7 +264,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         double angle = std::get<0>(inter_tuples[i]) * std::get<1>(inter_tuples[i]);
         double scale = std::get<2>(inter_tuples[i]);
 
-        double fin_angle = goal.position.angle_to(start.position) + angle;
+        double fin_angle = start.position.angle_to(start.position) + angle;
         double fin_length = scale;
 
         // Convert the distances and angles into a point

@@ -36,9 +36,9 @@ private:
      */
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
-    enum State { START, POINT_US, POINT_THEM };
+    enum State { TO_BALL, KICK, MARKER, ROTATE };
 
-    State current_state_ = START;
+    State current_state_ = TO_BALL;
 
     rj_geometry::Point target_;
 
