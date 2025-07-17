@@ -42,7 +42,6 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     if (post_trajectory.empty() ||
         !Pose::nearly_equals(pre_trajectory.last().pose, post_trajectory.first().pose) ||
         !Twist::nearly_equals(pre_trajectory.last().velocity, post_trajectory.first().velocity)) {
-            SPDLOG_INFO("full replan due to bad velocity");
         return full_replan(params);
     }
 
@@ -180,14 +179,24 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
 bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
+    std::optional<RobotInstant> maybe_prev = trajectory.evaluate(now - RJ::Seconds(0.5));
     // If we don't have an instant, assume we're past the end of the path.
     if (!maybe_instant.has_value()) {
         maybe_instant = trajectory.last();
     }
+    if (!maybe_prev.has_value()) {
+        maybe_prev = trajectory.last();
+    }
     RobotInstant instant = maybe_instant.value();
-    double path_error = (instant.position() - actual.position()).mag();
+    RobotInstant prev = maybe_prev.value();
+    double path_error_now = (instant.position() - actual.position()).mag();
+    double path_error_prev = (prev.position() - actual.position()).mag();
 
-    return path_error > replanner::PARAM_off_path_threshold;
+    if( path_error_now > replanner::PARAM_off_path_threshold && path_error_prev > replanner::PARAM_off_path_threshold){
+        SPDLOG_INFO("full replan due to bad velocity");
+        return true;
+    } 
+    return false;
 }
 
 bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,

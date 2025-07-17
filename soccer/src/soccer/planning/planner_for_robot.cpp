@@ -211,11 +211,12 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
 
     // as a test, i'm averageing the two.
     rj_geometry::Twist startVel = robot.velocity;
-    // visionVelocity.linear().x() = (visionVelocity.linear().x() + last_motion_setpoint_.xvelocity) / 2;
-    // visionVelocity.linear().y() = (visionVelocity.linear().y() + last_motion_setpoint_.yvelocity) / 2;
-    startVel.linear().x() = last_motion_setpoint_.xvelocity;
-    startVel.linear().y() = last_motion_setpoint_.yvelocity;
-    startVel.angular() = last_motion_setpoint_.avelocity;
+    // startVel.linear().x() = (startVel.linear().x() + last_motion_setpoint_.xvelocity) / 2;
+    // startVel.linear().y() = (startVel.linear().y() + last_motion_setpoint_.yvelocity) / 2;
+    // startVel.angular() = (startVel.angular() + last_motion_setpoint_.avelocity) / 2;
+    // startVel.linear().x() = last_motion_setpoint_.xvelocity;
+    // startVel.linear().y() = last_motion_setpoint_.yvelocity;
+    // startVel.angular() = last_motion_setpoint_.avelocity;
 
 
     const auto start = RobotInstant{robot.pose, startVel, robot.timestamp};
