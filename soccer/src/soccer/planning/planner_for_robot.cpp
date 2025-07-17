@@ -61,7 +61,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         });
 
     motion_setpoint_sub_ = node->create_subscription<rj_msgs::msg::MotionSetpoint>(
-        control::topics::motion_setpoint_topic(robot_id), [this](rj_msgs::msg::MotionSetpoint::SharedPtr msg) {
+        control::topics::motion_setpoint_topic(robot_id), rclcpp::QoS(1), [this](rj_msgs::msg::MotionSetpoint::SharedPtr msg) {
             last_motion_setpoint_ = rj_convert::convert_from_ros(*msg);
         }
     );
@@ -210,11 +210,15 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
      */
 
     // as a test, i'm averageing the two.
-    rj_geometry::Twist visionVelocity = robot.velocity;
-    visionVelocity.linear().x() = (visionVelocity.linear().x() + last_motion_setpoint_.xvelocity) / 2;
-    visionVelocity.linear().y() = (visionVelocity.linear().y() + last_motion_setpoint_.yvelocity) / 2;
+    rj_geometry::Twist startVel = robot.velocity;
+    // visionVelocity.linear().x() = (visionVelocity.linear().x() + last_motion_setpoint_.xvelocity) / 2;
+    // visionVelocity.linear().y() = (visionVelocity.linear().y() + last_motion_setpoint_.yvelocity) / 2;
+    startVel.linear().x() = last_motion_setpoint_.xvelocity;
+    startVel.linear().y() = last_motion_setpoint_.yvelocity;
+    startVel.angular() = last_motion_setpoint_.avelocity;
 
-    const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
+
+    const auto start = RobotInstant{robot.pose, startVel, robot.timestamp};
 
     const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
