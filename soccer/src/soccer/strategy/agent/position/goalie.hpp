@@ -26,10 +26,6 @@ public:
     ~Goalie() override = default;
     Goalie(const Position& other);
 
-    void derived_acknowledge_pass() override;
-    void derived_pass_ball() override;
-    void derived_acknowledge_ball_in_transit() override;
-
     std::string get_current_state() override;
 
 private:
@@ -47,11 +43,7 @@ private:
         IDLING,          // doing nothing
         BLOCKING,        // blocking the ball from reaching the goal
         CLEARING,        // clearing the ball out of the goal box
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
         BALL_NOT_FOUND,  // the ball is not in play
-        RECEIVING,       // physically intercepting the ball from a pass
-        PASSING,         // physically kicking the ball at another robot
-        FACING,          // turning to face the passing robot
         PENALTY,         // stay on baseline for penalty kick
     };
 
