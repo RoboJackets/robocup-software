@@ -57,8 +57,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
         });
     motion_mag_pub_ = node->create_publisher<std_msgs::msg::Float64>(
-        "debug/speed/robot_" + std::to_string(shell_id_), rclcpp::QoS(1)
-    );
+        "debug/speed/robot_" + std::to_string(shell_id_), rclcpp::QoS(1));
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldState::Msg::SharedPtr world_state_msg) {  // NOLINT
@@ -196,7 +195,7 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
         drawer_.publish();
     }
-   
+
     if (maybe_target) {
         RobotState desired_state;
         desired_state.pose = maybe_target->pose;

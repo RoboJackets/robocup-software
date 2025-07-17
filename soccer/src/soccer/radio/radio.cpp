@@ -1,7 +1,9 @@
 #include "radio.hpp"
+
 #include <cmath>
 
 #include <spdlog/spdlog.h>
+
 #include <sys/socket.h>
 
 namespace radio {
@@ -40,7 +42,7 @@ Radio::Radio()
                 motion_pubs_.at(i)->publish(*motion);
             });
         motion_pubs_.at(i) = create_publisher<rj_msgs::msg::MotionSetpoint>(
-            "debug/radio/motion_setpoint/robot_" + std::to_string(i), rclcpp::QoS(1));        
+            "debug/radio/motion_setpoint/robot_" + std::to_string(i), rclcpp::QoS(1));
     }
 
     alive_robots_pub_ =

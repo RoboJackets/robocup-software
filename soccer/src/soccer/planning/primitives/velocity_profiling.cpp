@@ -36,7 +36,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     std::vector<Point> points(num_points);
     std::vector<Point> derivs1(num_points);
     std::vector<double> curvature(num_points);
-    std::vector<double> speed(num_points, constraints.max_speed*2);
+    std::vector<double> speed(num_points, constraints.max_speed * 2);
 
     // Note: these are just suggestions. If they are impossible given
     // MotionConstraints, then we'll limit them.
@@ -102,7 +102,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         speed[n + 1] =
             limit_acceleration(speed[n], speed[n + 1], distance, max_tangential_acceleration);
     }
-   
+
     // Deceleration pass: calculate maximum velocity at each point based on
     // acceleration limits backwards in time.
     for (int n = num_points - 1; n > 1; n--) {
