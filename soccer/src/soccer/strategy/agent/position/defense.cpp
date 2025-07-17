@@ -144,7 +144,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         // NOTE: Check we can actually use break beams
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         // TODO: Adjust the kick speed based on distance
-        intent.kick_speed = 4.0;
+        intent.kick_speed = 3.0;
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {

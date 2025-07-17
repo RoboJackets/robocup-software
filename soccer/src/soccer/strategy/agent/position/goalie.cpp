@@ -85,7 +85,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 4.0;
+        intent.kick_speed = 3.0;
         intent.dribbler_mode = RobotIntent::DribblerMode::ON;
         intent.is_active = true;
 

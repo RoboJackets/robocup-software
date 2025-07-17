@@ -123,7 +123,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
+            intent.kick_speed = 3.0;
 
             return intent;
         }

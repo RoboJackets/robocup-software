@@ -125,16 +125,16 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     RJ::Time now = params.start.stamp;
 
-    // if (previous.empty() || veered_off_path(previous, params.start, now) ||
-    //     goal_changed(previous.last().linear_motion(), params.goal)) {
-    //     return full_replan(params);
-    // }
-
-    if (previous.empty() ||
+    if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
-        // SPDLOG_INFO("full replan due to veered off path");
         return full_replan(params);
     }
+
+    // if (previous.empty() ||
+    //     goal_changed(previous.last().linear_motion(), params.goal)) {
+    //     // SPDLOG_INFO("full replan due to veered off path");
+    //     return full_replan(params);
+    // }
 
     // If; we get here, we definitely should have a valid previous trajectory
     // and so it should have a valid creation time (or we would have thrown).
