@@ -122,6 +122,11 @@ private:
 
     int get_marker_target_id();
     Marker marker_;
+
+    // band-aid function, used to track robot death in live play
+    bool is_alive(u_int8_t concerned_id);
+    // this tracks the ball pose (since it can be occluded in play)
+    rj_geometry::Point cached_ball_pose;
 };
 
 }  // namespace strategy

@@ -10,9 +10,8 @@ Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensi
 }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
-    // SPDLOG_INFO("waller length (sus) {}, {}", walling_robots_.size(), robot_id_);
     current_state_ = update_state();
-    // waller_id_ = get_waller_id();
+    //waller_id_ = get_waller_id();
     return state_to_task(intent);
 }
 
@@ -29,6 +28,11 @@ Defense::State Defense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
+    if (!Defense::is_alive(robot_id_) || (current_state_ == WALLING && waller_id_ == -1)) { // deadlock band-aid :(
+        Defense::die();
+        return IDLING;
+    }
+
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
@@ -37,6 +41,7 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
+            next_state = JOINING_WALL; // deadlock band-aid :(]
             break;
         case JOINING_WALL:
             send_join_wall_request();
@@ -142,9 +147,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {
+        // band-aid fix: ball might be occluded
+        if (last_world_state_->ball.visible) {
+            cached_ball_pose = last_world_state_->ball.position;
+        }
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
-            return waller.get_task(intent, last_world_state_, this->field_dimensions_);
+            // return waller.get_task(intent, last_world_state_, this->field_dimensions_);
+            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pose);
         }
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
@@ -167,6 +177,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     }
 
     return std::nullopt;
+}
+
+bool Defense::is_alive(u_int8_t concerned_id) {
+    if (!last_world_state_->get_robot(concerned_id, true).visible) {
+        return false;
+    } else /**if (another condition) {} else*/ {
+        return true;
+    }
 }
 
 void Defense::receive_communication_response(communication::AgentPosResponseWrapper response) {
