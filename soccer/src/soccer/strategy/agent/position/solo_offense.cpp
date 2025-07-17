@@ -75,10 +75,6 @@ SoloOffense::State SoloOffense::next_state() {
                 if (!point_in_red(gather_target_)) {
                     return GATHER_STEP;
                 }
-                juke_target_ = calculate_juke();
-                if (!point_in_red(juke_target_)) {
-                    return SIDE_STEP;
-                }
                 shot_target_ = calculate_best_shot();
                 return AIM_AND_SHOOT;
             }
@@ -89,26 +85,13 @@ SoloOffense::State SoloOffense::next_state() {
                 if (!ball_in_dribbler()) { // we *should* have the ball
                     return DEFAULT;
                 }
-                
-                juke_target_ = calculate_juke();
-                if (!point_in_red(juke_target_)) {
-                    return SIDE_STEP;
-                }
                 shot_target_ = calculate_best_shot();
                 return AIM_AND_SHOOT;
             }
             return GATHER_STEP;
         }
-        case SIDE_STEP: {
-            if (check_is_done() || timed_out()) {
-                if (!ball_in_dribbler()) { // we *should* have the ball
-                    return DEFAULT;
-                }
-    
-                shot_target_ = calculate_best_shot();
-                return AIM_AND_SHOOT;
-            }
-            return SIDE_STEP;
+        case SIDE_STEP: { // in this version, we don't side step
+            return DEFAULT;
         }
         case AIM_AND_SHOOT: {
             if (check_is_done()) {
