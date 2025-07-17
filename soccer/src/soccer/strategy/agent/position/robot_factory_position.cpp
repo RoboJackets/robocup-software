@@ -14,8 +14,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    } else if (robot_id_ == 3) {
+        current_position_ = std::make_unique<SoloOffense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
@@ -196,6 +196,23 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+
+
+    // salvador hotfix
+
+    if (robot_id_ == goalie_id_) {
+        return;
+    }
+    if (robot_id_ == 3) {
+        set_current_position<SoloOffense>();
+    } else {
+        set_current_position<Defense>();
+    }
+    return;
+
+
+// end salvador hotfix
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
@@ -234,16 +251,16 @@ void RobotFactoryPosition::set_default_position() {
 
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
-        } else {
+        if (i == 3) {
             set_current_position<SoloOffense>();
+        } else {
+            set_current_position<Defense>();
         }
     } else {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
+        if (i == 3) {
+            set_current_position<SoloOffense>();
         } else {
             set_current_position<SoloOffense>();
         }
