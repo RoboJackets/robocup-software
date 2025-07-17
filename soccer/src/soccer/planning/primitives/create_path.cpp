@@ -14,6 +14,8 @@ namespace {
 inline double dot(const rj_geometry::Point& a, const rj_geometry::Point& b) {
     return a.x() * b.x() + a.y() * b.y();
 }
+constexpr double kIntermediateClearance = 0.03;  // meters beyond actual robot radius
+
 
 // Unit dir start→target (returns length; dir_out=(0,0) if degenerate)
 inline double dir_to(const rj_geometry::Point& start,
