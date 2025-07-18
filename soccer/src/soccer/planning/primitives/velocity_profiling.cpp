@@ -9,7 +9,7 @@ using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-constexpr int kInterpolationsPerBezier = 40;
+constexpr int kInterpolationsPerBezier = 80;
 
 double limit_acceleration(double velocity_initial, double velocity_final, double displacement,
                           double max_accel) {
