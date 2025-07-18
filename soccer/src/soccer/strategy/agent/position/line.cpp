@@ -1,4 +1,6 @@
 #include "line.hpp"
+#include "planning/instant.hpp"
+#include "planning/planner/motion_command.hpp"
 
 namespace strategy {
 
@@ -42,18 +44,10 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
             intent.motion_command = motion_command;
         }
     } else {
-            auto motion_command = planning::MotionCommand{
-                "path_target",
-                planning::LinearMotionInstant{
-                    rj_geometry::Point{
-                        field_dimensions_.our_defense_area().maxx(),
-                        (field_dimensions_.center_field_loc().y() - 1) / 6 * robot_id_ + 1,
-                    },
-                    rj_geometry::Point{0.0, 0.0},
-                },
-                planning::FacePoint{}};
+        auto motion_command = planning::MotionCommand{
+            "rotate",planning::LinearMotionInstant{{0.0, 0.0}, {0.0, 0.0}}};
 
-            intent.motion_command = motion_command;
+        intent.motion_command = motion_command;
     }
 
     return intent;

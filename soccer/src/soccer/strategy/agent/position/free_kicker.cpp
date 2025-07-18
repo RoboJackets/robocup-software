@@ -29,7 +29,8 @@ rj_geometry::Point FreeKicker::calculate_best_shot() const {
     }
     return best_shot;
 }
-double FreeKicker::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
+double FreeKicker::distance_from_their_robots(rj_geometry::Point tail,
+                                              rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 
@@ -53,11 +54,11 @@ double FreeKicker::distance_from_their_robots(rj_geometry::Point tail, rj_geomet
     return min_angle;
 }
 
-
 std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // FreeKicker is used for every set piece (kickoff, free, penalty)
     auto shot_target = calculate_best_shot();
-    auto kick_cmd = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target}};
+    auto kick_cmd =
+        planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target}};
 
     intent.motion_command = kick_cmd;
     intent.shoot_mode = RobotIntent::ShootMode::KICK;

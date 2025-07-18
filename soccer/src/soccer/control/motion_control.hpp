@@ -9,13 +9,6 @@
 #include <rj_param_utils/param.hpp>
 #include <std_msgs/msg/float64.hpp>
 
-#include <context.hpp>
-#include <rj_common/time.hpp>
-#include <rj_constants/topic_names.hpp>
-#include <rj_geometry/point.hpp>
-#include <rj_param_utils/param.hpp>
-#include <std_msgs/msg/float64.hpp>
-
 #include "control/motion_setpoint.hpp"
 #include "game_state.hpp"
 #include "ros_debug_drawer.hpp"

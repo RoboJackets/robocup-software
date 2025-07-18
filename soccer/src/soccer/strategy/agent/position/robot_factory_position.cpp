@@ -201,9 +201,8 @@ void RobotFactoryPosition::set_default_position() {
     // salvador hotfix
 
     if (robot_id_ == goalie_id_) {
-        return;
-    }
-    if (robot_id_ == 3) {
+        return;}
+    if (robot_id_ == 1) {
         set_current_position<SoloOffense>();
     } else {
         set_current_position<Defense>();
@@ -261,8 +260,8 @@ void RobotFactoryPosition::set_default_position() {
         } else {
             set_current_position<SoloOffense>();
         }
-    }
-}
+    }}
+
 
 std::deque<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {

@@ -27,7 +27,8 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
 DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
                "Maximum angular velocity limit (motion control) (rad/s)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
@@ -44,7 +45,8 @@ DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, translation_kd, 0.
 DEFINE_NS_INT64(params::kMotionControlParamModule, robot_0, translation_windup, 0,
                 "Windup limit for translation (unknown units)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_kd, 0.0,
@@ -60,7 +62,8 @@ DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, translation_kd, 0.
 DEFINE_NS_INT64(params::kMotionControlParamModule, robot_1, translation_windup, 0,
                 "Windup limit for translation (unknown units)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_kd, 0.0,
@@ -76,7 +79,8 @@ DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, translation_kd, 0.
 DEFINE_NS_INT64(params::kMotionControlParamModule, robot_2, translation_windup, 0,
                 "Windup limit for translation (unknown units)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_kd, 0.0,
@@ -92,7 +96,8 @@ DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, translation_kd, 0.
 DEFINE_NS_INT64(params::kMotionControlParamModule, robot_3, translation_windup, 0,
                 "Windup limit for translation (unknown units)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_kd, 0.0,
@@ -108,7 +113,8 @@ DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, translation_kd, 0.
 DEFINE_NS_INT64(params::kMotionControlParamModule, robot_4, translation_windup, 0,
                 "Windup limit for translation (unknown units)");
 
-DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_kp, 0.0, "Kp for rotation ((rad/s)/rad)")
+DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_kp, 0.0,
+                  "Kp for rotation ((rad/s)/rad)")
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_ki, 0.0,
                   "Ki for rotation ((rad/s)/(rad*s))");
 DEFINE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_kd, 0.0,
@@ -133,69 +139,66 @@ struct {
     const double& translation_ki;
     const double& translation_kd;
     const int64_t& translation_windup;
-} robot_params[6] = {
-    {
-        robot_0::PARAM_rotation_kp,
-        robot_0::PARAM_rotation_ki,
-        robot_0::PARAM_rotation_kd,
-        robot_0::PARAM_rotation_windup,
-        robot_0::PARAM_translation_kp,
-        robot_0::PARAM_translation_ki,
-        robot_0::PARAM_translation_kd,
-        robot_0::PARAM_translation_windup,
-    },
-    {
-        robot_1::PARAM_rotation_kp,
-        robot_1::PARAM_rotation_ki,
-        robot_1::PARAM_rotation_kd,
-        robot_1::PARAM_rotation_windup,
-        robot_1::PARAM_translation_kp,
-        robot_1::PARAM_translation_ki,
-        robot_1::PARAM_translation_kd,
-        robot_1::PARAM_translation_windup,
-    },
-    {
-        robot_2::PARAM_rotation_kp,
-        robot_2::PARAM_rotation_ki,
-        robot_2::PARAM_rotation_kd,
-        robot_2::PARAM_rotation_windup,
-        robot_2::PARAM_translation_kp,
-        robot_2::PARAM_translation_ki,
-        robot_2::PARAM_translation_kd,
-        robot_2::PARAM_translation_windup,
-    },
-    {
-        robot_3::PARAM_rotation_kp,
-        robot_3::PARAM_rotation_ki,
-        robot_3::PARAM_rotation_kd,
-        robot_3::PARAM_rotation_windup,
-        robot_3::PARAM_translation_kp,
-        robot_3::PARAM_translation_ki,
-        robot_3::PARAM_translation_kd,
-        robot_3::PARAM_translation_windup,
-    }, 
-    {
-        robot_4::PARAM_rotation_kp,
-        robot_4::PARAM_rotation_ki,
-        robot_4::PARAM_rotation_kd,
-        robot_4::PARAM_rotation_windup,
-        robot_4::PARAM_translation_kp,
-        robot_4::PARAM_translation_ki,
-        robot_4::PARAM_translation_kd,
-        robot_4::PARAM_translation_windup,
-    }, 
-    {
-        robot_5::PARAM_rotation_kp,
-        robot_5::PARAM_rotation_ki,
-        robot_5::PARAM_rotation_kd,
-        robot_5::PARAM_rotation_windup,
-        robot_5::PARAM_translation_kp,
-        robot_5::PARAM_translation_ki,
-        robot_5::PARAM_translation_kd,
-        robot_5::PARAM_translation_windup,
-    } 
-};
-
+} robot_params[6] = {{
+                         robot_0::PARAM_rotation_kp,
+                         robot_0::PARAM_rotation_ki,
+                         robot_0::PARAM_rotation_kd,
+                         robot_0::PARAM_rotation_windup,
+                         robot_0::PARAM_translation_kp,
+                         robot_0::PARAM_translation_ki,
+                         robot_0::PARAM_translation_kd,
+                         robot_0::PARAM_translation_windup,
+                     },
+                     {
+                         robot_1::PARAM_rotation_kp,
+                         robot_1::PARAM_rotation_ki,
+                         robot_1::PARAM_rotation_kd,
+                         robot_1::PARAM_rotation_windup,
+                         robot_1::PARAM_translation_kp,
+                         robot_1::PARAM_translation_ki,
+                         robot_1::PARAM_translation_kd,
+                         robot_1::PARAM_translation_windup,
+                     },
+                     {
+                         robot_2::PARAM_rotation_kp,
+                         robot_2::PARAM_rotation_ki,
+                         robot_2::PARAM_rotation_kd,
+                         robot_2::PARAM_rotation_windup,
+                         robot_2::PARAM_translation_kp,
+                         robot_2::PARAM_translation_ki,
+                         robot_2::PARAM_translation_kd,
+                         robot_2::PARAM_translation_windup,
+                     },
+                     {
+                         robot_3::PARAM_rotation_kp,
+                         robot_3::PARAM_rotation_ki,
+                         robot_3::PARAM_rotation_kd,
+                         robot_3::PARAM_rotation_windup,
+                         robot_3::PARAM_translation_kp,
+                         robot_3::PARAM_translation_ki,
+                         robot_3::PARAM_translation_kd,
+                         robot_3::PARAM_translation_windup,
+                     },
+                     {
+                         robot_4::PARAM_rotation_kp,
+                         robot_4::PARAM_rotation_ki,
+                         robot_4::PARAM_rotation_kd,
+                         robot_4::PARAM_rotation_windup,
+                         robot_4::PARAM_translation_kp,
+                         robot_4::PARAM_translation_ki,
+                         robot_4::PARAM_translation_kd,
+                         robot_4::PARAM_translation_windup,
+                     },
+                     {
+                         robot_5::PARAM_rotation_kp,
+                         robot_5::PARAM_rotation_ki,
+                         robot_5::PARAM_rotation_kd,
+                         robot_5::PARAM_rotation_windup,
+                         robot_5::PARAM_translation_kp,
+                         robot_5::PARAM_translation_ki,
+                         robot_5::PARAM_translation_kd,
+                         robot_5::PARAM_translation_windup,
+                     }};
 
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),

@@ -29,8 +29,6 @@ public:
      */
     double distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const;
 
-
-
     /**
      * @brief Does nothing; this position is a special case
      */
