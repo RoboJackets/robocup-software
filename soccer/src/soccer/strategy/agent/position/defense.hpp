@@ -28,7 +28,7 @@ namespace strategy {
 class Defense : public Position {
 public:
     Defense(int r_id);
-    ~Defense() override = default;
+    ~Defense() override;
     Defense(const Position& other);
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
@@ -60,18 +60,14 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        IDLING,            // simply staying in place
+        DEFAULT,            // simply staying in place
         JOINING_WALL,      // send message to find its place in the wall
         WALLING,           // participating in the wall
-        SEARCHING,         // moving around on the field to do something
-        RECEIVING,         // physically intercepting the ball from a pass
-        PASSING,           // physically kicking the ball towards another robot
-        FACING,            // turning to face the passing robot
-        MARKING,           // Following closely to an offense robot
-        ENTERING_MARKING,  // Choosing/waiting for a robot to mark
     };
 
     State update_state();
+    State current_state_ = DEFAULT;
+    State next_state;
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
@@ -116,17 +112,13 @@ private:
     std::vector<u_int8_t> walling_robots_ = {};
     int waller_id_ = -1;
 
-    // current state of the defense agent (state machine)
     int get_waller_id();
-    State current_state_ = JOINING_WALL;
-
-    int get_marker_target_id();
-    Marker marker_;
 
     // band-aid function, used to track robot death in live play
     bool is_alive(u_int8_t concerned_id);
     // this tracks the ball pose (since it can be occluded in play)
-    rj_geometry::Point cached_ball_pose;
+    rj_geometry::Point cached_ball_pos_;
+    rj_geometry::Point get_ball_pos() const;
 };
 
 }  // namespace strategy
