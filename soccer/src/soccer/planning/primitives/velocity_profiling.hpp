@@ -39,4 +39,6 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed,
                            const MotionConstraints& constraints,
                            RJ::Time initial_time = RJ::now());
 
+constexpr double kSpeedMultiplier = 0.7;
+
 }  // namespace planning

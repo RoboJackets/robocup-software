@@ -19,62 +19,14 @@ namespace control {
 
 DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
 DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_angular_acceleration);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_0, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_0, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_0, translation_windup);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_1, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_1, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_1, translation_windup);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_2, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_2, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_2, translation_windup);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_3, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_3, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_3, translation_windup);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_4, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_4, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_4, translation_windup);
-
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, rotation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_5, rotation_windup);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, translation_kp);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, translation_ki);
-DECLARE_NS_FLOAT64(params::kMotionControlParamModule, robot_5, translation_kd);
-DECLARE_NS_INT64(params::kMotionControlParamModule, robot_5, translation_windup);
+DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
+DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
+DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
+DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
+DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
+DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
+DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
+DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
 
 namespace testing {
 
@@ -153,18 +105,6 @@ private:
 
     rclcpp::TimerBase::SharedPtr vel_timer_;
     bool forward_ = true;
-
-    enum Param {
-        rotation_kP,
-        rotation_kI,
-        rotationkD,
-        rotation_windup,
-        translation_kP,
-        translation_kI,
-        translation_kD
-    };
-
-    static float get_param(int shell_id, Param param);
 };
 
 }  // namespace control
