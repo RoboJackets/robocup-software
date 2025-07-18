@@ -14,10 +14,12 @@ namespace {
 inline double dot(const rj_geometry::Point& a, const rj_geometry::Point& b) {
     return a.x() * b.x() + a.y() * b.y();
 }
-constexpr double kIntermediateClearance = 0.03;  // meters beyond actual robot radius
+
+constexpr double kIntermediateClearance = 0.03;
 
 // Unit dir start→target (returns length; dir_out=(0,0) if degenerate)
-inline double dir_to(const rj_geometry::Point& start, const rj_geometry::Point& target,
+inline double dir_to(const rj_geometry::Point& start,
+                     const rj_geometry::Point& target,
                      rj_geometry::Point* dir_out) {
     rj_geometry::Point d = target - start;
     double m = d.mag();
@@ -30,6 +32,7 @@ inline double dir_to(const rj_geometry::Point& start, const rj_geometry::Point& 
 }
 
 }  // namespace
+
 
 namespace planning::CreatePath {
 
@@ -61,8 +64,8 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     double start_speed = start.velocity.mag();
     double goal_speed = 0.0;
 
-    Trajectory path =
-        profile_velocity(bezier, start_speed, goal_speed, motion_constraints, start_time);
+    Trajectory path = profile_velocity(bezier, start_speed, goal_speed,
+                                    motion_constraints, start_time);
 
     return path;
 }
@@ -123,8 +126,9 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
         // profile (keep actual start speed mag; goal zero)
         double start_speed = start.velocity.mag();
         double goal_speed = 0.0;
-        path =
-            profile_velocity(post_bezier, start_speed, goal_speed, motion_constraints, start_time);
+        path = profile_velocity(post_bezier, start_speed, goal_speed,
+                                motion_constraints, start_time);
+
 
         Circle hit_circle;
         if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle,
@@ -174,6 +178,9 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
         // and test each point on that path as an intermediate point
         for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position);
              t += intermediate::PARAM_step_size) {
+            
+
+
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             auto offset = intermediate - field_dimensions->center_point();
@@ -184,7 +191,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             }
 
             // candidate intermediate point t meters toward final_inter
-            rj_geometry::Point cand = (final_inter - start.position).normalized(t) + start.position;
+            rj_geometry::Point cand =
+                (final_inter - start.position).normalized(t) + start.position;
 
             // reject if behind start relative to goal
             if (dot(cand - start.position, goal.position - start.position) <= 0) {
@@ -230,6 +238,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                                                         (final_inter - start.position).mag()};
                 return trajectory;
             }
+
         }
     }
 

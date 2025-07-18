@@ -9,7 +9,7 @@ using rj_geometry::Point;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-constexpr int kInterpolationsPerBezier = 80;
+constexpr int kInterpolationsPerBezier = 40;
 
 double limit_acceleration(double velocity_initial, double velocity_final, double displacement,
                           double max_accel) {
@@ -36,7 +36,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     std::vector<Point> points(num_points);
     std::vector<Point> derivs1(num_points);
     std::vector<double> curvature(num_points);
-    std::vector<double> speed(num_points, constraints.max_speed * 2);
+    std::vector<double> speed(num_points, constraints.max_speed);
 
     // Note: these are just suggestions. If they are impossible given
     // MotionConstraints, then we'll limit them.
@@ -46,7 +46,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
     // Disable curvature limiting. Our Bezier implementation has some
     // issues when the initial or final velocity is small: it places
     // two keypoints directly on top of one another, which makes very large
-    // curvature mathematicallynear the endpoints.
+    // curvature near the endpoints.
     // TODO(#1539): Switch to Hermite splines and minimize
     //  sum-squared-acceleration instead of solving for Bezier curves.
     double max_centripetal_acceleration = constraints.max_acceleration;

@@ -59,12 +59,6 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
             plan_hypothetical_robot_path(request, response);
         });
-
-    motion_setpoint_sub_ = node->create_subscription<rj_msgs::msg::MotionSetpoint>(
-        control::topics::motion_setpoint_topic(robot_id), rclcpp::QoS(1),
-        [this](rj_msgs::msg::MotionSetpoint::SharedPtr msg) {
-            last_motion_setpoint_ = rj_convert::convert_from_ros(*msg);
-        });
 }
 
 void PlannerForRobot::execute_intent(const RobotIntent& intent) {
@@ -193,33 +187,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // publish new necessary information
 
     const auto& robot = world_state->our_robots.at(robot_id_);
-    /**
-     * sid at comp 2025
-     *
-     * we see a lot of "jerk" in the setpoints we are giving the robot. there are sudden drops
-     * at a fixed period, which we think correlates with (full) replanning. instead of starting new
-     * plans with simply what vision sees as the current speed, we want to take into account the
-     * previously sent setpoint. this is because during the time it takes for us to replan and
-     * radio, the robot is trying to get closer to the setpoint, so the sudden drop, which is
-     * intended to actually create a smooth curve of velocities,  actually causes the robot to slow
-     * down suddenly. this is all an informed guess though. this behavior doesn't happen in sim. if
-     * this theory is even right, the sim difference is explained simply: sim robots can accelerate
-     * perfectly, whereas real firmware and hardware are slower. also radio/vision latency causes
-     * there to be a larger difference in what we saw in vision when we started planning and what
-     * speed the robot made it to when it gets the new plan.
-     *
-     */
-
-    // as a test, i'm averageing the two.
-    rj_geometry::Twist startVel = robot.velocity;
-    // startVel.linear().x() = (startVel.linear().x() + last_motion_setpoint_.xvelocity) / 2;
-    // startVel.linear().y() = (startVel.linear().y() + last_motion_setpoint_.yvelocity) / 2;
-    // startVel.angular() = (startVel.angular() + last_motion_setpoint_.avelocity) / 2;
-    // startVel.linear().x() = last_motion_setpoint_.xvelocity;
-    // startVel.linear().y() = last_motion_setpoint_.yvelocity;
-    // startVel.angular() = last_motion_setpoint_.avelocity;
-
-    const auto start = RobotInstant{robot.pose, startVel, robot.timestamp};
+    const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
     const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;

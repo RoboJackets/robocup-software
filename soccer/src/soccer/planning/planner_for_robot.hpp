@@ -8,7 +8,6 @@
 
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
-#include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 
@@ -148,14 +147,11 @@ private:
 
     bool had_break_beam_ = false;
 
-    MotionSetpoint last_motion_setpoint_;
-
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_topic_;
     rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
     rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
-    rclcpp::Subscription<rj_msgs::msg::MotionSetpoint>::SharedPtr motion_setpoint_sub_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };
