@@ -30,7 +30,7 @@ public:
 
 private:
     // point goalie will aim for when clearing balls
-    const rj_geometry::Point clear_point_{0.0, 4.5};
+    const rj_geometry::Point clear_point_{-3.0, 4};
 
     // temp
     int send_idle_ct_ = 0;
