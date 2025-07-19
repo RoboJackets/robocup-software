@@ -45,6 +45,9 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case DEFAULT: {
+            if (robot_id_ == 0 || robot_id_ == 5) {
+                return DEFAULT; // short circuit disabled bots salvador
+            }
             return JOINING_WALL;
         }
         case JOINING_WALL: {

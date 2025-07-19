@@ -189,7 +189,7 @@ void RobotFactoryPosition::update_position() {
             if (current_play_state_.is_their_restart()) {  // Their restart
                 if (current_play_state_.is_kickoff()) {
                     if (robot_id_ == 3) {
-                        set_current_position<Idle>();
+                        set_current_position<SmartIdle>();
                     } else {
                         set_current_position<Defense>();
                     }
@@ -203,7 +203,7 @@ void RobotFactoryPosition::update_position() {
                     // don't want a player on offense to try to kick the
                     // ball instead of free kicker
                     if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr) {
-                        set_current_position<Idle>();
+                        set_current_position<SmartIdle>();
                     }
                 }
             }
