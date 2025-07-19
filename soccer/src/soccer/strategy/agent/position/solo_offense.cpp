@@ -39,7 +39,7 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case TO_BALL: {
             if (check_is_done()) {
-                shot_target_ = calculate_best_shot();
+                shot_target_ = field_dimensions_.their_goal_loc();
                 return KICK;  // TODO: should we check if the ball is in front of us?
             }
         }
@@ -79,14 +79,15 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case KICK: {
+            SPDLOG_INFO("kick");
             auto line_kick_cmd = planning::MotionCommand{
-                "line_kick", planning::LinearMotionInstant{shot_target_}, planning::FaceBall{}};
+                "line_kick", planning::LinearMotionInstant{shot_target_}};
 
             intent.motion_command = line_kick_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            intent.dribbler_mode = RobotIntent::DribblerMode::OFF;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 3.0;
+            intent.kick_speed = 2.7;
             intent.is_active = true;
 
             return intent;

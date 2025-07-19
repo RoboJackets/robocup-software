@@ -4,6 +4,7 @@
 
 #include "control/trapezoidal_motion.hpp"
 #include "escape_obstacles_path_planner.hpp"
+#include "planning/planner/motion_command.hpp"
 #include "planning/primitives/create_path.hpp"
 #include "planning/trajectory_utils.hpp"
 
@@ -68,7 +69,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     LinearMotionInstant target{ball_position - offset_from_ball};
 
     MotionCommand modified_command{"path_target", target,
-                                   FacePoint{plan_request.motion_command.target.position}};
+                                   FaceBall{}};
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);
@@ -83,6 +84,10 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 
     // Create an updated MotionCommand and forward to PathTargetPathPlaner
     PlanRequest modified_request = plan_request;
+
+    if (plan_request.motion_command.pivot_radius == 6.9) {
+        vel *= 3;
+    }
 
     LinearMotionInstant target{ball.position, vel};
 

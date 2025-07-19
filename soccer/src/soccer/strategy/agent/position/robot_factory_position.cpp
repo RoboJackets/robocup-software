@@ -127,18 +127,24 @@ void RobotFactoryPosition::handle_ready() {
     if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
         !kicker_picker_.am_i_member()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
-        kicker_picker_.join_group([this](KickerPickerClient::Result result) {
-            if (result.am_i_member && result.kicker_id == robot_id_) {
-                set_current_position<FreeKicker>();
-            } else {
-                set_default_position();
+        // kicker_picker_.join_group([this](KickerPickerClient::Result result) {
+        //     if (result.am_i_member && result.kicker_id == robot_id_) {
+        //         set_current_position<FreeKicker>();
+        //     } else {
+        //         set_default_position();
 
-                if (dynamic_cast<SoloOffense*>(current_position_.get()) !=
-                    nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken FSM
-                    set_current_position<SmartIdle>();
-                }
-            }
-        });
+        //         if (dynamic_cast<SoloOffense*>(current_position_.get()) !=
+        //             nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken FSM
+        //             set_current_position<SmartIdle>();
+        //         }
+        //     }
+        // });
+
+        if (robot_id_== 3) {
+            set_current_position<FreeKicker>();
+        } else {
+            set_current_position<Defense>();
+        }
 
     } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
         if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr ||
@@ -202,7 +208,7 @@ void RobotFactoryPosition::set_default_position() {
 
     if (robot_id_ == goalie_id_) {
         return;}
-    if (robot_id_ == 1) {
+    if (robot_id_ == 3) {
         set_current_position<SoloOffense>();
     } else {
         set_current_position<Defense>();
