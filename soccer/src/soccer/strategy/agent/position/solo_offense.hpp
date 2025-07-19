@@ -71,7 +71,7 @@ private:
     rj_geometry::Point get_ball_pos() const;
 
     rj_geometry::Point shot_target_;
-    static constexpr double kBackOffset = 2 * kRobotRadius;
+    static constexpr double kBackOffset = 3.5 * kRobotRadius;
 };
 
 }  // namespace strategy

@@ -77,7 +77,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         return intent;
     } else if (latest_state_ == CLEARING) {
         planning::LinearMotionInstant target{clear_point_};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        auto line_kick_cmd = planning::MotionCommand{"line_kick", target, {}, {}, {}, 6.9};
         intent.motion_command = line_kick_cmd;
 
         // note: the way this is set up makes it impossible to
@@ -86,7 +86,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = 3.0;
-        intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+        intent.dribbler_mode = RobotIntent::DribblerMode::OFF;
         intent.is_active = true;
 
         return intent;

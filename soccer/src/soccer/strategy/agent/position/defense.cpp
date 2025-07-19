@@ -1,4 +1,5 @@
 #include "defense.hpp"
+#include <spdlog/spdlog.h>
 
 namespace strategy {
 
@@ -18,10 +19,6 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     next_state_ = update_state();
     if (next_state_ != current_state_) {
         SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
-        SPDLOG_INFO("My walling_robots_ are:");
-        for (u_int8_t robo : walling_robots_) {
-            SPDLOG_INFO("{}", robo);
-        }
     }
     current_state_ = next_state_;
     return state_to_task(intent);
