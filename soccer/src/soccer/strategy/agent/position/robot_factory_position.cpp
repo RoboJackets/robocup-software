@@ -101,7 +101,7 @@ void RobotFactoryPosition::handle_setup() {
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !kicker_picker_.am_i_member()) {
-            kicker_picker_.join_group([this](KickerPickerClient::Result result) {
+            /**kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();
@@ -113,7 +113,21 @@ void RobotFactoryPosition::handle_setup() {
                 } else if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 }
-            });
+            });*/
+            //penalty
+            if (current_play_state_.is_penalty()) {
+                if(robot_id_== 3) {
+                    set_current_position<PenaltyPlayer>();
+                } else {
+                    set_current_position<PenaltyNonKicker>();
+                }
+            } else if (current_play_state_.is_kickoff()) {
+                if (robot_id_== 3) {
+                    set_current_position<FreeKicker>();
+                } else {
+                    set_current_position<Defense>();
+                }
+            }
         } else {
             SPDLOG_WARN("Invalid restart setup!");
         }
