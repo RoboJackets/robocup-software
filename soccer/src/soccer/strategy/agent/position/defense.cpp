@@ -5,7 +5,8 @@ namespace strategy {
 Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
 Defense::~Defense() {
-    die();
+    SPDLOG_INFO("I ({}) am dying. waller_id_={}", robot_id_, waller_id_);
+    send_leave_wall_request();
 }
 
 Defense::Defense(const Position& other) : Position{other} {
@@ -14,8 +15,15 @@ Defense::Defense(const Position& other) : Position{other} {
 }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
-    current_state_ = update_state();
-    //waller_id_ = get_waller_id();
+    next_state_ = update_state();
+    if (next_state_ != current_state_) {
+        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+        SPDLOG_INFO("My walling_robots_ are:");
+        for (u_int8_t robo : walling_robots_) {
+            SPDLOG_INFO("{}", robo);
+        }
+    }
+    current_state_ = next_state_;
     return state_to_task(intent);
 }
 
@@ -24,14 +32,17 @@ std::string Defense::get_current_state() {
 }
 
 Defense::State Defense::update_state() {
-    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-    rj_geometry::Point ball_position = last_world_state_->ball.position;
-    double distance_to_ball = robot_position.dist_to(ball_position);
-
-    if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
+    // If the robot is not in the wall, but it has a waller_id_, leave.
+    if ((current_state_ != WALLING && current_state_ != JOINING_WALL) && (waller_id_ != -1)) {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
+        return DEFAULT;
+    }
+
+    // If the robot is in the wall, but it has NO waller_id_, reset the state machine.
+    if ((current_state_ == WALLING) && (waller_id_ == -1)) {
+        walling_robots_ = {(u_int8_t)robot_id_};
         return DEFAULT;
     }
 
@@ -40,18 +51,14 @@ Defense::State Defense::update_state() {
             return JOINING_WALL;
         }
         case JOINING_WALL: {
-            send_join_wall_request(); // sets waller_id_
-            SPDLOG_INFO("{} joining wall at wall pos {}", robot_id_, waller_id_);
-            next_state = WALLING;
+            send_join_wall_request(); // sets waller_id_ AND transitions to walling
             walling_robots_ = {(u_int8_t)robot_id_};
-            break;
+            return WALLING; // spurious return
         }
         case WALLING: {
-            break;
+            return WALLING;
         }
     }
-
-    return next_state;
 }
 
 std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
@@ -129,6 +136,7 @@ void Defense::send_join_wall_request() {
     communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
+    SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
 }
 
 void Defense::send_leave_wall_request() {
@@ -170,7 +178,7 @@ communication::JoinWallResponse Defense::handle_join_wall_request(
 communication::Acknowledge Defense::handle_leave_wall_request(
     communication::LeaveWallRequest leave_request) {
     if (robot_id_ != leave_request.robot_id) {
-        for (int i = walling_robots_.size() - 1; i > 0; i--) {
+        for (int i = walling_robots_.size() - 1; i >= 0; i--) {
             if (walling_robots_[i] == leave_request.robot_id) {
                 walling_robots_.erase(walling_robots_.begin() + i);
                 waller_id_ = get_waller_id();
@@ -214,7 +222,7 @@ int Defense::get_waller_id() {
 }
 
 void Defense::die() {
-    if (current_state_ == WALLING) {
+    if (waller_id_ != -1) {
         send_leave_wall_request();
     }
 }

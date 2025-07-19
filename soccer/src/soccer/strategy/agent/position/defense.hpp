@@ -65,9 +65,21 @@ private:
         WALLING,           // participating in the wall
     };
 
+    // For debugging
+    static constexpr std::string_view state_to_name(State s) {
+        switch (s) {
+            case DEFAULT:
+                return "DEFAULT";
+            case JOINING_WALL:
+                return "JOINING_WALL";
+            case WALLING:
+                return "WALLING";
+        }
+    }
+
     State update_state();
     State current_state_ = DEFAULT;
-    State next_state;
+    State next_state_;
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
