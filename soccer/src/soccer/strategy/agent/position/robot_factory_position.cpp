@@ -99,9 +99,8 @@ void RobotFactoryPosition::handle_setup() {
     if (current_play_state_.is_our_restart()) {
         // Set up our restart
 
-        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
-            !kicker_picker_.am_i_member()) {
-            kicker_picker_.join_group([this](KickerPickerClient::Result result) {
+        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty())) {
+            /**kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();
@@ -113,7 +112,21 @@ void RobotFactoryPosition::handle_setup() {
                 } else if (current_play_state_.is_kickoff()) {
                     set_current_position<Defense>();
                 }
-            });
+            });*/
+            //penalty
+            if (current_play_state_.is_penalty()) {
+                if(robot_id_== 3) {
+                    set_current_position<PenaltyPlayer>();
+                } else {
+                    set_current_position<PenaltyNonKicker>();
+                }
+            } else if (current_play_state_.is_kickoff()) {
+                if (robot_id_== 3) {
+                    set_current_position<FreeKicker>();
+                } else {
+                    set_current_position<Defense>();
+                }
+            }
         } else {
             SPDLOG_WARN("Invalid restart setup!");
         }
@@ -124,8 +137,7 @@ void RobotFactoryPosition::handle_ready() {
     // Ready stage for a restart
     // Time to kick
 
-    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
-        !kicker_picker_.am_i_member()) {
+    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
         // kicker_picker_.join_group([this](KickerPickerClient::Result result) {
         //     if (result.am_i_member && result.kicker_id == robot_id_) {
@@ -150,7 +162,7 @@ void RobotFactoryPosition::handle_ready() {
         if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr ||
             dynamic_cast<PenaltyPlayer*>(current_position_.get()) != nullptr ||
             dynamic_cast<FreeKicker*>(current_position_.get()) != nullptr) {
-            set_current_position<SmartIdle>();  // TODO(sanat): why would we do nothing? we should
+            set_current_position<Idle>();  // TODO(sanat): why would we do nothing? we should
                                                 // play defense, esp. marking.
         }
     }
@@ -176,7 +188,12 @@ void RobotFactoryPosition::update_position() {
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_their_restart()) {  // Their restart
                 if (current_play_state_.is_kickoff()) {
-                    set_current_position<Defense>();
+                    if (robot_id_ == 3) {
+                        set_current_position<Idle>();
+                    } else {
+                        set_current_position<Defense>();
+                    }
+                    
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();
                     set_current_position<PenaltyNonKicker>();
@@ -186,7 +203,7 @@ void RobotFactoryPosition::update_position() {
                     // don't want a player on offense to try to kick the
                     // ball instead of free kicker
                     if (dynamic_cast<SoloOffense*>(current_position_.get()) != nullptr) {
-                        set_current_position<SmartIdle>();
+                        set_current_position<Idle>();
                     }
                 }
             }
