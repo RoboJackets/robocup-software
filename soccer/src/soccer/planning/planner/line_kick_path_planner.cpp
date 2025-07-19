@@ -52,12 +52,18 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
 Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     // Getting ball info
     const BallState& ball = plan_request.world_state->ball;
-
-    // Distance to stay away from the ball
-    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
-
     // In case the ball is (slowly) moving
     auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn}).position;
+    // Normal kick distance from the ball
+    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 8;
+
+    if (ball_position.x() < -4.25 || ball_position.x() > 4.25 || ball_position.y() < 0.25 || ball_position.y() > 11.75) {
+        // If the ball is too close to the edge of the field, we must reduce the distance to kick.
+        distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
+    } 
+
+
+    
 
     // Along the vector from the goal to ball
     auto goal_to_ball = (plan_request.motion_command.target.position - ball_position);
