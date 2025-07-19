@@ -1,13 +1,12 @@
 #include "defense.hpp"
+
 #include <spdlog/spdlog.h>
 
 namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
-Defense::~Defense() {
-    die();
-}
+Defense::~Defense() { die(); }
 
 Defense::Defense(const Position& other) : Position{other} {
     position_name_ = "Defense";
@@ -21,7 +20,7 @@ std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     }
     current_state_ = next_state;
 
-    //waller_id_ = get_waller_id();
+    // waller_id_ = get_waller_id();
     return state_to_task(intent);
 }
 
@@ -30,7 +29,8 @@ std::string Defense::get_current_state() {
 }
 
 Defense::State Defense::update_state() {
-    rj_geometry::Point robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = last_world_state_->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
@@ -46,7 +46,7 @@ Defense::State Defense::update_state() {
             return JOINING_WALL;
         }
         case JOINING_WALL: {
-            send_join_wall_request(); // sets waller_id_
+            send_join_wall_request();  // sets waller_id_
             SPDLOG_INFO("{} joining wall at wall pos {}", robot_id_, waller_id_);
             next_state = WALLING;
             walling_robots_ = {(u_int8_t)robot_id_};
@@ -71,7 +71,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             // return waller.get_task(intent, last_world_state_, this->field_dimensions_);
-            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pos_);
+            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_,
+                                             cached_ball_pos_);
         }
     }
 

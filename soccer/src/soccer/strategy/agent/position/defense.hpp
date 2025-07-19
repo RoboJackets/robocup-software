@@ -60,9 +60,9 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
-        DEFAULT,            // simply staying in place
-        JOINING_WALL,      // send message to find its place in the wall
-        WALLING,           // participating in the wall
+        DEFAULT,       // simply staying in place
+        JOINING_WALL,  // send message to find its place in the wall
+        WALLING,       // participating in the wall
     };
 
     State update_state();

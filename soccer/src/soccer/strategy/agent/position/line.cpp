@@ -1,4 +1,5 @@
 #include "line.hpp"
+
 #include "planning/instant.hpp"
 #include "planning/planner/motion_command.hpp"
 
@@ -45,7 +46,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
         }
     } else {
         auto motion_command = planning::MotionCommand{
-            "rotate",planning::LinearMotionInstant{{0.0, 0.0}, {0.0, 0.0}}};
+            "rotate", planning::LinearMotionInstant{{0.0, 0.0}, {0.0, 0.0}}};
 
         intent.motion_command = motion_command;
     }

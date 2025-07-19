@@ -134,13 +134,13 @@ void RobotFactoryPosition::handle_ready() {
         //         set_default_position();
 
         //         if (dynamic_cast<SoloOffense*>(current_position_.get()) !=
-        //             nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken FSM
-        //             set_current_position<SmartIdle>();
+        //             nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken
+        //             FSM set_current_position<SmartIdle>();
         //         }
         //     }
         // });
 
-        if (robot_id_== 3) {
+        if (robot_id_ == 3) {
             set_current_position<FreeKicker>();
         } else {
             set_current_position<Defense>();
@@ -207,7 +207,8 @@ void RobotFactoryPosition::set_default_position() {
     // salvador hotfix
 
     if (robot_id_ == goalie_id_) {
-        return;}
+        return;
+    }
     if (robot_id_ == 3) {
         set_current_position<SoloOffense>();
     } else {
@@ -266,8 +267,8 @@ void RobotFactoryPosition::set_default_position() {
         } else {
             set_current_position<SoloOffense>();
         }
-    }}
-
+    }
+}
 
 std::deque<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {
