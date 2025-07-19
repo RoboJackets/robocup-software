@@ -99,8 +99,7 @@ void RobotFactoryPosition::handle_setup() {
     if (current_play_state_.is_our_restart()) {
         // Set up our restart
 
-        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
-            !kicker_picker_.am_i_member()) {
+        if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty())) {
             /**kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
@@ -138,8 +137,7 @@ void RobotFactoryPosition::handle_ready() {
     // Ready stage for a restart
     // Time to kick
 
-    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
-        !kicker_picker_.am_i_member()) {
+    if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
         // kicker_picker_.join_group([this](KickerPickerClient::Result result) {
         //     if (result.am_i_member && result.kicker_id == robot_id_) {
