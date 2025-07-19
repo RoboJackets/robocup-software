@@ -65,9 +65,13 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     cached_ball_pos_ = get_ball_pos();
 
     if (current_state_ == DEFAULT) {
-        return std::nullopt;
+            planning::MotionCommand afk{};
+            intent.motion_command = afk;
+            return intent;
     } else if (current_state_ == JOINING_WALL) {
-        return std::nullopt;
+            planning::MotionCommand afk{};
+            intent.motion_command = afk;
+            return intent;
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
