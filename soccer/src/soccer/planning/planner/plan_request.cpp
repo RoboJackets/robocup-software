@@ -33,8 +33,7 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
         auto their_robot_obs = make_robot_obstacle(their_robot);
         if (their_robot.visible) {
-            out_static->add(
-                std::make_shared<rj_geometry::Circle>(their_robot_obs));
+            out_static->add(std::make_shared<rj_geometry::Circle>(their_robot_obs));
         }
         if (in.debug_drawer != nullptr) {
             QColor draw_color = Qt::red;

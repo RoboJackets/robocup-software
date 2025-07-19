@@ -57,13 +57,11 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     // Normal kick distance from the ball
     auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 1.5;
 
-    if (ball_position.x() < -2.7 || ball_position.x() > 2.7 || ball_position.y() < 0.3 || ball_position.y() > 8.7) {
+    if (ball_position.x() < -2.7 || ball_position.x() > 2.7 || ball_position.y() < 0.3 ||
+        ball_position.y() > 8.7) {
         // If the ball is too close to the edge of the field, we must reduce the distance to kick.
         distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
-    } 
-
-
-    
+    }
 
     // Along the vector from the goal to ball
     auto goal_to_ball = (plan_request.motion_command.target.position - ball_position);
@@ -74,8 +72,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
 
     LinearMotionInstant target{ball_position - offset_from_ball};
 
-    MotionCommand modified_command{"path_target", target,
-                                   FaceBall{}};
+    MotionCommand modified_command{"path_target", target, FaceBall{}};
     modified_request.motion_command = modified_command;
 
     return path_target_.plan(modified_request);

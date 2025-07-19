@@ -1,4 +1,5 @@
 #include "defense.hpp"
+
 #include <spdlog/spdlog.h>
 
 namespace strategy {
@@ -18,7 +19,8 @@ Defense::Defense(const Position& other) : Position{other} {
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     next_state_ = update_state();
     if (next_state_ != current_state_) {
-        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_,
+                    state_to_name(next_state_), waller_id_);
     }
     current_state_ = next_state_;
     return state_to_task(intent);
@@ -46,14 +48,14 @@ Defense::State Defense::update_state() {
     switch (current_state_) {
         case DEFAULT: {
             if (robot_id_ == 0 || robot_id_ == 5) {
-                return DEFAULT; // short circuit disabled bots salvador
+                return DEFAULT;  // short circuit disabled bots salvador
             }
             return JOINING_WALL;
         }
         case JOINING_WALL: {
-            send_join_wall_request(); // sets waller_id_ AND transitions to walling
+            send_join_wall_request();  // sets waller_id_ AND transitions to walling
             walling_robots_ = {(u_int8_t)robot_id_};
-            return WALLING; // spurious return
+            return WALLING;  // spurious return
         }
         case WALLING: {
             return WALLING;
@@ -65,18 +67,19 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
     cached_ball_pos_ = get_ball_pos();
 
     if (current_state_ == DEFAULT) {
-            planning::MotionCommand afk{};
-            intent.motion_command = afk;
-            return intent;
+        planning::MotionCommand afk{};
+        intent.motion_command = afk;
+        return intent;
     } else if (current_state_ == JOINING_WALL) {
-            planning::MotionCommand afk{};
-            intent.motion_command = afk;
-            return intent;
+        planning::MotionCommand afk{};
+        intent.motion_command = afk;
+        return intent;
     } else if (current_state_ == WALLING) {
         if (!walling_robots_.empty() && waller_id_ != -1) {
             Waller waller{waller_id_, walling_robots_};
             // return waller.get_task(intent, last_world_state_, this->field_dimensions_);
-            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_, cached_ball_pos_);
+            return waller.get_task_with_ball(intent, last_world_state_, this->field_dimensions_,
+                                             cached_ball_pos_);
         }
     }
 
@@ -140,7 +143,8 @@ void Defense::send_join_wall_request() {
     communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
-    SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+    SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_,
+                state_to_name(next_state_), waller_id_);
 }
 
 void Defense::send_leave_wall_request() {

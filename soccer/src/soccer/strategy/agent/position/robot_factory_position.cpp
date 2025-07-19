@@ -113,15 +113,15 @@ void RobotFactoryPosition::handle_setup() {
                     set_current_position<Defense>();
                 }
             });*/
-            //penalty
+            // penalty
             if (current_play_state_.is_penalty()) {
-                if(robot_id_== 3) {
+                if (robot_id_ == 3) {
                     set_current_position<PenaltyPlayer>();
                 } else {
                     set_current_position<PenaltyNonKicker>();
                 }
             } else if (current_play_state_.is_kickoff()) {
-                if (robot_id_== 3) {
+                if (robot_id_ == 3) {
                     set_current_position<FreeKicker>();
                 } else {
                     set_current_position<Defense>();
@@ -146,13 +146,13 @@ void RobotFactoryPosition::handle_ready() {
         //         set_default_position();
 
         //         if (dynamic_cast<SoloOffense*>(current_position_.get()) !=
-        //             nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken FSM
-        //             set_current_position<SmartIdle>();
+        //             nullptr) {  // TODO(sanat): why is this check necessary. smells of a broken
+        //             FSM set_current_position<SmartIdle>();
         //         }
         //     }
         // });
 
-        if (robot_id_== 3) {
+        if (robot_id_ == 3) {
             set_current_position<FreeKicker>();
         } else {
             set_current_position<Defense>();
@@ -163,7 +163,7 @@ void RobotFactoryPosition::handle_ready() {
             dynamic_cast<PenaltyPlayer*>(current_position_.get()) != nullptr ||
             dynamic_cast<FreeKicker*>(current_position_.get()) != nullptr) {
             set_current_position<Idle>();  // TODO(sanat): why would we do nothing? we should
-                                                // play defense, esp. marking.
+                                           // play defense, esp. marking.
         }
     }
 }
@@ -193,7 +193,7 @@ void RobotFactoryPosition::update_position() {
                     } else {
                         set_current_position<Defense>();
                     }
-                    
+
                 } else if (current_play_state_.is_penalty()) {
                     // set_current_position<SmartIdle>();
                     set_current_position<PenaltyNonKicker>();
@@ -224,7 +224,8 @@ void RobotFactoryPosition::set_default_position() {
     // salvador hotfix
 
     if (robot_id_ == goalie_id_) {
-        return;}
+        return;
+    }
     if (robot_id_ == 3) {
         set_current_position<SoloOffense>();
     } else {
@@ -283,8 +284,8 @@ void RobotFactoryPosition::set_default_position() {
         } else {
             set_current_position<SoloOffense>();
         }
-    }}
-
+    }
+}
 
 std::deque<communication::PosAgentRequestWrapper>
 RobotFactoryPosition::send_communication_request() {

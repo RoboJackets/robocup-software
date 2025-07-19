@@ -40,7 +40,6 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
              "Windup limit for translation (unknown units)");
 
-
 struct {
     double rotation_kd;
     double rotation_ki;
@@ -51,66 +50,9 @@ struct {
     double translation_kp;
     int64_t translation_windup;
 } robot_params[6] = {
-{
-     0.1,
-     0.002,
-     7.5,
-     0,
-     0.05,
-     0.015,
-     1.25,
-     0
-},
-{
-     0.04,
-     0.01,
-     12,
-     1,
-     0.00,
-     0.017,
-     1.2,
-     5
-},
-{
-     0.025,
-     0.01,
-     12,
-     1,
-     0.1,
-     0.017,
-     1.7,
-     5
-},
-{
-     0.4,
-     0.01,
-     12,
-     1,
-     0.1,
-     0.017,
-     1.7,
-     5
-},
-{
-     0.15,
-     0.05,
-     15,
-     2,
-     0.1,
-     0.017,
-     1.7,
-     5
-},
-{
-     0.1,
-     0.002,
-     7.5,
-     0,
-     0.05,
-     0.015,
-     1.25,
-     0
-},
+    {0.1, 0.002, 7.5, 0, 0.05, 0.015, 1.25, 0}, {0.04, 0.01, 12, 1, 0.00, 0.017, 1.2, 5},
+    {0.025, 0.01, 12, 1, 0.1, 0.017, 1.7, 5},   {0.4, 0.01, 12, 1, 0.1, 0.017, 1.7, 5},
+    {0.15, 0.05, 15, 2, 0.1, 0.017, 1.7, 5},    {0.1, 0.002, 7.5, 0, 0.05, 0.015, 1.25, 0},
 };
 
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
@@ -303,7 +245,6 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
 }
 
 void MotionControl::update_params() {
-
     if (shell_id_ < 6) {
         position_x_controller_.kp = static_cast<float>(robot_params[shell_id_].translation_kp);
         position_x_controller_.ki = static_cast<float>(robot_params[shell_id_].translation_ki);
@@ -320,22 +261,21 @@ void MotionControl::update_params() {
         angle_controller_.kd = static_cast<float>(robot_params[shell_id_].rotation_kd);
         angle_controller_.setWindup(robot_params[shell_id_].rotation_windup);
     } else {
+        // Update PID parameters
+        position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
+        position_x_controller_.ki = static_cast<float>(PARAM_translation_ki);
+        position_x_controller_.kd = static_cast<float>(PARAM_translation_kd);
+        position_x_controller_.setWindup(PARAM_translation_windup);
 
-    // Update PID parameters
-    position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_x_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_x_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_x_controller_.setWindup(PARAM_translation_windup);
+        position_y_controller_.kp = static_cast<float>(PARAM_translation_kp);
+        position_y_controller_.ki = static_cast<float>(PARAM_translation_ki);
+        position_y_controller_.kd = static_cast<float>(PARAM_translation_kd);
+        position_y_controller_.setWindup(PARAM_translation_windup);
 
-    position_y_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_y_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_y_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_y_controller_.setWindup(PARAM_translation_windup);
-
-    angle_controller_.kp = static_cast<float>(PARAM_rotation_kp);
-    angle_controller_.ki = static_cast<float>(PARAM_rotation_ki);
-    angle_controller_.kd = static_cast<float>(PARAM_rotation_kd);
-    angle_controller_.setWindup(PARAM_rotation_windup);
+        angle_controller_.kp = static_cast<float>(PARAM_rotation_kp);
+        angle_controller_.ki = static_cast<float>(PARAM_rotation_ki);
+        angle_controller_.kd = static_cast<float>(PARAM_rotation_kd);
+        angle_controller_.setWindup(PARAM_rotation_windup);
     }
 }
 

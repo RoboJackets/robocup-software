@@ -75,8 +75,8 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case KICK: {
-            auto line_kick_cmd = planning::MotionCommand{
-                "line_kick", planning::LinearMotionInstant{shot_target_}};
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::OFF;
