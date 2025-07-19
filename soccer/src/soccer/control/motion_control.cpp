@@ -319,7 +319,7 @@ void MotionControl::update_params() {
         angle_controller_.ki = static_cast<float>(robot_params[shell_id_].rotation_ki);
         angle_controller_.kd = static_cast<float>(robot_params[shell_id_].rotation_kd);
         angle_controller_.setWindup(robot_params[shell_id_].rotation_windup);
-    }
+    } else {
 
     // Update PID parameters
     position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
@@ -336,6 +336,7 @@ void MotionControl::update_params() {
     angle_controller_.ki = static_cast<float>(PARAM_rotation_ki);
     angle_controller_.kd = static_cast<float>(PARAM_rotation_kd);
     angle_controller_.setWindup(PARAM_rotation_windup);
+    }
 }
 
 void MotionControl::reset() {
