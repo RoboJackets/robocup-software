@@ -18,7 +18,8 @@ Defense::Defense(const Position& other) : Position{other} {
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     next_state_ = update_state();
     if (next_state_ != current_state_) {
-        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_,
+                    state_to_name(next_state_), waller_id_);
     }
     current_state_ = next_state_;
     return state_to_task(intent);
@@ -48,9 +49,9 @@ Defense::State Defense::update_state() {
             return JOINING_WALL;
         }
         case JOINING_WALL: {
-            send_join_wall_request(); // sets waller_id_ AND transitions to walling
+            send_join_wall_request();  // sets waller_id_ AND transitions to walling
             walling_robots_ = {(u_int8_t)robot_id_};
-            return WALLING; // spurious return
+            return WALLING;  // spurious return
         }
         case WALLING: {
             return WALLING;
@@ -133,7 +134,8 @@ void Defense::send_join_wall_request() {
     communication_requests_.push_back(communication_request);
 
     current_state_ = WALLING;
-    SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+    SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_,
+                state_to_name(next_state_), waller_id_);
 }
 
 void Defense::send_leave_wall_request() {
