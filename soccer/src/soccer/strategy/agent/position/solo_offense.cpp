@@ -13,7 +13,7 @@ std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     State new_state = next_state();
     if (new_state != current_state_) {
         reset_timeout();
-        SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
+        SPDLOG_INFO("SoloOffense ID {} is now {}", robot_id_, state_to_name(new_state));
     }
     current_state_ = new_state;
 
@@ -45,7 +45,7 @@ SoloOffense::State SoloOffense::next_state() {
         }
         case KICK: {
             if (check_is_done() || timed_out()) {
-                return TO_BALL;
+                return DEFAULT;
             }
         }
     }
@@ -55,13 +55,9 @@ SoloOffense::State SoloOffense::next_state() {
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case DEFAULT: {
-            auto pivot_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{rj_geometry::Point{0, 2.5}},
-                planning::FaceBall{}, false};
-
-            intent.motion_command = pivot_cmd;
-
-            return std::nullopt;
+            planning::MotionCommand afk{};
+            intent.motion_command = afk;
+            return intent;
         }
         case TO_BALL: {
             rj_geometry::Point ball_pos = get_ball_pos();
@@ -79,7 +75,6 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case KICK: {
-            SPDLOG_INFO("kick");
             auto line_kick_cmd = planning::MotionCommand{
                 "line_kick", planning::LinearMotionInstant{shot_target_}};
 

@@ -41,6 +41,17 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     enum State { DEFAULT, TO_BALL, KICK };
+    // For debugging
+    static constexpr std::string_view state_to_name(State s) {
+        switch (s) {
+            case DEFAULT:
+                return "DEFAULT";
+            case TO_BALL:
+                return "TO_BALL";
+            case KICK:
+                return "KICK";
+        }
+    }
     State current_state_ = DEFAULT;
     /**
      * @return what the state should be right now. called on each get_task tick
@@ -71,7 +82,7 @@ private:
     rj_geometry::Point get_ball_pos() const;
 
     rj_geometry::Point shot_target_;
-    static constexpr double kBackOffset = 3.5 * kRobotRadius;
+    static constexpr double kBackOffset = 4 * kRobotRadius;
 };
 
 }  // namespace strategy
