@@ -57,7 +57,7 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     // Normal kick distance from the ball
     auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 8;
 
-    if (ball_position.x() < -4.25 || ball_position.x() > 4.25 || ball_position.y() < 0.25 || ball_position.y() > 11.75) {
+    if (ball_position.x() < -2.7 || ball_position.x() > 2.7 || ball_position.y() < 0.3 || ball_position.y() > 8.7) {
         // If the ball is too close to the edge of the field, we must reduce the distance to kick.
         distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
     } 
