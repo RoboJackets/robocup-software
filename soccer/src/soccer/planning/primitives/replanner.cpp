@@ -158,7 +158,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         //     return full_replan(params);
         // }
         // return partial_replan(params, previous_trajectory);
-        SPDLOG_INFO("PLAN RESET, OBSTACLE HIT INCOMING");
+        // SPDLOG_INFO("PLAN RESET, OBSTACLE HIT INCOMING");
         return full_replan(params);
     }
 
