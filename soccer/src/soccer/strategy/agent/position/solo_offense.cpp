@@ -1,4 +1,5 @@
 #include "solo_offense.hpp"
+#include "game_state.hpp"
 
 namespace strategy {
 
@@ -29,7 +30,7 @@ SoloOffense::State SoloOffense::next_state() {
     // handle transitions between current state
     cached_ball_pos_ = get_ball_pos();
 
-    if (point_in_red(get_ball_pos())) {
+    if (point_in_red(get_ball_pos()) || current_play_state_.is_stop()) {
         return DEFAULT;
     }
 

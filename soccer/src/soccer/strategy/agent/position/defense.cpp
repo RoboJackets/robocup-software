@@ -6,7 +6,7 @@ namespace strategy {
 Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
 Defense::~Defense() {
-    SPDLOG_INFO("I ({}) am dying. waller_id_={}", robot_id_, waller_id_);
+    // SPDLOG_INFO("I ({}) am dying. waller_id_={}", robot_id_, waller_id_);
     send_leave_wall_request();
 }
 
@@ -18,7 +18,7 @@ Defense::Defense(const Position& other) : Position{other} {
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     next_state_ = update_state();
     if (next_state_ != current_state_) {
-        SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
+        // SPDLOG_INFO("Defender ID {} is now {} with waller_id_={}", robot_id_, state_to_name(next_state_), waller_id_);
     }
     current_state_ = next_state_;
     return state_to_task(intent);
@@ -34,12 +34,6 @@ Defense::State Defense::update_state() {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
         waller_id_ = -1;
-        return DEFAULT;
-    }
-
-    // If the robot is in the wall, but it has NO waller_id_, reset the state machine.
-    if ((current_state_ == WALLING) && (waller_id_ == -1)) {
-        walling_robots_ = {(u_int8_t)robot_id_};
         return DEFAULT;
     }
 

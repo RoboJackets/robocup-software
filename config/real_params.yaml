@@ -68,7 +68,7 @@
     pivot:
       radius_multiplier: 1.0
     replanner:
-      off_path_threshold: 0.1
+      off_path_threshold: 0.5
       partial_replan_lead_time: 0.1
       pos_change_threshold: 0.025
       vel_change_threshold: 0.025

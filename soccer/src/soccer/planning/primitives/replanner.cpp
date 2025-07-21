@@ -123,15 +123,15 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     RJ::Time now = params.start.stamp;
 
-    // if (previous.empty() || veered_off_path(previous, params.start, now) ||
-    //     goal_changed(previous.last().linear_motion(), params.goal)) {
-    //     return full_replan(params);
-    // }
-
-    if (previous.empty() ||
+    if (previous.empty() || veered_off_path(previous, params.start, now) ||
         goal_changed(previous.last().linear_motion(), params.goal)) {
         return full_replan(params);
     }
+
+    // if (previous.empty() ||
+    //     goal_changed(previous.last().linear_motion(), params.goal)) {
+    //     return full_replan(params);
+    // }
 
     // If we get here, we definitely should have a valid previous trajectory
     // and so it should have a valid creation time (or we would have thrown).
@@ -183,15 +183,21 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
 bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
+    std::optional<RobotInstant> prev_instant = trajectory.evaluate(now - RJ::Seconds(0.25));
 
     // If we don't have an instant, assume we're past the end of the path.
     if (!maybe_instant.has_value()) {
         maybe_instant = trajectory.last();
     }
+    if (!prev_instant.has_value()) {
+        prev_instant = trajectory.last();
+    }
     RobotInstant instant = maybe_instant.value();
+    RobotInstant prev = prev_instant.value();
 
     double path_error = (instant.position() - actual.position()).mag();
-    return path_error > replanner::PARAM_off_path_threshold;
+    double prev_error = (prev.position() - actual.position()).mag();
+    return path_error > replanner::PARAM_off_path_threshold && prev_error > replanner::PARAM_off_path_threshold;
 }
 
 bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
