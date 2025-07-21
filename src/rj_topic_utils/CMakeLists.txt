@@ -1,36 +1,52 @@
-# ======================================================================
-# Preamble
-# ======================================================================
-cmake_minimum_required(VERSION 3.16)
-project(rj_topic_utils)
+# how to write/edit this file: https://docs.ros.org/en/humble/How-To-Guides/Ament-CMake-Documentation.html
 
-# ======================================================================
-# Find package
-# ======================================================================
+cmake_minimum_required(VERSION 3.16)
+project(rj_topic_utils LANGUAGES CXX)
+
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+
+# Enable useful warnings for GCC/Clang
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Find required dependencies
+find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# ======================================================================
-# Define Targets
-# ======================================================================
-add_library(rj_topic_utils INTERFACE)
+# create library
+add_library(${PROJECT_NAME} INTERFACE)
 
-# ======================================================================
-# Dependencies List
-# ======================================================================
-set(RJ_TOPIC_UTILS_DEPS_INCLUDE_DIRS include)
+# add dependencies
+ament_target_dependencies(${PROJECT_NAME} INTERFACE rclcpp)
 
-# ======================================================================
-# Include and Linking
-# ======================================================================
-target_include_directories(rj_topic_utils INTERFACE ${RJ_TOPIC_UTILS_DEPS_INCLUDE_DIRS})
+# required for ament
+target_include_directories(${PROJECT_NAME} INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
-ament_target_dependencies(rj_topic_utils INTERFACE rclcpp)
-
-# ======================================================================
-# Packaging
-# ======================================================================
 install(
-  TARGETS rj_topic_utils
-  ARCHIVE DESTINATION lib
+  DIRECTORY include/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
   LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+# Export targets and dependencies for other packages
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(rclcpp)
+
+# Register this package with ament
+ament_package()
