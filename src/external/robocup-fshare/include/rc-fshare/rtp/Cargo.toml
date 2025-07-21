@@ -1,0 +1,26 @@
+[package]
+name = "robojackets-robocup-rtp"
+version = "0.4.1"
+edition = "2021"
+license = "MIT"
+description = "Communication Messages for RoboJackets Robocup"
+authors = ["Nathaniel Wert <n8.wert.b@gmail.com>"]
+
+[dependencies]
+
+[dependencies.nalgebra]
+version = "0.32.3"
+optional = true
+default-features = false
+features = ["libm", "nalgebra-macros", "alloc"]
+
+[dependencies.packed_struct]
+version = "0.10.1"
+default-features = false
+
+[features]
+default = ["nostd"]
+std = ["packed_struct/std"]
+nostd = ["packed_struct/alloc", "nalgebra"]
+yellow-team = []
+blue-team = []
