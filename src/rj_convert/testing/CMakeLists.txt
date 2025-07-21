@@ -1,9 +1,2 @@
-# ======================================================================
-# Set Sources
-# ======================================================================
-set(TEST_RJ_CONVERT_SRCS ros_convert_test.cpp)
-
-# ======================================================================
-# Add sources
-# ======================================================================
-target_sources(test_rj_convert PRIVATE ${TEST_RJ_CONVERT_SRCS})
+ament_add_gtest(test_ros_convert ros_convert_test.cpp)
+target_link_libraries(test_ros_convert ${PROJECT_NAME})
