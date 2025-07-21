@@ -1,7 +1,4 @@
-# ======================================================================
-# Set Testing Sources
-# ======================================================================
-set(GEOMETRY2D_TESTING_SRCS
+ament_add_gtest(rj_geometry_testing
     arc_test.cpp
     circle_test.cpp
     composite_shape_test.cpp
@@ -13,7 +10,4 @@ set(GEOMETRY2D_TESTING_SRCS
     segment_test.cpp
     transform_matrix_test.cpp)
 
-# ======================================================================
-# Add Sources
-# ======================================================================
-target_sources(geometry2d_testing PRIVATE ${GEOMETRY2D_TESTING_SRCS})
+target_link_libraries(rj_geometry_testing ${PROJECT_NAME})

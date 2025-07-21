@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>rj_geometry</name>
+    <version>0.0.0</version>
+    <description>Geometry tools</description>
+    <maintainer email="hello@robojackets.org">RoboJackets</maintainer>
+    <license>Apache License 2.0</license>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+
+    <depend>rj_geometry_msgs</depend>
+    <depend>rj_convert</depend>
+    <depend>rj_constants</depend>
+    <depend>rj_protos</depend>
+    <depend>Qt5</depend>
+    <depend>Eigen3</depend>
+    <depend>fmt</depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>
