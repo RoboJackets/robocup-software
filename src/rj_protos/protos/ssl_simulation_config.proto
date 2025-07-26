@@ -1,0 +1,77 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+import "ssl_gc_common.proto";
+import "ssl_vision_geometry.proto";
+import "google/protobuf/any.proto";
+
+// Movement limits for a robot
+message RobotLimits {
+    // Max absolute speed-up acceleration [m/s^2]
+    optional float acc_speedup_absolute_max = 1;
+    // Max angular speed-up acceleration [rad/s^2]
+    optional float acc_speedup_angular_max = 2;
+    // Max absolute brake acceleration [m/s^2]
+    optional float acc_brake_absolute_max = 3;
+    // Max angular brake acceleration [rad/s^2]
+    optional float acc_brake_angular_max = 4;
+    // Max absolute velocity [m/s]
+    optional float vel_absolute_max = 5;
+    // Max angular velocity [rad/s]
+    optional float vel_angular_max = 6;
+}
+
+// Robot wheel angle configuration
+// all angles are relative to looking forward,
+// all wheels / angles are clockwise
+message RobotWheelAngles {
+    // Angle front right [rad]
+    required float front_right = 1;
+    // Angle back right [rad]
+    required float back_right = 2;
+    // Angle back left [rad]
+    required float back_left = 3;
+    // Angle front left [rad]
+    required float front_left = 4;
+}
+
+// Specs of a robot
+message RobotSpecs {
+    // Id of the robot
+    required RobotId id = 1;
+    // Robot radius [m]
+    optional float radius = 2 [default = 0.09];
+    // Robot height [m]
+    optional float height = 3 [default = 0.15];
+    // Robot mass [kg]
+    optional float mass = 4;
+    // Max linear kick speed [m/s] (unset = unlimited)
+    optional float max_linear_kick_speed = 7;
+    // Max chip kick speed [m/s] (unset = unlimited)
+    optional float max_chip_kick_speed = 8;
+    // Distance from robot center to dribbler [m] (implicitly defines the opening angle and dribbler width)
+    optional float center_to_dribbler = 9;
+    // Movement limits
+    optional RobotLimits limits = 10;
+    // Wheel angle configuration
+    optional RobotWheelAngles wheel_angles = 13;
+    // Custom robot spec for specific simulators (the protobuf files are managed by the simulators)
+    optional google.protobuf.Any custom = 14;
+}
+
+message RealismConfig {
+    // Custom config for specific simulators (the protobuf files are managed by the simulators)
+    optional google.protobuf.Any custom = 1;
+}
+
+// Change the simulator configuration
+message SimulatorConfig {
+    // Update the geometry
+    optional SSL_GeometryData geometry = 1;
+    // Update the robot specs
+    repeated RobotSpecs robot_specs = 2;
+    // Update realism configuration
+    optional RealismConfig realism_config = 3;
+    // Change the vision publish port
+    optional uint32 vision_port = 4;
+}

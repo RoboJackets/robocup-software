@@ -1,0 +1,25 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+import "ssl_vision_detection.proto";
+import "ssl_simulation_robot_feedback.proto";
+import "ssl_simulation_robot_control.proto";
+import "ssl_simulation_control.proto";
+
+// Request from the team to the simulator
+message SimulationSyncRequest {
+    // The simulation step [s] to perform
+    optional float sim_step = 1;
+    // An optional simulator command
+    optional SimulatorCommand simulator_command = 2;
+    // An optional robot control command
+    optional RobotControl robot_control = 3;
+}
+
+// Response to last SimulationSyncRequest
+message SimulationSyncResponse {
+    // List of detection frames for all cameras with the state after the simulation step in the request was performed
+    repeated SSL_DetectionFrame detection = 1;
+    // An optional robot control response
+    optional RobotControlResponse robot_control_response = 2;
+}

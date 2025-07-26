@@ -1,0 +1,33 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+message SSL_DetectionBall {
+  required float  confidence = 1;
+  optional uint32 area       = 2;
+  required float  x          = 3;
+  required float  y          = 4;
+  optional float  z          = 5;
+  required float  pixel_x    = 6;
+  required float  pixel_y    = 7;
+}
+
+message SSL_DetectionRobot {
+  required float  confidence  =  1;
+  optional uint32 robot_id    =  2;
+  required float  x           =  3;
+  required float  y           =  4;
+  optional float  orientation =  5;
+  required float  pixel_x     =  6;
+  required float  pixel_y     =  7;
+  optional float  height      =  8;
+}
+
+message SSL_DetectionFrame {
+  required uint32             frame_number  = 1;
+  required double             t_capture     = 2;
+  required double             t_sent        = 3;
+  required uint32             camera_id     = 4;
+  repeated SSL_DetectionBall  balls         = 5;
+  repeated SSL_DetectionRobot robots_yellow = 6;
+  repeated SSL_DetectionRobot robots_blue   = 7;
+}

@@ -1,0 +1,23 @@
+syntax = "proto2";
+option go_package = "github.com/RoboCup-SSL/ssl-simulation-protocol/pkg/sim";
+
+import "ssl_simulation_error.proto";
+import "google/protobuf/any.proto";
+
+// Feedback from a robot
+message RobotFeedback {
+    // Id of the robot
+    required uint32 id = 1;
+    // Has the dribbler contact to the ball right now
+    optional bool dribbler_ball_contact = 2;
+    // Custom robot feedback for specific simulators (the protobuf files are managed by the simulators)
+    optional google.protobuf.Any custom = 3;
+}
+
+// Response to RobotControl from the simulator to the connected client
+message RobotControlResponse {
+    // List of errors, like using unsupported features
+    repeated SimulatorError errors = 1;
+    // Feedback of the robots
+    repeated RobotFeedback feedback = 2;
+}

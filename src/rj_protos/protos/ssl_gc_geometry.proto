@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+option go_package = "github.com/RoboCup-SSL/ssl-game-controller/internal/app/geom";
+
+// A vector with two dimensions
+message Vector2 {
+    required float x = 1;
+    required float y = 2;
+}
+
+// A vector with three dimensions
+message Vector3 {
+    required float x = 1;
+    required float y = 2;
+    required float z = 3;
+}

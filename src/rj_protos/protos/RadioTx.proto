@@ -1,0 +1,8 @@
+syntax = "proto2";
+package Packet;
+
+import "Robot.proto";
+
+message RadioTx {
+    repeated Robot robots = 2;
+}
