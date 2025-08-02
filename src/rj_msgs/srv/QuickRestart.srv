@@ -1,0 +1,5 @@
+uint8 RESTART_KICKOFF = 0
+uint8 RESTART_FREE = 1
+uint8 restart
+bool blue_team
+---
