@@ -1,0 +1,3 @@
+string text
+rj_geometry_msgs/Point position
+DrawColor color
