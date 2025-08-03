@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rj_common</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>qt5</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rj_msgs</depend>
+  <depend>eigen3_cmake_module</depend>
+  <depend>eigen</depend>
+  <depend>rj_constants</depend>
+  <depend>rj_convert</depend>
+  <depend>rj_protos</depend>
+  <depend>rj_geometry</depend>
+
+  <build_depend>protobuf-dev</build_depend>
+
+  <exec_depend>protobuf</exec_depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,96 @@
+cmake_minimum_required(VERSION 3.8)
+project(rj_common)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
+find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(rj_msgs REQUIRED)
+find_package(rj_protos REQUIRED)
+find_package(rj_convert REQUIRED)
+find_package(eigen3_cmake_module REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(rj_geometry REQUIRED)
+
+add_library(${PROJECT_NAME} SHARED
+  src/field_dimensions.cpp
+  src/multicast.cpp
+  src/qt_utils.cpp
+  src/referee_enums.cpp
+  src/transforms.cpp
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  PUBLIC
+  rclcpp
+  rclcpp_action
+  rclcpp_components
+  rj_msgs
+  Qt5
+  Eigen3
+  rj_protos
+  rj_convert
+  rj_geometry
+)
+
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+  Qt5::Core
+  Qt5::Network
+  Qt5::Widgets
+  Eigen3::Eigen
+  ${CMAKE_DL_LIBS}
+)
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_export_dependencies(
+  Qt5
+  rj_msgs
+  Eigen3
+  rj_convert
+  rj_protos
+  rj_geometry
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # comment the line when a copyright and license is added to all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # comment the line when this package is in a git repo and when
+  # a copyright and license is added to all source files
+  set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_export_targets(${PROJECT_NAME})
+ament_package()
