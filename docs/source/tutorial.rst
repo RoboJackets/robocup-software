@@ -606,7 +606,7 @@ career.
 8. Resources (again)
 --------------------
 
-Here are all the external links from this document, copied again for your easy reference
+Here are all the external links from this document, copied again for your easy reference:
 
 * `Command Line Basics`_
   
