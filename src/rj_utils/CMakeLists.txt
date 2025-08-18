@@ -13,7 +13,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_convert REQUIRED)
-find_package(rj_protos)
+find_package(rj_protos REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/conversions.cpp
@@ -30,6 +31,8 @@ ament_target_dependencies(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
+  Qt5::Core
+  Qt5::Widgets
   ${CMAKE_DL_LIBS}
 )
 
@@ -67,4 +70,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_targets(${PROJECT_NAME})
 ament_package()

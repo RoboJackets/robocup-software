@@ -1,9 +1,5 @@
 #include "rj_utils/logging.hpp"
 
-#include <rclcpp/logging.hpp>
-#include <spdlog/sinks/base_sink.h>
-#include <spdlog/spdlog.h>
-
 namespace rj_utils {
 /**
  * @brief Sink for spdlog that passes the formatted message along to ros2.

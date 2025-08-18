@@ -119,14 +119,14 @@ def generate_launch_description():
             # random order (there are Executors to change that)
             Node(
                 package="rj_robocup",
-                executable="vision_receiver",
+                executable="rj_vision_receiver_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
                 package="rj_robocup",
-                executable="config_server",
+                executable="rj_config_server_node",
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
                 parameters=[param_config_filepath],

@@ -72,7 +72,7 @@ install(
 
 ament_export_dependencies(
   Eigen3
-  Qt5
+  Qt5Core
   rj_protos
   rj_constants
   rj_convert
@@ -95,4 +95,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_targets(${PROJECT_NAME})
 ament_package()

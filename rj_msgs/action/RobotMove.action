@@ -1,8 +1,0 @@
-# Goal
-rj_msgs/RobotIntent robot_intent
----
-# Result
-bool is_done
----
-# Feedback
-builtin_interfaces/Duration time_left

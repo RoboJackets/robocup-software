@@ -11,16 +11,49 @@ find_package(ament_cmake REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(fmt REQUIRED)
 
-add_library(${PROJECT_NAME} SHARED
+add_executable(global_param_server_node
+  src/global_param_server.cpp
+  src/global_params.cpp
   src/param.cpp
   src/ros2_global_param_provider.cpp
   src/ros2_local_param_provider.cpp
   src/ros2_param_provider.cpp
 )
 
+add_library(${PROJECT_NAME} SHARED
+  src/global_params.cpp
+  src/param.cpp
+  src/ros2_global_param_provider.cpp
+  src/ros2_local_param_provider.cpp
+  src/ros2_param_provider.cpp
+  src/planning/planning_params.cpp
+  src/vision/vision_params.cpp
+)
+
+ament_target_dependencies(global_param_server_node
+  rclcpp
+  fmt
+)
+
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
+  fmt
+)
+
+target_link_libraries(${PROJECT_NAME}
+  fmt
+)
+
+target_link_libraries(global_param_server_node
+  fmt
+)
+
+target_include_directories(global_param_server_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -34,6 +67,13 @@ ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 install(
   DIRECTORY include/
   DESTINATION include
+)
+
+install(
+  TARGETS global_param_server_node
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 install(
@@ -57,4 +97,5 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+ament_export_targets(${PROJECT_NAME})
 ament_package()

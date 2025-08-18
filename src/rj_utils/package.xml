@@ -7,10 +7,12 @@
   <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
   <license>TODO: License declaration</license>
 
+  <depend>qt5</depend>
   <depend>rclcpp</depend>
   <depend>rj_msgs</depend>
   <depend>rj_protos</depend>
   <depend>rj_convert</depend>
+  <depend>rj_geometry_msgs</depend>
 
   <build_depend>protobuf-dev</build_depend>
 

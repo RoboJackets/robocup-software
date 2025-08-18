@@ -3,7 +3,11 @@
 #include <stdexcept>
 #include <string>
 
+#include <spdlog/sinks/base_sink.h>
 #include <spdlog/spdlog.h>
+#include <rclcpp/logging.hpp>
+
+#include "rj_utils/log_utils.hpp"
 
 namespace rj_utils {
 const static bool kThrowDebugExceptions = true;
