@@ -1,10 +1,10 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <fmt/format.h>
 
 #include <rj_utils/logging.hpp>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include "rj_joystick/manual_control.hpp"
 

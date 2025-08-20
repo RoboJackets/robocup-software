@@ -4,19 +4,19 @@
 #include <cstdint>
 #include <stdexcept>
 
-#include <spdlog/spdlog.h>
 #include <boost/asio.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/network.hpp>
-#include <rj_common/time.hpp>
 #include <rj_common/radio/packet_convert.hpp>
+#include <rj_common/time.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
+#include <rj_param_utils/global_params.hpp>
 #include <rj_protos/ssl_simulation_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 #include <rj_utils/logging.hpp>
-#include <rj_param_utils/global_params.hpp>
 
 #include "rj_radio/radio.hpp"
 

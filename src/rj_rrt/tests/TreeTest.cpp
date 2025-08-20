@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
 #include <memory>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 #include "rj_rrt/2dplane/2dplane.hpp"
 #include "rj_rrt/2dplane/GridStateSpace.hpp"
@@ -13,10 +13,9 @@ using namespace std;
 namespace RRT {
 
 TEST(Tree, Example_2dplane) {
-    shared_ptr<Tree<Vector2d>> tree =
-        TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
-                       Vector2d(40, 40),  //	goal point
-                       5);                //	step size
+    shared_ptr<Tree<Vector2d>> tree = TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
+                                                     Vector2d(40, 40),  //	goal point
+                                                     5);                //	step size
 
     //	give it plenty of iterations so it's not likely to fail
     const int maxIterations = 10000;
@@ -29,10 +28,10 @@ TEST(Tree, Example_2dplane) {
 }
 
 TEST(Tree, FailOnImpossibleRequest) {
-    shared_ptr<Tree<Vector2d>> tree = TreeFor2dPlane(
-        make_shared<GridStateSpace>(50, 50, 50, 50),
-        Vector2d(60, 60),  //	goal point outside the bounds of the state space
-        5);                //	step size
+    shared_ptr<Tree<Vector2d>> tree =
+        TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
+                       Vector2d(60, 60),  //	goal point outside the bounds of the state space
+                       5);                //	step size
 
     //	give it plenty of iterations so it's not likely to fail
     const int maxIterations = 2000;
@@ -41,16 +40,15 @@ TEST(Tree, FailOnImpossibleRequest) {
 
     tree->setStartState(Vector2d(10, 10));
     bool success = tree->run();  //	run with the given starting point
-    ASSERT_FALSE(success);  // the rrt search should fail because the goal isn't
-                            // reachable
+    ASSERT_FALSE(success);       // the rrt search should fail because the goal isn't
+                                 // reachable
 }
 
 TEST(Tree, getPath) {
     Vector2d start = {10, 10}, goal = {40, 40};
-    shared_ptr<Tree<Vector2d>> tree =
-        TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
-                       goal,  //	goal point
-                       5);    //	step size
+    shared_ptr<Tree<Vector2d>> tree = TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
+                                                     goal,  //	goal point
+                                                     5);    //	step size
 
     //	give it plenty of iterations so it's not likely to fail
     const int maxIterations = 10000;
@@ -76,10 +74,9 @@ TEST(Tree, getPath) {
 
 TEST(Tree, ASC) {
     // test adaptive stepsize control
-    shared_ptr<Tree<Vector2d>> tree =
-        TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
-                       Vector2d(40, 40),  //	goal point
-                       5);                //	step size
+    shared_ptr<Tree<Vector2d>> tree = TreeFor2dPlane(make_shared<GridStateSpace>(50, 50, 50, 50),
+                                                     Vector2d(40, 40),  //	goal point
+                                                     5);                //	step size
 
     //	give it plenty of iterations so it's not likely to fail
     const int maxIterations = 10000;

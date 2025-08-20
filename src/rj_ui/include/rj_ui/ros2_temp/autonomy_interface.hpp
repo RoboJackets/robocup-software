@@ -1,15 +1,15 @@
 #pragma once
 
-#include <spdlog/spdlog.h>
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
+#include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_common/context.hpp>
+#include <rj_common/node.hpp>
+#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_constants/topic_names.hpp>
-#include <rj_common/node.hpp>
-#include <rj_common/context.hpp>
-#include <rj_common/radio/packet_convert.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace ros2_temp {
 

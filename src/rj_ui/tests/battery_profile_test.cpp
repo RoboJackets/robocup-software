@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "rj_ui/battery_profile.hpp"
+
+#include <gtest/gtest.h>
 
 TEST(BatteryProfile, get_charge_level) {
     BatteryProfile profile({{1, 0.00}, {4, 0.50}, {5, 0.75}, {7, 1.00}});

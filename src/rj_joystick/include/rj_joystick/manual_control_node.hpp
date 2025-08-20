@@ -3,15 +3,13 @@
 #include <functional>
 #include <unordered_map>
 
-#include <rclcpp/rclcpp.hpp>
-
 #include <SDL2/SDL.h>
 #include <fmt/format.h>
+#include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/node.hpp>
 #include <rj_common/context.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_common/node.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
@@ -19,6 +17,7 @@
 #include <rj_msgs/srv/list_joysticks.hpp>
 #include <rj_msgs/srv/set_manual.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "rj_joystick/manual_control.hpp"
 #include "rj_joystick/sdl_manual_control.hpp"

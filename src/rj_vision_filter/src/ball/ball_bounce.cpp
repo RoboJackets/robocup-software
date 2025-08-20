@@ -1,12 +1,12 @@
+#include "rj_vision_filter/ball/ball_bounce.hpp"
+
 #include <algorithm>
 #include <cmath>
 
-#include <rj_geometry/line.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/line.hpp>
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
-
-#include "rj_vision_filter/ball/ball_bounce.hpp"
 
 namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_lin_dampen, 0.9,

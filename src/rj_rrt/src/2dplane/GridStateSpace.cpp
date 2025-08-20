@@ -17,10 +17,8 @@ bool GridStateSpace::stateValid(const Vector2d& pt) const {
            !_obstacleGrid.obstacleAt(_obstacleGrid.gridSquareForLocation(pt));
 }
 
-Vector2d GridStateSpace::intermediateState(const Vector2d& source,
-                                           const Vector2d& target,
-                                           double minStepSize,
-                                           double maxStepSize) const {
+Vector2d GridStateSpace::intermediateState(const Vector2d& source, const Vector2d& target,
+                                           double minStepSize, double maxStepSize) const {
     bool debug = false;
 
     Vector2d delta = target - source;
@@ -28,8 +26,7 @@ Vector2d GridStateSpace::intermediateState(const Vector2d& source,
     double dist = _obstacleGrid.nearestObstacleDist(source, maxStepSize * 2);
 
     double stepSize =
-        (dist / maxStepSize) *
-        minStepSize;  // scale based on how far we are from obstacles
+        (dist / maxStepSize) * minStepSize;  // scale based on how far we are from obstacles
     if (stepSize > maxStepSize) stepSize = maxStepSize;
     if (stepSize < minStepSize) stepSize = minStepSize;
     if (debug) {
@@ -44,8 +41,7 @@ Vector2d GridStateSpace::intermediateState(const Vector2d& source,
     return val;
 }
 
-bool GridStateSpace::transitionValid(const Vector2d& from,
-                                     const Vector2d& to) const {
+bool GridStateSpace::transitionValid(const Vector2d& from, const Vector2d& to) const {
     //  make sure we're within bounds
     if (!stateValid(to)) return false;
 
@@ -73,8 +69,7 @@ bool GridStateSpace::transitionValid(const Vector2d& from,
 
                 //  the corners of this obstacle square
                 Vector2d ulCorner(x * gridSqWidth, y * gridSqHeight);
-                Vector2d brCorner(ulCorner.x() + gridSqWidth,
-                                  ulCorner.y() + gridSqHeight);
+                Vector2d brCorner(ulCorner.x() + gridSqWidth, ulCorner.y() + gridSqHeight);
 
                 if (delta.x() != 0) {
                     /**
@@ -98,11 +93,9 @@ bool GridStateSpace::transitionValid(const Vector2d& from,
                      * segment, it's an intersection.
                      */
                     double yInt = slope * ulCorner.x() + b;
-                    if (inRange<double>(yInt, ulCorner.y(), brCorner.y()))
-                        return false;
+                    if (inRange<double>(yInt, ulCorner.y(), brCorner.y())) return false;
                     yInt = slope * brCorner.x() + b;
-                    if (inRange<double>(yInt, ulCorner.y(), brCorner.y()))
-                        return false;
+                    if (inRange<double>(yInt, ulCorner.y(), brCorner.y())) return false;
 
                     /*
                      * Check intersection with horizontal sides of box
@@ -115,11 +108,9 @@ bool GridStateSpace::transitionValid(const Vector2d& from,
                      */
                     if (slope == 0) return false;
                     double xInt = (ulCorner.y() - b) / slope;
-                    if (inRange<double>(xInt, ulCorner.x(), brCorner.x()))
-                        return false;
+                    if (inRange<double>(xInt, ulCorner.x(), brCorner.x())) return false;
                     xInt = (brCorner.y() - b) / slope;
-                    if (inRange<double>(xInt, ulCorner.x(), brCorner.x()))
-                        return false;
+                    if (inRange<double>(xInt, ulCorner.x(), brCorner.x())) return false;
                 } else {
                     //  vertical line - slope undefined
 
@@ -132,16 +123,11 @@ bool GridStateSpace::transitionValid(const Vector2d& from,
                         //  visually on the screen due to qt's coordinate layout
                         Vector2d lower(from);
                         Vector2d higher(to);
-                        if (higher.y() < lower.y())
-                            swap<Vector2d>(lower, higher);
+                        if (higher.y() < lower.y()) swap<Vector2d>(lower, higher);
 
                         //  check for intersection based on y-values
-                        if (lower.y() < ulCorner.y() &&
-                            higher.y() > ulCorner.y())
-                            return false;
-                        if (lower.y() < brCorner.y() &&
-                            higher.y() > brCorner.y())
-                            return false;
+                        if (lower.y() < ulCorner.y() && higher.y() > ulCorner.y()) return false;
+                        if (lower.y() < brCorner.y() && higher.y() > brCorner.y()) return false;
                     }
                 }
             }
@@ -151,9 +137,7 @@ bool GridStateSpace::transitionValid(const Vector2d& from,
     return true;
 }
 
-const ObstacleGrid& GridStateSpace::obstacleGrid() const {
-    return _obstacleGrid;
-}
+const ObstacleGrid& GridStateSpace::obstacleGrid() const { return _obstacleGrid; }
 
 ObstacleGrid& GridStateSpace::obstacleGrid() { return _obstacleGrid; }
 

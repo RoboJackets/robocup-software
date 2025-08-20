@@ -10,9 +10,9 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/motion_command.hpp>
 
-#include "rj_common/world_state.hpp"
 #include "rj_common/planning/instant.hpp"
 #include "rj_common/planning/trajectory.hpp"
+#include "rj_common/world_state.hpp"
 
 namespace planning {
 

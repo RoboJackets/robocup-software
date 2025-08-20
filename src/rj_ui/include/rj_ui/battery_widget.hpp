@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QtWidgets>
-
 #include <cmath>
+
+#include <QtWidgets>
 
 /**
  * @brief Draws a battery given a battery level value from 0 to 1

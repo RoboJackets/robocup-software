@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "rj_vision_filter/ball/world_ball.hpp"
+
+#include <gtest/gtest.h>
 
 namespace vision_filter {
 TEST(WorldBall, invalid) {

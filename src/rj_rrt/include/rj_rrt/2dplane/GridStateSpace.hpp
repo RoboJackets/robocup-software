@@ -1,9 +1,10 @@
 #pragma once
 
-#include <math.h>
 #include <stdexcept>
 
 #include <Eigen/Dense>
+
+#include <math.h>
 
 #include "rj_rrt/2dplane/ObstacleGrid.hpp"
 #include "rj_rrt/2dplane/PlaneStateSpace.hpp"
@@ -18,21 +19,17 @@ namespace RRT {
  */
 class GridStateSpace : public PlaneStateSpace<Eigen::Vector2d> {
 public:
-    GridStateSpace(double width, double height, int discretizedWidth,
-                   int discretizedHeight);
+    GridStateSpace(double width, double height, int discretizedWidth, int discretizedHeight);
 
     /**
      * Returns a boolean indicating whether the given point is within bounds and
      * obstacle-free.
      */
     bool stateValid(const Eigen::Vector2d& pt) const;
-    bool transitionValid(const Eigen::Vector2d& from,
-                         const Eigen::Vector2d& to) const;
+    bool transitionValid(const Eigen::Vector2d& from, const Eigen::Vector2d& to) const;
 
-    Eigen::Vector2d intermediateState(const Eigen::Vector2d& source,
-                                      const Eigen::Vector2d& target,
-                                      double minStepSize,
-                                      double maxStepSize) const;
+    Eigen::Vector2d intermediateState(const Eigen::Vector2d& source, const Eigen::Vector2d& target,
+                                      double minStepSize, double maxStepSize) const;
 
     const ObstacleGrid& obstacleGrid() const;
     ObstacleGrid& obstacleGrid();

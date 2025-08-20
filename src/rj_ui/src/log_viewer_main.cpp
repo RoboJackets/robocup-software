@@ -1,20 +1,17 @@
-#include <rj_ui/log_viewer.hpp>
-
 #include <algorithm>
 #include <cstdio>
-
-#include <rj_protos/LogFrame.pb.h>
-#include <ui_LogViewer.h>
-
-#include <QTime>
-#include <QTimer>
 #include <vector>
 
 #include <QApplication>
 #include <QFile>
+#include <QTime>
+#include <QTimer>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <fcntl.h>
+#include <rj_protos/LogFrame.pb.h>
+#include <rj_ui/log_viewer.hpp>
+#include <ui_LogViewer.h>
 
 using namespace std;
 using namespace boost;

@@ -1,6 +1,6 @@
-#include "rj_referee/internal_referee.hpp"
-
 #include <rclcpp/rclcpp.hpp>
+
+#include "rj_referee/internal_referee.hpp"
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

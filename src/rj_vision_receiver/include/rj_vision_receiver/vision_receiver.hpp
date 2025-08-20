@@ -6,8 +6,8 @@
 #include <boost/asio.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_config_client/config_client.hpp>
 #include <rj_common/network.hpp>
+#include <rj_config_client/config_client.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>

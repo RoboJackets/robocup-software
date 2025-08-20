@@ -1,6 +1,7 @@
+#include "rj_common/game_state.hpp"
+
 #include <gtest/gtest.h>
 
-#include "rj_common/game_state.hpp"
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 TEST(ROSConvertPlayState, play_state_lossless_convert) {

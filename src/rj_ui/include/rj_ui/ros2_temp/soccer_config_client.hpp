@@ -1,8 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_config_client/config_client_node.hpp>
-
 #include <rj_common/context.hpp>
+#include <rj_config_client/config_client_node.hpp>
 
 namespace ros2_temp {
 

@@ -2,8 +2,8 @@
 #include <cmath>
 
 #include <rj_geometry/point.hpp>
-#include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
+#include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 
 namespace vision_filter {
 

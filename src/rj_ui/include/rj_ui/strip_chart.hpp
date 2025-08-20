@@ -1,18 +1,16 @@
 #pragma once
 
-#include <vector>
-#include <memory>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <fstream>
-#include <string.h>
+#include <memory>
+#include <vector>
 
-#include <QWidget>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QPainter>
-
+#include <QWidget>
 #include <fmt/ostream.h>
 #include <google/protobuf/descriptor.h>
 #include <spdlog/spdlog.h>
@@ -21,6 +19,7 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_protos/LogFrame.pb.h>
+#include <string.h>
 
 namespace Packet {
 class LogFrame;

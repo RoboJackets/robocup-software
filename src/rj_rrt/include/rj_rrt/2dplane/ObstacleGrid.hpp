@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdlib.h>
 #include <iostream>
 
 #include <Eigen/Dense>
+
+#include <stdlib.h>
 
 namespace RRT {
 
@@ -14,8 +15,7 @@ namespace RRT {
  */
 class ObstacleGrid {
 public:
-    ObstacleGrid(double width, double height, int discretizedWidth,
-                 int discretizedHeight);
+    ObstacleGrid(double width, double height, int discretizedWidth, int discretizedHeight);
     ~ObstacleGrid();
 
     Eigen::Vector2i gridSquareForLocation(const Eigen::Vector2d& loc) const;
@@ -31,8 +31,7 @@ public:
      * @param maxDist The maximum vertical and horizontal distance from state to
      * search for obstacles
      */
-    double nearestObstacleDist(const Eigen::Vector2d& state,
-                              double maxDist) const;
+    double nearestObstacleDist(const Eigen::Vector2d& state, double maxDist) const;
     void clear();
     bool& obstacleAt(int x, int y);
     bool obstacleAt(int x, int y) const;

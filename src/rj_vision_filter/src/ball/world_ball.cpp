@@ -1,8 +1,8 @@
 #include <cmath>
 
+#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_utils/logging.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 
 namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,

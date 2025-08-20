@@ -8,13 +8,13 @@ struct ControlMessage {
     static constexpr float VELOCITY_SCALE_FACTOR = 1000.0f;
 
     // TODO: Determine the mapping for this
-    unsigned trigger_mode: 2;
+    unsigned trigger_mode : 2;
     // 0 -> Kick; 1 -> Chip
-    unsigned shoot_mode: 1;
+    unsigned shoot_mode : 1;
     // Id of the robot
-    unsigned robot_id: 4;
+    unsigned robot_id : 4;
     // Team of the robot (0: Blue) (1: Yellow)
-    unsigned team: 1;
+    unsigned team : 1;
     // x velocity (body frame)
     int16_t body_x;
     // y velocity (body frame)
@@ -31,4 +31,4 @@ struct ControlMessage {
     unsigned role : 2;
 } __attribute__((packed));
 
-} // namespace messagea
+}  // namespace RadioMessage

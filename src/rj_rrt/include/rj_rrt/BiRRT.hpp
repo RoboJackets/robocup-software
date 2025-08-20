@@ -14,8 +14,7 @@ namespace RRT {
 template <typename T>
 class BiRRT {
 public:
-    BiRRT(std::shared_ptr<StateSpace<T>> stateSpace,
-          std::function<size_t(T)> hash, int dimensions,
+    BiRRT(std::shared_ptr<StateSpace<T>> stateSpace, std::function<size_t(T)> hash, int dimensions,
           std::function<T(double*)> arrayToT = NULL,
           std::function<void(T, double*)> TToArray = NULL)
         : _startTree(stateSpace, hash, dimensions, true, arrayToT, TToArray),
@@ -121,8 +120,7 @@ public:
         if (newStartNode) {
             otherNode = _findBestPath(newStartNode->state(), _goalTree, &depth);
             if (otherNode && depth + newStartNode->depth() < _solutionLength &&
-                _goalTree.stateSpace().transitionValid(newStartNode->state(),
-                                                       otherNode->state())) {
+                _goalTree.stateSpace().transitionValid(newStartNode->state(), otherNode->state())) {
                 _startSolutionNode = newStartNode;
                 _goalSolutionNode = otherNode;
                 _solutionLength = newStartNode->depth() + depth;
@@ -133,8 +131,7 @@ public:
         if (newGoalNode) {
             otherNode = _findBestPath(newGoalNode->state(), _startTree, &depth);
             if (otherNode && depth + newGoalNode->depth() < _solutionLength &&
-                _goalTree.stateSpace().transitionValid(otherNode->state(),
-                                                       newGoalNode->state())) {
+                _goalTree.stateSpace().transitionValid(otherNode->state(), newGoalNode->state())) {
                 _startSolutionNode = otherNode;
                 _goalSolutionNode = newGoalNode;
                 _solutionLength = newGoalNode->depth() + depth;
@@ -151,8 +148,7 @@ public:
     bool run() {
         for (int i = 0; i < _startTree.maxIterations(); i++) {
             grow();
-            if (_startSolutionNode != nullptr && i >= minIterations())
-                return true;
+            if (_startSolutionNode != nullptr && i >= minIterations()) return true;
         }
         return false;
     }
@@ -176,14 +172,12 @@ public:
     int iterationCount() const { return _iterationCount; }
 
 protected:
-    const Node<T>* _findBestPath(const T& targetState, Tree<T>& treeToSearch,
-                                 int* depthOut) const {
+    const Node<T>* _findBestPath(const T& targetState, Tree<T>& treeToSearch, int* depthOut) const {
         const Node<T>* bestNode = nullptr;
         int depth = INT_MAX;
 
         for (const Node<T>& other : treeToSearch.allNodes()) {
-            double dist =
-                _startTree.stateSpace().distance(other.state(), targetState);
+            double dist = _startTree.stateSpace().distance(other.state(), targetState);
             if (dist < goalMaxDist() && other.depth() < depth) {
                 bestNode = &other;
                 depth = other.depth();
@@ -203,7 +197,7 @@ private:
     int _minIterations;
 
     int _solutionLength;
-    const Node<T> *_startSolutionNode, *_goalSolutionNode;
+    const Node<T>*_startSolutionNode, *_goalSolutionNode;
 };
 
 }  // namespace RRT

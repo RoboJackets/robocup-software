@@ -1,19 +1,20 @@
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <QColor>
+#include <QMap>
+
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/composite_shape.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
-
-#include <QColor>
-#include <QMap>
-#include <memory>
-#include <string>
-#include <vector>
 
 struct Context;
 

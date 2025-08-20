@@ -13,9 +13,8 @@
 
 #include <fcntl.h>
 #include <rj_common/qt_utils.hpp>
-#include <unistd.h>
-
 #include <rj_param_utils/global_params.hpp>
+#include <unistd.h>
 
 #include "rj_ui/main_window.hpp"
 #include "rj_ui/style_sheet_manager.hpp"

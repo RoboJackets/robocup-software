@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <string>
 
+#include <rclcpp/logging.hpp>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/spdlog.h>
-#include <rclcpp/logging.hpp>
 
 #include "rj_utils/log_utils.hpp"
 

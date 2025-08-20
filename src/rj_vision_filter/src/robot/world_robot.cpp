@@ -1,10 +1,10 @@
+#include "rj_vision_filter/robot/world_robot.hpp"
+
 #include <cmath>
 
 #include <spdlog/spdlog.h>
 
 #include <rj_param_utils/vision/vision_params.hpp>
-
-#include "rj_vision_filter/robot/world_robot.hpp"
 
 namespace vision_filter {
 

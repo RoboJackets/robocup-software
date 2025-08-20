@@ -1,10 +1,11 @@
+#include "rj_optimization/nelder_mead_2d.hpp"
+
 #include <iostream>
 
 #include <gtest/gtest.h>
 
 #include <rj_geometry/util.hpp>
 
-#include "rj_optimization/nelder_mead_2d.hpp"
 #include "rj_optimization/nelder_mead_2d_config.hpp"
 
 static float eval_function1(rj_geometry::Point p) {

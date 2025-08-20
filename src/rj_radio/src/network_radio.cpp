@@ -77,8 +77,8 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
         return;
     }
     if (num_bytes != sizeof(RadioMessage::RobotStatusMessage)) {
-        SPDLOG_ERROR("Invalid packet length: expected {}, got {}", sizeof(RadioMessage::RobotStatusMessage),
-                     num_bytes);
+        SPDLOG_ERROR("Invalid packet length: expected {}, got {}",
+                     sizeof(RadioMessage::RobotStatusMessage), num_bytes);
         start_robot_status_receive();
         return;
     }

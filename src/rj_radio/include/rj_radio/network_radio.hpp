@@ -6,22 +6,21 @@
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/config.hpp>
-
 #include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/network.hpp>
-#include <rj_common/status.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/radio/messages/control_message.hpp>
 #include <rj_common/radio/messages/robot_status_message.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_common/radio/packet_convert.hpp>
+#include <rj_common/robot_intent.hpp>
+#include <rj_common/status.hpp>
+#include <rj_common/strategy/positions.hpp>
+#include <rj_common/time.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_param_utils/global_params.hpp>
-#include <rj_geometry/util.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/strategy/positions.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "rj_radio/radio.hpp"
 

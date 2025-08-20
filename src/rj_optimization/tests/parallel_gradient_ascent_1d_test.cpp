@@ -1,3 +1,5 @@
+#include "rj_optimization/parallel_gradient_ascent_1d.hpp"
+
 #include <tuple>
 #include <vector>
 
@@ -6,7 +8,6 @@
 #include "rj_optimization/gradient_1d_config.hpp"
 #include "rj_optimization/gradient_ascent_1d.hpp"
 #include "rj_optimization/parallel_gradient_1d_config.hpp"
-#include "rj_optimization/parallel_gradient_ascent_1d.hpp"
 
 using namespace std;
 

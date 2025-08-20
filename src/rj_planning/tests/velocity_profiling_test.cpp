@@ -1,9 +1,10 @@
+#include "rj_planning/primitives/velocity_profiling.hpp"
+
 #include <fstream>
 
 #include <gtest/gtest.h>
 
 #include "rj_planning/primitives/path_smoothing.hpp"
-#include "rj_planning/primitives/velocity_profiling.hpp"
 #include "rj_planning/utils/testing_utils.hpp"
 
 using rj_geometry::Point;

@@ -1,26 +1,25 @@
 #pragma once
 
 #include <cstdlib>
+#include <limits>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <limits>
-#include <queue>
 
-#include <spdlog/spdlog.h>
+#include <queue>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/time.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/robot_intent.hpp>
+#include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_common/game_state.hpp>
+#include <rj_msgs/msg/alive_robots.hpp>
 
 #include "rj_strategy/agent/position/overriding_positions.hpp"
 

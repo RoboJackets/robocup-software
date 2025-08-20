@@ -1,9 +1,10 @@
+#include "rj_optimization/gradient_ascent_1d.hpp"
+
 #include <tuple>
 
 #include <gtest/gtest.h>
 
 #include "rj_optimization/gradient_1d_config.hpp"
-#include "rj_optimization/gradient_ascent_1d.hpp"
 
 using namespace std;
 

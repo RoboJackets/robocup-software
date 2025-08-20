@@ -1,7 +1,7 @@
-#include <rj_geometry/point.hpp>
 #include <rj_constants/constants.hpp>
-#include <rj_vision_filter/camera/camera.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
+#include <rj_vision_filter/camera/camera.hpp>
 
 namespace vision_filter {
 

@@ -1,28 +1,28 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <string>
-#include <algorithm>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/action/robot_move.hpp>
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/planning/instant.hpp>
 #include <rj_common/game_state.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
+#include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/override_position.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/overriding_positions.hpp"
 #include "rj_strategy/agent/position/defense.hpp"
 #include "rj_strategy/agent/position/free_kicker.hpp"
 #include "rj_strategy/agent/position/goal_kicker.hpp"
 #include "rj_strategy/agent/position/goalie.hpp"
+#include "rj_strategy/agent/position/idle.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 #include "rj_strategy/agent/position/offense.hpp"
 #include "rj_strategy/agent/position/overriding_positions.hpp"
@@ -33,7 +33,6 @@
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"
-#include "rj_strategy/agent/position/idle.hpp"
 
 namespace strategy {
 

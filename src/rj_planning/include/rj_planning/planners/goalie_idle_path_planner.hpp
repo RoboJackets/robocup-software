@@ -3,14 +3,14 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
 #include <rj_common/planning/motion_command.hpp>
+#include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/point.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
-#include "rj_planning/primitives/replanner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
+#include "rj_planning/primitives/replanner.hpp"
 
 namespace planning {
 /**

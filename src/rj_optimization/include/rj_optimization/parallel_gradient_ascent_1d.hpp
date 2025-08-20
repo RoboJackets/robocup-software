@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <vector>
+
 #include <math.h>
 
 #include "rj_optimization/gradient_ascent_1d.hpp"

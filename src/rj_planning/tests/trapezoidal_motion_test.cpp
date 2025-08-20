@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "rj_planning/primitives/trapezoidal_motion.hpp"
+
+#include <gtest/gtest.h>
 
 using namespace planning;
 using namespace std;

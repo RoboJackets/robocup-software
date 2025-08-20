@@ -2,18 +2,17 @@
 
 #include <cstdio>
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include <QTreeWidget>
 #include <QContextMenuEvent>
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMenu>
 #include <QTimer>
-
-#include <google/protobuf/message.h>
+#include <QTreeWidget>
 #include <google/protobuf/descriptor.h>
+#include <google/protobuf/message.h>
 
 #include "rj_ui/strip_chart.hpp"
 

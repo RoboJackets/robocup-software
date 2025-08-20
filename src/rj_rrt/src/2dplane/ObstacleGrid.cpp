@@ -12,8 +12,7 @@ ObstacleGrid::ObstacleGrid(double width, double height, int discretizedWidth,
     _discretizedWidth = discretizedWidth;
     _discretizedHeight = discretizedHeight;
 
-    _obstacles =
-        (bool*)malloc(sizeof(bool) * discretizedWidth * discretizedHeight);
+    _obstacles = (bool*)malloc(sizeof(bool) * discretizedWidth * discretizedHeight);
 
     clear();
 }
@@ -25,8 +24,7 @@ Vector2i ObstacleGrid::gridSquareForLocation(const Vector2d& loc) const {
                     loc.y() / height() * discretizedHeight());
 }
 
-double ObstacleGrid::nearestObstacleDist(const Vector2d& state,
-                                        double maxDist) const {
+double ObstacleGrid::nearestObstacleDist(const Vector2d& state, double maxDist) const {
     // x and y are the indices of the cell that state is located in
     double x = (state.x() / (_width / _discretizedWidth));
     double y = (state.y() / (_height / _discretizedHeight));
@@ -66,13 +64,9 @@ void ObstacleGrid::clear() {
     }
 }
 
-bool& ObstacleGrid::obstacleAt(int x, int y) {
-    return _obstacles[x + _discretizedWidth * y];
-}
+bool& ObstacleGrid::obstacleAt(int x, int y) { return _obstacles[x + _discretizedWidth * y]; }
 
-bool ObstacleGrid::obstacleAt(int x, int y) const {
-    return _obstacles[x + _discretizedWidth * y];
-}
+bool ObstacleGrid::obstacleAt(int x, int y) const { return _obstacles[x + _discretizedWidth * y]; }
 
 bool& ObstacleGrid::obstacleAt(const Vector2i& gridLoc) {
     return obstacleAt(gridLoc.x(), gridLoc.y());

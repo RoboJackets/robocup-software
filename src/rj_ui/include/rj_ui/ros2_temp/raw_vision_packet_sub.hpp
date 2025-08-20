@@ -2,13 +2,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_topic_utils/async_message_queue.hpp>
-#include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rj_common/context.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rj_topic_utils/async_message_queue.hpp>
 
 #include "rj_ui/ros2_temp/raw_vision_packet_sub.hpp"
-
-#include <rj_common/context.hpp>
 
 namespace ros2_temp {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;

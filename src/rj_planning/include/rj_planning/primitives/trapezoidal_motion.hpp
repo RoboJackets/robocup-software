@@ -1,7 +1,7 @@
 #pragma once
 
-#include <optional>
 #include <cmath>
+#include <optional>
 
 #include <rj_utils/logging.hpp>
 
@@ -23,8 +23,7 @@ struct State {
  * within this speed.
  * @return The minimum time required to go from initial to goal.
  */
-double time_remaining(State initial, State goal, double max_velocity,
-                     double max_acceleration);
+double time_remaining(State initial, State goal, double max_velocity, double max_acceleration);
 
 /**
  * @brief Use trapezoidal profiling to get an intermediate state on the way to a
@@ -37,8 +36,8 @@ double time_remaining(State initial, State goal, double max_velocity,
  * @param time_now The time at which to query the profile.
  * @return The minimum time required to go from initial to goal.
  */
-State predict_in(State initial, State goal, double max_velocity,
-                double max_acceleration, double time_now);
+State predict_in(State initial, State goal, double max_velocity, double max_acceleration,
+                 double time_now);
 
 }  // namespace planning::Trapezoid
 
