@@ -1,34 +1,32 @@
 #include "rj_ui/main_window.hpp"
 
-#include <mutex>
-#include <optional>
 #include <ctime>
 #include <fstream>
+#include <mutex>
+#include <optional>
 #include <regex>
 
-#include <QComboBox>
-#include <QMainWindow>
-#include <QPushButton>
-#include <QTime>
-#include <QTimer>
-#include <QtGui/QStandardItemModel>
 #include <QActionGroup>
+#include <QComboBox>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QMainWindow>
 #include <QMessageBox>
 #include <QObject>
+#include <QPushButton>
 #include <QString>
-
+#include <QTime>
+#include <QTimer>
+#include <QtGui/QStandardItemModel>
 #include <boost/algorithm/string.hpp>
 #include <google/protobuf/descriptor.h>
-#include <spdlog/spdlog.h>
 #include <rclcpp/rclcpp.hpp>
+#include <spdlog/spdlog.h>
 
-#include <std_msgs/msg/string.hpp>
-
+#include <rj_common/game_state.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
@@ -38,16 +36,15 @@
 #include <rj_msgs/srv/set_game_settings.hpp>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
-#include <rj_common/game_state.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
+#include <std_msgs/msg/string.hpp>
 
-#include "ui_MainWindow.h"
-
-#include "rj_ui/field_view.hpp"
 #include "rj_ui/battery_profile.hpp"
+#include "rj_ui/field_view.hpp"
+#include "rj_ui/processor.hpp"
 #include "rj_ui/robot_status_widget.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
-#include "rj_ui/processor.hpp"
+#include "ui_MainWindow.h"
 
 using namespace std;
 using namespace boost;

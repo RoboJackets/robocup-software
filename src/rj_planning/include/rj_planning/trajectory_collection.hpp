@@ -1,7 +1,7 @@
 #pragma once
 
-#include <rj_constants/constants.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include <rj_constants/constants.hpp>
 
 namespace planning {
 

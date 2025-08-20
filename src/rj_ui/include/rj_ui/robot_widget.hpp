@@ -5,9 +5,9 @@
 
 #include <QtWidgets>
 
-#include <rj_geometry/util.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_geometry/util.hpp>
 
 /**
  * @brief Presents an image of a robot with errors drawn in red.  A ball is

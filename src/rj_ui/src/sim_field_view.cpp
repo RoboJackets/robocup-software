@@ -4,16 +4,16 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include <rj_msgs/srv/sim_placement.hpp>
+#include <rj_common/context.hpp>
+#include <rj_common/network.hpp>
+#include <rj_constants/constants.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/ball_placement.hpp>
 #include <rj_msgs/msg/robot_placement.hpp>
+#include <rj_msgs/srv/sim_placement.hpp>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
-#include <rj_common/network.hpp>
-#include <rj_common/context.hpp>
-#include <rj_constants/constants.hpp>
-#include <rj_constants/topic_names.hpp>
 
 #include "rj_ui/field_view.hpp"
 

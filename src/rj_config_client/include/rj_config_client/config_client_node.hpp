@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rj_config_client/config_client.hpp>
-
 #include <rclcpp/rclcpp.hpp>
+
+#include <rj_config_client/config_client.hpp>
 
 namespace config_client {
 /**

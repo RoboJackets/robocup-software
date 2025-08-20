@@ -28,8 +28,7 @@ public:
      * any validation on the state before returning, the tree will handle
      * that.
      */
-    virtual T intermediateState(const T& source, const T& target,
-                                double stepSize) const = 0;
+    virtual T intermediateState(const T& source, const T& target, double stepSize) const = 0;
 
     /**
      * An overloaded version designed for use in adaptive stepsize control.
@@ -43,8 +42,8 @@ public:
      *
      * @return A state in the direction of @target from @source.state()
      */
-    virtual T intermediateState(const T& source, const T& target,
-                                double minStepSize, double maxStepSize) const = 0;
+    virtual T intermediateState(const T& source, const T& target, double minStepSize,
+                                double maxStepSize) const = 0;
 
     /**
      * @brief Calculate the distance between two states

@@ -1,8 +1,8 @@
+#include "rj_planning/primitives/angle_planning.hpp"
+
 #include <fstream>
 
 #include <gtest/gtest.h>
-
-#include "rj_planning/primitives/angle_planning.hpp"
 
 using namespace planning;
 using namespace rj_geometry;

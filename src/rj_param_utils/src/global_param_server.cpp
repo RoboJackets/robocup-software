@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include "rj_param_utils/ros2_local_param_provider.hpp"
 #include "rj_param_utils/global_params.hpp"
+#include "rj_param_utils/ros2_local_param_provider.hpp"
 
 int main(int argc, const char** argv) {
     rclcpp::init(argc, argv);

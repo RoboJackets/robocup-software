@@ -1,18 +1,16 @@
 #pragma once
 
-#include <string>
-#include <optional>
 #include <cmath>
+#include <optional>
+#include <string>
 
 #include <QtWidgets>
-
 #include <spdlog/spdlog.h>
 
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_common/status.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 #include "rj_ui/battery_profile.hpp"
-
 #include "ui_RobotStatusWidget.h"
 
 /**

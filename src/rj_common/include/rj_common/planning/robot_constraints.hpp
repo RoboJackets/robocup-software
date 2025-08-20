@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rj_common/planning/rotation_constraints.hpp"
 #include "rj_common/planning/motion_constraints.hpp"
+#include "rj_common/planning/rotation_constraints.hpp"
 
 namespace planning {
 

@@ -1,9 +1,10 @@
+#include "rj_common/logger.hpp"
+
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/util/message_differencer.h>
 #include <gtest/gtest.h>
 
 #include "rj_common/context.hpp"
-#include "rj_common/logger.hpp"
 
 // NOLINTNEXTLINE
 TEST(Logger, SaveContext) {

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <algorithm>
-#include <vector>
-#include <tuple>
 #include <cmath>
+#include <tuple>
+#include <vector>
 
 #include <rj_geometry/point.hpp>
 

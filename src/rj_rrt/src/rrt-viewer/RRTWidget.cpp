@@ -191,11 +191,9 @@ void RRTWidget::paint(QPainter* p) {
         rectH = height() / _stateSpace->obstacleGrid().discretizedHeight();
     painter.setPen(QPen(Qt::black, 2));
     for (int x = 0; x < _stateSpace->obstacleGrid().discretizedWidth(); x++) {
-        for (int y = 0; y < _stateSpace->obstacleGrid().discretizedHeight();
-             y++) {
+        for (int y = 0; y < _stateSpace->obstacleGrid().discretizedHeight(); y++) {
             if (_stateSpace->obstacleGrid().obstacleAt(x, y)) {
-                painter.fillRect(x * rectW, y * rectH, rectW, rectH,
-                                 Qt::SolidPattern);
+                painter.fillRect(x * rectW, y * rectH, rectW, rectH, Qt::SolidPattern);
             }
         }
     }
@@ -209,8 +207,7 @@ void RRTWidget::paint(QPainter* p) {
             if (first) {
                 first = false;
             } else {
-                painter.drawLine(QPointF(prev.x(), prev.y()),
-                                 QPointF(curr.x(), curr.y()));
+                painter.drawLine(QPointF(prev.x(), prev.y()), QPointF(curr.x(), curr.y()));
             }
             prev = curr;
         }
@@ -234,18 +231,17 @@ void RRTWidget::paint(QPainter* p) {
                 //  determine the
                 //  distance of the control point from the waypoint
                 Vector2d nextWaypoint = _previousSolution[i + 1];
-                controlLength = 0.5 * min((waypoint - prevWaypoint).norm(),
-                                          (nextWaypoint - waypoint).norm());
-                controlDir =
-                    ((prevWaypoint - waypoint).normalized() -
-                     (nextWaypoint - waypoint).normalized()).normalized();
+                controlLength =
+                    0.5 * min((waypoint - prevWaypoint).norm(), (nextWaypoint - waypoint).norm());
+                controlDir = ((prevWaypoint - waypoint).normalized() -
+                              (nextWaypoint - waypoint).normalized())
+                                 .normalized();
             }
 
             Vector2d controlDiff = controlDir * controlLength;
 
             path.cubicTo(vecToPoint(prevWaypoint - prevControlDiff),
-                         vecToPoint(waypoint + controlDiff),
-                         vecToPoint(waypoint));
+                         vecToPoint(waypoint + controlDiff), vecToPoint(waypoint));
 
             prevControlDiff = controlDiff;
         }
@@ -265,16 +261,15 @@ void RRTWidget::paint(QPainter* p) {
 
     //  draw trees
     drawTree(painter, _biRRT->startTree(), _biRRT->startSolutionNode());
-    drawTree(painter, _biRRT->goalTree(), _biRRT->goalSolutionNode(),
-             Qt::darkGreen);
+    drawTree(painter, _biRRT->goalTree(), _biRRT->goalSolutionNode(), Qt::darkGreen);
 
     //  draw start and goal states
     drawTerminalState(painter, _biRRT->startState(), _startVel, Qt::red);
     drawTerminalState(painter, _biRRT->goalState(), _goalVel, Qt::darkGreen);
 }
 
-void RRTWidget::drawTerminalState(QPainter& painter, const Vector2d& pos,
-                                  const Vector2d& vel, const QColor& color) {
+void RRTWidget::drawTerminalState(QPainter& painter, const Vector2d& pos, const Vector2d& vel,
+                                  const QColor& color) {
     //  draw point
     painter.setPen(QPen(color, 6));
     QPointF rootLoc(pos.x(), pos.y());
@@ -322,8 +317,7 @@ void RRTWidget::drawTree(QPainter& painter, const Tree<Vector2d>& rrt,
     if (solutionNode) {
         painter.setPen(QPen(solutionColor, 2));
 
-        const Node<Vector2d>* node = solutionNode,
-                              * parent = solutionNode->parent();
+        const Node<Vector2d>*node = solutionNode, *parent = solutionNode->parent();
         while (parent) {
             //  draw the edge
             QPointF from = pointFromNode(node);
@@ -350,19 +344,16 @@ void RRTWidget::mousePressEvent(QMouseEvent* event) {
         _draggingItem = DraggingStart;
     } else if (mouseInGrabbingRange(event, _biRRT->goalState())) {
         _draggingItem = DraggingGoal;
-    } else if (mouseInGrabbingRange(
-                   event, _biRRT->startState() +
-                              _startVel * VelocityDrawingMultiplier)) {
+    } else if (mouseInGrabbingRange(event,
+                                    _biRRT->startState() + _startVel * VelocityDrawingMultiplier)) {
         _draggingItem = DraggingStartVel;
     } else if (mouseInGrabbingRange(event,
-                                    _biRRT->goalState() +
-                                        _goalVel * VelocityDrawingMultiplier)) {
+                                    _biRRT->goalState() + _goalVel * VelocityDrawingMultiplier)) {
         _draggingItem = DraggingGoalVel;
     } else {
         _editingObstacles = true;
         Vector2d pos = Vector2d(event->pos().x(), event->pos().y());
-        Vector2i gridLoc =
-            _stateSpace->obstacleGrid().gridSquareForLocation(pos);
+        Vector2i gridLoc = _stateSpace->obstacleGrid().gridSquareForLocation(pos);
         _erasingObstacles = _stateSpace->obstacleGrid().obstacleAt(gridLoc);
 
         //  toggle the obstacle state of clicked square
@@ -385,14 +376,10 @@ void RRTWidget::mouseMoveEvent(QMouseEvent* event) {
     } else if (_draggingItem == DraggingGoalVel) {
         _goalVel = (point - _biRRT->goalState()) / VelocityDrawingMultiplier;
     } else if (_editingObstacles) {
-        Vector2i gridLoc =
-            _stateSpace->obstacleGrid().gridSquareForLocation(point);
-        if (gridLoc[1] >= 0 &&
-            gridLoc[1] < _stateSpace->obstacleGrid().discretizedHeight() &&
-            gridLoc[0] >= 0 &&
-            gridLoc[0] < _stateSpace->obstacleGrid().discretizedWidth()) {
-            _stateSpace->obstacleGrid().obstacleAt(gridLoc) =
-                !_erasingObstacles;
+        Vector2i gridLoc = _stateSpace->obstacleGrid().gridSquareForLocation(point);
+        if (gridLoc[1] >= 0 && gridLoc[1] < _stateSpace->obstacleGrid().discretizedHeight() &&
+            gridLoc[0] >= 0 && gridLoc[0] < _stateSpace->obstacleGrid().discretizedWidth()) {
+            _stateSpace->obstacleGrid().obstacleAt(gridLoc) = !_erasingObstacles;
         }
     }
 

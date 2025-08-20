@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <cmath>
+#include <memory>
 #include <tuple>
 
 #include <rj_common/utils.hpp>

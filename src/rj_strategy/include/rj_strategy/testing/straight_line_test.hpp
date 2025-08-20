@@ -2,8 +2,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-#include <std_msgs/msg/bool.hpp>
 
+#include <rj_common/game_state.hpp>
+#include <rj_common/robot_intent.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
@@ -11,14 +13,12 @@
 #include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_constants/topic_names.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/robot_intent.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_utils/logging.hpp>
+#include <std_msgs/msg/bool.hpp>
 
-#include "rj_strategy/agent/position/line.hpp"
 #include "rj_strategy/agent/position.hpp"
+#include "rj_strategy/agent/position/line.hpp"
 
 // Note: The direction of the line can be changed by running:
 // `ros2 topic pub -1 line_direction std_msgs/msg/Bool "{data: VERTICAL}"`

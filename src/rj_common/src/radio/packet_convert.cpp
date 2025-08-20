@@ -157,12 +157,12 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     rtp_message->team = blue_team;
     rtp_message->robot_id = shell;
 
-    rtp_message->body_x =
-        static_cast<int16_t>(setpoint.xvelocity * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->body_y =
-        static_cast<int16_t>(setpoint.yvelocity * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->body_w =
-        static_cast<int16_t>(setpoint.avelocity * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->body_x = static_cast<int16_t>(setpoint.xvelocity *
+                                               RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->body_y = static_cast<int16_t>(setpoint.yvelocity *
+                                               RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->body_w = static_cast<int16_t>(setpoint.avelocity *
+                                               RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp_message->dribbler_speed = std::clamp<uint16_t>(
         static_cast<uint16_t>(
             (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? kMaxDribble : 0.0)),
@@ -263,16 +263,16 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
                            (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 255.0 : 0.0)));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, RadioMessage::ControlMessage* rtp,
-                strategy::Positions role, bool blue_team) {
+                const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team) {
     rtp->team = blue_team;
     rtp->robot_id = shell;
-    rtp->body_x =
-        static_cast<int16_t>(motion.velocity_x_mps * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->body_y =
-        static_cast<int16_t>(motion.velocity_y_mps * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->body_w =
-        static_cast<int16_t>(motion.velocity_z_radps * RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_x = static_cast<int16_t>(motion.velocity_x_mps *
+                                       RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_y = static_cast<int16_t>(motion.velocity_y_mps *
+                                       RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp->body_w = static_cast<int16_t>(motion.velocity_z_radps *
+                                       RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->dribbler_speed = manipulator.dribbler_speed;
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);

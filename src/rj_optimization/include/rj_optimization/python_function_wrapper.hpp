@@ -1,12 +1,12 @@
 #pragma once
 
 #include <functional>
-#include <Python.h>
+
 #include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
+#include <Python.h>
 #include <rj_geometry/point.hpp>
-
 
 float cpp_function_cb(rj_geometry::Point p, PyObject* pyfunc);
 

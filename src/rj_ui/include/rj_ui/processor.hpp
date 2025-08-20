@@ -8,26 +8,25 @@
 #include <optional>
 #include <vector>
 
+#include <QMutexLocker>
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <spdlog/spdlog.h>
 
-#include <QMutexLocker>
-
-#include <rj_referee/external_referee.hpp>
+#include <rj_common/context.hpp>
+#include <rj_common/debug_drawer.hpp>
+#include <rj_common/logger.hpp>
+#include <rj_common/node.hpp>
+#include <rj_constants/constants.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_protos/LogFrame.pb.h>
+#include <rj_referee/external_referee.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
-#include <rj_constants/constants.hpp>
-#include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
-#include <rj_common/node.hpp>
-#include <rj_common/context.hpp>
-#include <rj_common/logger.hpp>
-#include <rj_common/debug_drawer.hpp>
 
 #include "rj_ui/ros2_temp/autonomy_interface.hpp"
 #include "rj_ui/ros2_temp/debug_draw_interface.hpp"

@@ -5,8 +5,7 @@
 
 class Pid {
 public:
-    Pid(float p = 0, float i = 0, float d = 0, unsigned int windup = 0,
-        float dAlpha = 0);
+    Pid(float p = 0, float i = 0, float d = 0, unsigned int windup = 0, float dAlpha = 0);
 
     float run(float err);
 

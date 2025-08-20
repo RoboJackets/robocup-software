@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_config_server/config_server.hpp>
 #include <rj_common/field_dimensions.hpp>
+#include <rj_config_server/config_server.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging_macros.hpp>
 
@@ -95,7 +95,7 @@ GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
     return game_settings;
 }
 
-int main(int argc, char * argv[]) {
+int main(int argc, char* argv[]) {
     std::vector<std::string> args = rclcpp::init_and_remove_ros_arguments(argc, argv);
 
     try {

@@ -4,8 +4,8 @@
 #include <limits>
 
 #include <rj_geometry/point.hpp>
-#include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
+#include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 
 namespace vision_filter {
 

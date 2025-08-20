@@ -1,5 +1,5 @@
-#include <rj_utils/logging.hpp>
 #include <rj_param_utils/global_params.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "rj_planning/planner_node.hpp"
 

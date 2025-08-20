@@ -3,21 +3,21 @@
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/float64.hpp>
 
+#include <rj_common/control/motion_setpoint.hpp>
+#include <rj_common/game_state.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/utils.hpp>
+#include <rj_common/world_state.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_utils/logging.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_common/ros_debug_drawer.hpp>
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/control/motion_setpoint.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_utils/logging.hpp>
+#include <std_msgs/msg/float64.hpp>
 
 #include "rj_control/pid.hpp"
 

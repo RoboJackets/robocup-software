@@ -1,6 +1,6 @@
 #include <rj_constants/constants.hpp>
-#include <rj_vision_filter/camera/world.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
+#include <rj_vision_filter/camera/world.hpp>
 
 namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_kick_timeout, 1.0,

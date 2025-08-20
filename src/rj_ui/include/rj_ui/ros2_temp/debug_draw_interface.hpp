@@ -2,10 +2,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_drawing_msgs/msg/debug_draw.hpp>
-#include <rj_constants/topic_names.hpp>
 #include <rj_common/context.hpp>
 #include <rj_common/node.hpp>
+#include <rj_constants/topic_names.hpp>
+#include <rj_drawing_msgs/msg/debug_draw.hpp>
 
 namespace ros2_temp {
 

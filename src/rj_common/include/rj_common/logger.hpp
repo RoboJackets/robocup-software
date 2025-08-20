@@ -12,14 +12,14 @@
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/logging.hpp>
 
-#include "rj_common/control/motion_setpoint.hpp"
-#include "rj_common/radio/robot_status.hpp"
-#include "rj_common/radio/packet_convert.hpp"
-#include "rj_common/time.hpp"
-#include "rj_common/node.hpp"
-#include "rj_common/robot_intent.hpp"
-#include "rj_common/world_state.hpp"
 #include "rj_common/context.hpp"
+#include "rj_common/control/motion_setpoint.hpp"
+#include "rj_common/node.hpp"
+#include "rj_common/radio/packet_convert.hpp"
+#include "rj_common/radio/robot_status.hpp"
+#include "rj_common/robot_intent.hpp"
+#include "rj_common/time.hpp"
+#include "rj_common/world_state.hpp"
 
 // For FRIEND_TEST
 // #include <gtest/gtest_prod.h>

@@ -1,6 +1,7 @@
+#include "rj_vision_filter/filter/kalman_filter_2d.hpp"
+
 #include <cmath>
 
-#include "rj_vision_filter/filter/kalman_filter_2d.hpp"
 #include <rj_param_utils/vision/vision_params.hpp>
 
 namespace vision_filter {

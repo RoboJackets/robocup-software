@@ -3,10 +3,10 @@
 #include <optional>
 #include <random>
 
-#include <rj_constants/constants.hpp>
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/rrt_util.hpp"

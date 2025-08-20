@@ -1,30 +1,28 @@
 #include "rj_ui/field_view.hpp"
 
-
 #include <algorithm>
 #include <cstdio>
 #include <memory>
 #include <set>
 
-#include <QLayout>
+#include <QGLWidget>
 #include <QLabel>
+#include <QLayout>
 #include <QPainter>
 #include <QPainterPath>
 #include <QResizeEvent>
-#include <QGLWidget>
 #include <QStyle>
 #include <QStyleOption>
 
+#include <rj_common/field_dimensions.hpp>
+#include <rj_common/planning/motion_constraints.hpp>
+#include <rj_common/vision_dot_pattern.hpp>
+#include <rj_constants/constants.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/transform_matrix.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/util.hpp>
-#include <rj_geometry/transform_matrix.hpp>
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/vision_dot_pattern.hpp>
-#include <rj_common/planning/motion_constraints.hpp>
-#include <rj_constants/constants.hpp>
 
 using namespace std;
 

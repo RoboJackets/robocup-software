@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_vision_filter/vision_filter.hpp>
 #include <rj_param_utils/global_params.hpp>
+#include <rj_vision_filter/vision_filter.hpp>
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

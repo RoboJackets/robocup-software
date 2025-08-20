@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <fstream>
+#include <memory>
 #include <string>
 
 #include <Eigen/Dense>
@@ -9,10 +9,10 @@
 #include <QtQuick>
 #include <QtWidgets>
 
-#include "rj_rrt/2dplane/GridStateSpace.hpp"
-#include "rj_rrt/BiRRT.hpp"
 #include "rj_rrt/2dplane/2dplane.hpp"
+#include "rj_rrt/2dplane/GridStateSpace.hpp"
 #include "rj_rrt/2dplane/ObstacleGrid.hpp"
+#include "rj_rrt/BiRRT.hpp"
 #include "rj_rrt/planning/Path.hpp"
 
 /**
@@ -81,8 +81,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
 
-    static bool mouseInGrabbingRange(QMouseEvent* event,
-                                     const Eigen::Vector2d& pt);
+    static bool mouseInGrabbingRange(QMouseEvent* event, const Eigen::Vector2d& pt);
 
 private:
     std::shared_ptr<RRT::GridStateSpace> _stateSpace;

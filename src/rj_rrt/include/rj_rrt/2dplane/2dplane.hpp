@@ -1,11 +1,12 @@
 #pragma once
 
-#include <math.h>
-#include <memory>
 #include <functional>
+#include <memory>
 
-#include <boost/functional/hash.hpp>
 #include <Eigen/Dense>
+#include <boost/functional/hash.hpp>
+
+#include <math.h>
 
 #include "rj_rrt/StateSpace.hpp"
 #include "rj_rrt/Tree.hpp"
@@ -42,7 +43,6 @@ static size_t hash(Eigen::Vector2d state) {
  * if your 2d plane has any obstacles.
  */
 std::shared_ptr<RRT::Tree<Eigen::Vector2d>> TreeFor2dPlane(
-    std::shared_ptr<StateSpace<Eigen::Vector2d>> stateSpace,
-    Eigen::Vector2d goal, double step);
+    std::shared_ptr<StateSpace<Eigen::Vector2d>> stateSpace, Eigen::Vector2d goal, double step);
 
 }  // namespace RRT

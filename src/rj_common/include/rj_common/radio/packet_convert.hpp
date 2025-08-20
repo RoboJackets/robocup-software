@@ -8,19 +8,19 @@
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
+#include <rj_param_utils/global_params.hpp>
 #include <rj_protos/RadioRx.pb.h>
 #include <rj_protos/RadioTx.pb.h>
 #include <rj_protos/Robot.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
-#include <rj_param_utils/global_params.hpp>
 
-#include "rj_common/radio/robot_status.hpp"
+#include "rj_common/control/motion_setpoint.hpp"
+#include "rj_common/planning/trajectory.hpp"
 #include "rj_common/radio/messages/control_message.hpp"
 #include "rj_common/radio/messages/robot_status_message.hpp"
-#include "rj_common/control/motion_setpoint.hpp"
+#include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"
-#include "rj_common/planning/trajectory.hpp"
 #include "rj_common/strategy/positions.hpp"
 
 /**
@@ -58,8 +58,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
             RadioMessage::ControlMessage* rtp, bool blue_team);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell, RadioMessage::ControlMessage* rtp,
-                strategy::Positions role, bool blue_team);
+                const rj_msgs::msg::MotionSetpoint& motion, int shell,
+                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team);
 
 void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
               const MotionSetpoint& setpoint, int shell, Packet::Robot* proto);

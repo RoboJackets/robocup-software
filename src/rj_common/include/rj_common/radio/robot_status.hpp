@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
+#include <rj_geometry/pose.hpp>
 
 /**
  * \brief Struct representing data returned from the robot, possibly including

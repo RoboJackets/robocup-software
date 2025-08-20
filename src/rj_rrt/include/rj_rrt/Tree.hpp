@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
 #include <deque>
 #include <functional>
 #include <list>
@@ -13,6 +12,7 @@
 #include <flann/algorithms/dist.h>
 #include <flann/algorithms/kdtree_single_index.h>
 #include <flann/flann.hpp>
+#include <stdlib.h>
 
 #include "rj_rrt/StateSpace.hpp"
 
@@ -50,8 +50,7 @@ public:
      */
     int depth() const {
         int n = 0;
-        for (Node<T>* ancestor = _parent; ancestor != nullptr;
-             ancestor = ancestor->_parent) {
+        for (Node<T>* ancestor = _parent; ancestor != nullptr; ancestor = ancestor->_parent) {
             n++;
         }
         return n;
@@ -129,13 +128,10 @@ class Tree {
 public:
     Tree(const Tree&) = delete;
     Tree& operator=(const Tree&) = delete;
-    Tree(std::shared_ptr<StateSpace<T>> stateSpace,
-         std::function<size_t(T)> hashT, int dimensions, bool forward = true,
-         std::function<T(double*)> arrayToT = NULL,
+    Tree(std::shared_ptr<StateSpace<T>> stateSpace, std::function<size_t(T)> hashT, int dimensions,
+         bool forward = true, std::function<T(double*)> arrayToT = NULL,
          std::function<void(T, double*)> TToArray = NULL)
-        : _kdtree(flann::KDTreeSingleIndexParams()),
-          _dimensions(dimensions),
-          _nodemap(20, hashT) {
+        : _kdtree(flann::KDTreeSingleIndexParams()), _dimensions(dimensions), _nodemap(20, hashT) {
         _stateSpace = stateSpace;
         _forward = forward;
         _arrayToT = arrayToT;
@@ -179,8 +175,7 @@ public:
     double goalBias() const { return _goalBias; }
     void setGoalBias(double goalBias) {
         if (goalBias < 0 || goalBias > 1) {
-            throw std::invalid_argument(
-                "The goal bias must be a number between 0.0 and 1.0");
+            throw std::invalid_argument("The goal bias must be a number between 0.0 and 1.0");
         }
         _goalBias = goalBias;
     }
@@ -192,8 +187,7 @@ public:
     double waypointBias() const { return _waypointBias; }
     void setWaypointBias(double waypointBias) {
         if (waypointBias < 0 || waypointBias > 1) {
-            throw std::invalid_argument(
-                "The waypoint bias must be a number between 0.0 and 1.0");
+            throw std::invalid_argument("The waypoint bias must be a number between 0.0 and 1.0");
         }
         _waypointBias = waypointBias;
     }
@@ -205,9 +199,7 @@ public:
      * towards these
      */
     const std::vector<T>& waypoints() const { return _waypoints; }
-    void setWaypoints(const std::vector<T>& waypoints) {
-        _waypoints = waypoints;
-    }
+    void setWaypoints(const std::vector<T>& waypoints) { _waypoints = waypoints; }
     void clearWaypoints() { _waypoints.clear(); }
 
     double stepSize() const { return _stepSize; }
@@ -240,8 +232,7 @@ public:
         for (int i = 0; i < _maxIterations; i++) {
             Node<T>* newNode = grow();
 
-            if (newNode && _stateSpace->distance(newNode->state(), _goalState) <
-                               _goalMaxDist)
+            if (newNode && _stateSpace->distance(newNode->state(), _goalState) < _goalMaxDist)
                 return true;
         }
 
@@ -253,8 +244,7 @@ public:
      * Removes nodes from _nodes and _nodemap so it can be run() again.
      */
     void reset(bool eraseRoot = false) {
-        _kdtree = flann::Index<flann::L2_Simple<double>>(
-            flann::KDTreeSingleIndexParams());
+        _kdtree = flann::Index<flann::L2_Simple<double>>(flann::KDTreeSingleIndexParams());
         if (eraseRoot) {
             _nodes.clear();
             _nodemap.clear();
@@ -267,11 +257,10 @@ public:
             if (_TToArray) {
                 std::vector<double> data(_dimensions);
                 _TToArray(root, data.data());
-                _kdtree.buildIndex(
-                    flann::Matrix<double>(data.data(), 1, _dimensions));
+                _kdtree.buildIndex(flann::Matrix<double>(data.data(), 1, _dimensions));
             } else {
-                _kdtree.buildIndex(flann::Matrix<double>(
-                    (double*)&(rootNode()->state()), 1, _dimensions));
+                _kdtree.buildIndex(
+                    flann::Matrix<double>((double*)&(rootNode()->state()), 1, _dimensions));
             }
         }
     }
@@ -283,9 +272,7 @@ public:
     Node<T>* grow() {
         //  extend towards goal, waypoint, or random state depending on the
         //  biases and a random number
-        double r =
-            rand() /
-            (double)RAND_MAX;  //  r is between 0 and one since we normalize it
+        double r = rand() / (double)RAND_MAX;  //  r is between 0 and one since we normalize it
         if (r < goalBias()) {
             return extend(goalState());
         } else if (r < goalBias() + waypointBias() && _waypoints.size() > 0) {
@@ -307,24 +294,20 @@ public:
         // k-NN search (O(log(N)))
         flann::Matrix<double> query;
         if (NULL == _TToArray) {
-            query = flann::Matrix<double>((double*)&state, 1,
-                                          sizeof(state) / sizeof(0.0));
+            query = flann::Matrix<double>((double*)&state, 1, sizeof(state) / sizeof(0.0));
         } else {
             std::vector<double> data(_dimensions);
             _TToArray(state, data.data());
-            query = flann::Matrix<double>(data.data(), 1,
-                                          sizeof(state) / sizeof(0.0));
+            query = flann::Matrix<double>(data.data(), 1, sizeof(state) / sizeof(0.0));
         }
         std::vector<int> i(query.rows);
         flann::Matrix<int> indices(i.data(), query.rows, 1);
         std::vector<double> d(query.rows);
         flann::Matrix<double> dists(d.data(), query.rows, 1);
 
-        int n =
-            _kdtree.knnSearch(query, indices, dists, 1, flann::SearchParams());
+        int n = _kdtree.knnSearch(query, indices, dists, 1, flann::SearchParams());
 
-        if (distanceOut)
-            *distanceOut = _stateSpace->distance(state, best->state());
+        if (distanceOut) *distanceOut = _stateSpace->distance(state, best->state());
 
         T point;
         if (NULL == _arrayToT) {
@@ -358,11 +341,10 @@ public:
         //  the they're really close together.
         T intermediateState;
         if (_isASCEnabled) {
-            intermediateState = _stateSpace->intermediateState(
-                source->state(), target, stepSize(), maxStepSize());
+            intermediateState =
+                _stateSpace->intermediateState(source->state(), target, stepSize(), maxStepSize());
         } else {
-            intermediateState = _stateSpace->intermediateState(
-                source->state(), target, stepSize());
+            intermediateState = _stateSpace->intermediateState(source->state(), target, stepSize());
         }
 
         //  Make sure there's actually a direct path from @source to
@@ -375,10 +357,9 @@ public:
 
         // Add a node to the tree for this state
         _nodes.emplace_back(intermediateState, source, _dimensions, _TToArray);
-        _kdtree.addPoints(flann::Matrix<double>(
-            _nodes.back().coordinates()->data(), 1, _dimensions));
-        _nodemap.insert(
-            std::pair<T, Node<T>*>(intermediateState, &_nodes.back()));
+        _kdtree.addPoints(
+            flann::Matrix<double>(_nodes.back().coordinates()->data(), 1, _dimensions));
+        _nodemap.insert(std::pair<T, Node<T>*>(intermediateState, &_nodes.back()));
         return &_nodes.back();
     }
 
@@ -393,8 +374,8 @@ public:
      * @param reverse if true, the states will be sent from @dest to the tree's
      *     root
      */
-    void getPath(std::function<void(const T& stateI)> callback,
-                 const Node<T>* dest = nullptr, bool reverse = false) const {
+    void getPath(std::function<void(const T& stateI)> callback, const Node<T>* dest = nullptr,
+                 bool reverse = false) const {
         const Node<T>* node = (dest != nullptr) ? dest : lastNode();
         if (reverse) {
             while (node) {
@@ -426,16 +407,14 @@ public:
      */
     void getPath(std::vector<T>* vectorOut, const Node<T>* dest = nullptr,
                  bool reverse = false) const {
-        getPath([&](const T& stateI) { vectorOut->push_back(stateI); }, dest,
-                reverse);
+        getPath([&](const T& stateI) { vectorOut->push_back(stateI); }, dest, reverse);
     }
 
     /**
      * The same as the first getPath() method, but returns the vector of states
      * instead of executing a callback.
      */
-    std::vector<T> getPath(const Node<T>* dest = nullptr,
-                           bool reverse = false) const {
+    std::vector<T> getPath(const Node<T>* dest = nullptr, bool reverse = false) const {
         std::vector<T> path;
         getPath(&path, dest, reverse);
         return path;
@@ -482,11 +461,10 @@ public:
         if (_TToArray) {
             std::vector<double> data(_dimensions);
             _TToArray(rootNode()->state(), data.data());
-            _kdtree.buildIndex(
-                flann::Matrix<double>(data.data(), 1, _dimensions));
+            _kdtree.buildIndex(flann::Matrix<double>(data.data(), 1, _dimensions));
         } else {
-            _kdtree.buildIndex(flann::Matrix<double>(
-                (double*)&(rootNode()->state()), 1, _dimensions));
+            _kdtree.buildIndex(
+                flann::Matrix<double>((double*)&(rootNode()->state()), 1, _dimensions));
         }
     }
 

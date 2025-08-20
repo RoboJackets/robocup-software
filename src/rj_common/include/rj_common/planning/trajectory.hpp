@@ -5,14 +5,12 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
-
 #include <rj_geometry/pose.hpp>
-
 #include <rj_msgs/msg/trajectory.hpp>
 
 #include "rj_common/debug_drawer.hpp"
-#include "rj_common/planning/instant.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
+#include "rj_common/planning/instant.hpp"
 
 namespace planning {
 

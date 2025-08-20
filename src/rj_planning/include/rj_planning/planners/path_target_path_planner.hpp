@@ -1,19 +1,19 @@
 #pragma once
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include <spdlog/spdlog.h>
 
-#include <rj_geometry/shape_set.hpp>
-#include <rj_geometry/pose.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include <rj_geometry/pose.hpp>
+#include <rj_geometry/shape_set.hpp>
 
+#include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/replanner.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
-#include "rj_planning/plan_request.hpp"
 
 namespace planning {
 
