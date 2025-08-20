@@ -7,23 +7,20 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: robojackets/robocup-software:humble
+      image: osrf/ros:humble-desktop-full
     defaults:
       run:
         shell: bash
     steps:
-      - name: Config git
-        run: "git config --global --add safe.directory /__w/robocup-software/robocup-software"
-
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Run util/ubuntu-setup as sudo
         run: "sudo ./util/ubuntu-setup --yes"
 
-      - name: Install git pre-commit hooks & update submodules
+      - name: Install submodules
         run: "git submodule sync && git submodule update --init --recursive"
 
       - name: Make ${{ github.base_ref }} branch exist
