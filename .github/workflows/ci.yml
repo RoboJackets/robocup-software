@@ -18,13 +18,13 @@ jobs:
           fetch-depth: 0
 
       - name: Run util/ubuntu-setup as sudo
-        run: "sudo ./util/ubuntu-setup --yes"
+        run: "./util/ubuntu-setup -y"
 
       - name: Build
-        run: colcon build
+        run: source /opt/ros/humble/setup.bash && colcon build --parallel-workers 4
 
       - name: Test
-        run: colcon test
+        run: source /opt/ros/humble/setup.bash && colcon test
 
   fix-style:
     # Check if the PR is not raised by this workflow

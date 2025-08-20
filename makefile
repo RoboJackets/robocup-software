@@ -34,29 +34,29 @@ define cmake_build_target_perf
 endef
 
 all-perf:
-	colcon build
+	colcon build --parallel-workers 4
 # perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
 perf: all-perf
 
 # used in GH Actions build-and-test
 all:
-	colcon build
+	colcon build --parallel-workers 4
 # debug: slow executable, but many debug symbols (e.g. for GDB)
 debug: all
 
 # NOT used in build-and-test
 all_including_tests:
-	colcon build
+	colcon build --parallel-workers 4
 
 all-release:
-	colcon build
+	colcon build --parallel-workers 4
 # release: fast executable, no debug symbols
 release: all-release
 
 # run if build-release-debug/ exists from a previous build
 # and no CMake files or launch.py files have been changed
 again:
-	colcon build
+	colcon build --parallel-workers 4
 
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
