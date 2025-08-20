@@ -140,9 +140,7 @@ install(
 
 install(
   TARGETS planner_node
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_export_dependencies(

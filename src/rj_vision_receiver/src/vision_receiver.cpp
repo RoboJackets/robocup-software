@@ -337,10 +337,3 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     }
 }
 }  // namespace vision_receiver
-
-int main(int argc, char * argv[]) {
-    rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<vision_receiver::VisionReceiver>());
-    rclcpp::shutdown();
-    return 0;
-}

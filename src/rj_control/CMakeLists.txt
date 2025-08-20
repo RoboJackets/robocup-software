@@ -98,9 +98,7 @@ install(
 
 install(
   TARGETS motion_control_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(

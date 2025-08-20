@@ -147,9 +147,7 @@ install(
 
 install(
   TARGETS straight_line_test_node kicker_picker_node agent_action_clients
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_export_dependencies(

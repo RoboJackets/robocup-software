@@ -21,23 +21,7 @@ find_package(rj_constants REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
 
-add_executable(${PROJECT_NAME}_node
-  src/vision_receiver.cpp
-)
-
-target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-)
-
-target_include_directories(${PROJECT_NAME}_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(${PROJECT_NAME}_node
-  PUBLIC
+set(VISION_RECEIVER_DEPS
   rclcpp
   Boost
   rj_msgs
@@ -49,6 +33,29 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_config_client
 )
 
+set(VISION_RECEIVER_LIBS
+  Boost::boost
+)
+
+set(VISION_RECEIVER_SRC
+  src/vision_receiver.cpp
+)
+
+add_executable(${PROJECT_NAME}_node
+  ${VISION_RECEIVER_SRC}
+  src/main.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_node PUBLIC ${VISION_RECEIVER_LIBS})
+
+target_include_directories(${PROJECT_NAME}_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(${PROJECT_NAME}_node PUBLIC ${VISION_RECEIVER_DEPS})
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -56,9 +63,7 @@ install(
 
 install(
   TARGETS ${PROJECT_NAME}_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

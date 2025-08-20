@@ -137,9 +137,7 @@ install(
 
 install(
   TARGETS ${PROJECT_NAME}_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(
@@ -182,4 +180,5 @@ if(BUILD_TESTING)
   endforeach()
 endif()
 
+ament_export_targets(${PROJECT_NAME})
 ament_package()

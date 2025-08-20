@@ -61,14 +61,6 @@ def generate_launch_description():
         "RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED", "1"
     )
 
-    # bring up global_param_server
-    # TODO: delete global_param_server.launch.py and merge?
-    bringup_dir = Path(get_package_share_directory("rj_robocup"))
-    launch_dir = bringup_dir / "launch"
-    global_param_server = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(str(launch_dir / "global_param_server.launch.py"))
-    )
-
     return LaunchDescription(
         [
             # LaunchArguments are declared here to be filled in by CLI arg,
@@ -102,7 +94,7 @@ def generate_launch_description():
                 default_value=[
                     TextSubstitution(
                         text=os.path.join(
-                            get_package_share_directory("rj_robocup"), "config", ""
+                            get_package_share_directory("rj_param_utils"), "config", ""
                         )
                     ),
                     param_config,
@@ -132,7 +124,19 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
-            global_param_server,
+            Node(
+                package="rj_param_utils",
+                executable="global_param_server_node",
+                output="screen",
+                parameters=[
+                    os.path.join(
+                        get_package_share_directory("rj_param_utils"),
+                        "config",
+                        "sim.yaml"
+                    )
+                ],
+                on_exit=Shutdown(),
+            ),
             Node(
                 package="rj_ui",
                 executable="rj_ui_node",
@@ -169,7 +173,7 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup",
+                package="rj_planning",
                 executable="planner_node",
                 output="screen",
                 parameters=[param_config_filepath],
@@ -178,7 +182,7 @@ def generate_launch_description():
             # spawn manual node only if use_manual_control is True
             Node(
                 condition=IfCondition(PythonExpression([use_manual_control])),
-                package="rj_robocup",
+                package="rj_joystick",
                 executable="manual_control_node",
                 output="screen",
                 on_exit=Shutdown(),
@@ -187,15 +191,15 @@ def generate_launch_description():
             # LaunchArgument
             Node(
                 condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
-                package="rj_robocup",
-                executable="agent_action_client_node",
+                package="rj_strategy",
+                executable="agent_action_clients",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
                 condition=IfCondition(PythonExpression([run_line_test])),
-                package="rj_robocup",
+                package="rj_strategy",
                 executable="straight_line_test_node",
                 output="screen",
                 parameters=[param_config_filepath],
@@ -203,7 +207,7 @@ def generate_launch_description():
             ),
             Node(
                 condition=IfCondition(PythonExpression([use_internal_ref])),
-                package="rj_robocup",
+                package="rj_referee",
                 executable="internal_referee_node",
                 output="screen",
                 parameters=[param_config_filepath],
@@ -211,7 +215,7 @@ def generate_launch_description():
             ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", use_internal_ref])),
-                package="rj_robocup",
+                package="rj_referee",
                 executable="external_referee_node",
                 output="screen",
                 parameters=[
@@ -221,14 +225,14 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup",
-                executable="rj_vision_filter",
+                package="rj_vision_filter",
+                executable="rj_vision_filter_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup",
+                package="rj_strategy",
                 executable="kicker_picker_node",
                 output="screen",
                 parameters=[param_config_filepath],

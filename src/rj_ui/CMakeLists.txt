@@ -249,7 +249,12 @@ install(
 )
 
 install(
-  TARGETS ${PROJECT_NAME}_node log_viewer_node ${PROJECT_NAME}
+  TARGETS ${PROJECT_NAME}_node log_viewer_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
