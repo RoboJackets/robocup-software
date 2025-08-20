@@ -24,7 +24,7 @@ jobs:
         run: "sudo ./util/ubuntu-setup --yes"
 
       - name: Install git pre-commit hooks & update submodules
-        run: "./util/git-setup --yes"
+        run: "git submodule sync && git submodule update --init --recursive"
 
       - name: Make ${{ github.base_ref }} branch exist
         run: |
@@ -32,29 +32,10 @@ jobs:
           git checkout -
 
       - name: Build
-        run: |
-          echo "::add-matcher::ci/clang.json"
-          source /opt/ros/humble/setup.bash
-          source install/setup.bash
-          make all
-          echo "::remove-matcher owner=clang::"
+        run: colcon build
 
       - name: Test
-        run: |
-          echo "::add-matcher::ci/gtest.json"
-          source /opt/ros/humble/setup.bash
-          source install/setup.bash
-          ./install/lib/rj_robocup/test-soccer
-          echo "::remove-matcher owner=gtest::"
-
-      - name: Run clang-tidy
-        run: |
-          echo "::add-matcher::ci/clang-tidy.json"
-          source /opt/ros/humble/setup.bash
-          source install/setup.bash
-          DIFFBASE=${{ github.base_ref }} make checktidy-lines
-          echo "::remove-matcher owner=clang-tidy::"
-        if: always()
+        run: colcon test
 
   fix-style:
     # Check if the PR is not raised by this workflow

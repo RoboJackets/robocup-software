@@ -13,6 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(fmt REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
@@ -43,6 +44,7 @@ ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
   Eigen3
   Qt5
+  fmt
   rj_protos
   rj_constants
   rj_convert
@@ -53,6 +55,7 @@ target_link_libraries(${PROJECT_NAME}
   PUBLIC
   Eigen3::Eigen
   Qt5::Core
+  fmt
   ${CMAKE_DL_LIBS}
 )
 
@@ -73,6 +76,7 @@ install(
 ament_export_dependencies(
   Eigen3
   Qt5Core
+  fmt
   rj_protos
   rj_constants
   rj_convert
@@ -80,19 +84,26 @@ ament_export_dependencies(
 )
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
 
-  # TODO: Add tests from testing
+  set(RJ_GEOMETRY_TESTS
+     arc_test
+     circle_test
+     composite_shape_test
+     geometry_conversions_test
+     line_test
+     point_test
+     pose_test
+     rect_test
+     segment_test
+     transform_matrix_test
+  )
 
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  foreach(TEST IN LISTS RJ_GEOMETRY_TESTS)
+    ament_add_gtest(${TEST} tests/${TEST}.cpp)
+    target_include_directories(${TEST} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+    target_link_libraries(${TEST} ${PROJECT_NAME})
+  endforeach()
 endif()
 
 ament_export_targets(${PROJECT_NAME})

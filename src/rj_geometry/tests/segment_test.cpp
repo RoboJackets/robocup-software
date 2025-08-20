@@ -2,6 +2,7 @@
 
 #include "rj_geometry/segment.hpp"
 #include "rj_geometry/util.hpp"
+
 using namespace rj_geometry;
 
 TEST(Segment, dist_to) {

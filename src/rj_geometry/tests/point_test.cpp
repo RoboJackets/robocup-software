@@ -2,6 +2,7 @@
 
 #include "rj_geometry/point.hpp"
 #include "rj_geometry/util.hpp"
+
 using namespace std;
 using namespace rj_geometry;
 

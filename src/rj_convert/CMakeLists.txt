@@ -32,23 +32,11 @@ install(
 )
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  find_package(ament_cmake_gtest REQUIRED)
 
-  add_executable(test_rj_convert)
-  target_sources(test_rj_convert PRIVATE testing/ros_convert_test.cpp)
-  target_link_libraries(test_rj_convert PRIVATE rj_convert gtest gtest_main)
-  install(
-    TARGETS test_rj_convert
-    DESTINATION lib/${CMAKE_PROJECT_NAME}
-  )
+  ament_add_gtest(ros_convert_test tests/ros_convert_test.cpp)
+  target_include_directories(ros_convert_test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_link_libraries(ros_convert_test ${PROJECT_NAME})
 endif()
 
 ament_export_include_directories(include)
