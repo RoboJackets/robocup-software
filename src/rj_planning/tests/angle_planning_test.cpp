@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "planning/primitives/angle_planning.hpp"
+#include "rj_planning/primitives/angle_planning.hpp"
 
 using namespace planning;
 using namespace rj_geometry;

@@ -1,16 +1,4 @@
-#include "planner_for_robot.hpp"
-
-#include "game_state.hpp"
-#include "planning/planner/collect_path_planner.hpp"
-#include "planning/planner/escape_obstacles_path_planner.hpp"
-#include "planning/planner/goalie_idle_path_planner.hpp"
-#include "planning/planner/intercept_path_planner.hpp"
-#include "planning/planner/line_kick_path_planner.hpp"
-#include "planning/planner/line_pivot_path_planner.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
-#include "planning/planner/pivot_path_planner.hpp"
-#include "planning/planner/rotate_path_planner.hpp"
-#include "planning/planner/settle_path_planner.hpp"
+#include "rj_planning/planner_for_robot.hpp"
 
 namespace planning {
 

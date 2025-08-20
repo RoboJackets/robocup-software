@@ -1,18 +1,4 @@
-#include "settle_path_planner.hpp"
-
-#include <algorithm>
-#include <cmath>
-
-#include <spdlog/spdlog.h>
-
-#include <rj_common/utils.hpp>
-#include <rj_constants/constants.hpp>
-
-#include "planning/instant.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/trajectory_utils.hpp"
+#include "rj_planning/planners/settle_path_planner.hpp"
 
 using namespace rj_geometry;
 

@@ -2,9 +2,9 @@
 
 #include <random>
 
-#include "planning/instant.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory.hpp"
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/planning/robot_constraints.hpp>
 
 namespace planning::TestingUtils {
 /**

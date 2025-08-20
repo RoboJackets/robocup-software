@@ -10,10 +10,9 @@
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/goalie.hpp>
-
-#include "game_settings.hpp"
-#include "game_state.hpp"
-#include "world_state.hpp"
+#include <rj_common/game_settings.hpp>
+#include <rj_common/game_state.hpp>
+#include <rj_common/world_state.hpp>
 
 namespace planning {
 

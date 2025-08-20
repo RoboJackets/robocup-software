@@ -7,17 +7,26 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/time.hpp>
+#include <rj_common/robot_intent.hpp>
+#include <rj_common/planning/trajectory.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/srv/plan_hypothetical_path.hpp>
 
-#include "global_state.hpp"
-#include "planning/planner/escape_obstacles_path_planner.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/plan_request.hpp"
-#include "planning/trajectory.hpp"
-#include "planning/trajectory_collection.hpp"
-#include "robot_intent.hpp"
+#include "rj_planning/planners/escape_obstacles_path_planner.hpp"
+#include "rj_planning/planners/collect_path_planner.hpp"
+#include "rj_planning/planners/goalie_idle_path_planner.hpp"
+#include "rj_planning/planners/intercept_path_planner.hpp"
+#include "rj_planning/planners/line_kick_path_planner.hpp"
+#include "rj_planning/planners/line_pivot_path_planner.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
+#include "rj_planning/planners/pivot_path_planner.hpp"
+#include "rj_planning/planners/rotate_path_planner.hpp"
+#include "rj_planning/planners/settle_path_planner.hpp"
+#include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/plan_request.hpp"
+#include "rj_planning/trajectory_collection.hpp"
+#include "rj_planning/global_state.hpp"
 
 namespace planning {
 

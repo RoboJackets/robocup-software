@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "planning/primitives/path_smoothing.hpp"
+#include "rj_planning/primitives/path_smoothing.hpp"
 
 using rj_geometry::Point;
 

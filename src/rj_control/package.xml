@@ -9,6 +9,7 @@
 
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
+  <depend>flann</depend>
 
   <depend>rj_utils</depend>
   <depend>rj_constants</depend>

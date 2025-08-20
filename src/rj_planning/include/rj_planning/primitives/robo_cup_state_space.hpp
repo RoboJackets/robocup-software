@@ -3,7 +3,7 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/shape_set.hpp>
-#include <rrt/2dplane/PlaneStateSpace.hpp>
+#include <rj_rrt/2dplane/PlaneStateSpace.hpp>
 
 namespace planning {
 

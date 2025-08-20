@@ -1,13 +1,4 @@
-#include "escape_obstacles_path_planner.hpp"
-
-#include <optional>
-#include <vector>
-
-#include "planning/planning_params.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/primitives/robo_cup_state_space.hpp"
-#include "planning/primitives/rrt_util.hpp"
+#include "rj_planning/planners/escape_obstacles_path_planner.hpp"
 
 using namespace rj_geometry;
 namespace planning {

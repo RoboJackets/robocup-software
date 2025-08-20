@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
-#include "planning/primitives/trapezoidal_motion.hpp"
+#include "rj_planning/primitives/trapezoidal_motion.hpp"
 
 using namespace planning;
+using namespace std;
 
 class TrapezoidalMotionTest : public ::testing::Test {
 public:

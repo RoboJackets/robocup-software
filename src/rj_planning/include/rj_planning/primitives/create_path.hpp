@@ -3,10 +3,15 @@
 #include <optional>
 #include <random>
 
-#include "planning/motion_constraints.hpp"
-#include "planning/primitives/path_smoothing.hpp"
-#include "planning/trajectory.hpp"
-#include "rj_common/field_dimensions.hpp"
+#include <rj_constants/constants.hpp>
+#include <rj_common/field_dimensions.hpp>
+#include <rj_common/planning/motion_constraints.hpp>
+#include <rj_common/planning/trajectory.hpp>
+
+#include "rj_planning/primitives/path_smoothing.hpp"
+#include "rj_planning/primitives/rrt_util.hpp"
+#include "rj_planning/primitives/velocity_profiling.hpp"
+#include "rj_planning/trajectory_utils.hpp"
 
 namespace planning::CreatePath {
 

@@ -1,5 +1,5 @@
 # Use the official Ubuntu 22.04 image
-FROM ubuntu:22.04
+FROM osrf/ros:humble-desktop-full
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -48,19 +48,9 @@ RUN mkdir -p /root/.vnc && \
     echo "#!/bin/bash\nxrdb $HOME/.Xresources\nstartxfce4 &" > /root/.vnc/xstartup && \
     chmod +x /root/.vnc/xstartup
 
-# Clone RoboJackets RoboCup software and install dependencies
-RUN git clone https://github.com/RoboJackets/robocup-software.git /root/robocup-software
-
 # Set timezone to avoid interactive prompt
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-# Install dependencies
-RUN cd /root/robocup-software && \
-    ./util/ubuntu-setup -y || { echo 'ubuntu-setup script failed' ; exit 1; }
-
-RUN cd /root/robocup-software && \
-    ./util/git-setup || { echo 'git-setup script failed' ; exit 1; }
 
 # Clone and build ER-Force’s simulator
 RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework && \
@@ -77,12 +67,6 @@ RUN git clone https://github.com/robotics-erlangen/autoref.git /root/autoref && 
     cmake .. && \
     make
 
-# Use bash to source the ROS2 setup file and run make perf
-RUN bash -c "source /opt/ros/humble/setup.bash && \
-    cd /root/robocup-software && \
-    make perf && \
-    source install/setup.bash"
-
 # Install external ref (conditionally download the correct binary based on architecture)
 RUN cd /root && \
     if [ "$TARGETARCH" = "amd64" ]; then \
@@ -91,6 +75,13 @@ RUN cd /root && \
         curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.12.3/ssl-game-controller_v3.12.3_linux_arm64 -L -O; \
     fi && \
     chmod +x ssl-game-controller_v3.12.3_linux_*
+
+# Install Robocup Dependencies
+RUN mkdir -p /util
+COPY ./util/ubuntu-setup /ubuntu-setup
+COPY ./util/ubuntu-packages.txt /util/ubuntu-packages.txt
+COPY ./util/requirements3.txt /util/requirements3.txt
+RUN /ubuntu-setup -y || { echo 'ubuntu-setup script failed' ; exit 1; }
 
 # Expose the VNC, noVNC, and external ref ports
 EXPOSE 5901 6080 8081

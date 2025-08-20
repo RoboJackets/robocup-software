@@ -2,15 +2,15 @@
 
 #include <spdlog/spdlog.h>
 
-#include "planning/instant.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
-#include "planning/primitives/replanner.hpp"
-#include "planning/trajectory.hpp"
-#include "rj_geometry/point.hpp"
-/* #include <rj_msgs/msg/path_target_motion_command.hpp> */
-#include "planning/planner/motion_command.hpp"
-#include "planning/primitives/angle_planning.hpp"
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/planning/motion_command.hpp>
+#include <rj_geometry/point.hpp>
+
+#include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
+#include "rj_planning/primitives/replanner.hpp"
+#include "rj_planning/primitives/angle_planning.hpp"
 
 namespace planning {
 /**

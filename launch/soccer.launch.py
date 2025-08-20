@@ -118,14 +118,14 @@ def generate_launch_description():
             # Note the order doesn't matter here: ROS nodes launch in some
             # random order (there are Executors to change that)
             Node(
-                package="rj_robocup",
+                package="rj_vision_receiver",
                 executable="rj_vision_receiver_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup",
+                package="rj_config_server",
                 executable="rj_config_server_node",
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
@@ -134,8 +134,8 @@ def generate_launch_description():
             ),
             global_param_server,
             Node(
-                package="rj_robocup",
-                executable="soccer",
+                package="rj_ui",
+                executable="rj_ui_node",
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
                 parameters=[param_config_filepath],
@@ -143,7 +143,7 @@ def generate_launch_description():
             ),
             Node(
                 condition=IfCondition(PythonExpression([run_sim])),
-                package="rj_robocup",
+                package="rj_radio",
                 executable="sim_radio_node",
                 output="screen",
                 parameters=[param_config_filepath],
@@ -151,7 +151,7 @@ def generate_launch_description():
             ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", run_sim])),
-                package="rj_robocup",
+                package="rj_radio",
                 executable="network_radio_node",
                 output="screen",
                 parameters=[
@@ -162,8 +162,8 @@ def generate_launch_description():
             ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-                package="rj_robocup",
-                executable="control_node",
+                package="rj_control",
+                executable="motion_control_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

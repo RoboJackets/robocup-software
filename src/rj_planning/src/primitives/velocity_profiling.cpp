@@ -1,7 +1,4 @@
-#include "velocity_profiling.hpp"
-
-#include "planning/instant.hpp"
-#include "trapezoidal_motion.hpp"
+#include "rj_planning/primitives/velocity_profiling.hpp"
 
 namespace planning {
 

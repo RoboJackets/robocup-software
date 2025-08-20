@@ -1,17 +1,4 @@
-#include "rrt_util.hpp"
-
-#include <array>
-
-#include <rrt/planning/Path.hpp>
-
-#include "debug_drawer.hpp"
-#include "path_smoothing.hpp"
-#include "planning/instant.hpp"
-#include "planning/motion_constraints.hpp"
-#include "planning/planning_params.hpp"
-#include "planning/trajectory.hpp"
-#include "planning/trajectory_utils.hpp"
-#include "velocity_profiling.hpp"
+#include "rj_planning/primitives/rrt_util.hpp"
 
 namespace planning {
 

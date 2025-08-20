@@ -1,7 +1,7 @@
 #include <rj_utils/logging.hpp>
+#include <rj_param_utils/global_params.hpp>
 
-#include "global_params.hpp"
-#include "planner_node.hpp"
+#include "rj_planning/planner_node.hpp"
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

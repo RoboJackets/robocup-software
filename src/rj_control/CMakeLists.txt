@@ -5,6 +5,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
@@ -12,6 +14,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(Flann REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
@@ -26,14 +29,12 @@ add_executable(motion_control_node
   src/motion_control_node.cpp
   src/motion_control.cpp
   src/pid.cpp
-  src/trapezoidal_motion.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED
   src/motion_control_node.cpp
   src/motion_control.cpp
   src/pid.cpp
-  src/trapezoidal_motion.cpp
 )
 
 target_include_directories(motion_control_node
@@ -48,10 +49,21 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
+target_link_libraries(motion_control_node
+  PUBLIC
+  ${FLANN_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+  ${FLANN_LIBRARIES}
+)
+
 ament_target_dependencies(motion_control_node
   PUBLIC
   rclcpp
   std_msgs
+  Flann
   rj_utils
   rj_constants
   rj_msgs
@@ -67,6 +79,7 @@ ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
   rclcpp
   std_msgs
+  Flann
   rj_utils
   rj_constants
   rj_msgs
@@ -129,11 +142,6 @@ if(BUILD_TESTING)
   ament_add_gtest(motion_control_test tests/motion_control_test.cpp)
   target_include_directories(motion_control_test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
   target_link_libraries(motion_control_test ${PROJECT_NAME})
-
-  # Trapezoidal Motion Tests
-  ament_add_gtest(trapezoidal_motion_test tests/trapezoidal_motion_test.cpp)
-  target_include_directories(trapezoidal_motion_test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-  target_link_libraries(trapezoidal_motion_test ${PROJECT_NAME})
 endif()
 
 ament_export_targets(${PROJECT_NAME})

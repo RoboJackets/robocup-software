@@ -1,13 +1,4 @@
-#include "planning/planner/path_target_path_planner.hpp"
-
-#include <utility>
-
-#include <spdlog/spdlog.h>
-
-#include "planning/instant.hpp"
-#include "planning/planner/plan_request.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
-#include "planning/trajectory.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
 
 using namespace rj_geometry;
 

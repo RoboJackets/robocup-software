@@ -1,4 +1,4 @@
-#include "planning/trajectory_collection.hpp"
+#include "rj_planning/trajectory_collection.hpp"
 
 namespace planning {
 

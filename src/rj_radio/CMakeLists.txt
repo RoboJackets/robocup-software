@@ -5,6 +5,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
@@ -14,6 +16,7 @@ find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
+find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
@@ -38,12 +41,14 @@ target_link_libraries(network_radio_node
   PUBLIC
   spdlog
   Boost::boost
+  ${FLANN_LIBRARIES}
 )
 
 target_link_libraries(sim_radio_node
   PUBLIC
   spdlog
   Boost::boost
+  ${FLANN_LIBRARIES}
 )
 
 target_include_directories(network_radio_node
@@ -64,6 +69,7 @@ ament_target_dependencies(network_radio_node
   rclcpp
   rclcpp_components
   Boost
+  Flann
   rj_common
   rj_msgs
   rj_protos
@@ -81,6 +87,7 @@ ament_target_dependencies(sim_radio_node
   rclcpp
   rclcpp_components
   Boost
+  Flann
   rj_common
   rj_msgs
   rj_protos

@@ -2,9 +2,9 @@
 
 #include <gtest/gtest.h>
 
-#include "planning/primitives/path_smoothing.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
-#include "planning/tests/testing_utils.hpp"
+#include "rj_planning/primitives/path_smoothing.hpp"
+#include "rj_planning/primitives/velocity_profiling.hpp"
+#include "rj_planning/utils/testing_utils.hpp"
 
 using rj_geometry::Point;
 

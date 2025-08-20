@@ -1,9 +1,10 @@
 #pragma once
 
-#include "motion_command.hpp"
-#include "plan_request.hpp"
-#include "planning/instant.hpp"
-#include "planning/trajectory.hpp"
+#include <rj_common/planning/motion_command.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+
+#include "rj_planning/plan_request.hpp"
 
 namespace planning {
 

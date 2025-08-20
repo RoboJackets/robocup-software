@@ -2,19 +2,20 @@
 
 #include <gtest/gtest.h>
 
-#include "game_state.hpp"
-#include "planning/instant.hpp"
-#include "planning/planner/collect_path_planner.hpp"
-#include "planning/planner/motion_command.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
-#include "planning/planner/plan_request.hpp"
-#include "planning/planner/settle_path_planner.hpp"
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/tests/testing_utils.hpp"
-#include "planning/trajectory.hpp"
-#include "rj_common/field_dimensions.hpp"
-#include "rj_geometry/pose.hpp"
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/field_dimensions.hpp>
+#include <rj_common/game_state.hpp>
+#include <rj_common/planning/motion_command.hpp>
+#include <rj_geometry/pose.hpp>
+
+#include "rj_planning/planners/collect_path_planner.hpp"
+#include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
+#include "rj_planning/plan_request.hpp"
+#include "rj_planning/planners/settle_path_planner.hpp"
+#include "rj_planning/primitives/rrt_util.hpp"
+#include "rj_planning/utils/testing_utils.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure

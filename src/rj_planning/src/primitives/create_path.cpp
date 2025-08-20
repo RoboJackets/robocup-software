@@ -1,10 +1,4 @@
-#include "create_path.hpp"
-
-#include <rj_constants/constants.hpp>
-
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
-#include "planning/trajectory_utils.hpp"
+#include "rj_planning/primitives/create_path.hpp"
 
 using namespace rj_geometry;
 

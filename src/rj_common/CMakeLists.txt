@@ -121,7 +121,7 @@ if(BUILD_TESTING)
 
   foreach(TEST IN LISTS RJ_COMMON_TESTS)
     ament_add_gtest(${TEST} tests/${TEST}.cpp)
-    target_include_directories(${TEST} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_include_directories(${TEST} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
     target_link_libraries(${TEST} ${PROJECT_NAME})
   endforeach()
 endif()

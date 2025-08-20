@@ -1,13 +1,12 @@
-#include "testing_utils.hpp"
+#include "rj_planning/utils/testing_utils.hpp"
 
 #include <gtest/gtest.h>
 
 #include <rj_common/utils.hpp>
-
-#include "rj_geometry/point.hpp"
-#include "planning/instant.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory.hpp"
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/planning/robot_constraints.hpp>
+#include <rj_geometry/point.hpp>
 
 namespace planning::TestingUtils {
 

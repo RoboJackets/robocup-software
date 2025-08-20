@@ -11,6 +11,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>boost</depend>
+  <depend>flann</depend>
 
   <depend>rj_common</depend>
   <depend>rj_msgs</depend>

@@ -5,6 +5,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
@@ -18,6 +20,7 @@ find_package(Boost REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(fmt REQUIRED)
+find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_protos REQUIRED)
@@ -129,6 +132,7 @@ target_link_libraries(${PROJECT_NAME}_node
   protobuf::libprotobuf
   spdlog
   fmt
+  ${FLANN_LIBRARIES}
 )
 
 target_link_libraries(log_viewer_node
@@ -143,6 +147,7 @@ target_link_libraries(log_viewer_node
   protobuf::libprotobuf
   spdlog
   fmt
+  ${FLANN_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -157,6 +162,7 @@ target_link_libraries(${PROJECT_NAME}
   protobuf::libprotobuf
   spdlog
   fmt
+  ${FLANN_LIBRARIES}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node
@@ -169,6 +175,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
   spdlog
   std_msgs
   fmt
+  Flann
   rj_common
   rj_param_utils
   rj_protos
@@ -194,6 +201,7 @@ ament_target_dependencies(log_viewer_node
   spdlog
   std_msgs
   fmt
+  Flann
   rj_common
   rj_param_utils
   rj_protos
@@ -219,6 +227,7 @@ ament_target_dependencies(${PROJECT_NAME}
   spdlog
   std_msgs
   fmt
+  Flann
   rj_common
   rj_param_utils
   rj_protos

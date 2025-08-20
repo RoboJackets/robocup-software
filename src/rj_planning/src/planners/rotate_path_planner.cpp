@@ -1,19 +1,4 @@
-#include "rotate_path_planner.hpp"
-
-#include <memory>
-#include <vector>
-
-#include <rj_constants/constants.hpp>
-#include <rj_geometry/pose.hpp>
-#include <rj_geometry/util.hpp>
-
-#include "planning/instant.hpp"
-#include "planning/planning_params.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/path_smoothing.hpp"
-#include "planning/primitives/trapezoidal_motion.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
-#include "planning/trajectory.hpp"
+#include "rj_planning/planners/rotate_path_planner.hpp"
 
 namespace planning {
 using namespace rj_geometry;

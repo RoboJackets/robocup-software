@@ -1,6 +1,4 @@
-#include "trapezoidal_motion.hpp"
-
-#include <cmath>
+#include "rj_planning/primitives/trapezoidal_motion.hpp"
 
 namespace planning::Trapezoid {
 

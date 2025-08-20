@@ -1,16 +1,4 @@
-#include "replanner.hpp"
-
-#include <vector>
-
-#include <rj_constants/constants.hpp>
-
-#include "planning/instant.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/trajectory_utils.hpp"
-#include "rj_geometry/point.hpp"
-#include "rrt_util.hpp"
+#include "rj_planning/primitives/replanner.hpp"
 
 using namespace rj_geometry;
 

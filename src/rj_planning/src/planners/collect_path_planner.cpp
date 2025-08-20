@@ -1,13 +1,4 @@
-#include "collect_path_planner.hpp"
-
-#include <spdlog/spdlog.h>
-
-#include <rj_constants/constants.hpp>
-
-#include "planning/instant.hpp"
-#include "planning/primitives/angle_planning.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/primitives/rrt_util.hpp"
+#include "rj_planning/planners/collect_path_planner.hpp"
 
 using namespace rj_geometry;
 

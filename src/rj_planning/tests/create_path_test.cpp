@@ -1,13 +1,12 @@
-#include "planning/primitives/create_path.hpp"
-
 #include <fstream>
 #include <iostream>
 #include <random>
 
 #include <gtest/gtest.h>
 
-#include "planning/tests/testing_utils.hpp"
-#include "planning/trajectory_utils.hpp"
+#include "rj_planning/utils/testing_utils.hpp"
+#include "rj_planning/primitives/create_path.hpp"
+#include "rj_planning/trajectory_utils.hpp"
 
 using namespace rj_geometry;
 

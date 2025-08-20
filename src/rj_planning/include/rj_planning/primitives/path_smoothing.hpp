@@ -1,8 +1,9 @@
 #pragma once
 
 #include <rj_geometry/point.hpp>
+#include <rj_common/planning/motion_constraints.hpp>
 
-#include "planning/motion_constraints.hpp"
+#include "rj_planning/primitives/trapezoidal_motion.hpp"
 
 namespace planning {
 

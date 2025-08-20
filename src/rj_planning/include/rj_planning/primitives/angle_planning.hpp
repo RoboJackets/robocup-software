@@ -3,12 +3,12 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/utils.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/planning/robot_constraints.hpp>
 #include <rj_constants/constants.hpp>
 
-#include "control/trapezoidal_motion.hpp"
-#include "planning/instant.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory.hpp"
+#include "rj_planning/primitives/trapezoidal_motion.hpp"
 
 namespace planning {
 

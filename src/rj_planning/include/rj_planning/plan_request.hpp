@@ -4,19 +4,19 @@
 #include <memory>
 #include <utility>
 
-#include <planning/motion_constraints.hpp>
-#include <planning/planner/motion_command.hpp>
-#include <planning/trajectory.hpp>
+#include <rj_common/planning/motion_constraints.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/context.hpp>
+#include <rj_common/planning/dynamic_obstacle.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/planning/robot_constraints.hpp>
+#include <rj_common/robot_intent.hpp>
+#include <rj_common/ros_debug_drawer.hpp>
+#include <rj_common/world_state.hpp>
+#include <rj_common/planning/motion_command.hpp>
 
-#include "../global_state.hpp"
-#include "context.hpp"
-#include "planning/dynamic_obstacle.hpp"
-#include "planning/instant.hpp"
-#include "planning/robot_constraints.hpp"
-#include "planning/trajectory_collection.hpp"
-#include "robot_intent.hpp"
-#include "ros_debug_drawer.hpp"
-#include "world_state.hpp"
+#include "rj_planning/global_state.hpp"
+#include "rj_planning/trajectory_collection.hpp"
 
 namespace planning {
 

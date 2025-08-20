@@ -1,6 +1,4 @@
-#include "path_smoothing.hpp"
-
-#include <control/trapezoidal_motion.hpp>
+#include "rj_planning/primitives/path_smoothing.hpp"
 
 namespace planning {
 

@@ -2,10 +2,16 @@
 
 #include <optional>
 
-#include "planning/planner/collect_path_planner.hpp"
-#include "planning/planner/path_planner.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
-#include "planning/trajectory.hpp"
+#include <rj_geometry/util.hpp>
+#include <rj_common/planning/trajectory.hpp>
+
+#include "rj_planning/planners/escape_obstacles_path_planner.hpp"
+#include "rj_planning/planners/collect_path_planner.hpp"
+#include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
+#include "rj_planning/trajectory_utils.hpp"
+#include "rj_planning/primitives/create_path.hpp"
+#include "rj_planning/primitives/trapezoidal_motion.hpp"
 
 namespace planning {
 

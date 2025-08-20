@@ -1,16 +1,16 @@
-#include "planning/trajectory.hpp"
+#include "math.h"
 
 #include <gtest/gtest.h>
 
-#include <rrt/planning/Path.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/planning/instant.hpp>
+#include <rj_rrt/planning/Path.hpp>
 
-#include "math.h"
-#include "planning/instant.hpp"
-#include "planning/planner/path_target_path_planner.hpp"
-#include "planning/primitives/path_smoothing.hpp"
-#include "planning/primitives/rrt_util.hpp"
-#include "planning/primitives/velocity_profiling.hpp"
-#include "testing_utils.hpp"
+#include "rj_planning/planners/path_target_path_planner.hpp"
+#include "rj_planning/primitives/path_smoothing.hpp"
+#include "rj_planning/primitives/rrt_util.hpp"
+#include "rj_planning/primitives/velocity_profiling.hpp"
+#include "rj_planning/utils/testing_utils.hpp"
 
 using namespace planning;
 using namespace rj_geometry;

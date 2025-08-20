@@ -1,11 +1,4 @@
-#include "planning/planner/line_kick_path_planner.hpp"
-
-#include <rj_geometry/util.hpp>
-
-#include "control/trapezoidal_motion.hpp"
-#include "escape_obstacles_path_planner.hpp"
-#include "planning/primitives/create_path.hpp"
-#include "planning/trajectory_utils.hpp"
+#include "rj_planning/planners/line_kick_path_planner.hpp"
 
 using namespace std;
 using namespace rj_geometry;
