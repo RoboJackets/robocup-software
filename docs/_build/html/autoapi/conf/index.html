@@ -1,0 +1,525 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>conf &mdash; RJ RC Software  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3d624f3c" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="API Reference" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            RJ RC Software
+              <img src="../../_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Welcome</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#command-line-basics">0. Command-Line Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#installation">1. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#github-basics">2. GitHub Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#ros-cli-basics">3. ROS CLI Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#rqt-basics">4. rqt Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#action-clients-and-building-a-position">5. Action Clients and building a position</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#background">Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#instructions">Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#testing">Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#wrapping-up">Wrapping up</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#ros-and-c">6. ROS and C++</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#objective">Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#creating-a-new-node">Creating a New Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#building-your-node">Building Your Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#launching-your-node">Launching Your Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../tutorial.html#id1">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#conclusion">7. Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#resources-again">8. Resources (again)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#native-virtual-machine-setup">Native/Virtual Machine Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#docker-setup">Docker Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#shortcuts">Shortcuts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../our_stack.html">Our Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#gameplay">Gameplay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#motion-control">Motion Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#motion-planning">Motion Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#main-cpp-processor">main.cpp &amp; Processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#radio">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#referee">Referee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#ui">UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../our_stack.html#vision">Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../troubleshooting.html#general-troubleshooting">General Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../troubleshooting.html#er-force-troubleshooting">ER-Force Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#git">Git</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#pull-requests-pr">Pull Requests (PR)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#docstrings">Docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#how-do-i-debug-my-code">How do I debug my code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#c-is-hard-where-can-i-get-better-at-it">C++ is hard. Where can I get better at it?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#why-do-we-use-ros">Why do we use ROS?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#how-do-i-learn-more-about-ros">How do I learn more about ROS?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#how-should-i-use-ros-msgs-in-my-code">How should I use ROS msgs in my code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#what-is-a-launch-file">What is a .launch file?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#what-is-a-build-system">What is a build system?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#what-is-continuous-integration">What is continuous integration?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#how-do-i-run-the-external-referee">How do I run the external referee?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#using-external-referee-in-an-m1-mac-arm64-architecture">Using external referee in an M1 Mac (ARM64 architecture)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html#how-do-i-add-to-these-docs">How do I add to these docs?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../fieldcomp_operation.html">Field Computer Operation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../fieldcomp_operation.html#manual-control">Manual Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fieldcomp_operation.html#launching-soccer">Launching Soccer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fieldcomp_operation.html#open-ref">Open Ref</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../fieldcomp_operation.html#starting-vision">Starting Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../meta_docs.html">Meta-Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../meta_docs.html#how-to-write-documentation">How to Write Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../meta_docs.html#log">Log</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">conf</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#conf.project"><code class="docutils literal notranslate"><span class="pre">project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.copyright"><code class="docutils literal notranslate"><span class="pre">copyright</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.author"><code class="docutils literal notranslate"><span class="pre">author</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.version"><code class="docutils literal notranslate"><span class="pre">version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.release"><code class="docutils literal notranslate"><span class="pre">release</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.extensions"><code class="docutils literal notranslate"><span class="pre">extensions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.autoapi_type"><code class="docutils literal notranslate"><span class="pre">autoapi_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.autoapi_dirs"><code class="docutils literal notranslate"><span class="pre">autoapi_dirs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.breathe_projects"><code class="docutils literal notranslate"><span class="pre">breathe_projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.breathe_default_project"><code class="docutils literal notranslate"><span class="pre">breathe_default_project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.breathe_default_members"><code class="docutils literal notranslate"><span class="pre">breathe_default_members</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.templates_path"><code class="docutils literal notranslate"><span class="pre">templates_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.source_suffix"><code class="docutils literal notranslate"><span class="pre">source_suffix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.master_doc"><code class="docutils literal notranslate"><span class="pre">master_doc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.language"><code class="docutils literal notranslate"><span class="pre">language</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.exclude_patterns"><code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.pygments_style"><code class="docutils literal notranslate"><span class="pre">pygments_style</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.html_theme"><code class="docutils literal notranslate"><span class="pre">html_theme</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.html_theme_options"><code class="docutils literal notranslate"><span class="pre">html_theme_options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.html_static_path"><code class="docutils literal notranslate"><span class="pre">html_static_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.html_css_files"><code class="docutils literal notranslate"><span class="pre">html_css_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.html_logo"><code class="docutils literal notranslate"><span class="pre">html_logo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.htmlhelp_basename"><code class="docutils literal notranslate"><span class="pre">htmlhelp_basename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.latex_elements"><code class="docutils literal notranslate"><span class="pre">latex_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.latex_documents"><code class="docutils literal notranslate"><span class="pre">latex_documents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.man_pages"><code class="docutils literal notranslate"><span class="pre">man_pages</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.texinfo_documents"><code class="docutils literal notranslate"><span class="pre">texinfo_documents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.epub_title"><code class="docutils literal notranslate"><span class="pre">epub_title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.epub_exclude_files"><code class="docutils literal notranslate"><span class="pre">epub_exclude_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.configure_doxyfile"><code class="docutils literal notranslate"><span class="pre">configure_doxyfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.run_doxygen"><code class="docutils literal notranslate"><span class="pre">run_doxygen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.generate_doxygen_xml"><code class="docutils literal notranslate"><span class="pre">generate_doxygen_xml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf.setup"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RJ RC Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">conf</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/autoapi/conf/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-conf">
+<span id="conf"></span><h1>conf<a class="headerlink" href="#module-conf" title="Link to this heading"></a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.project" title="conf.project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">project</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.copyright" title="conf.copyright"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copyright</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.author" title="conf.author"><code class="xref py py-obj docutils literal notranslate"><span class="pre">author</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.version" title="conf.version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">version</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.release" title="conf.release"><code class="xref py py-obj docutils literal notranslate"><span class="pre">release</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.extensions" title="conf.extensions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extensions</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.autoapi_type" title="conf.autoapi_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoapi_type</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.autoapi_dirs" title="conf.autoapi_dirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autoapi_dirs</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.breathe_projects" title="conf.breathe_projects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">breathe_projects</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.breathe_default_project" title="conf.breathe_default_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">breathe_default_project</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.breathe_default_members" title="conf.breathe_default_members"><code class="xref py py-obj docutils literal notranslate"><span class="pre">breathe_default_members</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.templates_path" title="conf.templates_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">templates_path</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.source_suffix" title="conf.source_suffix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source_suffix</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.master_doc" title="conf.master_doc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">master_doc</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.language" title="conf.language"><code class="xref py py-obj docutils literal notranslate"><span class="pre">language</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.exclude_patterns" title="conf.exclude_patterns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exclude_patterns</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.pygments_style" title="conf.pygments_style"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pygments_style</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.html_theme" title="conf.html_theme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">html_theme</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.html_theme_options" title="conf.html_theme_options"><code class="xref py py-obj docutils literal notranslate"><span class="pre">html_theme_options</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.html_static_path" title="conf.html_static_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">html_static_path</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.html_css_files" title="conf.html_css_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">html_css_files</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.html_logo" title="conf.html_logo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">html_logo</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.htmlhelp_basename" title="conf.htmlhelp_basename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">htmlhelp_basename</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.latex_elements" title="conf.latex_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latex_elements</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.latex_documents" title="conf.latex_documents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">latex_documents</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.man_pages" title="conf.man_pages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">man_pages</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.texinfo_documents" title="conf.texinfo_documents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">texinfo_documents</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.epub_title" title="conf.epub_title"><code class="xref py py-obj docutils literal notranslate"><span class="pre">epub_title</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.epub_exclude_files" title="conf.epub_exclude_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">epub_exclude_files</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.configure_doxyfile" title="conf.configure_doxyfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">configure_doxyfile</span></code></a>(→ None)</p></td>
+<td><p>Mimics the configure_file functionality in cmake.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.run_doxygen" title="conf.run_doxygen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_doxygen</span></code></a>(→ None)</p></td>
+<td><p>Runs the doxygen command in the passed in directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#conf.generate_doxygen_xml" title="conf.generate_doxygen_xml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_doxygen_xml</span></code></a>(→ None)</p></td>
+<td><p>Generates the doxygen XML for breathe.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#conf.setup" title="conf.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>(→ None)</p></td>
+<td><p>Adds generate_doxygen_xml hook to generate the doxygen XML for breathe.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.project">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">project</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RJ</span> <span class="pre">RC</span> <span class="pre">Software'</span></em><a class="headerlink" href="#conf.project" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.copyright">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">copyright</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2022,</span> <span class="pre">RoboJackets'</span></em><a class="headerlink" href="#conf.copyright" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.author">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">author</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RoboJackets</span> <span class="pre">RoboCup</span> <span class="pre">Project'</span></em><a class="headerlink" href="#conf.author" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.version">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#conf.version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.release">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">release</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#conf.release" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.extensions">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">extensions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['breathe',</span> <span class="pre">'autoapi.extension']</span></em><a class="headerlink" href="#conf.extensions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.autoapi_type">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">autoapi_type</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'python'</span></em><a class="headerlink" href="#conf.autoapi_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.autoapi_dirs">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">autoapi_dirs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['.']</span></em><a class="headerlink" href="#conf.autoapi_dirs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.breathe_projects">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">breathe_projects</span></span><a class="headerlink" href="#conf.breathe_projects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.breathe_default_project">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">breathe_default_project</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rj_robocup'</span></em><a class="headerlink" href="#conf.breathe_default_project" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.breathe_default_members">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">breathe_default_members</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('members',</span> <span class="pre">'protected-members',</span> <span class="pre">'private-members',</span> <span class="pre">'undoc-members')</span></em><a class="headerlink" href="#conf.breathe_default_members" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.templates_path">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">templates_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['_templates']</span></em><a class="headerlink" href="#conf.templates_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.source_suffix">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">source_suffix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.rst'</span></em><a class="headerlink" href="#conf.source_suffix" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.master_doc">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">master_doc</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'index'</span></em><a class="headerlink" href="#conf.master_doc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.language">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">language</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'en'</span></em><a class="headerlink" href="#conf.language" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.exclude_patterns">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">exclude_patterns</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['_build',</span> <span class="pre">'Thumbs.db',</span> <span class="pre">'.DS_Store']</span></em><a class="headerlink" href="#conf.exclude_patterns" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.pygments_style">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">pygments_style</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#conf.pygments_style" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.html_theme">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">html_theme</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sphinx_rtd_theme'</span></em><a class="headerlink" href="#conf.html_theme" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.html_theme_options">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">html_theme_options</span></span><a class="headerlink" href="#conf.html_theme_options" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.html_static_path">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">html_static_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['_static']</span></em><a class="headerlink" href="#conf.html_static_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.html_css_files">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">html_css_files</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['custom.css']</span></em><a class="headerlink" href="#conf.html_css_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.html_logo">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">html_logo</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_static/RoboBuzz.svg'</span></em><a class="headerlink" href="#conf.html_logo" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.htmlhelp_basename">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">htmlhelp_basename</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rj_robocupdoc'</span></em><a class="headerlink" href="#conf.htmlhelp_basename" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.latex_elements">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">latex_elements</span></span><a class="headerlink" href="#conf.latex_elements" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.latex_documents">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">latex_documents</span></span><a class="headerlink" href="#conf.latex_documents" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.man_pages">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">man_pages</span></span><a class="headerlink" href="#conf.man_pages" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.texinfo_documents">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">texinfo_documents</span></span><a class="headerlink" href="#conf.texinfo_documents" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.epub_title">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">epub_title</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RJ</span> <span class="pre">RC</span> <span class="pre">Software'</span></em><a class="headerlink" href="#conf.epub_title" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="conf.epub_exclude_files">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">epub_exclude_files</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['search.html']</span></em><a class="headerlink" href="#conf.epub_exclude_files" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="conf.configure_doxyfile">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">configure_doxyfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doxyfile_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#conf.configure_doxyfile" title="Link to this definition"></a></dt>
+<dd><p>Mimics the configure_file functionality in cmake.
+:param input_dir: Input directory for Doxygen.
+:param output_dir: Output directory for Doxygen.
+:param doxyfile_dir: The directory of the Doxyfile.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="conf.run_doxygen">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">run_doxygen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doxyfile_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#conf.run_doxygen" title="Link to this definition"></a></dt>
+<dd><p>Runs the doxygen command in the passed in directory.
+:param doxyfile_dir: Path to the directory containing the Doxyfile.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="conf.generate_doxygen_xml">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">generate_doxygen_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">sphinx.application.Sphinx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#conf.generate_doxygen_xml" title="Link to this definition"></a></dt>
+<dd><p>Generates the doxygen XML for breathe.
+:param app: Application object representing the Sphinx process</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="conf.setup">
+<span class="sig-prename descclassname"><span class="pre">conf.</span></span><span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">sphinx.application.Sphinx</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#conf.setup" title="Link to this definition"></a></dt>
+<dd><p>Adds generate_doxygen_xml hook to generate the doxygen XML for breathe.
+:param app: Application object representing the Sphinx process</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, RoboJackets.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
