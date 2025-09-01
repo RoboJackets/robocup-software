@@ -91,13 +91,33 @@ Defense::State Defense::update_state() {
             }
             break;
         case ENTERING_MARKING:
-            marker_.choose_target(world_state);
-            int target_id = marker_.get_target();
-            if (target_id == -1) {
-                next_state = ENTERING_MARKING;
-            } else {
-                next_state = MARKING;
+            if (!sent_join_marking_group_request_) {
+                sent_join_marking_group_request_ = true;
+
+                clientHandles->markingClient_->join_group([this](const MarkingClient::Result& result) {
+                    // Defensive check: Only transition if we are still in the process of entering.
+                    // We might have timed out and moved to another state in the meantime.
+                    if (current_state_ != ENTERING_MARKING) {
+                        return IDLING;
+                    }
+
+                    if (result.am_i_member && result.am_i_marking) {
+                        next_state = MARKING;
+                    } else {
+                        return IDLING;
+                    }
+                });
             }
+
+            auto elapsed = RJ::now() - state_entry_time_;
+            if (elapsed > kMarkingGroupJoinTimeout) {
+                // reset flag
+                sent_join_marking_group_request_ = false;
+                // ensure not in coordinator group
+                clientHandles->markingClient_->leave_group();
+                SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
+            }
+            break;
     }
 
     return next_state;

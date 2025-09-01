@@ -122,7 +122,9 @@ private:
     int get_waller_id();
     State current_state_ = JOINING_WALL;
 
-    int get_marker_target_id();
+    bool sent_join_marking_group_request_ = false;
+    RJ::Time time_of_join_marking_group_request_;
+    double kMarkingGroupJoinTimeout = ;
     Marker marker_;
 
     std::shared_ptr<ClientHandles> clientHandles_;
