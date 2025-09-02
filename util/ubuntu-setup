@@ -150,7 +150,7 @@ fi
 
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-22.04" ]; then
-    sudo apt-get update && sudo apt-get install -y ros-humble-desktop
+    sudo apt-get update && sudo apt-get install -y ros-humble-desktop ros-dev-tools
 fi
 
 MACH=$(uname -m)
