@@ -85,7 +85,7 @@ fi
 
 # Add the llvm key
 # Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-sudo apt-get update && sudo apt-get install $ARGS lsb-release wget software-properties-common gnupg locales -y # Somehow we don't have wget
+sudo apt-get update && sudo apt-get install $ARGS lsb-release wget software-properties-common gnupg gnupg2 gnupg1 locales -y # Somehow we don't have wget
 
 if $OVERWRITE_SOURCES; then
     read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON STOCK UBUNTU [yN]: " yn
