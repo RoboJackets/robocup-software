@@ -53,6 +53,7 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
+            SPDLOG_INFO("Robot {}: idling", robot_id_);
             break;
         case JOINING_WALL:
             send_join_wall_request();
@@ -112,10 +113,10 @@ Defense::State Defense::update_state() {
                 clientHandles_->markingClient->join_group([this](const MarkingClient::Result& result) {
                     // Defensive check: Only transition if we are still in the process of entering.
                     // We might have timed out and moved to another state in the meantime.
-                    if (current_state_ != ENTERING_MARKING) {
-                        pending_state_ = IDLING;
-                        return;
-                    }
+                    // if (current_state_ != ENTERING_MARKING) {
+                    //     pending_state_ = IDLING;
+                    //     return;
+                    // }
                     
                     SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
                     if (result.am_i_member && result.am_i_marking) {
