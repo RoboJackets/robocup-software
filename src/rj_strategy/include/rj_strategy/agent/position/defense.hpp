@@ -47,8 +47,8 @@ public:
 
 private:
     // static constexpr int kMaxWallers{6};
-    static constexpr int kMaxWallers{
-        static_cast<int>(kNumShells)};  // This effectively turns off marking
+    static constexpr int kMaxWallers{1};
+        // static_cast<int>(kNumShells)};  // This effectively turns off marking
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -124,8 +124,11 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time time_of_join_marking_group_request_;
-    double kMarkingGroupJoinTimeout = ;
+    double kMarkingGroupJoinTimeout = 1000000;
     Marker marker_;
+
+    std::optional<State> pending_state_;
+    std::optional<uint8_t> pending_mark_target_;
 
     std::shared_ptr<ClientHandles> clientHandles_;
 };

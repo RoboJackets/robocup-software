@@ -38,6 +38,7 @@ public:
                                         FieldDimensions field_dimensions) override;
 
     void choose_target(const WorldState* ws);
+    void set_target(int target);
     int get_target();
     bool target_out_of_bounds(const WorldState* ws);
 };

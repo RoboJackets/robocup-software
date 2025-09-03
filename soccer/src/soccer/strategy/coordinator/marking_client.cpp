@@ -99,7 +99,7 @@ void MarkingClient::leave_group(StatusCallback callback) {
             // deallocate the subscription. The callback will no longer be
             // called.
             subscription_.reset();
-            am_i_marking_ = kInvalidRobotId;
+            am_i_marking_ = false;
             selected_robot_marking_id_ = kInvalidRobotId;
 
             if (callback) {

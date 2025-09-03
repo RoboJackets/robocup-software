@@ -36,6 +36,8 @@ void Marker::choose_target(const WorldState* ws) {
     target_ = -1;
 }
 
+void Marker::set_target(int target) { target_ = target; }
+
 bool Marker::target_out_of_bounds(const WorldState* ws) {
     if (target_ == -1) return true;
     if (ws->get_robot(false, target_).pose.position().y() > y_bound) {

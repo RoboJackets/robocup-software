@@ -36,6 +36,15 @@ Defense::State Defense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
+    if (pending_state_) {
+        next_state = *pending_state_;
+        if (next_state == MARKING && pending_mark_target_) {
+            marker_.set_target(*pending_mark_target_);
+        }
+        pending_state_.reset();
+        pending_mark_target_.reset();
+    }
+
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
         walling_robots_ = {(u_int8_t)robot_id_};
@@ -86,37 +95,55 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
-            if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
+            SPDLOG_INFO("Robot {}: marking robot {}", robot_id_, marker_.get_target());
+            if (!clientHandles_->markingClient->am_i_member()) {
+                SPDLOG_INFO("Robot {}: no longer a member of marking group", robot_id_);
+                next_state = IDLING;
+            } else if (!clientHandles_->markingClient->am_i_marking()) {
                 next_state = ENTERING_MARKING;
             }
             break;
         case ENTERING_MARKING:
+            // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
+
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
 
-                clientHandles->markingClient_->join_group([this](const MarkingClient::Result& result) {
+                clientHandles_->markingClient->join_group([this](const MarkingClient::Result& result) {
                     // Defensive check: Only transition if we are still in the process of entering.
                     // We might have timed out and moved to another state in the meantime.
                     if (current_state_ != ENTERING_MARKING) {
-                        return IDLING;
+                        pending_state_ = IDLING;
+                        return;
                     }
-
+                    
+                    SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
                     if (result.am_i_member && result.am_i_marking) {
-                        next_state = MARKING;
+                        SPDLOG_INFO("{}: Yes", robot_id_);
+                        pending_state_ = MARKING;
+                        pending_mark_target_ = clientHandles_->markingClient->who_am_i_marking();
                     } else {
-                        return IDLING;
+                        SPDLOG_INFO("{}: No", robot_id_);
+                        pending_state_ = IDLING;
                     }
                 });
             }
+            // auto elapsed = RJ::now() - state_entry_time_;
+            // if (elapsed > kMarkingGroupJoinTimeout) {
+            //     // reset flag
+            //     sent_join_marking_group_request_ = false;
+            //     // ensure not in coordinator group
+            //     clientHandles_->markingClient->leave_group();
+            //     SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
+            // }
 
-            auto elapsed = RJ::now() - state_entry_time_;
-            if (elapsed > kMarkingGroupJoinTimeout) {
-                // reset flag
-                sent_join_marking_group_request_ = false;
-                // ensure not in coordinator group
-                clientHandles->markingClient_->leave_group();
-                SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
-            }
+            // if (clientHandles_->markingClient->am_i_member() &&
+            //     clientHandles_->markingClient->am_i_marking()) {
+            //     next_state = MARKING;
+            //     SPDLOG_INFO("Next state is {}, ENTERING_MARKING is {}, MARKING is {}", static_cast<int>(next_state), ENTERING_MARKING, MARKING);
+            //     marker_.set_target(clientHandles_->markingClient->who_am_i_marking());
+            // }
+            
             break;
     }
 
