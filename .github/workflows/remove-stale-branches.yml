@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Preview stale branches
-        uses: fpicalausa/remove-stale-branches@v2
+        uses: fpicalausa/remove-stale-branches@v2.4.0
         with:
           dry-run: true
           # curr threshold is >= 2 years
