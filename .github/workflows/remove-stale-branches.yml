@@ -1,0 +1,32 @@
+name: Remove Stale Branches (DRY-RUN)
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # every day at 09:00 UTC
+  workflow_dispatch: {}   # manual run button
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: remove-stale-branches
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preview stale branches
+        uses: fpicalausa/remove-stale-branches@v2
+        with:
+          dry-run: true
+          # curr threshold is >= 2 years
+          days-before-branch-stale: 730
+          days-before-branch-delete: 2
+          ignore-branches-with-open-prs: false
+          exempt-protected-branches: true
+          exempt-branches-regex: "^(main|master|develop|dev|ros2|release/.+)$"
+          operations-per-run: 200
+          restrict-branches-regex: "^.*$"
