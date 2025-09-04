@@ -51,3 +51,8 @@ launch/debug-*
 # clangd
 .clangd/
 compile_commands.json
+
+# Colcon Build Things
+build/
+install/
+log/

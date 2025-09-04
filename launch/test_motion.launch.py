@@ -27,44 +27,44 @@ def generate_launch_description():
     grsim = Node(package="rj_robocup", executable="grSim", arguments=[])
 
     radio = Node(
-        package="rj_robocup",
+        package="rj_radio",
         executable="sim_radio_node",
         output="screen",
         on_exit=Shutdown(),
     )
 
     control = Node(
-        package="rj_robocup",
-        executable="control_node",
+        package="rj_control",
+        executable="motion_control_node",
         output="screen",
         on_exit=Shutdown(),
     )
 
     config_server = Node(
-        package="rj_robocup",
-        executable="config_server",
+        package="rj_config_server",
+        executable="rj_config_server_node",
         output="screen",
         on_exit=Shutdown(),
     )
 
     vision_receiver = Node(
-        package="rj_robocup",
-        executable="vision_receiver",
+        package="rj_vision_receiver",
+        executable="rj_vision_receiver_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),
     )
 
     ref_receiver = Node(
-        package="rj_robocup",
+        package="rj_referee",
         executable="internal_referee_node",
         output="screen",
         on_exit=Shutdown(),
     )
 
     vision_filter = Node(
-        package="rj_robocup",
-        executable="rj_vision_filter",
+        package="rj_vision_filter",
+        executable="rj_vision_filter_node",
         output="screen",
         parameters=[config],
         on_exit=Shutdown(),

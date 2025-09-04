@@ -34,30 +34,29 @@ define cmake_build_target_perf
 endef
 
 all-perf:
-	$(call cmake_build_target_perf, all)
+	colcon build --parallel-workers 4
 # perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
 perf: all-perf
 
 # used in GH Actions build-and-test
 all:
-	$(call cmake_build_target, all)
+	colcon build --parallel-workers 4
 # debug: slow executable, but many debug symbols (e.g. for GDB)
 debug: all
 
 # NOT used in build-and-test
 all_including_tests:
-	$(call cmake_build_target, all)
-	$(call cmake_build_target, test-soccer)
+	colcon build --parallel-workers 4
 
 all-release:
-	$(call cmake_build_target_release, all)
+	colcon build --parallel-workers 4
 # release: fast executable, no debug symbols
 release: all-release
 
 # run if build-release-debug/ exists from a previous build
 # and no CMake files or launch.py files have been changed
 again:
-	(cd build-release-debug/ && ninja install)
+	colcon build --parallel-workers 4
 
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
@@ -76,36 +75,36 @@ run-sim-line-test:
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=True
+	ros2 launch ./launch/soccer.launch.py run_sim:=True
 
 run-line-test-stack:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=True run_line_test:=True
+	ros2 launch ./launch/soccer.launch.py run_sim:=True run_line_test:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=True use_internal_ref:=False
+	ros2 launch ./launch/soccer.launch.py run_sim:=True use_internal_ref:=False
 
 run-sim-ex: run-sim-external
 
 # run on real field computer with real robots and internal ref (our UI)
 run-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_manual_control:=True use_sim_radio:=False
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_manual_control:=True use_sim_radio:=False
 
 run-real-line-test:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False run_line_test:=True
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False run_line_test:=True
 
 # same as run-real, with different server port
 run-alt-real:
-	ros2 launch rj_robocup soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
 
 # run sim2play (requires external referee)
 run-sim2play:

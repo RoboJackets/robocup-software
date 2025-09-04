@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rj_geometry</name>
+  <version>0.0.0</version>
+  <description>TODO: Package description</description>
+  <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>eigen3_cmake_modules</depend>
+  <depend>qt5</depend>
+  <depend>fmt</depend>
+  <depend>eigen3</depend>
+  <depend>std_msgs</depend>
+
+  <depend>rj_protos</depend>
+  <depend>rj_constants</depend>
+  <depend>rj_convert</depend>
+  <depend>rj_geometry_msgs</depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

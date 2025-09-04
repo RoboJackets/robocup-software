@@ -1,0 +1,71 @@
+#include <gtest/gtest.h>
+
+#include "rj_rrt/2dplane/2dplane.hpp"
+#include "rj_rrt/2dplane/GridStateSpace.hpp"
+#include "rj_rrt/BiRRT.hpp"
+
+using namespace std;
+using namespace Eigen;
+
+namespace RRT {
+
+TEST(BiRRT, Instantiation) {
+    BiRRT<Vector2d> biRRT(make_shared<GridStateSpace>(50, 50, 50, 50), hash, dimensions);
+}
+
+TEST(BiRRT, getPath) {
+    Vector2d start = {1, 1}, goal = {30, 30};
+
+    BiRRT<Vector2d> biRRT(make_shared<GridStateSpace>(50, 50, 50, 50), hash, dimensions);
+    biRRT.setStartState(start);
+    biRRT.setGoalState(goal);
+    biRRT.setStepSize(1);
+    biRRT.setMaxIterations(10000);
+
+    bool success = biRRT.run();
+    ASSERT_TRUE(success);
+
+    vector<Vector2d> path = biRRT.getPath();
+
+    // path should contain at least two points (start and end)
+    ASSERT_GE(path.size(), 2);
+
+    // The given start and goal points should be the first and last points of
+    // the path, respectively.
+    EXPECT_EQ(start, path.front());
+    EXPECT_EQ(goal, path.back());
+}
+
+TEST(BiRRT, multipleRuns) {
+    Vector2d start = {1, 1}, goal = {30, 30};
+
+    BiRRT<Vector2d> biRRT(make_shared<GridStateSpace>(50, 50, 50, 50), hash, dimensions);
+    biRRT.setStartState(start);
+    biRRT.setGoalState(goal);
+    biRRT.setStepSize(1);
+    biRRT.setMaxIterations(10000);
+
+    for (int i = 0; i < 50; i++) {
+        bool success = biRRT.run();
+        ASSERT_TRUE(success);
+        biRRT.reset();
+    }
+}
+
+TEST(BiRRT, intoObstacle) {
+    // The BiRRT should fail if the goal is in an obstacle.
+    Vector2d start = {1, 1}, goal = {30, 30};
+
+    auto state_space = make_shared<GridStateSpace>(50, 50, 50, 50);
+    state_space->obstacleGrid().obstacleAt(30, 30) = true;
+
+    BiRRT<Vector2d> biRRT(state_space, hash, dimensions);
+    biRRT.setStartState(start);
+    biRRT.setGoalState(goal);
+    biRRT.setStepSize(1);
+    biRRT.setMaxIterations(1000);
+
+    ASSERT_FALSE(biRRT.run());
+}
+
+}  // namespace RRT

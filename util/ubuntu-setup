@@ -83,6 +83,10 @@ if [ $UID -ne 0 ]; then
 	exec sudo $0 $@
 fi
 
+# Add the llvm key
+# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+sudo apt-get update && sudo apt-get install $ARGS lsb-release wget software-properties-common gnupg gnupg2 gnupg1 locales -y # Somehow we don't have wget
+
 if $OVERWRITE_SOURCES; then
     read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON STOCK UBUNTU [yN]: " yn
     case $yn in
@@ -120,10 +124,6 @@ if $YES; then
     ARGS="-y"
 fi
 
-# Add the llvm key
-# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-apt-get install $ARGS wget curl # Somehow we don't have wget
-
 # Somehow 16.04 doesn't support https
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 
@@ -135,18 +135,22 @@ if [ "$SYSTEM" = "ubuntu-22.04" ]; then
     rm llvm.sh
 fi
 
-# Add ROS key and repo
-sudo locale-gen en_US en_US.UTF-8
-sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-export LANG=en_US.UTF-8
-sudo apt-get update && sudo apt-get install -y curl gnupg2 lsb-release
-curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
-sudo apt-get update
+# Add ROS 2 Humble key and repo
+if [[ ! $(which ros2) ]]; then
+    sudo locale-gen en_US en_US.UTF-8
+    sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+    export LANG=en_US.UTF-8
+    sudo add-apt-repository universe
+    sudo apt update && sudo apt install curl -y
+    export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')
+    curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo $VERSION_CODENAME)_all.deb" # If using Ubuntu derivates use $UBUNTU_CODENAME
+    sudo dpkg -i /tmp/ros2-apt-source.deb
+fi
+
 
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-22.04" ]; then
-    sudo apt-get install -y ros-humble-ros-base
+    sudo apt-get update && sudo apt-get install -y ros-humble-desktop ros-dev-tools
 fi
 
 MACH=$(uname -m)
