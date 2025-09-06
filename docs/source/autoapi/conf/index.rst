@@ -1,0 +1,186 @@
+conf
+====
+
+.. py:module:: conf
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   conf.project
+   conf.copyright
+   conf.author
+   conf.version
+   conf.release
+   conf.extensions
+   conf.autoapi_type
+   conf.autoapi_dirs
+   conf.breathe_projects
+   conf.breathe_default_project
+   conf.breathe_default_members
+   conf.templates_path
+   conf.source_suffix
+   conf.master_doc
+   conf.language
+   conf.exclude_patterns
+   conf.pygments_style
+   conf.html_theme
+   conf.html_theme_options
+   conf.html_static_path
+   conf.html_css_files
+   conf.html_logo
+   conf.htmlhelp_basename
+   conf.latex_elements
+   conf.latex_documents
+   conf.man_pages
+   conf.texinfo_documents
+   conf.epub_title
+   conf.epub_exclude_files
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   conf.configure_doxyfile
+   conf.run_doxygen
+   conf.generate_doxygen_xml
+   conf.setup
+
+
+Module Contents
+---------------
+
+.. py:data:: project
+   :value: 'RJ RC Software'
+
+
+.. py:data:: copyright
+   :value: '2025, RoboJackets'
+
+
+.. py:data:: author
+   :value: 'RoboJackets RoboCup Project'
+
+
+.. py:data:: version
+   :value: ''
+
+
+.. py:data:: release
+   :value: ''
+
+
+.. py:data:: extensions
+   :value: ['breathe', 'autoapi.extension']
+
+
+.. py:data:: autoapi_type
+   :value: 'python'
+
+
+.. py:data:: autoapi_dirs
+   :value: ['.']
+
+
+.. py:data:: breathe_projects
+
+.. py:data:: breathe_default_project
+   :value: 'rj_robocup'
+
+
+.. py:data:: breathe_default_members
+   :value: ('members', 'protected-members', 'private-members', 'undoc-members')
+
+
+.. py:data:: templates_path
+   :value: ['_templates']
+
+
+.. py:data:: source_suffix
+   :value: '.rst'
+
+
+.. py:data:: master_doc
+   :value: 'index'
+
+
+.. py:data:: language
+   :value: 'en'
+
+
+.. py:data:: exclude_patterns
+   :value: ['_build', 'Thumbs.db', '.DS_Store']
+
+
+.. py:data:: pygments_style
+   :value: None
+
+
+.. py:data:: html_theme
+   :value: 'sphinx_rtd_theme'
+
+
+.. py:data:: html_theme_options
+
+.. py:data:: html_static_path
+   :value: ['_static']
+
+
+.. py:data:: html_css_files
+   :value: ['custom.css']
+
+
+.. py:data:: html_logo
+   :value: '_static/RoboBuzz.svg'
+
+
+.. py:data:: htmlhelp_basename
+   :value: 'rj_robocupdoc'
+
+
+.. py:data:: latex_elements
+
+.. py:data:: latex_documents
+
+.. py:data:: man_pages
+
+.. py:data:: texinfo_documents
+
+.. py:data:: epub_title
+   :value: 'RJ RC Software'
+
+
+.. py:data:: epub_exclude_files
+   :value: ['search.html']
+
+
+.. py:function:: configure_doxyfile(input_dir: pathlib.Path, output_dir: pathlib.Path, doxyfile_dir: pathlib.Path) -> None
+
+   Mimics the configure_file functionality in cmake.
+   :param input_dir: Input directory for Doxygen.
+   :param output_dir: Output directory for Doxygen.
+   :param doxyfile_dir: The directory of the Doxyfile.
+
+
+.. py:function:: run_doxygen(doxyfile_dir: pathlib.Path) -> None
+
+   Runs the doxygen command in the passed in directory.
+   :param doxyfile_dir: Path to the directory containing the Doxyfile.
+
+
+.. py:function:: generate_doxygen_xml(app: sphinx.application.Sphinx) -> None
+
+   Generates the doxygen XML for breathe.
+   :param app: Application object representing the Sphinx process
+
+
+.. py:function:: setup(app: sphinx.application.Sphinx) -> None
+
+   Adds generate_doxygen_xml hook to generate the doxygen XML for breathe.
+   :param app: Application object representing the Sphinx process
+
+

@@ -1,0 +1,836 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial &mdash; RJ RC Software  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=3d624f3c" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Our Stack" href="our_stack.html" />
+    <link rel="prev" title="ROS &amp; C++ Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            RJ RC Software
+              <img src="_static/RoboBuzz.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Welcome</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#native-virtual-machine-setup">Native/Virtual Machine Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#building-the-stack">Building the Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#docker-setup">Docker Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#shortcuts">Shortcuts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">ROS &amp; C++ Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#setup">0. Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#trying-out-ros-2">1. Trying out ROS 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#what-just-happened">2. What Just Happened?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#building-your-own-publisher">3. Building Your Own Publisher</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-basics">0. Command-Line Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">1. Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#github-basics">2. GitHub Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ros-cli-basics">3. ROS CLI Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rqt-basics">4. rqt Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#action-clients-and-building-a-position">5. Action Clients and building a position</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instructions">Instructions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wrapping-up">Wrapping up</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ros-and-c">6. ROS and C++</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-new-node">Creating a New Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-your-node">Building Your Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#launching-your-node">Launching Your Node</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">7. Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resources-again">8. Resources (again)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="our_stack.html">Our Stack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#gameplay">Gameplay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#motion-control">Motion Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#motion-planning">Motion Planning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#main-cpp-processor">main.cpp &amp; Processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#radio">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#referee">Referee</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#ui">UI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="our_stack.html#vision">Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#general-troubleshooting">General Troubleshooting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#er-force-troubleshooting">ER-Force Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#git">Git</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#pull-requests-pr">Pull Requests (PR)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#docstrings">Docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i-debug-my-code">How do I debug my code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#c-is-hard-where-can-i-get-better-at-it">C++ is hard. Where can I get better at it?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#why-do-we-use-ros">Why do we use ROS?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i-learn-more-about-ros">How do I learn more about ROS?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-should-i-use-ros-msgs-in-my-code">How should I use ROS msgs in my code?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-is-a-launch-file">What is a .launch file?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-is-a-build-system">What is a build system?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#what-is-continuous-integration">What is continuous integration?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i-run-the-external-referee">How do I run the external referee?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#using-external-referee-in-an-m1-mac-arm64-architecture">Using external referee in an M1 Mac (ARM64 architecture)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i-add-to-these-docs">How do I add to these docs?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fieldcomp_operation.html">Field Computer Operation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fieldcomp_operation.html#manual-control">Manual Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fieldcomp_operation.html#launching-soccer">Launching Soccer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fieldcomp_operation.html#open-ref">Open Ref</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fieldcomp_operation.html#starting-vision">Starting Vision</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="meta_docs.html">Meta-Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="meta_docs.html#how-to-write-documentation">How to Write Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="meta_docs.html#log">Log</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/conf/index.html">conf</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/conf/index.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/conf/index.html#functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autoapi/conf/index.html#module-contents">Module Contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.project"><code class="docutils literal notranslate"><span class="pre">project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.copyright"><code class="docutils literal notranslate"><span class="pre">copyright</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.author"><code class="docutils literal notranslate"><span class="pre">author</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.version"><code class="docutils literal notranslate"><span class="pre">version</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.release"><code class="docutils literal notranslate"><span class="pre">release</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.extensions"><code class="docutils literal notranslate"><span class="pre">extensions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.autoapi_type"><code class="docutils literal notranslate"><span class="pre">autoapi_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.autoapi_dirs"><code class="docutils literal notranslate"><span class="pre">autoapi_dirs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.breathe_projects"><code class="docutils literal notranslate"><span class="pre">breathe_projects</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.breathe_default_project"><code class="docutils literal notranslate"><span class="pre">breathe_default_project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.breathe_default_members"><code class="docutils literal notranslate"><span class="pre">breathe_default_members</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.templates_path"><code class="docutils literal notranslate"><span class="pre">templates_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.source_suffix"><code class="docutils literal notranslate"><span class="pre">source_suffix</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.master_doc"><code class="docutils literal notranslate"><span class="pre">master_doc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.language"><code class="docutils literal notranslate"><span class="pre">language</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.exclude_patterns"><code class="docutils literal notranslate"><span class="pre">exclude_patterns</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.pygments_style"><code class="docutils literal notranslate"><span class="pre">pygments_style</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.html_theme"><code class="docutils literal notranslate"><span class="pre">html_theme</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.html_theme_options"><code class="docutils literal notranslate"><span class="pre">html_theme_options</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.html_static_path"><code class="docutils literal notranslate"><span class="pre">html_static_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.html_css_files"><code class="docutils literal notranslate"><span class="pre">html_css_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.html_logo"><code class="docutils literal notranslate"><span class="pre">html_logo</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.htmlhelp_basename"><code class="docutils literal notranslate"><span class="pre">htmlhelp_basename</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.latex_elements"><code class="docutils literal notranslate"><span class="pre">latex_elements</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.latex_documents"><code class="docutils literal notranslate"><span class="pre">latex_documents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.man_pages"><code class="docutils literal notranslate"><span class="pre">man_pages</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.texinfo_documents"><code class="docutils literal notranslate"><span class="pre">texinfo_documents</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.epub_title"><code class="docutils literal notranslate"><span class="pre">epub_title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.epub_exclude_files"><code class="docutils literal notranslate"><span class="pre">epub_exclude_files</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.configure_doxyfile"><code class="docutils literal notranslate"><span class="pre">configure_doxyfile()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.run_doxygen"><code class="docutils literal notranslate"><span class="pre">run_doxygen()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.generate_doxygen_xml"><code class="docutils literal notranslate"><span class="pre">generate_doxygen_xml()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/conf/index.html#conf.setup"><code class="docutils literal notranslate"><span class="pre">setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RJ RC Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial">
+<h1><a class="toc-backref" href="#id3" role="doc-backlink">Tutorial</a><a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
+<p>This page is meant to teach new RoboCup Software members the basics of what
+they’ll need to contribute. It will introduce the Robot Operating System (ROS),
+the command-line, GitHub, git, Python, C++, and the general shape of our stack.
+Upon completion of this tutorial, you’ll have the knowledge and trust of your
+teammates to implement new features on your own.</p>
+<p>No prior experience is assumed. However, a bit of stubbornness is required.
+RoboCup SW has seen many members without any prior CS experience become valued
+contributors, and many talented CS majors quit within a few weeks.</p>
+<p><strong>Note: you must have Ubuntu 20.04 installed in some capacity to use our
+stack.</strong> Most new members do this with a VM, which is the quickest way. Google
+“how to install Ubuntu VM on &lt;your current OS&gt;” and follow a tutorial online.
+If you decide to stick with RoboCup long-term, it might be worth your time to
+invest in a used laptop that only has Ubuntu 20.04 and your RoboCup files
+installed.</p>
+<p>The tutorial is structured as follows.</p>
+<nav class="contents" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tutorial" id="id3">Tutorial</a></p>
+<ul>
+<li><p><a class="reference internal" href="#command-line-basics" id="id4">0. Command-Line Basics</a></p></li>
+<li><p><a class="reference internal" href="#installation" id="id5">1. Installation</a></p></li>
+<li><p><a class="reference internal" href="#github-basics" id="id6">2. GitHub Basics</a></p></li>
+<li><p><a class="reference internal" href="#ros-cli-basics" id="id7">3. ROS CLI Basics</a></p></li>
+<li><p><a class="reference internal" href="#rqt-basics" id="id8">4. rqt Basics</a></p></li>
+<li><p><a class="reference internal" href="#action-clients-and-building-a-position" id="id9">5. Action Clients and building a position</a></p>
+<ul>
+<li><p><a class="reference internal" href="#background" id="id10">Background</a></p></li>
+<li><p><a class="reference internal" href="#instructions" id="id11">Instructions</a></p></li>
+<li><p><a class="reference internal" href="#testing" id="id12">Testing</a></p></li>
+<li><p><a class="reference internal" href="#wrapping-up" id="id13">Wrapping up</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#ros-and-c" id="id14">6. ROS and C++</a></p>
+<ul>
+<li><p><a class="reference internal" href="#objective" id="id15">Objective</a></p></li>
+<li><p><a class="reference internal" href="#creating-a-new-node" id="id16">Creating a New Node</a></p></li>
+<li><p><a class="reference internal" href="#building-your-node" id="id17">Building Your Node</a></p></li>
+<li><p><a class="reference internal" href="#launching-your-node" id="id18">Launching Your Node</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id19">Testing</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#conclusion" id="id20">7. Conclusion</a></p></li>
+<li><p><a class="reference internal" href="#resources-again" id="id21">8. Resources (again)</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>There are some gaps intentionally left in the tutorial. This is to force you to
+problem-solve on your own, simulating what it feels like to write a new feature.
+If the tutorial was simply a bulleted list of commands to type, it would not
+prove that you’re ready to work on something meaningful on your own.</p>
+<p>When you run into issues, your order of question-asking should be:</p>
+<ol class="arabic simple">
+<li><p>Google</p>
+<ul class="simple">
+<li><p>Keywords, not full sentences</p></li>
+<li><p>Error messages, if they come up</p></li>
+</ul>
+</li>
+<li><p>Google</p>
+<ul class="simple">
+<li><p>Seriously</p></li>
+</ul>
+</li>
+<li><p>FAQ page in our docs (common errors and debug info)</p></li>
+<li><p>Fellow new members</p></li>
+<li><p>Software lead</p></li>
+<li><p>Anyone the SW lead takes advice from</p></li>
+</ol>
+<p>This is not because older members don’t want to help you, but because if older
+members helped every new member with every question, they wouldn’t have time to
+make our robots better (nor would you learn as much). So try to resolve your
+issue yourself, and expect to be asked “what have you tried already?” when you
+ask for help.</p>
+<section id="command-line-basics">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">0. Command-Line Basics</a><a class="headerlink" href="#command-line-basics" title="Link to this heading"></a></h2>
+<p>If you’ve never heard of or used the command-line before, <a class="reference external" href="https://ubuntu.com/tutorials/command-line-for-beginners#1-overview">Command Line Basics</a> is
+wonderful for beginners.</p>
+<img alt="_images/ubuntu_cli_tutorial.png" src="_images/ubuntu_cli_tutorial.png" />
+<p>The rest of this tutorial assumes you have working knowledge of the
+command-line: how to run an executable, change directories, move files, run
+commands, etc. So if you’re uncomfortable with any of that, go through the
+exercises in the site above.</p>
+<dl class="simple">
+<dt>Some tips about learning how to use commands:</dt><dd><ul class="simple">
+<li><p><code class="code highlight sh docutils literal highlight-sh">man<span class="w"> </span><span class="o">[</span>command<span class="o">]</span></code> will pull up a manpage, which is an explanation of the
+command and all of its options. This usually only works on standard Unix
+commands. For instance, you can find words in any file in a directory using
+<code class="code highlight sh docutils literal highlight-sh">grep</code>: try <code class="code highlight sh docutils literal highlight-sh">man<span class="w"> </span>grep</code> to see its full potential.</p></li>
+<li><p><code class="code highlight sh docutils literal highlight-sh"><span class="o">[</span><span class="nb">command</span><span class="w"> </span>or<span class="w"> </span>executable<span class="o">]</span><span class="w"> </span>--help</code> will almost always return a prompt that
+tells you what the command does, and how you can modify it with options. Many
+custom command-line tools will have a –help output, if they don’t have a man
+page.</p></li>
+<li><p>Of course, you can also simply Google a command you don’t understand, or look
+up something like “how to search for a filename with command line”.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="installation">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">1. Installation</a><a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>See “Installation”. That page will assume you have the Command-Line Basics
+from above, as well as a working knowledge of Git (which you can get either
+online (<a class="reference external" href="https://rogerdudler.github.io/git-guide/">Git Guide</a>) or from the “Contributing”
+page).</p>
+<p>Once you’ve installed, play around with the simulator a little bit. Be familiar
+with how to move the ball (click), take a shot (right click and drag), move a robot
+(click and drag), and issue the basic referee commands: stop, halt, and force start.
+(Buttons in the top left)</p>
+</section>
+<section id="github-basics">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">2. GitHub Basics</a><a class="headerlink" href="#github-basics" title="Link to this heading"></a></h2>
+<p>Now that you have everything installed and understand the basics of the
+command-line and git, let’s get started using GitHub.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>git is a command line version-control tool. GitHub is a website to host
+shared files, and is well-integrated with git, but is not the same thing.</p>
+</div>
+<p>First, use git to checkout the branch that contains starter code for this
+project, and then pull its latest version:</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>ros2
+git<span class="w"> </span>pull
+</pre></div>
+</div>
+</div></blockquote>
+<p>Next, create a new branch under this naming scheme:</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span><span class="s2">&quot;&lt;your-name&gt;/robocup-sw-tutorial&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>For instance, the author’s branch would be named
+<code class="docutils literal notranslate"><span class="pre">kevin-fu/robocup-sw-tutorial</span></code>.</p>
+<p>Launch soccer (our UI) and the ER-force simulator, same way as you did in the
+installation guide. Press the green check mark. You should see three wallers
+and one goalie move into position. Click anywhere on the field to place the
+ball in that location. You should see all five robots move between the ball
+and the goal.</p>
+<p>Open the file <code class="docutils literal notranslate"><span class="pre">soccer/src/soccer/strategy/agent/position/waller.cpp</span></code>.
+Find the line of code that calculates the <code class="docutils literal notranslate"><span class="pre">wall_spacing</span></code> and double its value.</p>
+<p>Re-build the project (<code class="code highlight sh docutils literal highlight-sh">make<span class="w"> </span>again</code>) and run the simulator again. You should
+see the wallers more spread out. Note that this is probably a less effective wall!
+This change is just for educational purposes.</p>
+<p><strong>Take a screenshot of your new wall.*</strong></p>
+<p>Now that you’ve made a change to the repo, run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">status</span></code>. You should see
+that whatever files you changed show up in red, which indicates that they are
+unstaged. Stage the files you changed with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">add</span></code> (Google this if unsure
+how, or see the previous section on git), then commit them:</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;&lt;commit msg&gt;&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>&lt;commit msg&gt; should be a present-tense description of what you’ve changed. In
+this case, “double wall spacing” is fine.</p>
+<p>Without the -m flag, git commit will open a nano (or whatever your
+default text editor is set to) and ask you to type in
+a commit msg. -m is a bit faster.</p>
+</div>
+<p>When you commit, you should see our pre-commit hooks run. These are automated
+programs that make your code comply with standardized style guidelines. If one
+of the checks fails, simply re-add your files and re-commit. (If you don’t see
+this, make sure you have everything installed correctly per the installation
+guide.)</p>
+<p>Now that you’ve committed, run <code class="code highlight sh docutils literal highlight-sh">git<span class="w"> </span>push</code> to push your changes to the remote
+server. This is how GitHub sees your changes. If you run into any errors at this
+step, read the error logs carefully (they often tell you what to do), and Google
+if needed.</p>
+<p>Finally, go to our GitHub page, click the “Pull Requests” tab, and create a new
+draft pull request for your branch. When it asks you to fill in the PR
+description, you can delete the template and write something simple like
+“Completes RC SW tutorials.” Add that screenshot of your four-waller setup as a
+comment below your brand new PR. Nice work!</p>
+</section>
+<section id="ros-cli-basics">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">3. ROS CLI Basics</a><a class="headerlink" href="#ros-cli-basics" title="Link to this heading"></a></h2>
+<p>This section is our variation of the ROS 2 <a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools&gt;">Beginner CLI Tools</a> tutorials. We
+do things slightly differently (and don’t use all of the ROS 2 features
+described in those tutorials), so this is intended to keep you from having to
+read all of those docs.</p>
+<p>However, those docs are obviously still the source of truth on ROS. Before we
+get started, read all of the short “Background” sections for these pages:</p>
+<ul class="simple">
+<li><p>Understanding ROS 2 nodes</p></li>
+<li><p>Understanding ROS 2 topics</p></li>
+<li><p>Understanding ROS 2 services</p></li>
+<li><p>Understanding ROS 2 parameters</p></li>
+<li><p>Understanding ROS 2 actions</p></li>
+</ul>
+<p>The background sections put together are only a couple hundred words, and
+contain very neat animated diagrams that we can’t recreate here.</p>
+<p>Now that you have some background on what ROS is and how it works, let’s explore
+how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest of these
+docs, just know that we are referencing ROS 2 every time.)</p>
+<p>First, open up our stack, same as you did in the installation guide. (Remember
+to source ROS2!) Then run</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>topic<span class="w"> </span>list
+</pre></div>
+</div>
+</div></blockquote>
+<p>to see the list of topics. Let’s look at what robot 0 is thinking. Run</p>
+<blockquote>
+<div><div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>topic<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>/gameplay/robot_intent/robot_0
+</pre></div>
+</div>
+</div></blockquote>
+<p>to see what’s being published to that topic. You should see that robot 0 is
+being given a motion_command to go to a certain position at a certain angle.
+Feel free to try echoing other topics to see what they’re publishing.</p>
+<p>Now run <code class="code highlight sh docutils literal highlight-sh">ros2<span class="w"> </span>topic<span class="w"> </span>info</code> on the same topic to see what message type that
+topic is publishing, and how many publishers and subscribers are listening to
+it. For this topic, the message type is a subset of <code class="docutils literal notranslate"><span class="pre">rj_msgs/</span></code>, which means we
+wrote our own custom .msg file that this topic uses.</p>
+<p>Your task for this section is to find the file that defines the message type
+used by <code class="docutils literal notranslate"><span class="pre">/gameplay/robot_intent/robot_0</span></code>. This will take you a long time if
+you search for it manually and almost no time if you use a tool like <code class="code highlight sh docutils literal highlight-sh">find</code>.
+Once you have the right file, figure out the full filepath and add it to your
+GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.</p>
+</section>
+<section id="rqt-basics">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">4. rqt Basics</a><a class="headerlink" href="#rqt-basics" title="Link to this heading"></a></h2>
+<p>The observant among you may have noticed that the last section only covered ROS
+topics, even though it asked you to read about ROS nodes, services, parameters,
+and actions as well. This was to set up the need to use <code class="code highlight sh docutils literal highlight-sh">rqt</code>, a graphical
+interface for the many tools ROS includes.</p>
+<p>To use it, open a new terminal, source ROS (like you do before running our
+stack), and run <code class="code highlight sh docutils literal highlight-sh">rqt</code>. (This should have been installed with the rest of the
+stack when you ran <code class="code highlight sh docutils literal highlight-sh">./util/ubuntu-setup</code>; if not, see <a class="reference external" href="http://wiki.ros.org/rqt/UserGuide/Install/Groovy">Install Groovy</a>.) You should see a blank
+GUI pop up.</p>
+<img alt="_images/blank_rqt.png" src="_images/blank_rqt.png" />
+<p>To replicate what we did in the last section, go to the top, click Plugins &gt;
+Topics &gt; Topic Monitor. This allows you to see both a list of all topics, and
+see the most recent message published to any topic (by clicking the checkbox).</p>
+<p>Now find and launch the Node Graph. You should see a large, complex node diagram
+pop up. If you don’t see something large and complex, make sure you have both
+our AI and the ER-Force simulator running.</p>
+<p>Zoom in on the Node Graph. You should notice and most of the nodes are actually
+just duplicated across robot numbers. (For instance, notice there is a
+<code class="docutils literal notranslate"><span class="pre">/planning/trajectory/robot_*</span></code> topic for each robot.) Find the two arrows that
+are labelled with robot 0’s robot intent and figure out which nodes publish and
+subscribe to that topic. Post your answer as a GitHub comment on your PR.
+(Hint: There are <strong>two</strong> nodes that subscribe to this topic.)</p>
+<p>We can also use rqt to dynamically change the behavior of our robots. Pull up
+the Dynamic Reconfigure menu and click the control params. Run your runner play
+from earlier. In the middle of the play, double the max velocity. You should see
+the runner (and every other robot on our team) move much more quickly.</p>
+<p>Take a screen recording of this whole process and send it to your software lead
+via Slack. Feel free to play around with any other params you see!</p>
+</section>
+<section id="action-clients-and-building-a-position">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">5. Action Clients and building a position</a><a class="headerlink" href="#action-clients-and-building-a-position" title="Link to this heading"></a></h2>
+<section id="background">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Background</a><a class="headerlink" href="#background" title="Link to this heading"></a></h3>
+<p>This section introduces more concepts of ROS and our strategy.</p>
+<p>First, read this page and do some research if you need to get an understanding
+of ROS actions. Our strategy stack is centered around an Action Server and six
+Action Clients, each of which represent a robot on the field.</p>
+<p>Also, take a second to understand the difference between
+strategy and planning in our stack. Strategy is responsible for high level decisions,
+such as robot movement, kicking procedure, robot communication, and referee interaction. Planning is responsible
+for taking the instructions from strategy and turning them into trajectories and commands a robot can execute,
+which are relayed to our physical robots by the radio.</p>
+<p>The Action Server is housed by the Planner node, which is the node responsible for turning requests
+for robot actions into trajectories for the robot to follow.</p>
+<p>The Action Clients are created by the AgentActionClient node which contain some
+other useful subscriptions to get information about the field and referee.</p>
+<p>At any given time, an AgentActionClient is playing a single position.
+It creates a RobotFactoryPosition instance and checks for its task,
+which it then relays to the planner using ROS actions. Take a look through <code class="docutils literal notranslate"><span class="pre">agent_action_client.cpp</span></code> to get a better understanding of this process.</p>
+<p>Strategy decisions are delegated to the Positions. This makes
+sense with respect to soccer—players play differently based on their position.</p>
+<p>There are three major positions: Offense, Defense, and Goalie. You may see
+some others, but these are only for special game cases.</p>
+<p>Robots independently make choices on what position to play via the RobotFactoryPosition.
+The RobotFactoryPosition follows the factory design pattern, as it generates
+different position instances (e.g., Offense) based on the game state, and returns
+the relevant intent from whatever position it is playing.</p>
+<p>Take some time to read through Offense, Defense, and Goalie, paying special
+attention to how they each implement <code class="docutils literal notranslate"><span class="pre">state_to_task</span></code> and <code class="docutils literal notranslate"><span class="pre">update_state</span></code>.
+This is called a finite state machine, and it is a crucial concept to get the
+hang of. Here’s a simple article to get you started: <a class="reference external" href="https://medium.com/&#64;mlbors/what-is-a-finite-state-machine-6d8dec727e2c">Finite State Machines</a></p>
+</section>
+<section id="instructions">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Instructions</a><a class="headerlink" href="#instructions" title="Link to this heading"></a></h3>
+<p>This is the most open-ended part of the tutorial, but you got this!
+Remember, if you get stuck, ask Google first. Then, check with your peers. We’re a very collaborative
+team. If you’re still stuck, your software lead is happy to give you some hints
+and troubleshoot bugs.</p>
+<p>Your task is to create a new position, like Offense, Defense, or Goalie. Your
+new position will be called Runner. It will be a subclass of <code class="docutils literal notranslate"><span class="pre">position.hpp</span></code>.</p>
+<p>Some useful C++ resources:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.learncpp.com/cpp-tutorial/classes-and-class-members/">C++ Classes</a></p></li>
+<li><p><a class="reference external" href="https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/">C++ Inheritance</a></p></li>
+</ul>
+<p>Your runner will be a robot that takes laps around the field. It should run in a rectangle that you choose.
+If you’re feeling creative, the shape it runs in can be any polygon with 4 or more sides.</p>
+<p>A runner’s process looks like this:</p>
+<ol class="arabic simple">
+<li><p>Run along first side of shape</p></li>
+<li><p>Continue until done</p></li>
+<li><p>Run along second side of shape</p></li>
+<li><p>Continue until done</p></li>
+<li><p>Run along third side of shape</p></li>
+<li><p>Continue until done</p></li>
+</ol>
+<p>etc, starting over when it finishes the shape.</p>
+<p>Hopefully, you’re seeing how this list lends nicely to a state machine, where states are sides
+and you know to switch states based on when the robot has reached a vertex (the end of its path).</p>
+<p>You will need to look through the other positions to figure out the details of creating this position,
+but here are some more hints.</p>
+<ul class="simple">
+<li><p>The motion command for driving in a straight line is <code class="code highlight cpp docutils literal highlight-cpp"><span class="s">&quot;path_target&quot;</span></code>.</p></li>
+<li><p>You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don’t need to do anything in your position, as your robot will not pass the ball</p></li>
+<li><p>The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.</p></li>
+<li><p>You will need to add the new file name you create to <code class="docutils literal notranslate"><span class="pre">soccer/src/soccer/CMakeLists.txt</span></code>. See how this is done for other positions.</p></li>
+</ul>
+</section>
+<section id="testing">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Testing</a><a class="headerlink" href="#testing" title="Link to this heading"></a></h3>
+<p>To test your new position, the robot(s) needs to know to use it.
+Recall that the RobotFactoryPosition (<code class="docutils literal notranslate"><span class="pre">robot_factory_position.cpp</span></code>) is how the robot assigns itself a position.
+Take some time to review this file. RobotFactoryPosition is a subclass of Postion, just like your new runner.
+However, it determines what intent to return by calling <code class="docutils literal notranslate"><span class="pre">get_task</span></code> on the <code class="docutils literal notranslate"><span class="pre">current_position_</span></code> instance, which in our case should be your runner!</p>
+<p>You only want one Runner robot, so just set the robot with ID 1 to always be a Runner. See how this is done in the constructor with Offense.
+You will also need to change other methods as well (i.e. <code class="docutils literal notranslate"><span class="pre">set_default_position</span></code>) so the position is not overridden on later ticks.</p>
+</section>
+<section id="wrapping-up">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Wrapping up</a><a class="headerlink" href="#wrapping-up" title="Link to this heading"></a></h3>
+<p>Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!</p>
+<p>Once robot 1 is successfully running in a rectangle (or other shape), you’re finished! Congratulations!</p>
+</section>
+</section>
+<section id="ros-and-c">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">6. ROS and C++</a><a class="headerlink" href="#ros-and-c" title="Link to this heading"></a></h2>
+<p>Much like Section 4, this section is our version of an official ROS
+tutorial. This time we’ll reprise <a class="reference external" href="http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html">Writing a simple publisher and subscriber (C++)</a>.
+Before continuing, read the “Background” section of that tutorial, and brush up
+on any of the readings from section 4 that you need to. Ignore
+“Prerequisites”–our workspace is already set up for you, and we’ll walk through
+instructions for building your code here.</p>
+<p>This section is by far the most difficult of the tutorial.</p>
+<p><strong>Read the rest of this section before starting.</strong></p>
+<section id="objective">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Objective</a><a class="headerlink" href="#objective" title="Link to this heading"></a></h3>
+<p>In this section, you’ll be creating a SoccerMom node that gets the team color
+and picks a fruit to match. Our robots have to stay motivated somehow!</p>
+<p>You can find the team color by subscribing to the relevant topic (this should
+become obvious after looking at the list of topics). To “pick a fruit”, publish
+a standard <a class="reference external" href="http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html">String Msg</a>
+to a new topic <code class="docutils literal notranslate"><span class="pre">/team_fruit</span></code>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When our team color is yellow, publish “banana” to <code class="docutils literal notranslate"><span class="pre">/team_fruit</span></code>.</p></li>
+<li><p>When our team color is blue, publish “blueberries” to <code class="docutils literal notranslate"><span class="pre">/team_fruit</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="creating-a-new-node">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Creating a New Node</a><a class="headerlink" href="#creating-a-new-node" title="Link to this heading"></a></h3>
+<p>Often in C++ you’ll see the use of a header file, which ends in <code class="docutils literal notranslate"><span class="pre">.hpp</span></code>, and a
+source file, which ends in <code class="docutils literal notranslate"><span class="pre">.cpp</span></code>. Header files contain all the function
+declarations and docstrings explaining their use. Source files contain the
+function definitions–that is, the code that actually makes the functions work.
+This allows for many files to share access to the same methods or classes
+without copy-pasting their entire implementation by importing the right header
+files.</p>
+<p>(For more information, check out <a class="reference external" href="https://cplusplus.com/articles/Gw6AC542/">Headers and Includes</a> resource.)</p>
+<p>Let’s take a look at a real example in our codebase to make this more
+understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
+last section, you used <code class="code highlight sh docutils literal highlight-sh">rqt</code> to launch the Node Graph. One of the nodes that
+subscribe and publish to various topics is <code class="docutils literal notranslate"><span class="pre">/radio</span></code>, and these files are the
+source of that node.</p>
+<p>Comparing the similarities and differences between the subscribers and
+publishers in these files vs. the ROS tutorial will help you learn what you can
+take directly from the ROS tutorial, and where you need to deviate from it.</p>
+<p>As a brief overview to help you get started…</p>
+<ul>
+<li><p>Notice the <code class="code highlight cpp docutils literal highlight-cpp"><span class="cp">#includes</span></code> at the top of both files. <code class="code highlight cpp docutils literal highlight-cpp"><span class="cp">#includes</span></code> are like
+<code class="code highlight cpp docutils literal highlight-cpp"><span class="k">import</span></code> statements from Java or Python (with slight differences that are
+not terribly important for our purposes right now). Using ROS forces you to
+include certain things; again, check out the ROS tutorial.</p></li>
+<li><p>The header file defines Radio to be subclass of rclcpp::Node (see <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span></code>).
+This means the Radio has access to all the methods of rclcpp::Node
+(notice that Node is under <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">namespace</span><span class="w"> </span><span class="nn">rclcpp</span></code>!).</p></li>
+<li><p>The header file also categorizes all variables and methods of the Radio
+class into <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">public</span></code>, <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">protected</span></code>, and <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">private</span></code>. These are known
+as “access specifiers”. This article on <a class="reference external" href="https://www.w3schools.com/cpp/cpp_access_specifiers.asp">Access Specifiers</a>
+sums them up nicely.</p></li>
+<li><p>Both files are enclosed under a namespace. Namespaces are an organizational
+tool in C++ which helps organize large codebases. For instance, the radio.hpp
+file defines <code class="code highlight cpp docutils literal highlight-cpp"><span class="k">namespace</span><span class="w"> </span><span class="nn">radio</span></code>, so when other files use the <code class="code highlight cpp docutils literal highlight-cpp"><span class="n">SimRadio</span></code>
+object, they reference <code class="code highlight cpp docutils literal highlight-cpp"><span class="n">radio</span><span class="o">::</span><span class="n">SimRadio</span></code>. Give your SoccerMom node a
+<code class="code highlight cpp docutils literal highlight-cpp"><span class="n">tutorial</span></code> namespace.</p></li>
+<li><p>The existing codebase makes heavy use of <em>lambda expressions</em>. For instance,
+in radio.cpp:</p>
+<blockquote>
+<div><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">create_subscription</span><span class="o">&lt;</span><span class="n">rj_msgs</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">ManipulatorSetpoint</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">         </span><span class="n">control</span><span class="o">::</span><span class="n">topics</span><span class="o">::</span><span class="n">manipulator_setpoint_topic</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">QoS</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+<span class="w">         </span><span class="p">[</span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">](</span><span class="n">rj_msgs</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">ManipulatorSetpoint</span><span class="o">::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">manipulator</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">manipulators_cached_</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">manipulator</span><span class="p">;</span>
+<span class="w">         </span><span class="p">});</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>Here, a lambda expression is used instead of the callback function that you’ll
+see in the ROS tutorial. A lambda expression is just a concise way of defining
+a function without giving it a name. This is only suitable when you know you
+don’t want to reuse a function (since without a name, you can’t reference that
+function anywhere else). and requires less lines of code when compared to
+having another function.</p>
+<p>Read more about <a class="reference external" href="https://www.programiz.com/cpp-programming/lambda-expression">Lambda Expressions</a>
+if you would like.</p>
+<ul>
+<li><p>The existing codebase also makes heavy use of <em>pointers</em>. You will see this
+in the use of the arrow operator, <code class="code highlight cpp docutils literal highlight-cpp"><span class="o">-&gt;</span></code>. For example:</p>
+<blockquote>
+<div><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">robot_status_topics_</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">robot_id</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">publish</span><span class="p">(</span><span class="n">robot_status</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>The arrow operator is used to access a method or element of an object, when
+given a pointer to that object. Above, <code class="code highlight cpp docutils literal highlight-cpp"><span class="n">robot_status_topics_</span></code> is a list of
+pointers to ROS publisher objects. Calling <code class="code highlight cpp docutils literal highlight-cpp"><span class="o">-&gt;</span><span class="n">publish</span><span class="p">(</span><span class="n">robot_status</span><span class="p">)</span></code> on one
+element in that list publishes a robot status using that specific publisher.
+You will learn more about pointers when you take CS 2110, but if you want to
+get a headstart, see <a class="reference external" href="https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm">C++ Member Operators</a>.</p>
+<ul class="simple">
+<li><p>Finally, the docstrings in the radio header file state that the Radio class
+abstract superclass of the network_radio and sim_radio nodes. (If you are
+unfamiliar with the concept of abstraction, <a class="reference external" href="https://en.wikibooks.org/wiki/C%2B%2B_Programming/Classes/Abstract_Classes">C++ Abstract Classes</a> is more
+information.) The concrete subclasses are NetworkRadio and SimRadio.</p></li>
+</ul>
+<p>You might be wondering: okay, this is great, but how do I compile and run my
+new node?</p>
+<p>Well, both NetworkRadio and SimRadio have an associated &lt;name&gt;_main.cpp file
+(e.g. <code class="docutils literal notranslate"><span class="pre">sim_radio_node_main</span></code>) which contains the main function for its
+respective node. This structure is intended to make writing the CMake files for
+the directory easier. We use <a class="reference external" href="https://cmake.org/overview/">CMake</a> to compile
+our C++ programs on a variety of different hardware architectures.</p>
+<p>As a result, to compile and use your new node, you’ll need to add your new
+source files to the right CMake files.</p>
+</section>
+<section id="building-your-node">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Building Your Node</a><a class="headerlink" href="#building-your-node" title="Link to this heading"></a></h3>
+<p>CMakeLists.txt files are used to make standard build files for the directory. It
+locates files, libraries, and executables to support complex directory
+hierarchies. Locate the <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file in
+<code class="docutils literal notranslate"><span class="pre">robocup-software/soccer/src/soccer</span></code>.</p>
+<p>Let’s start looking at all the magic CMake text that builds our cpp code:</p>
+<ul class="simple">
+<li><p>Notice the source files under <code class="code highlight cmake docutils literal highlight-cmake"><span class="err">ROBOCUP_LIB_SRC</span></code>. You will find the
+radio files that you explored earlier, along with all the other source
+files we use (motion control, UI, etc.).</p></li>
+<li><p>Many of the nodes have an environment variable set for their
+&lt;node&gt;_main.cpp. For instance, SimRadio has the line
+<code class="code highlight cmake docutils literal highlight-cmake"><span class="nb">set</span><span class="p">(</span><span class="s">SIM_RADIO_NODE_SRC</span><span class="w"> </span><span class="s">radio/sim_radio_node_main.cpp</span><span class="p">)</span></code>. This defines
+<code class="code highlight cmake docutils literal highlight-cmake"><span class="err">SIM_RADIO_NODE_SRC</span></code> to be the filepath
+<code class="code highlight cmake docutils literal highlight-cmake"><span class="err">radio/sim_radio_node_main.cpp</span></code>. You will need a similar line for
+your new node, with adjustments to the names.</p></li>
+<li><p>There is a corresponding <code class="code highlight cmake docutils literal highlight-cmake"><span class="err">target_sources</span></code> line that SimRadio needs to
+actually start: <code class="code highlight cmake docutils literal highlight-cmake"><span class="nb">target_sources</span><span class="p">(</span><span class="s">sim_radio_node</span><span class="w"> </span><span class="s">PRIVATE</span><span class="w"> </span><span class="o">${</span><span class="nv">SIM_RADIO_NODE_SRC</span><span class="o">}</span><span class="p">)</span></code></p></li>
+</ul>
+<p>The rest is up to you. Keep using SimRadio as an example. Search through and
+find the parts of the CMake file where SimRadio is used, then follow that
+format for your own node.</p>
+<p>It’s okay if you don’t understand everything that’s going on. (Honestly, CMake
+files are one of those things we re-learn when adding new nodes and forget
+almost immediately after.) Just match the existing patterns.</p>
+</section>
+<section id="launching-your-node">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Launching Your Node</a><a class="headerlink" href="#launching-your-node" title="Link to this heading"></a></h3>
+<p>You’re almost there! The final file to get your node up and running is the
+<code class="docutils literal notranslate"><span class="pre">.launch</span></code> file.</p>
+<p>Launch files in ROS are a convenient way of starting up multiple nodes, setting
+initial parameters, and other requirements. Find the <code class="docutils literal notranslate"><span class="pre">robocup-software/launch</span></code>
+directory and open the file that seems most relevant to your new node.
+(HINT: Your node should be located in <code class="docutils literal notranslate"><span class="pre">robocup-software/soccer</span></code>.)</p>
+<p>Like the CMake section, this part is a lot of copying what already exists and
+changing it to match your new node’s names. If you want to read more about ROS
+launch files, the <a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a> is a great place to start.</p>
+</section>
+<section id="id1">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Testing</a><a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>Whew! What a section. If you’ve made it this far, you should have everything
+you need to create the SoccerMom node.</p>
+<p>This section will probably take you a while. Remember, when you run into
+issues, your order of question-asking should be:</p>
+<ol class="arabic simple">
+<li><p>Google</p></li>
+<li><p>FAQ page in our docs</p></li>
+<li><p>Fellow new members</p></li>
+<li><p>Software lead</p></li>
+<li><p>Anyone the SW lead takes advice from</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since you have made changes to the C++ part of our codebase, you must build
+it again to test your node. This may take a while, so be patient and
+proactive with your changes. If you forgot how to build the codebase, go to
+the Getting Started page.</p>
+</div>
+<p>To test, change our team color using the UI by going to the top menu bar and
+clicking Field &gt; Team Color. You should see the team color change in the top
+right corner of our UI. Screenshot proof that your <code class="docutils literal notranslate"><span class="pre">/team_fruit</span></code> topic is
+publishing the right fruit for both options, and post as a comment to your PR.</p>
+<p>Similar to the Python section, there’s a lot of file-finding in this part. Use
+the option in your IDE or text editor that allows you to see a full folder at
+once. For instance, in VS Code, there is an option to open a full folder, which
+displays all the subfolders and files in the left toolbar.</p>
+<p>If you’ve read this whole section and are feeling a little intimidated, that’s
+normal. The paragraphs above form a nice guide and checklist for you to follow.
+Just try your best, one step at a time, and eventually you’ll have a working
+piece of software to be proud of.</p>
+</section>
+</section>
+<section id="conclusion">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">7. Conclusion</a><a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>Finally, tag your software lead for review on your pull request. For your final
+comment, leave feedback on anything that confused you in this tutorial. When
+reviewing your PR, your software lead will either request changes, meaning they
+have some feedback for you to adjust your PR, or approve it, meaning your
+changes are ready to merge.</p>
+<p>However, this time, upon approval, <strong>CLOSE your pull request. Do not merge it.</strong>
+Since this is only a tutorial project, there’s no need to add it to the
+codebase.</p>
+<p>Congratulations! This was a long journey, but if you’ve made it this far, you
+have proved yourself worthy of your teammates’ trust, and are ready to work on
+real features. We hope this was a helpful first step in your long robotics
+career.</p>
+</section>
+<section id="resources-again">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">8. Resources (again)</a><a class="headerlink" href="#resources-again" title="Link to this heading"></a></h2>
+<p>Here are all the external links from this document, copied again for your easy reference</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://ubuntu.com/tutorials/command-line-for-beginners#1-overview">Command Line Basics</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://rogerdudler.github.io/git-guide/">Git Guide</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools&gt;">Beginner CLI Tools</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="http://wiki.ros.org/rqt/UserGuide/Install/Groovy">Install Groovy</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html">Writing a simple publisher and subscriber (C++)</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="http://docs.ros.org/en/noetic/api/std_msgs/html/msg/String.html">String Msg</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://cplusplus.com/articles/Gw6AC542/">Headers and Includes</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.w3schools.com/cpp/cpp_access_specifiers.asp">Access Specifiers</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.programiz.com/cpp-programming/lambda-expression">Lambda Expressions</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.tutorialspoint.com/cplusplus/cpp_member_operators.htm">C++ Member Operators</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://en.wikibooks.org/wiki/C%2B%2B_Programming/Classes/Abstract_Classes">C++ Abstract Classes</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://cmake.org/overview/">CMake</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://medium.com/&#64;mlbors/what-is-a-finite-state-machine-6d8dec727e2c">Finite State Machines</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.learncpp.com/cpp-tutorial/classes-and-class-members/">C++ Classes</a></p></li>
+</ul>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.learncpp.com/cpp-tutorial/basic-inheritance-in-c/">C++ Inheritance</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-left" title="ROS &amp; C++ Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="our_stack.html" class="btn btn-neutral float-right" title="Our Stack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, RoboJackets.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
