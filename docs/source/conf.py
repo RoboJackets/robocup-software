@@ -4,9 +4,6 @@ import subprocess
 
 import sphinx.application
 
-from pathlib import Path
-import os
-
 # -- Project information -----------------------------------------------------
 
 project = "RJ RC Software"
@@ -232,12 +229,7 @@ def generate_doxygen_xml(app: sphinx.application.Sphinx) -> None:
 
     input_dir = (project_dir / "soccer").resolve()
     output_dir = (cwd / "build").resolve()
-    
-    CONF_DIR = Path(__file__).resolve().parent      # .../docs/source
-    DOCS_DIR = CONF_DIR.parent                      # .../docs
-    doxyfile_dir = Path(os.environ.get("DOXYFILE_DIR", str(DOCS_DIR)))
-
-    # doxyfile_dir = (project_dir / "docs").resolve()
+    doxyfile_dir = (project_dir / "docs").resolve()
 
     # Configure the Doxyfile.
     configure_doxyfile(input_dir, output_dir, doxyfile_dir)
