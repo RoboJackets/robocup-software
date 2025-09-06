@@ -34,6 +34,11 @@ To set up your local version of VSCode, head over to the Remote Explorer extensi
 the Dev Containers option at the top. You should then see your newly added container,
 which starts with ``ghcr.io``. You should open the ``/home/ubuntu`` folder for now.
 
+.. note::
+
+    When running the terminal, you might have to run ``cd home/ubuntu/`` before you
+    can proceed with any of the commands specified later in this tutorial.
+
 1. Trying out ROS 2
 -------------------
 Before we actually do any coding, let's try out some ROS 2 commands so you can start
@@ -277,6 +282,140 @@ the function that we binded to it. **Without spin, the program would just shut d
 
 Once spin has exited (ie. you press Ctrl+C), we clean up and shut down the ROS 2 system.
 
+And that's the publisher. We know you probably have lots of questions about the C++ syntax side of things,
+but don't focus too much on that for now. Just understand what each line of code does in terms of functionality!
+
+4. Building Your Own Subscriber
+-------------------------------
+Now that the publisher is done, let's switch to the subscriber. Inside the same directory
+as the publisher node, create a new file named ``turtle_poser.cpp``. 
+
+Once you're done, add in the following code. It's structure is very similar to the publisher
+we just wrote:
+
+.. code-block:: cpp
+
+    /* Start with includes, just like the publisher. */
+    #include "rclcpp/rclcpp.hpp"
+    #include "turtlesim/msg/pose.hpp"
+
+    /* Define a class TurtlePoser class that inherits from ROS's node class. */
+    class TurtlePoser : public rclcpp::Node
+    {
+    public:
+        /* Constructor initializes the node with the name "turtle_poser". */
+        TurtlePoser() : Node("turtle_poser")
+        {
+            /* Create a subscriber. It will receive messages of type turtlesim::msg::Pose
+            on the "/turtle1/pose" topic. The '10' is the queue size. When a message is received, 
+            the 'topic_callback' function is called.
+            */
+            subscription_ = this->create_subscription<turtlesim::msg::Pose>(
+                "/turtle1/pose", 10, std::bind(&TurtlePoser::topic_callback, this, std::placeholders::_1));
+
+            RCLCPP_INFO(this->get_logger(), "Turtle poser has been started.");
+        }
+
+    private:
+        /* This function is called every time a message is received on the topic. */
+        void topic_callback(const turtlesim::msg::Pose &msg) const
+        {
+            /* In this case, all we want this subscriber to do is log where the Turtle is */
+            RCLCPP_INFO(this->get_logger(), "Turtle at x: '%.2f', y: '%.2f'", msg.x, msg.y);
+        }
+
+        /* The subscriber is a private member variable */
+        rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr subscription_;
+    };
+
+    /* Main method to actually spin up the node */
+    int main(int argc, char *argv[])
+    {
+        // Initialize the ROS 2 client library
+        rclcpp::init(argc, argv);
+        // Create an instance of our TurtlePoser node and spin it to process callbacks
+        rclcpp::spin(std::make_shared<TurtlePoser>());
+        // Shut down the ROS 2 client library
+        rclcpp::shutdown();
+        return 0;
+    }
+
+Hopefully after learning more about the publisher code, this code also makes sense.
+
+One thing to observe with this code is that **we are not directly observing the messages being sent 
+by the publisher.** Instead, recall that the TurtleSim publishes information about the Turtle's current 
+position (pose). This is what we're subscribing to.
+
+5. Building the Code
+--------------------
+Now that we've written our code for the nodes, we need to tell ROS 2 how it should build
+our new nodes.
+
+In order to do so, we need to add information to the ``CMakeLists.txt`` file in ``ros2_ws/src/turtlesim_project/``.
+The CMakeLists file is used for the build system that we use to build all of our code. 
+
+What we need to do is just tell our build system that we want to include our two C++ files, make them
+executable (so that they can actually be run), and then install them so that ROS 2 can find them.
+
+Here's what you'll add to the end of your CMakeLists file:
+
+.. code-block:: cmake
+
+    add_executable(turtle_controller src/turtle_controller.cpp)
+    ament_target_dependencies(turtle_controller rclcpp geometry_msgs)
+
+    add_executable(turtle_poser src/turtle_poser.cpp)
+    ament_target_dependencies(turtle_poser rclcpp turtlesim)
+
+    install(TARGETS
+        turtle_controller
+        turtle_poser
+        DESTINATION lib/${PROJECT_NAME}
+    )
+
+Once you've updated that, navigate to the root of your ROS workspace (ie. ``~/ros2_ws``) and run
+``colcon build``. 
+
+If things built successfully, you're done! We can now proceed to testing. If not, you should read the 
+error and try to debug your current implementation for any syntax errors, or errors in the way you 
+have setup your workspace directory.
+
+6. Testing Our Code
+-------------------
+To test our new nodes, we need 3 separate Terminator windows. 
+
+**Before running any ROS command, you need to source your workspace's setup file.** This configures
+the current environment to recognize and use the packages and functionalities within our current ROS
+workspace (also, in ROS, it's common to switch around multiple workspaces, so you want to make sure
+you're in the right workspace).
+
+In the first terminal window:
+
+.. code-block:: bash
+
+   cd ~/ros2_ws
+   source install/setup.bash
+
+Next, let's actually run the TurtleSim, which can be done by running 
+
+.. code-block:: bash
+
+   ros2 run turtlesim turtlesim_node
+
+In the next terminal, source the workspace, and then run:
+
+.. code-block:: bash
+
+   ros2 run turtlesim_project turtle_controller
+
+Finally, open the third terminal, source the workspace, and run:
+
+.. code-block:: bash
+
+   ros2 run turtlesim_project turtle_poser
 
 
+You should now see the Turtle moving in a circle and seeing a full log that reports the 
+turtle's X and Y coordinates. It should look something like this: 
 
+.. image:: ./_static/intro-final-result.png

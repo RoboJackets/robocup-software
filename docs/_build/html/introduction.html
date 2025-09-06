@@ -64,6 +64,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#coding-the-publisher">Coding the Publisher</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#building-your-own-subscriber">4. Building Your Own Subscriber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-the-code">5. Building the Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-our-code">6. Testing Our Code</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
@@ -229,6 +232,9 @@ for the main tutorial that you’ll work on in the next section.</p>
 <li><p><a class="reference internal" href="#coding-the-publisher" id="id7">Coding the Publisher</a></p></li>
 </ul>
 </li>
+<li><p><a class="reference internal" href="#building-your-own-subscriber" id="id8">4. Building Your Own Subscriber</a></p></li>
+<li><p><a class="reference internal" href="#building-the-code" id="id9">5. Building the Code</a></p></li>
+<li><p><a class="reference internal" href="#testing-our-code" id="id10">6. Testing Our Code</a></p></li>
 </ul>
 </li>
 </ul>
@@ -252,6 +258,11 @@ the terminator app in your Docker image.</p>
 <p>To set up your local version of VSCode, head over to the Remote Explorer extension, and select
 the Dev Containers option at the top. You should then see your newly added container,
 which starts with <code class="docutils literal notranslate"><span class="pre">ghcr.io</span></code>. You should open the <code class="docutils literal notranslate"><span class="pre">/home/ubuntu</span></code> folder for now.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When running the terminal, you might have to run <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">home/ubuntu/</span></code> before you
+can proceed with any of the commands specified later in this tutorial.</p>
+</div>
 </section>
 <section id="trying-out-ros-2">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">1. Trying out ROS 2</a><a class="headerlink" href="#trying-out-ros-2" title="Link to this heading"></a></h2>
@@ -461,7 +472,122 @@ call prior to starting the node.</p>
 the node alive. While the node is spinning, it can process things like the timer running and executing
 the function that we binded to it. <strong>Without spin, the program would just shut down immediately.</strong></p>
 <p>Once spin has exited (ie. you press Ctrl+C), we clean up and shut down the ROS 2 system.</p>
+<p>And that’s the publisher. We know you probably have lots of questions about the C++ syntax side of things,
+but don’t focus too much on that for now. Just understand what each line of code does in terms of functionality!</p>
 </section>
+</section>
+<section id="building-your-own-subscriber">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">4. Building Your Own Subscriber</a><a class="headerlink" href="#building-your-own-subscriber" title="Link to this heading"></a></h2>
+<p>Now that the publisher is done, let’s switch to the subscriber. Inside the same directory
+as the publisher node, create a new file named <code class="docutils literal notranslate"><span class="pre">turtle_poser.cpp</span></code>.</p>
+<p>Once you’re done, add in the following code. It’s structure is very similar to the publisher
+we just wrote:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Start with includes, just like the publisher. */</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;rclcpp/rclcpp.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;turtlesim/msg/pose.hpp&quot;</span>
+
+<span class="cm">/* Define a class TurtlePoser class that inherits from ROS&#39;s node class. */</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TurtlePoser</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Node</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="cm">/* Constructor initializes the node with the name &quot;turtle_poser&quot;. */</span>
+<span class="w">    </span><span class="n">TurtlePoser</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="s">&quot;turtle_poser&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* Create a subscriber. It will receive messages of type turtlesim::msg::Pose</span>
+<span class="cm">        on the &quot;/turtle1/pose&quot; topic. The &#39;10&#39; is the queue size. When a message is received,</span>
+<span class="cm">        the &#39;topic_callback&#39; function is called.</span>
+<span class="cm">        */</span>
+<span class="w">        </span><span class="n">subscription_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">create_subscription</span><span class="o">&lt;</span><span class="n">turtlesim</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">Pose</span><span class="o">&gt;</span><span class="p">(</span>
+<span class="w">            </span><span class="s">&quot;/turtle1/pose&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">bind</span><span class="p">(</span><span class="o">&amp;</span><span class="n">TurtlePoser</span><span class="o">::</span><span class="n">topic_callback</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">placeholders</span><span class="o">::</span><span class="n">_1</span><span class="p">));</span>
+
+<span class="w">        </span><span class="n">RCLCPP_INFO</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">get_logger</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Turtle poser has been started.&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="cm">/* This function is called every time a message is received on the topic. */</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">topic_callback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">turtlesim</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">Pose</span><span class="w"> </span><span class="o">&amp;</span><span class="n">msg</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="cm">/* In this case, all we want this subscriber to do is log where the Turtle is */</span>
+<span class="w">        </span><span class="n">RCLCPP_INFO</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">get_logger</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;Turtle at x: &#39;%.2f&#39;, y: &#39;%.2f&#39;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="cm">/* The subscriber is a private member variable */</span>
+<span class="w">    </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">Subscription</span><span class="o">&lt;</span><span class="n">turtlesim</span><span class="o">::</span><span class="n">msg</span><span class="o">::</span><span class="n">Pose</span><span class="o">&gt;::</span><span class="n">SharedPtr</span><span class="w"> </span><span class="n">subscription_</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/* Main method to actually spin up the node */</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Initialize the ROS 2 client library</span>
+<span class="w">    </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Create an instance of our TurtlePoser node and spin it to process callbacks</span>
+<span class="w">    </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">spin</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">TurtlePoser</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// Shut down the ROS 2 client library</span>
+<span class="w">    </span><span class="n">rclcpp</span><span class="o">::</span><span class="n">shutdown</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Hopefully after learning more about the publisher code, this code also makes sense.</p>
+<p>One thing to observe with this code is that <strong>we are not directly observing the messages being sent
+by the publisher.</strong> Instead, recall that the TurtleSim publishes information about the Turtle’s current
+position (pose). This is what we’re subscribing to.</p>
+</section>
+<section id="building-the-code">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">5. Building the Code</a><a class="headerlink" href="#building-the-code" title="Link to this heading"></a></h2>
+<p>Now that we’ve written our code for the nodes, we need to tell ROS 2 how it should build
+our new nodes.</p>
+<p>In order to do so, we need to add information to the <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file in <code class="docutils literal notranslate"><span class="pre">ros2_ws/src/turtlesim_project/</span></code>.
+The CMakeLists file is used for the build system that we use to build all of our code.</p>
+<p>What we need to do is just tell our build system that we want to include our two C++ files, make them
+executable (so that they can actually be run), and then install them so that ROS 2 can find them.</p>
+<p>Here’s what you’ll add to the end of your CMakeLists file:</p>
+<div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">add_executable</span><span class="p">(</span><span class="s">turtle_controller</span><span class="w"> </span><span class="s">src/turtle_controller.cpp</span><span class="p">)</span>
+<span class="nb">ament_target_dependencies</span><span class="p">(</span><span class="s">turtle_controller</span><span class="w"> </span><span class="s">rclcpp</span><span class="w"> </span><span class="s">geometry_msgs</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">turtle_poser</span><span class="w"> </span><span class="s">src/turtle_poser.cpp</span><span class="p">)</span>
+<span class="nb">ament_target_dependencies</span><span class="p">(</span><span class="s">turtle_poser</span><span class="w"> </span><span class="s">rclcpp</span><span class="w"> </span><span class="s">turtlesim</span><span class="p">)</span>
+
+<span class="nb">install</span><span class="p">(</span><span class="s">TARGETS</span>
+<span class="w">    </span><span class="s">turtle_controller</span>
+<span class="w">    </span><span class="s">turtle_poser</span>
+<span class="w">    </span><span class="s">DESTINATION</span><span class="w"> </span><span class="s">lib/</span><span class="o">${</span><span class="nv">PROJECT_NAME</span><span class="o">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you’ve updated that, navigate to the root of your ROS workspace (ie. <code class="docutils literal notranslate"><span class="pre">~/ros2_ws</span></code>) and run
+<code class="docutils literal notranslate"><span class="pre">colcon</span> <span class="pre">build</span></code>.</p>
+<p>If things built successfully, you’re done! We can now proceed to testing. If not, you should read the
+error and try to debug your current implementation for any syntax errors, or errors in the way you
+have setup your workspace directory.</p>
+</section>
+<section id="testing-our-code">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">6. Testing Our Code</a><a class="headerlink" href="#testing-our-code" title="Link to this heading"></a></h2>
+<p>To test our new nodes, we need 3 separate Terminator windows.</p>
+<p><strong>Before running any ROS command, you need to source your workspace’s setup file.</strong> This configures
+the current environment to recognize and use the packages and functionalities within our current ROS
+workspace (also, in ROS, it’s common to switch around multiple workspaces, so you want to make sure
+you’re in the right workspace).</p>
+<p>In the first terminal window:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~/ros2_ws
+<span class="nb">source</span><span class="w"> </span>install/setup.bash
+</pre></div>
+</div>
+<p>Next, let’s actually run the TurtleSim, which can be done by running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>turtlesim<span class="w"> </span>turtlesim_node
+</pre></div>
+</div>
+<p>In the next terminal, source the workspace, and then run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>turtlesim_project<span class="w"> </span>turtle_controller
+</pre></div>
+</div>
+<p>Finally, open the third terminal, source the workspace, and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ros2<span class="w"> </span>run<span class="w"> </span>turtlesim_project<span class="w"> </span>turtle_poser
+</pre></div>
+</div>
+<p>You should now see the Turtle moving in a circle and seeing a full log that reports the
+turtle’s X and Y coordinates. It should look something like this:</p>
+<img alt="_images/intro-final-result.png" src="_images/intro-final-result.png" />
 </section>
 </section>
 
