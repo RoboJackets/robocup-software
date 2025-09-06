@@ -11,21 +11,18 @@ Tutorial
 =============
 
 This page is meant to teach new RoboCup Software members the basics of what
-they'll need to contribute. It will introduce the Robot Operating System (ROS),
-the command-line, GitHub, git, Python, C++, and the general shape of our stack.
-Upon completion of this tutorial, you'll have the knowledge and trust of your
-teammates to implement new features on your own.
+they'll need to contribute. Upon completion of this tutorial, you'll have 
+the knowledge and trust of your teammates to implement new features on your own.
+
+If you have absolutely no familiarity with ROS or C++, check out the Introduction page first.
 
 No prior experience is assumed. However, a bit of stubbornness is required.
 RoboCup SW has seen many members without any prior CS experience become valued
 contributors, and many talented CS majors quit within a few weeks.
 
-**Note: you must have Ubuntu 20.04 installed in some capacity to use our
-stack.** Most new members do this with a VM, which is the quickest way. Google
-"how to install Ubuntu VM on <your current OS>" and follow a tutorial online.
-If you decide to stick with RoboCup long-term, it might be worth your time to
-invest in a used laptop that only has Ubuntu 20.04 and your RoboCup files
-installed.
+**Note: you must have Ubuntu 22.04 installed in some capacity to use our
+stack.** You should make sure that you have gone through all the installation steps
+before proceeding here.
 
 The tutorial is structured as follows.
 
@@ -44,9 +41,9 @@ When you run into issues, your order of question-asking should be:
 
    * Error messages, if they come up
 
-#. Google
+#. ChatGPT/Claude/Gemini/Grok/Whatever
 
-   * Seriously
+   * Great at helping you out with errors. Don't expect to be able to vibe code stuff, though.
 
 #. FAQ page in our docs (common errors and debug info)
 
@@ -54,7 +51,7 @@ When you run into issues, your order of question-asking should be:
 
 #. Software lead
 
-#. Anyone the SW lead takes advice from
+#. Anyone the SW lead takes advice from (basically any veteran SW member)
 
 This is not because older members don't want to help you, but because if older
 members helped every new member with every question, they wouldn't have time to
@@ -62,45 +59,7 @@ make our robots better (nor would you learn as much). So try to resolve your
 issue yourself, and expect to be asked "what have you tried already?" when you
 ask for help.
 
-0. Command-Line Basics
-----------------------
-
-If you've never heard of or used the command-line before, `Command Line Basics`_ is
-wonderful for beginners.
-
-.. image:: ./_static/ubuntu_cli_tutorial.png
-
-The rest of this tutorial assumes you have working knowledge of the
-command-line: how to run an executable, change directories, move files, run
-commands, etc. So if you're uncomfortable with any of that, go through the
-exercises in the site above.
-
-Some tips about learning how to use commands:
- * :sh:`man [command]` will pull up a manpage, which is an explanation of the
-   command and all of its options. This usually only works on standard Unix
-   commands. For instance, you can find words in any file in a directory using
-   :sh:`grep`: try :sh:`man grep` to see its full potential.
- * :sh:`[command or executable] --help` will almost always return a prompt that
-   tells you what the command does, and how you can modify it with options. Many
-   custom command-line tools will have a --help output, if they don't have a man
-   page.
- * Of course, you can also simply Google a command you don't understand, or look
-   up something like "how to search for a filename with command line".
-
-1. Installation
----------------
-
-See "Installation". That page will assume you have the Command-Line Basics
-from above, as well as a working knowledge of Git (which you can get either
-online (`Git Guide`_) or from the "Contributing"
-page).
-
-Once you've installed, play around with the simulator a little bit. Be familiar 
-with how to move the ball (click), take a shot (right click and drag), move a robot
-(click and drag), and issue the basic referee commands: stop, halt, and force start.
-(Buttons in the top left)
-
-2. GitHub Basics
+1. GitHub Basics
 ----------------
 
 Now that you have everything installed and understand the basics of the
@@ -137,7 +96,7 @@ and the goal.
 Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``. 
 Find the line of code that calculates the ``wall_spacing`` and double its value.
 
-Re-build the project (:sh:`make again`) and run the simulator again. You should
+Re-build the project (:sh:`colcon build`) and run the simulator again. You should
 see the wallers more spread out. Note that this is probably a less effective wall!
 This change is just for educational purposes. 
 
@@ -178,7 +137,7 @@ description, you can delete the template and write something simple like
 "Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
 comment below your brand new PR. Nice work!
 
-3. ROS CLI Basics
+2. ROS CLI Basics
 -----------------
 
 This section is our variation of the ROS 2 `Beginner CLI Tools`_ tutorials. We
@@ -189,8 +148,8 @@ read all of those docs.
 However, those docs are obviously still the source of truth on ROS. Before we
 get started, read all of the short "Background" sections for these pages:
 
-* Understanding ROS 2 nodes
-* Understanding ROS 2 topics
+* Understanding ROS 2 nodes (assuming you didn't look at the Introduction)
+* Understanding ROS 2 topics (assuming you didn't look at the Introduction)
 * Understanding ROS 2 services
 * Understanding ROS 2 parameters
 * Understanding ROS 2 actions
@@ -230,7 +189,7 @@ you search for it manually and almost no time if you use a tool like :sh:`find`.
 Once you have the right file, figure out the full filepath and add it to your
 GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.
 
-4. rqt Basics
+3. rqt Basics
 -------------
 
 The observant among you may have noticed that the last section only covered ROS
@@ -268,7 +227,7 @@ the runner (and every other robot on our team) move much more quickly.
 Take a screen recording of this whole process and send it to your software lead
 via Slack. Feel free to play around with any other params you see!
 
-5. Action Clients and building a position
+4. Action Clients and building a position
 -----------------------------------------
 
 Background
@@ -370,7 +329,7 @@ Make sure that you are periodically commiting your changes. This makes it easy f
 
 Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Congratulations!
 
-6. ROS and C++
+5. ROS and C++
 --------------
 
 Much like Section 4, this section is our version of an official ROS
@@ -585,7 +544,7 @@ normal. The paragraphs above form a nice guide and checklist for you to follow.
 Just try your best, one step at a time, and eventually you'll have a working
 piece of software to be proud of.
 
-7. Conclusion
+6. Conclusion
 -------------
 
 Finally, tag your software lead for review on your pull request. For your final
@@ -603,7 +562,7 @@ have proved yourself worthy of your teammates' trust, and are ready to work on
 real features. We hope this was a helpful first step in your long robotics
 career.
 
-8. Resources (again)
+7. Resources (again)
 --------------------
 
 Here are all the external links from this document, copied again for your easy reference
@@ -618,7 +577,7 @@ Here are all the external links from this document, copied again for your easy r
 
 * `Beginner CLI Tools`_
   
-.. _Beginner CLI Tools: https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools>
+.. _Beginner CLI Tools: https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html>
 
 * `Install Groovy`_
 
@@ -658,7 +617,7 @@ Here are all the external links from this document, copied again for your easy r
 
 * `Launch Files Tutorial`_
 
-.. _Launch Files Tutorial: https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html
+.. _Launch Files Tutorial: https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html
 
 * `Finite State Machines`_ 
 

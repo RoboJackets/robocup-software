@@ -70,19 +70,17 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#command-line-basics">0. Command-Line Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation">1. Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#github-basics">2. GitHub Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ros-cli-basics">3. ROS CLI Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rqt-basics">4. rqt Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#action-clients-and-building-a-position">5. Action Clients and building a position</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#github-basics">1. GitHub Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ros-cli-basics">2. ROS CLI Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rqt-basics">3. rqt Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#action-clients-and-building-a-position">4. Action Clients and building a position</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#background">Background</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#instructions">Instructions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#testing">Testing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#wrapping-up">Wrapping up</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#ros-and-c">6. ROS and C++</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ros-and-c">5. ROS and C++</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#objective">Objective</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#creating-a-new-node">Creating a New Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#building-your-node">Building Your Node</a></li>
@@ -90,8 +88,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#id1">Testing</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#conclusion">7. Conclusion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#resources-again">8. Resources (again)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">6. Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resources-again">7. Resources (again)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="our_stack.html">Our Stack</a><ul>
@@ -213,51 +211,45 @@
            <div itemprop="articleBody">
              
   <section id="tutorial">
-<h1><a class="toc-backref" href="#id3" role="doc-backlink">Tutorial</a><a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id2" role="doc-backlink">Tutorial</a><a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
 <p>This page is meant to teach new RoboCup Software members the basics of what
-they’ll need to contribute. It will introduce the Robot Operating System (ROS),
-the command-line, GitHub, git, Python, C++, and the general shape of our stack.
-Upon completion of this tutorial, you’ll have the knowledge and trust of your
-teammates to implement new features on your own.</p>
+they’ll need to contribute. Upon completion of this tutorial, you’ll have
+the knowledge and trust of your teammates to implement new features on your own.</p>
+<p>If you have absolutely no familiarity with ROS or C++, check out the Introduction page first.</p>
 <p>No prior experience is assumed. However, a bit of stubbornness is required.
 RoboCup SW has seen many members without any prior CS experience become valued
 contributors, and many talented CS majors quit within a few weeks.</p>
-<p><strong>Note: you must have Ubuntu 20.04 installed in some capacity to use our
-stack.</strong> Most new members do this with a VM, which is the quickest way. Google
-“how to install Ubuntu VM on &lt;your current OS&gt;” and follow a tutorial online.
-If you decide to stick with RoboCup long-term, it might be worth your time to
-invest in a used laptop that only has Ubuntu 20.04 and your RoboCup files
-installed.</p>
+<p><strong>Note: you must have Ubuntu 22.04 installed in some capacity to use our
+stack.</strong> You should make sure that you have gone through all the installation steps
+before proceeding here.</p>
 <p>The tutorial is structured as follows.</p>
 <nav class="contents" id="contents">
 <p class="topic-title">Contents</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#tutorial" id="id3">Tutorial</a></p>
+<li><p><a class="reference internal" href="#tutorial" id="id2">Tutorial</a></p>
 <ul>
-<li><p><a class="reference internal" href="#command-line-basics" id="id4">0. Command-Line Basics</a></p></li>
-<li><p><a class="reference internal" href="#installation" id="id5">1. Installation</a></p></li>
-<li><p><a class="reference internal" href="#github-basics" id="id6">2. GitHub Basics</a></p></li>
-<li><p><a class="reference internal" href="#ros-cli-basics" id="id7">3. ROS CLI Basics</a></p></li>
-<li><p><a class="reference internal" href="#rqt-basics" id="id8">4. rqt Basics</a></p></li>
-<li><p><a class="reference internal" href="#action-clients-and-building-a-position" id="id9">5. Action Clients and building a position</a></p>
+<li><p><a class="reference internal" href="#github-basics" id="id3">1. GitHub Basics</a></p></li>
+<li><p><a class="reference internal" href="#ros-cli-basics" id="id4">2. ROS CLI Basics</a></p></li>
+<li><p><a class="reference internal" href="#rqt-basics" id="id5">3. rqt Basics</a></p></li>
+<li><p><a class="reference internal" href="#action-clients-and-building-a-position" id="id6">4. Action Clients and building a position</a></p>
 <ul>
-<li><p><a class="reference internal" href="#background" id="id10">Background</a></p></li>
-<li><p><a class="reference internal" href="#instructions" id="id11">Instructions</a></p></li>
-<li><p><a class="reference internal" href="#testing" id="id12">Testing</a></p></li>
-<li><p><a class="reference internal" href="#wrapping-up" id="id13">Wrapping up</a></p></li>
+<li><p><a class="reference internal" href="#background" id="id7">Background</a></p></li>
+<li><p><a class="reference internal" href="#instructions" id="id8">Instructions</a></p></li>
+<li><p><a class="reference internal" href="#testing" id="id9">Testing</a></p></li>
+<li><p><a class="reference internal" href="#wrapping-up" id="id10">Wrapping up</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#ros-and-c" id="id14">6. ROS and C++</a></p>
+<li><p><a class="reference internal" href="#ros-and-c" id="id11">5. ROS and C++</a></p>
 <ul>
-<li><p><a class="reference internal" href="#objective" id="id15">Objective</a></p></li>
-<li><p><a class="reference internal" href="#creating-a-new-node" id="id16">Creating a New Node</a></p></li>
-<li><p><a class="reference internal" href="#building-your-node" id="id17">Building Your Node</a></p></li>
-<li><p><a class="reference internal" href="#launching-your-node" id="id18">Launching Your Node</a></p></li>
-<li><p><a class="reference internal" href="#id1" id="id19">Testing</a></p></li>
+<li><p><a class="reference internal" href="#objective" id="id12">Objective</a></p></li>
+<li><p><a class="reference internal" href="#creating-a-new-node" id="id13">Creating a New Node</a></p></li>
+<li><p><a class="reference internal" href="#building-your-node" id="id14">Building Your Node</a></p></li>
+<li><p><a class="reference internal" href="#launching-your-node" id="id15">Launching Your Node</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id16">Testing</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#conclusion" id="id20">7. Conclusion</a></p></li>
-<li><p><a class="reference internal" href="#resources-again" id="id21">8. Resources (again)</a></p></li>
+<li><p><a class="reference internal" href="#conclusion" id="id17">6. Conclusion</a></p></li>
+<li><p><a class="reference internal" href="#resources-again" id="id18">7. Resources (again)</a></p></li>
 </ul>
 </li>
 </ul>
@@ -274,59 +266,23 @@ prove that you’re ready to work on something meaningful on your own.</p>
 <li><p>Error messages, if they come up</p></li>
 </ul>
 </li>
-<li><p>Google</p>
+<li><p>ChatGPT/Claude/Gemini/Grok/Whatever</p>
 <ul class="simple">
-<li><p>Seriously</p></li>
+<li><p>Great at helping you out with errors. Don’t expect to be able to vibe code stuff, though.</p></li>
 </ul>
 </li>
 <li><p>FAQ page in our docs (common errors and debug info)</p></li>
 <li><p>Fellow new members</p></li>
 <li><p>Software lead</p></li>
-<li><p>Anyone the SW lead takes advice from</p></li>
+<li><p>Anyone the SW lead takes advice from (basically any veteran SW member)</p></li>
 </ol>
 <p>This is not because older members don’t want to help you, but because if older
 members helped every new member with every question, they wouldn’t have time to
 make our robots better (nor would you learn as much). So try to resolve your
 issue yourself, and expect to be asked “what have you tried already?” when you
 ask for help.</p>
-<section id="command-line-basics">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">0. Command-Line Basics</a><a class="headerlink" href="#command-line-basics" title="Link to this heading"></a></h2>
-<p>If you’ve never heard of or used the command-line before, <a class="reference external" href="https://ubuntu.com/tutorials/command-line-for-beginners#1-overview">Command Line Basics</a> is
-wonderful for beginners.</p>
-<img alt="_images/ubuntu_cli_tutorial.png" src="_images/ubuntu_cli_tutorial.png" />
-<p>The rest of this tutorial assumes you have working knowledge of the
-command-line: how to run an executable, change directories, move files, run
-commands, etc. So if you’re uncomfortable with any of that, go through the
-exercises in the site above.</p>
-<dl class="simple">
-<dt>Some tips about learning how to use commands:</dt><dd><ul class="simple">
-<li><p><code class="code highlight sh docutils literal highlight-sh">man<span class="w"> </span><span class="o">[</span>command<span class="o">]</span></code> will pull up a manpage, which is an explanation of the
-command and all of its options. This usually only works on standard Unix
-commands. For instance, you can find words in any file in a directory using
-<code class="code highlight sh docutils literal highlight-sh">grep</code>: try <code class="code highlight sh docutils literal highlight-sh">man<span class="w"> </span>grep</code> to see its full potential.</p></li>
-<li><p><code class="code highlight sh docutils literal highlight-sh"><span class="o">[</span><span class="nb">command</span><span class="w"> </span>or<span class="w"> </span>executable<span class="o">]</span><span class="w"> </span>--help</code> will almost always return a prompt that
-tells you what the command does, and how you can modify it with options. Many
-custom command-line tools will have a –help output, if they don’t have a man
-page.</p></li>
-<li><p>Of course, you can also simply Google a command you don’t understand, or look
-up something like “how to search for a filename with command line”.</p></li>
-</ul>
-</dd>
-</dl>
-</section>
-<section id="installation">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">1. Installation</a><a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>See “Installation”. That page will assume you have the Command-Line Basics
-from above, as well as a working knowledge of Git (which you can get either
-online (<a class="reference external" href="https://rogerdudler.github.io/git-guide/">Git Guide</a>) or from the “Contributing”
-page).</p>
-<p>Once you’ve installed, play around with the simulator a little bit. Be familiar
-with how to move the ball (click), take a shot (right click and drag), move a robot
-(click and drag), and issue the basic referee commands: stop, halt, and force start.
-(Buttons in the top left)</p>
-</section>
 <section id="github-basics">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">2. GitHub Basics</a><a class="headerlink" href="#github-basics" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">1. GitHub Basics</a><a class="headerlink" href="#github-basics" title="Link to this heading"></a></h2>
 <p>Now that you have everything installed and understand the basics of the
 command-line and git, let’s get started using GitHub.</p>
 <div class="admonition note">
@@ -357,7 +313,7 @@ ball in that location. You should see all five robots move between the ball
 and the goal.</p>
 <p>Open the file <code class="docutils literal notranslate"><span class="pre">soccer/src/soccer/strategy/agent/position/waller.cpp</span></code>.
 Find the line of code that calculates the <code class="docutils literal notranslate"><span class="pre">wall_spacing</span></code> and double its value.</p>
-<p>Re-build the project (<code class="code highlight sh docutils literal highlight-sh">make<span class="w"> </span>again</code>) and run the simulator again. You should
+<p>Re-build the project (<code class="code highlight sh docutils literal highlight-sh">colcon<span class="w"> </span>build</code>) and run the simulator again. You should
 see the wallers more spread out. Note that this is probably a less effective wall!
 This change is just for educational purposes.</p>
 <p><strong>Take a screenshot of your new wall.*</strong></p>
@@ -394,16 +350,16 @@ description, you can delete the template and write something simple like
 comment below your brand new PR. Nice work!</p>
 </section>
 <section id="ros-cli-basics">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">3. ROS CLI Basics</a><a class="headerlink" href="#ros-cli-basics" title="Link to this heading"></a></h2>
-<p>This section is our variation of the ROS 2 <a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools&gt;">Beginner CLI Tools</a> tutorials. We
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">2. ROS CLI Basics</a><a class="headerlink" href="#ros-cli-basics" title="Link to this heading"></a></h2>
+<p>This section is our variation of the ROS 2 <a class="reference external" href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html&gt;">Beginner CLI Tools</a> tutorials. We
 do things slightly differently (and don’t use all of the ROS 2 features
 described in those tutorials), so this is intended to keep you from having to
 read all of those docs.</p>
 <p>However, those docs are obviously still the source of truth on ROS. Before we
 get started, read all of the short “Background” sections for these pages:</p>
 <ul class="simple">
-<li><p>Understanding ROS 2 nodes</p></li>
-<li><p>Understanding ROS 2 topics</p></li>
+<li><p>Understanding ROS 2 nodes (assuming you didn’t look at the Introduction)</p></li>
+<li><p>Understanding ROS 2 topics (assuming you didn’t look at the Introduction)</p></li>
 <li><p>Understanding ROS 2 services</p></li>
 <li><p>Understanding ROS 2 parameters</p></li>
 <li><p>Understanding ROS 2 actions</p></li>
@@ -440,7 +396,7 @@ Once you have the right file, figure out the full filepath and add it to your
 GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.</p>
 </section>
 <section id="rqt-basics">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">4. rqt Basics</a><a class="headerlink" href="#rqt-basics" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">3. rqt Basics</a><a class="headerlink" href="#rqt-basics" title="Link to this heading"></a></h2>
 <p>The observant among you may have noticed that the last section only covered ROS
 topics, even though it asked you to read about ROS nodes, services, parameters,
 and actions as well. This was to set up the need to use <code class="code highlight sh docutils literal highlight-sh">rqt</code>, a graphical
@@ -470,9 +426,9 @@ the runner (and every other robot on our team) move much more quickly.</p>
 via Slack. Feel free to play around with any other params you see!</p>
 </section>
 <section id="action-clients-and-building-a-position">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">5. Action Clients and building a position</a><a class="headerlink" href="#action-clients-and-building-a-position" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">4. Action Clients and building a position</a><a class="headerlink" href="#action-clients-and-building-a-position" title="Link to this heading"></a></h2>
 <section id="background">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Background</a><a class="headerlink" href="#background" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Background</a><a class="headerlink" href="#background" title="Link to this heading"></a></h3>
 <p>This section introduces more concepts of ROS and our strategy.</p>
 <p>First, read this page and do some research if you need to get an understanding
 of ROS actions. Our strategy stack is centered around an Action Server and six
@@ -503,7 +459,7 @@ This is called a finite state machine, and it is a crucial concept to get the
 hang of. Here’s a simple article to get you started: <a class="reference external" href="https://medium.com/&#64;mlbors/what-is-a-finite-state-machine-6d8dec727e2c">Finite State Machines</a></p>
 </section>
 <section id="instructions">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Instructions</a><a class="headerlink" href="#instructions" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Instructions</a><a class="headerlink" href="#instructions" title="Link to this heading"></a></h3>
 <p>This is the most open-ended part of the tutorial, but you got this!
 Remember, if you get stuck, ask Google first. Then, check with your peers. We’re a very collaborative
 team. If you’re still stuck, your software lead is happy to give you some hints
@@ -539,7 +495,7 @@ but here are some more hints.</p>
 </ul>
 </section>
 <section id="testing">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Testing</a><a class="headerlink" href="#testing" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Testing</a><a class="headerlink" href="#testing" title="Link to this heading"></a></h3>
 <p>To test your new position, the robot(s) needs to know to use it.
 Recall that the RobotFactoryPosition (<code class="docutils literal notranslate"><span class="pre">robot_factory_position.cpp</span></code>) is how the robot assigns itself a position.
 Take some time to review this file. RobotFactoryPosition is a subclass of Postion, just like your new runner.
@@ -548,13 +504,13 @@ However, it determines what intent to return by calling <code class="docutils li
 You will also need to change other methods as well (i.e. <code class="docutils literal notranslate"><span class="pre">set_default_position</span></code>) so the position is not overridden on later ticks.</p>
 </section>
 <section id="wrapping-up">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">Wrapping up</a><a class="headerlink" href="#wrapping-up" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Wrapping up</a><a class="headerlink" href="#wrapping-up" title="Link to this heading"></a></h3>
 <p>Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!</p>
 <p>Once robot 1 is successfully running in a rectangle (or other shape), you’re finished! Congratulations!</p>
 </section>
 </section>
 <section id="ros-and-c">
-<h2><a class="toc-backref" href="#id14" role="doc-backlink">6. ROS and C++</a><a class="headerlink" href="#ros-and-c" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">5. ROS and C++</a><a class="headerlink" href="#ros-and-c" title="Link to this heading"></a></h2>
 <p>Much like Section 4, this section is our version of an official ROS
 tutorial. This time we’ll reprise <a class="reference external" href="http://docs.ros.org/en/rolling/Tutorials/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html">Writing a simple publisher and subscriber (C++)</a>.
 Before continuing, read the “Background” section of that tutorial, and brush up
@@ -564,7 +520,7 @@ instructions for building your code here.</p>
 <p>This section is by far the most difficult of the tutorial.</p>
 <p><strong>Read the rest of this section before starting.</strong></p>
 <section id="objective">
-<h3><a class="toc-backref" href="#id15" role="doc-backlink">Objective</a><a class="headerlink" href="#objective" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Objective</a><a class="headerlink" href="#objective" title="Link to this heading"></a></h3>
 <p>In this section, you’ll be creating a SoccerMom node that gets the team color
 and picks a fruit to match. Our robots have to stay motivated somehow!</p>
 <p>You can find the team color by subscribing to the relevant topic (this should
@@ -579,7 +535,7 @@ to a new topic <code class="docutils literal notranslate"><span class="pre">/tea
 </div></blockquote>
 </section>
 <section id="creating-a-new-node">
-<h3><a class="toc-backref" href="#id16" role="doc-backlink">Creating a New Node</a><a class="headerlink" href="#creating-a-new-node" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Creating a New Node</a><a class="headerlink" href="#creating-a-new-node" title="Link to this heading"></a></h3>
 <p>Often in C++ you’ll see the use of a header file, which ends in <code class="docutils literal notranslate"><span class="pre">.hpp</span></code>, and a
 source file, which ends in <code class="docutils literal notranslate"><span class="pre">.cpp</span></code>. Header files contain all the function
 declarations and docstrings explaining their use. Source files contain the
@@ -668,7 +624,7 @@ our C++ programs on a variety of different hardware architectures.</p>
 source files to the right CMake files.</p>
 </section>
 <section id="building-your-node">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Building Your Node</a><a class="headerlink" href="#building-your-node" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Building Your Node</a><a class="headerlink" href="#building-your-node" title="Link to this heading"></a></h3>
 <p>CMakeLists.txt files are used to make standard build files for the directory. It
 locates files, libraries, and executables to support complex directory
 hierarchies. Locate the <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file in
@@ -695,7 +651,7 @@ files are one of those things we re-learn when adding new nodes and forget
 almost immediately after.) Just match the existing patterns.</p>
 </section>
 <section id="launching-your-node">
-<h3><a class="toc-backref" href="#id18" role="doc-backlink">Launching Your Node</a><a class="headerlink" href="#launching-your-node" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Launching Your Node</a><a class="headerlink" href="#launching-your-node" title="Link to this heading"></a></h3>
 <p>You’re almost there! The final file to get your node up and running is the
 <code class="docutils literal notranslate"><span class="pre">.launch</span></code> file.</p>
 <p>Launch files in ROS are a convenient way of starting up multiple nodes, setting
@@ -704,10 +660,10 @@ directory and open the file that seems most relevant to your new node.
 (HINT: Your node should be located in <code class="docutils literal notranslate"><span class="pre">robocup-software/soccer</span></code>.)</p>
 <p>Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node’s names. If you want to read more about ROS
-launch files, the <a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a> is a great place to start.</p>
+launch files, the <a class="reference external" href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a> is a great place to start.</p>
 </section>
 <section id="id1">
-<h3><a class="toc-backref" href="#id19" role="doc-backlink">Testing</a><a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Testing</a><a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <p>Whew! What a section. If you’ve made it this far, you should have everything
 you need to create the SoccerMom node.</p>
 <p>This section will probably take you a while. Remember, when you run into
@@ -741,7 +697,7 @@ piece of software to be proud of.</p>
 </section>
 </section>
 <section id="conclusion">
-<h2><a class="toc-backref" href="#id20" role="doc-backlink">7. Conclusion</a><a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">6. Conclusion</a><a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
 <p>Finally, tag your software lead for review on your pull request. For your final
 comment, leave feedback on anything that confused you in this tutorial. When
 reviewing your PR, your software lead will either request changes, meaning they
@@ -756,7 +712,7 @@ real features. We hope this was a helpful first step in your long robotics
 career.</p>
 </section>
 <section id="resources-again">
-<h2><a class="toc-backref" href="#id21" role="doc-backlink">8. Resources (again)</a><a class="headerlink" href="#resources-again" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">7. Resources (again)</a><a class="headerlink" href="#resources-again" title="Link to this heading"></a></h2>
 <p>Here are all the external links from this document, copied again for your easy reference</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://ubuntu.com/tutorials/command-line-for-beginners#1-overview">Command Line Basics</a></p></li>
@@ -765,7 +721,7 @@ career.</p>
 <li><p><a class="reference external" href="https://rogerdudler.github.io/git-guide/">Git Guide</a></p></li>
 </ul>
 <ul class="simple">
-<li><p><a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials.html#beginner-cli-tools&gt;">Beginner CLI Tools</a></p></li>
+<li><p><a class="reference external" href="https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html&gt;">Beginner CLI Tools</a></p></li>
 </ul>
 <ul class="simple">
 <li><p><a class="reference external" href="http://wiki.ros.org/rqt/UserGuide/Install/Groovy">Install Groovy</a></p></li>
@@ -795,7 +751,7 @@ career.</p>
 <li><p><a class="reference external" href="https://cmake.org/overview/">CMake</a></p></li>
 </ul>
 <ul class="simple">
-<li><p><a class="reference external" href="https://docs.ros.org/en/foxy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a></p></li>
+<li><p><a class="reference external" href="https://docs.ros.org/en/humble/Tutorials/Intermediate/Launch/Creating-Launch-Files.html">Launch Files Tutorial</a></p></li>
 </ul>
 <ul class="simple">
 <li><p><a class="reference external" href="https://medium.com/&#64;mlbors/what-is-a-finite-state-machine-6d8dec727e2c">Finite State Machines</a></p></li>

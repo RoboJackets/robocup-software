@@ -20,7 +20,7 @@ with Ubuntu 22.04 will work. The steps to set this up can be found `here
 .com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_. For Mac
 users, Ubuntu 22.04 can be emulated in a virtual machine. For M1 Macs
 specifically, using the arm64 version of Ubuntu 22.04 with the application UTM
-has worked in the past.
+has worked in the past. If you need the Ubuntu 22.04 image, see the SW lead.
 
 First, clone the repository from GitHub:
 
@@ -207,17 +207,4 @@ machine, though, you can build again more quickly with:
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
 is refreshed on each build. (**Note:** this does not build any CMake-related
-files, so if you're editing those, use ``make perf`` as usual.)
-
-There are a few different ways to build our code. See the makefile for more
-details, but in short:
-
-.. code-block:: bash
-
-   make all         # builds with full debugging symbols 
-   make debug       # alias for make all 
-   make all-release # builds with 0 debugging symbols 
-   make perf        # builds with some debugging symbols; preferred method
-
-TODO(Kevin): add description of running on field comp (move that md file over
-too)
+files, so if you're editing those, use ``colcon build`` as usual.)

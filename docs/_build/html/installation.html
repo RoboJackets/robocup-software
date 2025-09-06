@@ -70,19 +70,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#command-line-basics">0. Command-Line Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#installation">1. Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#github-basics">2. GitHub Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#ros-cli-basics">3. ROS CLI Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#rqt-basics">4. rqt Basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#action-clients-and-building-a-position">5. Action Clients and building a position</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#github-basics">1. GitHub Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#ros-cli-basics">2. ROS CLI Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#rqt-basics">3. rqt Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#action-clients-and-building-a-position">4. Action Clients and building a position</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#background">Background</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#instructions">Instructions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#testing">Testing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#wrapping-up">Wrapping up</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#ros-and-c">6. ROS and C++</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#ros-and-c">5. ROS and C++</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#objective">Objective</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#creating-a-new-node">Creating a New Node</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#building-your-node">Building Your Node</a></li>
@@ -90,8 +88,8 @@
 <li class="toctree-l3"><a class="reference internal" href="tutorial.html#id1">Testing</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#conclusion">7. Conclusion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resources-again">8. Resources (again)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#conclusion">6. Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resources-again">7. Resources (again)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="our_stack.html">Our Stack</a><ul>
@@ -229,7 +227,7 @@ are on an Ubuntu 22.04 machine before continuing. For Windows users, using WSL2
 with Ubuntu 22.04 will work. The steps to set this up can be found <a class="reference external" href="https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview">here</a>. For Mac
 users, Ubuntu 22.04 can be emulated in a virtual machine. For M1 Macs
 specifically, using the arm64 version of Ubuntu 22.04 with the application UTM
-has worked in the past.</p>
+has worked in the past. If you need the Ubuntu 22.04 image, see the SW lead.</p>
 <p>First, clone the repository from GitHub:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/RoboJackets/robocup-software.git
 </pre></div>
@@ -363,17 +361,7 @@ machine, though, you can build again more quickly with:</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">source.bash</span></code> line is necessary to source the file in <code class="docutils literal notranslate"><span class="pre">install/</span></code>, which
 is refreshed on each build. (<strong>Note:</strong> this does not build any CMake-related
-files, so if you’re editing those, use <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">perf</span></code> as usual.)</p>
-<p>There are a few different ways to build our code. See the makefile for more
-details, but in short:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>all<span class="w">         </span><span class="c1"># builds with full debugging symbols</span>
-make<span class="w"> </span>debug<span class="w">       </span><span class="c1"># alias for make all</span>
-make<span class="w"> </span>all-release<span class="w"> </span><span class="c1"># builds with 0 debugging symbols</span>
-make<span class="w"> </span>perf<span class="w">        </span><span class="c1"># builds with some debugging symbols; preferred method</span>
-</pre></div>
-</div>
-<p>TODO(Kevin): add description of running on field comp (move that md file over
-too)</p>
+files, so if you’re editing those, use <code class="docutils literal notranslate"><span class="pre">colcon</span> <span class="pre">build</span></code> as usual.)</p>
 </section>
 </section>
 
