@@ -277,6 +277,67 @@ the function that we binded to it. **Without spin, the program would just shut d
 
 Once spin has exited (ie. you press Ctrl+C), we clean up and shut down the ROS 2 system.
 
+And that's the publisher. We know you probably have lots of questions about the C++ syntax side of things,
+but don't focus too much on that for now. Just understand what each line of code does in terms of functionality!
 
+3. Building Your Own Subscriber
+-------------------------------
+Now that the publisher is done, let's switch to the subscriber. Inside the same directory
+as the publisher node, create a new file named ``turtle_poser.cpp``. 
 
+Once you're done, add in the following code. It's structure is very similar to the publisher
+we just wrote:
+
+.. code-block:: cpp
+
+    /* Start with includes, just like the publisher. */
+    #include "rclcpp/rclcpp.hpp"
+    #include "turtlesim/msg/pose.hpp"
+
+    /* Define a class TurtlePoser class that inherits from ROS's node class. */
+    class TurtlePoser : public rclcpp::Node
+    {
+    public:
+        /* Constructor initializes the node with the name "turtle_poser". */
+        TurtlePoser() : Node("turtle_poser")
+        {
+            /* Create a subscriber. It will receive messages of type turtlesim::msg::Pose
+            on the "/turtle1/pose" topic. The '10' is the queue size. When a message is received, 
+            the 'topic_callback' function is called.
+            */
+            subscription_ = this->create_subscription<turtlesim::msg::Pose>(
+                "/turtle1/pose", 10, std::bind(&TurtlePoser::topic_callback, this, std::placeholders::_1));
+
+            RCLCPP_INFO(this->get_logger(), "Turtle poser has been started.");
+        }
+
+    private:
+        /* This function is called every time a message is received on the topic. */
+        void topic_callback(const turtlesim::msg::Pose &msg) const
+        {
+            /* In this case, all we want this subscriber to do is log where the Turtle is */
+            RCLCPP_INFO(this->get_logger(), "Turtle at x: '%.2f', y: '%.2f'", msg.x, msg.y);
+        }
+
+        /* The subscriber is a private member variable */
+        rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr subscription_;
+    };
+
+    /* Main method to actually spin up the node */
+    int main(int argc, char *argv[])
+    {
+        // Initialize the ROS 2 client library
+        rclcpp::init(argc, argv);
+        // Create an instance of our TurtlePoser node and spin it to process callbacks
+        rclcpp::spin(std::make_shared<TurtlePoser>());
+        // Shut down the ROS 2 client library
+        rclcpp::shutdown();
+        return 0;
+    }
+
+Hopefully after learning more about the publisher code, this code also makes sense.
+
+One thing to observe with this code is that **we are not directly observing the messages being sent 
+by the publisher.** Instead, recall that the TurtleSim publishes information about the Turtle's current 
+position (pose). This is what we're subscribing to.
 
