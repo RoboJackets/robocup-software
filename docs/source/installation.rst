@@ -1,13 +1,13 @@
 Installation
 ======================================
 
-.. note:: 
-   If you are completely unfamiliar with the command line or basic git
-   usage, see the Tutorial page before proceeding. 
-
 There are two main ways to install our software. The first is use a native
 or virtual machine running Ubuntu 22.04, and the second is to use Docker.
-The Docker method is recommended for Mac users.
+
+.. Note::
+   If you elect to use Docker, you need to ensure your system has sufficient
+   memory as Docker is not the greatest with RAM management. In particular, it's
+   recommended that you have at least 16 GB of RAM allocated.
 
 
 Native/Virtual Machine Setup
@@ -20,7 +20,7 @@ with Ubuntu 22.04 will work. The steps to set this up can be found `here
 .com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview>`_. For Mac
 users, Ubuntu 22.04 can be emulated in a virtual machine. For M1 Macs
 specifically, using the arm64 version of Ubuntu 22.04 with the application UTM
-has worked in the past.
+has worked in the past. If you need the Ubuntu 22.04 image, see the SW lead.
 
 First, clone the repository from GitHub:
 
@@ -78,6 +78,11 @@ Sadly, this program has no output, so when you run it nothing will appear to
 happen. However, it will become obvious after you start our UI whether or not
 you've correctly started the simulator or not.
 
+.. _building_the_stack:
+
+Building the Stack
+------------------
+
 In another terminal, change directories back into ``robocup-software``.
 Make sure you're on the most updated version of ``ros2`` branch. This is
 where the latest working version of our codebase exists. (See Contributing page for
@@ -97,12 +102,19 @@ Then, source the ROS setup file. This allows your shell to use ROS commands.
 If you're on zsh, source ``setup.zsh`` instead. (If you don't know what
 zsh is, you're not on zsh.)
 
-Then build the codebase. This compiles all of our code. On a VM, this step will
-take upwards of 15 minutes.
+Then build the codebase. If you are running this on your own dedicated Linux 
+machine, you are welcome to simply run:
 
 .. code-block:: bash
 
-   make perf
+   colcon build
+
+However, if you are on a VM/Docker, then you need to restrict the amount of resources
+that ``colcon`` takes up, by running:
+
+.. code-block:: bash
+   
+   colcon build --parallel-workers 1 --executor sequential
 
 After building, we need to source our custom ROS setup. Run the following in
 the ``robocup-software`` directory:
@@ -131,6 +143,7 @@ If everything is working properly, you should see the following window show up.
 
 .. image:: ./_static/soccer.png
 
+.. _docker-setup:
 
 Docker Setup
 ----------------------------
@@ -140,12 +153,16 @@ image that runs Ubuntu 22.04. The Docker image also has our tech stack and all t
 pre-installed with a desktop GUI. The Docker setup should work on any platform 
 (Windows, Mac, ARM, x86, etc.).
 
-Before you start, make sure you have Docker installed on your computer. The steps for doing
-so can be found `here <https://docs.docker.com/engine/install/>`_.
+The easiest way to get started with Docker is to just download Docker desktop. 
+Note that when using Docker desktop, you will need to have the app open in the background
+to run your containers. For installation details, see the `Docker Desktop Manual
+<https://docs.docker.com/desktop/>`_.
 
 Once you have Docker installed, please follow the steps for installing and using our RoboCup 
 image at `DockerHub
 <https://hub.docker.com/r/robojackets/robocup-software-dev>`_.
+
+Once you're done, follow the instructions on :ref:`building the stack <building_the_stack>`.
 
 
 Shortcuts
@@ -190,17 +207,4 @@ machine, though, you can build again more quickly with:
 
 The ``source.bash`` line is necessary to source the file in ``install/``, which
 is refreshed on each build. (**Note:** this does not build any CMake-related
-files, so if you're editing those, use ``make perf`` as usual.)
-
-There are a few different ways to build our code. See the makefile for more
-details, but in short:
-
-.. code-block:: bash
-
-   make all         # builds with full debugging symbols 
-   make debug       # alias for make all 
-   make all-release # builds with 0 debugging symbols 
-   make perf        # builds with some debugging symbols; preferred method
-
-TODO(Kevin): add description of running on field comp (move that md file over
-too)
+files, so if you're editing those, use ``colcon build`` as usual.)

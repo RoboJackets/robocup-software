@@ -7,7 +7,7 @@ import sphinx.application
 # -- Project information -----------------------------------------------------
 
 project = "RJ RC Software"
-copyright = "2022, RoboJackets"
+copyright = "2025, RoboJackets"
 author = "RoboJackets RoboCup Project"
 
 # The short X.Y version
