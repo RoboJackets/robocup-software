@@ -1,5 +1,5 @@
 # Use the official Ubuntu 22.04 image
-FROM osrf/ros:humble-desktop-full
+FROM ubuntu:22.04
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -9,7 +9,6 @@ ENV DISPLAY=:1
 # Define the architecture-specific variable
 ARG TARGETARCH
 ENV TARGETARCH=${TARGETARCH}
-
 
 # Update the package list and install necessary packages, including the missing ones
 RUN apt-get update && \
@@ -52,12 +51,25 @@ RUN mkdir -p /root/.vnc && \
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# Clone RoboJackets RoboCup software
+RUN git clone https://github.com/RoboJackets/robocup-software.git /root/robocup-software
+
+# Install dependencies
+RUN cd /root/robocup-software && \
+    ./util/ubuntu-setup -y || { echo 'ubuntu-setup script failed' ; exit 1; }
+
 # Clone and build ER-Force’s simulator
 RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework && \
     cd /root/framework && \
     mkdir build && cd build && \
     cmake .. && \
     make simulator-cli
+
+# Build our stack
+RUN bash -c "source /opt/ros/humble/setup.bash && \
+    cd /root/robocup-software && \
+    colcon build --parallel-workers 1 --executor sequential && \
+    source install/setup.bash"
 
 # Clone, build ER-Force's autoref
 RUN git clone https://github.com/robotics-erlangen/autoref.git /root/autoref && \
@@ -75,13 +87,6 @@ RUN cd /root && \
         curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.12.3/ssl-game-controller_v3.12.3_linux_arm64 -L -O; \
     fi && \
     chmod +x ssl-game-controller_v3.12.3_linux_*
-
-# Install Robocup Dependencies
-RUN mkdir -p /util
-COPY ./util/ubuntu-setup /ubuntu-setup
-COPY ./util/ubuntu-packages.txt /util/ubuntu-packages.txt
-COPY ./util/requirements3.txt /util/requirements3.txt
-RUN /ubuntu-setup -y || { echo 'ubuntu-setup script failed' ; exit 1; }
 
 # Expose the VNC, noVNC, and external ref ports
 EXPOSE 5901 6080 8081
