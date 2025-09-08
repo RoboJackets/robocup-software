@@ -2,16 +2,16 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
+Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
-Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
+Defense::Defense(const Position& other) : Position{other} {
     position_name_ = "Defense";
     walling_robots_ = {};
 }
 
-Defense::Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Defense"), marker_{field_dimensions_}, clientHandles_{clientHandles} {}
+Defense::Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Defense"), clientHandles_{clientHandles} {}
 
-Defense::Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, marker_{field_dimensions_}, clientHandles_{clientHandles} {
+Defense::Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {
     position_name_ = "Defense";
     walling_robots_ = {};
 }
@@ -28,22 +28,29 @@ std::string Defense::get_current_state() {
 }
 
 Defense::State Defense::update_state() {
-    State next_state = current_state_;
-    // handle transitions between states
     WorldState* world_state = last_world_state_;
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-    if (pending_state_) {
-        next_state = *pending_state_;
-        if (next_state == MARKING && pending_mark_target_) {
-            marker_.set_target(*pending_mark_target_);
+    // Update state based on coordinator async calls resolving
+    if (pending_marking_state_) {
+        // Defensive check: Only transition if we are still in the process of entering.
+        // We might have timed out and moved to another state in the meantime.
+        if (current_state_ != ENTERING_MARKING) {
+            return IDLING;
         }
-        pending_state_.reset();
-        pending_mark_target_.reset();
+
+        SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
+        if (client_handles->marking_client->am_i_member && result.am_i_marking) {
+            return MARKING;
+        } else {
+            return IDLING;
+        }
     }
+
+    State next_state = current_state_;
 
     if (current_state_ != WALLING && current_state_ != JOINING_WALL && waller_id_ != -1) {
         send_leave_wall_request();
@@ -96,12 +103,10 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
-            SPDLOG_INFO("Robot {}: marking robot {}", robot_id_, marker_.get_target());
-            if (!clientHandles_->markingClient->am_i_member()) {
+            SPDLOG_INFO("Robot {}: marking robot {}", robot_id_);
+            if (!clientHandles_->markingClient->am_i_member() || !clientHandles_->markingClient->am_i_marking()) {
                 SPDLOG_INFO("Robot {}: no longer a member of marking group", robot_id_);
                 next_state = IDLING;
-            } else if (!clientHandles_->markingClient->am_i_marking()) {
-                next_state = ENTERING_MARKING;
             }
             break;
         case ENTERING_MARKING:
@@ -109,42 +114,19 @@ Defense::State Defense::update_state() {
 
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
+                request_time_ = RJ::now();
 
-                clientHandles_->markingClient->join_group([this](const MarkingClient::Result& result) {
-                    // Defensive check: Only transition if we are still in the process of entering.
-                    // We might have timed out and moved to another state in the meantime.
-                    // if (current_state_ != ENTERING_MARKING) {
-                    //     pending_state_ = IDLING;
-                    //     return;
-                    // }
-                    
-                    SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
-                    if (result.am_i_member && result.am_i_marking) {
-                        SPDLOG_INFO("{}: Yes", robot_id_);
-                        pending_state_ = MARKING;
-                        pending_mark_target_ = clientHandles_->markingClient->who_am_i_marking();
-                    } else {
-                        SPDLOG_INFO("{}: No", robot_id_);
-                        pending_state_ = IDLING;
-                    }
-                });
+                clientHandles_->markingClient->join_group() {
             }
-            // auto elapsed = RJ::now() - state_entry_time_;
-            // if (elapsed > kMarkingGroupJoinTimeout) {
-            //     // reset flag
-            //     sent_join_marking_group_request_ = false;
-            //     // ensure not in coordinator group
-            //     clientHandles_->markingClient->leave_group();
-            //     SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
-            // }
+            auto elapsed = RJ::now() - request_time_;
+            if (elapsed > kMarkingGroupJoinTimeout) {
+                // reset flag
+                sent_join_marking_group_request_ = false;
+                // ensure not in coordinator group
+                clientHandles_->markingClient->leave_group();
+                SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
+            }
 
-            // if (clientHandles_->markingClient->am_i_member() &&
-            //     clientHandles_->markingClient->am_i_marking()) {
-            //     next_state = MARKING;
-            //     SPDLOG_INFO("Next state is {}, ENTERING_MARKING is {}, MARKING is {}", static_cast<int>(next_state), ENTERING_MARKING, MARKING);
-            //     marker_.set_target(clientHandles_->markingClient->who_am_i_marking());
-            // }
-            
             break;
     }
 
@@ -217,8 +199,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == MARKING) {
-        // Marker marker = Marker((u_int8_t) robot_id_);
-        return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
+        rj_geometry::Point targetPoint = last_world_state_->get_robot(false, clientHandles_->markingClient->who_am_i_marking()).pose.position();
+
+        rj_geometry::Point ballPoint = last_world_state_->ball.position;
+        rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
+        planning::LinearMotionInstant goal{targetPoint + targetToBall, rj_geometry::Point{0.0, 0.0}};
+        intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
+
+        return intent;
     }
 
     return std::nullopt;

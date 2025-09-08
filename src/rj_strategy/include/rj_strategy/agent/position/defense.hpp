@@ -15,9 +15,14 @@
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 
-#include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/marker.hpp"
-#include "rj_strategy/agent/position/waller.hpp"
+#include "planning/instant.hpp"
+#include "position.hpp"
+#include "rj_common/field_dimensions.hpp"
+#include "rj_common/time.hpp"
+#include "rj_constants/constants.hpp"
+#include "rj_geometry/geometry_conversions.hpp"
+#include "rj_geometry/point.hpp"
+#include "waller.hpp"
 
 namespace strategy {
 
@@ -123,12 +128,10 @@ private:
     State current_state_ = JOINING_WALL;
 
     bool sent_join_marking_group_request_ = false;
-    RJ::Time time_of_join_marking_group_request_;
-    double kMarkingGroupJoinTimeout = 1000000;
-    Marker marker_;
+    RJ::Time request_time_;
+    RJ::Seconds kMarkingGroupJoinTimeout{3.0}; // 3 seconds
 
-    std::optional<State> pending_state_;
-    std::optional<uint8_t> pending_mark_target_;
+    <State> pending_state_;
 
     std::shared_ptr<ClientHandles> clientHandles_;
 };
