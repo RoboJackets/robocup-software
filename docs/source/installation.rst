@@ -33,7 +33,7 @@ install all required dependencies:
 
 .. code-block:: bash
 
-    cd robocup-software && ./util/ubuntu-setup && ./util/git-setup
+    cd robocup-software && ./util/ubuntu-setup
 
 To simulate the vision data we'd get from a real field camera setup, we'll use
 ER-Force's simulator. For that, clone their repo, and ``cd`` into it. Note, this should
@@ -161,8 +161,6 @@ to run your containers. For installation details, see the `Docker Desktop Manual
 Once you have Docker installed, please follow the steps for installing and using our RoboCup 
 image at `DockerHub
 <https://hub.docker.com/r/robojackets/robocup-software-dev>`_.
-
-Once you're done, follow the instructions on :ref:`building the stack <building_the_stack>`.
 
 
 Shortcuts
