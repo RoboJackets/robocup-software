@@ -5,6 +5,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV USER=root
 ENV DISPLAY=:1
+ENV MAKEFLAGS="-j 1"
 
 # Define the architecture-specific variable
 ARG TARGETARCH

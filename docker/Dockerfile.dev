@@ -1,0 +1,42 @@
+# Use the ros2 desktop image
+FROM osrf/ros:humble-desktop-full
+
+WORKDIR /ws
+
+ENV MAKEFLAGS="-j 1"
+
+# Set timeszone to avoid interactive prompt
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Run ubuntu-setup
+COPY ./util/ubuntu-setup /ubuntu-setup
+COPY ./util/ubuntu-packages.txt /util/ubuntu-packages.txt
+COPY ./util/requirements3.txt /util/requirements3.txt
+RUN /ubuntu-setup -y
+
+# Clone and build ER-Force’s simulator
+RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework && \
+    cd /root/framework && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make simulator-cli
+
+# Clone, build ER-Force's autoref
+RUN git clone https://github.com/robotics-erlangen/autoref.git /root/autoref && \
+    cd /root/autoref && \
+    git submodule update --init && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make
+
+# Install external ref (conditionally download the correct binary based on architecture)
+RUN cd /root && \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.18.0/ssl-game-controller_v3.18.0_linux_amd64 -L -O && echo "TEST" >> /test.txt; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.18.0/ssl-game-controller_v3.18.0_linux_arm64 -L -O && echo "TEST2" >> /test2.txt; \
+    else \
+        curl https://github.com/RoboCup-SSL/ssl-game-controller/releases/download/v3.18.0/ssl-game-controller_v3.18.0_linux_arm -L -O; \
+    fi && \
+    chmod +x /root/ssl-game-controll*
