@@ -131,7 +131,7 @@ private:
     RJ::Time request_time_;
     RJ::Seconds kMarkingGroupJoinTimeout{3.0}; // 3 seconds
 
-    <State> pending_state_;
+    bool pending_marking_state_ = false;
 
     std::shared_ptr<ClientHandles> clientHandles_;
 };

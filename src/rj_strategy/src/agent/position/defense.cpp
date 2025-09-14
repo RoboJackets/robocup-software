@@ -38,12 +38,14 @@ Defense::State Defense::update_state() {
     if (pending_marking_state_) {
         // Defensive check: Only transition if we are still in the process of entering.
         // We might have timed out and moved to another state in the meantime.
+        pending_marking_state_ = false;
         if (current_state_ != ENTERING_MARKING) {
             return IDLING;
         }
 
         SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
-        if (client_handles->marking_client->am_i_member && result.am_i_marking) {
+        if (clientHandles_->markingClient->am_i_member() && clientHandles_->markingClient->am_i_marking()) {
+            SPDLOG_INFO("Robot {}: successfully joined marking coordinator group and is marking robot {}", robot_id_, clientHandles_->markingClient->who_am_i_marking());
             return MARKING;
         } else {
             return IDLING;
@@ -116,7 +118,11 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
 
-                clientHandles_->markingClient->join_group() {
+                clientHandles_->markingClient->join_group([this](const MarkingClient::Result& res) {
+                    if (res.am_i_member && res.am_i_marking) {
+                        pending_marking_state_ = true;
+                    }
+                });
             }
             auto elapsed = RJ::now() - request_time_;
             if (elapsed > kMarkingGroupJoinTimeout) {
@@ -128,6 +134,10 @@ Defense::State Defense::update_state() {
             }
 
             break;
+    }
+
+    if (robot_id_ == 4) {
+        SPDLOG_INFO("Robot {}: current state {}, next state {}, marking state {}, idling state {}", robot_id_, current_state_, next_state, MARKING, IDLING);
     }
 
     return next_state;
