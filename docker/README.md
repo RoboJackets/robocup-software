@@ -16,14 +16,14 @@ For linux, you don't need to install any dependencies and you should be able to 
 
 ### MacOs
 
-For MacOs, you will need to install an X server (for example [XQuartz]()) and then you can start up the docker development container by running:
+For MacOs, you will need to install an X server (for example [XQuartz](https://www.xquartz.org/)) and then you can start up the docker development container by running:
 
 ```bash
 ./docker/docker-build.sh && ./docker/docker-run-mac.sh
 ```
 
 ### Windows
-For Windows, you will also need to install an X server (for example [VcXsrv]()).  You should also be using WSL with Docker Desktop.  Then you can start up the docker development container by running:
+For Windows, you will also need to install an X server.  You should also be using WSL with Docker Desktop.  Then you can start up the docker development container by running:
 
 ```bash
 .\docker\docker-build.sh && .\docker\docker-run-windows.sh
