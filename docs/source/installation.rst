@@ -60,7 +60,7 @@ already in the ``framework/build/`` directory, simply run:
 
    ./bin/simulator-cli
 
-Note also that the absolute filepath works from any directory:
+You won't see anything output for this. Note also that the absolute filepath works from any directory:
 
 .. code-block:: sh
 
