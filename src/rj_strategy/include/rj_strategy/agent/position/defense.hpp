@@ -52,7 +52,7 @@ public:
 
 private:
     // static constexpr int kMaxWallers{6};
-    static constexpr int kMaxWallers{1};
+    static constexpr int kMaxWallers{0};
         // static_cast<int>(kNumShells)};  // This effectively turns off marking
 
     /**
@@ -129,7 +129,7 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
-    RJ::Seconds kMarkingGroupJoinTimeout{3.0}; // 3 seconds
+    RJ::Seconds kMarkingGroupJoinTimeout{999999999999999999999999999.0}; // 3 seconds
 
     bool pending_marking_state_ = false;
 

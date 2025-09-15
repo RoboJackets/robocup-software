@@ -24,6 +24,8 @@ MarkingClient::MarkingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
 }
 
 void MarkingClient::join_group(StatusCallback callback) {
+
+    SPDLOG_INFO("Hello, please print");
     if (am_i_member_) {
         return;
     }
@@ -40,12 +42,15 @@ void MarkingClient::join_group(StatusCallback callback) {
     request->robot_id = robot_id_;
     request->join = true;
 
+    SPDLOG_INFO("About to send async request");
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
                      rclcpp::Client<rj_msgs::srv::Marking>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
+                            SPDLOG_INFO("Hello, finished async");
             if (!future.valid() || !future.get()->success) {
+                SPDLOG_INFO("Something bad happened");
                 if (callback) {
                     callback(Result{false});
                 }
@@ -57,14 +62,14 @@ void MarkingClient::join_group(StatusCallback callback) {
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::Marking>(
                 "marking_data", rclcpp::QoS(1).transient_local(),
-                [this,
-                 callback = std::move(callback)](const rj_msgs::msg::Marking::SharedPtr msg) {
+                [this](const rj_msgs::msg::Marking::SharedPtr msg) {
                     selected_robot_marking_id_ = msg->mark_robot_ids[robot_id_];
                     am_i_marking_ = (selected_robot_marking_id_ != kInvalidRobotId);
-                    if (callback) {
-                        callback(Result{true, am_i_marking_, selected_robot_marking_id_});
-                    }
                 });
+
+            callback(Result{true});
+
+            SPDLOG_INFO("Should be done with group call");
         });
 }
 

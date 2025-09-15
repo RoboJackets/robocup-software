@@ -14,6 +14,7 @@ KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t rob
 }
 
 void KickerPickerClient::join_group(StatusCallback callback) {
+    SPDLOG_INFO("Hello, I'm trying to join");
     if (am_i_member_) {
         return;
     }

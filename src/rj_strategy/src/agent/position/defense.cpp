@@ -118,7 +118,10 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
 
+                SPDLOG_INFO("About to try to join marking");
+
                 clientHandles_->markingClient->join_group([this](const MarkingClient::Result& res) {
+                    SPDLOG_INFO("Completed join group call");
                     if (res.am_i_member && res.am_i_marking) {
                         pending_marking_state_ = true;
                     }
@@ -214,6 +217,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         rj_geometry::Point ballPoint = last_world_state_->ball.position;
         rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
         planning::LinearMotionInstant goal{targetPoint + targetToBall, rj_geometry::Point{0.0, 0.0}};
+        SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint + targetToBall).y());
         intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
 
         return intent;
