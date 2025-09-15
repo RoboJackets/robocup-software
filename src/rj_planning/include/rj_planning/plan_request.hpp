@@ -29,7 +29,7 @@ namespace planning {
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
-                rj_geometry::ShapeSet virtual_obstacles, TrajectoryCollection* planned_trajectories,
+                rj_geometry::ShapeSet virtual_obstacles, std::shared_ptr<TrajectoryCollection> planned_trajectories,
                 unsigned shell_id, const WorldState* world_state, PlayState play_state,
                 const FieldDimensions* field_dimensions, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
@@ -84,7 +84,7 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    TrajectoryCollection* planned_trajectories;
+    std::shared_ptr<TrajectoryCollection> planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.

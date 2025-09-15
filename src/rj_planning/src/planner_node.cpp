@@ -23,10 +23,11 @@ PlannerNode::PlannerNode()
         std::bind(&PlannerNode::handle_accepted, this, _1));
 
     // set up PlannerForRobot objects
+    robot_trajectories_ = std::make_shared<TrajectoryCollection>();
     robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
         auto planner =
-            std::make_unique<PlannerForRobot>(i, this, &robot_trajectories_, global_state_);
+            std::make_unique<PlannerForRobot>(i, this, robot_trajectories_, global_state_);
         robot_planners_.emplace_back(std::move(planner));
     }
 }
@@ -104,7 +105,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         // pub Trajectory based on the RobotIntent
         my_robot_planner.execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
 
-        /*
+        
         // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
         std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
@@ -112,7 +113,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
             feedback->time_left = rj_convert::convert_to_ros(time_left.value());
             goal_handle->publish_feedback(feedback);
         }
-        */
+        
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory

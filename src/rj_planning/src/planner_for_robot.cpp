@@ -3,11 +3,11 @@
 namespace planning {
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
-                                 TrajectoryCollection* robot_trajectories,
+                                 std::shared_ptr<TrajectoryCollection> robot_trajectories,
                                  const GlobalState& global_state)
     : node_{node},
       robot_id_{robot_id},
-      robot_trajectories_{robot_trajectories},
+      robot_trajectories_ {robot_trajectories},
       global_state_{global_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
@@ -92,12 +92,16 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .kick_speed(intent.kick_speed)
                                       .dribbler_speed(trajectory.dribbler_speed));
 
-        /*
+        
         // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
+        // TODO: (JAMES) Remove all these try/catch blocks pls thx
+        try{
         robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
                                  intent.priority);
-        */
+        } catch (std::exception e) {
+            SPDLOG_INFO("YEET");
+        }
     }
 }
 
@@ -116,15 +120,18 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // get the Traj out of the relevant [Trajectory, priority] tuple in
     // robot_trajectories_
 
-    /*
+    
     // TODO (PR #1970): fix TrajectoryCollection
+    try {
     const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
-    if (!latest_traj) {
+        if (!latest_traj) {
         return std::nullopt;
     }
     return latest_traj->end_time() - RJ::now();
-    */
     return std::nullopt;
+    } catch (std::exception e) {
+        SPDLOG_INFO("YOTE");
+    }
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
@@ -187,7 +194,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         virtual_obstacles.add(def_area_obstacles);
     }
 
-    /*
+    
     // TODO (PR #1970): fix TrajectoryCollection
     // make a copy instead of getting the actual shared_ptr to Trajectory
     std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
@@ -196,6 +203,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         // TODO(Kevin): check that priority works (seems like
         // robot_trajectories_ is passed on init, when no planning has occured
         // yet)
+        try {
         const auto& [trajectory, priority] = robot_trajectories_->get(i);
         if (i != robot_id_ && priority >= intent.priority) {
             if (!trajectory) {
@@ -205,8 +213,11 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     Trajectory>(*trajectory.get());
             }
         }
+    } catch (std::exception e) {
+        SPDLOG_INFO("NAH");
     }
-    */
+    }
+    
 
     RobotConstraints constraints;
     MotionCommand motion_command;
