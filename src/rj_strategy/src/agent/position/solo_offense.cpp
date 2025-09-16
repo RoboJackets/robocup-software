@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/solo_offense.hpp"
+// This file has been adapted to reflect the strategy used at RoboCup Brazil 2025.
 
 namespace strategy {
 
@@ -9,129 +10,85 @@ SoloOffense::SoloOffense(const Position& other) : Position{other} {
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
-    // Get next state, and if different, reset clock
-    State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
-    current_state_ = new_state;
-
+    // Check ball position
+    cached_ball_pos_ = get_ball_pos();
+    // Query the state machine
+    SoloOffense::State next_state_ = next_state();
+    // Check for a state transition
+    if (next_state_ != current_state_) {
+        reset_timeout();
+        SPDLOG_INFO("[SoloOffense] ID {} is now {}", robot_id_, state_to_name(next_state_));
+        current_state_ = next_state_;
+    }
     // Calculate task based on state
     return state_to_task(intent);
 }
 
 std::string SoloOffense::get_current_state() {
-    return std::string{"Solo Offense"} + std::to_string(static_cast<int>(current_state_));
+    return position_name_ + std::string{"-"} + std::string(state_to_name(current_state_));
 }
 
 SoloOffense::State SoloOffense::next_state() {
-    // handle transitions between current state
-    double closest_dist = std::numeric_limits<double>::infinity();
-    auto current_point = last_world_state_->ball.position;
-
-    for (int i = 0; i < 6; i++) {
-        RobotState robot = last_world_state_->get_robot(false, i);
-        rj_geometry::Point opp_pos = robot.pose.position();
-        auto robot_dist = opp_pos.dist_to(current_point);
-        if (robot_dist < closest_dist) {
-            marking_id_ = i;
-            closest_dist = robot_dist;
-        }
+    // SoloOffense is very aggressive, we need rules compliance states.
+    // As a base implementation, just don't chase the ball in STOP or if it's OOB.
+    if (point_in_red(get_ball_pos()) || current_play_state_.is_stop()) {
+        return DEFAULT;
     }
-
-    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
-
-    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
-        field_dimensions_.their_defense_area().contains_point(current_point) ||
-        !field_dimensions_.field_coordinates().contains_point(current_point)) {
-        return MARKER;
-    }
+    
+    // State machine :)
     switch (current_state_) {
-        case MARKER: {
+        case DEFAULT: {
             return TO_BALL;
         }
         case TO_BALL: {
             if (check_is_done()) {
-                return ROTATE;
+                shot_target_ = field_dimensions_.their_goal_loc();
+                return KICK;
             }
             return TO_BALL;
         }
-        case ROTATE: {
-            if (check_is_done()) {
-                counter_ = 0;
-                kick_ = true;
-                return MARKER;
-            }
-            return ROTATE;
-        }
         case KICK: {
-            if (!kick_ ||
-                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
-                        .mag() > kRobotRadius * 5) {
-                return TO_BALL;
+            if (check_is_done() || timed_out()) {
+                return DEFAULT;
             }
             return KICK;
         }
     }
-    return current_state_;
+    return DEFAULT;
 }
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
-        case MARKER: {
-            auto marker_target_pos =
-                last_world_state_->get_robot(false, marking_id_).pose.position();
-            auto target =
-                marker_target_pos +
-                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
-            auto mark_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
-            intent.motion_command = mark_cmd;
-
+        case DEFAULT: {
+            planning::MotionCommand afk{};
+            intent.motion_command = afk; // never give motion_command a nullopt{}.
             return intent;
         }
         case TO_BALL: {
-            rj_geometry::Point robotToBall =
-                (last_world_state_->ball.position -
-                 last_world_state_->get_robot(true, robot_id_).pose.position());
-            double slowDown = 1.0;
-            double length = robotToBall.mag() - kRobotRadius * slowDown;
-            robotToBall = robotToBall.normalized(length);
-            planning::LinearMotionInstant target{
-                last_world_state_->get_robot(true, robot_id_).pose.position() + robotToBall};
-            auto pivot_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = pivot_cmd;
-            return intent;
-        }
-        case ROTATE: {
-            planning::LinearMotionInstant target{calculate_best_shot()};
+            rj_geometry::Point ball_pos = get_ball_pos();
+            rj_geometry::Point goal_pos = field_dimensions_.their_goal_loc();
+
+            rj_geometry::Point shot_dir = (goal_pos - ball_pos).normalized();
+            rj_geometry::Point shot_dot = ball_pos - shot_dir * kBackOffset;
+
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"path_target", planning::LinearMotionInstant{shot_dot},
+                                        planning::FaceBall{}, false}; // TODO: even with ignore_ball=False, the robot still crashes into the ball.
+
             intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = 4.0;
+
             return intent;
         }
         case KICK: {
-            // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position -
-            // last_world_state_->get_robot(true,
-            // robot_id_).pose.position()).normalized(scaleFactor); point +=
-            // last_world_state_->get_robot(true, robot_id_).pose.position();
-            // planning::LinearMotionInstant target{point};
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            // planning::LinearMotionInstant target{last_world_state_->ball.position};
-            auto kick_cmd =
-                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
-            intent.motion_command = kick_cmd;
+            auto line_kick_cmd = planning::MotionCommand{
+                "line_kick", planning::LinearMotionInstant{shot_target_}};
+
+            intent.motion_command = line_kick_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::OFF;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
-            counter_++;
-            if (counter_ > 15) {
-                kick_ = false;
-            }
+            intent.kick_speed = 2.7; // We found this to be a good speed. Fast enough to not be pitiful, slow enough to not be overspeed.
+            intent.is_active = true;
 
             return intent;
         }
@@ -139,6 +96,23 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     return intent;
 }
 
+rj_geometry::Point SoloOffense::get_ball_pos() const {
+    if (last_world_state_->ball.visible) {
+        return last_world_state_->ball.position;
+    } else {
+        return cached_ball_pos_;
+    }
+}
+bool SoloOffense::point_in_red(rj_geometry::Point concerned_point) const {
+    return (field_dimensions_.our_defense_area().contains_point(concerned_point) ||
+            field_dimensions_.their_defense_area().contains_point(concerned_point) ||
+            !field_dimensions_.field_rect().contains_point(concerned_point));
+}
+
+/** No calculate_best_shot?
+ * Our motion is not accurate enough to bother with aiming. 
+ * Our best EV strategy was to aim at the center and either hope their goalie is tweaking or our motion variance hits it top bin.
+ * Better to get blocked than to miss an open goal because we were aiming for the goalpost.
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
@@ -153,7 +127,7 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
     rj_geometry::Point curr_point =
         their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
     for (int i = 0; i < 19; i++) {
-        double distance = distance_from_their_robots(ball_position, curr_point);
+        double distance = shot_clearance(ball_position, curr_point);
         if (distance > best_distance) {
             best_distance = distance;
             best_shot = curr_point;
@@ -162,9 +136,7 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
     }
     return best_shot;
 }
-
-double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
-                                               rj_geometry::Point head) const {
+double SoloOffense::shot_clearance(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 
@@ -187,4 +159,6 @@ double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
     }
     return min_angle;
 }
+ */
+
 }  // namespace strategy
