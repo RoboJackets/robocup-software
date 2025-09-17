@@ -6,7 +6,7 @@ rj_geometry::Circle make_inflated_static_obs(rj_geometry::Point position,
                                              rj_geometry::Point velocity, double radius) {
     // params for obstacle shift
     constexpr double obs_center_shift{0.5};
-    constexpr double obs_radius_inflation{1};
+    constexpr double obs_radius_inflation{1.0};
     constexpr double max_safety_margin{5};
 
     rj_geometry::Point obs_center{position + (velocity * radius * obs_center_shift)};
