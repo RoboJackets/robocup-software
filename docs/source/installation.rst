@@ -60,7 +60,7 @@ already in the ``framework/build/`` directory, simply run:
 
    ./bin/simulator-cli
 
-Note also that the absolute filepath works from any directory:
+You won't see anything output for this. Note also that the absolute filepath works from any directory:
 
 .. code-block:: sh
 
@@ -125,19 +125,12 @@ the ``robocup-software`` directory:
 
 (Again, if you're on zsh, source the ``.zsh`` version instead.)
 
-Now we are good to go. As a sanity check, the following command should print out
-``rj_robocup``:
-
-.. code-block:: bash
-
-    ros2 pkg list | grep rj_robocup
-
 To launch our stack, which contains our AI that sends commands to the
 simulator, plus a UI to show what's happening, run the following:
 
 .. code-block:: bash
 
-    ros2 launch rj_robocup soccer.launch.py
+    make run-sim
 
 If everything is working properly, you should see the following window show up.
 
@@ -162,6 +155,11 @@ Once you have Docker installed, please follow the steps for installing and using
 image at `DockerHub
 <https://hub.docker.com/r/robojackets/robocup-software-dev>`_.
 
+For the Docker image specifically, you will need to run ``cd root/robocup-software`` to get
+access to the main ``robocup-software`` directory that we work in. Once you're there,
+head over :ref:`here <building_the_stack>` to build the stack and run our simulator.
+
+You are also welcome to check out the shortcuts page below once you've fully built the stack.
 
 Shortcuts
 ---------

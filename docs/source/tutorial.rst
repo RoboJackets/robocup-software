@@ -93,7 +93,7 @@ and one goalie move into position. Click anywhere on the field to place the
 ball in that location. You should see all five robots move between the ball
 and the goal.
 
-Open the file ``soccer/src/soccer/strategy/agent/position/waller.cpp``. 
+Open the file ``src/rj_strategy/src/agent/position/waller.cpp``. 
 Find the line of code that calculates the ``wall_spacing`` and double its value.
 
 Re-build the project (:sh:`colcon build`) and run the simulator again. You should
@@ -577,7 +577,7 @@ Here are all the external links from this document, copied again for your easy r
 
 * `Beginner CLI Tools`_
   
-.. _Beginner CLI Tools: https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html>
+.. _Beginner CLI Tools: https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html
 
 * `Install Groovy`_
 
