@@ -30,6 +30,7 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     AngleFunction angle_function = get_angle_function(request);
 
     // Call into the sub-object to actually execute the plan.
+    SPDLOG_INFO("In PathTargetPathPlanner Line 33");
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, static_obstacles, dynamic_obstacles,
                               request.field_dimensions, request.constraints, angle_function,

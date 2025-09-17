@@ -17,6 +17,11 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
          cursor.advance(100ms)) {
         bias_waypoints.push_back(cursor.value().position());
     }
+    
+    RJ::Time partial_path_end = params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+    if (partial_path_end <= previous.begin_time()) {
+        return full_replan(params);
+    }
 
     Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
     Trajectory post_trajectory = CreatePath::intermediate(
@@ -101,6 +106,7 @@ Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajecto
 }
 
 Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
+    SPDLOG_INFO("Begin Replanner::create_plan");
     rj_geometry::Point goal_point = params.goal.position;
 
     if (!previous.empty() && !previous.time_created().has_value()) {
@@ -108,7 +114,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
             "CreatePlan must be called with a trajectory with a valid creation "
             "time!");
     }
-
+    SPDLOG_INFO("Replanner 1");
     RJ::Time now = params.start.stamp;
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
@@ -121,37 +127,42 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     RJ::Time previous_created_time = previous.time_created().value();
 
     Trajectory previous_trajectory = std::move(previous);
-
+    SPDLOG_INFO("Replanner 2");
     RJ::Time start_time =
         std::clamp(now, previous_trajectory.begin_time(), previous_trajectory.end_time());
     const RJ::Seconds time_remaining{previous_trajectory.end_time() - start_time};
 
     RJ::Time hit_time = RJ::Time::max();
 
+    SPDLOG_INFO("Replanner 3");
     // Use short-circuiting to only check dynamic trajectories if necessary.
     bool should_partial_replan =
         trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time,
                                &hit_time) ||
         trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
                                 &hit_time);
-
+    SPDLOG_INFO("Replanner 4");
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
+                SPDLOG_INFO("Replanner 4A");
             return full_replan(params);
         }
+        SPDLOG_INFO("Replanner 4B");
         return partial_replan(params, previous_trajectory);
     }
 
+    SPDLOG_INFO("Replanner 5");
     // Make fine corrections when we are close to the target
     // because the old target might be a bit off
     if (params.start.position().dist_to(goal_point) < kRobotRadius) {
+        SPDLOG_INFO("Replanner 6");
         std::optional<RobotInstant> now_instant = previous_trajectory.evaluate(now);
         if (now_instant) {
             params.start = *now_instant;
             return full_replan(params);
         }
     }
-
+    SPDLOG_INFO("Replanner 7");
     if (now - previous_created_time > kCheckBetterDeltaTime &&
         time_remaining > partial_replan_lead_time() * 2) {
         return check_better(params, previous_trajectory);

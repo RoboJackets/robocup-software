@@ -29,6 +29,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     auto angle_function = AngleFns::face_point(plan_request.world_state->ball.position);
 
     // call Replanner to generate a Trajectory
+    SPDLOG_INFO("In GoalieIdlePathPlanner 32");
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
                               plan_request.field_dimensions, plan_request.constraints,
