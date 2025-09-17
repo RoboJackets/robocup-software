@@ -31,7 +31,6 @@ public:
     std::string get_current_state() override;
 
 private:
-
     // State space.
     enum State { DEFAULT, TO_BALL, KICK };
     State current_state_ = DEFAULT;
@@ -53,7 +52,7 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     SoloOffense::State next_state();
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-    
+
     // Timeout forcing.
     RJ::Time last_time_;
     void reset_timeout() { last_time_ = RJ::now(); }

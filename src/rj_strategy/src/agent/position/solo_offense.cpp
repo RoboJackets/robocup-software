@@ -34,7 +34,7 @@ SoloOffense::State SoloOffense::next_state() {
     if (point_in_red(get_ball_pos()) || current_play_state_.is_stop()) {
         return DEFAULT;
     }
-    
+
     // State machine :)
     switch (current_state_) {
         case DEFAULT: {
@@ -61,7 +61,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case DEFAULT: {
             planning::MotionCommand afk{};
-            intent.motion_command = afk; // never give motion_command a nullopt{}.
+            intent.motion_command = afk;  // never give motion_command a nullopt{}.
             return intent;
         }
         case TO_BALL: {
@@ -71,23 +71,25 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             rj_geometry::Point shot_dir = (goal_pos - ball_pos).normalized();
             rj_geometry::Point shot_dot = ball_pos - shot_dir * kBackOffset;
 
-            auto pivot_cmd =
-                planning::MotionCommand{"path_target", planning::LinearMotionInstant{shot_dot},
-                                        planning::FaceBall{}, false}; // TODO: even with ignore_ball=False, the robot still crashes into the ball.
+            auto pivot_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{shot_dot}, planning::FaceBall{},
+                false};  // TODO: even with ignore_ball=False, the robot still crashes into the
+                         // ball.
 
             intent.motion_command = pivot_cmd;
 
             return intent;
         }
         case KICK: {
-            auto line_kick_cmd = planning::MotionCommand{
-                "line_kick", planning::LinearMotionInstant{shot_target_}};
+            auto line_kick_cmd =
+                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{shot_target_}};
 
             intent.motion_command = line_kick_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::OFF;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 2.7; // We found this to be a good speed. Fast enough to not be pitiful, slow enough to not be overspeed.
+            intent.kick_speed = 2.7;  // We found this to be a good speed. Fast enough to not be
+                                      // pitiful, slow enough to not be overspeed.
             intent.is_active = true;
 
             return intent;
@@ -110,8 +112,9 @@ bool SoloOffense::point_in_red(rj_geometry::Point concerned_point) const {
 }
 
 /** No calculate_best_shot?
- * Our motion is not accurate enough to bother with aiming. 
- * Our best EV strategy was to aim at the center and either hope their goalie is tweaking or our motion variance hits it top bin.
+ * Our motion is not accurate enough to bother with aiming.
+ * Our best EV strategy was to aim at the center and either hope their goalie is tweaking or our
+motion variance hits it top bin.
  * Better to get blocked than to miss an open goal because we were aiming for the goalpost.
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
     // Goal location
