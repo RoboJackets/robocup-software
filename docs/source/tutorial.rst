@@ -168,15 +168,14 @@ to source ROS2!) Then run
 
       ros2 topic list
 
-to see the list of topics. Let's look at what robot 0 is thinking. Run
+to see the list of topics. Let's look at how robot 2 is moving. Run
 
    .. code-block:: sh
 
-      ros2 topic echo /gameplay/robot_intent/robot_0
+      ros2 topic echo /planning/trajectory/robot_2
 
-to see what's being published to that topic. You should see that robot 0 is
-being given a motion_command to go to a certain position at a certain angle.
-Feel free to try echoing other topics to see what they're publishing.
+to see what's being published to that topic. You should see a bunch of different
+information pertaining to robot 2's motion. 
 
 Now run :sh:`ros2 topic info` on the same topic to see what message type that
 topic is publishing, and how many publishers and subscribers are listening to
@@ -184,13 +183,16 @@ it. For this topic, the message type is a subset of ``rj_msgs/``, which means we
 wrote our own custom .msg file that this topic uses.
 
 Your task for this section is to find the file that defines the message type
-used by ``/gameplay/robot_intent/robot_0``. This will take you a long time if
+used by ``/planning/trajectory/robot_2``. This will take you a long time if
 you search for it manually and almost no time if you use a tool like :sh:`find`.
 Once you have the right file, figure out the full filepath and add it to your
 GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.
 
 3. rqt Basics
 -------------
+
+.. note::
+   This currently does not work on Docker. Feel free to skip this for now if you are using Docker.
 
 The observant among you may have noticed that the last section only covered ROS
 topics, even though it asked you to read about ROS nodes, services, parameters,
@@ -310,7 +312,7 @@ but here are some more hints.
 * The motion command for driving in a straight line is :cpp:`"path_target"`.
 * You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
 * The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
-* You will need to add the new file name you create to ``soccer/src/soccer/CMakeLists.txt``. See how this is done for other positions.
+* You will need to add the new file name you create to ``src/CMakeLists.txt``. See how this is done for other positions.
 
 Testing
 ~~~~~~~
@@ -460,7 +462,7 @@ Building Your Node
 CMakeLists.txt files are used to make standard build files for the directory. It
 locates files, libraries, and executables to support complex directory
 hierarchies. Locate the ``CMakeLists.txt`` file in
-``robocup-software/soccer/src/soccer``.
+``robocup-software/src/soccer``.
 
 Let's start looking at all the magic CMake text that builds our cpp code:
 
@@ -496,7 +498,7 @@ You're almost there! The final file to get your node up and running is the
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
 initial parameters, and other requirements. Find the ``robocup-software/launch``
 directory and open the file that seems most relevant to your new node.
-(HINT: Your node should be located in ``robocup-software/soccer``.) 
+(HINT: Your node should be located in ``robocup-software/src``.) 
 
 Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node's names. If you want to read more about ROS
