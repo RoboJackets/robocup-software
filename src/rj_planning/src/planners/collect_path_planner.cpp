@@ -94,8 +94,9 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
 
     // List of obstacles
     ShapeSet static_obstacles;
+    std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
+    fill_obstacles(plan_request, &static_obstacles, &obstacles, false);
 
     // Return an empty trajectory if the ball is hitting static obstacles
     // or it is in the goalie area.

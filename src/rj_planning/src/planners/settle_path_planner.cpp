@@ -29,9 +29,10 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // List of obstacles
     ShapeSet static_obstacles;
+    std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, avoid_ball,
+    fill_obstacles(plan_request, &static_obstacles, &obstacles, avoid_ball,
                    &ball_trajectory);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate

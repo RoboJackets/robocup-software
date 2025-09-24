@@ -96,12 +96,12 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
         // TODO: (JAMES) Remove all these try/catch blocks pls thx
-        try{
-        robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
-                                 intent.priority);
-        } catch (std::exception e) {
-            SPDLOG_INFO("YEET");
-        }
+        // try{
+        // robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
+        //                          intent.priority);
+        // } catch (std::exception e) {
+        //     SPDLOG_INFO("YEET");
+        // }
     }
 }
 
@@ -122,16 +122,16 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
 
     
     // TODO (PR #1970): fix TrajectoryCollection
-    try {
-    const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
-        if (!latest_traj) {
-        return std::nullopt;
-    }
-    return latest_traj->end_time() - RJ::now();
-    return std::nullopt;
-    } catch (std::exception e) {
-        SPDLOG_INFO("YOTE");
-    }
+    // try {
+    // const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
+    //     if (!latest_traj) {
+    //     return std::nullopt;
+    // }
+    // return latest_traj->end_time() - RJ::now();
+    // return std::nullopt;
+    // } catch (std::exception e) {
+    //     SPDLOG_INFO("YOTE");
+    // }
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
@@ -197,26 +197,26 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     
     // TODO (PR #1970): fix TrajectoryCollection
     // make a copy instead of getting the actual shared_ptr to Trajectory
-    std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
+    // std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
 
-    for (size_t i = 0; i < kNumShells; i++) {
+    // for (size_t i = 0; i < kNumShells; i++) {
         // TODO(Kevin): check that priority works (seems like
         // robot_trajectories_ is passed on init, when no planning has occured
         // yet)
-        try {
-        const auto& [trajectory, priority] = robot_trajectories_->get(i);
-        if (i != robot_id_ && priority >= intent.priority) {
-            if (!trajectory) {
-                planned_trajectories[i] = std::nullopt;
-            } else {
-                planned_trajectories[i] = std::make_optional<const
-    Trajectory>(*trajectory.get());
-            }
-        }
-    } catch (std::exception e) {
-        SPDLOG_INFO("NAH");
-    }
-    }
+    //     try {
+    //     const auto& [trajectory, priority] = robot_trajectories_->get(i);
+    //     if (i != robot_id_ && priority >= intent.priority) {
+    //         if (!trajectory) {
+    //             planned_trajectories[i] = std::nullopt;
+    //         } else {
+    //             planned_trajectories[i] = std::make_optional<const
+    // Trajectory>(*trajectory.get());
+    //         }
+    //     }
+    // } catch (std::exception e) {
+    //     SPDLOG_INFO("NAH");
+    // }
+    // }
     
 
     RobotConstraints constraints;

@@ -55,6 +55,7 @@ set(RJ_PLANNING_SRC
   src/planner_node.cpp
   src/trajectory_collection.cpp
   src/trajectory_utils.cpp
+  src/obstacle.cpp
 
   # Planners
   src/planners/collect_path_planner.cpp

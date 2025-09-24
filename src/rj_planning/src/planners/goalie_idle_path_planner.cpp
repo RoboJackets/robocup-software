@@ -8,10 +8,11 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // Collect obstacles
     rj_geometry::ShapeSet static_obstacles;
+    std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, ignore_ball,
+    fill_obstacles(plan_request, &static_obstacles, &obstacles, ignore_ball,
                    &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take

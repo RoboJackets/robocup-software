@@ -9,14 +9,23 @@ void StadiumShape::init(Point c1, Point c2, float r) {
     rj_geometry::Circle second_circle = rj_geometry::Circle{c2, static_cast<float>(r)};
 
     rj_geometry::Segment vect{c1, c2};
+    rj_geometry::Point leftToRight {c2.x() - c1.x(), c2.y() - c1.y()};
+    rj_geometry::Point leftToRightN = leftToRight.norm().perp_ccw();
 
-    rj_geometry::Point end1{c1.x() + r * (c2.x() - c1.x()) / vect.length(),
-                            c1.y() + r * (c2.y() - c1.y()) / vect.length()};
-    rj_geometry::Point end2{c2.x() - r * (c2.x() - c1.x()) / vect.length(),
-                            c2.y() - r * (c2.y() - c1.y()) / vect.length()};
+    rj_geometry::Point leftTop = c1 + (leftToRightN * r);
+    rj_geometry::Point leftBottom = c1 - (leftToRightN * r);
+    rj_geometry::Point rightTop = c2 + (leftToRightN * r);
+    rj_geometry::Point rightBottom = c2 - (leftToRightN * r);
 
-    rj_geometry::Segment vect_updated{end1, end2};
-    rj_geometry::Polygon rect_obs{vect_updated, r};
+    std::vector<Point> verts {};
+    verts.push_back(leftTop);
+    verts.push_back(leftBottom);
+    verts.push_back(rightBottom);
+    verts.push_back(rightTop);
+
+    //rj_geometry::Segment vect_updated{end1, end2};
+    rj_geometry::Polygon rect_obs{verts};
+    rj_geometry::Rect rectangle_ {(c1 + (leftToRightN.perp_ccw() * r)), (c2 - (leftToRightN.perp_ccw() * r))};
 
     std::shared_ptr<rj_geometry::Circle> c1_obs_ptr =
         std::make_shared<rj_geometry::Circle>(first_circle);
@@ -24,13 +33,17 @@ void StadiumShape::init(Point c1, Point c2, float r) {
         std::make_shared<rj_geometry::Polygon>(rect_obs);
     std::shared_ptr<rj_geometry::Circle> c2_obs_ptr =
         std::make_shared<rj_geometry::Circle>(second_circle);
+    std::shared_ptr<rj_geometry::Rect> rectangle_ptr =
+        std::make_shared<rj_geometry::Rect>(rectangle_);
 
     subshapes_.push_back(c1_obs_ptr);
     subshapes_.push_back(rect_obs_ptr);
+    //subshapes_.push_back(rectangle_ptr);
     subshapes_.push_back(c2_obs_ptr);
 
     drawshapes_.add(c1_obs_ptr);
     drawshapes_.add(rect_obs_ptr);
+    //drawshapes_.add(rectangle_ptr);
     drawshapes_.add(c2_obs_ptr);
 }
 

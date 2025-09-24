@@ -21,11 +21,15 @@ rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
 }
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+                    std::vector<Obstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory) {
     out_static->clear();
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);
+
+    // out_dynamic->clear();
+    // out_dynamic->add(in.field_obstacles);
+    // out_dynamic->add(in.virtual_obstacles);
 
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
@@ -49,19 +53,26 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             continue;
         }
         // TEMPORARY: Check and see how dynamic obstacles currently work
-         std::shared_ptr<const Trajectory> ptr_to_traj = std::get<0>(in.planned_trajectories->get(shell));
-         float obs_radius = kRobotRadius;
-         rj_geometry::Point obs_center = our_robot.pose.position();
-         if (out_dynamic != nullptr && ptr_to_traj != nullptr) { 
-             // Dynamic obstacle */
-             out_dynamic->emplace_back(obs_radius, ptr_to_traj); 
-         } else { 
-             // Static obstacle */
-             out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius)); 
-         } 
+        //  std::shared_ptr<const Trajectory> ptr_to_traj = std::get<0>(in.planned_trajectories->get(shell));
+        //  float obs_radius = kRobotRadius;
+        //  rj_geometry::Point obs_center = our_robot.pose.position();
+        //  if (out_dynamic != nullptr && ptr_to_traj != nullptr) { 
+        //      // Dynamic obstacle */
+        //      out_dynamic->emplace_back(obs_radius, ptr_to_traj); 
+        //  } else { 
+        //      // Static obstacle */
+        //      out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius)); 
+        //  } 
 
         // Static obstacle
-        //out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
+        out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
+        rj_geometry::Circle c {our_robot.pose.position(), kRobotRadius};
+
+        if (out_dynamic != nullptr) { out_dynamic->emplace_back(our_robot.pose.position(), our_robot.velocity.linear());
+            if (out_dynamic->size() > 0) in.debug_drawer->draw_stadium(dynamic_cast<rj_geometry::StadiumShape&>(out_dynamic->at(out_dynamic->size() - 1).padding), Qt::red);
+            //if (out_dynamic->size() > 0) in.debug_drawer->draw_circle(static_cast<rj_geometry::Circle&>(out_dynamic->at(out_dynamic->size() - 1).obstacle), Qt::red);
+        }
+        //in.debug_drawer->draw_circle(static_cast<rj_geometry::Circle&>(out_dynamic->at(shell).obstacle), Qt::red);
     }
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)

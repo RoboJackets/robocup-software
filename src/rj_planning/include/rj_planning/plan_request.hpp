@@ -6,6 +6,7 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/planning/dynamic_obstacle.hpp>
+#include <rj_planning/obstacle.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
@@ -185,7 +186,7 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
  *  nullptr.
  */
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+                    std::vector<Obstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory = nullptr);
 
 }  // namespace planning

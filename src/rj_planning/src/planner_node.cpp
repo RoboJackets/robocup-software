@@ -108,11 +108,11 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         
         // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
-        std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
-        if (auto time_left = my_robot_planner.get_time_left()) {
-            feedback->time_left = rj_convert::convert_to_ros(time_left.value());
-            goal_handle->publish_feedback(feedback);
-        }
+        // std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
+        // if (auto time_left = my_robot_planner.get_time_left()) {
+        //     feedback->time_left = rj_convert::convert_to_ros(time_left.value());
+        //     goal_handle->publish_feedback(feedback);
+        // }
         
 
         // when done, tell client goal is done, break loop
