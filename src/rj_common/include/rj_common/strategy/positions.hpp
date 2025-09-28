@@ -2,6 +2,6 @@
 
 namespace strategy {
 
-enum Positions { Goalie, Defense, Offense };
+enum Positions { Goalie, Defense, Offense, Runner };
 
 }  // namespace strategy

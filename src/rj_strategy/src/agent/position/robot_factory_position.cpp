@@ -19,6 +19,10 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
+    } else if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
     }
 
     // Update our state
@@ -194,7 +198,7 @@ void RobotFactoryPosition::set_default_position() {
     std::vector<RobotPos> robots_copy;
     for (int i = 0; i < static_cast<int>(kNumShells); i++) {
         // Ignore goalie
-        if (i == goalie_id_) {
+        if (i == goalie_id_ || i == 1) {
             continue;
         }
         if (alive_robots_[i]) {
@@ -330,6 +334,10 @@ bool RobotFactoryPosition::set_position_override_if_requested() {
         }
         case strategy::OverridingPositions::IDLE: {
             set_current_position<Idle>();
+            return true;
+        }
+        case strategy::OverridingPositions::RUNNER: {
+            set_current_position<Runner>();
             return true;
         }
         default: {

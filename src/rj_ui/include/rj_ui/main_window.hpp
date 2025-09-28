@@ -341,7 +341,7 @@ private:
                                                         "Defense",        "Free Kicker",
                                                         "Penalty Player", "Penalty Non-Kicker",
                                                         "Solo Offense",   "Smart Idle",
-                                                        "Zoner",          "Idle"};
+                                                        "Zoner",          "Runner",         "Idle"};
 
     void populate_override_position_dropdowns();
 };

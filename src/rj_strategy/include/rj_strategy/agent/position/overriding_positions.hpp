@@ -18,6 +18,7 @@ enum OverridingPositions {
     SOLO_OFFENSE,
     SMART_IDLE,
     ZONER,
+    RUNNER,
     IDLE,
 };
 

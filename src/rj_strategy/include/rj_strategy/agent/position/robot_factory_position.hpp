@@ -19,6 +19,7 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/defense.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
 #include "rj_strategy/agent/position/free_kicker.hpp"
 #include "rj_strategy/agent/position/goal_kicker.hpp"
 #include "rj_strategy/agent/position/goalie.hpp"
