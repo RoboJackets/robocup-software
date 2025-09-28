@@ -197,7 +197,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            
+
             // Adjusts kick speed based on distance.
             // Details: TIGERS 2019 eTDP, rj_gameplay/passer.py
             rj_geometry::Point this_robot_pos =
@@ -367,7 +367,7 @@ void Offense::derived_pass_ball() {
     // However, if we've since started shooting, just do that.
     // Otherwise, we can now pass because somebody has accepted our pass.
     // if (current_state_ != SHOOTING) {
-        // current_state_ = PASSING;
+    // current_state_ = PASSING;
     // }
 }
 
