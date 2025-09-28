@@ -99,7 +99,7 @@ private:
             case POSSESSION_START:
                 return RJ::Seconds{-1};
             case PASSING:
-                return RJ::Seconds(5);;
+                return RJ::Seconds(5);
             case STEALING:
                 return RJ::Seconds{10};
             case RECEIVING_START:
