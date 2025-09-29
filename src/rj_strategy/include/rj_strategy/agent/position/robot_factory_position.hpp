@@ -33,6 +33,7 @@
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
 
 namespace strategy {
 
