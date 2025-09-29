@@ -1,14 +1,4 @@
-#include "marking_client.hpp"
-
-#include <utility>
-
-#include <rclcpp/rclcpp.hpp>
-#include <spdlog/spdlog.h>
-
-#include <rj_msgs/msg/marking.hpp>
-#include <rj_msgs/srv/marking.hpp>
-
-#include "marking.hpp"
+#include "rj_strategy/coordinator/marking_client.hpp"
 
 namespace strategy {
 

@@ -239,7 +239,7 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
-                package="rj_robocup",
+                package="rj_strategy",
                 executable="marking_node",
                 output="screen",
                 parameters=[param_config_filepath],

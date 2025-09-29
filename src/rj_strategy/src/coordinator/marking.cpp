@@ -1,11 +1,4 @@
-#include "marking.hpp"
-
-#include <algorithm>  // for std::any_of
-#include <limits>
-
-#include <rj_constants/topic_names.hpp>
-#include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/marking.hpp>
+#include "rj_strategy/coordinator/marking.hpp"
 
 namespace strategy {
 
@@ -190,3 +183,11 @@ void Marking::update_danger_scores() {
 
 
 }  // namespace strategy
+
+int main(int argc, char* argv[]) {
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<strategy::Marking>();
+    rclcpp::spin(node);
+    rclcpp::shutdown();
+    return 0;
+}

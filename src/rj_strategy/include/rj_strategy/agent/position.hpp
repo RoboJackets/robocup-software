@@ -41,8 +41,8 @@
 #include <rj_msgs/msg/test_response.hpp>
 
 // Coordinators
-#include "strategy/coordinator/kicker_picker_client.hpp"
-#include "strategy/coordinator/marking_client.hpp"
+#include "rj_strategy/coordinator/kicker_picker_client.hpp"
+#include "rj_strategy/coordinator/marking_client.hpp"
 
 // tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
