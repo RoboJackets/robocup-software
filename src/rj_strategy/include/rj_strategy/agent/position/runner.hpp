@@ -39,10 +39,10 @@ private:
     rj_geometry::Point point3{2.0, 2.0};
     rj_geometry::Point point4{1.0, 2.0};
 
-    vector<int> corners_ = {point1, point2, point3, point4};
-    State current_state_ = states[0];
+    vector<rj_geometry::Point> corners_ = {point1, point2, point3, point4};
+    int current_state_ = states_[0];
 
-    State next_state();
+    int next_state();
 
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
     std::string get_current_state() override;
