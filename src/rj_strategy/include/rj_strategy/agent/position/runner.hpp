@@ -22,15 +22,14 @@ public:
     Runner(const Position& other);
 
     void derived_acknowledge_pass() override;
-    
+
     void derived_pass_ball() override;
-    
+
     void derived_acknowledge_ball_in_transit() override;
 
     std::string get_current_state() override;
 
 private:
-
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State {
@@ -73,4 +72,4 @@ private:
     static constexpr double kRunningRectLengthRatio = 0.8;
 };
 
-}
+}  // namespace strategy
