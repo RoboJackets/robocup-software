@@ -61,7 +61,7 @@ Offense::State Offense::next_state() {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
-                return SHOOTING_START;
+                return SHOOTING;
             }
 
             // No open shot, try to pass.
@@ -76,33 +76,15 @@ Offense::State Offense::next_state() {
             // If we can make a shot, make it.
             // If we need to stop possessing now, shoot.
             if (has_open_shot() || timed_out()) {
-                return SHOOTING_START;
+                return SHOOTING;
             }
 
             return POSSESSION;
         }
 
-        case PASSING_START: {
-            if (check_is_done()) {
-                return PASSING;
-            }
-            return PASSING_START;
-        }
-
         case PASSING: {
-            // If we've finished passing, cool!
             if (check_is_done()) {
                 pass_ball(pass_to_robot_id_);
-                return DEFAULT;
-            }
-
-            // If we didn't successfully pass in time, take a shot
-            if (timed_out()) {
-                return SHOOTING_START;
-            }
-
-            // If we lost the ball completely, give up
-            if (distance_to_ball() > kBallTooFarDist) {
                 return DEFAULT;
             }
 
@@ -159,22 +141,13 @@ Offense::State Offense::next_state() {
             return RECEIVING_START;
         }
 
-        case SHOOTING_START: {
-            if (check_is_done()) {
-                return SHOOTING;
-            }
-            if (distance_to_ball() < kOwnBallRadius) {
-                return DEFAULT;
-            }
-            return SHOOTING_START;
-        }
-
         case SHOOTING: {
-            // If we either succeed or fail, it's time to start over.
-            if (check_is_done() || timed_out()) {
+            if (check_is_done()) {
                 return DEFAULT;
             }
-
+            if (distance_to_ball() > kOwnBallRadius) {
+                return DEFAULT;
+            }
             return SHOOTING;
         }
     }
@@ -204,38 +177,26 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case POSSESSION_START: {
             target_ = calculate_best_shot();
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
             return intent;
         }
 
         case POSSESSION: {
-            return intent;
-        }
-
-        case PASSING_START: {
-            rj_geometry::Point ball_position = last_world_state_->ball.position;
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-            auto move_vector = (current_pos - ball_position).normalized(0.2);
-
-            planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
-
-            intent.motion_command = prep_command;
-
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
             return intent;
         }
 
         case PASSING: {
-            // Kick to the target robot
             rj_geometry::Point target_robot_pos =
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
-
             planning::LinearMotionInstant target{target_robot_pos};
-            planning::MotionCommand line_kick_cmd{"line_kick", target};
-
-            // Set intent to kick
-            intent.motion_command = line_kick_cmd;
-            intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            auto pivot_cmd =
+                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
 
             // Adjusts kick speed based on distance.
             // Details: TIGERS 2019 eTDP, rj_gameplay/passer.py
@@ -244,30 +205,12 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             double dist = target_robot_pos.dist_to(this_robot_pos);
             intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
-
             return intent;
         }
 
         case STEALING: {
-            // intercept the ball
-            // if ball fast, use settle, otherwise collect
-            // if (last_world_state_->ball.velocity.mag() > 0.75) {
-            //     auto settle_cmd = planning::MotionCommand{"settle"};
-            //     intent.motion_command = settle_cmd;
-            //     intent.dribbler_speed = 255.0;
-            // } else {
-
-            // rj_geometry::Point increment(0.3, 0.3);
-            // auto current_pos = last_world_state_->ball.position - increment;
-
-            // planning::LinearMotionInstant stay_in_place {current_pos};
-
-            // intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
-            // planning::FaceBall{}, false};
-
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            // }
 
             return intent;
         }
@@ -300,40 +243,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
 
-        case SHOOTING_START: {
-            // Line kick best shot
+        case SHOOTING: {
+            // rotate kick best shot
             target_ = calculate_best_shot();
 
-            // auto line_kick_cmd =
-            //     planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
-
-            // intent.motion_command = line_kick_cmd;
-            // intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            // intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            // intent.kick_speed = 4.0;
-
-            rj_geometry::Point ball_position = last_world_state_->ball.position;
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-            auto move_vector = (current_pos - ball_position).normalized(0.2);
-
-            planning::LinearMotionInstant target{ball_position + move_vector};
-            planning::MotionCommand prep_command{"path_target", target, planning::FaceBall{}};
-
-            intent.motion_command = prep_command;
-
-            return intent;
-        }
-
-        case SHOOTING: {
-            // target_ = calculate_best_shot();
-            auto line_kick_cmd =
-                planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
-
-            intent.motion_command = line_kick_cmd;
-            intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            planning::LinearMotionInstant target{calculate_best_shot()};
+            auto pivot_cmd =
+                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            intent.motion_command = pivot_cmd;
+            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
             intent.kick_speed = 4.0;
-
             return intent;
         }
     }
@@ -405,7 +325,7 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
                 // robot_id_);
 
                 // Chosen Robot has told us they are ready to receive
-                current_state_ = PASSING_START;
+                current_state_ = PASSING;
                 pass_to_robot_id_ = response.received_robot_ids[i];
 
                 // pass_ball(response.received_robot_ids[i]);
@@ -429,7 +349,7 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
                     // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
                     // pass_to_robot_id_ = response.received_robot_ids[i];
-                    // current_state_ = PASSING_START;
+                    // current_state_ = PASSING;
                 }
             }
         }
@@ -446,9 +366,9 @@ void Offense::derived_pass_ball() {
     // When we have the ball we send out a pass request.
     // However, if we've since started shooting, just do that.
     // Otherwise, we can now pass because somebody has accepted our pass.
-    if (current_state_ != SHOOTING) {
-        // current_state_ = PASSING_START;
-    }
+    // if (current_state_ != SHOOTING) {
+    // current_state_ = PASSING;
+    // }
 }
 
 void Offense::derived_acknowledge_ball_in_transit() {
