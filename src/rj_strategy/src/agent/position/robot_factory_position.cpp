@@ -191,6 +191,15 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (robot_id_ == 1) {
+        //make runner here
+        set_current_position<Runner>();
+    } else {
+        //set everything else to SmartIdle
+        set_current_position<SmartIdle>();
+    }
+
+    return;
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
