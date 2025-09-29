@@ -21,7 +21,7 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
     Trajectory post_trajectory = CreatePath::intermediate(
         pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
-        pre_trajectory.end_time(), params.static_obstacles, params.dynamic_obstacles,
+        pre_trajectory.end_time(), params.obstacles,
         params.field_dimensions, params.robot_id);
 
     // If we couldn't profile such that velocity at the end of the partial replan period is valid,
@@ -46,7 +46,7 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
 Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     Trajectory path = CreatePath::intermediate(params.start.linear_motion(), params.goal,
                                                params.constraints.mot, params.start.stamp,
-                                               params.static_obstacles, params.dynamic_obstacles,
+                                               params.obstacles,
                                                params.field_dimensions, params.robot_id);
 
     // if the initial path is empty, the goal must be blocked
@@ -67,7 +67,7 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
         path = CreatePath::intermediate(params.start.linear_motion(), almost_goal,
                                         params.constraints.mot, params.start.stamp,
-                                        params.static_obstacles, params.dynamic_obstacles,
+                                        params.obstacles,
                                         params.field_dimensions, params.robot_id);
     }
 
@@ -130,10 +130,10 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
 
     // Use short-circuiting to only check dynamic trajectories if necessary.
     bool should_partial_replan =
-        trajectory_hits_static(previous_trajectory, params.static_obstacles, start_time,
-                               &hit_time) ||
-        trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
-                                &hit_time);
+        trajectory_hits_static(previous_trajectory, params.obstacles, start_time,
+                               &hit_time) // ||
+        // trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
+        //                         &hit_time);
 
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {

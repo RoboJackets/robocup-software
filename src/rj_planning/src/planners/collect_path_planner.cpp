@@ -93,14 +93,13 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     process_state_transition(plan_request, ball, &start_instant);
 
     // List of obstacles
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, false);
+    std::vector<Obstacle> obstacles;
+    fill_obstacles(plan_request, &obstacles, false);
 
     // Return an empty trajectory if the ball is hitting static obstacles
     // or it is in the goalie area.
     // Check the robot for the same conditions.
-    if (static_obstacles.hit(start_instant.pose.position())) {
+    if (obstacles.hit(start_instant.pose.position())) {
         return Trajectory{};
     }
 
@@ -108,25 +107,25 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
         // Moves from the current location to the slow point of approach
         case COARSE_APPROACH:
             previous_ =
-                coarse_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+                coarse_approach(plan_request, start_instant, obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
         case FINE_APPROACH:
             previous_ =
-                fine_approach(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+                fine_approach(plan_request, start_instant, obstacles);
             break;
         // Intercept a moving ball
         case INTERCEPT: {
-            previous_ = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+            previous_ = intercept(plan_request, start_instant, obstacles);
             break;
         }
         // Dampen a moving ball
         case DAMPEN: {
-            previous_ = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles);
+            previous_ = dampen(plan_request, start_instant, obstacles);
             break;
         }
         default:
-            previous_ = invalid(plan_request, static_obstacles, dynamic_obstacles);
+            previous_ = invalid(plan_request, obstacles);
             break;
     }
 
@@ -198,8 +197,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
 
 Trajectory CollectPathPlanner::coarse_approach(
     const PlanRequest& plan_request, RobotInstant start,
-    const rj_geometry::ShapeSet& static_obstacles,
-    const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    const std::vector<Obstacle>& obstacles) {
     BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
@@ -235,8 +233,7 @@ Trajectory CollectPathPlanner::coarse_approach(
 
     Replanner::PlanParams params{start,
                                  target_slow,
-                                 static_obstacles,
-                                 dynamic_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
@@ -259,8 +256,7 @@ Trajectory CollectPathPlanner::coarse_approach(
 
 Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
                                          RobotInstant start_instant,
-                                         const rj_geometry::ShapeSet& static_obstacles,
-                                         const std::vector<DynamicObstacle>& dynamic_obstacles) {
+                                         const std::vector<Obstacle>& obstacles) {
     const double max_ball_angle_change_for_path_reset =
         settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
@@ -318,7 +314,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         // Calculate the
@@ -428,7 +424,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         if (!shortcut.empty()) {
@@ -465,8 +461,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 
     Replanner::PlanParams params{start_instant,
                                  target_robot_intersection,
-                                 static_obstacles,
-                                 dynamic_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
@@ -487,8 +482,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 }
 
 Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                      const rj_geometry::ShapeSet& static_obstacles,
-                                      const std::vector<DynamicObstacle>& dynamic_obstacles) {
+                                      const std::vector<Obstacle>& obstacles) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -576,12 +570,12 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles, dynamic_obstacles,
+                                              obstacles,
                                               plan_request.field_dimensions, plan_request.shell_id);
     } else {
         dampen_end = CreatePath::intermediate(
             previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            previous_.last().stamp, obstacles,
             plan_request.field_dimensions, plan_request.shell_id);
     }
 
@@ -600,8 +594,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
 
 Trajectory CollectPathPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
-    const rj_geometry::ShapeSet& static_obstacles,
-    const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    const std::vector<Obstacle>& obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
@@ -636,8 +629,7 @@ Trajectory CollectPathPlanner::fine_approach(
         std::min(target_hit_vel.mag(), motion_constraints_hit.max_speed);
     Replanner::PlanParams params{start_instant,
                                  target_hit,
-                                 static_obstacles,
-                                 dynamic_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
@@ -665,8 +657,7 @@ Trajectory CollectPathPlanner::fine_approach(
 }
 
 Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
-                                       const rj_geometry::ShapeSet& static_obstacles,
-                                       const std::vector<DynamicObstacle>& dynamic_obstacles) {
+                                       const std::vector<Obstacle>& obstacles) {
     current_state_ = COARSE_APPROACH;
 
     // Stop movement until next frame since it's the safest option
@@ -675,8 +666,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
 
     Replanner::PlanParams params{plan_request.start,
                                  target,
-                                 static_obstacles,
-                                 dynamic_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),

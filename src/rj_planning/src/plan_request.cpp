@@ -20,12 +20,12 @@ rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
     return make_inflated_static_obs(robot.pose.position(), robot.velocity.linear(), kRobotRadius);
 }
 
-void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
+void fill_obstacles(const PlanRequest& in,
+                    std::vector<Obstacle>* out, bool avoid_ball,
                     Trajectory* out_ball_trajectory) {
-    out_static->clear();
-    out_static->add(in.field_obstacles);
-    out_static->add(in.virtual_obstacles);
+    out->clear();
+    out->add(in.field_obstacles);
+    out->add(in.virtual_obstacles);
 
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.

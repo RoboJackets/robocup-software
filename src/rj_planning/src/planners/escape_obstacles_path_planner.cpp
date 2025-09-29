@@ -8,7 +8,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const auto& motion_constraints = plan_request.constraints.mot;
 
     rj_geometry::ShapeSet obstacles;
-    fill_obstacles(plan_request, &obstacles, nullptr, true, nullptr);
+    fill_obstacles(plan_request, &obstacles, true, nullptr);
 
     if (!obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to

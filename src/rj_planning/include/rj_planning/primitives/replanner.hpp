@@ -34,8 +34,7 @@ public:
     struct PlanParams {
         RobotInstant start;
         LinearMotionInstant goal;
-        const rj_geometry::ShapeSet& static_obstacles;
-        const std::vector<DynamicObstacle>& dynamic_obstacles;
+        const std::vector<Obstacle>& obstacles;
         const FieldDimensions* field_dimensions;
         RobotConstraints constraints;
         const AngleFunction& angle_function;

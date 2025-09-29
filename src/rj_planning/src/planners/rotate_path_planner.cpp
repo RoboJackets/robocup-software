@@ -39,9 +39,8 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
-    rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
+    std::vector<Obstacle> obstacles;
+    fill_obstacles(request, &obstacles, false);
 
     const MotionCommand& command = request.motion_command;
 
