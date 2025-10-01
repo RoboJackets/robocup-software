@@ -21,6 +21,12 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
         return Trajectory();
     }
 
+    for (int i = 0; i < obstacles.size(); i++) {
+        SPDLOG_INFO("YYYYYYYYYYYYYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEETTTTTTTTTT");
+        std::shared_ptr<rj_geometry::Circle> c = std::dynamic_pointer_cast<rj_geometry::Circle>(obstacles.at(i).padding);
+        request.debug_drawer->draw_shapes(obstacles.at(i).shapes);
+    }
+
     LinearMotionInstant target_instant = command.target;
     Point goal_point = target_instant.position;
 

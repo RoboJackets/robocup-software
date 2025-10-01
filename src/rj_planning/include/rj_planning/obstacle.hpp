@@ -9,20 +9,18 @@
 namespace planning {
 
 class Obstacle {
-public:
-    rj_geometry::Circle obstacle;
-    rj_geometry::StadiumShape padding;
 
-    //Obstacle(rj_geometry::Shape obstacle, rj_geometry::Shape padding, rj_geometry::Point pos);
+public:
+    std::shared_ptr<rj_geometry::Shape> obstacle;
+    std::shared_ptr<rj_geometry::Shape> padding;
+    std::shared_ptr<rj_geometry::Point> velocity;
+    rj_geometry::ShapeSet shapes;
+
+    Obstacle(std::shared_ptr<rj_geometry::Shape> obstacle, std::shared_ptr<rj_geometry::Shape> padding);
 
     Obstacle(rj_geometry::Point pos, rj_geometry::Point vel);
 
-    //Obstacle(rj_geometry::Circle obstacle, rj_geometry::Circle padding, rj_geometry::Point pos, rj_geometry::Point vel);
-    //Obstacle(rj_geometry::Circle obstacle, rj_geometry::Circle padding, rj_geometry::Point pos);
-
 private:
-    rj_geometry::Point pos_;
-    rj_geometry::Point vel_;
     
 };
 

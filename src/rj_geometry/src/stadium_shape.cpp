@@ -25,7 +25,6 @@ void StadiumShape::init(Point c1, Point c2, float r) {
 
     //rj_geometry::Segment vect_updated{end1, end2};
     rj_geometry::Polygon rect_obs{verts};
-    rj_geometry::Rect rectangle_ {(c1 + (leftToRightN.perp_ccw() * r)), (c2 - (leftToRightN.perp_ccw() * r))};
 
     std::shared_ptr<rj_geometry::Circle> c1_obs_ptr =
         std::make_shared<rj_geometry::Circle>(first_circle);
@@ -33,17 +32,13 @@ void StadiumShape::init(Point c1, Point c2, float r) {
         std::make_shared<rj_geometry::Polygon>(rect_obs);
     std::shared_ptr<rj_geometry::Circle> c2_obs_ptr =
         std::make_shared<rj_geometry::Circle>(second_circle);
-    std::shared_ptr<rj_geometry::Rect> rectangle_ptr =
-        std::make_shared<rj_geometry::Rect>(rectangle_);
 
     subshapes_.push_back(c1_obs_ptr);
     subshapes_.push_back(rect_obs_ptr);
-    //subshapes_.push_back(rectangle_ptr);
     subshapes_.push_back(c2_obs_ptr);
 
     drawshapes_.add(c1_obs_ptr);
     drawshapes_.add(rect_obs_ptr);
-    //drawshapes_.add(rectangle_ptr);
     drawshapes_.add(c2_obs_ptr);
 }
 
