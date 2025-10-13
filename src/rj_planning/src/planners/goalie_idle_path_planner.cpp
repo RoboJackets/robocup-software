@@ -8,7 +8,6 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // Collect obstacles
     rj_geometry::ShapeSet static_obstacles;
-    // std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     bool ignore_ball = true;

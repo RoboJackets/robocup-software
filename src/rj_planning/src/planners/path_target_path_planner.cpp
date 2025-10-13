@@ -7,7 +7,6 @@ namespace planning {
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     ShapeSet static_obstacles;
-    // std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     const MotionCommand& command = request.motion_command;
