@@ -19,9 +19,6 @@ public:
     Obstacle(std::shared_ptr<rj_geometry::Shape> obstacle, std::shared_ptr<rj_geometry::Shape> padding);
 
     Obstacle(rj_geometry::Point pos, rj_geometry::Point vel);
-
-private:
-    
 };
 
 }

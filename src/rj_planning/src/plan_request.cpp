@@ -21,7 +21,7 @@ rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
 }
 
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<Obstacle>* out_dynamic, bool avoid_ball,
+                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory) {
     out_static->clear();
     out_static->add(in.field_obstacles);
@@ -66,24 +66,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
 
         // Static obstacle
         out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
-        rj_geometry::Point obs_center = our_robot.pose.position();
-        rj_geometry::Circle c = rj_geometry::Circle(obs_center, kRobotRadius);
-
-        rj_geometry::Circle robot_padding = rj_geometry::Circle(obs_center, kRobotRadius * 2);
-        if (out_dynamic != nullptr) { out_dynamic->emplace_back(our_robot.pose.position(), our_robot.velocity.linear());
-            // Obstacle o{c, robot_padding, our_robot.pose.position()};
-            // rj_geometry::Shape& x = o.obstacle;
-            // rj_geometry::Circle& c = dynamic_cast<rj_geometry::Circle&>(x);
-
-            // SPDLOG_INFO("Obstacle with center {} and padding radius", c.center.x());
-
-            //SPDLOG_INFO("Obstacle with center {} and padding radius {}", static_cast<rj_geometry::Circle>(o.obstacle).center.x(), static_cast<rj_geometry::Circle>(o.obstacle).center.y(), static_cast<rj_geometry::Circle>(o.padding).radius);
-            //if (out_dynamic->size() > 0) in.debug_drawer->draw_stadium(dynamic_cast<rj_geometry::StadiumShape&>(out_dynamic->at(out_dynamic->size() - 1).padding), Qt::red);
-            //if (out_dynamic->size() > 0) in.debug_drawer->draw_circle((out_dynamic->at(out_dynamic->size()-1).obstacle&), Qt::red);
-            //if (out_dynamic->size() > 0) in.debug_drawer->draw_circle((out_dynamic->at(out_dynamic->size() - 1).padding&), Qt::blue);
-            //if (out_dynamic->size() > 0) in.debug_drawer->draw_shapes(out_dynamic->at(out_dynamic->size() - 1).shapes, Qt::blue);
-        }
-        //in.debug_drawer->draw_circle(static_cast<rj_geometry::Circle&>(out_dynamic->at(shell).obstacle), Qt::red);
     }
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)

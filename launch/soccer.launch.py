@@ -177,7 +177,6 @@ def generate_launch_description():
                 executable="planner_node",
                 output="screen",
                 parameters=[param_config_filepath],
-                #prefix=['gdb -ex run --args'],
                 on_exit=Shutdown(),
             ),
             # spawn manual node only if use_manual_control is True

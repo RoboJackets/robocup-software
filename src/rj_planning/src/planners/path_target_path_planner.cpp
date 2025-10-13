@@ -7,11 +7,11 @@ namespace planning {
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     ShapeSet static_obstacles;
-    std::vector<Obstacle> obstacles;
+    // std::vector<Obstacle> obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, &obstacles, !command.ignore_ball,
+    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
                    &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take
@@ -19,12 +19,6 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     if (static_obstacles.hit(request.start.position())) {
         reset();
         return Trajectory();
-    }
-
-    for (int i = 0; i < obstacles.size(); i++) {
-        SPDLOG_INFO("YYYYYYYYYYYYYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEETTTTTTTTTT");
-        std::shared_ptr<rj_geometry::Circle> c = std::dynamic_pointer_cast<rj_geometry::Circle>(obstacles.at(i).padding);
-        request.debug_drawer->draw_shapes(obstacles.at(i).shapes);
     }
 
     LinearMotionInstant target_instant = command.target;
@@ -37,7 +31,6 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     AngleFunction angle_function = get_angle_function(request);
 
     // Call into the sub-object to actually execute the plan.
-    SPDLOG_INFO("In PathTargetPathPlanner Line 33");
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, static_obstacles, std::vector<DynamicObstacle>{},
                               request.field_dimensions, request.constraints, angle_function,

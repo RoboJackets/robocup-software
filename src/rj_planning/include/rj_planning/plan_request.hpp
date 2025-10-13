@@ -186,7 +186,7 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
  *  nullptr.
  */
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<Obstacle>* out_dynamic, bool avoid_ball,
+                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory = nullptr);
 
 }  // namespace planning
