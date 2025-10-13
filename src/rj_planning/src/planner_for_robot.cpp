@@ -94,7 +94,6 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 
         // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
-        // TODO: (JAMES) Remove all these try/catch blocks pls thx
         // robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
         //                          intent.priority);
     }
