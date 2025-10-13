@@ -7,7 +7,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  const GlobalState& global_state)
     : node_{node},
       robot_id_{robot_id},
-      robot_trajectories_ {robot_trajectories},
+      robot_trajectories_{robot_trajectories},
       global_state_{global_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
@@ -92,7 +92,6 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .kick_speed(intent.kick_speed)
                                       .dribbler_speed(trajectory.dribbler_speed));
 
-        
         // TODO (PR #1970): fix TrajectoryCollection
         // store all latest trajectories in a mutex-locked shared map
         // TODO: (JAMES) Remove all these try/catch blocks pls thx
@@ -116,7 +115,6 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     // get the Traj out of the relevant [Trajectory, priority] tuple in
     // robot_trajectories_
 
-    
     // TODO (PR #1970): fix TrajectoryCollection
     // const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
     //     if (!latest_traj) {
@@ -186,15 +184,14 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         virtual_obstacles.add(def_area_obstacles);
     }
 
-    
     // TODO (PR #1970): fix TrajectoryCollection
     // make a copy instead of getting the actual shared_ptr to Trajectory
     // std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
 
     // for (size_t i = 0; i < kNumShells; i++) {
-        // TODO(Kevin): check that priority works (seems like
-        // robot_trajectories_ is passed on init, when no planning has occured
-        // yet)
+    // TODO(Kevin): check that priority works (seems like
+    // robot_trajectories_ is passed on init, when no planning has occured
+    // yet)
     //     const auto& [trajectory, priority] = robot_trajectories_->get(i);
     //     if (i != robot_id_ && priority >= intent.priority) {
     //         if (!trajectory) {
@@ -205,7 +202,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     //         }
     //     }
     // }
-    
 
     RobotConstraints constraints;
     MotionCommand motion_command;

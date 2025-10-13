@@ -17,8 +17,6 @@ Entry TrajectoryCollection::get(int robot_id) {
     return robot_trajectories_.at(robot_id);
 }
 
-
-
 void TrajectoryCollection::put(int robot_id, std::shared_ptr<const Trajectory> trajectory,
                                int priority) {
     // associate a (Trajectory, priority) tuple with a robot id

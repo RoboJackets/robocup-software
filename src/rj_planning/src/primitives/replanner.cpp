@@ -17,8 +17,9 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
          cursor.advance(100ms)) {
         bias_waypoints.push_back(cursor.value().position());
     }
-    
-    RJ::Time partial_path_end = params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+
+    RJ::Time partial_path_end =
+        params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
     if (partial_path_end <= previous.begin_time()) {
         return full_replan(params);
     }

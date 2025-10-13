@@ -242,7 +242,7 @@ Trajectory CollectPathPlanner::coarse_approach(
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id};
-                       
+
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
     if (plan_request.debug_drawer != nullptr) {

@@ -105,7 +105,6 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         // pub Trajectory based on the RobotIntent
         my_robot_planner.execute_intent(rj_convert::convert_from_ros(goal->robot_intent));
 
-        
         // TODO (PR #1970): fix TrajectoryCollection
         // send feedback
         // std::shared_ptr<RobotMove::Feedback> feedback = std::make_shared<RobotMove::Feedback>();
@@ -113,7 +112,6 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         //     feedback->time_left = rj_convert::convert_to_ros(time_left.value());
         //     goal_handle->publish_feedback(feedback);
         // }
-        
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory

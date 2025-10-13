@@ -6,7 +6,6 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/planning/dynamic_obstacle.hpp>
-#include <rj_planning/obstacle.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
@@ -15,6 +14,7 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_planning/obstacle.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/trajectory_collection.hpp"
@@ -30,8 +30,9 @@ namespace planning {
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
-                rj_geometry::ShapeSet virtual_obstacles, std::shared_ptr<TrajectoryCollection> planned_trajectories,
-                unsigned shell_id, const WorldState* world_state, PlayState play_state,
+                rj_geometry::ShapeSet virtual_obstacles,
+                std::shared_ptr<TrajectoryCollection> planned_trajectories, unsigned shell_id,
+                const WorldState* world_state, PlayState play_state,
                 const FieldDimensions* field_dimensions, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float kick_speed = 0,
