@@ -177,7 +177,13 @@ void Marking::update_danger_scores() {
         angle_between = std::abs(angle_between);
 
         double danger_score = dist_to_ball * kDangerDistToBall + dist_to_goal * kDangerDistToGoal - min * kDangerDistToOurRobots - angle_between * kDangerAngle;
+        if (i < 6) {
+            SPDLOG_INFO("Robot {} has dist to goal {}", i, dist_to_goal);
+        }
         danger_score_[i] = danger_score;
+    }
+    for (size_t i = 0; i < 6; ++i) {
+        SPDLOG_INFO("Robot {} has danger score {}", i, danger_score_[i]);
     }
 }
 

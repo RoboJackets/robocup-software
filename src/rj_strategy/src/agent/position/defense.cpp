@@ -43,11 +43,10 @@ Defense::State Defense::update_state() {
             return IDLING;
         }
 
-        SPDLOG_INFO("Robot {}: checking if it is a member and if it is marking", robot_id_);
         if (clientHandles_->markingClient->am_i_member() && clientHandles_->markingClient->am_i_marking()) {
-            SPDLOG_INFO("Robot {}: successfully joined marking coordinator group and is marking robot {}", robot_id_, clientHandles_->markingClient->who_am_i_marking());
             return MARKING;
         } else {
+            SPDLOG_INFO("Robot {}: After pending marking, not a member so idling", robot_id_);
             return IDLING;
         }
     }
@@ -62,7 +61,7 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
-            SPDLOG_INFO("Robot {}: idling", robot_id_);
+            // SPDLOG_INFO("Robot {}: idling", robot_id_);
             break;
         case JOINING_WALL:
             send_join_wall_request();
@@ -105,9 +104,7 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
-            SPDLOG_INFO("Robot {}: marking robot {}", robot_id_);
             if (!clientHandles_->markingClient->am_i_member() || !clientHandles_->markingClient->am_i_marking()) {
-                SPDLOG_INFO("Robot {}: no longer a member of marking group", robot_id_);
                 next_state = IDLING;
             }
             break;
@@ -118,10 +115,8 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
 
-                SPDLOG_INFO("About to try to join marking");
 
                 clientHandles_->markingClient->join_group([this](const MarkingClient::Result& res) {
-                    SPDLOG_INFO("Completed join group call");
                     if (res.am_i_member && res.am_i_marking) {
                         pending_marking_state_ = true;
                     }
@@ -133,14 +128,11 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = false;
                 // ensure not in coordinator group
                 clientHandles_->markingClient->leave_group();
-                SPDLOG_INFO("Took too long to join marking coordinator group for robot {}", robot_id_);
+                SPDLOG_INFO("Robot {}: Timeout on join group, IDLING now", robot_id_);
+                next_state = IDLING;
             }
 
             break;
-    }
-
-    if (robot_id_ == 4) {
-        SPDLOG_INFO("Robot {}: current state {}, next state {}, marking state {}, idling state {}", robot_id_, current_state_, next_state, MARKING, IDLING);
     }
 
     return next_state;
@@ -217,7 +209,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         rj_geometry::Point ballPoint = last_world_state_->ball.position;
         rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
         planning::LinearMotionInstant goal{targetPoint + targetToBall, rj_geometry::Point{0.0, 0.0}};
-        SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint + targetToBall).y());
+        // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint + targetToBall).y());
         intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
 
         return intent;

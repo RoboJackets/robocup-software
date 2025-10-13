@@ -122,7 +122,7 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
-    RJ::Seconds kMarkingGroupJoinTimeout{999999999999999999999999999.0}; // 3 seconds
+    RJ::Seconds kMarkingGroupJoinTimeout{2.0}; // 2 seconds
 
     bool pending_marking_state_ = false;
 

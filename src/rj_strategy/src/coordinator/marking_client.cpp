@@ -15,7 +15,6 @@ MarkingClient::MarkingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
 
 void MarkingClient::join_group(StatusCallback callback) {
 
-    SPDLOG_INFO("Hello, please print");
     if (am_i_member_) {
         return;
     }
@@ -32,15 +31,12 @@ void MarkingClient::join_group(StatusCallback callback) {
     request->robot_id = robot_id_;
     request->join = true;
 
-    SPDLOG_INFO("About to send async request");
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
                      rclcpp::Client<rj_msgs::srv::Marking>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
-                            SPDLOG_INFO("Hello, finished async");
             if (!future.valid() || !future.get()->success) {
-                SPDLOG_INFO("Something bad happened");
                 if (callback) {
                     callback(Result{false});
                 }
@@ -59,7 +55,6 @@ void MarkingClient::join_group(StatusCallback callback) {
 
             callback(Result{true});
 
-            SPDLOG_INFO("Should be done with group call");
         });
 }
 
