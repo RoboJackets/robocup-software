@@ -52,17 +52,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         if (!our_robot.visible || shell == in.shell_id) {
             continue;
         }
-        // TEMPORARY: Check and see how dynamic obstacles currently work
-        //  std::shared_ptr<const Trajectory> ptr_to_traj =
-        //  std::get<0>(in.planned_trajectories->get(shell)); float obs_radius = kRobotRadius;
-        //  rj_geometry::Point obs_center = our_robot.pose.position();
-        //  if (out_dynamic != nullptr && ptr_to_traj != nullptr) {
-        //      // Dynamic obstacle */
-        //      out_dynamic->emplace_back(obs_radius, ptr_to_traj);
-        //  } else {
-        //      // Static obstacle */
-        //      out_static->add(std::make_shared<rj_geometry::Circle>(obs_center, obs_radius));
-        //  }
 
         // Static obstacle
         out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));

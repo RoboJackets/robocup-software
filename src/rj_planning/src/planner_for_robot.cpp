@@ -92,10 +92,6 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .kick_speed(intent.kick_speed)
                                       .dribbler_speed(trajectory.dribbler_speed));
 
-        // TODO (PR #1970): fix TrajectoryCollection
-        // store all latest trajectories in a mutex-locked shared map
-        // robot_trajectories_->put(robot_id_, std::make_shared<Trajectory>(std::move(trajectory)),
-        //                          intent.priority);
     }
 }
 
@@ -120,7 +116,7 @@ std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
     //     return std::nullopt;
     // }
     // return latest_traj->end_time() - RJ::now();
-    // return std::nullopt;
+    return std::nullopt;
 }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
@@ -182,25 +178,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     if (!is_goalie) {
         virtual_obstacles.add(def_area_obstacles);
     }
-
-    // TODO (PR #1970): fix TrajectoryCollection
-    // make a copy instead of getting the actual shared_ptr to Trajectory
-    // std::array<std::optional<Trajectory>, kNumShells> planned_trajectories;
-
-    // for (size_t i = 0; i < kNumShells; i++) {
-    // TODO(Kevin): check that priority works (seems like
-    // robot_trajectories_ is passed on init, when no planning has occured
-    // yet)
-    //     const auto& [trajectory, priority] = robot_trajectories_->get(i);
-    //     if (i != robot_id_ && priority >= intent.priority) {
-    //         if (!trajectory) {
-    //             planned_trajectories[i] = std::nullopt;
-    //         } else {
-    //             planned_trajectories[i] = std::make_optional<const
-    // Trajectory>(*trajectory.get());
-    //         }
-    //     }
-    // }
 
     RobotConstraints constraints;
     MotionCommand motion_command;
