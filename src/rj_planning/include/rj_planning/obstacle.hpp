@@ -9,6 +9,7 @@ namespace planning {
 
 class Obstacle {
 public:
+    Obstacle() = default;
     Obstacle(std::shared_ptr<rj_geometry::Shape> obstacle,
              std::shared_ptr<rj_geometry::Shape> padding);
 

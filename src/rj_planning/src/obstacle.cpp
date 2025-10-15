@@ -34,5 +34,7 @@ std::shared_ptr<rj_geometry::Shape> Obstacle::get_obstacle() { return obstacle; 
 
 std::shared_ptr<rj_geometry::Shape> Obstacle::get_padding() { return padding; }
 
-std::shared_ptr<rj_geometry::ShapeSet> Obstacle::get_shapes() { return shapes; }
+std::shared_ptr<rj_geometry::ShapeSet> Obstacle::get_shapes() {
+    return std::make_shared<rj_geometry::ShapeSet>(shapes);
+}
 }  // namespace planning

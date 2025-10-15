@@ -17,11 +17,7 @@ void StadiumShape::init(Point c1, Point c2, float r) {
     rj_geometry::Point rightTop = c2 + (leftToRightN * r);
     rj_geometry::Point rightBottom = c2 - (leftToRightN * r);
 
-    std::vector<Point> verts{};
-    verts.push_back(leftTop);
-    verts.push_back(leftBottom);
-    verts.push_back(rightBottom);
-    verts.push_back(rightTop);
+    std::vector<Point> verts = {leftTop, leftBottom, rightTop, rightBottom};
 
     rj_geometry::Polygon rect_obs{verts};
 

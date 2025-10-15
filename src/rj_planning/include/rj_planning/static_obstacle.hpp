@@ -6,6 +6,6 @@ class StaticObstacle : Obstacle {
 public:
     StaticObstacle(std::shared_ptr<rj_geometry::Shape> obstacle,
                    std::shared_ptr<rj_geometry::Shape> padding);
-}
+};
 
 }  // namespace planning

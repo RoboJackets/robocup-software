@@ -6,6 +6,6 @@ namespace planning {
 class StadiumObstacle : Obstacle {
 public:
     StadiumObstacle(rj_geometry::Point pos, rj_geometry::Point vel);
-}
+};
 
 }  // namespace planning
