@@ -27,10 +27,6 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
     out_static->add(in.field_obstacles);
     out_static->add(in.virtual_obstacles);
 
-    // out_dynamic->clear();
-    // out_dynamic->add(in.field_obstacles);
-    // out_dynamic->add(in.virtual_obstacles);
-
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
     for (size_t shell = 0; shell < kNumShells; shell++) {

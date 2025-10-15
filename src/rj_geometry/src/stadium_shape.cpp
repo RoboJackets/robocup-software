@@ -23,7 +23,6 @@ void StadiumShape::init(Point c1, Point c2, float r) {
     verts.push_back(rightBottom);
     verts.push_back(rightTop);
 
-    // rj_geometry::Segment vect_updated{end1, end2};
     rj_geometry::Polygon rect_obs{verts};
 
     std::shared_ptr<rj_geometry::Circle> c1_obs_ptr =

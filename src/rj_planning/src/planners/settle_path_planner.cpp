@@ -359,7 +359,6 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
                                  plan_request.shell_id};
-    SPDLOG_INFO("SettlePathPlanner line 362");
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();

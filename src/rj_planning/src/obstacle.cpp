@@ -18,20 +18,31 @@ Obstacle::Obstacle(std::shared_ptr<rj_geometry::Shape> obstacle,
     shapes.add(padding);
 }
 
-/**
- * Creates a new obstacle with stadium shape padding.
- * Intended for use with obstacles in motion.
- * @param pos rj_geometry::Point representing the obstacle's position.
- * @param vel rj_geometry::Point representing the obstacle's linear velocity.
- */
-Obstacle::Obstacle(rj_geometry::Point pos, rj_geometry::Point vel) {
-    float scaling = 0.5f;
-    float width_scaling = 0.1f;
-    obstacle = std::make_shared<rj_geometry::Circle>(rj_geometry::Circle(pos, kRobotRadius));
-    padding = std::make_shared<rj_geometry::StadiumShape>(rj_geometry::StadiumShape(
-        pos, pos + vel * scaling, 1.5 * kRobotRadius + (vel.mag() * width_scaling)));
-    velocity = std::make_shared<rj_geometry::Point>(vel);
-    shapes.add(obstacle);
-    shapes.add(dynamic_pointer_cast<rj_geometry::StadiumShape>(padding)->drawshapes());
+bool Obstacle::obstacle_hit(rj_geometry::Point pt) {
+    return obstacle->hit(pt);
+}
+
+bool Obstacle::padding_hit(rj_geometry::Point pt) {
+    return padding->hit(pt);
+}
+
+bool Obstacle::padding_near(rj_geometry::Point pt, float thresh) {
+    return padding->near_point(pt, thresh);
+}
+
+bool Obstacle::obstacle_near(rj_geometry::Point pt, float thresh) {
+    return obstacle->near_point(pt, thresh);
+}
+
+std::shared_ptr<rj_geometry::Shape> Obstacle::get_obstacle() {
+    return obstacle;
+}
+
+std::shared_ptr<rj_geometry::Shape> Obstacle::get_padding() {
+    return padding;
+}
+
+std::shared_ptr<rj_geometry::ShapeSet> Obstacle::get_shapes() {
+    return shapes;
 }
 }  // namespace planning

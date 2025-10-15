@@ -25,7 +25,6 @@ public:
     void put(int robot_id, std::shared_ptr<const Trajectory> trajectory, int priority);
 
 private:
-    // TrajectoryCollection();
     std::mutex lock_;
     std::array<std::mutex, kNumShells> entry_locks;
     std::array<Entry, kNumShells> robot_trajectories_ = {};

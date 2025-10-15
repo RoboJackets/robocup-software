@@ -106,16 +106,6 @@ void PlannerForRobot::plan_hypothetical_robot_path(
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
-    // TODO(p-nayak): why does this say 3s even when the robot is on its point?
-    // get the Traj out of the relevant [Trajectory, priority] tuple in
-    // robot_trajectories_
-
-    // TODO (PR #1970): fix TrajectoryCollection
-    // const auto& [latest_traj, priority] = robot_trajectories_->get(robot_id_);
-    //     if (!latest_traj) {
-    //     return std::nullopt;
-    // }
-    // return latest_traj->end_time() - RJ::now();
     return std::nullopt;
 }
 
