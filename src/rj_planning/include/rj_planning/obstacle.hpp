@@ -19,6 +19,7 @@ public:
     virtual shared_ptr<rj_geometry::ShapeSet> get_shapes();
     virtual std::shared_ptr<rj_geometry::Shape> get_obstacle();
     virtual std::shared_ptr<rj_geometry::Shape> get_padding();
+
 protected:
     std::shared_ptr<rj_geometry::Shape> obstacle;
     std::shared_ptr<rj_geometry::Shape> padding;

@@ -17,4 +17,4 @@ StadiumObstacle::StadiumObstacle(rj_geometry::Point pos, rj_geometry::Point vel)
     shapes.add(obstacle);
     shapes.add(dynamic_pointer_cast<rj_geometry::StadiumShape>(padding)->drawshapes());
 }
-}
+}  // namespace planning
