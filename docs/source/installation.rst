@@ -114,14 +114,14 @@ that ``colcon`` takes up, by running:
 
 .. code-block:: bash
    
-   colcon build --parallel-workers 1 --executor sequential
+   make perf_docker
 
 After building, we need to source our custom ROS setup. Run the following in
 the ``robocup-software`` directory:
 
 .. code-block:: bash
 
-    source install/setup.bash
+   source install/setup.bash
 
 (Again, if you're on zsh, source the ``.zsh`` version instead.)
 
