@@ -59,11 +59,10 @@ again:
 	colcon build --parallel-workers 4
 
 perf_docker:
-	MAKEFLAGS='-j3' colcon build --parallel-workers 1 --executor sequential --cmake-args \
+	MAKEFLAGS='-j5' colcon build --parallel-workers 1 --executor sequential --cmake-args \
 	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-	-DCMAKE_BUILD_TYPE=Debug \ 
-	-DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
-	-DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=lld" 
+	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_CXX_FLAGS_DEBUG="-g1" 
 
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
