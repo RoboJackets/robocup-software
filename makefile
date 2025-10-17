@@ -58,6 +58,13 @@ release: all-release
 again:
 	colcon build --parallel-workers 4
 
+perf_docker:
+	MAKEFLAGS='-j3' colcon build --parallel-workers 1 --executor sequential --cmake-args \
+	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+	-DCMAKE_BUILD_TYPE=Debug \ 
+	-DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld" \
+	-DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=lld" 
+
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
 # fix this so defaults launch sim, with special cases for real
