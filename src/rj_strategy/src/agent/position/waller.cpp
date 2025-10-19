@@ -35,7 +35,7 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
     // Find target Point
     rj_geometry::Point mid_point{(goal_pos) + (ball_dir_vector * min_wall_rad)};
 
-    auto wall_spacing = 2 * kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
+    auto wall_spacing = 2 * (kRobotDiameterMultiplier * kRobotDiameter + kBallRadius);
 
     rj_geometry::Point target_point{};
     auto angle = (mid_point - goal_pos).angle();
