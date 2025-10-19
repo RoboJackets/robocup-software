@@ -642,6 +642,7 @@ Trajectory CollectPathPlanner::fine_approach(
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id};
+
     Trajectory path_hit = Replanner::create_plan(params, previous_);
     path_hit.set_debug_text("fine");
 
@@ -681,6 +682,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),
                                  plan_request.shell_id};
+
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");
 
