@@ -42,7 +42,7 @@ private:
 
     // possible states of the Runner
     enum State {
-        IDLING,          // doing nothing
+        IDLING,  // doing nothing
         BOTTOM_LEFT,
         TOP_LEFT,
         TOP_RIGHT,
@@ -55,10 +55,9 @@ private:
 
     State state_{IDLING};
 
-
     rj_geometry::Point square_center_pos_;
     static constexpr double kSquareSize_{2.0};  // meters
-    static constexpr double kTolerance_{0.1};  // meters
+    static constexpr double kTolerance_{0.1};   // meters
 };
 
 }  // namespace strategy
