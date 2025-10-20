@@ -53,6 +53,7 @@ set(RJ_STRATEGY_SRC
   src/agent/position/penalty_player.cpp
   src/agent/position/pivot_test.cpp
   src/agent/position/robot_factory_position.cpp
+  src/agent/position/runner.cpp
   src/agent/position/seeker.cpp
   src/agent/position/smartidling.cpp
   src/agent/position/solo_offense.cpp
