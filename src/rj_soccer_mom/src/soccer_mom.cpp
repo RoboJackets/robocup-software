@@ -1,5 +1,5 @@
-#include <rj_soccer_mom/soccer_mom.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_soccer_mom/soccer_mom.hpp>
 
 using namespace std::chrono_literals;
 
@@ -21,7 +21,6 @@ SoccerMom::SoccerMom() : Node("soccer_mom") {
         this->publisher_->publish(message);
     };
     timer_ = this->create_wall_timer(1000ms, timer_callback);
-
 }
 
 int main(int argc, char* argv[]) {

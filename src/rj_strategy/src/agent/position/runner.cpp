@@ -85,7 +85,8 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     rj_geometry::Point target_point = get_target_corner(this->state_);
 
     planning::LinearMotionInstant target{target_point};
-    planning::MotionCommand motion_command{"path_target", target, planning::FacePoint{square_center_pos_}};
+    planning::MotionCommand motion_command{"path_target", target,
+                                           planning::FacePoint{square_center_pos_}};
     intent.motion_command = motion_command;
 
     return intent;
