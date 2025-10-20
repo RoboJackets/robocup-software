@@ -1,4 +1,5 @@
 #include "rj_tutorial_soccer_mom/soccer_mom_node.hpp"
+
 #include <rj_utils/logging.hpp>
 
 namespace tutorial {
@@ -19,7 +20,8 @@ void SoccerMomNode::team_color_callback(rj_msgs::msg::TeamColor::SharedPtr msg) 
         fruit_msg.data = "banana";
     }
     fruit_pub_->publish(fruit_msg);
-    RCLCPP_INFO(get_logger(), "Team color %s -> publishing %s", msg->is_blue ? "blue" : "yellow", fruit_msg.data.c_str());
+    RCLCPP_INFO(get_logger(), "Team color %s -> publishing %s", msg->is_blue ? "blue" : "yellow",
+                fruit_msg.data.c_str());
 }
 
-}
+}  // namespace tutorial

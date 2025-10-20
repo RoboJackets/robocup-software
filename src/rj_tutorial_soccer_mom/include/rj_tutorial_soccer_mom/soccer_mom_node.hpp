@@ -1,9 +1,10 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
-#include <rj_msgs/msg/team_color.hpp>
+
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/team_color.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace tutorial {
 
@@ -18,4 +19,4 @@ private:
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr fruit_pub_;
 };
 
-}
+}  // namespace tutorial
