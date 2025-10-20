@@ -165,6 +165,14 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                condition=IfCondition(PythonExpression([run_sim])),
+                package="rj_soccer_mom",
+                executable="soccer_mom_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
                 condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_control",
                 executable="motion_control_node",
