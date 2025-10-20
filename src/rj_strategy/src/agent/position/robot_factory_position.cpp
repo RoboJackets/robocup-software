@@ -8,8 +8,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1) {
         current_position_ = std::make_unique<Runner>(robot_id_);
-    }
-    else if (robot_id_ == 2) {
+    } else if (robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -192,10 +191,10 @@ void RobotFactoryPosition::update_position() {
 
 void RobotFactoryPosition::set_default_position() {
     if (robot_id_ == 1) {
-        //make runner here
+        // make runner here
         set_current_position<Runner>();
     } else {
-        //set everything else to SmartIdle
+        // set everything else to SmartIdle
         set_current_position<SmartIdle>();
     }
 

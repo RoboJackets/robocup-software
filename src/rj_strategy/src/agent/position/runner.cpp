@@ -13,7 +13,7 @@ std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
 
 int Runner::next_state() {
     rj_geometry::Point robot_position =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
+        last_world_state_->get_robot(true, robot_id_).pose.position();
     double distance_to_point = robot_position.dist_to(corners_[current_state_]);
 
     if (distance_to_point > 0.3) {
@@ -28,7 +28,8 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     planning::PathTargetFaceOption face_option{planning::FaceBall{}};
     bool ignore_ball{true};
     planning::LinearMotionInstant target{target_point, target_vel};
-    intent.motion_command = planning::MotionCommand{"path_target", target, face_option, ignore_ball};
+    intent.motion_command =
+        planning::MotionCommand{"path_target", target, face_option, ignore_ball};
     return intent;
 }
 

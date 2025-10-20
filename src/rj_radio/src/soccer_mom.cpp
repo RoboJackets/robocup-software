@@ -1,7 +1,4 @@
-#include "rclcpp/rclcpp.hpp"
-#include <std_msgs/msg/string.hpp>
 #include <chrono>
-
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
@@ -19,33 +16,31 @@
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 #include <rj_utils/logging.hpp>
+#include <std_msgs/msg/string.hpp>
 
+#include "rclcpp/rclcpp.hpp"
 #include "rj_radio/radio.hpp"
 
 using namespace std::chrono_literals;
 
-class SoccerMom : public rclcpp::Node
-{
+class SoccerMom : public rclcpp::Node {
 public:
-    SoccerMom() : Node("soccer_mom")
-    {
+    SoccerMom() : Node("soccer_mom") {
         publisher_ = this->create_publisher<std_msgs::msg::String>("/soccer_mom", 10);
 
         team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
-        referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
-            last_is_blue_ = color->is_blue;
-        });
-        
-        timer_ = this->create_wall_timer(
-            500ms, std::bind(&SoccerMom::timer_callback, this));
+            referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
+            [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
+                last_is_blue_ = color->is_blue;
+            });
+
+        timer_ = this->create_wall_timer(500ms, std::bind(&SoccerMom::timer_callback, this));
 
         RCLCPP_INFO(this->get_logger(), "Soccer Mom has been started.");
     }
 
 private:
-    void timer_callback()
-    {
+    void timer_callback() {
         std_msgs::msg::String message;
 
         message.data = (*last_is_blue_) ? "blueberries" : "bananas";
@@ -59,8 +54,7 @@ private:
     std::optional<bool> last_is_blue_;
 };
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<SoccerMom>());
     rclcpp::shutdown();
