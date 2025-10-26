@@ -41,8 +41,8 @@ private:
     static constexpr int kMaxMarkers = 20;
     // this is the threshold value for switching
     static constexpr double kSuperDangerSub = 3.1415926535;
-    static constexpr double kDangerDistToBall = 1.0;
-    static constexpr double kDangerDistToGoal = 2.0;
+    static constexpr double kDangerDistToBall = 3.0;
+    static constexpr double kDangerDistToGoal = 5.0;
     static constexpr double kDangerDistToOurRobots = 3.0;
     static constexpr double kDangerAngle = 2.0;
     int num_markers_;
