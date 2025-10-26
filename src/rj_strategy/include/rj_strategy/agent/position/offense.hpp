@@ -55,13 +55,11 @@ private:
         SEEKING,           // Get open
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
-        PASSING_START,     // Prepare to pass
-        PASSING,           // Getting rid of it
+        PASSING,           // Pass the ball
         STEALING,          // Getting the ball
         RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
-        SHOOTING_START,    // Calculate shot
-        SHOOTING,          // Winning the game
+        SHOOTING,          // Shoot the ball
     };
 
     /**
@@ -102,8 +100,6 @@ private:
                 return RJ::Seconds{-1};
             case POSSESSION_START:
                 return RJ::Seconds{-1};
-            case PASSING_START:
-                return RJ::Seconds(-1);
             case PASSING:
                 return RJ::Seconds{5};
             case STEALING:
@@ -112,10 +108,8 @@ private:
                 return RJ::Seconds{5};
             case RECEIVING:
                 return RJ::Seconds{5};
-            case SHOOTING_START:
-                return RJ::Seconds{3};
             case SHOOTING:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{3};
         }
     }
 
@@ -132,8 +126,6 @@ private:
                 return "POSSESSION";
             case POSSESSION_START:
                 return "POSSESSION_START";
-            case PASSING_START:
-                return "PASSING_START";
             case PASSING:
                 return "PASSING";
             case STEALING:
@@ -142,8 +134,6 @@ private:
                 return "RECEIVING_START";
             case RECEIVING:
                 return "RECEIVING";
-            case SHOOTING_START:
-                return "SHOOTING_START";
             case SHOOTING:
                 return "SHOOTING";
         }

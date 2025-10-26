@@ -39,7 +39,7 @@ public:
 
 private:
     std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
-    TrajectoryCollection robot_trajectories_;
+    std::shared_ptr<TrajectoryCollection> robot_trajectories_ = nullptr;
     GlobalState global_state_;
     ::params::LocalROS2ParamProvider param_provider_;
     // setup ActionServer for RobotMove.action

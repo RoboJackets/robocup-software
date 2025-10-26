@@ -8,34 +8,34 @@
 
 // Number of identifiable robots on one team
 // IF U CHANGE THIS NUMBER CHECK Marking.msg
-constexpr size_t kNumShells = 16;
+inline constexpr size_t kNumShells = 16;
 
 // Number of playing robots on one team
-constexpr size_t kRobotsPerTeam = 6;
+inline constexpr size_t kRobotsPerTeam = 6;
 
-constexpr size_t kMaxDribble = 128;
-constexpr size_t kMaxKick = 255;
+inline constexpr size_t kMaxDribble = 128;
+inline constexpr size_t kMaxKick = 255;
 
-constexpr float kBallDiameter = 0.043f;
-constexpr float kBallRadius = kBallDiameter / 2.0f;
-constexpr float kBallMass = 0.048f;
+inline constexpr float kBallDiameter = 0.043f;
+inline constexpr float kBallRadius = kBallDiameter / 2.0f;
+inline constexpr float kBallMass = 0.048f;
 
-constexpr float kRobotDiameter = 0.180f;
-constexpr float kRobotRadius = kRobotDiameter / 2.0f;
-constexpr float kRobotHeight = 0.150f;
-constexpr float kRobotMouthWidth = 0.0635f;
-constexpr float kRobotMouthRadius = 0.078f;
+inline constexpr float kRobotDiameter = 0.180f;
+inline constexpr float kRobotRadius = kRobotDiameter / 2.0f;
+inline constexpr float kRobotHeight = 0.150f;
+inline constexpr float kRobotMouthWidth = 0.0635f;
+inline constexpr float kRobotMouthRadius = 0.078f;
 
 // Constant for ball deceleration on field
-constexpr float kBallDecel{-0.4f};
+inline constexpr float kBallDecel{-0.4f};
 
 /** constants for dot patterns */
-constexpr float kDotsSmallOffset = 0.035;
-constexpr float kDotsLargeOffset = 0.054772;
-constexpr float kDotsRadius = 0.02;
+inline constexpr float kDotsSmallOffset = 0.035;
+inline constexpr float kDotsLargeOffset = 0.054772;
+inline constexpr float kDotsRadius = 0.02;
 
 /** constants for planning */
-constexpr double kAvoidBallDistance = 0.01;
+inline constexpr double kAvoidBallDistance = 0.01;
 
-const std::string kTeamNameLower = "robojackets";
-const std::string kTeamName = "RoboJackets";
+inline const std::string kTeamNameLower = "robojackets";
+inline const std::string kTeamName = "RoboJackets";

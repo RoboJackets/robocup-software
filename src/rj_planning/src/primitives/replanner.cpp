@@ -18,6 +18,12 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
         bias_waypoints.push_back(cursor.value().position());
     }
 
+    RJ::Time partial_path_end =
+        params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+    if (partial_path_end <= previous.begin_time()) {
+        return full_replan(params);
+    }
+
     Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
     Trajectory post_trajectory = CreatePath::intermediate(
         pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
@@ -108,7 +114,6 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
             "CreatePlan must be called with a trajectory with a valid creation "
             "time!");
     }
-
     RJ::Time now = params.start.stamp;
 
     if (previous.empty() || veered_off_path(previous, params.start, now) ||
@@ -121,7 +126,6 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     RJ::Time previous_created_time = previous.time_created().value();
 
     Trajectory previous_trajectory = std::move(previous);
-
     RJ::Time start_time =
         std::clamp(now, previous_trajectory.begin_time(), previous_trajectory.end_time());
     const RJ::Seconds time_remaining{previous_trajectory.end_time() - start_time};
@@ -134,7 +138,6 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
                                &hit_time) ||
         trajectory_hits_dynamic(previous_trajectory, params.dynamic_obstacles, start_time, nullptr,
                                 &hit_time);
-
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
             return full_replan(params);
@@ -151,7 +154,6 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
             return full_replan(params);
         }
     }
-
     if (now - previous_created_time > kCheckBetterDeltaTime &&
         time_remaining > partial_replan_lead_time() * 2) {
         return check_better(params, previous_trajectory);
