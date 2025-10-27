@@ -147,6 +147,8 @@ void Marking::update_danger_scores() {
     // lower danger score is more dangerous
 
     const auto& ball_pos = last_world_state_.ball.position;
+    const auto& goal_loc = field_dimensions_.our_goal_loc();
+    const auto& field_center = field_dimensions_.center_field_loc();
 
     for (uint8_t i = 0; i < kNumShells; i++) {
         const auto& robot = last_world_state_.get_robot(false, i);
@@ -154,7 +156,7 @@ void Marking::update_danger_scores() {
             continue;
         }
         double dist_to_ball = ball_pos.dist_to(robot.pose.position());
-        double dist_to_goal = robot.pose.position().dist_to(field_dimensions_.our_goal_loc());
+        double dist_to_goal = robot.pose.position().dist_to(goal_loc);
 
         double min = std::numeric_limits<double>::infinity();
         for (uint8_t j = 0; j < kNumShells; j++) {
@@ -167,21 +169,41 @@ void Marking::update_danger_scores() {
                 min = dist;
             }
         }
-        const auto& goal_to_ball =  ball_pos - field_dimensions_.our_goal_loc();
-        const auto& goal_to_robot = robot.pose.position() - field_dimensions_.our_goal_loc();
-        double cosTheta = goal_to_ball.dot(goal_to_robot) / (goal_to_ball.mag() * goal_to_robot.mag());
-        // Clamp value to [-1, 1] to avoid domain errors due to floating point precision
-        if (cosTheta > 1.0) cosTheta = 1.0;
-        if (cosTheta < -1.0) cosTheta = -1.0;
-        double angle_between = std::acos(cosTheta); // returns radians
-        angle_between = std::abs(angle_between);
+
+        double angle_between = 0.0; // Default to 0 (not dangerous)
+        // Check if beyond midfield
+
+        bool onOurSide = false;
+        if (goal_loc.y() < field_center.y()) {
+            onOurSide = robot.pose.position().y() < field_center.y();
+        } else {
+            onOurSide = robot.pose.position().y() > field_center.y();
+        }
+
+        if (onOurSide) {
+            const auto& vec_goal_to_center = field_center - goal_loc;
+            const auto& vec_goal_to_robot = robot.pose.position() - goal_loc;
+
+            double cosTheta = vec_goal_to_center.dot(vec_goal_to_robot) /
+                                (vec_goal_to_center.mag() * vec_goal_to_robot.mag());
+
+            if (cosTheta > 1.0) cosTheta = 1.0;
+            if (cosTheta < -1.0) cosTheta = -1.0;
+            double central_angle = std::abs(std::acos(cosTheta)); // [0, PI/2]
+            // Normalize
+            double normalized_danger = (M_PI_2 - central_angle) / M_PI_2;
+            if (normalized_danger < 0.0) normalized_danger = 0.0; // Clamp
+
+            // Scales angles so that more central angles close together and more sideline are futher apart
+            const double kDangerAngleExponent = 0.25;
+            angle_between = std::pow(normalized_danger, kDangerAngleExponent);
+        }
 
         double danger_score = dist_to_ball * kDangerDistToBall + dist_to_goal * kDangerDistToGoal - min * kDangerDistToOurRobots - angle_between * kDangerAngle;
-        if (i < 6) {
-            SPDLOG_INFO("Robot {} has dist to goal {}", i, dist_to_goal);
-        }
+
         danger_score_[i] = danger_score;
     }
+
     for (size_t i = 0; i < 6; ++i) {
         SPDLOG_INFO("Robot {} has danger score {}", i, danger_score_[i]);
     }
