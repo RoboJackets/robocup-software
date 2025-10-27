@@ -74,8 +74,7 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
     const auto& rotation_constraints = request.constraints.rot;
 
     rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
+    fill_obstacles(request, &static_obstacles, false);
 
     const MotionCommand& command = request.motion_command;
 

@@ -22,7 +22,6 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
-               const std::vector<DynamicObstacle>& dynamic_obstacles,
                const std::vector<Point>& bias_waypoints) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -36,35 +35,17 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr) &&
-         !trajectory_hits_dynamic(straight_trajectory, dynamic_obstacles, start_time, nullptr,
-                                  nullptr))) {
+        !trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr)) {
         return straight_trajectory;
     }
 
-    ShapeSet obstacles = static_obstacles;
-    Trajectory path{{}};
-    constexpr int kAttemptsToAvoidDynamics = 10;
-    for (int i = 0; i < kAttemptsToAvoidDynamics; i++) {
-        std::vector<Point> points =
-            generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
+    std::vector<Point> points =
+        generate_rrt(start.position, goal.position, static_obstacles, bias_waypoints);
 
-        BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
+    BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
 
-        path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
-                                motion_constraints, start_time);
-
-        Circle hit_circle;
-        if (!trajectory_hits_dynamic(path, dynamic_obstacles, path.begin_time(), &hit_circle,
-                                     nullptr)) {
-            break;
-        }
-
-        // Inflate the radius slightly so we don't try going super close to
-        // it and hitting it again.
-        hit_circle.radius(hit_circle.radius() * 1.5f);
-        obstacles.add(std::make_shared<Circle>(hit_circle));
-    }
+    Trajectory path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
+                                       motion_constraints, start_time);
 
     return path;
 }
@@ -74,7 +55,6 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles,
-                        const std::vector<DynamicObstacle>& dynamic_obstacles,
                         const FieldDimensions* field_dimensions, unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -127,8 +107,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // If all else fails, use rrt to ensure obstacle avoidance
-    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles,
-                           dynamic_obstacles);
+    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,

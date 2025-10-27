@@ -7,11 +7,8 @@ namespace planning {
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
     const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
-                   &ball_trajectory);
+    fill_obstacles(request, &static_obstacles, !command.ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
@@ -32,7 +29,7 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, static_obstacles,
-                              std::vector<DynamicObstacle>{}, request.field_dimensions,
+                              request.field_dimensions,
                               request.constraints, angle_function, request.shell_id,
                               RJ::Seconds(3.0)},
         std::move(previous_));

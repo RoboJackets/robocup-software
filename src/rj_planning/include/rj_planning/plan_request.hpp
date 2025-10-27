@@ -5,7 +5,6 @@
 #include <utility>
 
 #include <rj_common/context.hpp>
-#include <rj_common/planning/dynamic_obstacle.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
@@ -176,18 +175,11 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
  * @param in the plan request.
  * @param out_static an (empty) vector of static obstacles to be populated.
  *  This will be filled with field obstacles, local (virtual) obstacles,
- *  opponent robots, and our robots that have not yet been planned.
- * @param out_dynamic an (empty) vector of dynamic obstacles to be populated.
- *  This will be filled with trajectories for our robots that have already been
- *  planned.
+ *  opponent robots, and our robots.
  * @param avoid_ball whether to avoid the ball. If this is true, out_ball_trajectory
  *  should point to a valid trajectory.
- * @param ball_trajectory temporary storage for the ball trajectory. This must
- *  outlive the usage of out_dynamic. If avoid_ball == false, this should be
- *  nullptr.
  */
 void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
-                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
-                    Trajectory* out_ball_trajectory = nullptr);
+                    bool avoid_ball);
 
 }  // namespace planning

@@ -8,7 +8,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const auto& motion_constraints = plan_request.constraints.mot;
 
     rj_geometry::ShapeSet obstacles;
-    fill_obstacles(plan_request, &obstacles, nullptr, true, nullptr);
+    fill_obstacles(plan_request, &obstacles, true);
 
     if (!obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to
@@ -34,7 +34,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     path_obstacles.add(std::make_shared<rj_geometry::Circle>(ball));
 
     auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
-                                           start_instant.stamp, path_obstacles, {},
+                                           start_instant.stamp, path_obstacles,
                                            plan_request.field_dimensions, plan_request.shell_id);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");

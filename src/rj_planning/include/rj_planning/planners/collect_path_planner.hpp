@@ -53,26 +53,21 @@ private:
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,
-        const rj_geometry::ShapeSet& static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles);
+        const rj_geometry::ShapeSet& static_obstacles);
 
     Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                         const rj_geometry::ShapeSet& static_obstacles,
-                         const std::vector<DynamicObstacle>& dynamic_obstacles);
+                         const rj_geometry::ShapeSet& static_obstacles);
 
     // Dampen doesn't need to take obstacles into account.
     Trajectory dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                      const rj_geometry::ShapeSet& static_obstacles,
-                      const std::vector<DynamicObstacle>& dynamic_obstacles);
+                      const rj_geometry::ShapeSet& static_obstacles);
 
     Trajectory fine_approach(
         const PlanRequest& plan_request, RobotInstant start_instant,
-        const rj_geometry::ShapeSet& static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles);
+        const rj_geometry::ShapeSet& static_obstacles);
 
     Trajectory invalid(const PlanRequest& plan_request,
-                       const rj_geometry::ShapeSet& static_obstacles,
-                       const std::vector<DynamicObstacle>& dynamic_obstacles);
+                       const rj_geometry::ShapeSet& static_obstacles);
 
     Trajectory previous_;
 

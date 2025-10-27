@@ -8,11 +8,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // Collect obstacles
     rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
     bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, ignore_ball,
-                   &ball_trajectory);
+    fill_obstacles(plan_request, &static_obstacles, ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
@@ -30,7 +27,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
+        Replanner::PlanParams{plan_request.start, target, static_obstacles,
                               plan_request.field_dimensions, plan_request.constraints,
                               angle_function, plan_request.shell_id, RJ::Seconds(3.0)},
         std::move(previous_));

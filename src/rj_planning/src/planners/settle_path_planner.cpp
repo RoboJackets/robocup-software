@@ -29,10 +29,7 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // List of obstacles
     ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, avoid_ball,
-                   &ball_trajectory);
+    fill_obstacles(plan_request, &static_obstacles, avoid_ball);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
@@ -73,15 +70,15 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     // Run state code
     switch (current_state_) {
         case SettlePathPlannerStates::Intercept:
-            result = intercept(plan_request, start_instant, static_obstacles, dynamic_obstacles,
+            result = intercept(plan_request, start_instant, static_obstacles,
                                delta_pos, face_pos);
             break;
         case SettlePathPlannerStates::Dampen:
-            result = dampen(plan_request, start_instant, static_obstacles, dynamic_obstacles,
+            result = dampen(plan_request, start_instant, static_obstacles,
                             delta_pos, face_pos);
             break;
         default:
-            result = invalid(plan_request, static_obstacles, dynamic_obstacles);
+            result = invalid(plan_request, static_obstacles);
             break;
     }
 
@@ -162,7 +159,6 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
 
 Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
                                         const rj_geometry::ShapeSet& static_obstacles,
-                                        const std::vector<DynamicObstacle>& dynamic_obstacles,
                                         rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
@@ -211,7 +207,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, static_obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         // Calculate the
@@ -323,7 +319,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, static_obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         if (!shortcut.empty()) {
@@ -354,7 +350,6 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     Replanner::PlanParams params{start_instant,
                                  target_robot_intersection,
                                  static_obstacles,
-                                 dynamic_obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
@@ -376,7 +371,6 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
 Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
                                      const rj_geometry::ShapeSet& static_obstacles,
-                                     const std::vector<DynamicObstacle>& dynamic_obstacles,
                                      rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     // Only run once if we can
 
@@ -462,12 +456,12 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles, dynamic_obstacles,
+                                              static_obstacles,
                                               plan_request.field_dimensions, plan_request.shell_id);
     } else {
         dampen_end = CreatePath::intermediate(
             previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            previous_.last().stamp, static_obstacles, dynamic_obstacles,
+            previous_.last().stamp, static_obstacles,
             plan_request.field_dimensions, plan_request.shell_id);
     }
 
@@ -484,8 +478,7 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
 }
 
 Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
-                                      const rj_geometry::ShapeSet& static_obstacles,
-                                      const std::vector<DynamicObstacle>& dynamic_obstacles) {
+                                      const rj_geometry::ShapeSet& static_obstacles) {
     SPDLOG_WARN("Invalid state in settle planner. Restarting");
     current_state_ = SettlePathPlannerStates::Intercept;
 
@@ -496,7 +489,6 @@ Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
     Replanner::PlanParams params{plan_request.start,
                                  target,
                                  static_obstacles,
-                                 dynamic_obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),

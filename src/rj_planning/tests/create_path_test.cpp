@@ -137,7 +137,7 @@ TEST(CreatePath, intermediate_creation_time) {
 
         auto start_time = RJ::now();
         Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(),
-                                                   obstacles, {}, field_dimensions, 0);
+                                                   obstacles, field_dimensions, 0);
         double nanos = (RJ::now() - start_time).count();
         file << "CreatePath::intermediate() Time: " << nanos / 1e6 << " ms\n";
         tfile << "CreatePath::intermediate() Time: "
