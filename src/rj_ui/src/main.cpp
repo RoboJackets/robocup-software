@@ -18,6 +18,7 @@
 
 #include "rj_ui/main_window.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
+#include "rj_utils/latency_benchmarking.hpp"
 
 using namespace std;
 
@@ -43,7 +44,9 @@ void usage(const char* prog) {
 
 int main(int argc, char* argv[]) {
     printf("Starting Soccer...\n");
-
+    latency_benchmarking::Registry registery;
+    // registery.lol();
+    printf("stupidest thing ive ever witnessed");
     //  register our signal handler
     signal(SIGINT, signal_handler);
 

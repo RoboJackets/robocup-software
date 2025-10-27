@@ -35,6 +35,7 @@ void RotatePathPlanner::update_state() {
 bool RotatePathPlanner::is_done() const { return current_state_ == END; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
+    latency_benchmarking::Timer timer("rotate_kick_pivot", request.shell_id);
     const RobotInstant& start_instant = request.start;
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
