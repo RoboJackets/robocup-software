@@ -1,0 +1,1 @@
+string fruit_type

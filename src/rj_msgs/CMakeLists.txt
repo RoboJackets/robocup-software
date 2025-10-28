@@ -51,6 +51,7 @@ rosidl_generate_interfaces(
   msg/Trajectory.msg
   msg/WorldState.msg
   msg/OverridePosition.msg
+  msg/FruitType.msg
 
   # Communication
   msg/AgentRequest.msg
