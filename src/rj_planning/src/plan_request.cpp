@@ -20,11 +20,14 @@ rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
     return make_inflated_static_obs(robot.pose.position(), robot.velocity.linear(), kRobotRadius);
 }
 
-void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
+void fill_obstacles(const PlanRequest& in, std::vector<std::shared_ptr<Obstacle>>& out_obstacles,
                     bool avoid_ball) {
-    out_static->clear();
-    out_static->add(in.field_obstacles);
-    out_static->add(in.virtual_obstacles);
+    out_obstacles.clear();
+
+    // TODO: Convert in.global_obstacles and in.virtual_obstacles to Obstacle objects
+    // Assume these obstacles have identical padding to shape
+    // out_obstacles.add(in.global_obstacles);
+    // out_obstacles.add(in.virtual_obstacles);
 
     // Add their robots as static obstacles (inflated based on velocity).
     // See calc_static_robot_obs() docstring for more info.
@@ -32,8 +35,9 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
 
         if (their_robot.visible) {
-            out_static->add(
-                std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
+            // TODO: Create Obstacle object instead of adding to ShapeSet
+            // out_obstacles.add(
+            //     std::make_shared<rj_geometry::Circle>(make_robot_obstacle(their_robot)));
         }
     }
 
@@ -45,7 +49,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
         }
 
         // Static obstacle
-        out_static->add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
+        // TODO: Create Obstacle object instead of adding to ShapeSet
+        // out_obstacles.add(std::make_shared<rj_geometry::Circle>(make_robot_obstacle(our_robot)));
     }
 
     // Adding ball as a static obstacle (because dynamic obstacles are not working)
@@ -62,7 +67,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             in.debug_drawer->draw_circle(ball_obs, draw_color);
         }
 
-        out_static->add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
+        // TODO: Create Obstacle object instead of adding to ShapeSet
+        // out_obstacles.add(std::make_shared<rj_geometry::Circle>(std::move(ball_obs)));
 
         auto maybe_bp_point = in.play_state.ball_placement_point();
         if (maybe_bp_point.has_value() && in.play_state.is_their_restart()) {
@@ -73,7 +79,8 @@ void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
             std::shared_ptr<rj_geometry::StadiumShape> track_obs_ptr =
                 std::make_shared<rj_geometry::StadiumShape>(stadium);
 
-            out_static->add(track_obs_ptr);
+            // TODO: Create Obstacle object instead of adding to ShapeSet
+            // out_obstacles.add(track_obs_ptr);
 
             if (in.debug_drawer != nullptr) {
                 QColor draw_color = Qt::red;

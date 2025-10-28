@@ -6,9 +6,9 @@ namespace planning {
 
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    ShapeSet static_obstacles;
+    std::vector<std::shared_ptr<Obstacle>> static_obstacles;
     const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, !command.ignore_ball);
+    fill_obstacles(request, static_obstacles, !command.ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.

@@ -7,9 +7,9 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     // an easy way to convert from one PlanRequest to another
 
     // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
+    std::vector<std::shared_ptr<Obstacle>> static_obstacles;
     bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, ignore_ball);
+    fill_obstacles(plan_request, static_obstacles, ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.

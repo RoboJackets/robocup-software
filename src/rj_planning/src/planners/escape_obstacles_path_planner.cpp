@@ -7,8 +7,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
 
-    rj_geometry::ShapeSet obstacles;
-    fill_obstacles(plan_request, &obstacles, true);
+    std::vector<std::shared_ptr<Obstacle>> obstacles;
+    fill_obstacles(plan_request, obstacles, true);
 
     if (!obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to

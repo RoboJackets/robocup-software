@@ -159,9 +159,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
-    const auto global_obstacles = global_state_.global_obstacles();
-    rj_geometry::ShapeSet real_obstacles = global_obstacles;
-
     const auto def_area_obstacles = global_state_.def_area_obstacles();
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     const bool is_goalie = goalie_id == robot_id_;
@@ -192,7 +189,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     return PlanRequest{start,
                        motion_command,
                        constraints,
-                       std::move(real_obstacles),
+                       global_state_.global_obstacles(),
                        std::move(virtual_obstacles),
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),

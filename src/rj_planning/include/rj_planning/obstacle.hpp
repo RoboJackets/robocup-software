@@ -11,19 +11,43 @@ class Obstacle {
 public:
     Obstacle() = default;
 
-    virtual bool obstacle_hit(rj_geometry::Point pt);
-    virtual bool padding_hit(rj_geometry::Point pt);
-    virtual bool obstacle_near(rj_geometry::Point pt, float thresh);
-    virtual bool padding_near(rj_geometry::Point pt, float thresh);
-    virtual shared_ptr<rj_geometry::ShapeSet> get_shapes();
-    virtual std::shared_ptr<rj_geometry::Shape> get_obstacle();
-    virtual std::shared_ptr<rj_geometry::Shape> get_padding();
+    Obstacle(std::shared_ptr<rj_geometry::Shape> obs,
+             std::shared_ptr<rj_geometry::Shape> pad)
+        : obstacle(obs), padding(pad) {}
+
+    virtual ~Obstacle() = default;
+    Obstacle(const Obstacle& other) = default;
+    Obstacle(Obstacle&& other) = default;
+    Obstacle& operator=(const Obstacle& other) = default;
+    Obstacle& operator=(Obstacle&& other) = default;
+
+    virtual bool obstacle_hit(rj_geometry::Point pt) {
+        return obstacle->hit(pt);
+    }
+
+    virtual bool padding_hit(rj_geometry::Point pt) {
+        return padding->hit(pt);
+    }
+
+    virtual bool obstacle_near(rj_geometry::Point pt, float thresh) {
+        return obstacle->near_point(pt, thresh);
+    }
+
+    virtual bool padding_near(rj_geometry::Point pt, float thresh) {
+        return padding->near_point(pt, thresh);
+    }
+
+    virtual std::shared_ptr<rj_geometry::Shape> get_obstacle() {
+        return obstacle;
+    }
+
+    virtual std::shared_ptr<rj_geometry::Shape> get_padding() {
+        return padding;
+    }
 
 protected:
     std::shared_ptr<rj_geometry::Shape> obstacle;
     std::shared_ptr<rj_geometry::Shape> padding;
-    std::shared_ptr<rj_geometry::Point> velocity;
-    rj_geometry::ShapeSet shapes;
 };
 
 }  // namespace planning

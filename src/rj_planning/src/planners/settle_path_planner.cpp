@@ -28,8 +28,8 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     bool avoid_ball = true;
 
     // List of obstacles
-    ShapeSet static_obstacles;
-    fill_obstacles(plan_request, &static_obstacles, avoid_ball);
+    std::vector<std::shared_ptr<Obstacle>> static_obstacles;
+    fill_obstacles(plan_request, static_obstacles, avoid_ball);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points

@@ -11,7 +11,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
                 last_play_state_ = rj_convert::convert_from_ros(*state);
                 have_play_state_ = true;
             }
-            set_static_obstacles();
+            set_field_obstacles();
         });
     game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
         config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
@@ -45,7 +45,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
                 last_field_dimensions_ = rj_convert::convert_from_ros(*msg);
                 have_field_dimensions_ = true;
             }
-            set_static_obstacles();
+            set_field_obstacles();
         });
 }
 
@@ -115,7 +115,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     return def_area_obstacles;
 }
 
-void GlobalState::set_static_obstacles() {
+void GlobalState::set_field_obstacles() {
     std::scoped_lock lock{last_field_dimensions_mutex_, last_play_state_mutex_,
                           last_def_area_obstacles_mutex_};
 
