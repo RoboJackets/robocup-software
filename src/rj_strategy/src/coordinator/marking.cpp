@@ -50,10 +50,26 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         return;
     }
     if (num_markers_ < kMaxMarkers) {
+        uint8_t robotInPossession = kInvalidRobotId;
+        double min_dist_to_ball = std::numeric_limits<double>::infinity();
+        const auto& ball_pos = last_world_state_.ball.position;
+        for (uint8_t i = 0; i < kNumShells; i++) {
+            const auto& robot = last_world_state_.get_robot(false, i);
+            if (!robot.visible) {
+                continue;
+            }
+            double dist_to_ball = ball_pos.dist_to(robot.pose.position());
+            if (dist_to_ball < min_dist_to_ball && dist_to_ball < 0.3) {
+                robotInPossession = i;
+                min_dist_to_ball = dist_to_ball;
+            }
+        }
+
+
         uint8_t most_dangerous = kInvalidRobotId;
         double min = std::numeric_limits<double>::infinity();
         for (size_t i = 0; i < danger_score_.size(); ++i) {
-            if (enemey_to_friends_[i] != kInvalidRobotId) {
+            if (enemey_to_friends_[i] != kInvalidRobotId || i == robotInPossession) {
                 continue;
             }
             if (danger_score_[i] < min) {
@@ -102,13 +118,32 @@ void Marking::publish_marking_list() {
     // make this run on a timer
     update_danger_scores();
 
-    // reshuffle, only change one because on timer so will get others later
+    // find the guy with possession of the ball if exists so we don't mark them
+    uint8_t robotInPossession = kInvalidRobotId;
+    double min_dist_to_ball = std::numeric_limits<double>::infinity();
+    const auto& ball_pos = last_world_state_.ball.position;
+    for (uint8_t i = 0; i < kNumShells; i++) {
+        const auto& robot = last_world_state_.get_robot(false, i);
+        if (!robot.visible) {
+            continue;
+        }
+        double dist_to_ball = ball_pos.dist_to(robot.pose.position());
+        if (dist_to_ball < min_dist_to_ball && dist_to_ball < 0.3) {
+            robotInPossession = i;
+            min_dist_to_ball = dist_to_ball;
+        }
+    }
+
+    if (robotInPossession != kInvalidRobotId) {
+        SPDLOG_INFO("Robot in possession is {}", robotInPossession);
+    }
+
 
     // finding most dangerous of non-marked robots
     uint8_t most_dangerous = kInvalidRobotId;
     double min = std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < danger_score_.size(); ++i) {
-        if (enemey_to_friends_[i] != kInvalidRobotId) {
+        if (enemey_to_friends_[i] != kInvalidRobotId || i == robotInPossession) {
             continue;
         }
         if (danger_score_[i] < min) {
@@ -116,6 +151,15 @@ void Marking::publish_marking_list() {
             min = danger_score_[i];
         }
     }
+
+    for (size_t i = 0; i < marking_list_.size(); ++i) {
+        if (marking_list_[i] == robotInPossession && robotInPossession != kInvalidRobotId) {
+            enemey_to_friends_[robotInPossession] = kInvalidRobotId;
+            marking_list_[i] = most_dangerous;
+            enemey_to_friends_[most_dangerous] = i;
+        }
+    }
+
     if (most_dangerous != kInvalidRobotId) {
         uint8_t not_dangerous_robot_id = kInvalidRobotId;
         double max_danger_sub = 0.0;

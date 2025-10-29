@@ -62,6 +62,7 @@ Defense::State Defense::update_state() {
     switch (current_state_) {
         case IDLING:
             // SPDLOG_INFO("Robot {}: idling", robot_id_);
+            next_state = JOINING_WALL;
             break;
         case JOINING_WALL:
             send_join_wall_request();
