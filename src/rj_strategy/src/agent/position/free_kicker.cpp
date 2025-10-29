@@ -11,11 +11,34 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     // SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
 
-    rj_geometry::Point goal_corner{
-        this->field_dimensions_.their_goal_loc().x() + 0.5 * this->field_dimensions_.goal_width(),
-        this->field_dimensions_.their_goal_loc().y()};
+    // Read positions of their team
+    std::vector<RobotState> their_robots = this->last_world_state_->their_robots;
+    rj_geometry::Point enemy_goalie_location{0.0, 0.0};
 
-    planning::LinearMotionInstant target{goal_corner};
+    for (const RobotState& enemy : their_robots) {
+        // Get position of their goalie
+        if (this->field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            enemy_goalie_location = enemy.pose.position();
+            break;
+        }
+    }
+
+    rj_geometry::Point best_shot = this->field_dimensions_.their_goal_loc();
+    rj_geometry::Point increment(0.05, 0);
+    double best_distance = -1.0;
+    double goal_width = field_dimensions_.goal_width();
+    rj_geometry::Point curr_point =
+        field_dimensions_.their_goal_loc() - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    for (int i = 0; i < 19; i++) {
+        double distance = (enemy_goalie_location - curr_point).mag();
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = curr_point;
+        }
+        curr_point = curr_point + increment;
+    }
+
+    planning::LinearMotionInstant target{best_shot};
     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
     intent.motion_command = line_kick_cmd;
 
