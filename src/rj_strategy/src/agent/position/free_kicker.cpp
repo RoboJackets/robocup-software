@@ -13,7 +13,7 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     // Read positions of their team
     std::vector<RobotState> their_robots = this->last_world_state_->their_robots;
-    rj_geometry::Point enemy_goalie_location{0.0, 0.0};
+    rj_geometry::Point enemy_goalie_location = this->field_dimensions_.their_goal_loc();
 
     for (const RobotState& enemy : their_robots) {
         // Get position of their goalie
@@ -29,8 +29,14 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     double goal_width = field_dimensions_.goal_width();
     rj_geometry::Point curr_point =
         field_dimensions_.their_goal_loc() - rj_geometry::Point(goal_width / 2.0, 0) + increment;
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+    rj_geometry::Point vec = curr_point - ball_position;
     for (int i = 0; i < 19; i++) {
-        double distance = (enemy_goalie_location - curr_point).mag();
+        rj_geometry::Point enemy_vec = enemy_goalie_location - curr_point;
+        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
+        enemy_vec = enemy_vec - (projection)*vec;
+        double distance = enemy_vec.mag();
+
         if (distance > best_distance) {
             best_distance = distance;
             best_shot = curr_point;
