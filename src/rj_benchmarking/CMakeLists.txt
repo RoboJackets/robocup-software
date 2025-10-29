@@ -22,6 +22,7 @@ set(BENCHMARKING_LIBS
 )
 
 set(BENCHMARKING_SRC
+    src/benchmarking.cpp
     src/registry.cpp
 )
 
