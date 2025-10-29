@@ -12,7 +12,7 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
 
     // Read positions of their team
-    std::vector<RobotState> their_robots = this->last_world_state_->their_robots;
+    std::vector<RobotState> const their_robots = this->last_world_state_->their_robots;
     rj_geometry::Point enemy_goalie_location = this->field_dimensions_.their_goal_loc();
 
     for (const RobotState& enemy : their_robots) {
@@ -24,25 +24,27 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     }
 
     rj_geometry::Point best_shot = this->field_dimensions_.their_goal_loc();
-    rj_geometry::Point increment(0.05, 0);
-    double best_distance = -1.0;
-    double goal_width = field_dimensions_.goal_width();
+    rj_geometry::Point const increment(0.05, 0);
+    double best_angle = -1.0;
     rj_geometry::Point curr_point =
-        field_dimensions_.their_goal_loc() - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+        field_dimensions_.their_goal_loc() - rj_geometry::Point(field_dimensions_.goal_width() / 2.0, 0) + increment;
+    rj_geometry::Point const ball_position = this->last_world_state_->ball.position;
     rj_geometry::Point vec = curr_point - ball_position;
     for (int i = 0; i < 19; i++) {
-        rj_geometry::Point enemy_vec = enemy_goalie_location - curr_point;
+        rj_geometry::Point enemy_vec = enemy_goalie_location - ball_position;
         auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
         enemy_vec = enemy_vec - (projection)*vec;
-        double distance = enemy_vec.mag();
+        double const distance = enemy_vec.mag();
+        double const angle = distance / projection;
 
-        if (distance > best_distance) {
-            best_distance = distance;
+        if (angle > best_angle) {
+            best_angle = angle;
             best_shot = curr_point;
         }
         curr_point = curr_point + increment;
     }
+
+    SPDLOG_INFO("Free Kicker {} shooting at point {}, {}", this->robot_id_, best_shot.x(), best_shot.y());
 
     planning::LinearMotionInstant target{best_shot};
     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
