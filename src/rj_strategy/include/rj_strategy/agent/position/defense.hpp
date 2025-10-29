@@ -45,7 +45,7 @@ public:
 
 private:
     // static constexpr int kMaxWallers{6};
-    static constexpr int kMaxWallers{0};
+    static constexpr int kMaxWallers{2};
         // static_cast<int>(kNumShells)};  // This effectively turns off marking
 
     /**

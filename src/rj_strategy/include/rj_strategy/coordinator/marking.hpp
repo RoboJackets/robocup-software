@@ -38,7 +38,7 @@ private:
     void publish_marking_list();
     void update_danger_scores();
 
-    static constexpr int kMaxMarkers = 20;
+    static constexpr int kMaxMarkers = 2;
     // this is the threshold value for switching
     static constexpr double kSuperDangerSub = 3.1415926535;
     static constexpr double kDangerDistToBall = 3.0;

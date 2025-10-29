@@ -134,11 +134,6 @@ void Marking::publish_marking_list() {
         }
     }
 
-    if (robotInPossession != kInvalidRobotId) {
-        SPDLOG_INFO("Robot in possession is {}", robotInPossession);
-    }
-
-
     // finding most dangerous of non-marked robots
     uint8_t most_dangerous = kInvalidRobotId;
     double min = std::numeric_limits<double>::infinity();
@@ -248,9 +243,9 @@ void Marking::update_danger_scores() {
         danger_score_[i] = danger_score;
     }
 
-    for (size_t i = 0; i < 6; ++i) {
-        SPDLOG_INFO("Robot {} has danger score {}", i, danger_score_[i]);
-    }
+    // for (size_t i = 0; i < 6; ++i) {
+    //     SPDLOG_INFO("Robot {} has danger score {}", i, danger_score_[i]);
+    // }
 }
 
 
