@@ -37,9 +37,11 @@ public:
 private:
     void publish_marking_list();
     void update_danger_scores();
+    double find_their_robot_in_possession();
 
     static constexpr int kMaxMarkers = 2;
     // this is the threshold value for switching
+    // you can play with these constants if the current results aren't good enough
     static constexpr double kSuperDangerSub = 3.1415926535;
     static constexpr double kDangerDistToBall = 3.0;
     static constexpr double kDangerDistToGoal = 5.0;
