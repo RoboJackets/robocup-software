@@ -19,7 +19,6 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 add_library(${PROJECT_NAME} SHARED
   src/conversions.cpp
   src/logging.cpp
-  src/latency_benchmarking.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
