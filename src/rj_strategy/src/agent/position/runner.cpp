@@ -4,12 +4,6 @@ namespace strategy {
     Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
     Runner::Runner(const Position& other) : Position{other} {}
 
-    void Runner::derived_acknowledge_pass() {}
-
-    void Runner::derived_pass_ball() {}
-
-    void Runner::derived_acknowledge_ball_in_transit() {}
-
     std::string Runner::get_current_state() { 
         return "Runner"; 
     }

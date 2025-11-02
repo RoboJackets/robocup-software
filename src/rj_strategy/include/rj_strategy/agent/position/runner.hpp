@@ -9,12 +9,7 @@ namespace strategy {
             ~Runner() = default;
             Runner(const Position& other);
 
-            /* these functions do nothing, ignore */
-            void derived_acknowledge_pass() override;
-            void derived_pass_ball() override;
-            void derived_acknowledge_ball_in_transit() override;
-
-            // most important function for Runner
+            // function extended
             std::string get_current_state() override;
 
         private:
