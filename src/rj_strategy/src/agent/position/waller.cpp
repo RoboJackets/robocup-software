@@ -37,6 +37,8 @@ std::optional<RobotIntent> Waller::get_task(RobotIntent intent, const WorldState
 
     auto wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
 
+    wall_spacing *= 2;
+
     rj_geometry::Point target_point{};
     auto angle = (mid_point - goal_pos).angle();
     auto delta_angle = (wall_spacing * (waller_pos_ - num_wallers / 2. - 0.5)) / min_wall_rad;
