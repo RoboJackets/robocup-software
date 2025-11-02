@@ -14,7 +14,11 @@ using Entry = std::tuple<std::shared_ptr<const Trajectory>, int>;
  */
 class TrajectoryCollection {
 public:
+    ~TrajectoryCollection() = default;
     std::array<Entry, kNumShells> get();
+    TrajectoryCollection();
+    TrajectoryCollection(const TrajectoryCollection& other) = default;
+    TrajectoryCollection(TrajectoryCollection&& other) noexcept = default;
 
     Entry get(int robot_id);
 
