@@ -34,6 +34,8 @@
 #include "rj_strategy/agent/position/zoner.hpp"
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"
 
+#include "runner.hpp"
+
 namespace strategy {
 
 /*

@@ -40,6 +40,7 @@ set(RJ_STRATEGY_DEPS
 
 set(RJ_STRATEGY_SRC
   # Positions
+  src/agent/position/runner.cpp
   src/agent/position.cpp
   src/agent/position/defense.cpp
   src/agent/position/free_kicker.cpp
