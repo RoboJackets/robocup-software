@@ -25,6 +25,7 @@ find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_rrt REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 set(RJ_PLANNING_DEPS
   rclcpp
@@ -39,6 +40,7 @@ set(RJ_PLANNING_DEPS
   rj_msgs
   rj_param_utils
   rj_rrt
+  rj_benchmarking
   Flann
 )
 

@@ -9,5 +9,6 @@ Benchmarking::Benchmarking() : rclcpp::Node{"rj_benchmarking"}
 
 Benchmarking::~Benchmarking()
 {
+    delete Registry::getInstance();
     SPDLOG_INFO("TESTING: Benchmarking Destroyed");
 }

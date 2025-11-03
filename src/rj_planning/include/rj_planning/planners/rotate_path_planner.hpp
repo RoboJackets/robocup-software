@@ -17,7 +17,7 @@
 #include "rj_planning/primitives/trapezoidal_motion.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
 
-#include "rj_utils/latency_benchmarking.hpp"
+#include <rj_benchmarking/timer.hpp>
 
 namespace planning {
 /**
