@@ -3,7 +3,7 @@
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
-    : Position(r_id, "RobotFactoryPosition"), clientHandles_(std::make_shared<ClientHandles>())  {
+    : Position(r_id, "RobotFactoryPosition"), clientHandles_(std::make_shared<ClientHandles>()) {
     clientHandles_->kickerPickerClient = std::make_unique<KickerPickerClient>(node, r_id);
     clientHandles_->markingClient = std::make_unique<MarkingClient>(node, r_id);
     if (robot_id_ == 0) {
@@ -83,7 +83,8 @@ void RobotFactoryPosition::process_play_state() {
 void RobotFactoryPosition::handle_stop() { set_default_position(); }
 
 void RobotFactoryPosition::handle_penalty_playing() {
-    if (!(clientHandles_->kickerPickerClient->am_i_member() && clientHandles_->kickerPickerClient->is_selected())) {
+    if (!(clientHandles_->kickerPickerClient->am_i_member() &&
+          clientHandles_->kickerPickerClient->is_selected())) {
         set_current_position<SmartIdle>();
     }
 }
@@ -95,7 +96,8 @@ void RobotFactoryPosition::handle_setup() {
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !clientHandles_->kickerPickerClient->am_i_member()) {
-                clientHandles_->kickerPickerClient->join_group([this](KickerPickerClient::Result result) {
+            clientHandles_->kickerPickerClient->join_group([this](
+                                                               KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();

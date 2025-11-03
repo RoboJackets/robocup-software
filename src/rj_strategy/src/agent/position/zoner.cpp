@@ -6,10 +6,13 @@ Zoner::Zoner(int r_id) : Position(r_id, "Zoner") {}
 
 Zoner::Zoner(const Position& other) : Position{other} { position_name_ = "Zoner"; }
 
-Zoner::Zoner(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Zoner"), clientHandles_{clientHandles} {}
+Zoner::Zoner(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "Zoner"), clientHandles_{clientHandles} {}
 
-Zoner::Zoner(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {
-    position_name_ = "Zoner"; }
+Zoner::Zoner(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, clientHandles_{clientHandles} {
+    position_name_ = "Zoner";
+}
 
 std::optional<RobotIntent> Zoner::derived_get_task(RobotIntent intent) {
     current_state_ = next_state();

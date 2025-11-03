@@ -9,9 +9,11 @@ Defense::Defense(const Position& other) : Position{other} {
     walling_robots_ = {};
 }
 
-Defense::Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "Defense"), clientHandles_{clientHandles} {}
+Defense::Defense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "Defense"), clientHandles_{clientHandles} {}
 
-Defense::Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {
+Defense::Defense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, clientHandles_{clientHandles} {
     position_name_ = "Defense";
     walling_robots_ = {};
 }
@@ -43,7 +45,8 @@ Defense::State Defense::update_state() {
             return IDLING;
         }
 
-        if (clientHandles_->markingClient->am_i_member() && clientHandles_->markingClient->am_i_marking()) {
+        if (clientHandles_->markingClient->am_i_member() &&
+            clientHandles_->markingClient->am_i_marking()) {
             return MARKING;
         } else {
             SPDLOG_INFO("Robot {}: After pending marking, not a member so idling", robot_id_);
@@ -105,7 +108,8 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
         case MARKING:
-            if (!clientHandles_->markingClient->am_i_member() || !clientHandles_->markingClient->am_i_marking()) {
+            if (!clientHandles_->markingClient->am_i_member() ||
+                !clientHandles_->markingClient->am_i_marking()) {
                 next_state = IDLING;
             }
             break;
@@ -115,7 +119,6 @@ Defense::State Defense::update_state() {
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
-
 
                 clientHandles_->markingClient->join_group([this](const MarkingClient::Result& res) {
                     if (res.am_i_member && res.am_i_marking) {
@@ -205,13 +208,18 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == MARKING) {
-        rj_geometry::Point targetPoint = last_world_state_->get_robot(false, clientHandles_->markingClient->who_am_i_marking()).pose.position();
+        rj_geometry::Point targetPoint =
+            last_world_state_->get_robot(false, clientHandles_->markingClient->who_am_i_marking())
+                .pose.position();
 
         rj_geometry::Point ballPoint = last_world_state_->ball.position;
         rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
-        planning::LinearMotionInstant goal{targetPoint + targetToBall, rj_geometry::Point{0.0, 0.0}};
-        // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint + targetToBall).y());
-        intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
+        planning::LinearMotionInstant goal{targetPoint + targetToBall,
+                                           rj_geometry::Point{0.0, 0.0}};
+        // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint +
+        // targetToBall).y());
+        intent.motion_command =
+            planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
 
         return intent;
     }
