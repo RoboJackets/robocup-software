@@ -24,6 +24,7 @@ set(BENCHMARKING_LIBS
 set(BENCHMARKING_SRC
     src/benchmarking.cpp
     src/registry.cpp
+    src/timer.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

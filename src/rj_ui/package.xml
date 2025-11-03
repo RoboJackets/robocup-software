@@ -30,6 +30,7 @@
   <depend>rj_referee</depend>
   <depend>rj_config_client</depend>
   <depend>rj_topic_utils</depend>
+  <!-- <depend>rj_benchmarking</depend> -->
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
