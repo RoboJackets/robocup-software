@@ -4,13 +4,9 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 
-Runner::Runner(const Position& other) : Position{other} {
-    position_name_ = "Runner";
-}
+Runner::Runner(const Position& other) : Position{other} { position_name_ = "Runner"; }
 
-std::string Runner::get_current_state() {
-    return "Runner";
-}
+std::string Runner::get_current_state() { return "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     State new_state = update_state();
@@ -32,23 +28,23 @@ Runner::State Runner::update_state() {
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     rj_geometry::Point center = field_dimensions_.center_field_loc();
-    
+
     rj_geometry::Point vertices[kNumVertices] = {
         rj_geometry::Point{center.x() + 2.0, center.y() + 1.5},
         rj_geometry::Point{center.x() - 2.0, center.y() + 1.5},
         rj_geometry::Point{center.x() - 2.0, center.y() - 1.5},
-        rj_geometry::Point{center.x() + 2.0, center.y() - 1.5}
-    };
+        rj_geometry::Point{center.x() + 2.0, center.y() - 1.5}};
 
     switch (current_state_) {
         case RUNNING: {
             rj_geometry::Point target_vertex = vertices[current_vertex_index_];
             planning::LinearMotionInstant target{target_vertex, rj_geometry::Point{0.0, 0.0}};
-            intent.motion_command = planning::MotionCommand{"path_target", target, planning::FaceAngle{0}, true};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", target, planning::FaceAngle{0}, true};
             return intent;
         }
     }
-    
+
     return intent;
 }
 
