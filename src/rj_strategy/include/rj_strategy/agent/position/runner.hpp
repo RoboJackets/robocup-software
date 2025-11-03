@@ -27,13 +27,7 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     // possible states of the Runner
-    enum State {
-        IDLING,
-        WALL1,          
-        WALL2,       
-        WALL3,  
-        WALL4
-    };
+    enum State { IDLING, WALL1, WALL2, WALL3, WALL4 };
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
     State next_state();
 

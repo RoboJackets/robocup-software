@@ -190,7 +190,7 @@ void RobotFactoryPosition::update_position() {
 void RobotFactoryPosition::set_default_position() {
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
-    if (robot_id_==1){
+    if (robot_id_ == 1) {
         return;
     }
     std::vector<RobotPos> robots_copy;
