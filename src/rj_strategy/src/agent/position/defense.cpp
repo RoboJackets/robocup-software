@@ -49,7 +49,6 @@ Defense::State Defense::update_state() {
             clientHandles_->markingClient->am_i_marking()) {
             return MARKING;
         } else {
-            SPDLOG_INFO("Robot {}: After pending marking, not a member so idling", robot_id_);
             return IDLING;
         }
     }
@@ -64,7 +63,6 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
-            // SPDLOG_INFO("Robot {}: idling", robot_id_);
             next_state = JOINING_WALL;
             break;
         case JOINING_WALL:

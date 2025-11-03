@@ -25,10 +25,13 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             marking_list_[request->robot_id] = kInvalidRobotId;
             enemey_to_friends_[enemey_id] = kInvalidRobotId;
             num_markers_--;
-            // replace if possible
+            // The robot is leaving so replace the robot its marking if possible
             const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
             double min = std::numeric_limits<double>::infinity();
             uint8_t waiting_robot_id = kInvalidRobotId;
+            // Find closest robot in queue for replacement
+            // Queue is queue of robots that want to join marking but aren't good enough
+            //          Not close enough to mark or we exceeed the max num of markers
             for (size_t i = 0; i < queue_.size(); ++i) {
                 const auto& i_robot = last_world_state_.get_robot(true, queue_[i]);
                 double distance = i_robot.pose.position().dist_to(enemey_robot.pose.position());
@@ -52,6 +55,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         return;
     }
     if (num_markers_ < kMaxMarkers) {
+        // this means we can add this prospective marker as a marker
         uint8_t robotInPossession = find_their_robot_in_possession();
 
         uint8_t most_dangerous = kInvalidRobotId;
@@ -67,6 +71,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             }
         }
         if (most_dangerous != kInvalidRobotId) {
+            // Assign most dangerous unmarked robot without ball
             enemey_to_friends_[most_dangerous] = request->robot_id;
             marking_list_[request->robot_id] = most_dangerous;
             num_markers_++;
@@ -74,10 +79,11 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             queue_.push_back(request->robot_id);
         }
     } else {
-        // should we kick someone out
+        // should we kick someone out (is this new robot a better marker)
         double better_distance = 0;
         uint8_t kick_out_this_robot_id = kInvalidRobotId;
         const auto& robot_requesting = last_world_state_.get_robot(true, request->robot_id);
+        // Kicked out robot is one that is furthest from its marker and new robot is closer than it
         for (size_t i = 0; i < marking_list_.size(); ++i) {
             if (marking_list_[i] != kInvalidRobotId) {
                 uint8_t enemey_id = marking_list_[i];
@@ -126,9 +132,9 @@ void Marking::publish_marking_list() {
         }
     }
 
-    // checking if anyone we are marking has possession and if they are, then they should take the
-    // most dangerous guy then he would have been assigned to someone so no need to check the others
     bool assigned = false;
+    // check if anyone being marked has the ball
+    // if so, remove them from being marked and assign them the most dangerous robot
     for (size_t i = 0; i < marking_list_.size(); ++i) {
         if (marking_list_[i] == robotInPossession && robotInPossession != kInvalidRobotId) {
             enemey_to_friends_[robotInPossession] = kInvalidRobotId;
@@ -138,6 +144,7 @@ void Marking::publish_marking_list() {
         }
     }
 
+    // If the most dangerous is not assigned then find the robot that is assigned to least dangerous
     if (most_dangerous != kInvalidRobotId && !assigned) {
         uint8_t not_dangerous_robot_id = kInvalidRobotId;
         double max_danger_sub = 0.0;
@@ -153,6 +160,8 @@ void Marking::publish_marking_list() {
         }
         // seeing if most dangerous of non-marked robots is significantly more dangerous than any
         // marked robot
+        // This only gets rid of the most dangerous non-marked robot
+        //      , subsequent runs will pick up next most dangerous
         if (max_danger_sub > kSuperDangerSub && not_dangerous_robot_id != kInvalidRobotId) {
             uint8_t friend_id = enemey_to_friends_[not_dangerous_robot_id];
             enemey_to_friends_[not_dangerous_robot_id] = kInvalidRobotId;
