@@ -9,12 +9,13 @@ namespace strategy {
  */
 
 MarkingClient::MarkingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
-    : node_{std::move(node)}, robot_id_{robot_id}, selected_robot_marking_id_{MarkingClient::kInvalidRobotId} {
+    : node_{std::move(node)},
+      robot_id_{robot_id},
+      selected_robot_marking_id_{MarkingClient::kInvalidRobotId} {
     client_ = node_->create_client<rj_msgs::srv::Marking>("marking_srv");
 }
 
 void MarkingClient::join_group(StatusCallback callback) {
-
     if (am_i_member_) {
         return;
     }

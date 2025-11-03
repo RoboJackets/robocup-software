@@ -2,12 +2,12 @@
 
 namespace strategy {
 
-Marking::Marking()
-    : Coordinator("marking_srv", "marking_data", "marking_node") {
+Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node") {
     // Subscribe to world state
-    marking_list_.fill(kInvalidRobotId); // initializes to no valid markers
-    enemey_to_friends_.fill(kInvalidRobotId); // matches the enemy robot to who is marking them
-    danger_score_.fill(std::numeric_limits<double>::infinity()); // everyone starts with an infinite danger score
+    marking_list_.fill(kInvalidRobotId);       // initializes to no valid markers
+    enemey_to_friends_.fill(kInvalidRobotId);  // matches the enemy robot to who is marking them
+    danger_score_.fill(
+        std::numeric_limits<double>::infinity());  // everyone starts with an infinite danger score
     num_markers_ = 0;
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
@@ -38,13 +38,15 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 }
             }
             if (kInvalidRobotId != waiting_robot_id) {
-                queue_.erase(std::remove(queue_.begin(), queue_.end(), waiting_robot_id), queue_.end());
+                queue_.erase(std::remove(queue_.begin(), queue_.end(), waiting_robot_id),
+                             queue_.end());
                 marking_list_[waiting_robot_id] = enemey_id;
                 enemey_to_friends_[enemey_id] = waiting_robot_id;
                 num_markers_++;
             }
         } else {
-            queue_.erase(std::remove(queue_.begin(), queue_.end(), request->robot_id), queue_.end());
+            queue_.erase(std::remove(queue_.begin(), queue_.end(), request->robot_id),
+                         queue_.end());
         }
         response->success = true;
         return;
@@ -81,7 +83,9 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 uint8_t enemey_id = marking_list_[i];
                 const auto& i_robot = last_world_state_.get_robot(true, i);
                 const auto& enemey_robot = last_world_state_.get_robot(false, enemey_id);
-                double dist = (i_robot.pose.position().dist_to(enemey_robot.pose.position())) - (robot_requesting.pose.position().dist_to(enemey_robot.pose.position()));
+                double dist =
+                    (i_robot.pose.position().dist_to(enemey_robot.pose.position())) -
+                    (robot_requesting.pose.position().dist_to(enemey_robot.pose.position()));
                 if (dist > better_distance) {
                     better_distance = dist;
                     kick_out_this_robot_id = i;
@@ -122,8 +126,8 @@ void Marking::publish_marking_list() {
         }
     }
 
-    // checking if anyone we are marking has possession and if they are, then they should take the most dangerous guy
-    // then he would have been assigned to someone so no need to check the others
+    // checking if anyone we are marking has possession and if they are, then they should take the
+    // most dangerous guy then he would have been assigned to someone so no need to check the others
     bool assigned = false;
     for (size_t i = 0; i < marking_list_.size(); ++i) {
         if (marking_list_[i] == robotInPossession && robotInPossession != kInvalidRobotId) {
@@ -147,7 +151,8 @@ void Marking::publish_marking_list() {
                 }
             }
         }
-        // seeing if most dangerous of non-marked robots is significantly more dangerous than any marked robot
+        // seeing if most dangerous of non-marked robots is significantly more dangerous than any
+        // marked robot
         if (max_danger_sub > kSuperDangerSub && not_dangerous_robot_id != kInvalidRobotId) {
             uint8_t friend_id = enemey_to_friends_[not_dangerous_robot_id];
             enemey_to_friends_[not_dangerous_robot_id] = kInvalidRobotId;
@@ -160,9 +165,9 @@ void Marking::publish_marking_list() {
 }
 
 void Marking::update_danger_scores() {
-
-    // danger score calculation is distance_to_ball * constant + distance_to_goal * constant - distance_from_our_closest_robot * constant - danger_angle * constant
-    // lower danger score is more dangerous
+    // danger score calculation is distance_to_ball * constant + distance_to_goal * constant -
+    // distance_from_our_closest_robot * constant - danger_angle * constant lower danger score is
+    // more dangerous
 
     const auto& ball_pos = last_world_state_.ball.position;
     const auto& goal_loc = field_dimensions_.our_goal_loc();
@@ -188,7 +193,7 @@ void Marking::update_danger_scores() {
             }
         }
 
-        double angle_between = 0.0; // Default to 0 (not dangerous)
+        double angle_between = 0.0;  // Default to 0 (not dangerous)
         // Check if beyond midfield
 
         bool onOurSide = false;
@@ -203,21 +208,23 @@ void Marking::update_danger_scores() {
             const auto& vec_goal_to_robot = robot.pose.position() - goal_loc;
 
             double cosTheta = vec_goal_to_center.dot(vec_goal_to_robot) /
-                                (vec_goal_to_center.mag() * vec_goal_to_robot.mag());
+                              (vec_goal_to_center.mag() * vec_goal_to_robot.mag());
 
             if (cosTheta > 1.0) cosTheta = 1.0;
             if (cosTheta < -1.0) cosTheta = -1.0;
-            double central_angle = std::abs(std::acos(cosTheta)); // [0, PI/2]
+            double central_angle = std::abs(std::acos(cosTheta));  // [0, PI/2]
             // Normalize
             double normalized_danger = (M_PI_2 - central_angle) / M_PI_2;
-            if (normalized_danger < 0.0) normalized_danger = 0.0; // Clamp
+            if (normalized_danger < 0.0) normalized_danger = 0.0;  // Clamp
 
-            // Scales angles so that more central angles close together and more sideline are futher apart
+            // Scales angles so that more central angles close together and more sideline are futher
+            // apart
             const double kDangerAngleExponent = 0.25;
             angle_between = std::pow(normalized_danger, kDangerAngleExponent);
         }
 
-        double danger_score = dist_to_ball * kDangerDistToBall + dist_to_goal * kDangerDistToGoal - min * kDangerDistToOurRobots - angle_between * kDangerAngle;
+        double danger_score = dist_to_ball * kDangerDistToBall + dist_to_goal * kDangerDistToGoal -
+                              min * kDangerDistToOurRobots - angle_between * kDangerAngle;
 
         danger_score_[i] = danger_score;
     }
@@ -245,7 +252,6 @@ double Marking::find_their_robot_in_possession() {
 
     return robotInPossession;
 }
-
 
 }  // namespace strategy
 

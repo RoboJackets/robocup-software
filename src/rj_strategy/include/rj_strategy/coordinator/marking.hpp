@@ -1,13 +1,13 @@
 #pragma once
 
-#include <array>
 #include <algorithm>  // for std::any_of
+#include <array>
 #include <limits>
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/world_state.hpp>
 #include <rj_common/field_dimensions.hpp>
+#include <rj_common/world_state.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
@@ -17,11 +17,9 @@
 
 #include "rj_strategy/coordinator.hpp"
 
-
 namespace strategy {
 
-class Marking
-    : public Coordinator<Marking, rj_msgs::srv::Marking, rj_msgs::msg::Marking> {
+class Marking : public Coordinator<Marking, rj_msgs::srv::Marking, rj_msgs::msg::Marking> {
 public:
     static constexpr uint8_t kInvalidRobotId = kNumShells;
 
@@ -49,8 +47,10 @@ private:
     static constexpr double kDangerAngle = 2.0;
     int num_markers_;
 
-    std::array<uint8_t, kNumShells> marking_list_{};  // Initialize it to invalid robot id in constructor
-    std::array<double, kNumShells> danger_score_{}; // infinity initialized in constructor, no one is a valid target initially
+    std::array<uint8_t, kNumShells>
+        marking_list_{};  // Initialize it to invalid robot id in constructor
+    std::array<double, kNumShells>
+        danger_score_{};  // infinity initialized in constructor, no one is a valid target initially
     std::array<uint8_t, kNumShells> enemey_to_friends_{};
     std::vector<uint8_t> queue_;
     WorldState last_world_state_;

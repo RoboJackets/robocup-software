@@ -6,9 +6,11 @@ SmartIdle::SmartIdle(int r_id) : Position{r_id, "SmartIdle"} {}
 
 SmartIdle::SmartIdle(const Position& other) : Position{other} {}
 
-SmartIdle::SmartIdle(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "SmartIdle"), clientHandles_{clientHandles} {}
+SmartIdle::SmartIdle(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "SmartIdle"), clientHandles_{clientHandles} {}
 
-SmartIdle::SmartIdle(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} { }
+SmartIdle::SmartIdle(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, clientHandles_{clientHandles} {}
 
 std::string SmartIdle::get_current_state() { return "SmartIdle"; }
 

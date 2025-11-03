@@ -41,7 +41,6 @@ public:
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
     std::shared_ptr<ClientHandles> clientHandles_;
-
 };
 
 }  // namespace strategy

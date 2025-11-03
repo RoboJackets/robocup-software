@@ -6,9 +6,12 @@ PenaltyNonKicker::PenaltyNonKicker(int r_id) : Position{r_id, "PenaltyNonKicker"
 
 PenaltyNonKicker::PenaltyNonKicker(const Position& other) : Position{other} {}
 
-PenaltyNonKicker::PenaltyNonKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "PenaltyNonKicker"), clientHandles_{clientHandles} {}
+PenaltyNonKicker::PenaltyNonKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "PenaltyNonKicker"), clientHandles_{clientHandles} {}
 
-PenaltyNonKicker::PenaltyNonKicker(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {}
+PenaltyNonKicker::PenaltyNonKicker(const Position& other,
+                                   std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, clientHandles_{clientHandles} {}
 
 std::string PenaltyNonKicker::get_current_state() { return "PenaltyNonKicker"; }
 

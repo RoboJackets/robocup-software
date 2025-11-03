@@ -46,7 +46,7 @@ public:
 private:
     // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{2};
-        // static_cast<int>(kNumShells)};  // This effectively turns off marking
+    // static_cast<int>(kNumShells)};  // This effectively turns off marking
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -122,7 +122,7 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
-    RJ::Seconds kMarkingGroupJoinTimeout{2.0}; // 2 seconds
+    RJ::Seconds kMarkingGroupJoinTimeout{2.0};  // 2 seconds
 
     bool pending_marking_state_ = false;
 

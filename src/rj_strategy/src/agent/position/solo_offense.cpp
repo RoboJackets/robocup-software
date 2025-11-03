@@ -8,9 +8,11 @@ SoloOffense::SoloOffense(const Position& other) : Position{other} {
 
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
-SoloOffense::SoloOffense(int r_id, std::shared_ptr<ClientHandles> clientHandles) : Position(r_id, "SoloOffense"), clientHandles_{clientHandles} {}
+SoloOffense::SoloOffense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "SoloOffense"), clientHandles_{clientHandles} {}
 
-SoloOffense::SoloOffense(const Position& other, std::shared_ptr<ClientHandles> clientHandles) : Position{other}, clientHandles_{clientHandles} {
+SoloOffense::SoloOffense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, clientHandles_{clientHandles} {
     position_name_ = "SoloOffense";
 }
 
