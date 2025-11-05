@@ -23,25 +23,30 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         }
     }
 
-    rj_geometry::Point best_shot = this->field_dimensions_.their_goal_loc();
-    rj_geometry::Point const increment(0.05, 0);
-    double best_angle = -1.0;
-    rj_geometry::Point curr_point =
-        field_dimensions_.their_goal_loc() - rj_geometry::Point(field_dimensions_.goal_width() / 2.0, 0) + increment;
-    rj_geometry::Point const ball_position = this->last_world_state_->ball.position;
-    rj_geometry::Point vec = curr_point - ball_position;
-    for (int i = 0; i < 19; i++) {
-        rj_geometry::Point enemy_vec = enemy_goalie_location - ball_position;
-        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
-        enemy_vec = enemy_vec - (projection)*vec;
-        double const distance = enemy_vec.mag();
-        double const angle = distance / projection;
+    double ball_width_offset = 0.025;
+    rj_geometry::Point const right_goal_post =
+        this->field_dimensions_.their_goal_loc() + rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
+    
+    rj_geometry::Point const left_goal_post =
+        this->field_dimensions_.their_goal_loc() - rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) + ball_width_offset, 0.0);
 
-        if (angle > best_angle) {
-            best_angle = angle;
-            best_shot = curr_point;
+    rj_geometry::Point best_shot = right_goal_post;
+    double best_distance = -1.0;
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    int num_samples = 20;
+
+    for (int i = 0; i < num_samples; ++i) {
+        double t = i / static_cast<double>(num_samples - 1);
+        rj_geometry::Point shot_target = left_goal_post + (right_goal_post - left_goal_post) * t;
+
+        double distance = std::abs((enemy_goalie_location - ball_position).cross(shot_target - ball_position)) /
+                          (shot_target - ball_position).mag();
+
+        if (distance > best_distance) {
+            best_distance = distance;
+            best_shot = shot_target;
         }
-        curr_point = curr_point + increment;
     }
 
     SPDLOG_INFO("Free Kicker {} shooting at point {}, {}", this->robot_id_, best_shot.x(), best_shot.y());
