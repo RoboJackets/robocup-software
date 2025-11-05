@@ -12,17 +12,17 @@ SoccerMom::SoccerMom() : Node("soccer_mom") {
 
 void SoccerMom::team_color_callback(const rj_msgs::msg::TeamColor::SharedPtr msg) {
     std_msgs::msg::String fruit_msg;
-    
+
     if (msg->is_blue) {
         fruit_msg.data = "blueberries";
     } else {
         fruit_msg.data = "banana";
     }
-    
+
     team_fruit_pub_->publish(fruit_msg);
 }
 
-}
+}  // namespace tutorial
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
