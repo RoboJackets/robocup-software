@@ -25,10 +25,12 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     double ball_width_offset = 0.025;
     rj_geometry::Point const right_goal_post =
-        this->field_dimensions_.their_goal_loc() + rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
-    
+        this->field_dimensions_.their_goal_loc() +
+        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
+
     rj_geometry::Point const left_goal_post =
-        this->field_dimensions_.their_goal_loc() - rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
+        this->field_dimensions_.their_goal_loc() -
+        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
 
     rj_geometry::Point best_shot = right_goal_post;
     double best_distance = -1.0;
@@ -40,8 +42,9 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         double t = i / static_cast<double>(num_samples - 1);
         rj_geometry::Point shot_target = left_goal_post + (right_goal_post - left_goal_post) * t;
 
-        double distance = std::abs((enemy_goalie_location - ball_position).cross(shot_target - ball_position)) /
-                          (shot_target - ball_position).mag();
+        double distance =
+            std::abs((enemy_goalie_location - ball_position).cross(shot_target - ball_position)) /
+            (shot_target - ball_position).mag();
 
         if (distance > best_distance) {
             best_distance = distance;
@@ -49,7 +52,8 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         }
     }
 
-    SPDLOG_INFO("Free Kicker {} shooting at point {}, {}", this->robot_id_, best_shot.x(), best_shot.y());
+    SPDLOG_INFO("Free Kicker {} shooting at point {}, {}", this->robot_id_, best_shot.x(),
+                best_shot.y());
 
     planning::LinearMotionInstant target{best_shot};
     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
