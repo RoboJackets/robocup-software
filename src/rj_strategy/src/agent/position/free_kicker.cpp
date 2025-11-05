@@ -28,7 +28,7 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         this->field_dimensions_.their_goal_loc() + rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
     
     rj_geometry::Point const left_goal_post =
-        this->field_dimensions_.their_goal_loc() - rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) + ball_width_offset, 0.0);
+        this->field_dimensions_.their_goal_loc() - rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
 
     rj_geometry::Point best_shot = right_goal_post;
     double best_distance = -1.0;
