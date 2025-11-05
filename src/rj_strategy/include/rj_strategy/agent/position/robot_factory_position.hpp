@@ -116,7 +116,6 @@ public:
 private:
     std::unique_ptr<Position> current_position_;
 
-    KickerPickerClient kicker_picker_;
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
@@ -154,6 +153,8 @@ private:
     }
 
     bool set_position_override_if_requested();
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

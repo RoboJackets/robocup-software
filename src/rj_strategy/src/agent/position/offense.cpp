@@ -8,6 +8,15 @@ Offense::Offense(const Position& other) : Position{other}, seeker_{robot_id_} {
     position_name_ = "Offense";
 }
 
+Offense::Offense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
+    : Position(r_id, "Offense"), seeker_{r_id}, clientHandles_{clientHandles} {}
+
+Offense::Offense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
+    : Position{other}, seeker_{robot_id_}, clientHandles_{clientHandles} {
+    position_name_ = "Offense";
+}
+
+
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
@@ -39,7 +48,14 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_START: {
-            // Unconditionally only stay in this state for one tick.
+            if (clientHandles_->seekerClient->am_i_member())
+                return SEEKING_PROBE;
+            else
+                return SEEKING_START;
+        }
+
+        case SEEKING_PROBE: {
+            
             return SEEKING;
         }
 
@@ -163,16 +179,33 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case SEEKING_START: {
             // Calculate a new seeking point
-            seeker_.reset_target();
-            seeker_.set_seeker_points(seeker_points_);
-            std::optional<RobotIntent> actual_intent =
-                seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-            broadcast_seeker_request(seeker_.get_target_point(), true);
-            return actual_intent;
+            // seeker_.reset_target();
+            // seeker_.set_seeker_points(seeker_points_);
+            // std::optional<RobotIntent> actual_intent =
+            //     seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            // broadcast_seeker_request(seeker_.get_target_point(), true);
+            // return actual_intent;
+            clientHandles_->seekerClient->join_group();
+            intent.motion_command = planning::MotionCommand{};
+            return intent;
+        }
+
+        case SEEKING_PROBE: {
+            seeker_target_ = clientHandles_->seekerClient->selected_target();
+            intent.motion_command = planning::MotionCommand{};
+            return intent;
         }
 
         case SEEKING: {
-            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            //return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+            planning::PathTargetFaceOption face_option = planning::FaceBall{};
+            bool ignore_ball = false;
+            planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
+            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+
+            return intent;
         }
 
         case POSSESSION_START: {
