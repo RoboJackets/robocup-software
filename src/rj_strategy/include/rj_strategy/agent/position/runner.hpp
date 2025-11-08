@@ -7,6 +7,15 @@ namespace strategy {
     class Runner : public Position {
         public:
             // basic Runner constructor
-            Runner();
+            Runner(int r_id);
+
+        private:
+            // enum for private state variables
+            enum State {
+                SIDE_1,
+                SIDE_2,
+                SIDE_3,
+                SIDE_4
+        };
     };
 }
