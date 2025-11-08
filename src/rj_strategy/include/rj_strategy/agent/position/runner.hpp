@@ -9,6 +9,8 @@ namespace strategy {
             // basic Runner constructor
             Runner(int r_id);
 
+            void update(const WorldState* world_state);
+
         private:
             // enum for private state variables
             enum State {
@@ -16,6 +18,9 @@ namespace strategy {
                 SIDE_2,
                 SIDE_3,
                 SIDE_4
-        };
+            };
+
+            State current_state_;
+            State next_state(State s);
     };
 }
