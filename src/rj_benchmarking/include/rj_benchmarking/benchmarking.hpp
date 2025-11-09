@@ -1,7 +1,10 @@
+#pragma once
+
 #include <spdlog/spdlog.h>
 #include <rclcpp/rclcpp.hpp>
 
-class Benchmarking : public rclcpp::Node {
+class Benchmarking : public rclcpp::Node
+{
 
 public:
     Benchmarking();

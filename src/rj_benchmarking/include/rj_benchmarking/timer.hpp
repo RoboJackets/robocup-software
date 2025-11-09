@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <chrono>
 
@@ -5,7 +7,8 @@
 
 #include <cstdint>
 
-class Timer{
+class Timer
+{
 
 public:
   Timer(std::string label, std::int8_t robot_id);

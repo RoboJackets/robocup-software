@@ -17,6 +17,9 @@ find_package(builtin_interfaces REQUIRED)
 
 rosidl_generate_interfaces(
   ${PROJECT_NAME}
+  # Benchmarking
+  benchmarking/Latency.msg
+
   # Actions
   action/RobotMove.action
 

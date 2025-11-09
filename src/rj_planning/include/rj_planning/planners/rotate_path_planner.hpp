@@ -9,6 +9,7 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
+#include <rj_benchmarking/timer.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
@@ -16,8 +17,6 @@
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/trapezoidal_motion.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
-
-#include <rj_benchmarking/timer.hpp>
 
 namespace planning {
 /**
