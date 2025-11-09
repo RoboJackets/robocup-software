@@ -1,5 +1,5 @@
 #pragma once
-#include "position.hpp"
+#include "rj_strategy/agent/position.hpp"
 
 namespace strategy {
 
