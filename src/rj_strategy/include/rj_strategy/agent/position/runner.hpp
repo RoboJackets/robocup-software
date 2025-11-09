@@ -8,10 +8,15 @@ namespace strategy {
         public:
             // basic Runner constructor
             Runner(int r_id);
+            Runner(const Position& other);
+
+            std::string get_current_state() override;
 
             void update(const WorldState* world_state);
 
         private:
+            std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
             // enum for private state variables
             enum State {
                 SIDE_1,

@@ -1,15 +1,15 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
 
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+        // changing this so that I can just watch robot 1
+    if (robot_id_ == 1) {
+        current_position_ = std::make_unique<strategy::Runner>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<SmartIdle>(robot_id_);
     }
 }
 
@@ -188,52 +188,12 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
-    // Get sorted positions of all friendly robots
-    using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
-
-    std::vector<RobotPos> robots_copy;
-    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
-        // Ignore goalie
-        if (i == goalie_id_) {
-            continue;
-        }
-        if (alive_robots_[i]) {
-            robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
-        }
+    if (robot_id_ == 1) {
+        set_current_position<strategy::Runner>();
+        return;
     }
 
-    std::sort(robots_copy.begin(), robots_copy.end(),
-              [](RobotPos const& a, RobotPos const& b) { return a.second < b.second; });
-
-    // Find relative location of current robot
-    int i = 0;
-    for (RobotPos r : robots_copy) {
-        if (r.first == robot_id_) {
-            break;
-        }
-        i++;
-    }
-
-    // Assigning new position
-    // Checking whether we have possesion or if the ball is on their half
-    if (our_possession_ || last_world_state_->ball.position.y() >
-                               field_dimensions_.center_field_loc().y() - kBallDiameter) {
-        // Offensive mode
-        // Closest 2 robots on defense, rest on offense
-        if (i <= 1) {
-            set_current_position<Defense>();
-        } else {
-            set_current_position<Offense>();
-        }
-    } else {
-        // Defensive mode
-        // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
-        } else {
-            set_current_position<Offense>();
-        }
-    }
+    set_current_position<SmartIdle>();
 }
 
 std::deque<communication::PosAgentRequestWrapper>
