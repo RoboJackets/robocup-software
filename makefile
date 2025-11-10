@@ -160,7 +160,7 @@ coverage:
 		--gcov-options '\-lp'
 
 clean:
-	rn -rf build install log
+	rm -rf build install log
 	git clean -f -X -d cmake-*
 
 static-analysis:
