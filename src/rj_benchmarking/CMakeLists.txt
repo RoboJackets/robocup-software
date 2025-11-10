@@ -30,9 +30,9 @@ set(BENCHMARKING_LIBS
 )
 
 set(BENCHMARKING_SRC
-    src/benchmarking.cpp
     src/registry.cpp
     src/timer.cpp
+    src/registry_publisher.cpp
 )
 
 # RJ Benchmarking Library

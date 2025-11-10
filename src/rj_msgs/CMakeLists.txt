@@ -16,9 +16,7 @@ find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 rosidl_generate_interfaces(
-  ${PROJECT_NAME}
-  # Benchmarking
-  benchmarking/Latency.msg
+  ${PROJECT_NAME}  
 
   # Actions
   action/RobotMove.action
@@ -38,6 +36,7 @@ rosidl_generate_interfaces(
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
   msg/MotionSetpoint.msg
+  msg/Latency.msg
 
   msg/LinearMotionInstant.msg
   msg/MotionCommand.msg

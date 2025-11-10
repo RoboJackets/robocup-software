@@ -1,10 +1,11 @@
 #include "rj_benchmarking/timer.hpp"
-#include "rj_benchmarking/registry.hpp"
+// #include "rj_benchmarking/registry.hpp"
 
 Timer::Timer(std::string label, int8_t robot_id) : label_(label),
     robot_id_(robot_id), start_(std::chrono::steady_clock::now())
 {
-  SPDLOG_INFO("Testing: Timer Created " + label);
+    SPDLOG_INFO("Testing: Timer Created " + label);
+    // publisher_ = this->create_publisher<rj_msgs::msg::Latency>("/registry", 100);
 }
 
 Timer::~Timer()
@@ -13,5 +14,6 @@ Timer::~Timer()
     uint64_t time = static_cast<uint64_t>(std::chrono::
         duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()
         - start_).count());
-    Registry::getInstance()->record(label_, time, robot_id_);
+    
+    RegistryPublisher::getInstance()->publish(label_, robot_id_, time);
 }

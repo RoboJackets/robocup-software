@@ -3,7 +3,7 @@
 Registry::Registry() : rclcpp::Node{"rj_benchmarking"}
 {
     SPDLOG_INFO("TESTING: Registry Built");
-    subscription_ = this->create_subscription<rj_msgs::benchmarking::Latency>(
+    subscription_ = this->create_subscription<rj_msgs::msg::Latency>(
             "/registry", 100, std::bind(&Registry::topic_callback, this,
                 std::placeholders::_1));
 }
@@ -19,9 +19,9 @@ Registry::~Registry()
 //     registry_.at(robot_id)[label].push_back(time);
 // }
 
-void Registry::topic_callback(const rj_msgs::benchmarking::Latency &msg)
+void Registry::topic_callback(const rj_msgs::msg::Latency &msg)
 {
-    registry_.at(msg->label)[msg->robot_id].push_back(msg->duration_ns);
+    registry_.at(msg.robot_id)[msg.label].push_back(msg.duration_ns);
 }
 
 

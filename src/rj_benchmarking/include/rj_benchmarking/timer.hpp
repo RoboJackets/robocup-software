@@ -6,6 +6,10 @@
 #include <spdlog/spdlog.h>
 
 #include <cstdint>
+#include <rj_msgs/msg/latency.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+#include "rj_benchmarking/registry_publisher.hpp"
 
 class Timer
 {

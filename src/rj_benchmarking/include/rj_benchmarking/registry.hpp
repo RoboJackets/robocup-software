@@ -10,7 +10,7 @@
 
 #include <spdlog/spdlog.h>
 #include <rclcpp/rclcpp.hpp>
-#include <rj_msgs/benchmarking/latency.hpp>
+#include <rj_msgs/msg/latency.hpp>
 
 
 class Registry : public rclcpp::Node
@@ -43,12 +43,12 @@ private:
     // Registry(const Registry& other) = delete;
     // Registry& operator=(const Registry& other) = delete;
 
-    void topic_callback(const rj_msgs::benchmarking::Latency &msg);
+    void topic_callback(const rj_msgs::msg::Latency &msg);
     void dump();
 
     std::string path_ { "log/latency.txt" };
     
-    // registry[label][robot_id] -> latency sampling
+    // registry[robot_id][label] -> latency sampling
     std::array<std::unordered_map<std::string, std::vector<uint64_t>>, 6> registry_;
-    rclcpp::Subscription<rj_msgs::benchmarking::Latency>::SharedPtr subscription_;
+    rclcpp::Subscription<rj_msgs::msg::Latency>::SharedPtr subscription_;
 };
