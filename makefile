@@ -160,9 +160,8 @@ coverage:
 		--gcov-options '\-lp'
 
 clean:
-	((rm build-debug -rf); (rm build-release -rf); (rm build-release-debug -rf)) || true
+	rn -rf build install log
 	git clean -f -X -d cmake-*
-	rm -rf install/bin install/lib install/share install/include
 
 static-analysis:
 	mkdir -p build/static-analysis
