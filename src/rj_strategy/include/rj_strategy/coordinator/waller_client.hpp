@@ -1,0 +1,74 @@
+#pragma once
+
+#include <cmath>
+
+#include <rclcpp/rclcpp.hpp>
+#include <spdlog/spdlog.h>
+
+#include <rj_msgs/msg/waller.hpp>
+#include <rj_msgs/srv/waller.hpp>
+#include <rj_common/field_dimensions.hpp>
+
+#include "rj_strategy/coordinator/waller.hpp"
+
+namespace strategy {
+
+/**
+ * @brief Client for interacting with the Waller coordinator.
+ *
+ * Manages membership in the waller group and tracks the currently waller list.
+ */
+class WallerClient {
+public:
+    struct Result {
+        bool success{false};
+    };
+
+    using StatusCallback = std::function<void(Result)>;
+
+    explicit WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
+    ~WallerClient() = default;
+    WallerClient(const WallerClient&) = delete;
+    WallerClient& operator=(const WallerClient&) = delete;
+    WallerClient(WallerClient&&) = delete;
+    WallerClient& operator=(WallerClient&&) = delete;
+
+    /**
+     * @brief Join the waller group.
+     * @param callback Called with current membership status after attempt to join.
+     */
+    void join_group(StatusCallback callback = nullptr);
+
+    /**
+     * @brief Leave the waller group.
+     * @param callback Called with current membership status after attempt to leave.
+     */
+    void leave_group(StatusCallback callback = nullptr);
+
+    /**
+     * @brief Check if this robot is a member of the waller group.
+     */
+    [[nodiscard]] bool am_i_member() const;
+
+    /**
+     * @brief Get the target walling point 
+     * @return target walling point of this robot.
+     */
+    [[nodiscard]] std::optional<rj_geometry::Point> get_walling_point(const WorldState* world_state,
+                                        FieldDimensions field_dimensions) const;
+
+private:
+    rclcpp::Node::SharedPtr node_;
+    const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
+                              // isn't move/copy-able anyway
+    rclcpp::Client<rj_msgs::srv::Waller>::SharedPtr client_;
+    rclcpp::Subscription<rj_msgs::msg::Waller>::SharedPtr subscription_;
+
+    bool am_i_member_ = false;
+    std::array<u_int8_t, kNumShells> walling_robots_;
+    int num_wallers_ = 0;
+
+    static constexpr double kRobotDiameterMultiplier = 1.5;
+};
+
+}  // namespace strategy
