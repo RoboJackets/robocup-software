@@ -47,10 +47,8 @@ private:
     static constexpr double kDangerAngle = 2.0;
     int num_markers_;
 
-    std::array<uint8_t, kNumShells>
-        marking_list_{};
-    std::array<double, kNumShells>
-        danger_score_{};
+    std::array<uint8_t, kNumShells> marking_list_{};
+    std::array<double, kNumShells> danger_score_{};
     std::array<uint8_t, kNumShells> enemey_to_friends_{};
     std::vector<uint8_t> queue_;
     WorldState last_world_state_;
