@@ -20,6 +20,7 @@ find_package(rj_utils REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 set(VISION_RECEIVER_DEPS
   rclcpp
@@ -31,6 +32,7 @@ set(VISION_RECEIVER_DEPS
   rj_constants
   rj_protos
   rj_config_client
+  rj_benchmarking
 )
 
 set(VISION_RECEIVER_LIBS

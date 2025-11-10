@@ -22,6 +22,7 @@ find_package(rj_utils REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/referee_base.cpp
@@ -94,6 +95,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_msgs
   rj_protos
   rj_config_client
+  rj_benchmarking
 )
 
 ament_target_dependencies(external_referee_node
@@ -110,6 +112,7 @@ ament_target_dependencies(external_referee_node
   rj_msgs
   rj_protos
   rj_config_client
+  rj_benchmarking
 )
 
 ament_target_dependencies(internal_referee_node
@@ -126,6 +129,7 @@ ament_target_dependencies(internal_referee_node
   rj_msgs
   rj_protos
   rj_config_client
+  rj_benchmarking
 )
 
 install(

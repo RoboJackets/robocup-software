@@ -15,6 +15,7 @@ find_package(rj_msgs REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/conversions.cpp
@@ -27,6 +28,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_msgs
   rj_convert
   rj_protos
+  rj_benchmarking
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -42,7 +44,7 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-ament_export_dependencies(rclcpp rj_msgs rj_convert rj_protos)
+ament_export_dependencies(rclcpp rj_msgs rj_convert rj_protos rj_benchmarking)
 
 install(
   DIRECTORY include/

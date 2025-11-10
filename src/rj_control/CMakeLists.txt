@@ -24,6 +24,7 @@ find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_convert REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_executable(motion_control_node
   src/motion_control_node.cpp
@@ -73,6 +74,7 @@ ament_target_dependencies(motion_control_node
   rj_geometry
   rj_planning
   rj_convert
+  rj_benchmarking
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -89,6 +91,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_geometry
   rj_planning
   rj_convert
+  rj_benchmarking
 )
 
 install(
@@ -121,6 +124,7 @@ ament_export_dependencies(
   rj_geometry
   rj_planning
   rj_convert
+  rj_benchmarking
 )
 
 if(BUILD_TESTING)

@@ -22,6 +22,7 @@ find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 set(RJ_STRATEGY_DEPS
   rclcpp
@@ -36,6 +37,7 @@ set(RJ_STRATEGY_DEPS
   rj_geometry
   rj_param_utils
   rj_utils
+  rj_benchmarking
 )
 
 set(RJ_STRATEGY_SRC
@@ -163,6 +165,7 @@ ament_export_dependencies(
   rj_geometry
   rj_param_utils
   rj_utils
+  rj_benchmarking
 )
 
 ament_export_targets(${PROJECT_NAME})

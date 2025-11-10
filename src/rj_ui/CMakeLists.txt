@@ -34,6 +34,7 @@ find_package(rj_strategy REQUIRED)
 find_package(rj_referee REQUIRED)
 find_package(rj_config_client REQUIRED)
 find_package(rj_topic_utils REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 # Enable Qt's automatic processing
 set(CMAKE_AUTOMOC ON)   # Handle Q_OBJECT in headers automatically
@@ -189,6 +190,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_referee
   rj_config_client
   rj_topic_utils
+  rj_benchmarking
 )
 
 ament_target_dependencies(log_viewer_node
@@ -215,6 +217,7 @@ ament_target_dependencies(log_viewer_node
   rj_referee
   rj_config_client
   rj_topic_utils
+  rj_benchmarking
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -241,6 +244,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_referee
   rj_config_client
   rj_topic_utils
+  rj_benchmarking
 )
 
 install(

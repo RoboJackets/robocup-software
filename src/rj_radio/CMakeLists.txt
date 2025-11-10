@@ -26,6 +26,7 @@ find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_executable(network_radio_node
   src/network_radio.cpp
@@ -79,6 +80,7 @@ ament_target_dependencies(network_radio_node
   rj_geometry
   rj_planning
   rj_constants
+  rj_benchmarking
 )
 
 ament_target_dependencies(sim_radio_node
@@ -97,6 +99,7 @@ ament_target_dependencies(sim_radio_node
   rj_geometry
   rj_planning
   rj_constants
+  rj_benchmarking
 )
 
 install(

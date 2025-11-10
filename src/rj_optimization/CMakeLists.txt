@@ -17,6 +17,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/gradient_ascent_1d.cpp
@@ -46,6 +47,7 @@ ament_target_dependencies(${PROJECT_NAME}
   PythonLibs
   rj_common
   rj_geometry
+  rj_benchmarking
 )
 
 install(
@@ -68,6 +70,7 @@ ament_export_dependencies(
   PythonLibs
   rj_common
   rj_geometry
+  rj_benchmarking
 )
 
 if(BUILD_TESTING)

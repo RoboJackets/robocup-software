@@ -24,6 +24,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(rj_config_client REQUIRED)
 find_package(rj_topic_utils REQUIRED)
 find_package(rj_constants REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_executable(${PROJECT_NAME}_node
   src/main.cpp
@@ -110,6 +111,7 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_config_client
   rj_topic_utils
   rj_constants
+  rj_benchmarking
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -128,6 +130,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_config_client
   rj_topic_utils
   rj_constants
+  rj_benchmarking
 )
 
 install(

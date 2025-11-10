@@ -20,6 +20,7 @@ find_package(rj_convert REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
+find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/arc.cpp
@@ -49,6 +50,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_constants
   rj_convert
   rj_geometry_msgs
+  rj_benchmarking
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -81,6 +83,7 @@ ament_export_dependencies(
   rj_constants
   rj_convert
   rj_geometry_msgs
+  rj_benchmarking
 )
 
 if(BUILD_TESTING)
