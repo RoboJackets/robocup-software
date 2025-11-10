@@ -3,7 +3,7 @@
 namespace strategy {
 
 SeekerClient::SeekerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
-    : node_{std::move(node)}, robot_id_{robot_id}, selected_target_{SeekerCoordinator::invalidPoint()} {
+    : node_{std::move(node)}, robot_id_{robot_id}, selected_target_{-1,-1} {
     client_ = node_->create_client<rj_msgs::srv::SeekerCoordinator>("seeker_coordinator_srv");
 }
 
@@ -39,7 +39,7 @@ void SeekerClient::join_group(StatusCallback callback) {
             subscription_ = node_->create_subscription<rj_msgs::msg::SeekerCoordinator>(
             "seeker_coordinator_data", rclcpp::QoS(1).transient_local(),
             [this, callback=std::move(callback)](const rj_msgs::msg::SeekerCoordinator::SharedPtr msg) {
-                selected_target_ = rj_geometry::Point{msg->positions[robot_id_].x, msg->positions[robot_id_].y};
+                //selected_target_ = rj_geometry::Point{msg->positions[robot_id_].x, msg->positions[robot_id_].y};
             });
         });
 

@@ -66,7 +66,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::SeekerCoordinator>::SharedPtr subscription_;
 
     bool am_i_member_{false};
-    rj_geometry::Point selected_target_;
+    rj_geometry::Point selected_target_ {-1, -1};
 };
 
 }  // namespace strategy

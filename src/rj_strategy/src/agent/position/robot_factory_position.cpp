@@ -6,6 +6,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     : Position(r_id, "RobotFactoryPosition"), clientHandles_(std::make_shared<ClientHandles>()) {
     clientHandles_->kickerPickerClient = std::make_unique<KickerPickerClient>(node, r_id);
     clientHandles_->seekerClient = std::make_unique<SeekerClient>(node, r_id); 
+    SPDLOG_INFO("*********************SEEKER_CLIENT: {}", clientHandles_->seekerClient != nullptr);
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {

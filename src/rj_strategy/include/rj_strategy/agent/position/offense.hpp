@@ -96,6 +96,8 @@ private:
                 return RJ::Seconds{-1};
             case SEEKING_START:
                 return RJ::Seconds{-1};
+            case SEEKING_PROBE:
+                return RJ::Seconds{-1};
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
@@ -122,6 +124,8 @@ private:
                 return "DEFAULT";
             case SEEKING_START:
                 return "SEEKING_START";
+            case SEEKING_PROBE:
+                return "SEEKING_PROBE";
             case SEEKING:
                 return "SEEKING";
             case POSSESSION:

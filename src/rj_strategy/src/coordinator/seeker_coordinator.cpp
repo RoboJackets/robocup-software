@@ -26,23 +26,21 @@ void SeekerCoordinator::service_callback(RequestPtr request, ResponsePtr respons
 
 void SeekerCoordinator::publish_seeker_points() {
     //TODO: for currently seeking robots, check whether their current seeking point is really bad.
-    array<rj_geometry::Point, kNumShells> last_published_points = seeker_points_;
-    for (size_t i = 0; i < kNumShells; i++) {
-        if (is_seeking_[i]) {
-            rj_geometry::Point robot_pos = last_world_state_.our_robots.at(i).pose.position();
-            seeker_points_[i] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
-        } else {
-            seeker_points_[i] = invalidPoint();
-        }
-    }
-    if (last_published_points != seeker_points_) {
-        std::array<rj_geometry_msgs::msg::Point, kNumShells> msg_points;
-        for (size_t i = 0; i < kNumShells; i++) {
-            msg_points[i].x = seeker_points_[i].x();
-            msg_points[i].y = seeker_points_[i].y();
-        }
-        this->publisher_->publish(rj_msgs::msg::SeekerCoordinator().set__positions(msg_points));
-    }
+    //array<rj_geometry::Point, kNumShells> last_published_points = seeker_points_;
+    // for (size_t i = 0; i < kNumShells; i++) {
+    //     if (is_seeking_[i]) {
+    //         rj_geometry::Point robot_pos = last_world_state_.our_robots.at(i).pose.position();
+    //         seeker_points_[i] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
+    //     } else {
+    //         seeker_points_[i] = invalidPoint();
+    //     }
+    // }
+    std::array<rj_geometry_msgs::msg::Point, kNumShells> msg_points;
+    // for (size_t i = 0; i < kNumShells; i++) {
+    //     msg_points[i].x = seeker_points_[i].x();
+    //     msg_points[i].y = seeker_points_[i].y();
+    // }
+    this->publisher_->publish(rj_msgs::msg::SeekerCoordinator().set__positions(msg_points));
 }
 
 rj_geometry::Point SeekerCoordinator::get_open_point(const WorldState world_state,

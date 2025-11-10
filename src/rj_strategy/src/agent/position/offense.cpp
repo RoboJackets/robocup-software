@@ -25,9 +25,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
         reset_timeout();
 
         SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
-        if (current_state_ == SEEKING) {
-            broadcast_seeker_request(rj_geometry::Point{}, false);
-        }
     }
 
     current_state_ = new_state;
@@ -48,8 +45,9 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_START: {
+            SPDLOG_INFO("********************CLIENT_HANDLES_IS_NOT_NULL: {}", clientHandles_ != nullptr);
             if (clientHandles_->seekerClient->am_i_member())
-                return SEEKING_PROBE;
+                return SEEKING_START;
             else
                 return SEEKING_START;
         }
@@ -185,26 +183,27 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             //     seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
             // broadcast_seeker_request(seeker_.get_target_point(), true);
             // return actual_intent;
-            clientHandles_->seekerClient->join_group();
+            // clientHandles_->seekerClient->join_group();
             intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
         case SEEKING_PROBE: {
-            seeker_target_ = clientHandles_->seekerClient->selected_target();
+            // seeker_target_ = clientHandles_->seekerClient->selected_target();
+            // SPDLOG_INFO("Selected target: {}, {}", seeker_target_.x(), seeker_target_.y());
             intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
         case SEEKING: {
             //return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-            rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position();
+            // rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position();
 
-            planning::PathTargetFaceOption face_option = planning::FaceBall{};
-            bool ignore_ball = false;
-            planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
-            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
-
+            // planning::PathTargetFaceOption face_option = planning::FaceBall{};
+            // bool ignore_ball = false;
+            // planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
+            // intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
