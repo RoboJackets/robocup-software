@@ -1,6 +1,6 @@
 #pragma once
 
-#include <algorithm>  // for std::any_of
+#include <algorithm>
 #include <array>
 #include <limits>
 
@@ -48,9 +48,9 @@ private:
     int num_markers_;
 
     std::array<uint8_t, kNumShells>
-        marking_list_{};  // Initialize it to invalid robot id in constructor
+        marking_list_{};
     std::array<double, kNumShells>
-        danger_score_{};  // infinity initialized in constructor, no one is a valid target initially
+        danger_score_{};
     std::array<uint8_t, kNumShells> enemey_to_friends_{};
     std::vector<uint8_t> queue_;
     WorldState last_world_state_;
