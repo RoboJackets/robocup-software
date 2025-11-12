@@ -122,7 +122,6 @@ private:
     RJ::Seconds kMarkingGroupJoinTimeout{2.0};
 
     bool pending_marking_state_ = false;
-
 };
 
 }  // namespace strategy

@@ -109,11 +109,12 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
 
-                client_handles_->markingClient->join_group([this](const MarkingClient::Result& res) {
-                    if (res.am_i_member && res.am_i_marking) {
-                        pending_marking_state_ = true;
-                    }
-                });
+                client_handles_->markingClient->join_group(
+                    [this](const MarkingClient::Result& res) {
+                        if (res.am_i_member && res.am_i_marking) {
+                            pending_marking_state_ = true;
+                        }
+                    });
             }
             auto elapsed = RJ::now() - request_time_;
             if (elapsed > kMarkingGroupJoinTimeout) {
