@@ -23,15 +23,15 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         }
     }
 
-    double ball_width_offset = 0.025;
+    constexpr double BALL_WIDTH = 0.025;
+    constexpr double BALL_WIDTH_OFFSET = BALL_WIDTH * 3;
     rj_geometry::Point const right_goal_post =
         this->field_dimensions_.their_goal_loc() +
-        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
+        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - BALL_WIDTH_OFFSET, 0.0);
 
     rj_geometry::Point const left_goal_post =
         this->field_dimensions_.their_goal_loc() -
-        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - ball_width_offset, 0.0);
-
+        rj_geometry::Point((this->field_dimensions_.goal_width() / 2.0) - BALL_WIDTH_OFFSET, 0.0);
     rj_geometry::Point best_shot = right_goal_post;
     double best_distance = -1.0;
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
