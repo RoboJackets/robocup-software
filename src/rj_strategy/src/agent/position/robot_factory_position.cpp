@@ -101,7 +101,7 @@ void RobotFactoryPosition::handle_setup() {
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !client_handles_->kickerPickerClient->am_i_member()) {
             client_handles_->kickerPickerClient->join_group([this](
-                                                               KickerPickerClient::Result result) {
+                                                                KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();

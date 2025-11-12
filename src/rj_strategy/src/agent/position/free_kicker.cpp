@@ -4,7 +4,9 @@ namespace strategy {
 
 FreeKicker::FreeKicker(int r_id) : Position(r_id, "FreeKicker") {}
 
-FreeKicker::FreeKicker(Position&& other) : Position{std::move(other)} { position_name_ = "FreeKicker"; }
+FreeKicker::FreeKicker(Position&& other) : Position{std::move(other)} {
+    position_name_ = "FreeKicker";
+}
 
 std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
