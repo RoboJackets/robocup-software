@@ -42,8 +42,8 @@ public:
     void revive() override;
 
 private:
-    // static constexpr int kMaxWallers{6};
     static constexpr int kMaxWallers{2};
+    static constexpr RJ::Seconds kMarkingGroupJoinTimeout{2.0};
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
@@ -119,7 +119,7 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
-    RJ::Seconds kMarkingGroupJoinTimeout{2.0};
+    
 
     bool pending_marking_state_ = false;
 };

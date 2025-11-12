@@ -22,8 +22,7 @@ public:
     static constexpr uint8_t kInvalidRobotId = kNumShells;
     struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the kicker group.
-        std::optional<bool> am_i_marking{false};
-        std::optional<uint8_t> who_i_am_marking{kInvalidRobotId};  // ID of Kicker id
+        std::optional<uint8_t> who_am_i_marking;  // ID of Kicker id
     };
 
     using StatusCallback = std::function<void(Result)>;
