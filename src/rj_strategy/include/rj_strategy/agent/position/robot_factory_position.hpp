@@ -144,17 +144,14 @@ private:
     template <class Pos>
     void set_current_position() {
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            // This line requires Pos to implement the constructor Pos(const
-            // Position&)
+            // This line requires Pos to implement the constructor Pos(Position&&)
             current_position_->die();
-            current_position_ = std::make_unique<Pos>(*current_position_, clientHandles_);
+            current_position_ = std::make_unique<Pos>(std::move(*current_position_));
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }
 
     bool set_position_override_if_requested();
-
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

@@ -18,9 +18,7 @@ namespace strategy {
 class FreeKicker : public Position {
 public:
     FreeKicker(int r_id);
-    FreeKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles);
-    FreeKicker(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
-    FreeKicker(const Position&);
+    FreeKicker(Position&&);
     ~FreeKicker() = default;
 
     /**
@@ -40,7 +38,6 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

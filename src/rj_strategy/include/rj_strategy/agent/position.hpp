@@ -69,7 +69,7 @@ class Position {
 public:
     Position(int r_id);
     virtual ~Position() = default;
-    Position(const Position& other) = default;
+    Position(Position&& other) = default;
 
     /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
@@ -238,6 +238,9 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
+    // Allow external code (e.g., RobotFactoryPosition) to inject shared client handles
+    void set_client_handles(std::shared_ptr<ClientHandles> client_handles);
+
 protected:
     Position(int r_id, std::string position_name);
 
@@ -313,6 +316,9 @@ protected:
 
     // protected to allow WorldState to be accessed directly by deriveed
     WorldState* last_world_state_;
+
+    // Client Handles
+    std::shared_ptr<ClientHandles> client_handles_;
 
     // Current goalie
     int goalie_id_;

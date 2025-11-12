@@ -2,19 +2,11 @@
 
 namespace strategy {
 
-SoloOffense::SoloOffense(const Position& other) : Position{other} {
+SoloOffense::SoloOffense(Position&& other) : Position{std::move(other)} {
     position_name_ = "SoloOffense";
 }
 
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
-
-SoloOffense::SoloOffense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
-    : Position(r_id, "SoloOffense"), clientHandles_{clientHandles} {}
-
-SoloOffense::SoloOffense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
-    : Position{other}, clientHandles_{clientHandles} {
-    position_name_ = "SoloOffense";
-}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock

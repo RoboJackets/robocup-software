@@ -19,9 +19,7 @@ class PenaltyNonKicker : public Position {
 public:
     PenaltyNonKicker(int r_id);
     ~PenaltyNonKicker() = default;
-    PenaltyNonKicker(const Position& other);
-    PenaltyNonKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles);
-    PenaltyNonKicker(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
+    PenaltyNonKicker(Position&& other);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -53,7 +51,5 @@ private:
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
     // State latest_state_ = GET_AWAY;
-
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 }  // namespace strategy

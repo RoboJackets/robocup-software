@@ -9,9 +9,7 @@ class Idle : public Position {
 public:
     Idle(int r_id);
     ~Idle() = default;
-    Idle(const Position& other);
-    Idle(int r_id, std::shared_ptr<ClientHandles> clientHandles);
-    Idle(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
+    Idle(Position&& other);
 
     /**
      * @brief Does nothing; this position is a special case
@@ -30,7 +28,5 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 }  // namespace strategy

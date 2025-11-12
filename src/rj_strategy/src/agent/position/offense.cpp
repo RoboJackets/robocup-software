@@ -4,15 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
 
-Offense::Offense(const Position& other) : Position{other}, seeker_{robot_id_} {
-    position_name_ = "Offense";
-}
-
-Offense::Offense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
-    : Position(r_id, "Offense"), seeker_{r_id}, clientHandles_{clientHandles} {}
-
-Offense::Offense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
-    : Position{other}, seeker_{robot_id_}, clientHandles_{clientHandles} {
+Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
     position_name_ = "Offense";
 }
 

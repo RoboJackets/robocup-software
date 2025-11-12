@@ -32,8 +32,6 @@ public:
     Seeker(Seeker&& other) = default;
     Seeker& operator=(const Seeker& other) = default;
     Seeker& operator=(Seeker&& other) = default;
-    Seeker(int r_id, std::shared_ptr<ClientHandles> clientHandles);
-    Seeker(const Position& other, std::shared_ptr<ClientHandles> clientHandles);
 
     /**
      * @brief  Returns a seeker behavior which aims to get open
@@ -115,8 +113,6 @@ private:
                                     const FieldDimensions& field_dimensions) const;
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_{};
-
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy

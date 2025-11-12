@@ -3,8 +3,6 @@
 namespace strategy {
 
 GoalKicker::GoalKicker(int r_id) : Position(r_id, "GoalKicker") {}
-GoalKicker::GoalKicker(int r_id, std::shared_ptr<ClientHandles> clientHandles)
-    : Position(r_id, "GoalKicker"), clientHandles_{clientHandles} {}
 
 std::optional<RobotIntent> GoalKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
