@@ -4,7 +4,7 @@ namespace strategy {
 
 Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
 
-Defense::Defense(const Position& other) : Position{other}, marker_{field_dimensions_} {
+Defense::Defense(Position&& other) : Position{std::move(other)}, marker_{field_dimensions_} {
     position_name_ = "Defense";
     walling_robots_ = {};
 }

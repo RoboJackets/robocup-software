@@ -32,7 +32,6 @@
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
-#include "rj_strategy/coordinator/kicker_picker_client.hpp"
 
 namespace strategy {
 
@@ -116,7 +115,6 @@ public:
 private:
     std::unique_ptr<Position> current_position_;
 
-    KickerPickerClient kicker_picker_;
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
@@ -148,7 +146,7 @@ private:
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
             current_position_->die();
-            current_position_ = std::make_unique<Pos>(*current_position_);
+            current_position_ = std::make_unique<Pos>(std::move(*current_position_));
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }
