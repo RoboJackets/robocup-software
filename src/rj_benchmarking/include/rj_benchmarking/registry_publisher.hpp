@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/latency.hpp>
+
+#include <rclcpp/rclcpp.hpp>
 
 class RegistryPublisher
 {

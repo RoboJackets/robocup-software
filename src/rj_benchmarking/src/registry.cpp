@@ -14,11 +14,6 @@ Registry::~Registry()
     SPDLOG_INFO("TESTING: Registry Destroyed");
 }
 
-// void Registry::record(std::string label, uint64_t time, int8_t robot_id)
-// {
-//     registry_.at(robot_id)[label].push_back(time);
-// }
-
 void Registry::topic_callback(const rj_msgs::msg::Latency &msg)
 {
     registry_.at(msg.robot_id)[msg.label].push_back(msg.duration_ns);
@@ -28,6 +23,18 @@ void Registry::topic_callback(const rj_msgs::msg::Latency &msg)
 void Registry::dump()
 {
     SPDLOG_INFO("TESTING: Dump Called");
+
+    /*
+        1. Make LatencyLogs Directory if not already there
+        2. Make latency_curr-date_curr-time folder
+        3. Make csv for Robot 1
+            3a. first row is labels
+        4. Make csvs for all robots
+    */
+
+    std::filesystem::create_directories("./latency");
+    
+    std::filesystem::create_directories("./latency/")
     std::ofstream output_file;
     output_file.open(path_);
     for (int i = 0; i < 6; i++)

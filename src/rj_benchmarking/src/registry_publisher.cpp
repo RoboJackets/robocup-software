@@ -16,6 +16,5 @@ void RegistryPublisher::publish(std::string label, std::int8_t robot_id, uint64_
     message.robot_id = robot_id;
     message.duration_ns = time;
 
-    // Registry::getInstance()->record(label_, time, robot_id_);
     publisher_->publish(message);
 }
