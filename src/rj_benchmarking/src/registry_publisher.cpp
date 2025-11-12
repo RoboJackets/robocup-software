@@ -4,7 +4,7 @@ RegistryPublisher* RegistryPublisher::instance = nullptr;
 
 RegistryPublisher::RegistryPublisher()
 {
-    printf("Testing");
+    // printf("Testing");
 }
 
 void RegistryPublisher::publish(std::string label, std::int8_t robot_id, uint64_t time)

@@ -3,6 +3,7 @@
 namespace planning {
 
 Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
+    // Timer timer("goalie_idle_path_planner", plan_request.shell_id);
     // lots of this is duplicated from PathTargetPathPlanner, because there's not
     // an easy way to convert from one PlanRequest to another
 

@@ -9,6 +9,7 @@ SoloOffense::SoloOffense(const Position& other) : Position{other} {
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
+    Timer timer("solo_offense: derived_get_task", robot_id_);
     // Get next state, and if different, reset clock
     State new_state = next_state();
     // if (new_state != current_state_) {
@@ -25,6 +26,7 @@ std::string SoloOffense::get_current_state() {
 }
 
 SoloOffense::State SoloOffense::next_state() {
+    Timer timer("solo_offense: next_state", robot_id_);
     // handle transitions between current state
     double closest_dist = std::numeric_limits<double>::infinity();
     auto current_point = last_world_state_->ball.position;
@@ -77,6 +79,7 @@ SoloOffense::State SoloOffense::next_state() {
 }
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
+    Timer timer("solo_offense: state_to_task", robot_id_);
     switch (current_state_) {
         case MARKER: {
             auto marker_target_pos =
@@ -132,6 +135,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
 }
 
 rj_geometry::Point SoloOffense::calculate_best_shot() const {
+    Timer timer("solo_offense: calculate_best_shot", robot_id_);
     // Goal location
     rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
     double goal_width = field_dimensions_.goal_width();  // 1.0 meters
@@ -157,6 +161,7 @@ rj_geometry::Point SoloOffense::calculate_best_shot() const {
 
 double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
                                                rj_geometry::Point head) const {
+    Timer timer("solo_offense: distance_from_their_robots", robot_id_);
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
 

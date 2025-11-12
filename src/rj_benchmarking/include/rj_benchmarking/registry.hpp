@@ -13,8 +13,8 @@
 #include <fstream>
 #include <cstdint>
 #include <filesystem>
-#include <iomanip>
 #include <ctime>
+#include <iterator>
 
 class Registry : public rclcpp::Node
 {
@@ -26,9 +26,10 @@ private:
     void topic_callback(const rj_msgs::msg::Latency &msg);
     void dump();
 
-    std::string path_ { "log/latency.txt" };
+    std::string get_curr_datetime();
     
     // registry[robot_id][label] -> latency sampling
     std::array<std::unordered_map<std::string, std::vector<uint64_t>>, 6> registry_{};
     rclcpp::Subscription<rj_msgs::msg::Latency>::SharedPtr subscription_{};
+    int max_rows_{};
 };
