@@ -84,7 +84,8 @@ void RobotFactoryPosition::process_play_state() {
 void RobotFactoryPosition::handle_stop() { set_default_position(); }
 
 void RobotFactoryPosition::handle_penalty_playing() {
-    if (!(client_handles_->kicker_picker->am_i_member() && client_handles_->kicker_picker->is_selected())) {
+    if (!(client_handles_->kicker_picker->am_i_member() &&
+          client_handles_->kicker_picker->is_selected())) {
         set_current_position<SmartIdle>();
     }
 }
