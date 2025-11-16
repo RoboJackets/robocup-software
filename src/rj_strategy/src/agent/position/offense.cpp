@@ -4,7 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
 
-Offense::Offense(const Position& other) : Position{other}, seeker_{robot_id_} {
+Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
     position_name_ = "Offense";
 }
 

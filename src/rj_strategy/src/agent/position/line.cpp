@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-Line::Line(const Position& other) : Position{other} { position_name_ = "Line"; }
+Line::Line(Position&& other) : Position{std::move(other)} { position_name_ = "Line"; }
 
 Line::Line(int r_id) : Position{r_id, "Line"} {}
 

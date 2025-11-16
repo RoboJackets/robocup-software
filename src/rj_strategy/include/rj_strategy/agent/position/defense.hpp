@@ -29,7 +29,7 @@ class Defense : public Position {
 public:
     Defense(int r_id);
     ~Defense() override = default;
-    Defense(const Position& other);
+    Defense(Position&& other);
 
     void receive_communication_response(communication::AgentPosResponseWrapper response) override;
     communication::PosAgentResponseWrapper receive_communication_request(

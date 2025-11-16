@@ -29,7 +29,7 @@ class Offense : public Position {
 public:
     Offense(int r_id);
     ~Offense() override = default;
-    Offense(const Position& other);
+    Offense(Position&& other);
     communication::PosAgentResponseWrapper receive_communication_request(
         communication::AgentPosRequestWrapper request) override;
 
