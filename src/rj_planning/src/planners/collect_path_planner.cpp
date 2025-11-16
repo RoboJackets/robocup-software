@@ -106,13 +106,11 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     switch (current_state_) {
         // Moves from the current location to the slow point of approach
         case COARSE_APPROACH:
-            previous_ =
-                coarse_approach(plan_request, start_instant, static_obstacles);
+            previous_ = coarse_approach(plan_request, start_instant, static_obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
         case FINE_APPROACH:
-            previous_ =
-                fine_approach(plan_request, start_instant, static_obstacles);
+            previous_ = fine_approach(plan_request, start_instant, static_obstacles);
             break;
         // Intercept a moving ball
         case INTERCEPT: {
@@ -195,9 +193,8 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
 }
 
-Trajectory CollectPathPlanner::coarse_approach(
-    const PlanRequest& plan_request, RobotInstant start,
-    const rj_geometry::ShapeSet& static_obstacles) {
+Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
+                                               const rj_geometry::ShapeSet& static_obstacles) {
     BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
@@ -570,13 +567,13 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id);
+                                              static_obstacles, plan_request.field_dimensions,
+                                              plan_request.shell_id);
     } else {
-        dampen_end = CreatePath::intermediate(
-            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            previous_.last().stamp, static_obstacles,
-            plan_request.field_dimensions, plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
+                                              final_stopping_motion, plan_request.constraints.mot,
+                                              previous_.last().stamp, static_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -592,9 +589,9 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     return dampen_end;
 }
 
-Trajectory CollectPathPlanner::fine_approach(
-    const PlanRequest& plan_request, RobotInstant start_instant,
-    const rj_geometry::ShapeSet& static_obstacles) {
+Trajectory CollectPathPlanner::fine_approach(const PlanRequest& plan_request,
+                                             RobotInstant start_instant,
+                                             const rj_geometry::ShapeSet& static_obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;

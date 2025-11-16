@@ -13,7 +13,9 @@ public:
      * @param obstacle rj_geometry::Shape representing the obstacle; can be any Shape.
      * @param padding rj_geometry::Shape representing the padding; can be any Shape.
      */
-    StaticObstacle(std::shared_ptr<rj_geometry::Shape> obstacle, std::shared_ptr<rj_geometry::Shape> padding) : Obstacle(obstacle, padding) {}
+    StaticObstacle(std::shared_ptr<rj_geometry::Shape> obstacle,
+                   std::shared_ptr<rj_geometry::Shape> padding)
+        : Obstacle(obstacle, padding) {}
 };
 
 }  // namespace planning

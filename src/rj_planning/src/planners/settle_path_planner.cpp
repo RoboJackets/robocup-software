@@ -70,12 +70,10 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     // Run state code
     switch (current_state_) {
         case SettlePathPlannerStates::Intercept:
-            result = intercept(plan_request, start_instant, static_obstacles,
-                               delta_pos, face_pos);
+            result = intercept(plan_request, start_instant, static_obstacles, delta_pos, face_pos);
             break;
         case SettlePathPlannerStates::Dampen:
-            result = dampen(plan_request, start_instant, static_obstacles,
-                            delta_pos, face_pos);
+            result = dampen(plan_request, start_instant, static_obstacles, delta_pos, face_pos);
             break;
         default:
             result = invalid(plan_request, static_obstacles);
@@ -456,13 +454,13 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id);
+                                              static_obstacles, plan_request.field_dimensions,
+                                              plan_request.shell_id);
     } else {
-        dampen_end = CreatePath::intermediate(
-            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            previous_.last().stamp, static_obstacles,
-            plan_request.field_dimensions, plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
+                                              final_stopping_motion, plan_request.constraints.mot,
+                                              previous_.last().stamp, static_obstacles,
+                                              plan_request.field_dimensions, plan_request.shell_id);
     }
 
     dampen_end.set_debug_text("Damping");
