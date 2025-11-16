@@ -48,6 +48,7 @@ public:
     void reset_target();
 
     rj_geometry::Point get_target_point();
+    int get_robot_id();
 
     void set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points);
 

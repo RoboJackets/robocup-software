@@ -163,10 +163,13 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case SEEKING_START: {
             // Calculate a new seeking point
+            
             seeker_.reset_target();
             seeker_.set_seeker_points(seeker_points_);
             std::optional<RobotIntent> actual_intent =
                 seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            //SPDLOG_INFO("HI {} {}", seeker_.get_target_point().x(), seeker_.get_target_point().y());
+            seeker_points_[seeker_.get_robot_id()] = seeker_.get_target_point();
             broadcast_seeker_request(seeker_.get_target_point(), true);
             return actual_intent;
         }

@@ -26,6 +26,8 @@ void Seeker::reset_target() { target_valid_ = false; }
 
 rj_geometry::Point Seeker::get_target_point() { return target_pt_; }
 
+int Seeker::get_robot_id() { return robot_id_; }
+
 void Seeker::set_seeker_points(const std::unordered_map<int, rj_geometry::Point>& seeker_points) {
     seeker_points_ = seeker_points;
 }
@@ -195,9 +197,10 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // communication) Heuristic to penalize being close to other seekers (a small minimum distance)s
     double min_seeker_dist = std::numeric_limits<double>::infinity();
     for (const auto& [key, value] : seeker_points_) {
+        //SPDLOG_INFO("key {} px {} py {}", key, value.x(), value.y());
         min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(value));
     }
-    const double seeker_dist_loss = 0.4 * 1 / min_seeker_dist;
+    const double seeker_dist_loss = 0.3 * 1 / min_seeker_dist;
 
     // Final evaluation
     return max + ball_proximity_loss + goal_distance_loss + min_path_dist + min_robot_dist +
