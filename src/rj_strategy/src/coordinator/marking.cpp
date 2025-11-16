@@ -4,7 +4,7 @@ namespace strategy {
 
 Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node") {
     // Subscribe to world state
-    marking_list_.fill(kInvalidRobotId);       // initializes to no valid markers
+    marking_list_.fill(kInvalidRobotId);      // initializes to no valid markers
     enemy_to_friends_.fill(kInvalidRobotId);  // matches the enemy robot to who is marking them
     danger_score_.fill(
         std::numeric_limits<double>::infinity());  // everyone starts with an infinite danger score
@@ -33,7 +33,8 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             // Queue is queue of robots that want to join marking but aren't good enough
             //          Not close enough to mark or we exceeed the max num of markers
             for (size_t i = 0; i < unassigned_markers_queue_.size(); ++i) {
-                const auto& i_robot = last_world_state_.get_robot(true, unassigned_markers_queue_[i]);
+                const auto& i_robot =
+                    last_world_state_.get_robot(true, unassigned_markers_queue_[i]);
                 double distance = i_robot.pose.position().dist_to(enemy_robot.pose.position());
                 if (distance < min) {
                     min = distance;
@@ -41,15 +42,19 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 }
             }
             if (kInvalidRobotId != waiting_robot_id) {
-                unassigned_markers_queue_.erase(std::remove(unassigned_markers_queue_.begin(), unassigned_markers_queue_.end(), waiting_robot_id),
-                             unassigned_markers_queue_.end());
+                unassigned_markers_queue_.erase(
+                    std::remove(unassigned_markers_queue_.begin(), unassigned_markers_queue_.end(),
+                                waiting_robot_id),
+                    unassigned_markers_queue_.end());
                 marking_list_[waiting_robot_id] = enemy_id;
                 enemy_to_friends_[enemy_id] = waiting_robot_id;
                 num_markers_++;
             }
         } else {
-            unassigned_markers_queue_.erase(std::remove(unassigned_markers_queue_.begin(), unassigned_markers_queue_.end(), request->robot_id),
-                         unassigned_markers_queue_.end());
+            unassigned_markers_queue_.erase(
+                std::remove(unassigned_markers_queue_.begin(), unassigned_markers_queue_.end(),
+                            request->robot_id),
+                unassigned_markers_queue_.end());
         }
         response->success = true;
         return;
