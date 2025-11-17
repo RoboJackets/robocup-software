@@ -1,17 +1,14 @@
 #pragma once
 
-#include <rj_msgs/msg/latency.hpp>
-
 #include <rclcpp/rclcpp.hpp>
 
-class RegistryPublisher
-{
+#include <rj_msgs/msg/latency.hpp>
+
+class RegistryPublisher {
 public:
     // Singleton pattern
-    static RegistryPublisher* getInstance()
-    {
-        if (instance == nullptr)
-        {
+    static RegistryPublisher* getInstance() {
+        if (instance == nullptr) {
             instance = new RegistryPublisher();
         }
 
@@ -30,9 +27,8 @@ private:
     RegistryPublisher(const RegistryPublisher& other) = delete;
     RegistryPublisher& operator=(const RegistryPublisher& other) = delete;
 
-    std::shared_ptr<rclcpp::Node> node_ = std::make_shared<rclcpp::Node>(
-                                                                "rj_benchmarking_publisher");
-    rclcpp::Publisher<rj_msgs::msg::Latency>::SharedPtr publisher_
-        = node_->create_publisher<rj_msgs::msg::Latency>("/registry", 100);
-
+    std::shared_ptr<rclcpp::Node> node_ =
+        std::make_shared<rclcpp::Node>("rj_benchmarking_publisher");
+    rclcpp::Publisher<rj_msgs::msg::Latency>::SharedPtr publisher_ =
+        node_->create_publisher<rj_msgs::msg::Latency>("/registry", 100);
 };
