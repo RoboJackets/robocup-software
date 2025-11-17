@@ -25,6 +25,20 @@ find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_convert REQUIRED)
 
+set(RJ_CONTROL_DEPS
+  std_msgs
+  Flann
+  rj_utils
+  rj_constants
+  rj_msgs
+  rj_param_utils
+  rj_topic_utils
+  rj_common
+  rj_geometry
+  rj_planning
+  rj_convert
+)
+
 add_executable(motion_control_node
   src/motion_control_node.cpp
   src/motion_control.cpp
@@ -62,33 +76,13 @@ target_link_libraries(${PROJECT_NAME}
 ament_target_dependencies(motion_control_node
   PUBLIC
   rclcpp
-  std_msgs
-  Flann
-  rj_utils
-  rj_constants
-  rj_msgs
-  rj_param_utils
-  rj_topic_utils
-  rj_common
-  rj_geometry
-  rj_planning
-  rj_convert
+  ${RJ_CONTROL_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
   rclcpp
-  std_msgs
-  Flann
-  rj_utils
-  rj_constants
-  rj_msgs
-  rj_param_utils
-  rj_topic_utils
-  rj_common
-  rj_geometry
-  rj_planning
-  rj_convert
+  ${RJ_CONTROL_DEPS}
 )
 
 install(
@@ -111,16 +105,7 @@ install(
 )
 
 ament_export_dependencies(
-  std_msgs
-  rj_utils
-  rj_constants
-  rj_msgs
-  rj_param_utils
-  rj_topic_utils
-  rj_common
-  rj_geometry
-  rj_planning
-  rj_convert
+  ${RJ_CONTROL_DEPS}
 )
 
 if(BUILD_TESTING)
