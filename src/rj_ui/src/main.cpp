@@ -18,7 +18,6 @@
 
 #include "rj_ui/main_window.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
-// #include <rj_benchmarking/timer.hpp>
 
 using namespace std;
 
