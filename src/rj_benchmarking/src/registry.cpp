@@ -14,8 +14,7 @@ Registry::~Registry() {
         4. Make csvs for all robots
     */
 
-    if (max_rows_ != 0)
-    {
+    if (max_rows_ != 0) {
         std::string base_path{"./latency"};
         std::filesystem::create_directories(base_path);
         base_path += "/session_";
@@ -35,7 +34,7 @@ Registry::~Registry() {
 
             // Print out labels
             for (const auto& [label, timestamps] : registry_[i]) {
-                        robot_csv << label << ',';
+                robot_csv << label << ',';
             }
             robot_csv << '\n';
 
