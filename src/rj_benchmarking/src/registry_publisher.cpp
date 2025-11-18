@@ -2,13 +2,8 @@
 
 RegistryPublisher* RegistryPublisher::instance = nullptr;
 
-RegistryPublisher::RegistryPublisher() {
-    // printf("Testing");
-}
-
-void RegistryPublisher::publish(std::string label, std::int8_t robot_id, uint64_t time) {
-    // idk what type this should be im just following tutorial code
-    auto message = rj_msgs::msg::Latency();
+void RegistryPublisher::publish(const std::string& label, u_int8_t robot_id, uint64_t time) {
+    rj_msgs::msg::Latency message = rj_msgs::msg::Latency();
 
     message.label = label;
     message.robot_id = robot_id;

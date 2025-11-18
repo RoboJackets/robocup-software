@@ -19,7 +19,6 @@ find_package(rj_common REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
-find_package(rj_benchmarking REQUIRED)
 
 # Find sdl2
 include(FindPkgConfig)
@@ -55,7 +54,6 @@ ament_target_dependencies(manual_control_node
   rj_msgs
   rj_param_utils
   rclcpp_components
-  rj_benchmarking
 )
 
 install(

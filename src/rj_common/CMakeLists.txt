@@ -22,7 +22,6 @@ find_package(rj_geometry REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
-find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/debug_drawer.cpp
@@ -52,7 +51,6 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_param_utils
   rj_utils
   rj_drawing_msgs
-  rj_benchmarking
 )
 
 target_link_libraries(${PROJECT_NAME}

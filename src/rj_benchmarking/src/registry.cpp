@@ -1,24 +1,11 @@
 #include "rj_benchmarking/registry.hpp"
 
 Registry::Registry() : rclcpp::Node{"rj_benchmarking"} {
-    // SPDLOG_INFO("TESTING: Registry Built");
     subscription_ = this->create_subscription<rj_msgs::msg::Latency>(
         "/registry", 100, std::bind(&Registry::topic_callback, this, std::placeholders::_1));
 }
 
 Registry::~Registry() {
-    dump();
-    // SPDLOG_INFO("TESTING: Registry Destroyed");
-}
-
-void Registry::topic_callback(const rj_msgs::msg::Latency& msg) {
-    registry_.at(msg.robot_id)[msg.label].push_back(msg.duration_ns);
-    max_rows_ = std::max(max_rows_, static_cast<int>(registry_.at(msg.robot_id)[msg.label].size()));
-}
-
-void Registry::dump() {
-    // SPDLOG_INFO("TESTING: Dump Called");
-
     /*
         1. Make LatencyLogs Directory if not already there
         2. Make latency_curr-date_curr-time folder
@@ -26,56 +13,57 @@ void Registry::dump() {
             3a. first row is labels
         4. Make csvs for all robots
     */
-    std::string base_path{"./latency"};
-    std::filesystem::create_directories(base_path);
-    base_path += "/session_";
-    base_path += get_curr_datetime();
-    std::filesystem::create_directories(base_path);
 
-    // std::ofstream output_file;
-    // output_file.open(path_);
-    for (int i = 0; i < 6; i++) {
-        std::stringstream ss;
-        ss << "/robot_" << i << ".csv";
-        std::ofstream robot_csv{base_path + ss.str()};
+    if (max_rows_ != 0)
+    {
+        std::string base_path{"./latency"};
+        std::filesystem::create_directories(base_path);
+        base_path += "/session_";
+        base_path += get_curr_datetime();
+        std::filesystem::create_directories(base_path);
 
-        for (int row = -1; row < max_rows_; row++) {
-            if (row == -1) {
-                for (std::pair<std::string, std::vector<uint64_t>> labels : registry_.at(i)) {
-                    robot_csv << labels.first << ',';
+        for (size_t i = 0; i < kNumShells; i++) {
+            if (registry_[i].empty()) {
+                continue;
+            }
+
+            std::string ss{};
+            ss += "/robot_";
+            ss += std::to_string(i);
+            ss += ".csv";
+            std::ofstream robot_csv{base_path + ss};
+
+            // Print out labels
+            for (const auto& [label, timestamps] : registry_[i]) {
+                        robot_csv << label << ',';
+            }
+            robot_csv << '\n';
+
+            // Print out data row by row
+            for (size_t row = 0; row < max_rows_; ++row) {
+                for (const auto& [label, timestamps] : registry_[i]) {
+                    robot_csv << timestamps[row] << ',';
                 }
 
                 robot_csv << '\n';
             }
-
-            for (std::pair<std::string, std::vector<uint64_t>> labels : registry_.at(i)) {
-                robot_csv << labels.second[row] << ',';
-            }
-
-            robot_csv << '\n';
         }
-
-        // output_file << "Robot " << i << '\n';
-        // for (auto& p : registry_[i])
-        // {
-        //     output_file << p.first << "     ";
-        //     for (uint64_t e : p.second)
-        //     {
-        //         output_file << e << ", ";
-        //     }
-        //     output_file << "AVG: " << std::accumulate(p.second.begin(), p.second.end(), 0)
-        //                                                                         /
-        //                                                                         p.second.size();
-        //     output_file << '\n';
-        // }
     }
-    // output_file.close();
+}
+
+void Registry::topic_callback(const rj_msgs::msg::Latency& msg) {
+    registry_[msg.robot_id][msg.label].push_back(msg.duration_ns);
+    max_rows_ = std::max(max_rows_, static_cast<size_t>(registry_[msg.robot_id][msg.label].size()));
 }
 
 std::string Registry::get_curr_datetime() {
-    std::time_t time = std::time({});
-    char timeString[std::size("yyyy-mm-ddThh:mm:ssZ")];
-    std::strftime(std::data(timeString), std::size(timeString), "%FT%TZ", std::localtime(&time));
-    std::string out{timeString};
-    return out;
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
+    std::tm tm_buf{};
+
+    localtime_r(&now_time, &tm_buf);
+
+    std::ostringstream ss;
+    ss << std::put_time(&tm_buf, "%Y-%m-%d_%H:%M:%S");
+    return ss.str();
 }

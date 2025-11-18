@@ -17,7 +17,6 @@ find_package(fmt REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_benchmarking REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
   src/config_client.cpp
@@ -54,7 +53,6 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_constants
   rj_common
   rj_utils
-  rj_benchmarking
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node
@@ -65,7 +63,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_constants
   rj_common
   rj_utils
-  rj_benchmarking
 )
 
 install(

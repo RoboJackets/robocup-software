@@ -7,21 +7,18 @@
 class RegistryPublisher {
 public:
     // Singleton pattern
-    static RegistryPublisher* getInstance() {
-        if (instance == nullptr) {
-            instance = new RegistryPublisher();
-        }
-
+    static std::shared_ptr<RegistryPublisher> getInstance() {
+        static std::shared_ptr<RegistryPublisher> instance{new RegistryPublisher()};
         return instance;
     }
 
-    void publish(std::string label, std::int8_t robot_id, uint64_t time);
+    void publish(const std::string& label, uint8_t robot_id, uint64_t time);
 
 private:
     static RegistryPublisher* instance;
 
     // Private Constructor
-    RegistryPublisher();
+    RegistryPublisher() = default;
 
     // Delete Copy Constructor and Assignment
     RegistryPublisher(const RegistryPublisher& other) = delete;

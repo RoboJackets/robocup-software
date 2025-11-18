@@ -13,11 +13,11 @@
 
 class Timer {
 public:
-    Timer(std::string label, std::int8_t robot_id);
+    Timer(const std::string& label, uint8_t robot_id);
     ~Timer();
 
 private:
-    const std::chrono::steady_clock::time_point start_{};
-    std::string label_{};
-    std::int8_t robot_id_{};
+    std::string label_;
+    std::uint8_t robot_id_;
+    const std::chrono::steady_clock::time_point start_;
 };

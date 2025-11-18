@@ -17,7 +17,6 @@ find_package(fmt REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_benchmarking REQUIRED)
 
 add_executable(${PROJECT_NAME}_node
   src/config_server.cpp
@@ -42,7 +41,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_constants
   rj_common
   rj_utils
-  rj_benchmarking
 )
 
 install(

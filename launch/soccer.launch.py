@@ -245,10 +245,5 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             )
-            # Node(
-            #     package="rj_benchmarking",
-            #     executable="benchmarking_node",
-
-            # )
         ]
     )
