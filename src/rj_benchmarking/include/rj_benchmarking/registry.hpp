@@ -6,8 +6,8 @@
 #include <ctime>
 #include <filesystem>
 #include <fstream>
-#include <iterator>
 #include <iomanip>
+#include <iterator>
 #include <numeric>
 #include <string>
 #include <unordered_map>
@@ -16,8 +16,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/latency.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_msgs/msg/latency.hpp>
 
 class Registry : public rclcpp::Node {
 public:
