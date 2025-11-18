@@ -43,6 +43,7 @@ void usage(const char* prog) {
 
 int main(int argc, char* argv[]) {
     printf("Starting Soccer...\n");
+
     //  register our signal handler
     signal(SIGINT, signal_handler);
 
