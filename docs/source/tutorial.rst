@@ -30,8 +30,14 @@ The tutorial is structured as follows.
 
 There are some gaps intentionally left in the tutorial. This is to force you to
 problem-solve on your own, simulating what it feels like to write a new feature.
-If the tutorial was simply a bulleted list of commands to type, it would not
-prove that you're ready to work on something meaningful on your own.
+In other words, unlike the introduction section (if you've gone through that), 
+the descriptions for some sections of this tutorial are intentionally left vague
+and it's up to you to figure it out!
+
+Make sure you take your time with this. We don't care if you spend the rest of the
+semester working on this. Learning this takes time, and learning this well takes even more time.
+You may also have to read some more about C++ to work on this. Check out Learn CPP - almost all veteran
+RoboCup members have used this website to learn the basics.
 
 When you run into issues, your order of question-asking should be:
 
@@ -41,13 +47,13 @@ When you run into issues, your order of question-asking should be:
 
    * Error messages, if they come up
 
+#. Fellow new members
+
 #. ChatGPT/Claude/Gemini/Grok/Whatever
 
    * Great at helping you out with errors. Don't expect to be able to vibe code stuff, though.
 
 #. FAQ page in our docs (common errors and debug info)
-
-#. Fellow new members
 
 #. Software lead
 
@@ -70,8 +76,7 @@ command-line and git, let's get started using GitHub.
    git is a command line version-control tool. GitHub is a website to host
    shared files, and is well-integrated with git, but is not the same thing.
 
-First, use git to checkout the branch that contains starter code for this
-project, and then pull its latest version:
+First, use git to checkout the main branch for our stack, and then pull its latest version:
 
    .. code-block:: sh
 
@@ -96,15 +101,17 @@ and the goal.
 Open the file ``src/rj_strategy/src/agent/position/waller.cpp``. 
 Find the line of code that calculates the ``wall_spacing`` and double its value.
 
-Re-build the project (:sh:`colcon build`) and run the simulator again. You should
-see the wallers more spread out. Note that this is probably a less effective wall!
+Re-build the project (using the method specified in the installation guide) 
+and run the simulator again. You should see the wallers more spread out. 
+Note that this is probably a less effective wall!
 This change is just for educational purposes. 
 
-**Take a screenshot of your new wall.***
+**Take a screenshot of your new wall.**
 
 Now that you've made a change to the repo, run ``git status``. You should see
 that whatever files you changed show up in red, which indicates that they are
-unstaged. Stage the files you changed with ``git add`` (Google this if unsure
+unstaged. **Make sure only the file you changed is shown, and not additional files.**
+Stage the files you changed with ``git add`` (Google this if unsure
 how, or see the previous section on git), then commit them:
 
    .. code-block:: sh
@@ -120,12 +127,6 @@ how, or see the previous section on git), then commit them:
    default text editor is set to) and ask you to type in 
    a commit msg. -m is a bit faster.
 
-When you commit, you should see our pre-commit hooks run. These are automated
-programs that make your code comply with standardized style guidelines. If one
-of the checks fails, simply re-add your files and re-commit. (If you don't see
-this, make sure you have everything installed correctly per the installation
-guide.)
-
 Now that you've committed, run :sh:`git push` to push your changes to the remote
 server. This is how GitHub sees your changes. If you run into any errors at this
 step, read the error logs carefully (they often tell you what to do), and Google
@@ -134,7 +135,7 @@ if needed.
 Finally, go to our GitHub page, click the "Pull Requests" tab, and create a new
 draft pull request for your branch. When it asks you to fill in the PR
 description, you can delete the template and write something simple like
-"Completes RC SW tutorials." Add that screenshot of your four-waller setup as a
+"Doubled Wall Spacing" Add that screenshot of your waller setup as a
 comment below your brand new PR. Nice work!
 
 2. ROS CLI Basics
@@ -161,8 +162,8 @@ Now that you have some background on what ROS is and how it works, let's explore
 how we use ROS in our stack. (ROS is used in place of ROS 2 in the rest of these
 docs, just know that we are referencing ROS 2 every time.)
 
-First, open up our stack, same as you did in the installation guide. (Remember
-to source ROS2!) Then run
+First, open up our stack (aka. run the simulator), same as you did in the installation guide. (Remember
+to source ROS2!) Then run (in another terminal, after souring again)
 
    .. code-block:: sh
 
@@ -186,36 +187,37 @@ Your task for this section is to find the file that defines the message type
 used by ``/planning/trajectory/robot_2``. This will take you a long time if
 you search for it manually and almost no time if you use a tool like :sh:`find`.
 Once you have the right file, figure out the full filepath and add it to your
-GitHub PR as a comment. Congrats! You now have a grasp of ROS CLI tools.
+GitHub PR as a comment. (Hint: read the paragraph above one more time).
 
 
-3. Action Clients and building a position
+3. Building a Position
 -----------------------------------------
 
 Background
 ~~~~~~~~~~~
 
-This section introduces more concepts of ROS and our strategy. 
+This section introduces more concepts of ROS and our strategy. You should make sure
+you have read through and understand "Understanding ROS 2 actions" from part 2 before proceeding!
 
-First, read this page and do some research if you need to get an understanding
-of ROS actions. Our strategy stack is centered around an Action Server and six
-Action Clients, each of which represent a robot on the field. 
-
-Also, take a second to understand the difference between
+Let's first begin by understanding the difference between
 strategy and planning in our stack. Strategy is responsible for high level decisions,
-such as robot movement, kicking procedure, robot communication, and referee interaction. Planning is responsible
-for taking the instructions from strategy and turning them into trajectories and commands a robot can execute,
+such as robot movement, kicking procedure, robot communication, and referee interaction. Think 
+"here's what the robot should do given everything that's happening on the field right now".
+
+Planning is responsible for taking the instructions from strategy 
+and turning them into trajectories and commands a robot can execute,
 which are relayed to our physical robots by the radio.
 
-The Action Server is housed by the Planner node, which is the node responsible for turning requests
+Our Action Server is housed by the Planner node. The Planner node is responsible for turning requests
 for robot actions into trajectories for the robot to follow.
 
-The Action Clients are created by the AgentActionClient node which contain some 
+The Action Clients are created by the AgentActionClient node, which contains some 
 other useful subscriptions to get information about the field and referee.
 
 At any given time, an AgentActionClient is playing a single position. 
 It creates a RobotFactoryPosition instance and checks for its task,
-which it then relays to the planner using ROS actions. Take a look through ``agent_action_client.cpp`` to get a better understanding of this process. 
+which it then relays to the planner using ROS actions. 
+Take a look through ``agent_action_client.cpp`` to get a better understanding of this process. 
 
 Strategy decisions are delegated to the Positions. This makes
 sense with respect to soccer—players play differently based on their position.
@@ -261,18 +263,26 @@ A runner's process looks like this:
 #. Run along third side of shape
 #. Continue until done
 
-etc, starting over when it finishes the shape.
+The above steps will repeat, and then start over once the robot has finished making the shape you have
+specified.
 
 Hopefully, you're seeing how this list lends nicely to a state machine, where states are sides
 and you know to switch states based on when the robot has reached a vertex (the end of its path).
 
 You will need to look through the other positions to figure out the details of creating this position,
-but here are some more hints.
+but here's some guidance:
 
+* You should locate ``offense.cpp`` and ``offense.hpp``. You will be making a header file for our runner,
+so make sure you know the appropriate places to make your files.
+* The header file for runner should be quite simple. Start from the most essential components 
+(overriden methods and private State variables) and work your way up in complexity.
+* For readability purposes, let's keep our states an enum. Don't forget about a current state variable
+and a method to get the next state!
 * The motion command for driving in a straight line is :cpp:`"path_target"`.
-* You will probably need to override some methods relating to passing, but you can leave their implementations empty. They don't need to do anything in your position, as your robot will not pass the ball
 * The simulator tells you the coordinates of your cursor—these are the same coordinates you can use in your motion commands.
-* You will need to add the new file name you create to ``src/CMakeLists.txt``. See how this is done for other positions.
+* Remember, we're inheriting the position class. There is a useful method that we can use from the position class
+to see if we're done with our current state. Can you see how you can use this to help you get to the next state?
+* You will need to add the new file name you create to ``src/rj_strategy/CMakeLists.txt``. See how this is done for other positions.
 
 Testing
 ~~~~~~~
@@ -285,25 +295,21 @@ However, it determines what intent to return by calling ``get_task`` on the ``cu
 You only want one Runner robot, so just set the robot with ID 1 to always be a Runner. See how this is done in the constructor with Offense.
 You will also need to change other methods as well (i.e. ``set_default_position``) so the position is not overridden on later ticks.
 
+Suggestion: to make it easier to test/focus on robot 1, you can set all other robots to SmartIdle as their
+default position.
+
 Wrapping up
 ~~~~~~~~~~~
 Make sure that you are periodically commiting your changes. This makes it easy for you to revert things if you need to!
 
-Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Congratulations!
+Once robot 1 is successfully running in a rectangle (or other shape), you're finished! Nice work!
 
-4. ROS and C++
+4. SoccerMom
 --------------
-
-Much like Section 4, this section is our version of an official ROS
-tutorial. This time we'll reprise `Writing a simple publisher and subscriber (C++)`_.
-Before continuing, read the "Background" section of that tutorial, and brush up
-on any of the readings from section 4 that you need to. Ignore
-"Prerequisites"--our workspace is already set up for you, and we'll walk through
-instructions for building your code here.
-
-This section is by far the most difficult of the tutorial. 
-
-**Read the rest of this section before starting.**
+Welcome to the last part of the tutorial!
+This section is by far the most difficult of the tutorial. However, doing the ROS & C++ 
+introduction will give you a nice amount of background to get this section done,
+so review your work from that section (or, work on it if you haven't already). 
 
 Objective
 ~~~~~~~~~
@@ -322,6 +328,16 @@ to a new topic ``/team_fruit``.
 Creating a New Node
 ~~~~~~~~~~~~~~~~~~~
 
+.. note::
+   There are 2 main approaches you can take when adding your files
+   for the SoccerMom node. The first is to make a separate directory
+   just for SoccerMom. The second is to directly add your files 
+   into ``src/rj_radio/src``. The first option will teach you a lot about CMake
+   and how to properly create directories and nodes. However, since this is
+   an infrequent task, if you do not want to spend too much time exploring CMake,
+   we recommend option 2.
+
+
 Often in C++ you'll see the use of a header file, which ends in ``.hpp``, and a
 source file, which ends in ``.cpp``. Header files contain all the function
 declarations and docstrings explaining their use. Source files contain the
@@ -333,14 +349,13 @@ files.
 (For more information, check out `Headers and Includes`_ resource.)
 
 Let's take a look at a real example in our codebase to make this more
-understandable. Find the radio.cpp and radio.hpp files in our codebase. In the
-last section, you used :sh:`rqt` to launch the Node Graph. One of the nodes that
+understandable. Find the radio.cpp and radio.hpp files in our codebase. One of the nodes that
 subscribe and publish to various topics is ``/radio``, and these files are the
 source of that node. 
 
 Comparing the similarities and differences between the subscribers and
-publishers in these files vs. the ROS tutorial will help you learn what you can
-take directly from the ROS tutorial, and where you need to deviate from it.
+publishers in these files vs. the ROS introduction will help you learn what you can
+take directly from the ROS introduction, and where you need to deviate from it.
 
 As a brief overview to help you get started...
 
@@ -407,47 +422,15 @@ get a headstart, see `C++ Member Operators`_.
 You might be wondering: okay, this is great, but how do I compile and run my
 new node?
 
-Well, both NetworkRadio and SimRadio have an associated <name>_main.cpp file
-(e.g. ``sim_radio_node_main``) which contains the main function for its
-respective node. This structure is intended to make writing the CMake files for
-the directory easier. We use `CMake`_ to compile
-our C++ programs on a variety of different hardware architectures. 
+We use `CMake`_ to compile our C++ programs on a variety of different hardware architectures. 
+You'll notice that in the ``rj_radio`` folder, we have a ``CMakeLists.txt``. This is basically
+how we tell the compiler what our files are and how we would like them to be compiled.
 
 As a result, to compile and use your new node, you'll need to add your new
-source files to the right CMake files.
-
-Building Your Node
-~~~~~~~~~~~~~~~~~~
-
-CMakeLists.txt files are used to make standard build files for the directory. It
-locates files, libraries, and executables to support complex directory
-hierarchies. Locate the ``CMakeLists.txt`` file in
-``robocup-software/src/soccer``.
-
-Let's start looking at all the magic CMake text that builds our cpp code:
-
-* Notice the source files under :cmake:`ROBOCUP_LIB_SRC`. You will find the
-  radio files that you explored earlier, along with all the other source
-  files we use (motion control, UI, etc.).
-
-* Many of the nodes have an environment variable set for their
-  <node>_main.cpp. For instance, SimRadio has the line
-  :cmake:`set(SIM_RADIO_NODE_SRC radio/sim_radio_node_main.cpp)`. This defines
-  :cmake:`SIM_RADIO_NODE_SRC` to be the filepath
-  :cmake:`radio/sim_radio_node_main.cpp`. You will need a similar line for
-  your new node, with adjustments to the names.
-
-* There is a corresponding :cmake:`target_sources` line that SimRadio needs to
-  actually start: :cmake:`target_sources(sim_radio_node PRIVATE ${SIM_RADIO_NODE_SRC})`
-
-The rest is up to you. Keep using SimRadio as an example. Search through and
-find the parts of the CMake file where SimRadio is used, then follow that
-format for your own node. 
-
-It's okay if you don't understand everything that's going on. (Honestly, CMake
+source files to the right CMake files. It's okay if you don't understand everything that's going on. (Honestly, CMake
 files are one of those things we re-learn when adding new nodes and forget
-almost immediately after.) Just match the existing patterns.
-
+almost immediately after.) Just match the existing patterns if you're choosing
+to build your node within ``rj_radio``. 
 
 Launching Your Node
 ~~~~~~~~~~~~~~~~~~~
@@ -456,14 +439,12 @@ You're almost there! The final file to get your node up and running is the
 ``.launch`` file.
 
 Launch files in ROS are a convenient way of starting up multiple nodes, setting
-initial parameters, and other requirements. Find the ``robocup-software/launch``
+initial parameters, and other requirements. Find the ``launch/``
 directory and open the file that seems most relevant to your new node.
-(HINT: Your node should be located in ``robocup-software/src``.) 
 
 Like the CMake section, this part is a lot of copying what already exists and
 changing it to match your new node's names. If you want to read more about ROS
 launch files, the `Launch Files Tutorial`_ is a great place to start.
-
 
 Testing
 ~~~~~~~
@@ -471,25 +452,15 @@ Testing
 Whew! What a section. If you've made it this far, you should have everything
 you need to create the SoccerMom node. 
 
-This section will probably take you a while. Remember, when you run into
-issues, your order of question-asking should be:
-
-#. Google
-
-#. FAQ page in our docs
-
-#. Fellow new members
-
-#. Software lead
-
-#. Anyone the SW lead takes advice from
+This section will probably take you a while. And that's okay! Remember, you have a large
+support system to help you out.
 
 .. note::
 
    Since you have made changes to the C++ part of our codebase, you must build
    it again to test your node. This may take a while, so be patient and
-   proactive with your changes. If you forgot how to build the codebase, go to
-   the Getting Started page.
+   proactive with your changes. If you forgot how to build the codebase, reference
+   the installation section of the tutorial.
 
 To test, change our team color using the UI by going to the top menu bar and
 clicking Field > Team Color. You should see the team color change in the top

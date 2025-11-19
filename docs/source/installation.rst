@@ -7,7 +7,7 @@ or virtual machine running Ubuntu 22.04, and the second is to use Docker.
 .. Note::
    If you elect to use Docker, you need to ensure your system has sufficient
    memory as Docker is not the greatest with RAM management. In particular, it's
-   recommended that you have at least 16 GB of RAM allocated.
+   recommended that you have at least 8 GB of RAM allocated.
 
 
 Native/Virtual Machine Setup
@@ -114,14 +114,14 @@ that ``colcon`` takes up, by running:
 
 .. code-block:: bash
    
-   colcon build --parallel-workers 1 --executor sequential
+   make perf_docker
 
 After building, we need to source our custom ROS setup. Run the following in
 the ``robocup-software`` directory:
 
 .. code-block:: bash
 
-    source install/setup.bash
+   source install/setup.bash
 
 (Again, if you're on zsh, source the ``.zsh`` version instead.)
 

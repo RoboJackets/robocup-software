@@ -9,7 +9,7 @@ class SmartIdle : public Position {
 public:
     SmartIdle(int r_id);
     ~SmartIdle() = default;
-    SmartIdle(const Position& other);
+    SmartIdle(Position&& other);
 
     /**
      * @brief Does nothing; this position is a special case

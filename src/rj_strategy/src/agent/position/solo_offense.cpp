@@ -2,7 +2,7 @@
 
 namespace strategy {
 
-SoloOffense::SoloOffense(const Position& other) : Position{other} {
+SoloOffense::SoloOffense(Position&& other) : Position{std::move(other)} {
     position_name_ = "SoloOffense";
 }
 

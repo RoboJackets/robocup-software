@@ -32,7 +32,6 @@
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
-#include "rj_strategy/coordinator/kicker_picker_client.hpp"
 
 namespace strategy {
 
@@ -144,10 +143,9 @@ private:
     template <class Pos>
     void set_current_position() {
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            // This line requires Pos to implement the constructor Pos(const
-            // Position&)
+            // This line requires Pos to implement the constructor Pos(Position&&)
             current_position_->die();
-            current_position_ = std::make_unique<Pos>(*current_position_);
+            current_position_ = std::make_unique<Pos>(std::move(*current_position_));
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }

@@ -28,7 +28,7 @@ class Zoner : public Position {
 public:
     Zoner(int r_id);
     ~Zoner() override = default;
-    Zoner(const Position& other);
+    Zoner(Position&& other);
     Zoner(Zoner&& other) = default;
     Zoner& operator=(const Zoner& other) = default;
     Zoner& operator=(Zoner&& other) = default;

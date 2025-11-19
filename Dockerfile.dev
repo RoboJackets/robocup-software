@@ -27,6 +27,7 @@ RUN apt-get update && \
     wget \
     cmake \
     build-essential \
+    ccache \
     lsb-release \
     software-properties-common \
     gnupg \
@@ -51,6 +52,14 @@ RUN mkdir -p /root/.vnc && \
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# Configure ccache for faster rebuilds
+ENV CCACHE_DIR=/root/.ccache
+ENV CCACHE_COMPRESS=1
+ENV CCACHE_COMPRESSLEVEL=1
+ENV CCACHE_MAXSIZE=5G
+ENV CCACHE_SLOPPINESS=pch_defines,time_macros,include_file_mtime,include_file_ctime
+RUN ccache -M 5G || true
+
 # Clone RoboJackets RoboCup software
 RUN git clone https://github.com/RoboJackets/robocup-software.git /root/robocup-software
 
@@ -68,7 +77,7 @@ RUN git clone https://github.com/robotics-erlangen/framework.git /root/framework
 # Build our stack
 RUN bash -c "source /opt/ros/humble/setup.bash && \
     cd /root/robocup-software && \
-    colcon build --parallel-workers 1 --executor sequential && \
+    make perf_docker && \
     source install/setup.bash"
 
 # Clone, build ER-Force's autoref
