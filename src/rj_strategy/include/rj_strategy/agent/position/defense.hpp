@@ -119,7 +119,6 @@ private:
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
-    
 
     bool pending_marking_state_ = false;
 };

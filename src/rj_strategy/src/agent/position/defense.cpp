@@ -114,7 +114,8 @@ Defense::State Defense::update_state() {
                     [this](const MarkingClient::Result& res) {
                         if (res.am_i_member) {
                             // if (res.who_am_i_marking.has_value()) {
-                            //     SPDLOG_INFO("Robot {}: Joined marking group and assigned to mark "
+                            //     SPDLOG_INFO("Robot {}: Joined marking group and assigned to mark
+                            //     "
                             //                 "robot {}",
                             //                 robot_id_, res.who_am_i_marking.value());
                             // } else {
