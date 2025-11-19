@@ -96,6 +96,7 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+            break;
         case MARKING:
             if (!client_handles_->markingClient->am_i_member() ||
                 !client_handles_->markingClient->am_i_marking()) {

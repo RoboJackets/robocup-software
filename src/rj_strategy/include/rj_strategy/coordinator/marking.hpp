@@ -35,7 +35,7 @@ public:
 private:
     void publish_marking_list();
     void update_danger_scores();
-    double find_their_robot_in_possession();
+    uint8_t find_their_robot_in_possession();
     uint8_t most_dangerous_robot(uint8_t robotInPossession);
 
     static constexpr int kMaxMarkers = 2;

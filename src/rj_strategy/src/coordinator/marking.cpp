@@ -2,13 +2,12 @@
 
 namespace strategy {
 
-Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node") {
+Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node"), num_markers_{0} {
     // Subscribe to world state
     marking_list_.fill(kInvalidRobotId);       // initializes to no valid markers
     enemy_to_friends_.fill(kInvalidRobotId);  // matches the enemy robot to who is marking them
     danger_score_.fill(
         std::numeric_limits<double>::infinity());  // everyone starts with an infinite danger score
-    num_markers_ = 0;
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
@@ -171,7 +170,7 @@ void Marking::update_danger_scores() {
         double min = std::numeric_limits<double>::infinity();
         for (uint8_t j = 0; j < kNumShells; j++) {
             const auto& i_friend = last_world_state_.get_robot(true, j);
-            if (!robot.visible) {
+            if (!i_friend.visible) {
                 continue;
             }
             double dist = robot.pose.position().dist_to(i_friend.pose.position());
@@ -221,7 +220,7 @@ void Marking::update_danger_scores() {
     // }
 }
 
-double Marking::find_their_robot_in_possession() {
+uint8_t Marking::find_their_robot_in_possession() {
     uint8_t robotInPossession = kInvalidRobotId;
     double min_dist_to_ball = std::numeric_limits<double>::infinity();
     const auto& ball_pos = last_world_state_.ball.position;

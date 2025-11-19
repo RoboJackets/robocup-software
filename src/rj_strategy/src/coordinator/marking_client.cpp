@@ -3,7 +3,7 @@
 namespace strategy {
 
 /**
- * @brief Client for interacting with the KickerPicker coordinator.
+ * @brief Client for interacting with the Marking coordinator.
  *
  * Manages membership in the kicker group and tracks the currently selected kicker.
  */
@@ -95,7 +95,7 @@ void MarkingClient::leave_group(StatusCallback callback) {
             selected_robot_marking_id_ = kInvalidRobotId;
 
             if (callback) {
-                callback(Result{false});
+                callback(Result{true, selected_robot_marking_id_});
             }
         });
 }
