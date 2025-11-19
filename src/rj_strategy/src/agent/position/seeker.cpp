@@ -197,7 +197,7 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // communication) Heuristic to penalize being close to other seekers (a small minimum distance)s
     double min_seeker_dist = std::numeric_limits<double>::infinity();
     for (const auto& [key, value] : seeker_points_) {
-        //SPDLOG_INFO("key {} px {} py {}", key, value.x(), value.y());
+        // SPDLOG_INFO("key {} px {} py {}", key, value.x(), value.y());
         min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(value));
     }
     const double seeker_dist_loss = 0.3 * 1 / min_seeker_dist;
