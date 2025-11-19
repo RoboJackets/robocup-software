@@ -15,10 +15,10 @@ Waller::Waller()
 
 void Waller::service_callback(RequestPtr request, ResponsePtr response) {
     if (request->joining) {
-        if (num_wallers_ == kMaxWallers) {
+        if (num_wallers_ == kMaxWallers) {       
             response->success = false;
         } else {
-            if (std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id) != walling_robots_.end()) {
+            if (std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id) == walling_robots_.end()) {
                 walling_robots_[num_wallers_] = request->robot_id;
                 num_wallers_++;
                 update_wallers();
@@ -28,8 +28,8 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
     } else {
         auto it = std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id);
         if (it != walling_robots_.end()) {
-            *it = -1;
             num_wallers_--;
+            *it = -1;
             response->success = true;
             update_wallers();
         } else {

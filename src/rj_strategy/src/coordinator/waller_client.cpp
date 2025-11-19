@@ -8,7 +8,7 @@ WallerClient::WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id) : nod
 }
 
 void WallerClient::join_group(StatusCallback callback) {
-    if (am_i_member_) {
+    if (am_i_member_ || request_pending_) {
         return;
     }
 
@@ -24,9 +24,11 @@ void WallerClient::join_group(StatusCallback callback) {
     request->robot_id = robot_id_;
     request->joining = true;
 
+    request_pending_ = true;
     client_->async_send_request(request, [this, callback = std::move(callback)](
         rclcpp::Client<rj_msgs::srv::Waller>::SharedFuture future) {    // 6 NOLINT(performance-unnecessary-value-param) --
                                                                         //  ROS2 async callbacks require value capture.
+            request_pending_ = false;
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
                     callback(Result{false});
@@ -41,9 +43,10 @@ void WallerClient::join_group(StatusCallback callback) {
                     (const rj_msgs::msg::Waller::SharedPtr msg) {
                         walling_robots_ = msg->wall_list;
                         num_wallers_ = msg->wall_size;
+                        am_i_member_ = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_) != walling_robots_.end();
 
                         if (callback) {
-                            callback(Result{true});
+                            callback(Result{am_i_member_});
                         }
                     }
             );

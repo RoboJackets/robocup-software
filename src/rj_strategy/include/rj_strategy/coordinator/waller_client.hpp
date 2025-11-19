@@ -65,6 +65,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::Waller>::SharedPtr subscription_;
 
     bool am_i_member_ = false;
+    bool request_pending_ = false;
     std::array<u_int8_t, kNumShells> walling_robots_;
     int num_wallers_ = 0;
 

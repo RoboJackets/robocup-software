@@ -1,6 +1,9 @@
-#pragma <once>
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
+
+#include <array>
+#include <algorithm>
 
 #include <rj_msgs/srv/waller.hpp>
 #include <rj_msgs/msg/waller.hpp>
