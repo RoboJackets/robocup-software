@@ -21,7 +21,7 @@ jobs:
       - name: Preview stale branches
         uses: fpicalausa/remove-stale-branches@v2.4.0
         with:
-          dry-run: true
+          dry-run: false
           # curr threshold is >= 2 years
           days-before-branch-stale: 730
           days-before-branch-delete: 2
