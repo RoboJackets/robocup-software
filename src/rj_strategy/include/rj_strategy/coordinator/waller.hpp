@@ -31,8 +31,6 @@ public:
 private:
     std::array<u_int8_t, kNumShells> walling_robots_;
     u_int8_t num_wallers_ = 0;
-    WorldState last_world_state_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     static constexpr int kMaxWallers = 4;
 
     void update_wallers();

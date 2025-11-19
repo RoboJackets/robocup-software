@@ -44,7 +44,7 @@ void WallerClient::join_group(StatusCallback callback) {
                         walling_robots_ = msg->wall_list;
                         num_wallers_ = msg->wall_size;
                         am_i_member_ = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_) != walling_robots_.end();
-
+                        
                         if (callback) {
                             callback(Result{am_i_member_});
                         }
@@ -56,7 +56,7 @@ void WallerClient::join_group(StatusCallback callback) {
 }
 
 void WallerClient::leave_group(StatusCallback callback) {
-    if (!am_i_member_) {
+    if (!am_i_member_ && !request_pending_) {
         if (callback) {
             callback(Result{false});
         }
@@ -95,7 +95,7 @@ bool WallerClient::am_i_member() const { return am_i_member_; }
 
 std::optional<rj_geometry::Point> WallerClient::get_walling_point(const WorldState* world_state,
                                         FieldDimensions field_dimensions) const {
-    if (!am_i_member_) return nullopt;
+    if (!am_i_member_) return std::nullopt;
     
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
@@ -122,8 +122,7 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(const WorldSta
     auto wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
 
     auto it = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_);
-    if (it == walling_robots_.end()) return std::nullopt;
-    auto waller_pos = std::distance(walling_robots_.begin(), it);
+    auto waller_pos = std::distance(walling_robots_.begin(), it)+1;
 
     rj_geometry::Point target_point{};
     auto angle = (mid_point - goal_pos).angle();

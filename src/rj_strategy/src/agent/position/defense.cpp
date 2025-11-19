@@ -26,10 +26,6 @@ Defense::State Defense::update_state() {
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
-    if (current_state_ != WALLING && current_state_ != JOINING_WALL) {
-        client_handles_->waller->leave_group();
-    }
-
     switch (current_state_) {
         case IDLING:
             next_state = JOINING_WALL;
@@ -65,6 +61,7 @@ Defense::State Defense::update_state() {
             if (check_is_done()) {
                 next_state = IDLING;
             }
+            break;
         case MARKING:
             if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
                 next_state = ENTERING_MARKING;
@@ -182,9 +179,7 @@ void Defense::derived_acknowledge_ball_in_transit() {
 
 
 void Defense::die() {
-    if (current_state_ == WALLING) {
-        client_handles_->waller->leave_group();
-    }
+    client_handles_->waller->leave_group();
 }
 
 void Defense::revive() { current_state_ = JOINING_WALL; }
