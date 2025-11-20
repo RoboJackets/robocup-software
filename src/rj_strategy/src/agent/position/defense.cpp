@@ -32,8 +32,10 @@ Defense::State Defense::update_state() {
             break;
         case JOINING_WALL:
             client_handles_->waller->join_group([this](WallerClient::Result result) {
-                if (result.success) current_state_ = WALLING;
-                else current_state_ = ENTERING_MARKING;
+                if (result.success)
+                    current_state_ = WALLING;
+                else
+                    current_state_ = ENTERING_MARKING;
             });
             break;
         case WALLING:
@@ -123,12 +125,14 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.is_active = true;
         return intent;
     } else if (current_state_ == WALLING) {
-        auto walling_point = client_handles_->waller->get_walling_point(last_world_state_, field_dimensions_);
+        auto walling_point =
+            client_handles_->waller->get_walling_point(last_world_state_, field_dimensions_);
         if (walling_point) {
             planning::LinearMotionInstant target{walling_point.value()};
-            intent.motion_command = planning::MotionCommand{"path_target", target, planning::FaceBall{}};
-        }
-        else intent.motion_command = planning::MotionCommand{};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", target, planning::FaceBall{}};
+        } else
+            intent.motion_command = planning::MotionCommand{};
         return intent;
     } else if (current_state_ == FACING) {
         rj_geometry::Point robot_position =
@@ -177,10 +181,7 @@ void Defense::derived_acknowledge_ball_in_transit() {
     chasing_ball = false;
 }
 
-
-void Defense::die() {
-    client_handles_->waller->leave_group();
-}
+void Defense::die() { client_handles_->waller->leave_group(); }
 
 void Defense::revive() { current_state_ = JOINING_WALL; }
 

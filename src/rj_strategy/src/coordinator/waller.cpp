@@ -2,17 +2,17 @@
 
 namespace strategy {
 
-Waller::Waller()
-    : Coordinator("waller_srv", "waller_data", "waller_node") {
+Waller::Waller() : Coordinator("waller_srv", "waller_data", "waller_node") {
     walling_robots_.fill(-1);
 }
 
 void Waller::service_callback(RequestPtr request, ResponsePtr response) {
     if (request->joining) {
-        if (num_wallers_ == kMaxWallers) {       
+        if (num_wallers_ == kMaxWallers) {
             response->success = false;
         } else {
-            if (std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id) == walling_robots_.end()) {
+            if (std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id) ==
+                walling_robots_.end()) {
                 walling_robots_[num_wallers_] = request->robot_id;
                 num_wallers_++;
                 update_wallers();
@@ -33,7 +33,8 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
 void Waller::update_wallers() {
     auto prev_wallers = walling_robots_;
     std::sort(walling_robots_.begin(), walling_robots_.end());
-    publisher_->publish(rj_msgs::msg::Waller().set__wall_list(walling_robots_).set__wall_size(num_wallers_));
+    publisher_->publish(
+        rj_msgs::msg::Waller().set__wall_list(walling_robots_).set__wall_size(num_wallers_));
 }
 
 }  // namespace strategy
