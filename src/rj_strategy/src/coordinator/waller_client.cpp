@@ -1,8 +1,9 @@
 #include "rj_strategy/coordinator/waller_client.hpp"
 
 namespace strategy {
-    
-WallerClient::WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id) : node_{std::move(node)}, robot_id_{robot_id} {
+
+WallerClient::WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
+    : node_{std::move(node)}, robot_id_{robot_id} {
     client_ = node_->create_client<rj_msgs::srv::Waller>("waller_srv");
     walling_robots_.fill(-1);
 }
@@ -25,9 +26,11 @@ void WallerClient::join_group(StatusCallback callback) {
     request->joining = true;
 
     request_pending_ = true;
-    client_->async_send_request(request, [this, callback = std::move(callback)](
-        rclcpp::Client<rj_msgs::srv::Waller>::SharedFuture future) {    // 6 NOLINT(performance-unnecessary-value-param) --
-                                                                        //  ROS2 async callbacks require value capture.
+    client_->async_send_request(
+        request, [this, callback = std::move(callback)](
+                     rclcpp::Client<rj_msgs::srv::Waller>::SharedFuture
+                         future) {  // 6 NOLINT(performance-unnecessary-value-param) --
+                                    //  ROS2 async callbacks require value capture.
             request_pending_ = false;
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
@@ -39,20 +42,18 @@ void WallerClient::join_group(StatusCallback callback) {
 
             subscription_ = node_->create_subscription<rj_msgs::msg::Waller>(
                 "waller_data", rclcpp::QoS(1).transient_local(),
-                [this, callback = std::move(callback)] 
-                    (const rj_msgs::msg::Waller::SharedPtr msg) {
-                        walling_robots_ = msg->wall_list;
-                        num_wallers_ = msg->wall_size;
-                        am_i_member_ = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_) != walling_robots_.end();
-                        
-                        if (callback) {
-                            callback(Result{am_i_member_});
-                        }
-                    }
-            );
+                [this, callback = std::move(callback)](const rj_msgs::msg::Waller::SharedPtr msg) {
+                    walling_robots_ = msg->wall_list;
+                    num_wallers_ = msg->wall_size;
+                    am_i_member_ = std::find(walling_robots_.begin(), walling_robots_.end(),
+                                             robot_id_) != walling_robots_.end();
 
-        }
-    );
+                    if (callback) {
+                        callback(Result{am_i_member_});
+                    }
+                });
+
+        });
 }
 
 void WallerClient::leave_group(StatusCallback callback) {
@@ -93,10 +94,10 @@ void WallerClient::leave_group(StatusCallback callback) {
 
 bool WallerClient::am_i_member() const { return am_i_member_; }
 
-std::optional<rj_geometry::Point> WallerClient::get_walling_point(const WorldState* world_state,
-                                        FieldDimensions field_dimensions) const {
+std::optional<rj_geometry::Point> WallerClient::get_walling_point(
+    const WorldState* world_state, FieldDimensions field_dimensions) const {
     if (!am_i_member_) return std::nullopt;
-    
+
     // Creates Minimum wall radius is slightly greater than  box bounds
     // Dimension accessors should be edited when we figure out how we are doing dimensions realtime
     // from vision
@@ -122,7 +123,7 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(const WorldSta
     auto wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
 
     auto it = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_);
-    auto waller_pos = std::distance(walling_robots_.begin(), it)+1;
+    auto waller_pos = std::distance(walling_robots_.begin(), it) + 1;
 
     rj_geometry::Point target_point{};
     auto angle = (mid_point - goal_pos).angle();
@@ -164,5 +165,4 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(const WorldSta
     return target_point;
 }
 
-
-} // namespace strategy
+}  // namespace strategy

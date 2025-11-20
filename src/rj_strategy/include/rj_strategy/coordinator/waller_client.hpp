@@ -5,9 +5,9 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/field_dimensions.hpp>
 #include <rj_msgs/msg/waller.hpp>
 #include <rj_msgs/srv/waller.hpp>
-#include <rj_common/field_dimensions.hpp>
 
 #include "rj_strategy/coordinator/waller.hpp"
 
@@ -51,11 +51,11 @@ public:
     [[nodiscard]] bool am_i_member() const;
 
     /**
-     * @brief Get the target walling point 
+     * @brief Get the target walling point
      * @return target walling point of this robot.
      */
-    [[nodiscard]] std::optional<rj_geometry::Point> get_walling_point(const WorldState* world_state,
-                                        FieldDimensions field_dimensions) const;
+    [[nodiscard]] std::optional<rj_geometry::Point> get_walling_point(
+        const WorldState* world_state, FieldDimensions field_dimensions) const;
 
 private:
     rclcpp::Node::SharedPtr node_;
