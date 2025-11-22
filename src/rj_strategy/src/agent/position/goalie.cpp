@@ -19,7 +19,7 @@ Goalie::State Goalie::update_state() {
 
     // if PlayState is in state Ready and Restart is Penalty go to penalty state
     // call is_our_restart and if that is false we go into this state
-    
+
     if (current_play_state_.is_ready() && current_play_state_.is_penalty() &&
         !current_play_state_.is_our_restart()) {
         return PENALTY;
@@ -200,9 +200,8 @@ void Goalie::derived_pass_ball() { latest_state_ = PASSING; }
 void Goalie::derived_acknowledge_ball_in_transit() { latest_state_ = RECEIVING; }
 
 rj_geometry::Point Goalie::penalty_location(WorldState* world_state) {
-
     // be dumb: center of baseline
-    //return this->field_dimensions_.our_goal_loc();
+    // return this->field_dimensions_.our_goal_loc();
     // be smart
     // find robot on their team closest to ball
     std::vector<RobotState> const their_robots = last_world_state_->their_robots;
@@ -212,36 +211,35 @@ rj_geometry::Point Goalie::penalty_location(WorldState* world_state) {
     double closest_distance = std::numeric_limits<double>::infinity();
     RobotState curr_shooter;
     for (const RobotState& enemy : their_robots) {
-        
         // Get position of their shooter and the ball
         rj_geometry::Point ball_pos = world_state->ball.position;
         rj_geometry::Point enemy_location = enemy.pose.position();
-        
+
         double ball_distance = ball_pos.dist_to(enemy_location);
-        
+
         if (ball_distance < closest_distance) {
             closest_distance = ball_distance;
             curr_shooter = enemy;
         }
     }
-    
-    enemy_shooter_location = curr_shooter.pose.position();  //COORDS 1
-    rj_geometry::Point ball_pos = world_state->ball.position; //COORDS 2
+
+    enemy_shooter_location = curr_shooter.pose.position();     // COORDS 1
+    rj_geometry::Point ball_pos = world_state->ball.position;  // COORDS 2
 
     // SPDLOG_INFO("botpos {} {}", enemy_shooter_location.x(), enemy_shooter_location.y());
     // SPDLOG_INFO("ballpos {} {}", ball_pos.x(), ball_pos.y());
-    //SPDLOG_INFO("GOALX {}", field_dimensions_.goal_width());
-
+    // SPDLOG_INFO("GOALX {}", field_dimensions_.goal_width());
 
     double goalie_pos_y = field_dimensions_.our_goal_loc().y();
-    float goalie_pos_x = enemy_shooter_location.x() + ((goalie_pos_y - enemy_shooter_location.y())*(ball_pos.x() - enemy_shooter_location.x()))
-                           /(ball_pos.y() - enemy_shooter_location.y());
+    float goalie_pos_x =
+        enemy_shooter_location.x() + ((goalie_pos_y - enemy_shooter_location.y()) *
+                                      (ball_pos.x() - enemy_shooter_location.x())) /
+                                         (ball_pos.y() - enemy_shooter_location.y());
 
-    goalie_pos_x = std::clamp(goalie_pos_x, -1*field_dimensions_.goal_width()/2, field_dimensions_.goal_width()/2);
+    goalie_pos_x = std::clamp(goalie_pos_x, -1 * field_dimensions_.goal_width() / 2,
+                              field_dimensions_.goal_width() / 2);
 
-    //SPDLOG_INFO("enemy {}", goalie_pos_x);
-
-
+    // SPDLOG_INFO("enemy {}", goalie_pos_x);
 
     rj_geometry::Point goaliepose = {goalie_pos_x, goalie_pos_y};
     return goaliepose;
