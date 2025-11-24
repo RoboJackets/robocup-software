@@ -99,10 +99,11 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(
     if (!am_i_member_) return std::nullopt;
 
     auto waller_geometry = calculate_wall_geometry(world_state, field_dimensions);
-    auto waller_pos = std::distance(walling_robots_.begin(), 
-        std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_));
+    auto waller_pos =
+        std::distance(walling_robots_.begin(),
+                      std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_));
 
-    // Target point where the waller should end up 
+    // Target point where the waller should end up
     auto target_point = get_target_position(waller_geometry, waller_pos);
 
     // If we can, follow our parent instead of going directly to the target
@@ -114,7 +115,8 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(
     return target_point;
 }
 
-WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(const WorldState* world_state, FieldDimensions field_dimensions) const {
+WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(
+    const WorldState* world_state, FieldDimensions field_dimensions) const {
     WallerGeometry waller_geometry{};
 
     // Creates Minimum wall radius is slightly greater than  box bounds
@@ -123,9 +125,10 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(const WorldSt
     float box_w{field_dimensions.penalty_long_dist()};
     float box_h{field_dimensions.penalty_short_dist()};
     float line_w{field_dimensions.line_width()};
-    waller_geometry.min_wall_radius = (kRobotRadius * 4.0f) + line_w +
-                        hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)));
- 
+    waller_geometry.min_wall_radius =
+        (kRobotRadius * 4.0f) + line_w +
+        hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)));
+
     waller_geometry.robot_pos = world_state->get_robot(true, robot_id_).pose.position();
     waller_geometry.goal_pos = field_dimensions.our_goal_loc();
     waller_geometry.ball_pos = world_state->ball.position;
@@ -134,29 +137,39 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(const WorldSt
     return waller_geometry;
 }
 
-rj_geometry::Point WallerClient::get_target_position(WallerGeometry& waller_geometry, long waller_pos) const {
+rj_geometry::Point WallerClient::get_target_position(WallerGeometry& waller_geometry,
+                                                     long waller_pos) const {
     // Find target point of this robot
-    rj_geometry::Point ball_dir_vector = rj_geometry::Point(waller_geometry.ball_pos - waller_geometry.goal_pos).normalized();
-    
+    rj_geometry::Point ball_dir_vector =
+        rj_geometry::Point(waller_geometry.ball_pos - waller_geometry.goal_pos).normalized();
+
     // This serves as the center of the wall arc
-    rj_geometry::Point mid_point{(waller_geometry.goal_pos) + (ball_dir_vector * waller_geometry.min_wall_radius)};
+    rj_geometry::Point mid_point{(waller_geometry.goal_pos) +
+                                 (ball_dir_vector * waller_geometry.min_wall_radius)};
     auto angle = (mid_point - waller_geometry.goal_pos).angle();
 
     // Wallers are distributed evenly across the wall arc based on their position in the wall list
-    auto delta_angle = (waller_geometry.wall_spacing * (waller_pos - num_wallers_ / 2. - 0.5)) / waller_geometry.min_wall_radius;
+    auto delta_angle = (waller_geometry.wall_spacing * (waller_pos - num_wallers_ / 2. - 0.5)) /
+                       waller_geometry.min_wall_radius;
     auto target_angle = angle - delta_angle;
 
     // Calculate the target point using polar coordinates with wall radius and target angle
-    return rj_geometry::Point(1, 0).normalized(waller_geometry.min_wall_radius).rotated(target_angle);
+    return rj_geometry::Point(1, 0)
+        .normalized(waller_geometry.min_wall_radius)
+        .rotated(target_angle);
 }
 
-std::optional<uint8_t> WallerClient::get_parent_id(WallerGeometry& waller_geometry, rj_geometry::Point target_point, long waller_pos) const {
+std::optional<uint8_t> WallerClient::get_parent_id(WallerGeometry& waller_geometry,
+                                                   rj_geometry::Point target_point,
+                                                   long waller_pos) const {
     // Finds the parent point along the wall
-    auto distance_from_arc = abs(waller_geometry.robot_pos.dist_to(waller_geometry.goal_pos) - waller_geometry.min_wall_radius);
+    auto distance_from_arc = abs(waller_geometry.robot_pos.dist_to(waller_geometry.goal_pos) -
+                                 waller_geometry.min_wall_radius);
     auto distance_from_target = waller_geometry.robot_pos.dist_to(target_point);
 
     // We are not along the wall arco or we are close to our target, do not follow the parent
-    if (distance_from_arc >= kRobotRadius || distance_from_target <= kRobotRadius) return std::nullopt;
+    if (distance_from_arc >= kRobotRadius || distance_from_target <= kRobotRadius)
+        return std::nullopt;
 
     // We need to move to the left so our parent is the robot to the left of us
     if (target_point.x() < waller_geometry.robot_pos.x() && waller_pos > 0)
@@ -167,10 +180,12 @@ std::optional<uint8_t> WallerClient::get_parent_id(WallerGeometry& waller_geomet
 
     // We are the first robot in the arc, we should not follow anyone
     return std::nullopt;
-}   
+}
 
-rj_geometry::Point WallerClient::get_target_position_with_parent(WallerGeometry& waller_geometry, rj_geometry::Point target_point, rj_geometry::Point parent_point) const {
-    // Find target point of this robot by following some parent robot 
+rj_geometry::Point WallerClient::get_target_position_with_parent(
+    WallerGeometry& waller_geometry, rj_geometry::Point target_point,
+    rj_geometry::Point parent_point) const {
+    // Find target point of this robot by following some parent robot
     auto angle = (parent_point - waller_geometry.goal_pos).angle();
 
     // Go to {wall_spacing} behind the parent
@@ -181,9 +196,8 @@ rj_geometry::Point WallerClient::get_target_position_with_parent(WallerGeometry&
 
     // Calculate the target position using polar coordinates
     return rj_geometry::Point(1, 0)
-                        .normalized(waller_geometry.min_wall_radius)
-                        .rotated(target_angle);
+        .normalized(waller_geometry.min_wall_radius)
+        .rotated(target_angle);
 }
-
 
 }  // namespace strategy
