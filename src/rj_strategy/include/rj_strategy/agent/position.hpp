@@ -50,8 +50,8 @@ class AgentActionClient;
 namespace strategy {
 
 struct ClientHandles {
-    std::unique_ptr<KickerPickerClient> kickerPickerClient;
-    std::unique_ptr<MarkingClient> markingClient;
+    std::unique_ptr<KickerPickerClient> kicker_picker;
+    std::unique_ptr<MarkingClient> marking;
 };
 
 /*
@@ -238,7 +238,9 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
-    // Allow external code (e.g., RobotFactoryPosition) to inject shared client handles
+    /**
+     * @brief allows RobotFactoryPosition to synchronize with its client handles
+     */
     void set_client_handles(std::shared_ptr<ClientHandles> client_handles);
 
 protected:

@@ -36,8 +36,8 @@ Defense::State Defense::update_state() {
             return IDLING;
         }
 
-        if (client_handles_->markingClient->am_i_member() &&
-            client_handles_->markingClient->am_i_marking()) {
+        if (client_handles_->marking->am_i_member() &&
+            client_handles_->marking->am_i_marking()) {
             return MARKING;
         } else {
             return IDLING;
@@ -98,8 +98,8 @@ Defense::State Defense::update_state() {
             }
             break;
         case MARKING:
-            if (!client_handles_->markingClient->am_i_member() ||
-                !client_handles_->markingClient->am_i_marking()) {
+            if (!client_handles_->marking->am_i_member() ||
+                !client_handles_->marking->am_i_marking()) {
                 next_state = IDLING;
             }
             break;
@@ -110,7 +110,7 @@ Defense::State Defense::update_state() {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
 
-                client_handles_->markingClient->join_group(
+                client_handles_->marking->join_group(
                     [this](const bool is_member) {
                         if (is_member) {
                             pending_marking_state_ = true;
@@ -122,7 +122,7 @@ Defense::State Defense::update_state() {
                 // reset flag
                 sent_join_marking_group_request_ = false;
                 // ensure not in coordinator group
-                client_handles_->markingClient->leave_group();
+                client_handles_->marking->leave_group();
                 SPDLOG_INFO("Robot {}: Timeout on join group, IDLING now", robot_id_);
                 next_state = IDLING;
             }
@@ -200,7 +200,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         return intent;
     } else if (current_state_ == MARKING) {
         rj_geometry::Point targetPoint =
-            last_world_state_->get_robot(false, client_handles_->markingClient->who_am_i_marking())
+            last_world_state_->get_robot(false, client_handles_->marking->who_am_i_marking())
                 .pose.position();
 
         rj_geometry::Point ballPoint = last_world_state_->ball.position;

@@ -2,13 +2,14 @@
 
 namespace strategy {
 
-Position::Position(int r_id)
-    : robot_id_(r_id), client_handles_(std::make_shared<ClientHandles>()) {}
+Position::Position(int r_id) : robot_id_(r_id) {
+    client_handles_ = std::make_shared<ClientHandles>();
+}
 
 Position::Position(int r_id, std::string position_name)
-    : position_name_{std::move(position_name)},
-      robot_id_{r_id},
-      client_handles_(std::make_shared<ClientHandles>()){};
+    : position_name_{std::move(position_name)}, robot_id_{r_id} {
+    client_handles_ = std::make_shared<ClientHandles>();
+};
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions,
@@ -38,10 +39,6 @@ void Position::set_is_done() { is_done_ = true; }
 void Position::set_goal_canceled() { goal_canceled_ = true; }
 
 void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
-
-void Position::set_client_handles(std::shared_ptr<ClientHandles> client_handles) {
-    client_handles_ = std::move(client_handles);
-}
 
 bool Position::check_is_done() {
     if (is_done_) {
@@ -83,6 +80,10 @@ bool Position::assert_world_state_valid() {
         return false;
     }
     return true;
+}
+
+void Position::set_client_handles(std::shared_ptr<ClientHandles> client_handles) {
+    client_handles_ = client_handles;
 }
 
 std::deque<communication::PosAgentRequestWrapper> Position::send_communication_request() {
