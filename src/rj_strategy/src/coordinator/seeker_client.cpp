@@ -7,11 +7,7 @@ SeekerClient::SeekerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
     client_ = node_->create_client<rj_msgs::srv::SeekerCoordinator>("seeker_coordinator_srv");
 }
 
-void SeekerClient::join_group(StatusCallback callback) {
-    if (am_i_member_) {
-        return;
-    }
-
+void SeekerClient::poll_for_target(StatusCallback callback) {
     if (!client_->wait_for_service(std::chrono::seconds(1))) {
         SPDLOG_ERROR("SeekerCoordinator service not available.");
         if (callback) {
@@ -39,7 +35,7 @@ void SeekerClient::join_group(StatusCallback callback) {
             subscription_ = node_->create_subscription<rj_msgs::msg::SeekerCoordinator>(
             "seeker_coordinator_data", rclcpp::QoS(1).transient_local(),
             [this, callback=std::move(callback)](const rj_msgs::msg::SeekerCoordinator::SharedPtr msg) {
-                //selected_target_ = rj_geometry::Point{msg->positions[robot_id_].x, msg->positions[robot_id_].y};
+                selected_target_ = rj_geometry::Point{msg->positions[robot_id_].x, msg->positions[robot_id_].y};
             });
         });
 

@@ -37,7 +37,15 @@ public:
     static rj_geometry::Point invalidPoint() { return rj_geometry::Point{-1,-1}; }
 
 private:
+    /**
+     * @brief publishes current seeker target points whenever a new target point is acquired
+     */
     void publish_seeker_points();
+
+    /**
+     * @brief updates target point for robot_id whenever a robot joins the seeker group or polls for a new target.
+     */
+    void update_target(int robot_id);
 
     /**
      * @brief Returns the point which is most 'open'

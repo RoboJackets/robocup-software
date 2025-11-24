@@ -9,38 +9,35 @@ SeekerCoordinator::SeekerCoordinator()
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
-            publish_seeker_points();
         });
 }
 
 void SeekerCoordinator::service_callback(RequestPtr request, ResponsePtr response) {
-    bool membership_changed = is_seeking_[request->robot_id] != request->wants_to_seek;
     is_seeking_[request->robot_id] = request->wants_to_seek;
 
-    if (membership_changed) {
+    if (request->wants_to_seek) {
+        update_target(request->robot_id);
         publish_seeker_points();
+    } else {
+        seeker_points_[request->robot_id] = invalidPoint();
     }
 
     response->success = true;
 }
 
 void SeekerCoordinator::publish_seeker_points() {
-    //TODO: for currently seeking robots, check whether their current seeking point is really bad.
-    //array<rj_geometry::Point, kNumShells> last_published_points = seeker_points_;
-    // for (size_t i = 0; i < kNumShells; i++) {
-    //     if (is_seeking_[i]) {
-    //         rj_geometry::Point robot_pos = last_world_state_.our_robots.at(i).pose.position();
-    //         seeker_points_[i] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
-    //     } else {
-    //         seeker_points_[i] = invalidPoint();
-    //     }
-    // }
     std::array<rj_geometry_msgs::msg::Point, kNumShells> msg_points;
-    // for (size_t i = 0; i < kNumShells; i++) {
-    //     msg_points[i].x = seeker_points_[i].x();
-    //     msg_points[i].y = seeker_points_[i].y();
-    // }
+    for (size_t i = 0; i < kNumShells; i++) {
+        msg_points[i].x = seeker_points_[i].x();
+        msg_points[i].y = seeker_points_[i].y();
+    }
     this->publisher_->publish(rj_msgs::msg::SeekerCoordinator().set__positions(msg_points));
+}
+
+void SeekerCoordinator::update_target(int robot_id) {
+    rj_geometry::Point robot_pos = last_world_state_.our_robots.at(robot_id).pose.position();
+    seeker_points_[robot_id] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
+    SPDLOG_INFO("Open Point Found for Robot {}: {}, {}", robot_id, seeker_points_[robot_id].x(), seeker_points_[robot_id].y());
 }
 
 rj_geometry::Point SeekerCoordinator::get_open_point(const WorldState world_state,

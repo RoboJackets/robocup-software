@@ -53,7 +53,6 @@ namespace strategy {
 struct ClientHandles {
     std::unique_ptr<KickerPickerClient> kicker_picker;
     std::unique_ptr<SeekerClient> seekerClient;
->>>>>>> ros2
 };
 
 /*

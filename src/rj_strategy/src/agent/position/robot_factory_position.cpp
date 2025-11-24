@@ -3,19 +3,13 @@
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
-<<<<<<< HEAD
-    : Position(r_id, "RobotFactoryPosition"), clientHandles_(std::make_shared<ClientHandles>()) {
-    clientHandles_->kickerPickerClient = std::make_unique<KickerPickerClient>(node, r_id);
-    clientHandles_->seekerClient = std::make_unique<SeekerClient>(node, r_id); 
-    SPDLOG_INFO("*********************SEEKER_CLIENT: {}", clientHandles_->seekerClient != nullptr);
-=======
     : Position(r_id, "RobotFactoryPosition") {
-    client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(std::move(node), r_id);
->>>>>>> ros2
+    client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(node, r_id);
+    client_handles_->seekerClient = std::make_unique<SeekerClient>(node, r_id);
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_, clientHandles_);
+        current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
     }
@@ -49,11 +43,7 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Playing: {
                 // We just became regular playing.
                 // set_default_position();
-<<<<<<< HEAD
-                clientHandles_->kickerPickerClient->leave_group();
-=======
                 client_handles_->kicker_picker->leave_group();
->>>>>>> ros2
                 break;
             }
 
@@ -83,11 +73,7 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Halt: {
                 // The game has been stopped or halted. In this case, we typically want to keep
                 // our current position. The rules for movement should be handled at a lower level.
-<<<<<<< HEAD
-                clientHandles_->kickerPickerClient->leave_group();
-=======
                 client_handles_->kicker_picker->leave_group();
->>>>>>> ros2
                 handle_stop();
                 break;
             }
@@ -99,12 +85,8 @@ void RobotFactoryPosition::process_play_state() {
 void RobotFactoryPosition::handle_stop() { set_default_position(); }
 
 void RobotFactoryPosition::handle_penalty_playing() {
-<<<<<<< HEAD
-    if (!(clientHandles_->kickerPickerClient->am_i_member() && clientHandles_->kickerPickerClient->is_selected())) {
-=======
     if (!(client_handles_->kicker_picker->am_i_member() &&
           client_handles_->kicker_picker->is_selected())) {
->>>>>>> ros2
         set_current_position<SmartIdle>();
     }
 }
@@ -115,13 +97,8 @@ void RobotFactoryPosition::handle_setup() {
         // Set up our restart
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
-<<<<<<< HEAD
-            !clientHandles_->kickerPickerClient->am_i_member()) {
-            clientHandles_->kickerPickerClient->join_group([this](KickerPickerClient::Result result) {
-=======
             !client_handles_->kicker_picker->am_i_member()) {
             client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
->>>>>>> ros2
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();
@@ -145,15 +122,9 @@ void RobotFactoryPosition::handle_ready() {
     // Time to kick
 
     if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
-<<<<<<< HEAD
-        !clientHandles_->kickerPickerClient->am_i_member()) {
-        // There is no "Setup" stage for free kicks, so this is when we choose kicker
-        clientHandles_->kickerPickerClient->join_group([this](KickerPickerClient::Result result) {
-=======
         !client_handles_->kicker_picker->am_i_member()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
         client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
->>>>>>> ros2
             if (result.am_i_member && result.kicker_id == robot_id_) {
                 set_current_position<FreeKicker>();
             } else {

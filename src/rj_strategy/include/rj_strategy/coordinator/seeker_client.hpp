@@ -35,10 +35,10 @@ public:
     SeekerClient& operator=(SeekerClient&&) = delete;
 
     /**
-     * @brief Join the seeker group.
+     * @brief Join the seeker group. or poll for a new target position.
      * @param callback Called with current membership status after attempt to join.
      */
-    void join_group(StatusCallback callback = nullptr);
+    void poll_for_target(StatusCallback callback = nullptr);
 
     /**
      * @brief Leave the seeker group.

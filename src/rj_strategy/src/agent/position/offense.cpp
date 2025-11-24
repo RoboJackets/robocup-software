@@ -2,20 +2,11 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
+Offense::Offense(int r_id) : Position{r_id, "Offense"} {}
 
-Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
+Offense::Offense(Position&& other) : Position{std::move(other)} {
     position_name_ = "Offense";
 }
-
-Offense::Offense(int r_id, std::shared_ptr<ClientHandles> clientHandles)
-    : Position(r_id, "Offense"), seeker_{r_id}, clientHandles_{clientHandles} {}
-
-Offense::Offense(const Position& other, std::shared_ptr<ClientHandles> clientHandles)
-    : Position{other}, seeker_{robot_id_}, clientHandles_{clientHandles} {
-    position_name_ = "Offense";
-}
-
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
@@ -45,9 +36,8 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_START: {
-            SPDLOG_INFO("********************CLIENT_HANDLES_IS_NOT_NULL: {}", clientHandles_ != nullptr);
-            if (clientHandles_->seekerClient->am_i_member())
-                return SEEKING_START;
+            if (client_handles_->seekerClient->am_i_member())
+                return SEEKING_PROBE;
             else
                 return SEEKING_START;
         }
@@ -60,12 +50,13 @@ Offense::State Offense::next_state() {
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
+                client_handles_->seekerClient->leave_group();
                 return STEALING;
             }
 
             // If we need to get a new seeking target, restart seeking
-            if (check_is_done() ||
-                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+            if (check_is_done()  ||
+                 last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
                 return SEEKING_START;
             }
 
@@ -176,34 +167,22 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case SEEKING_START: {
-            // Calculate a new seeking point
-            // seeker_.reset_target();
-            // seeker_.set_seeker_points(seeker_points_);
-            // std::optional<RobotIntent> actual_intent =
-            //     seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-            // broadcast_seeker_request(seeker_.get_target_point(), true);
-            // return actual_intent;
-            // clientHandles_->seekerClient->join_group();
+            client_handles_->seekerClient->poll_for_target();
             intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
         case SEEKING_PROBE: {
-            // seeker_target_ = clientHandles_->seekerClient->selected_target();
-            // SPDLOG_INFO("Selected target: {}, {}", seeker_target_.x(), seeker_target_.y());
+            seeker_target_ = client_handles_->seekerClient->selected_target();
             intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
         case SEEKING: {
-            //return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-            // rj_geometry::Point current_loc = last_world_state_->get_robot(true, robot_id_).pose.position();
-
-            // planning::PathTargetFaceOption face_option = planning::FaceBall{};
-            // bool ignore_ball = false;
-            // planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
-            // intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
-            intent.motion_command = planning::MotionCommand{};
+            planning::PathTargetFaceOption face_option = planning::FaceBall{};
+            bool ignore_ball = false;
+            planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
+            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             return intent;
         }
 
@@ -332,14 +311,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
         comm_response.response = response;
-    } else if (const communication::SeekerRequest* seeker_request =
-                   std::get_if<communication::SeekerRequest>(&request.request)) {
-        if (seeker_request->adding) {
-            seeker_points_[seeker_request->robot_id] = rj_geometry::Point{
-                seeker_request->seeking_point_x, seeker_request->seeking_point_y};
-        } else {
-            seeker_points_.erase(seeker_request->robot_id);
-        }
     }
 
     return comm_response;
@@ -544,18 +515,5 @@ bool Offense::ball_in_red() const {
             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
             !field_dimensions_.field_rect().contains_point(ball_pos));
 }
-void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
-    communication::SeekerRequest seeker_request{};
-    communication::generate_uid(seeker_request);
-    seeker_request.robot_id = robot_id_;
-    seeker_request.seeking_point_x = seeking_point.x();
-    seeker_request.seeking_point_y = seeking_point.y();
-    seeker_request.adding = adding;
 
-    communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = seeker_request;
-    communication_request.urgent = false;
-    communication_request.broadcast = true;
-    communication_requests_.push_back(communication_request);
-}
 }  // namespace strategy

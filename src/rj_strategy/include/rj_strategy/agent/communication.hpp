@@ -25,7 +25,6 @@
 #include "rj_strategy/agent/communication/reset_scorer_request.hpp"
 #include "rj_strategy/agent/communication/scorer_request.hpp"
 #include "rj_strategy/agent/communication/scorer_response.hpp"
-#include "rj_strategy/agent/communication/seeker_request.hpp"
 #include "rj_strategy/agent/communication/test_request.hpp"
 #include "rj_strategy/agent/communication/test_response.hpp"
 
@@ -35,7 +34,7 @@ namespace strategy::communication {
  * @brief a conglomeration of the different request types.
  */
 using AgentRequest = std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest,
-                                  BallInTransitRequest, SeekerRequest, PositionRequest,
+                                  BallInTransitRequest, PositionRequest,
                                   LeaveWallRequest, ResetScorerRequest, IncomingBallRequest>;
 
 /**
@@ -144,9 +143,6 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* ball_in_transit_request =
                        std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
             result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
-        } else if (const auto* seeker_request =
-                       std::get_if<strategy::communication::SeekerRequest>(&from)) {
-            result.seeker_request.emplace_back(convert_to_ros(*seeker_request));
         } else if (const auto* position_request =
                        std::get_if<strategy::communication::PositionRequest>(&from)) {
             result.position_request.emplace_back(convert_to_ros(*position_request));
@@ -177,8 +173,6 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.scorer_request.front());
         } else if (!from.ball_in_transit_request.empty()) {
             result = convert_from_ros(from.ball_in_transit_request.front());
-        } else if (!from.seeker_request.empty()) {
-            result = convert_from_ros(from.seeker_request.front());
         } else if (!from.position_request.empty()) {
             result = convert_from_ros(from.position_request.front());
         } else if (!from.leave_wall_request.empty()) {

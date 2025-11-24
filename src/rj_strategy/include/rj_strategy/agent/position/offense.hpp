@@ -17,7 +17,6 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/seeker.hpp"
 #include "rj_strategy/coordinator/seeker_client.hpp"
 
 namespace strategy {
@@ -172,9 +171,6 @@ private:
 
     rj_geometry::Point seeker_target_;
 
-    /* RoleInterface Members */
-    Seeker seeker_;
-
     // Used to cache targets between states
     rj_geometry::Point target_;
 
@@ -235,12 +231,6 @@ private:
      * @return whether the ball is in an area that non-goalies cannot reach.
      */
     bool ball_in_red() const;
-
-    void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
-
-    std::unordered_map<int, rj_geometry::Point> seeker_points_;
-    
-    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy
