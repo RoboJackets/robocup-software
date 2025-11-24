@@ -36,10 +36,9 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     double const right_dist = get_shot_dist_to_goalie(enemy_goalie_location, right_goal_post);
     rj_geometry::Point const best_shot = left_dist < right_dist ? right_goal_post : left_goal_post;
 
-
     /*
     LOGIC FOR PASSING WHEN SHOT TOO EXTREME (i.e. CORNER KICK)
-    
+
     double const shot_angle = abs((best_shot - this->last_world_state_->ball.position).angle());
 
     if (shot_angle > 3 * M_PI / 4.0 ||
@@ -50,8 +49,8 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
         return intent;
     }
 
-    SPDLOG_INFO("Free Kicker {} shooting at point {}, {} with angle {}", this->robot_id_, best_shot.x(),
-               best_shot.y(), shot_angle);
+    SPDLOG_INFO("Free Kicker {} shooting at point {}, {} with angle {}", this->robot_id_,
+    best_shot.x(), best_shot.y(), shot_angle);
     */
 
     planning::LinearMotionInstant target{best_shot};
@@ -76,10 +75,10 @@ void FreeKicker::derived_pass_ball() {}
 
 void FreeKicker::derived_acknowledge_ball_in_transit() {}
 
-double FreeKicker::get_shot_dist_to_goalie(rj_geometry::Point const &goalie_pos, 
-    rj_geometry::Point const &shot_target) {
+double FreeKicker::get_shot_dist_to_goalie(rj_geometry::Point const& goalie_pos,
+                                           rj_geometry::Point const& shot_target) {
     rj_geometry::Point const ball_position = this->last_world_state_->ball.position;
-        return std::abs((goalie_pos - ball_position).cross(shot_target - ball_position)) /
-            (shot_target - ball_position).mag();
-    }
-} // namespace strategy
+    return std::abs((goalie_pos - ball_position).cross(shot_target - ball_position)) /
+           (shot_target - ball_position).mag();
+}
+}  // namespace strategy
