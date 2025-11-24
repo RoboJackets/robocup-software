@@ -3,7 +3,7 @@
 namespace strategy {
 
 Waller::Waller() : Coordinator("waller_srv", "waller_data", "waller_node") {
-    walling_robots_.fill(-1);
+    walling_robots_.fill(std::numeric_limits<uint8_t>::max());
 }
 
 void Waller::service_callback(RequestPtr request, ResponsePtr response) {
@@ -23,7 +23,7 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
         auto it = std::find(walling_robots_.begin(), walling_robots_.end(), request->robot_id);
         if (it != walling_robots_.end()) {
             num_wallers_--;
-            *it = -1;
+            *it = std::numeric_limits<uint8_t>::max();
             update_wallers();
         }
         response->success = true;

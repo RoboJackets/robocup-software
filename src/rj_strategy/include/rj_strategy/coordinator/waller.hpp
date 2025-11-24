@@ -29,8 +29,8 @@ public:
     void service_callback(RequestPtr request, ResponsePtr response);
 
 private:
-    std::array<u_int8_t, kNumShells> walling_robots_;
-    u_int8_t num_wallers_ = 0;
+    std::array<uint8_t, kNumShells> walling_robots_;
+    uint8_t num_wallers_ = 0;
     static constexpr int kMaxWallers = 4;
 
     void update_wallers();
