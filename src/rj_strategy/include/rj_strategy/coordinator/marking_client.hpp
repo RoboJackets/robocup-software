@@ -20,12 +20,8 @@ namespace strategy {
 class MarkingClient {
 public:
     static constexpr uint8_t kInvalidRobotId = kNumShells;
-    struct Result {
-        bool am_i_member{false};  // Whether this robot is currently a member of the kicker group.
-        std::optional<uint8_t> who_am_i_marking;  // ID of Kicker id
-    };
 
-    using StatusCallback = std::function<void(Result)>;
+    using StatusCallback = std::function<void(bool)>;
 
     explicit MarkingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
     ~MarkingClient() = default;

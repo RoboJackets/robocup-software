@@ -23,7 +23,7 @@ void MarkingClient::join_group(StatusCallback callback) {
     if (!client_->wait_for_service(std::chrono::seconds(1))) {
         SPDLOG_ERROR("Marking service not available.");
         if (callback) {
-            callback(Result{false});
+            callback(false);
         }
         return;
     }
@@ -39,7 +39,7 @@ void MarkingClient::join_group(StatusCallback callback) {
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
-                    callback(Result{false});
+                    callback(false);
                 }
                 return;
             }
@@ -50,13 +50,12 @@ void MarkingClient::join_group(StatusCallback callback) {
             subscription_ = node_->create_subscription<rj_msgs::msg::Marking>(
                 "marking_data", rclcpp::QoS(1).transient_local(),
                 [this](
-                    const rj_msgs::msg::Marking::SharedPtr msg) {  // callback=std::move(callback)
+                    const rj_msgs::msg::Marking::SharedPtr msg) {  
                     selected_robot_marking_id_ = msg->mark_robot_ids[robot_id_];
                     am_i_marking_ = (selected_robot_marking_id_ != kInvalidRobotId);
-                    // callback(Result{true, selected_robot_marking_id_});
                 });
 
-            callback(Result{true});
+            callback(true);
 
         });
 }
@@ -64,7 +63,7 @@ void MarkingClient::join_group(StatusCallback callback) {
 void MarkingClient::leave_group(StatusCallback callback) {
     if (!am_i_member_) {
         if (callback) {
-            callback(Result{false});
+            callback(false);
         }
         return;
     }
@@ -80,7 +79,7 @@ void MarkingClient::leave_group(StatusCallback callback) {
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
                 if (callback) {
-                    callback(Result{false});
+                    callback(false);
                 }
                 return;
             }
@@ -96,7 +95,7 @@ void MarkingClient::leave_group(StatusCallback callback) {
             selected_robot_marking_id_ = kInvalidRobotId;
 
             if (callback) {
-                callback(Result{true, selected_robot_marking_id_});
+                callback(true);
             }
         });
 }

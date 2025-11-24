@@ -41,13 +41,13 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 }
             }
             if (kInvalidRobotId != waiting_robot_id) {
-                unassigned_markers_.erase(waiting_robot_id);
+                unassigned_markers_queue_.erase(waiting_robot_id);
                 marking_list_[waiting_robot_id] = enemy_id;
                 enemy_to_friends_[enemy_id] = waiting_robot_id;
                 num_markers_++;
             }
         } else {
-            unassigned_markers_.erase(request->robot_id);
+            unassigned_markers_queue_.erase(request->robot_id);
         }
         response->success = true;
         return;
@@ -63,7 +63,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             marking_list_[request->robot_id] = most_dangerous;
             num_markers_++;
         } else {
-            unassigned_markers_queue_.push_back(request->robot_id);
+            unassigned_markers_queue_.insert(request->robot_id);
         }
     } else {
         // should we kick someone out (is this new robot a better marker)
@@ -91,7 +91,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             enemy_to_friends_[enemy_id] = request->robot_id;
             marking_list_[request->robot_id] = enemy_id;
         } else {
-            unassigned_markers_queue_.push_back(request->robot_id);
+            unassigned_markers_queue_.insert(request->robot_id);
         }
     }
 
@@ -214,9 +214,6 @@ void Marking::update_danger_scores() {
         danger_score_[i] = danger_score;
     }
 
-    // for (size_t i = 0; i < 6; ++i) {
-    //     SPDLOG_INFO("Robot {} has danger score {}", i, danger_score_[i]);
-    // }
 }
 
 uint8_t Marking::find_their_robot_in_possession() {

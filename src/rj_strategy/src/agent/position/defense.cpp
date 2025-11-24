@@ -111,18 +111,8 @@ Defense::State Defense::update_state() {
                 request_time_ = RJ::now();
 
                 client_handles_->markingClient->join_group(
-                    [this](const MarkingClient::Result& res) {
-                        if (res.am_i_member) {
-                            // if (res.who_am_i_marking.has_value()) {
-                            //     SPDLOG_INFO("Robot {}: Joined marking group and assigned to mark
-                            //     "
-                            //                 "robot {}",
-                            //                 robot_id_, res.who_am_i_marking.value());
-                            // } else {
-                            //     SPDLOG_INFO("Robot {}: Joined marking group but not assigned to "
-                            //                 "mark any robot",
-                            //                 robot_id_);
-                            // }
+                    [this](const bool is_member) {
+                        if (is_member) {
                             pending_marking_state_ = true;
                         }
                     });
