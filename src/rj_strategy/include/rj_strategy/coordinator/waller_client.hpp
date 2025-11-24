@@ -79,10 +79,14 @@ private:
         rj_geometry::Point robot_pos;
     };
 
-    WallerGeometry calculate_wall_geometry(const WorldState* world_state, FieldDimensions dimensions) const;
+    WallerGeometry calculate_wall_geometry(const WorldState* world_state,
+                                           FieldDimensions dimensions) const;
     rj_geometry::Point get_target_position(WallerGeometry& waller_geometry, long waller_pos) const;
-    std::optional<uint8_t> get_parent_id(WallerGeometry& waller_geometry, rj_geometry::Point target_point, long waller_pos) const;
-    rj_geometry::Point get_target_position_with_parent(WallerGeometry& waller_geometry, rj_geometry::Point target_point, rj_geometry::Point parent_point) const;
+    std::optional<uint8_t> get_parent_id(WallerGeometry& waller_geometry,
+                                         rj_geometry::Point target_point, long waller_pos) const;
+    rj_geometry::Point get_target_position_with_parent(WallerGeometry& waller_geometry,
+                                                       rj_geometry::Point target_point,
+                                                       rj_geometry::Point parent_point) const;
 };
 
 }  // namespace strategy
