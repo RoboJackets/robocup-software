@@ -37,19 +37,20 @@ void SeekerCoordinator::publish_seeker_points() {
 void SeekerCoordinator::update_target(int robot_id) {
     rj_geometry::Point robot_pos = last_world_state_.our_robots.at(robot_id).pose.position();
     seeker_points_[robot_id] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
-    SPDLOG_INFO("Open Point Found for Robot {}: {}, {}", robot_id, seeker_points_[robot_id].x(), seeker_points_[robot_id].y());
+    SPDLOG_INFO("Open Point Found for Robot {}: {}, {}", robot_id, seeker_points_[robot_id].x(),
+                seeker_points_[robot_id].y());
 }
 
-rj_geometry::Point SeekerCoordinator::get_open_point(const WorldState world_state,
-                                          rj_geometry::Point current_position,
-                                          const FieldDimensions& field_dimensions) const {
-    return SeekerCoordinator::calculate_open_point(3.0, .2, current_position, world_state, field_dimensions);
+rj_geometry::Point SeekerCoordinator::get_open_point(
+    const WorldState world_state, rj_geometry::Point current_position,
+    const FieldDimensions& field_dimensions) const {
+    return SeekerCoordinator::calculate_open_point(3.0, .2, current_position, world_state,
+                                                   field_dimensions);
 }
 
-rj_geometry::Point SeekerCoordinator::calculate_open_point(double current_prec, double min_prec,
-                                                rj_geometry::Point current_point,
-                                                const WorldState world_state,
-                                                const FieldDimensions& field_dimensions) const {
+rj_geometry::Point SeekerCoordinator::calculate_open_point(
+    double current_prec, double min_prec, rj_geometry::Point current_point,
+    const WorldState world_state, const FieldDimensions& field_dimensions) const {
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state.ball.position;
         rj_geometry::Point min = current_point;
@@ -89,7 +90,7 @@ rj_geometry::Point SeekerCoordinator::calculate_open_point(double current_prec, 
 }
 
 rj_geometry::Point SeekerCoordinator::correct_point(rj_geometry::Point p,
-                                         const FieldDimensions& field_dimensions) const {
+                                                    const FieldDimensions& field_dimensions) const {
     double border_buffer = .2;
     double x = p.x();
     double y = p.y();
@@ -127,8 +128,8 @@ rj_geometry::Point SeekerCoordinator::correct_point(rj_geometry::Point p,
 }
 
 double SeekerCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                          const WorldState world_state,
-                          const FieldDimensions& field_dimensions) const {
+                                     const WorldState world_state,
+                                     const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
 

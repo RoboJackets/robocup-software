@@ -20,11 +20,10 @@ namespace strategy {
  */
 class SeekerClient {
 public:
-
     struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the seeker group.
     };
-    
+
     using StatusCallback = std::function<void(Result)>;
 
     explicit SeekerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
@@ -57,7 +56,6 @@ public:
      */
     [[nodiscard]] rj_geometry::Point selected_target() const;
 
-
 private:
     rclcpp::Node::SharedPtr node_;
     const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
@@ -66,7 +64,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::SeekerCoordinator>::SharedPtr subscription_;
 
     bool am_i_member_{false};
-    rj_geometry::Point selected_target_ {-1, -1};
+    rj_geometry::Point selected_target_{-1, -1};
 };
 
 }  // namespace strategy

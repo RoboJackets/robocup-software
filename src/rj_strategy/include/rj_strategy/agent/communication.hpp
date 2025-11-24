@@ -33,9 +33,9 @@ namespace strategy::communication {
 /**
  * @brief a conglomeration of the different request types.
  */
-using AgentRequest = std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest,
-                                  BallInTransitRequest, PositionRequest,
-                                  LeaveWallRequest, ResetScorerRequest, IncomingBallRequest>;
+using AgentRequest =
+    std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest, BallInTransitRequest,
+                 PositionRequest, LeaveWallRequest, ResetScorerRequest, IncomingBallRequest>;
 
 /**
  * @brief a conglomeration of the different response types.

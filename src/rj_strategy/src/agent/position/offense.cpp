@@ -4,9 +4,7 @@ namespace strategy {
 
 Offense::Offense(int r_id) : Position{r_id, "Offense"} {}
 
-Offense::Offense(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Offense";
-}
+Offense::Offense(Position&& other) : Position{std::move(other)} { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
@@ -43,7 +41,6 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_PROBE: {
-            
             return SEEKING;
         }
 
@@ -55,8 +52,8 @@ Offense::State Offense::next_state() {
             }
 
             // If we need to get a new seeking target, restart seeking
-            if (check_is_done()  ||
-                 last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
+            if (check_is_done() ||
+                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
                 return SEEKING_START;
             }
 
@@ -182,7 +179,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             planning::PathTargetFaceOption face_option = planning::FaceBall{};
             bool ignore_ball = false;
             planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
-            intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             return intent;
         }
 

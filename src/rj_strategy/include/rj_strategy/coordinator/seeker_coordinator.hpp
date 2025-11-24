@@ -14,18 +14,16 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_msgs/msg/seeker_coordinator.hpp>
-#include <rj_msgs/srv/seeker_coordinator.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-
+#include <rj_msgs/srv/seeker_coordinator.hpp>
 
 #include "rj_strategy/coordinator.hpp"
 
 namespace strategy {
 
-class SeekerCoordinator
-    : public Coordinator<SeekerCoordinator, rj_msgs::srv::SeekerCoordinator, rj_msgs::msg::SeekerCoordinator> {
+class SeekerCoordinator : public Coordinator<SeekerCoordinator, rj_msgs::srv::SeekerCoordinator,
+                                             rj_msgs::msg::SeekerCoordinator> {
 public:
-
     SeekerCoordinator();
     ~SeekerCoordinator() override = default;
     SeekerCoordinator(const SeekerCoordinator&) = delete;
@@ -34,7 +32,7 @@ public:
     SeekerCoordinator& operator=(SeekerCoordinator&&) = delete;
 
     void service_callback(RequestPtr request, ResponsePtr response);
-    static rj_geometry::Point invalidPoint() { return rj_geometry::Point{-1,-1}; }
+    static rj_geometry::Point invalidPoint() { return rj_geometry::Point{-1, -1}; }
 
 private:
     /**
@@ -43,7 +41,8 @@ private:
     void publish_seeker_points();
 
     /**
-     * @brief updates target point for robot_id whenever a robot joins the seeker group or polls for a new target.
+     * @brief updates target point for robot_id whenever a robot joins the seeker group or polls for
+     * a new target.
      */
     void update_target(int robot_id);
 
@@ -100,12 +99,11 @@ private:
                                     const WorldState world_state,
                                     const FieldDimensions& field_dimensions) const;
 
-
     WorldState last_world_state_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    std::array<rj_geometry::Point, kNumShells> seeker_points_{rj_geometry::Point{-1,-1}};
+    std::array<rj_geometry::Point, kNumShells> seeker_points_{rj_geometry::Point{-1, -1}};
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
-    std::array<bool, kNumShells> is_seeking_ {false};
+    std::array<bool, kNumShells> is_seeking_{false};
 };
 
 }  // namespace strategy
