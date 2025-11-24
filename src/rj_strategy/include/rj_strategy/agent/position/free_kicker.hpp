@@ -38,6 +38,7 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    double get_shot_dist_to_goalie(rj_geometry::Point const &goalie_pos, rj_geometry::Point const &shot_target);
 };
 
 }  // namespace strategy
