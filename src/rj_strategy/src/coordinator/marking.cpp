@@ -32,8 +32,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
             // Queue is queue of robots that want to join marking but aren't good enough
             //          Not close enough to mark or we exceeed the max num of markers
             for (uint8_t id : unassigned_markers_queue_) {
-                const auto& i_robot =
-                    last_world_state_.get_robot(true, id);
+                const auto& i_robot = last_world_state_.get_robot(true, id);
                 double distance = i_robot.pose.position().dist_to(enemy_robot.pose.position());
                 if (distance < min) {
                     min = distance;
@@ -213,7 +212,6 @@ void Marking::update_danger_scores() {
 
         danger_score_[i] = danger_score;
     }
-
 }
 
 uint8_t Marking::find_their_robot_in_possession() {

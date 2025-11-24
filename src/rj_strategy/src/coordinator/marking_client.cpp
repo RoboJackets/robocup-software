@@ -49,8 +49,7 @@ void MarkingClient::join_group(StatusCallback callback) {
             // Create subscription to track selected kicker.
             subscription_ = node_->create_subscription<rj_msgs::msg::Marking>(
                 "marking_data", rclcpp::QoS(1).transient_local(),
-                [this](
-                    const rj_msgs::msg::Marking::SharedPtr msg) {  
+                [this](const rj_msgs::msg::Marking::SharedPtr msg) {
                     selected_robot_marking_id_ = msg->mark_robot_ids[robot_id_];
                     am_i_marking_ = (selected_robot_marking_id_ != kInvalidRobotId);
                 });
