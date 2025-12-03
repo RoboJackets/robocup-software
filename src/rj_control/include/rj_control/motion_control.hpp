@@ -23,16 +23,22 @@
 
 namespace control {
 
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
+// Per-robot motion control parameters (read from rclcpp::Node at runtime)
+struct MotionControlParams {
+    double max_acceleration = 3.0;
+    double max_velocity = 2.4;
+    double max_angular_velocity = 5.0;
+
+    double rotation_kp = 10.0;
+    double rotation_ki = 0.0;
+    double rotation_kd = 0.0;
+    int64_t rotation_windup = 0;
+
+    double translation_kp = 0.6;
+    double translation_ki = 0.0;
+    double translation_kd = 0.3;
+    int64_t translation_windup = 0;
+};
 
 namespace testing {
 
@@ -78,10 +84,14 @@ private:
      * Update PID parameters.
      */
     void update_params();
+    void read_params();
 
-    static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
+    void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 
     int shell_id_;
+    rclcpp::Node* node_ = nullptr;
+
+    MotionControlParams params_;
 
     /// The last velocity command (in m/s) that we sent / to the robot
     rj_geometry::Twist last_world_vel_command_;

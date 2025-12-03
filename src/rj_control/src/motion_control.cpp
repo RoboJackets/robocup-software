@@ -6,42 +6,20 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
-               "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
-               "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
-               "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 10.0,
-               "Kp for rotation ((rad/s)/rad)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
-               "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
-               "Kd for rotation ((rad/s)/(rad/s))");
-DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
-             "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 0.6,
-               "Kp for translation ((m/s)/m)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
-               "Ki for translation ((m/s)/(m*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
-               "Kd for translation ((m/s)/(m/s))");
-DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
-             "Windup limit for translation (unknown units)");
-
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
-    : shell_id_(shell_id),
-      angle_controller_(0, 0, 0, 50, 0),
-      drawer_(
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
-          fmt::format("motion_control/{}", std::to_string(shell_id))) {
+        : shell_id_(shell_id),
+            node_(node),
+            angle_controller_(0, 0, 0, 50, 0),
+            drawer_(
+                    node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
+                    fmt::format("motion_control/{}", std::to_string(shell_id))) {
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
     target_state_pub_ = node->create_publisher<RobotState::Msg>(
         topics::desired_state_topic(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory::Msg>(
-        planning::topics::trajectory_topic(shell_id), rclcpp::QoS(1),
+        planning::topics::trajectory_topic(shell_id_), rclcpp::QoS(1),
         [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
             trajectory_ = rj_convert::convert_from_ros(*trajectory);
         });
@@ -71,6 +49,46 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(
         "debug/motion_control/pose_error_heading", 10);
+    // Initialize params from node
+    read_params();
+}
+
+// Read per-robot parameters from the node (allows robots.<id>.<param> YAML)
+// This sets the defaults and reads overrides from the node.
+void MotionControl::read_params() {
+    const std::string root = "robots." + std::to_string(shell_id_) + ".";
+
+    auto declare_or_get = [this, &root](const std::string& name, auto default_val) {
+        using T = std::decay_t<decltype(default_val)>;
+        const std::string full = root + name;
+        T value{};
+        if (node_->has_parameter(full)) {
+            node_->get_parameter(full, value);
+            return value;
+        }
+        // fallback to global param name
+        if (node_->has_parameter(name)) {
+            node_->get_parameter(name, value);
+            return value;
+        }
+        // No parameter set in node: return default (do not declare to avoid conflicts)
+        return default_val;
+    };
+
+    params_.max_acceleration = declare_or_get("max_acceleration", params_.max_acceleration);
+    params_.max_velocity = declare_or_get("max_velocity", params_.max_velocity);
+    params_.max_angular_velocity =
+        declare_or_get("max_angular_velocity", params_.max_angular_velocity);
+
+    params_.rotation_kp = declare_or_get("rotation_kp", params_.rotation_kp);
+    params_.rotation_ki = declare_or_get("rotation_ki", params_.rotation_ki);
+    params_.rotation_kd = declare_or_get("rotation_kd", params_.rotation_kd);
+    params_.rotation_windup = declare_or_get("rotation_windup", params_.rotation_windup);
+
+    params_.translation_kp = declare_or_get("translation_kp", params_.translation_kp);
+    params_.translation_ki = declare_or_get("translation_ki", params_.translation_ki);
+    params_.translation_kd = declare_or_get("translation_kd", params_.translation_kd);
+    params_.translation_windup = declare_or_get("translation_windup", params_.translation_windup);
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -188,9 +206,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
-    target_vel.linear().clamp(PARAM_max_velocity);
+    target_vel.linear().clamp(params_.max_velocity);
     target_vel.angular() =
-        std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
+        std::clamp(target_vel.angular(), -params_.max_angular_velocity, params_.max_angular_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
@@ -210,21 +228,24 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
 }
 
 void MotionControl::update_params() {
-    // Update PID parameters
-    position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_x_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_x_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_x_controller_.setWindup(PARAM_translation_windup);
+    // Re-read params (allow dynamic overrides) and update PID parameters
+    if (node_) {
+        read_params();
+    }
+    position_x_controller_.kp = static_cast<float>(params_.translation_kp);
+    position_x_controller_.ki = static_cast<float>(params_.translation_ki);
+    position_x_controller_.kd = static_cast<float>(params_.translation_kd);
+    position_x_controller_.setWindup(params_.translation_windup);
 
-    position_y_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_y_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_y_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_y_controller_.setWindup(PARAM_translation_windup);
+    position_y_controller_.kp = static_cast<float>(params_.translation_kp);
+    position_y_controller_.ki = static_cast<float>(params_.translation_ki);
+    position_y_controller_.kd = static_cast<float>(params_.translation_kd);
+    position_y_controller_.setWindup(params_.translation_windup);
 
-    angle_controller_.kp = static_cast<float>(PARAM_rotation_kp);
-    angle_controller_.ki = static_cast<float>(PARAM_rotation_ki);
-    angle_controller_.kd = static_cast<float>(PARAM_rotation_kd);
-    angle_controller_.setWindup(PARAM_rotation_windup);
+    angle_controller_.kp = static_cast<float>(params_.rotation_kp);
+    angle_controller_.ki = static_cast<float>(params_.rotation_ki);
+    angle_controller_.kd = static_cast<float>(params_.rotation_kd);
+    angle_controller_.setWindup(params_.rotation_windup);
 }
 
 void MotionControl::reset() {
