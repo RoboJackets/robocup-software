@@ -17,10 +17,6 @@ public:
     RegistryPublisher() = default;
 
 private:
-
-    // Private Constructor
-    // RegistryPublisher() = default;
-
     // Delete Copy Constructor and Assignment
     RegistryPublisher(const RegistryPublisher& other) = delete;
     RegistryPublisher& operator=(const RegistryPublisher& other) = delete;
