@@ -11,7 +11,9 @@ from launch.actions import (
     SetEnvironmentVariable,
     SetLaunchConfiguration,
     Shutdown,
+    RegisterEventHandler,
 )
+from launch.event_handlers import OnProcessStart
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
@@ -124,19 +126,15 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
-            Node(
+            # start the global parameter server early and keep a reference so
+            # we can start other nodes after it is up
+            (global_param_server_node := Node(
                 package="rj_param_utils",
                 executable="global_param_server_node",
                 output="screen",
-                parameters=[
-                    os.path.join(
-                        get_package_share_directory("rj_param_utils"),
-                        "config",
-                        "sim.yaml"
-                    )
-                ],
+                parameters=[param_config_filepath],
                 on_exit=Shutdown(),
-            ),
+            )),
             Node(
                 package="rj_ui",
                 executable="rj_ui_node",
@@ -164,13 +162,21 @@ def generate_launch_description():
                 ],
                 on_exit=Shutdown(),
             ),
-            Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
-                package="rj_control",
-                executable="motion_control_node",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
+            # launch motion_control only after the global_param_server has started
+            RegisterEventHandler(
+                OnProcessStart(
+                    target_action=global_param_server_node,
+                    on_start=[
+                        Node(
+                            condition=IfCondition(PythonExpression(["not ", use_manual_control])),
+                            package="rj_control",
+                            executable="motion_control_node",
+                            output="screen",
+                            parameters=[param_config_filepath],
+                            on_exit=Shutdown(),
+                        )
+                    ],
+                )
             ),
             Node(
                 package="rj_planning",

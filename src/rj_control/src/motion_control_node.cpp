@@ -12,7 +12,13 @@ MotionControlNode::MotionControlNode()
     auto drawing_publisher = create_publisher<rj_drawing_msgs::msg::DebugDraw>(
         viz::topics::kDebugDrawTopic, rclcpp::QoS(10));
     for (int i = 0; i < kNumShells; i++) {
-        controllers_.emplace_back(i, this);
+        try {
+            controllers_.emplace_back(i, this);
+        } catch (const std::exception& e) {
+            SPDLOG_ERROR("Failed to construct MotionControl for id {}: {}", i, e.what());
+        } catch (...) {
+            SPDLOG_ERROR("Failed to construct MotionControl for id {}: unknown error", i);
+        }
     }
 }
 
@@ -22,7 +28,11 @@ int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     rj_utils::set_spdlog_default_ros2("processor");
 
+    // Start the global param provider receiver thread first so parameters
+    // from the global param server are available before we construct
+    // MotionControlNode and its per-robot controllers.
+    start_global_param_provider("processor", kGlobalParamServerNode);
+
     auto control = std::make_shared<control::MotionControlNode>();
-    start_global_param_provider(control.get(), kGlobalParamServerNode);
     rclcpp::spin(control);
 }

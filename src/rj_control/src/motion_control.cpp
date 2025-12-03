@@ -75,10 +75,29 @@ void MotionControl::read_params() {
         return default_val;
     };
 
+    // SPDLOG_INFO("MotionControl[{}]: reading params for robot {}", shell_id_, shell_id_);
+    // // Dump parameter names available on the node for debugging
+    // try {
+    //     auto list_res = node_->list_parameters(std::vector<std::string>{}, 10);
+    //     SPDLOG_INFO("MotionControl[{}]: node has {} parameters", shell_id_, list_res.names.size());
+    //     for (const auto& pname : list_res.names) {
+    //         SPDLOG_INFO("MotionControl[{}]: param available: {}", shell_id_, pname);
+    //     }
+    // } catch (const std::exception& e) {
+    //     SPDLOG_WARN("MotionControl[{}]: failed to list parameters: {}", shell_id_, e.what());
+    // }
+    // SPDLOG_INFO("MotionControl[{}]: checking '{}max_acceleration'", shell_id_, root);
     params_.max_acceleration = declare_or_get("max_acceleration", params_.max_acceleration);
+    // SPDLOG_INFO("MotionControl[{}]: max_acceleration = {}", shell_id_, params_.max_acceleration);
+
+    // SPDLOG_INFO("MotionControl[{}]: checking '{}max_velocity'", shell_id_, root);
     params_.max_velocity = declare_or_get("max_velocity", params_.max_velocity);
+    // SPDLOG_INFO("MotionControl[{}]: max_velocity = {}", shell_id_, params_.max_velocity);
+
+    // SPDLOG_INFO("MotionControl[{}]: checking '{}max_angular_velocity'", shell_id_, root);
     params_.max_angular_velocity =
         declare_or_get("max_angular_velocity", params_.max_angular_velocity);
+    // SPDLOG_INFO("MotionControl[{}]: max_angular_velocity = {}", shell_id_, params_.max_angular_velocity);
 
     params_.rotation_kp = declare_or_get("rotation_kp", params_.rotation_kp);
     params_.rotation_ki = declare_or_get("rotation_ki", params_.rotation_ki);

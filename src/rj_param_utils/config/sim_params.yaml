@@ -29,7 +29,7 @@
         translation_kd: 0.0
         translation_windup: 0
       1:
-        max_acceleration: 1.5
+        max_acceleration: 2.0
         max_velocity: 2.0
         max_angular_velocity: 5.0
         rotation_kp: 8.0
