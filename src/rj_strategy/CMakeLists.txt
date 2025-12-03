@@ -151,18 +151,7 @@ install(
 )
 
 ament_export_dependencies(
-  rclcpp
-  rclcpp_action
-  rclcpp_components
-  spdlog
-  std_msgs
-  rj_msgs
-  rj_constants
-  rj_convert
-  rj_common
-  rj_geometry
-  rj_param_utils
-  rj_utils
+  ${RJ_STRATEGY_DEPS}
 )
 
 ament_export_targets(${PROJECT_NAME})
