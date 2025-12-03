@@ -40,13 +40,10 @@ Registry::~Registry() {
             // Print out data row by row
             for (size_t row = 0; row < max_rows_; ++row) {
                 for (const auto& [label, timestamps] : registry_[i]) {
-                    if (row >= timestamps.size())
-                    {
+                    if (row >= timestamps.size()) {
                         // sentinel value
                         robot_csv << -1 << ',';
-                    }
-                    else
-                    {
+                    } else {
                         robot_csv << timestamps[row] << ',';
                     }
                 }

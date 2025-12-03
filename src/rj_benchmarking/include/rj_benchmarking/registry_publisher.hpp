@@ -8,7 +8,7 @@ class RegistryPublisher {
 public:
     static std::shared_ptr<RegistryPublisher> getRegistryPub() {
         // static local variables are intialized once and persist out of scope and subsequent calls
-        static std::shared_ptr<RegistryPublisher> registry_pub = 
+        static std::shared_ptr<RegistryPublisher> registry_pub =
             std::make_shared<RegistryPublisher>();
         return registry_pub;
     }
