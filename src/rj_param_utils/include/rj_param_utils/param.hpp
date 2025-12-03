@@ -185,7 +185,7 @@ protected:
 
 /**
  * @brief Defines a parameter in the root namespace. The defined parameter
- * can be used as PARAM_#, where * denotes # denotes the name passed in.
+ * can be used as PARAM_#, where # denotes the name passed in.
  * See DEFINE_NS_VARIABLE.
  * @param type The type of the parameter.
  * @param name The variable name of the parameter.
@@ -262,7 +262,7 @@ protected:
 
 /**
  * @brief Declares a parameter in the root namespace. The declared parameter
- * can be used as PARAM_#, where * denotes # denotes the name passed in.
+ * can be used as PARAM_#, where # denotes the name passed in.
  * See DEFINE_NS_VARIABLE.
  * @param type The type of the parameter.
  * @param name The variable name of the parameter.
