@@ -6,19 +6,20 @@
 
 class RegistryPublisher {
 public:
-    // Singleton pattern
-    static std::shared_ptr<RegistryPublisher> getInstance() {
-        static std::shared_ptr<RegistryPublisher> instance{new RegistryPublisher()};
-        return instance;
+    static std::shared_ptr<RegistryPublisher> getRegistryPub() {
+        // static local variables are intialized once and persist out of scope and subsequent calls
+        static std::shared_ptr<RegistryPublisher> registry_pub
+            = std::make_shared<RegistryPublisher>(); //{new RegistryPublisher()};
+        return registry_pub;
     }
 
     void publish(const std::string& label, uint8_t robot_id, uint64_t time);
+    RegistryPublisher() = default;
 
 private:
-    static RegistryPublisher* instance;
 
     // Private Constructor
-    RegistryPublisher() = default;
+    // RegistryPublisher() = default;
 
     // Delete Copy Constructor and Assignment
     RegistryPublisher(const RegistryPublisher& other) = delete;

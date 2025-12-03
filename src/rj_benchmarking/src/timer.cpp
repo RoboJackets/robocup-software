@@ -6,5 +6,5 @@ Timer::Timer(const std::string& label, uint8_t robot_id)
 Timer::~Timer() {
     rclcpp::Duration duration = ros_clock().now() - start_;
     uint64_t time_ns = static_cast<uint64_t>(duration.nanoseconds());
-    RegistryPublisher::getInstance()->publish(label_, robot_id_, time_ns);
+    RegistryPublisher::getRegistryPub()->publish(label_, robot_id_, time_ns);
 }

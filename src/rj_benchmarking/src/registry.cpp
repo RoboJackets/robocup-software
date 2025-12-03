@@ -9,9 +9,8 @@ Registry::~Registry() {
     /*
         1. Make LatencyLogs Directory if not already there
         2. Make latency_curr-date_curr-time folder
-        3. Make csv for Robot 1
+        3. Make csvs for all robots
             3a. first row is labels
-        4. Make csvs for all robots
     */
 
     if (max_rows_ != 0) {
@@ -41,7 +40,15 @@ Registry::~Registry() {
             // Print out data row by row
             for (size_t row = 0; row < max_rows_; ++row) {
                 for (const auto& [label, timestamps] : registry_[i]) {
-                    robot_csv << timestamps[row] << ',';
+                    if (row >= timestamps.size())
+                    {
+                        // sentinel value
+                        robot_csv << -1 << ',';
+                    }
+                    else
+                    {
+                        robot_csv << timestamps[row] << ',';
+                    }
                 }
 
                 robot_csv << '\n';
