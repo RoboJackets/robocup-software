@@ -24,7 +24,7 @@ namespace strategy {
                 DEFAULT,           // Decide what to do
                 FORWARD,     // moving forward towards opponent's goal
                 LEFT,           // moving left along opponent's end line
-                BACKWARD // moving back towards its own goal,
+                BACKWARD, // moving back towards its own goal,
                 RIGHT // moving right along its own end line
             };
 
@@ -39,6 +39,5 @@ namespace strategy {
             std::optional<RobotIntent> state_to_task(RobotIntent intent);
             
             State current_state_ = State::DEFAULT;
-
-    }
+        } 
 }
