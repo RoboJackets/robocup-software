@@ -7,6 +7,11 @@ namespace strategy {
             ~Runner() override = default;
             Runner(const Position& other);
 
+            communication::PosAgentResponseWrapper receive_communication_request(
+                communication::AgentPosRequestWrapper request) override;
+
+            void receive_communication_response(communication::AgentPosResponseWrapper response) override;
+
             std::string get_current_state() override;
 
         private:
@@ -32,6 +37,8 @@ namespace strategy {
              * @return the task to execute. called on each get_task tick AFTER next_state()
              */
             std::optional<RobotIntent> state_to_task(RobotIntent intent);
-        
+            
+            State current_state_ = State::DEFAULT;
+
     }
 }
