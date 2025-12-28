@@ -3,6 +3,9 @@
 namespace strategy {
     class Runner : public Position {
         public:
-            
+            Runner(int r_id);
+            ~Runner() override = default;
+            Runner(const Position& other);
+
     }
 }
