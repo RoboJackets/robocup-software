@@ -39,5 +39,5 @@ namespace strategy {
             std::optional<RobotIntent> state_to_task(RobotIntent intent);
             
             State current_state_ = State::DEFAULT;
-        } 
+        };
 }
