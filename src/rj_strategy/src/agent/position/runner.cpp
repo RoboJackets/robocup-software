@@ -8,33 +8,31 @@ namespace strategy {
     }
 
     Runner::State Runner::next_state() {
-        double x = last_world_state->get_robot(true, robot_id_).pose.position().x_();
-        double y = last_world_state->get_robot(true, robot_id_).pose.position().y_();
+        Point curr_pos = last_world_state->get_robot(true, robot_id_).pose.position();
+
+        const double dist_threshold = .15;
         // handle transitions between current state
         switch (current_state_) {
-            case DEFAULT: {
-                return FORWARD;
-            }
             case UP: {
-                if (y < .5) {
+                if (curr_pos.dist_to(top_right) < dist_threshold) {
                     return LEFT;
                 }
                 return current_state_;
             }
             case LEFT: {
-                if (x > 2.5) {
+                if (curr_pos.dist_to(top_left) < dist_threshold) {
                     return DOWN;
                 }
                 return current_state_;
             }
             case DOWN: {
-                if (y > 8.5) {
+                if (curr_pos.dist_to(bottom_left) < dist_threshold) {
                     return RIGHT;
                 }
                 return current_state_;
             }
             case RIGHT: {
-                if (x < -2.5) {
+                if (curr_pos.dist_to(bottom_right) < dist_threshold) {
                     return UP;
                 }
                 return current_state_;
@@ -60,27 +58,37 @@ namespace strategy {
 
     std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
         switch (current_state_) {
-            case DEFAULT: {
-                // Head towards middle of right sideline to begin
-                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, 
-                    planning::FacePoint{Point(-2.5, 0)}, true};
+            case UP: {
+                // Head towards top right corner
+                rj_geometry::Point target_pos{top_right};
+                planning::LinearMotionInstant move_to_point{target_pos};
+                intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
+                    planning::FacePoint{target_pos}, true};
                 return intent;
             }
-            case UP: {
-                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
-                    planning::FaceAngle{90}, true};
-            }
             case DOWN: {
-                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
-                    planning::FaceAngle{270}, true};
+                // Head towards bottom left corner
+                rj_geometry::Point target_pos{bottom_left};
+                planning::LinearMotionInstant move_to_point{target_pos};
+                intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
+                    planning::FacePoint{target_pos}, true};
+                return intent;
             }
             case RIGHT: {
-                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
-                    planning::FaceAngle{0}, true};
+                // Head towards bottom right corner
+                rj_geometry::Point target_pos{bottom_right};
+                planning::LinearMotionInstant move_to_point{target_pos};
+                intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
+                    planning::FacePoint{target_pos}, true};
+                return intent;
             }
             case LEFT: {
-                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
-                    planning::FaceAngle{180}, true};
+                // Head towards top left corner
+                rj_geometry::Point target_pos{top_left};
+                planning::LinearMotionInstant move_to_point{target_pos};
+                intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
+                    planning::FacePoint{target_pos}, true};
+                return intent;
             }
     }
     }
