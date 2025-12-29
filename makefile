@@ -58,6 +58,12 @@ release: all-release
 again:
 	colcon build --parallel-workers 4
 
+perf_docker:
+	MAKEFLAGS='-j5' colcon build --parallel-workers 1 --executor sequential --cmake-args \
+	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+	-DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_CXX_FLAGS_DEBUG="-g1" 
+
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
 # fix this so defaults launch sim, with special cases for real
@@ -154,9 +160,8 @@ coverage:
 		--gcov-options '\-lp'
 
 clean:
-	((rm build-debug -rf); (rm build-release -rf); (rm build-release-debug -rf)) || true
+	rm -rf build install log
 	git clean -f -X -d cmake-*
-	rm -rf install/bin install/lib install/share install/include
 
 static-analysis:
 	mkdir -p build/static-analysis

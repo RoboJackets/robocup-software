@@ -8,7 +8,7 @@
 namespace strategy {
 class Line : public Position {
 public:
-    Line(const Position& other);
+    Line(Position&& other);
     Line(int r_id);
     Line(int r_id, bool forward);
     ~Line() override = default;

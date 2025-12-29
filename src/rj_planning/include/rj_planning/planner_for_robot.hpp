@@ -42,7 +42,8 @@ namespace planning {
  */
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node* node, TrajectoryCollection* robot_trajectories,
+    PlannerForRobot(int robot_id, rclcpp::Node* node,
+                    shared_ptr<TrajectoryCollection> robot_trajectories,
                     const GlobalState& global_state);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
@@ -151,7 +152,7 @@ private:
     PathPlanner* current_path_planner_{default_path_planner_.get()};
 
     int robot_id_;
-    TrajectoryCollection* robot_trajectories_;
+    std::shared_ptr<TrajectoryCollection> robot_trajectories_;
     const GlobalState& global_state_;
 
     bool had_break_beam_ = false;

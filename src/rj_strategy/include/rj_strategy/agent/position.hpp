@@ -40,10 +40,18 @@
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_response.hpp>
 
+// Coordinators
+#include "rj_strategy/coordinator/kicker_picker_client.hpp"
+
 // tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
 
 namespace strategy {
+
+// Client Handles for coordinators
+struct ClientHandles {
+    std::unique_ptr<KickerPickerClient> kicker_picker;
+};
 
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -60,7 +68,7 @@ class Position {
 public:
     Position(int r_id);
     virtual ~Position() = default;
-    Position(const Position& other) = default;
+    Position(Position&& other) = default;
 
     /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
@@ -229,6 +237,11 @@ public:
      */
     virtual void set_goalie_id(int goalie_id);
 
+    /**
+     * @brief allows RobotFactoryPosition to synchronize with its client handles
+     */
+    void set_client_handles(std::shared_ptr<ClientHandles> client_handles);
+
 protected:
     Position(int r_id, std::string position_name);
 
@@ -307,6 +320,9 @@ protected:
 
     // Current goalie
     int goalie_id_;
+
+    // Client Handles
+    std::shared_ptr<ClientHandles> client_handles_;
 
 private:
     /**

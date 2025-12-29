@@ -19,7 +19,7 @@ class PenaltyNonKicker : public Position {
 public:
     PenaltyNonKicker(int r_id);
     ~PenaltyNonKicker() = default;
-    PenaltyNonKicker(const Position& other);
+    PenaltyNonKicker(Position&& other);
 
     /**
      * @brief Does nothing; this position is a special case

@@ -4,7 +4,7 @@ namespace strategy {
 
 Zoner::Zoner(int r_id) : Position(r_id, "Zoner") {}
 
-Zoner::Zoner(const Position& other) : Position{other} { position_name_ = "Zoner"; }
+Zoner::Zoner(Position&& other) : Position{std::move(other)} { position_name_ = "Zoner"; }
 
 std::optional<RobotIntent> Zoner::derived_get_task(RobotIntent intent) {
     current_state_ = next_state();
