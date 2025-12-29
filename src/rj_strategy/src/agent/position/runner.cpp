@@ -58,4 +58,31 @@ namespace strategy {
         return std::string{"Runner"} + std::to_string(static_cast<int>(current_state_));
     }
 
+    std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
+        switch (current_state_) {
+            case DEFAULT: {
+                // Head towards middle of right sideline to begin
+                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place, 
+                    planning::FacePoint{Point(-2.5, 0)}, true};
+                return intent;
+            }
+            case UP: {
+                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
+                    planning::FaceAngle{90}, true};
+            }
+            case DOWN: {
+                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
+                    planning::FaceAngle{270}, true};
+            }
+            case RIGHT: {
+                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
+                    planning::FaceAngle{0}, true};
+            }
+            case LEFT: {
+                intent.motion_command = planning::MotionCommand{"path_target", stay_in_place,
+                    planning::FaceAngle{180}, true};
+            }
+    }
+    }
+
 }
