@@ -1,3 +1,21 @@
+#pragma once
+
+#include <chrono>
+#include <cmath>
+#include <string>
+#include <unordered_map>
+
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
+#include <spdlog/spdlog.h>
+
+#include <rj_common/planning/instant.hpp>
+#include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_msgs/action/robot_move.hpp>
+
 #include "rj_strategy/agent/position.hpp"
 
 namespace strategy {
@@ -20,12 +38,17 @@ namespace strategy {
              */
             std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
+            // define corners of rectangular path
+            const Point top_right{-2.5, 4.5};
+            const Point top_left{2.5, 4.5};
+            const Point bottom_left{2.5,-4.5};
+            const Point bottom_right{-2.5,-4.5};
+
             enum State {
-                DEFAULT,           // Decide what to do
-                UP,     // moving up towards own goal
-                LEFT,           // moving left along own end line
-                DOWN, // moving back towards opponent's  goal,
-                RIGHT // moving right along its opponent's end line
+                UP,     // moving up towards top right
+                LEFT,   // moving left towards top left
+                DOWN, //   moving down towards bottom left
+                RIGHT //   moving right towards bottom right
             };
 
             /**
@@ -38,6 +61,6 @@ namespace strategy {
              */
             std::optional<RobotIntent> state_to_task(RobotIntent intent);
             
-            State current_state_ = State::DEFAULT;
+            State current_state_ = State::UP;
         };
 }
