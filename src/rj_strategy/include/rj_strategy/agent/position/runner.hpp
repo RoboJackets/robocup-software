@@ -22,10 +22,10 @@ namespace strategy {
 
             enum State {
                 DEFAULT,           // Decide what to do
-                FORWARD,     // moving forward towards opponent's goal
-                LEFT,           // moving left along opponent's end line
-                BACKWARD, // moving back towards its own goal,
-                RIGHT // moving right along its own end line
+                UP,     // moving up towards own goal
+                LEFT,           // moving left along own end line
+                DOWN, // moving back towards opponent's  goal,
+                RIGHT // moving right along its opponent's end line
             };
 
             /**

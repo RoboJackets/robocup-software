@@ -15,29 +15,27 @@ namespace strategy {
             case DEFAULT: {
                 return FORWARD;
             }
-            case FORWARD: {
-                if (y > 10) {
+            case UP: {
+                if (y < .5) {
                     return LEFT;
                 }
                 return current_state_;
             }
             case LEFT: {
-                if (x < -10) {
-                    return BACKWARD;
+                if (x > 2.5) {
+                    return DOWN;
                 }
                 return current_state_;
             }
-            case BACKWARD: {
-                if (y < -10) {
+            case DOWN: {
+                if (y > 8.5) {
                     return RIGHT;
-                } else {
-                    return BACKWARD;
                 }
                 return current_state_;
             }
             case RIGHT: {
-                if (x > 10) {
-                    return FORWARD;
+                if (x < -2.5) {
+                    return UP;
                 }
                 return current_state_;
             }
