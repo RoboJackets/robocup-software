@@ -17,7 +17,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
-        set_current_position<Goalie>();
+        set_current_position<Runner>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
