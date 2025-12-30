@@ -3,12 +3,11 @@
 namespace strategy {
     Runner::Runner(int r_id) : Position{r_id, "Runner"}{}
 
-    Runner::Runner(const Position& other) : Position{other} {
+    Runner::Runner(Position&& other) : Position{std::move(other)} {
         position_name_ = "Runner";
     }
-
     Runner::State Runner::next_state() {
-        Point curr_pos = last_world_state->get_robot(true, robot_id_).pose.position();
+        rj_geometry::Point curr_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
         const double dist_threshold = .15;
         // handle transitions between current state
@@ -45,7 +44,7 @@ namespace strategy {
         // Get next state, and if different, reset clock
         State new_state = next_state();
         if (current_state_ != new_state) {
-            SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
+            SPDLOG_INFO("Robot {}: now {}", robot_id_, get_current_state());
         }
         current_state_ = new_state;
         // Calculate task based on state
@@ -60,7 +59,7 @@ namespace strategy {
         switch (current_state_) {
             case UP: {
                 // Head towards top right corner
-                rj_geometry::Point target_pos{top_right};
+                rj_geometry::Point target_pos{Runner::top_right};
                 planning::LinearMotionInstant move_to_point{target_pos};
                 intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
                     planning::FacePoint{target_pos}, true};
@@ -68,7 +67,7 @@ namespace strategy {
             }
             case DOWN: {
                 // Head towards bottom left corner
-                rj_geometry::Point target_pos{bottom_left};
+                rj_geometry::Point target_pos{Runner::bottom_left};
                 planning::LinearMotionInstant move_to_point{target_pos};
                 intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
                     planning::FacePoint{target_pos}, true};
@@ -76,7 +75,7 @@ namespace strategy {
             }
             case RIGHT: {
                 // Head towards bottom right corner
-                rj_geometry::Point target_pos{bottom_right};
+                rj_geometry::Point target_pos{Runner::bottom_right};
                 planning::LinearMotionInstant move_to_point{target_pos};
                 intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
                     planning::FacePoint{target_pos}, true};
@@ -84,7 +83,7 @@ namespace strategy {
             }
             case LEFT: {
                 // Head towards top left corner
-                rj_geometry::Point target_pos{top_left};
+                rj_geometry::Point target_pos{Runner::top_left};
                 planning::LinearMotionInstant move_to_point{target_pos};
                 intent.motion_command = planning::MotionCommand{"path_target", move_to_point, 
                     planning::FacePoint{target_pos}, true};

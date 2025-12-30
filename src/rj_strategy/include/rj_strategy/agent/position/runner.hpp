@@ -23,13 +23,9 @@ namespace strategy {
         public:
             Runner(int r_id);
             ~Runner() override = default;
-            Runner(const Position& other);
+            Runner(Position&& other);
 
-            communication::PosAgentResponseWrapper receive_communication_request(
-                communication::AgentPosRequestWrapper request) override;
-
-            void receive_communication_response(communication::AgentPosResponseWrapper response) override;
-
+            
             std::string get_current_state() override;
 
         private:
@@ -39,10 +35,10 @@ namespace strategy {
             std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
             // define corners of rectangular path
-            const Point top_right{-2.5, 4.5};
-            const Point top_left{2.5, 4.5};
-            const Point bottom_left{2.5,-4.5};
-            const Point bottom_right{-2.5,-4.5};
+            const rj_geometry::Point top_right{-2.5, .5};
+            const rj_geometry::Point top_left{2.5, .5};
+            const rj_geometry::Point bottom_left{2.5,8.5};
+            const rj_geometry::Point bottom_right{-2.5,8.5};
 
             enum State {
                 UP,     // moving up towards top right
