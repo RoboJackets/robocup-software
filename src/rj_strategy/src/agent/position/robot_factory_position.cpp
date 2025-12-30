@@ -5,13 +5,10 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition") {
     client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(node, r_id);
-    if (robot_id_ == 0) {
-        //current_position_ = std::make_unique<Goalie>(robot_id_);
+    if (robot_id_ == 1) {
         current_position_ = std::make_unique<Runner>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<SmartIdle>(robot_id_);
     }
 
     current_position_->set_client_handles(client_handles_);
@@ -20,7 +17,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
-        set_current_position<Runner>();
+        set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
@@ -95,7 +92,13 @@ void RobotFactoryPosition::handle_setup() {
     // Set up some restart
     if (current_play_state_.is_our_restart()) {
         // Set up our restart
-
+        if (robot_id_ == 1) {
+            set_current_position<Runner>();
+            return;
+        } else {
+            set_current_position<SmartIdle>();
+            return;
+        }
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
             !client_handles_->kicker_picker->am_i_member()) {
             client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
@@ -193,6 +196,13 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return;
+    } else {
+        set_current_position<SmartIdle>();
+        return;
+    }
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
@@ -225,18 +235,18 @@ void RobotFactoryPosition::set_default_position() {
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
-        if (i <= 1) {
-            set_current_position<Defense>();
+        if (i == 1) {
+            set_current_position<Runner>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<SmartIdle>();
         }
     } else {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
-            set_current_position<Defense>();
+        if (i == 1) {
+            set_current_position<Runner>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<SmartIdle>();
         }
     }
 }
