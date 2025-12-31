@@ -34,8 +34,8 @@ void fill_obstacles(const PlanRequest& in, std::vector<std::shared_ptr<Obstacle>
         const RobotState& their_robot = in.world_state->their_robots.at(shell);
 
         if (their_robot.visible) {
-            out_obstacles.push_back(make_moving_robot_obstacle(
-                their_robot.pose.position(), their_robot.velocity.linear()));
+            out_obstacles.push_back(make_moving_robot_obstacle(their_robot.pose.position(),
+                                                               their_robot.velocity.linear()));
         }
     }
 
@@ -46,14 +46,14 @@ void fill_obstacles(const PlanRequest& in, std::vector<std::shared_ptr<Obstacle>
             continue;
         }
 
-        out_obstacles.push_back(make_moving_robot_obstacle(our_robot.pose.position(),
-                                                            our_robot.velocity.linear()));
+        out_obstacles.push_back(
+            make_moving_robot_obstacle(our_robot.pose.position(), our_robot.velocity.linear()));
     }
 
     // Add ball as obstacle if needed
     if (in.min_dist_from_ball > 0 || avoid_ball) {
-        out_obstacles.push_back(make_ball_obstacle(in.world_state->ball.position,
-                                                    in.min_dist_from_ball));
+        out_obstacles.push_back(
+            make_ball_obstacle(in.world_state->ball.position, in.min_dist_from_ball));
 
         // Draw ball obstacle in simulator
         if (in.debug_drawer != nullptr) {

@@ -202,7 +202,7 @@ inline std::shared_ptr<Obstacle> make_robot_obstacle(rj_geometry::Point pos) {
  * @return Shared pointer to the created Obstacle
  */
 inline std::shared_ptr<Obstacle> make_moving_robot_obstacle(rj_geometry::Point pos,
-                                                             rj_geometry::Point vel) {
+                                                            rj_geometry::Point vel) {
     auto obs_circle = std::make_shared<rj_geometry::Circle>(pos, kRobotRadius);
 
     // Create stadium-shaped padding based on velocity
@@ -222,7 +222,7 @@ inline std::shared_ptr<Obstacle> make_moving_robot_obstacle(rj_geometry::Point p
  * @return Shared pointer to the created Obstacle
  */
 inline std::shared_ptr<Obstacle> make_ball_obstacle(rj_geometry::Point pos,
-                                                     float extra_radius = 0.0f) {
+                                                    float extra_radius = 0.0f) {
     float radius = kBallRadius + kAvoidBallDistance + extra_radius;
     auto circle = std::make_shared<rj_geometry::Circle>(pos, radius);
     return std::make_shared<Obstacle>(circle, circle);
