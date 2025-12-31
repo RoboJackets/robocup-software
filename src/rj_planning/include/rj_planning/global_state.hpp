@@ -30,7 +30,6 @@ public:
     [[nodiscard]] PlayState play_state() const;
     [[nodiscard]] GameSettings game_settings() const;
     [[nodiscard]] int goalie_id() const;
-    [[nodiscard]] rj_geometry::ShapeSet global_obstacles() const;
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const;
     [[nodiscard]] const WorldState* world_state() const;
     [[nodiscard]] const FieldDimensions* field_dimensions() const;
@@ -39,7 +38,6 @@ private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
-    rclcpp::Subscription<rj_geometry_msgs::msg::ShapeSet>::SharedPtr global_obstacles_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
@@ -50,8 +48,6 @@ private:
     mutable std::mutex last_game_settings_mutex_{};
     int last_goalie_id_{};
     mutable std::mutex last_goalie_id_mutex_{};
-    rj_geometry::ShapeSet last_global_obstacles_{};
-    mutable std::mutex last_global_obstacles_mutex_{};
     rj_geometry::ShapeSet last_def_area_obstacles_{};
     mutable std::mutex last_def_area_obstacles_mutex_{};
     WorldState last_world_state_{};

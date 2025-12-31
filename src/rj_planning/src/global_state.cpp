@@ -25,12 +25,6 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             auto lock = std::lock_guard(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
         });
-    global_obstacles_sub_ = node->create_subscription<rj_geometry_msgs::msg::ShapeSet>(
-        planning::topics::kGlobalObstaclesTopic, rclcpp::QoS(1),
-        [this](rj_geometry_msgs::msg::ShapeSet::SharedPtr global_obstacles) {  // NOLINT
-            auto lock = std::lock_guard(last_global_obstacles_mutex_);
-            last_global_obstacles_ = rj_convert::convert_from_ros(*global_obstacles);
-        });
     world_state_sub_ = node->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
@@ -61,10 +55,6 @@ GlobalState::GlobalState(rclcpp::Node* node) {
 [[nodiscard]] int GlobalState::goalie_id() const {
     auto lock = std::lock_guard(last_goalie_id_mutex_);
     return last_goalie_id_;
-}
-[[nodiscard]] rj_geometry::ShapeSet GlobalState::global_obstacles() const {
-    auto lock = std::lock_guard(last_global_obstacles_mutex_);
-    return last_global_obstacles_;
 }
 [[nodiscard]] rj_geometry::ShapeSet GlobalState::def_area_obstacles() const {
     auto lock = std::lock_guard(last_def_area_obstacles_mutex_);

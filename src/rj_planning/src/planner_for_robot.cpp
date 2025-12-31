@@ -189,7 +189,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     return PlanRequest{start,
                        motion_command,
                        constraints,
-                       global_state_.global_obstacles(),
                        std::move(virtual_obstacles),
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
@@ -264,7 +263,6 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
-    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.publish();
 
