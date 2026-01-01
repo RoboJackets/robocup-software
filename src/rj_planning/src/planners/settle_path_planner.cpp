@@ -28,7 +28,7 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     bool avoid_ball = true;
 
     // List of obstacles
-    std::vector<std::shared_ptr<Obstacle>> static_obstacles;
+    ObstacleSet static_obstacles;
     fill_obstacles(plan_request, static_obstacles, avoid_ball);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate
@@ -156,7 +156,7 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
 }
 
 Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                        const rj_geometry::ShapeSet& static_obstacles,
+                                        const ObstacleSet& obstacles,
                                         rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
@@ -368,7 +368,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 }
 
 Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                     const rj_geometry::ShapeSet& static_obstacles,
+                                     const ObstacleSet& obstacles,
                                      rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     // Only run once if we can
 
@@ -476,7 +476,7 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
 }
 
 Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
-                                      const rj_geometry::ShapeSet& static_obstacles) {
+                                      const ObstacleSet& obstacles) {
     SPDLOG_WARN("Invalid state in settle planner. Restarting");
     current_state_ = SettlePathPlannerStates::Intercept;
 

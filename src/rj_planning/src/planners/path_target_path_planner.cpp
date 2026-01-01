@@ -6,13 +6,13 @@ namespace planning {
 
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    std::vector<std::shared_ptr<Obstacle>> static_obstacles;
+    ObstacleSet static_obstacles;
     const MotionCommand& command = request.motion_command;
     fill_obstacles(request, static_obstacles, !command.ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(request.start.position())) {
+    if (obstacles.hit(request.start.position())) {
         reset();
         return Trajectory();
     }

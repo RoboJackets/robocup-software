@@ -4,15 +4,12 @@
 
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_planning/obstacle_set.hpp>
 
 namespace planning {
 
-// TODO(#1501): both of these functions should be able to be abstracted under a
-//  single interface templated on either a shape set or a collection of dynamic
-//  obstacles.
-
 /**
- * @brief Whether the given trajectory intersects any of the static obstacles at
+ * @brief Whether the given trajectory intersects any of the obstacles at
  *  any point along its path after a specified starting time.
  *
  * @param trajectory The trajectory to check.
@@ -22,7 +19,7 @@ namespace planning {
  * @return           Whether or not there is a collision.
  */
 bool trajectory_hits_static(const Trajectory& trajectory,
-                          const rj_geometry::ShapeSet& obstacles,
+                          const ObstacleSet& obstacles,
                           RJ::Time start_time, RJ::Time* hit_time);
 
 }  // namespace planning

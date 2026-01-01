@@ -11,6 +11,7 @@
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
 
+#include "rj_planning/obstacle_set.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
@@ -34,7 +35,7 @@ public:
     struct PlanParams {
         RobotInstant start;
         LinearMotionInstant goal;
-        const rj_geometry::ShapeSet& static_obstacles;
+        const ObstacleSet& obstacles;
         const FieldDimensions* field_dimensions;
         RobotConstraints constraints;
         const AngleFunction& angle_function;

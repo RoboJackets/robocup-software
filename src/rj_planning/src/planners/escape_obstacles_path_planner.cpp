@@ -7,7 +7,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
 
-    std::vector<std::shared_ptr<Obstacle>> obstacles;
+    ObstacleSet obstacles;
     fill_obstacles(plan_request, obstacles, true);
 
     if (!obstacles.hit(start_instant.position())) {
@@ -46,7 +46,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 }
 
 Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optional<Point> prev_goal,
-                                                        const ShapeSet& obstacles, int max_itr) {
+                                                        const ObstacleSet& obstacles, int max_itr) {
     if (obstacles.hit(goal)) {
         auto state_space =
             std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);

@@ -2,7 +2,7 @@
 
 namespace planning {
 
-bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
+bool trajectory_hits_static(const Trajectory& trajectory, const ObstacleSet& obstacles,
                             RJ::Time start_time, RJ::Time* hit_time) {
     if (trajectory.empty()) {
         return false;
@@ -37,8 +37,8 @@ bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::Sha
         RobotInstant instant = cursor.value();
 
         // Only count hits that we didn't start in.
-        for (const auto& obstacle : obstacles.shapes()) {
-            if (obstacle->hit(instant.position()) &&
+        for (const auto& obstacle : obstacles.obstacles()) {
+            if (obstacle->padding_hit(instant.position()) &&
                 start_hits.find(obstacle) == start_hits.end()) {
                 if (hit_time != nullptr) {
                     *hit_time = instant.stamp;

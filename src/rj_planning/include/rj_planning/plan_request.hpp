@@ -14,6 +14,7 @@
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_planning/obstacle.hpp>
+#include <rj_planning/obstacle_set.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/trajectory_collection.hpp"
@@ -166,14 +167,13 @@ void fill_robot_obstacle(const RobotState& robot, rj_geometry::Point& obs_center
  * Fill the obstacle fields.
  *
  * @param in the plan request.
- * @param out_obstacles an (empty) vector of obstacles to be populated.
+ * @param out_obstacles an (empty) ObstacleSet to be populated.
  *  This will be filled with field obstacles, local (virtual) obstacles,
  *  opponent robots, and our robots.
  * @param avoid_ball whether to avoid the ball. If this is true, out_ball_trajectory
  *  should point to a valid trajectory.
  */
-void fill_obstacles(const PlanRequest& in, std::vector<std::shared_ptr<Obstacle>>& out_obstacles,
-                    bool avoid_ball);
+void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoid_ball);
 
 // Obstacle padding constants
 namespace obstacle {

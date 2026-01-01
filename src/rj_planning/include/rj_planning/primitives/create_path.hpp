@@ -7,6 +7,7 @@
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_planning/obstacle_set.hpp>
 
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/rrt_util.hpp"
@@ -21,7 +22,7 @@ namespace planning::CreatePath {
 Trajectory rrt(const LinearMotionInstant& start,
                const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const rj_geometry::ShapeSet& static_obstacles,
+               const ObstacleSet& obstacles,
                const std::vector<rj_geometry::Point>& bias_waypoints = {});
 
 /**
@@ -34,7 +35,7 @@ Trajectory simple(
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles,
+                        const ObstacleSet& obstacles,
                         const FieldDimensions* field_dimensions, unsigned int robot_id);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,

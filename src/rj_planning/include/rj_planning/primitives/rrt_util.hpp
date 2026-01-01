@@ -38,7 +38,7 @@ void draw_bi_rrt(const RRT::BiRRT<rj_geometry::Point>& bi_rrt,
  */
 std::vector<rj_geometry::Point> generate_rrt(
     rj_geometry::Point start, rj_geometry::Point goal,
-    const rj_geometry::ShapeSet& obstacles,
+    const ObstacleSet& obstacles,
     const std::vector<rj_geometry::Point>& waypoints = {});
 
 }  // namespace planning

@@ -21,7 +21,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
 
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const ShapeSet& static_obstacles,
+               const ObstacleSet& obstacles,
                const std::vector<Point>& bias_waypoints) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -35,12 +35,12 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        !trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr)) {
+        !trajectory_hits_static(straight_trajectory, obstacles, start_time, nullptr)) {
         return straight_trajectory;
     }
 
     std::vector<Point> points =
-        generate_rrt(start.position, goal.position, static_obstacles, bias_waypoints);
+        generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
 
     BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
 
@@ -54,7 +54,7 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const rj_geometry::ShapeSet& static_obstacles,
+                        const ObstacleSet& obstacles,
                         const FieldDimensions* field_dimensions, unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -68,7 +68,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (!trajectory_hits_static(straight_trajectory, static_obstacles, start_time, nullptr))) {
+        (!trajectory_hits_static(straight_trajectory, obstacles, start_time, nullptr))) {
         return straight_trajectory;
     }
 
@@ -97,7 +97,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 
             // If the trajectory does not hit an obstacle, it is valid
-            if ((!trajectory_hits_static(trajectory, static_obstacles, start_time, nullptr))) {
+            if ((!trajectory_hits_static(trajectory, obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
                 cached_intermediate_tuple_[robot_id] = {abs(angle), signbit(angle) ? -1 : 1,
                                                         (final_inter - start.position).mag()};
@@ -107,7 +107,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // If all else fails, use rrt to ensure obstacle avoidance
-    return CreatePath::rrt(start, goal, motion_constraints, start_time, static_obstacles);
+    return CreatePath::rrt(start, goal, motion_constraints, start_time, obstacles);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
