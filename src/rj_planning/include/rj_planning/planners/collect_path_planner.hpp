@@ -64,8 +64,7 @@ private:
     Trajectory fine_approach(const PlanRequest& plan_request, RobotInstant start_instant,
                              const ObstacleSet& obstacles);
 
-    Trajectory invalid(const PlanRequest& plan_request,
-                       const ObstacleSet& obstacles);
+    Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
 
     Trajectory previous_;
 

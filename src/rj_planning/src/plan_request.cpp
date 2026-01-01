@@ -34,7 +34,7 @@ void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoi
 
         if (their_robot.visible) {
             out_obstacles.add(make_moving_robot_obstacle(their_robot.pose.position(),
-                                                          their_robot.velocity.linear()));
+                                                         their_robot.velocity.linear()));
         }
     }
 
@@ -45,15 +45,14 @@ void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoi
             continue;
         }
 
-        out_obstacles.add(make_moving_robot_obstacle(our_robot.pose.position(),
-                                                      our_robot.velocity.linear()));
+        out_obstacles.add(
+            make_moving_robot_obstacle(our_robot.pose.position(), our_robot.velocity.linear()));
     }
 
     // Add ball as obstacle if needed
     // Only added when STOP state is enabled
     if (in.min_dist_from_ball > 0 || avoid_ball) {
-        out_obstacles.add(make_ball_obstacle(in.world_state->ball.position,
-                                              in.min_dist_from_ball));
+        out_obstacles.add(make_ball_obstacle(in.world_state->ball.position, in.min_dist_from_ball));
         float ball_radius = kBallRadius + kAvoidBallDistance + in.min_dist_from_ball;
 
         // Draw ball obstacle in simulator

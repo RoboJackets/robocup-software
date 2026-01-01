@@ -21,8 +21,7 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
 
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const ObstacleSet& obstacles,
-               const std::vector<Point>& bias_waypoints) {
+               const ObstacleSet& obstacles, const std::vector<Point>& bias_waypoints) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -54,8 +53,8 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const ObstacleSet& obstacles,
-                        const FieldDimensions* field_dimensions, unsigned int robot_id) {
+                        const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
+                        unsigned int robot_id) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};

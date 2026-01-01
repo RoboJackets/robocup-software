@@ -156,8 +156,8 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
 }
 
 Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                        const ObstacleSet& obstacles,
-                                        rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+                                        const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                                        rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -368,8 +368,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 }
 
 Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                     const ObstacleSet& obstacles,
-                                     rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+                                     const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                                     rj_geometry::Point face_pos) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball

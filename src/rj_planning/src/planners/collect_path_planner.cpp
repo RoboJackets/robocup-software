@@ -309,8 +309,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -419,8 +418,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
@@ -563,10 +561,9 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     Trajectory dampen_end;
 
     if (previous_.empty()) {
-        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
-                                              plan_request.constraints.mot, start_instant.stamp,
-                                              obstacles, plan_request.field_dimensions,
-                                              plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(
+            start_instant.linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
     } else {
         dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
                                               final_stopping_motion, plan_request.constraints.mot,
