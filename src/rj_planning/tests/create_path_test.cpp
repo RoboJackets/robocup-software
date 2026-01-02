@@ -62,8 +62,7 @@ TEST(CreatePath, success_rate) {
             auto circle = std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
                 .2);
-            obstacles.add(std::make_shared<Obstacle>(
-                circle, circle));
+            obstacles.add(std::make_shared<Obstacle>(circle, circle));
         }
 
         Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
