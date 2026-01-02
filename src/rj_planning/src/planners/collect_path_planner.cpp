@@ -192,7 +192,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
 }
 
 Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
-                                               const rj_geometry::ShapeSet& obstacles) {
+                                               const ObstacleSet& obstacles) {
     BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
@@ -251,7 +251,7 @@ Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, 
 
 Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
                                          RobotInstant start_instant,
-                                         const rj_geometry::ShapeSet& obstacles) {
+                                         const ObstacleSet& obstacles) {
     const double max_ball_angle_change_for_path_reset =
         settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
@@ -477,7 +477,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
 }
 
 Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                      const rj_geometry::ShapeSet& obstacles) {
+                                      const ObstacleSet& obstacles) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -589,7 +589,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
 
 Trajectory CollectPathPlanner::fine_approach(const PlanRequest& plan_request,
                                              RobotInstant start_instant,
-                                             const rj_geometry::ShapeSet& obstacles) {
+                                             const ObstacleSet& obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
@@ -653,7 +653,7 @@ Trajectory CollectPathPlanner::fine_approach(const PlanRequest& plan_request,
 }
 
 Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
-                                       const rj_geometry::ShapeSet& obstacles) {
+                                       const ObstacleSet& obstacles) {
     current_state_ = COARSE_APPROACH;
 
     // Stop movement until next frame since it's the safest option

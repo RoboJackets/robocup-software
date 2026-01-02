@@ -54,31 +54,24 @@ void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoi
     if (in.min_dist_from_ball > 0 || avoid_ball) {
         out_obstacles.add(make_ball_obstacle(in.world_state->ball.position,
                                               in.min_dist_from_ball));
-        float ball_radius = kBallRadius + kAvoidBallDistance + in.min_dist_from_ball;
-
-        // Draw ball obstacle in simulator
-        if (in.debug_drawer != nullptr) {
-            QColor draw_color = Qt::red;
-            in.debug_drawer->draw_circle(
-                rj_geometry::Circle(in.world_state->ball.position, ball_radius), draw_color);
-        }
 
         // Add ball placement track obstacle if applicable
         auto maybe_bp_point = in.play_state.ball_placement_point();
         if (maybe_bp_point.has_value() && in.play_state.is_their_restart()) {
             rj_geometry::Point bp_point = maybe_bp_point.value();
+            float ball_radius = kBallRadius + kAvoidBallDistance + in.min_dist_from_ball;
 
             auto stadium = std::make_shared<rj_geometry::StadiumShape>(
                 in.world_state->ball.position, bp_point, ball_radius);
 
             // For stadium, use the same shape for obstacle and padding
             out_obstacles.add(std::make_shared<Obstacle>(stadium, stadium));
-
-            if (in.debug_drawer != nullptr) {
-                QColor draw_color = Qt::red;
-                in.debug_drawer->draw_stadium(*stadium, draw_color);
-            }
         }
+    }
+
+    // Draw all obstacles for visualization
+    if (in.debug_drawer != nullptr) {
+        out_obstacles.draw(in.debug_drawer);
     }
 }
 

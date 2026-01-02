@@ -51,7 +51,7 @@ public:
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
     static rj_geometry::Point find_non_blocked_goal(
         rj_geometry::Point pt, std::optional<rj_geometry::Point> prev_pt,
-        const rj_geometry::ShapeSet& obstacles, int max_itr = 300);
+        const ObstacleSet& obstacles, int max_itr = 300);
 
     static double step_size() { return escape::PARAM_step_size; }
 

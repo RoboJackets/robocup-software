@@ -29,9 +29,9 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 
     LinearMotionInstant goal{unblocked, Point()};
 
-    rj_geometry::ShapeSet path_obstacles;
-    rj_geometry::Circle ball{plan_request.world_state->ball.position, kBallRadius};
-    path_obstacles.add(std::make_shared<rj_geometry::Circle>(ball));
+    ObstacleSet path_obstacles;
+    auto ball_shape = std::make_shared<rj_geometry::Circle>(plan_request.world_state->ball.position, kBallRadius);
+    path_obstacles.add(std::make_shared<Obstacle>(ball_shape, ball_shape));
 
     auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
                                            start_instant.stamp, path_obstacles,

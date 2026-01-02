@@ -16,7 +16,7 @@ namespace planning {
 TEST(CreatePath, smoke_test_efficiency) {
     MotionConstraints mot;
 
-    ShapeSet obs;
+    ObstacleSet obs;
 
     {
         RJ::Time t0 = RJ::now();
@@ -28,7 +28,8 @@ TEST(CreatePath, smoke_test_efficiency) {
 
     {
         RJ::Time t0 = RJ::now();
-        obs.add(std::make_shared<Circle>(Point{.5, .5}, 0.2));
+        auto circle = std::make_shared<Circle>(Point{.5, .5}, 0.2);
+        obs.add(std::make_shared<Obstacle>(circle, circle));
         CreatePath::rrt(LinearMotionInstant{Point()}, LinearMotionInstant{Point(1, 1)}, mot,
                         RJ::now(), obs);
         std::cout << "time for CreatePath::rrt obstructed: %.6f\n"
@@ -55,12 +56,14 @@ TEST(CreatePath, success_rate) {
     RobotConstraints constraints;
 
     for (int i = 0; i < kIterations; i++) {
-        ShapeSet obstacles;
+        ObstacleSet obstacles;
         int num_obstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < num_obstacles; j++) {
-            obstacles.add(std::make_shared<Circle>(
+            auto circle = std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
-                .2));
+                .2);
+            obstacles.add(std::make_shared<Obstacle>(
+                circle, circle));
         }
 
         Point start_point{TestingUtils::random(&gen, -3.0, 3.0),
@@ -116,7 +119,7 @@ TEST(CreatePath, intermediate_creation_time) {
         Point end_velocity{};
         LinearMotionInstant goal{end_point, end_velocity};
 
-        ShapeSet obstacles;
+        ObstacleSet obstacles;
         int num_obstacles = 5;
         double obst_size = 0.2;
         for (int j = 0; j < num_obstacles; j++) {
@@ -132,7 +135,8 @@ TEST(CreatePath, intermediate_creation_time) {
             offset *= random_sign;
             auto obst_center = base_point + offset;
 
-            obstacles.add(std::make_shared<Circle>(obst_center, obst_size));
+            auto circle = std::make_shared<Circle>(obst_center, obst_size);
+            obstacles.add(std::make_shared<Obstacle>(circle, circle));
         }
 
         auto start_time = RJ::now();

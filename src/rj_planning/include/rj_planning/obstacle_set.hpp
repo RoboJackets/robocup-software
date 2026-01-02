@@ -5,6 +5,9 @@
 #include <sstream>
 #include <vector>
 
+#include <rj_common/ros_debug_drawer.hpp>
+#include <rj_geometry/shape_set.hpp>
+
 #include "obstacle.hpp"
 
 namespace planning {
@@ -131,6 +134,54 @@ public:
             shape_set.add(obstacle->get_obstacle());
         }
         return shape_set;
+    }
+
+    /**
+     * Draw all obstacle padding shapes for visualization.
+     * This shows the "avoid zones" that robots will try to stay out of.
+     *
+     * @param debug_drawer The debug drawer to render with
+     * @param color Color to use for drawing (default: semi-transparent red)
+     */
+    void draw_padding(rj_drawing::RosDebugDrawer* debug_drawer,
+                      const QColor& color = QColor(255, 0, 0, 50)) const {
+        if (debug_drawer == nullptr) {
+            return;
+        }
+        debug_drawer->draw_shapes(to_padding_shape_set(), color);
+    }
+
+    /**
+     * Draw all obstacle core shapes for visualization.
+     * This shows the actual obstacle shapes (without padding).
+     *
+     * @param debug_drawer The debug drawer to render with
+     * @param color Color to use for drawing (default: semi-transparent dark red)
+     */
+    void draw_cores(rj_drawing::RosDebugDrawer* debug_drawer,
+                    const QColor& color = QColor(180, 0, 0, 80)) const {
+        if (debug_drawer == nullptr) {
+            return;
+        }
+        debug_drawer->draw_shapes(to_obstacle_shape_set(), color);
+    }
+
+    /**
+     * Draw both obstacle cores and padding for complete visualization.
+     * Cores are drawn in darker color, padding in lighter color.
+     *
+     * @param debug_drawer The debug drawer to render with
+     * @param show_cores Whether to draw the obstacle cores (default: true)
+     * @param show_padding Whether to draw the padding zones (default: true)
+     */
+    void draw(rj_drawing::RosDebugDrawer* debug_drawer, bool show_cores = true,
+              bool show_padding = true) const {
+        if (show_cores) {
+            draw_cores(debug_drawer, QColor(180, 0, 0, 80));
+        }
+        if (show_padding) {
+            draw_padding(debug_drawer, QColor(255, 0, 0, 30));
+        }
     }
 
     friend std::ostream& operator<<(std::ostream& out, const ObstacleSet& obstacle_set) {

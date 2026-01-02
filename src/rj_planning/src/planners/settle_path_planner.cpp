@@ -28,8 +28,8 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     bool avoid_ball = true;
 
     // List of obstacles
-    ObstacleSet static_obstacles;
-    fill_obstacles(plan_request, static_obstacles, avoid_ball);
+    ObstacleSet obstacles;
+    fill_obstacles(plan_request, obstacles, avoid_ball);
 
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
@@ -70,13 +70,13 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     // Run state code
     switch (current_state_) {
         case SettlePathPlannerStates::Intercept:
-            result = intercept(plan_request, start_instant, static_obstacles, delta_pos, face_pos);
+            result = intercept(plan_request, start_instant, obstacles, delta_pos, face_pos);
             break;
         case SettlePathPlannerStates::Dampen:
-            result = dampen(plan_request, start_instant, static_obstacles, delta_pos, face_pos);
+            result = dampen(plan_request, start_instant, obstacles, delta_pos, face_pos);
             break;
         default:
-            result = invalid(plan_request, static_obstacles);
+            result = invalid(plan_request, obstacles);
             break;
     }
 
@@ -205,7 +205,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         // Calculate the
@@ -317,7 +317,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, static_obstacles, plan_request.field_dimensions,
+            start_instant.stamp, obstacles, plan_request.field_dimensions,
             plan_request.shell_id);
 
         if (!shortcut.empty()) {
@@ -347,7 +347,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
     Replanner::PlanParams params{start_instant,
                                  target_robot_intersection,
-                                 static_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
@@ -454,12 +454,12 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles, plan_request.field_dimensions,
+                                              obstacles, plan_request.field_dimensions,
                                               plan_request.shell_id);
     } else {
         dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
                                               final_stopping_motion, plan_request.constraints.mot,
-                                              previous_.last().stamp, static_obstacles,
+                                              previous_.last().stamp, obstacles,
                                               plan_request.field_dimensions, plan_request.shell_id);
     }
 
@@ -486,7 +486,7 @@ Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
 
     Replanner::PlanParams params{plan_request.start,
                                  target,
-                                 static_obstacles,
+                                 obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),

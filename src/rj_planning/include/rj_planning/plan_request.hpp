@@ -13,7 +13,6 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_planning/obstacle.hpp>
 #include <rj_planning/obstacle_set.hpp>
 
 #include "rj_planning/global_state.hpp"
@@ -117,7 +116,7 @@ struct PlanRequest {
 
     // Whether the robot has a ball
     bool ball_sense = false;
-    /**
+
     /**
      * How far away to stay from the ball, if the MotionCommand chooses to avoid the ball.
      */

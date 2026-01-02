@@ -59,7 +59,7 @@ public:
 
         // Check if segment hits any obstacle that the start point doesn't hit
         for (const auto& obs : obstacles_.obstacles()) {
-            if (obs->padding_hit(seg) && !obs->padding_hit(from)) {
+            if (obs->hit(seg) && !obs->hit(from)) {
                 return false;
             }
         }
