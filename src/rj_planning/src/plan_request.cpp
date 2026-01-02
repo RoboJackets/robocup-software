@@ -49,11 +49,6 @@ void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoi
             out_obstacles.add(std::make_shared<Obstacle>(stadium, stadium));
         }
     }
-
-    // Draw all obstacles for visualization
-    if (in.debug_drawer != nullptr) {
-        out_obstacles.draw(in.debug_drawer);
-    }
 }
 
 }  // namespace planning

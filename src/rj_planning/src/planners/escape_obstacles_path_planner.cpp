@@ -48,7 +48,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 
 Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optional<Point> prev_goal,
                                                         const ObstacleSet& obstacles, int max_itr) {
-    if (obstacles.hit(goal)) {
+    if (obstacles.obstacle_hit(goal)) {
         auto state_space =
             std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
         RRT::Tree<Point> rrt(state_space, Point::hash, 2);
@@ -65,13 +65,13 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
             RRT::Node<Point>* new_node = rrt.grow();
 
             // if the new point is not blocked, it becomes the new goal
-            if (new_node && !obstacles.hit(new_node->state())) {
+            if (new_node && !obstacles.obstacle_hit(new_node->state())) {
                 new_goal = new_node->state();
                 break;
             }
         }
 
-        if (!prev_goal || obstacles.hit(*prev_goal)) return new_goal;
+        if (!prev_goal || obstacles.obstacle_hit(*prev_goal)) return new_goal;
 
         // Only use this newly-found point if it's closer to the desired goal by
         // at least a certain threshold
