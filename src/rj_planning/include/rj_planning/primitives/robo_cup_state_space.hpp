@@ -55,11 +55,8 @@ public:
         // Ensure that @to doesn't hit any obstacles that @from doesn't. This
         // allows the RRT to start inside an obstacle, but prevents it from
         // entering a new obstacle.
-        rj_geometry::Segment seg(from, to);
-
-        // Check if segment hits any obstacle that the start point doesn't hit
         for (const auto& obs : obstacles_.obstacles()) {
-            if (obs->hit(seg) && !obs->hit(from)) {
+            if (obs->hit(rj_geometry::Segment(from, to)) && !obs->hit(from)) {
                 return false;
             }
         }

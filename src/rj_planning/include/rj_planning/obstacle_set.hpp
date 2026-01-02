@@ -37,7 +37,7 @@ public:
     }
 
     void add(const ObstacleSet& other) {
-        for (auto obstacle : other.obstacles()) {
+        for (const auto& obstacle : other.obstacles()) {
             add(obstacle);
         }
     }

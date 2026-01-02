@@ -1,3 +1,4 @@
+#pragma once
 #include <rj_common/context.hpp>
 #include <rj_common/planning/robot_constraints.hpp>
 #include <rj_geometry/circle.hpp>
@@ -10,8 +11,6 @@ namespace planning {
 
 class Obstacle {
 public:
-    Obstacle() = default;
-
     Obstacle(std::shared_ptr<rj_geometry::Shape> obs, std::shared_ptr<rj_geometry::Shape> pad)
         : obstacle(obs), padding(pad) {}
 

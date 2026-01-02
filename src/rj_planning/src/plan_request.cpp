@@ -2,29 +2,11 @@
 
 namespace planning {
 
-rj_geometry::Circle make_inflated_static_obs(rj_geometry::Point position,
-                                             rj_geometry::Point velocity, double radius) {
-    // params for obstacle shift
-    constexpr double obs_center_shift{0.5};
-    constexpr double obs_radius_inflation{1.0};
-
-    rj_geometry::Point obs_center{position + (velocity * radius * obs_center_shift)};
-
-    double safety_margin{velocity.mag() * obs_radius_inflation};
-    double obs_radius{radius + (safety_margin * radius)};
-
-    return rj_geometry::Circle{obs_center, static_cast<float>(obs_radius)};
-}
-
-rj_geometry::Circle make_robot_obstacle(const RobotState& robot) {
-    return make_inflated_static_obs(robot.pose.position(), robot.velocity.linear(), kRobotRadius);
-}
-
 void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoid_ball) {
     out_obstacles.clear();
 
-    // Convert virtual_obstacles (ShapeSet) to Obstacle objects
-    for (const auto& shape : in.virtual_obstacles.shapes()) {
+    // Convert field_obstacles (ShapeSet) to Obstacle objects
+    for (const auto& shape : in.field_obstacles.shapes()) {
         out_obstacles.add(std::make_shared<Obstacle>(shape, shape));
     }
 

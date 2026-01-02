@@ -39,9 +39,6 @@ Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
-    ObstacleSet static_obstacles;
-    fill_obstacles(request, static_obstacles, false);
-
     const MotionCommand& command = request.motion_command;
 
     auto pivot_point =
