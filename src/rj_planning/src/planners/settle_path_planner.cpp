@@ -156,8 +156,8 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
 }
 
 Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                        const ObstacleSet& obstacles,
-                                        rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+                                        const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                                        rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -205,8 +205,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -317,8 +316,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
@@ -368,8 +366,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 }
 
 Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                     const ObstacleSet& obstacles,
-                                     rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
+                                     const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                                     rj_geometry::Point face_pos) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -452,10 +450,9 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     Trajectory dampen_end;
 
     if (previous_.empty()) {
-        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
-                                              plan_request.constraints.mot, start_instant.stamp,
-                                              obstacles, plan_request.field_dimensions,
-                                              plan_request.shell_id);
+        dampen_end = CreatePath::intermediate(
+            start_instant.linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
     } else {
         dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
                                               final_stopping_motion, plan_request.constraints.mot,

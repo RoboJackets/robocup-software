@@ -19,8 +19,7 @@ namespace planning::CreatePath {
 /**
  * Generate a smooth path from start to goal avoiding obstacles.
  */
-Trajectory rrt(const LinearMotionInstant& start,
-               const LinearMotionInstant& goal,
+Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ObstacleSet& obstacles,
                const std::vector<rj_geometry::Point>& bias_waypoints = {});
@@ -35,8 +34,8 @@ Trajectory simple(
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const ObstacleSet& obstacles,
-                        const FieldDimensions* field_dimensions, unsigned int robot_id);
+                        const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
+                        unsigned int robot_id);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,

@@ -25,10 +25,9 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     }
 
     Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
-    Trajectory post_trajectory =
-        CreatePath::intermediate(pre_trajectory.last().linear_motion(), params.goal,
-                                 params.constraints.mot, pre_trajectory.end_time(),
-                                 params.obstacles, params.field_dimensions, params.robot_id);
+    Trajectory post_trajectory = CreatePath::intermediate(
+        pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
+        pre_trajectory.end_time(), params.obstacles, params.field_dimensions, params.robot_id);
 
     // If we couldn't profile such that velocity at the end of the partial replan period is valid,
     // do a full replan.
@@ -70,9 +69,9 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
         almost_goal.position += shift_dir * shift_size;
 
-        path = CreatePath::intermediate(
-            params.start.linear_motion(), almost_goal, params.constraints.mot, params.start.stamp,
-            params.obstacles, params.field_dimensions, params.robot_id);
+        path = CreatePath::intermediate(params.start.linear_motion(), almost_goal,
+                                        params.constraints.mot, params.start.stamp,
+                                        params.obstacles, params.field_dimensions, params.robot_id);
     }
 
     if (!path.empty()) {
