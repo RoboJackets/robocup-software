@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <rj_common/ros_debug_drawer.hpp>
+#include <rj_geometry/composite_shape.hpp>
 #include <rj_geometry/shape_set.hpp>
 
 #include "obstacle.hpp"
@@ -42,13 +43,10 @@ public:
         }
     }
 
-    /// Remove all obstacles
     void clear() { obstacles_.clear(); }
 
-    /// Check if the set is empty
     [[nodiscard]] bool empty() const { return obstacles_.empty(); }
 
-    /// Get the number of obstacles
     [[nodiscard]] size_t size() const { return obstacles_.size(); }
 
     /**
@@ -112,12 +110,21 @@ public:
      * Convert to a ShapeSet containing all padding shapes.
      * Useful for interfacing with code that expects ShapeSet.
      *
+     * CompositeShapes (like StadiumShape) are automatically decomposed into
+     * their subshapes to ensure compatibility with ROS message conversion.
+     *
      * @return A ShapeSet containing the padding shape from each obstacle
      */
     rj_geometry::ShapeSet to_padding_shape_set() const {
         rj_geometry::ShapeSet shape_set;
         for (const auto& obstacle : obstacles_) {
-            shape_set.add(obstacle->get_padding());
+            if (auto* composite = dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_padding().get())) {
+                for (const auto& subshape : composite->subshapes()) {
+                    shape_set.add(subshape);
+                }
+            } else {
+                shape_set.add(obstacle->get_padding());
+            }
         }
         return shape_set;
     }
@@ -126,12 +133,21 @@ public:
      * Convert to a ShapeSet containing all obstacle cores.
      * Useful for debugging or visualization.
      *
+     * CompositeShapes (like StadiumShape) are automatically decomposed into
+     * their subshapes to ensure compatibility with ROS message conversion.
+     *
      * @return A ShapeSet containing the core obstacle shape from each obstacle
      */
     rj_geometry::ShapeSet to_obstacle_shape_set() const {
         rj_geometry::ShapeSet shape_set;
         for (const auto& obstacle : obstacles_) {
-            shape_set.add(obstacle->get_obstacle());
+            if (auto* composite = dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_obstacle().get())) {
+                for (const auto& subshape : composite->subshapes()) {
+                    shape_set.add(subshape);
+                }
+            } else {
+                shape_set.add(obstacle->get_obstacle());
+            }
         }
         return shape_set;
     }
@@ -141,10 +157,10 @@ public:
      * This shows the "avoid zones" that robots will try to stay out of.
      *
      * @param debug_drawer The debug drawer to render with
-     * @param color Color to use for drawing (default: semi-transparent red)
+     * @param color Color to use for drawing
      */
     void draw_padding(rj_drawing::RosDebugDrawer* debug_drawer,
-                      const QColor& color = QColor(255, 0, 0, 50)) const {
+                      const QColor& color = QColor(0, 180, 0, 100)) const {
         if (debug_drawer == nullptr) {
             return;
         }
@@ -156,10 +172,10 @@ public:
      * This shows the actual obstacle shapes (without padding).
      *
      * @param debug_drawer The debug drawer to render with
-     * @param color Color to use for drawing (default: semi-transparent dark red)
+     * @param color Color to use for drawing
      */
     void draw_cores(rj_drawing::RosDebugDrawer* debug_drawer,
-                    const QColor& color = QColor(180, 0, 0, 80)) const {
+                    const QColor& color = QColor(180, 0, 0, 100)) const {
         if (debug_drawer == nullptr) {
             return;
         }
@@ -174,14 +190,9 @@ public:
      * @param show_cores Whether to draw the obstacle cores (default: true)
      * @param show_padding Whether to draw the padding zones (default: true)
      */
-    void draw(rj_drawing::RosDebugDrawer* debug_drawer, bool show_cores = true,
-              bool show_padding = true) const {
-        if (show_cores) {
-            draw_cores(debug_drawer, QColor(180, 0, 0, 80));
-        }
-        if (show_padding) {
-            draw_padding(debug_drawer, QColor(255, 0, 0, 30));
-        }
+    void draw(rj_drawing::RosDebugDrawer* debug_drawer) const {
+        draw_cores(debug_drawer);
+        draw_padding(debug_drawer);
     }
 
     friend std::ostream& operator<<(std::ostream& out, const ObstacleSet& obstacle_set) {
