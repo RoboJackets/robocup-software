@@ -140,8 +140,8 @@ struct PlanRequest {
  * @param out_obstacles an (empty) ObstacleSet to be populated.
  *  This will be filled with field obstacles, the ball,
  *  opponent robots, and our robots.
- * @param avoid_ball whether to avoid the ball. If this is true, out_ball_trajectory
- *  should point to a valid trajectory.
+ * @param avoid_ball whether to avoid the ball. If this is true, the ball
+ *  will be included as an obstacle to avoid.
  */
 void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoid_ball);
 
