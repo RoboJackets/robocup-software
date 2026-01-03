@@ -118,7 +118,8 @@ public:
     rj_geometry::ShapeSet to_padding_shape_set() const {
         rj_geometry::ShapeSet shape_set;
         for (const auto& obstacle : obstacles_) {
-            if (auto* composite = dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_padding().get())) {
+            if (auto* composite =
+                    dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_padding().get())) {
                 for (const auto& subshape : composite->subshapes()) {
                     shape_set.add(subshape);
                 }
@@ -141,7 +142,8 @@ public:
     rj_geometry::ShapeSet to_obstacle_shape_set() const {
         rj_geometry::ShapeSet shape_set;
         for (const auto& obstacle : obstacles_) {
-            if (auto* composite = dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_obstacle().get())) {
+            if (auto* composite =
+                    dynamic_cast<rj_geometry::CompositeShape*>(obstacle->get_obstacle().get())) {
                 for (const auto& subshape : composite->subshapes()) {
                     shape_set.add(subshape);
                 }
