@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>rj_benchmarking</name>
+  <version>0.0.0</version>
+  <description>Node for Benchmarking</description>
+  <maintainer email="ydhadwal3@gatech.edu">Yuvraj Dhadwal</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>spdlog</depend>
+  <depend>fmt</depend>
+  <depend>rosidl_default_generators</depend>
+  <depend>std_msgs</depend>
+  <depend>rj_msgs</depend>
+  <depend>rj_constants</depend>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
