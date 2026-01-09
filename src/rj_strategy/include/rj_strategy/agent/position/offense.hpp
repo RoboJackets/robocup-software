@@ -166,7 +166,7 @@ private:
 
     int pass_to_robot_id_ = 0;
 
-    //TODO: Remove rj_geometry::Point seeker_target_;
+    // TODO: Remove rj_geometry::Point seeker_target_;
 
     // Used to cache targets between states
     rj_geometry::Point target_;

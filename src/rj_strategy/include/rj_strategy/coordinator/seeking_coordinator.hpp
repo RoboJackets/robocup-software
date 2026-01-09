@@ -23,7 +23,7 @@
 namespace strategy {
 
 class SeekingCoordinator : public Coordinator<SeekingCoordinator, rj_msgs::srv::SeekingCoordinator,
-                                             rj_msgs::msg::SeekingCoordinator> {
+                                              rj_msgs::msg::SeekingCoordinator> {
 public:
     SeekingCoordinator();
     ~SeekingCoordinator() override = default;
@@ -79,8 +79,7 @@ private:
      * @return rj_geometry::Point The best point found
      */
     rj_geometry::Point calculate_open_point(double current_prec, double min_prec,
-                                            rj_geometry::Point current_point,
-                                            int robot_id,
+                                            rj_geometry::Point current_point, int robot_id,
                                             const WorldState world_state,
                                             const FieldDimensions& field_dimensions) const;
 
@@ -100,14 +99,14 @@ private:
      *
      * @param ball_pos The current position of the ball
      * @param current_point The point that is being evaluated
-     * @param robot_id the robot ID for point evaluation; used to avoid evaluating a robot against its own current position
+     * @param robot_id the robot ID for point evaluation; used to avoid evaluating a robot against
+     * its own current position
      * @param world_state The current world state
      *
      * @return double The evaluation of that target point
      */
     [[nodiscard]] double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                                    int robot_id,
-                                    const WorldState world_state,
+                                    int robot_id, const WorldState world_state,
                                     const FieldDimensions& field_dimensions) const;
 
     WorldState last_world_state_;
@@ -120,11 +119,12 @@ private:
     rclcpp::TimerBase::SharedPtr publish_timer_;
 
     // Starting and ending precision for target position calculations
-    double target_position_start_precision_ {3.0};
-    double minimum_precision_ {0.2};
+    double target_position_start_precision_{3.0};
+    double minimum_precision_{0.2};
 
-    // Maximum score a current target can receive when deciding whether to recalculate a seeker's target point
-    double maximum_eval_score_ {2.0};
+    // Maximum score a current target can receive when deciding whether to recalculate a seeker's
+    // target point
+    double maximum_eval_score_{2.0};
 };
 
 }  // namespace strategy

@@ -3,14 +3,15 @@
 namespace strategy {
 
 SeekingCoordinator::SeekingCoordinator()
-    : Coordinator("seeking_coordinator_srv", "seeking_coordinator_data", "seeking_coordinator_node") {
+    : Coordinator("seeking_coordinator_srv", "seeking_coordinator_data",
+                  "seeking_coordinator_node") {
     // Subscribe to world state
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
         });
-    
+
     publish_timer_ = this->create_wall_timer(500ms, [this]() {
         update_targets();
         publish_seeker_points();
@@ -42,9 +43,11 @@ void SeekingCoordinator::publish_seeker_points() {
 void SeekingCoordinator::update_targets() {
     rj_geometry::Point ball_pos = last_world_state_.ball.position;
     for (int i = 0; i < is_seeking_.size(); i++) {
-        if (is_seeking_[i] && eval_point(ball_pos, seeker_points_[i], i, last_world_state_, field_dimensions_) > maximum_eval_score_) {
+        if (is_seeking_[i] && eval_point(ball_pos, seeker_points_[i], i, last_world_state_,
+                                         field_dimensions_) > maximum_eval_score_) {
             rj_geometry::Point robot_point = last_world_state_.our_robots.at(i).pose.position();
-            seeker_points_[i] = get_open_point(i, last_world_state_, robot_point, field_dimensions_);
+            seeker_points_[i] =
+                get_open_point(i, last_world_state_, robot_point, field_dimensions_);
         }
     }
 }
@@ -52,16 +55,20 @@ void SeekingCoordinator::update_targets() {
 void SeekingCoordinator::update_target(int robot_id) {
     rj_geometry::Point current_pos = last_world_state_.our_robots.at(robot_id).pose.position();
     rj_geometry::Point ball_pos = last_world_state_.ball.position;
-    if (is_seeking_[robot_id] && eval_point(ball_pos, seeker_points_[robot_id], robot_id, last_world_state_, field_dimensions_) > maximum_eval_score_) {
-        seeker_points_[robot_id] = get_open_point(robot_id, last_world_state_, current_pos, field_dimensions_);
+    if (is_seeking_[robot_id] &&
+        eval_point(ball_pos, seeker_points_[robot_id], robot_id, last_world_state_,
+                   field_dimensions_) > maximum_eval_score_) {
+        seeker_points_[robot_id] =
+            get_open_point(robot_id, last_world_state_, current_pos, field_dimensions_);
     }
 }
 
 rj_geometry::Point SeekingCoordinator::get_open_point(
     int robot_id, const WorldState world_state, rj_geometry::Point current_position,
     const FieldDimensions& field_dimensions) const {
-    return SeekingCoordinator::calculate_open_point(target_position_start_precision_, minimum_precision_, current_position, robot_id, world_state,
-                                                   field_dimensions);
+    return SeekingCoordinator::calculate_open_point(target_position_start_precision_,
+                                                    minimum_precision_, current_position, robot_id,
+                                                    world_state, field_dimensions);
 }
 
 rj_geometry::Point SeekingCoordinator::calculate_open_point(
@@ -70,7 +77,8 @@ rj_geometry::Point SeekingCoordinator::calculate_open_point(
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state.ball.position;
         rj_geometry::Point min = current_point;
-        double min_val = eval_point(ball_pos, current_point, robot_id, world_state, field_dimensions);
+        double min_val =
+            eval_point(ball_pos, current_point, robot_id, world_state, field_dimensions);
         double curr_val{};
         // Points in a current_prec radius of the current point, at 45 degree intervals
         std::vector<rj_geometry::Point> check_points{
@@ -105,8 +113,8 @@ rj_geometry::Point SeekingCoordinator::calculate_open_point(
     return current_point;
 }
 
-rj_geometry::Point SeekingCoordinator::correct_point(rj_geometry::Point p,
-                                                    const FieldDimensions& field_dimensions) const {
+rj_geometry::Point SeekingCoordinator::correct_point(
+    rj_geometry::Point p, const FieldDimensions& field_dimensions) const {
     double border_buffer = .2;
     double x = p.x();
     double y = p.y();
@@ -144,9 +152,8 @@ rj_geometry::Point SeekingCoordinator::correct_point(rj_geometry::Point p,
 }
 
 double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                                     const int robot_id,
-                                     const WorldState world_state,
-                                     const FieldDimensions& field_dimensions) const {
+                                      const int robot_id, const WorldState world_state,
+                                      const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
 
