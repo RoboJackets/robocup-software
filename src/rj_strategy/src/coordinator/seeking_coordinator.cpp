@@ -1,60 +1,76 @@
-#include "rj_strategy/coordinator/seeker_coordinator.hpp"
+#include "rj_strategy/coordinator/seeking_coordinator.hpp"
 
 namespace strategy {
 
-SeekerCoordinator::SeekerCoordinator()
-    : Coordinator("seeker_coordinator_srv", "seeker_coordinator_data", "seeker_coordinator_node") {
+SeekingCoordinator::SeekingCoordinator()
+    : Coordinator("seeking_coordinator_srv", "seeking_coordinator_data", "seeking_coordinator_node") {
     // Subscribe to world state
     world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
         });
+    
+    publish_timer_ = this->create_wall_timer(500ms, [this]() {
+        update_targets();
+        publish_seeker_points();
+    });
 }
 
-void SeekerCoordinator::service_callback(RequestPtr request, ResponsePtr response) {
+void SeekingCoordinator::service_callback(RequestPtr request, ResponsePtr response) {
     is_seeking_[request->robot_id] = request->wants_to_seek;
 
-    if (request->wants_to_seek) {
-        update_target(request->robot_id);
-        publish_seeker_points();
-    } else {
+    if (!request->wants_to_seek) {
         seeker_points_[request->robot_id] = invalidPoint();
+    } else {
+        update_target(request->robot_id);
     }
+    publish_seeker_points();
 
     response->success = true;
 }
 
-void SeekerCoordinator::publish_seeker_points() {
+void SeekingCoordinator::publish_seeker_points() {
     std::array<rj_geometry_msgs::msg::Point, kNumShells> msg_points;
     for (size_t i = 0; i < kNumShells; i++) {
         msg_points[i].x = seeker_points_[i].x();
         msg_points[i].y = seeker_points_[i].y();
     }
-    this->publisher_->publish(rj_msgs::msg::SeekerCoordinator().set__positions(msg_points));
+    this->publisher_->publish(rj_msgs::msg::SeekingCoordinator().set__positions(msg_points));
 }
 
-void SeekerCoordinator::update_target(int robot_id) {
-    rj_geometry::Point robot_pos = last_world_state_.our_robots.at(robot_id).pose.position();
-    seeker_points_[robot_id] = get_open_point(last_world_state_, robot_pos, field_dimensions_);
-    SPDLOG_INFO("Open Point Found for Robot {}: {}, {}", robot_id, seeker_points_[robot_id].x(),
-                seeker_points_[robot_id].y());
+void SeekingCoordinator::update_targets() {
+    rj_geometry::Point ball_pos = last_world_state_.ball.position;
+    for (int i = 0; i < is_seeking_.size(); i++) {
+        if (is_seeking_[i] && eval_point(ball_pos, seeker_points_[i], i, last_world_state_, field_dimensions_) > maximum_eval_score_) {
+            rj_geometry::Point robot_point = last_world_state_.our_robots.at(i).pose.position();
+            seeker_points_[i] = get_open_point(i, last_world_state_, robot_point, field_dimensions_);
+        }
+    }
 }
 
-rj_geometry::Point SeekerCoordinator::get_open_point(
-    const WorldState world_state, rj_geometry::Point current_position,
+void SeekingCoordinator::update_target(int robot_id) {
+    rj_geometry::Point current_pos = last_world_state_.our_robots.at(robot_id).pose.position();
+    rj_geometry::Point ball_pos = last_world_state_.ball.position;
+    if (is_seeking_[robot_id] && eval_point(ball_pos, seeker_points_[robot_id], robot_id, last_world_state_, field_dimensions_) > maximum_eval_score_) {
+        seeker_points_[robot_id] = get_open_point(robot_id, last_world_state_, current_pos, field_dimensions_);
+    }
+}
+
+rj_geometry::Point SeekingCoordinator::get_open_point(
+    int robot_id, const WorldState world_state, rj_geometry::Point current_position,
     const FieldDimensions& field_dimensions) const {
-    return SeekerCoordinator::calculate_open_point(3.0, .2, current_position, world_state,
+    return SeekingCoordinator::calculate_open_point(target_position_start_precision_, minimum_precision_, current_position, robot_id, world_state,
                                                    field_dimensions);
 }
 
-rj_geometry::Point SeekerCoordinator::calculate_open_point(
-    double current_prec, double min_prec, rj_geometry::Point current_point,
+rj_geometry::Point SeekingCoordinator::calculate_open_point(
+    double current_prec, double min_prec, rj_geometry::Point current_point, int robot_id,
     const WorldState world_state, const FieldDimensions& field_dimensions) const {
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state.ball.position;
         rj_geometry::Point min = current_point;
-        double min_val = eval_point(ball_pos, current_point, world_state, field_dimensions);
+        double min_val = eval_point(ball_pos, current_point, robot_id, world_state, field_dimensions);
         double curr_val{};
         // Points in a current_prec radius of the current point, at 45 degree intervals
         std::vector<rj_geometry::Point> check_points{
@@ -77,7 +93,7 @@ rj_geometry::Point SeekerCoordinator::calculate_open_point(
 
         // Finds the best point out of the ones checked
         for (auto point : check_points) {
-            curr_val = eval_point(ball_pos, point, world_state, field_dimensions);
+            curr_val = eval_point(ball_pos, point, robot_id, world_state, field_dimensions);
             if (curr_val < min_val) {
                 min_val = curr_val;
                 min = point;
@@ -89,7 +105,7 @@ rj_geometry::Point SeekerCoordinator::calculate_open_point(
     return current_point;
 }
 
-rj_geometry::Point SeekerCoordinator::correct_point(rj_geometry::Point p,
+rj_geometry::Point SeekingCoordinator::correct_point(rj_geometry::Point p,
                                                     const FieldDimensions& field_dimensions) const {
     double border_buffer = .2;
     double x = p.x();
@@ -127,11 +143,17 @@ rj_geometry::Point SeekerCoordinator::correct_point(rj_geometry::Point p,
     return rj_geometry::Point(x, y);
 }
 
-double SeekerCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
+double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
+                                     const int robot_id,
                                      const WorldState world_state,
                                      const FieldDimensions& field_dimensions) const {
     // Determines 'how good' a point is
     // A higher value is a worse point
+
+    // Target point is not invalidPoint()
+    if (current_point == invalidPoint()) {
+        return std::numeric_limits<double>::infinity();
+    }
 
     // Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
@@ -204,9 +226,10 @@ double SeekerCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::P
 
     // Finding the minimum distance from the target point to the other seeker points (from
     // communication) Heuristic to penalize being close to other seekers (a small minimum distance)s
+    // Checks for i == robot_id since the seeker's distance to itself need not be checked
     double min_seeker_dist = std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < kNumShells; i++) {
-        if (is_seeking_[i]) {
+        if (is_seeking_[i] && i != robot_id) {
             min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(seeker_points_[i]));
         }
     }
@@ -221,7 +244,7 @@ double SeekerCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::P
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<strategy::SeekerCoordinator>();
+    auto node = std::make_shared<strategy::SeekingCoordinator>();
     rclcpp::spin(node);
     rclcpp::shutdown();
     return 0;

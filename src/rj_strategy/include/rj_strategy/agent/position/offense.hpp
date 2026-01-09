@@ -17,7 +17,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/coordinator/seeker_client.hpp"
+#include "rj_strategy/coordinator/seeking_client.hpp"
 
 namespace strategy {
 
@@ -41,6 +41,8 @@ public:
 
     std::string get_current_state() override;
 
+    void die() override;
+
 private:
     /**
      * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
@@ -50,7 +52,6 @@ private:
     enum State {
         DEFAULT,           // Decide what to do
         SEEKING_START,     // Join seeker group
-        SEEKING_PROBE,     // Probe seeker client for new position
         SEEKING,           // Get open
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
@@ -93,8 +94,6 @@ private:
                 return RJ::Seconds{-1};
             case SEEKING_START:
                 return RJ::Seconds{-1};
-            case SEEKING_PROBE:
-                return RJ::Seconds{-1};
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
@@ -121,8 +120,6 @@ private:
                 return "DEFAULT";
             case SEEKING_START:
                 return "SEEKING_START";
-            case SEEKING_PROBE:
-                return "SEEKING_PROBE";
             case SEEKING:
                 return "SEEKING";
             case POSSESSION:
@@ -169,7 +166,7 @@ private:
 
     int pass_to_robot_id_ = 0;
 
-    rj_geometry::Point seeker_target_;
+    //TODO: Remove rj_geometry::Point seeker_target_;
 
     // Used to cache targets between states
     rj_geometry::Point target_;

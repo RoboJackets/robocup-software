@@ -63,7 +63,7 @@ set(RJ_STRATEGY_SRC
 
   # Coordinators
   src/coordinator/kicker_picker_client.cpp
-  src/coordinator/seeker_client.cpp
+  src/coordinator/seeking_client.cpp
 )
 
 # rj_strategy library
@@ -116,19 +116,19 @@ ament_target_dependencies(kicker_picker_node
 )
 
 # Seeker Node
-add_executable(seeker_coordinator_node
+add_executable(seeking_coordinator_node
   ${RJ_STRATEGY_SRC}
-  src/coordinator/seeker_client.cpp
-  src/coordinator/seeker_coordinator.cpp
+  src/coordinator/seeking_client.cpp
+  src/coordinator/seeking_coordinator.cpp
 )
 
-target_include_directories(seeker_coordinator_node
+target_include_directories(seeking_coordinator_node
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(seeker_coordinator_node
+ament_target_dependencies(seeking_coordinator_node
   ${RJ_STRATEGY_DEPS}
 )
 
@@ -163,7 +163,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node seeker_coordinator_node agent_action_clients
+  TARGETS straight_line_test_node kicker_picker_node seeking_coordinator_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 

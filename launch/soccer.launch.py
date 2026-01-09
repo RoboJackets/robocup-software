@@ -240,7 +240,7 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_strategy",
-                executable="seeker_coordinator_node",
+                executable="seeking_coordinator_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

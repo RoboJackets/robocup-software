@@ -34,31 +34,22 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_START: {
-            if (client_handles_->seekerClient->am_i_member())
-                return SEEKING_PROBE;
+            if (client_handles_->seeking_client->am_i_member())
+                return SEEKING;
             else
                 return SEEKING_START;
-        }
-
-        case SEEKING_PROBE: {
-            return SEEKING;
         }
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
-                client_handles_->seekerClient->leave_group();
+                client_handles_->seeking_client->leave_group();
                 return STEALING;
-            }
-
-            // If we need to get a new seeking target, restart seeking
-            if (check_is_done() ||
-                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-                return SEEKING_START;
             }
 
             return SEEKING;
         }
+
         case POSSESSION_START: {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
@@ -101,7 +92,7 @@ Offense::State Offense::next_state() {
 
             // If another robot becomes closer, leave state
             if (!can_steal_ball()) {
-                return SEEKING;
+                return SEEKING_START;
             }
 
             if (timed_out()) {
@@ -164,21 +155,19 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case SEEKING_START: {
-            client_handles_->seekerClient->poll_for_target();
-            intent.motion_command = planning::MotionCommand{};
-            return intent;
-        }
-
-        case SEEKING_PROBE: {
-            seeker_target_ = client_handles_->seekerClient->selected_target();
+            client_handles_->seeking_client->join_group();
             intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
         case SEEKING: {
+            if (client_handles_->seeking_client->selected_target() == SeekingCoordinator::invalidPoint()) {
+                intent.motion_command = planning::MotionCommand{};
+                return intent;
+            }
             planning::PathTargetFaceOption face_option = planning::FaceBall{};
             bool ignore_ball = false;
-            planning::LinearMotionInstant goal{seeker_target_, rj_geometry::Point{0.0, 0.0}};
+            planning::LinearMotionInstant goal{client_handles_->seeking_client->selected_target(), rj_geometry::Point{0.0, 0.0}};
             intent.motion_command =
                 planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             return intent;
@@ -512,6 +501,12 @@ bool Offense::ball_in_red() const {
     return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
             !field_dimensions_.field_rect().contains_point(ball_pos));
+}
+
+void Offense::die() {
+    if (client_handles_->seeking_client->am_i_member()) {
+        client_handles_->seeking_client->leave_group();
+    }
 }
 
 }  // namespace strategy

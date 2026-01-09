@@ -6,10 +6,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/seeker_coordinator.hpp>
-#include <rj_msgs/srv/seeker_coordinator.hpp>
+#include <rj_msgs/msg/seeking_coordinator.hpp>
+#include <rj_msgs/srv/seeking_coordinator.hpp>
 
-#include "rj_strategy/coordinator/seeker_coordinator.hpp"
+#include "rj_strategy/coordinator/seeking_coordinator.hpp"
 
 namespace strategy {
 
@@ -18,7 +18,7 @@ namespace strategy {
  *
  * Manages membership in the Seeker group and the seekers' next target positions.
  */
-class SeekerClient {
+class SeekingClient {
 public:
     struct Result {
         bool am_i_member{false};  // Whether this robot is currently a member of the seeker group.
@@ -26,18 +26,18 @@ public:
 
     using StatusCallback = std::function<void(Result)>;
 
-    explicit SeekerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
-    ~SeekerClient() = default;
-    SeekerClient(const SeekerClient&) = delete;
-    SeekerClient& operator=(const SeekerClient&) = delete;
-    SeekerClient(SeekerClient&&) = delete;
-    SeekerClient& operator=(SeekerClient&&) = delete;
+    explicit SeekingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id);
+    ~SeekingClient() = default;
+    SeekingClient(const SeekingClient&) = delete;
+    SeekingClient& operator=(const SeekingClient&) = delete;
+    SeekingClient(SeekingClient&&) = delete;
+    SeekingClient& operator=(SeekingClient&&) = delete;
 
     /**
-     * @brief Join the seeker group. or poll for a new target position.
+     * @brief Join the seeker group.
      * @param callback Called with current membership status after attempt to join.
      */
-    void poll_for_target(StatusCallback callback = nullptr);
+    void join_group(StatusCallback callback = nullptr);
 
     /**
      * @brief Leave the seeker group.
@@ -60,8 +60,8 @@ private:
     rclcpp::Node::SharedPtr node_;
     const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
                               // isn't move/copy-able anyway
-    rclcpp::Client<rj_msgs::srv::SeekerCoordinator>::SharedPtr client_;
-    rclcpp::Subscription<rj_msgs::msg::SeekerCoordinator>::SharedPtr subscription_;
+    rclcpp::Client<rj_msgs::srv::SeekingCoordinator>::SharedPtr client_;
+    rclcpp::Subscription<rj_msgs::msg::SeekingCoordinator>::SharedPtr subscription_;
 
     bool am_i_member_{false};
     rj_geometry::Point selected_target_{-1, -1};
