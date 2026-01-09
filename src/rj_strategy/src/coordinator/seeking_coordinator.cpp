@@ -23,10 +23,7 @@ void SeekingCoordinator::service_callback(RequestPtr request, ResponsePtr respon
 
     if (!request->wants_to_seek) {
         seeker_points_[request->robot_id] = invalidPoint();
-    } else {
-        update_target(request->robot_id);
     }
-    publish_seeker_points();
 
     response->success = true;
 }
