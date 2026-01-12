@@ -29,14 +29,13 @@ Registry::~Registry() {
             ss += "/robot_";
             ss += std::to_string(i);
             ss += ".csv";
-            std::ofstream robot_csv {base_path + ss};
+            std::ofstream robot_csv{base_path + ss};
             print_data(robot_csv, i);
         }
 
-        if (!registry_[kNumShells].empty())
-        {
-            std::string file_name {"/global.csv"};
-            std::ofstream global_csv {base_path + file_name};
+        if (!registry_[kNumShells].empty()) {
+            std::string file_name{"/global.csv"};
+            std::ofstream global_csv{base_path + file_name};
             print_data(global_csv, kNumShells);
         }
     }
@@ -46,12 +45,12 @@ void Registry::topic_callback(const rj_msgs::msg::Latency& msg) {
     if (msg.robot_id == -1)  // robot independent; will go at end
     {
         registry_[kNumShells][msg.label].push_back(msg.duration_ns);
-        max_rows_ = std::max(max_rows_, static_cast<size_t>(
-            registry_[kNumShells][msg.label].size()));
+        max_rows_ =
+            std::max(max_rows_, static_cast<size_t>(registry_[kNumShells][msg.label].size()));
     } else {
         registry_[msg.robot_id][msg.label].push_back(msg.duration_ns);
-        max_rows_ = std::max(max_rows_, static_cast<size_t>(
-            registry_[msg.robot_id][msg.label].size()));
+        max_rows_ =
+            std::max(max_rows_, static_cast<size_t>(registry_[msg.robot_id][msg.label].size()));
     }
 }
 
