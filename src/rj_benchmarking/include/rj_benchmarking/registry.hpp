@@ -28,7 +28,7 @@ private:
     void topic_callback(const rj_msgs::msg::Latency& msg);
 
     std::string get_curr_datetime();
-    void Registry::print_data(std::ofstream& file, int registry_index);
+    void print_data(std::ofstream& file, int registry_index);
 
     // registry[robot_id][label] -> latency sampling
     std::array<std::unordered_map<std::string, std::vector<uint64_t>>, kNumShells + 1> registry_{};
