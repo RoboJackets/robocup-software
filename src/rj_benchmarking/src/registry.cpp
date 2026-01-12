@@ -29,34 +29,30 @@ Registry::~Registry() {
             ss += "/robot_";
             ss += std::to_string(i);
             ss += ".csv";
-            std::ofstream robot_csv{base_path + ss};
+            std::ofstream robot_csv {base_path + ss};
+            print_data(robot_csv, i);
+        }
 
-            // Print out labels
-            for (const auto& [label, timestamps] : registry_[i]) {
-                robot_csv << label << ',';
-            }
-            robot_csv << '\n';
-
-            // Print out data row by row
-            for (size_t row = 0; row < max_rows_; ++row) {
-                for (const auto& [label, timestamps] : registry_[i]) {
-                    if (row >= timestamps.size()) {
-                        // sentinel value
-                        robot_csv << -1 << ',';
-                    } else {
-                        robot_csv << timestamps[row] << ',';
-                    }
-                }
-
-                robot_csv << '\n';
-            }
+        if (!registry_[kNumShells].empty())
+        {
+            std::string file_name {"/global.csv"};
+            std::ofstream global_csv {base_path + file_name};
+            print_data(global_csv, kNumShells);
         }
     }
 }
 
 void Registry::topic_callback(const rj_msgs::msg::Latency& msg) {
-    registry_[msg.robot_id][msg.label].push_back(msg.duration_ns);
-    max_rows_ = std::max(max_rows_, static_cast<size_t>(registry_[msg.robot_id][msg.label].size()));
+    if (msg.robot_id == -1)  // robot independent; will go at end
+    {
+        registry_[kNumShells][msg.label].push_back(msg.duration_ns);
+        max_rows_ = std::max(max_rows_, static_cast<size_t>(
+            registry_[kNumShells][msg.label].size()));
+    } else {
+        registry_[msg.robot_id][msg.label].push_back(msg.duration_ns);
+        max_rows_ = std::max(max_rows_, static_cast<size_t>(
+            registry_[msg.robot_id][msg.label].size()));
+    }
 }
 
 std::string Registry::get_curr_datetime() {
@@ -69,4 +65,25 @@ std::string Registry::get_curr_datetime() {
     std::ostringstream ss;
     ss << std::put_time(&tm_buf, "%Y-%m-%d_%H:%M:%S");
     return ss.str();
+}
+
+void Registry::print_data(std::ofstream& file, int registry_index) {
+    // Print out labels
+    for (const auto& [label, timestamps] : registry_[registry_index]) {
+        file << label << ',';
+    }
+    file << '\n';
+
+    // Print out data row by row
+    for (size_t row = 0; row < max_rows_; ++row) {
+        for (const auto& [label, timestamps] : registry_[registry_index]) {
+            if (row >= timestamps.size()) {
+                // sentinel value
+                file << -1 << ',';
+            } else {
+                file << timestamps[row] << ',';
+            }
+        }
+        file << '\n';
+    }
 }
