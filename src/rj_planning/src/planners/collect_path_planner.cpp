@@ -253,6 +253,7 @@ Trajectory CollectPathPlanner::coarse_approach(
 
     // Build a path from now to the slow point
     coarse_path.set_debug_text("coarse");
+    coarse_path.dribbler_speed = 255;
 
     return coarse_path;
 }
