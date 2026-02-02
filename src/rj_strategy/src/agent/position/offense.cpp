@@ -161,15 +161,15 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case SEEKING: {
-            if (client_handles_->seeking_client->selected_target() ==
-                SeekingCoordinator::invalidPoint()) {
+            if (client_handles_->seeking_client->selected_target() == nullptr) {
                 intent.motion_command = planning::MotionCommand{};
                 return intent;
             }
             planning::PathTargetFaceOption face_option = planning::FaceBall{};
             bool ignore_ball = false;
-            planning::LinearMotionInstant goal{client_handles_->seeking_client->selected_target(),
-                                               rj_geometry::Point{0.0, 0.0}};
+            planning::LinearMotionInstant goal{
+                *(client_handles_->seeking_client->selected_target()),
+                rj_geometry::Point{0.0, 0.0}};
             intent.motion_command =
                 planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
             return intent;

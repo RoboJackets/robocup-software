@@ -19,20 +19,32 @@ SeekingCoordinator::SeekingCoordinator()
 }
 
 void SeekingCoordinator::service_callback(RequestPtr request, ResponsePtr response) {
-    is_seeking_[request->robot_id] = request->wants_to_seek;
-
-    if (!request->wants_to_seek) {
-        seeker_points_[request->robot_id] = invalidPoint();
+    if (request->wants_to_seek && !is_seeking_[request->robot_id]) {
+        rj_geometry::Point current_pos =
+            last_world_state_.our_robots.at(request->robot_id).pose.position();
+        seeker_points_[request->robot_id] =
+            get_open_point(request->robot_id, last_world_state_, current_pos, field_dimensions_);
+    } else {
+        seeker_points_[request->robot_id] = nullptr;
     }
+
+    is_seeking_[request->robot_id] = request->wants_to_seek;
 
     response->success = true;
 }
 
 void SeekingCoordinator::publish_seeker_points() {
     std::array<rj_geometry_msgs::msg::Point, kNumShells> msg_points;
+
+    // Need to copy to a message array as a preprocessing step to create the ROS2 message
     for (size_t i = 0; i < kNumShells; i++) {
-        msg_points[i].x = seeker_points_[i].x();
-        msg_points[i].y = seeker_points_[i].y();
+        if (seeker_points_[i] == nullptr) {
+            msg_points[i].x = -1;
+            msg_points[i].y = -1;
+        } else {
+            msg_points[i].x = seeker_points_[i]->x();
+            msg_points[i].y = seeker_points_[i]->y();
+        }
     }
     this->publisher_->publish(rj_msgs::msg::SeekingCoordinator().set__positions(msg_points));
 }
@@ -40,8 +52,9 @@ void SeekingCoordinator::publish_seeker_points() {
 void SeekingCoordinator::update_targets() {
     rj_geometry::Point ball_pos = last_world_state_.ball.position;
     for (int i = 0; i < is_seeking_.size(); i++) {
-        if (is_seeking_[i] && eval_point(ball_pos, seeker_points_[i], i, last_world_state_,
-                                         field_dimensions_) > maximum_eval_score_) {
+        if (is_seeking_[i] && seeker_points_[i] != nullptr &&
+            eval_point(ball_pos, seeker_points_[i], i, last_world_state_, field_dimensions_) >
+                maximum_eval_score_) {
             rj_geometry::Point robot_point = last_world_state_.our_robots.at(i).pose.position();
             seeker_points_[i] =
                 get_open_point(i, last_world_state_, robot_point, field_dimensions_);
@@ -52,7 +65,7 @@ void SeekingCoordinator::update_targets() {
 void SeekingCoordinator::update_target(int robot_id) {
     rj_geometry::Point current_pos = last_world_state_.our_robots.at(robot_id).pose.position();
     rj_geometry::Point ball_pos = last_world_state_.ball.position;
-    if (is_seeking_[robot_id] &&
+    if (is_seeking_[robot_id] && seeker_points_[robot_id] != nullptr &&
         eval_point(ball_pos, seeker_points_[robot_id], robot_id, last_world_state_,
                    field_dimensions_) > maximum_eval_score_) {
         seeker_points_[robot_id] =
@@ -60,22 +73,22 @@ void SeekingCoordinator::update_target(int robot_id) {
     }
 }
 
-rj_geometry::Point SeekingCoordinator::get_open_point(
-    int robot_id, const WorldState world_state, rj_geometry::Point current_position,
+std::shared_ptr<rj_geometry::Point> SeekingCoordinator::get_open_point(
+    int robot_id, const WorldState& world_state, rj_geometry::Point current_position,
     const FieldDimensions& field_dimensions) const {
-    return SeekingCoordinator::calculate_open_point(target_position_start_precision_,
-                                                    minimum_precision_, current_position, robot_id,
-                                                    world_state, field_dimensions);
+    return std::make_shared<rj_geometry::Point>(SeekingCoordinator::calculate_open_point(
+        target_position_start_precision_, minimum_precision_, current_position, robot_id,
+        world_state, field_dimensions));
 }
 
 rj_geometry::Point SeekingCoordinator::calculate_open_point(
     double current_prec, double min_prec, rj_geometry::Point current_point, int robot_id,
-    const WorldState world_state, const FieldDimensions& field_dimensions) const {
+    const WorldState& world_state, const FieldDimensions& field_dimensions) const {
     while (current_prec > min_prec) {
         rj_geometry::Point ball_pos = world_state.ball.position;
         rj_geometry::Point min = current_point;
-        double min_val =
-            eval_point(ball_pos, current_point, robot_id, world_state, field_dimensions);
+        double min_val = eval_point(ball_pos, std::make_shared<rj_geometry::Point>(current_point),
+                                    robot_id, world_state, field_dimensions);
         double curr_val{};
         // Points in a current_prec radius of the current point, at 45 degree intervals
         std::vector<rj_geometry::Point> check_points{
@@ -98,7 +111,8 @@ rj_geometry::Point SeekingCoordinator::calculate_open_point(
 
         // Finds the best point out of the ones checked
         for (auto point : check_points) {
-            curr_val = eval_point(ball_pos, point, robot_id, world_state, field_dimensions);
+            curr_val = eval_point(ball_pos, std::make_shared<rj_geometry::Point>(point), robot_id,
+                                  world_state, field_dimensions);
             if (curr_val < min_val) {
                 min_val = curr_val;
                 min = point;
@@ -148,28 +162,23 @@ rj_geometry::Point SeekingCoordinator::correct_point(
     return rj_geometry::Point(x, y);
 }
 
-double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                                      const int robot_id, const WorldState world_state,
+double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos,
+                                      std::shared_ptr<rj_geometry::Point> current_point,
+                                      const int robot_id, const WorldState& world_state,
                                       const FieldDimensions& field_dimensions) const {
-    // Determines 'how good' a point is
-    // A higher value is a worse point
-
-    // Target point is not invalidPoint()
-    if (current_point == invalidPoint()) {
+    if (current_point == nullptr) {
         return std::numeric_limits<double>::infinity();
     }
 
-    // Does not go into the goalie boxes
     rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
-    if (goal_box.contains_point(current_point)) {
+    if (goal_box.contains_point(*current_point)) {
         return std::numeric_limits<double>::infinity();
     }
 
-    // Line of Sight Heuristic
     double max = 0;
     double curr_dp = 0;
     for (const RobotState& robot : world_state.their_robots) {
-        curr_dp = (current_point).norm().dot((robot.pose.position() - ball_pos).norm());
+        curr_dp = current_point->norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
         if (curr_dp > max) {
             max = curr_dp;
@@ -178,13 +187,13 @@ double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::
 
     // Whether the path from ball to the point is blocked
     // Same logic in passing to check if target is open
-    rj_geometry::Segment pass_path{ball_pos, current_point};
+    rj_geometry::Segment pass_path{ball_pos, *current_point};
     double min_robot_dist = std::numeric_limits<double>::infinity();
     float min_path_dist = std::numeric_limits<float>::infinity();
 
     for (const RobotState& robot : world_state.their_robots) {
         rj_geometry::Point opp_pos = robot.pose.position();
-        auto robot_dist = current_point.dist_to(opp_pos);
+        auto robot_dist = current_point->dist_to(opp_pos);
         min_robot_dist = std::min(min_robot_dist, robot_dist);
         auto path_dist = pass_path.dist_to(opp_pos);
         min_path_dist = std::min(min_path_dist, path_dist);
@@ -192,8 +201,7 @@ double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::
 
     for (const RobotState& robot : world_state.our_robots) {
         rj_geometry::Point ally_pos = robot.pose.position();
-        auto robot_dist = current_point.dist_to(ally_pos);
-        // if dist is 0, then bot must be seeker (self ) robot, so should ignore
+        auto robot_dist = current_point->dist_to(ally_pos);
         if (robot_dist == 0) {
             continue;
         }
@@ -205,9 +213,8 @@ double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::
     min_path_dist = 0.1f / min_path_dist;
     min_robot_dist = 0.1 / min_robot_dist;
 
-    // More Line of Sight Heuristics
     for (const RobotState& robot : world_state.our_robots) {
-        curr_dp = (current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
+        curr_dp = (*current_point - ball_pos).norm().dot((robot.pose.position() - ball_pos).norm());
         curr_dp *= curr_dp;
         if (curr_dp > max) {
             max = curr_dp;
@@ -217,12 +224,13 @@ double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::
     // Additional heuristics for calculating optimal point
     const double ball_proximity_loss_weight = 0.002;
     const double goal_distance_loss_weight = 0.15;
-    double ball_proximity_loss = (current_point - ball_pos).mag() * ball_proximity_loss_weight;
-    double goal_distance_loss = (field_dimensions.their_defense_area().miny() - current_point.y()) *
-                                goal_distance_loss_weight;
+    double ball_proximity_loss = (*current_point - ball_pos).mag() * ball_proximity_loss_weight;
+    double goal_distance_loss =
+        (field_dimensions.their_defense_area().miny() - current_point->y()) *
+        goal_distance_loss_weight;
 
     rj_geometry::Segment ball_goal{ball_pos, field_dimensions.their_goal_loc()};
-    double block_shot_dist = ball_goal.dist_to(current_point);
+    double block_shot_dist = ball_goal.dist_to(*current_point);
     double block_shot_loss = 0;
     if (block_shot_dist < 1) {
         block_shot_loss = 1;
@@ -234,7 +242,10 @@ double SeekingCoordinator::eval_point(rj_geometry::Point ball_pos, rj_geometry::
     double min_seeker_dist = std::numeric_limits<double>::infinity();
     for (size_t i = 0; i < kNumShells; i++) {
         if (is_seeking_[i] && i != robot_id) {
-            min_seeker_dist = std::min(min_seeker_dist, current_point.dist_to(seeker_points_[i]));
+            if (seeker_points_[i] != nullptr) {
+                min_seeker_dist =
+                    std::min(min_seeker_dist, current_point->dist_to(*seeker_points_[i]));
+            }
         }
     }
     const double seeker_dist_loss = 0.4 * 1 / min_seeker_dist;

@@ -54,7 +54,7 @@ public:
      * @brief Get the current target position.
      * @return rj_geometry::Point to target, or Point{-1,-1} if none selected.
      */
-    [[nodiscard]] rj_geometry::Point selected_target() const;
+    [[nodiscard]] std::shared_ptr<rj_geometry::Point> selected_target() const;
 
 private:
     rclcpp::Node::SharedPtr node_;
@@ -64,7 +64,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::SeekingCoordinator>::SharedPtr subscription_;
 
     bool am_i_member_{false};
-    rj_geometry::Point selected_target_{-1, -1};
+    std::shared_ptr<rj_geometry::Point> selected_target_{nullptr};
 };
 
 }  // namespace strategy

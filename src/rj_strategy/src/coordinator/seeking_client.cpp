@@ -3,7 +3,7 @@
 namespace strategy {
 
 SeekingClient::SeekingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
-    : node_{std::move(node)}, robot_id_{robot_id}, selected_target_{-1, -1} {
+    : node_{std::move(node)}, robot_id_{robot_id}, selected_target_{nullptr} {
     client_ = node_->create_client<rj_msgs::srv::SeekingCoordinator>("seeking_coordinator_srv");
 }
 
@@ -15,6 +15,8 @@ void SeekingClient::join_group(StatusCallback callback) {
         }
         return;
     }
+
+    if (am_i_member()) return;
 
     auto request = std::make_shared<rj_msgs::srv::SeekingCoordinator::Request>();
     request->robot_id = robot_id_;
@@ -37,8 +39,12 @@ void SeekingClient::join_group(StatusCallback callback) {
                 "seeking_coordinator_data", rclcpp::QoS(1).transient_local(),
                 [this, callback = std::move(callback)](
                     const rj_msgs::msg::SeekingCoordinator::SharedPtr msg) {
-                    selected_target_ = rj_geometry::Point{msg->positions[robot_id_].x,
-                                                          msg->positions[robot_id_].y};
+                    if (msg->positions[robot_id_].x == -1 && msg->positions[robot_id_].y == -1) {
+                        selected_target_ = nullptr;
+                    } else {
+                        selected_target_ = std::make_shared<rj_geometry::Point>(
+                            msg->positions[robot_id_].x, msg->positions[robot_id_].y);
+                    }
                 });
         });
 }
@@ -83,6 +89,8 @@ void SeekingClient::leave_group(StatusCallback callback) {
 
 bool SeekingClient::am_i_member() const { return am_i_member_; }
 
-rj_geometry::Point SeekingClient::selected_target() const { return selected_target_; }
+std::shared_ptr<rj_geometry::Point> SeekingClient::selected_target() const {
+    return selected_target_;
+}
 
 }  // namespace strategy

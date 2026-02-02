@@ -33,7 +33,6 @@ public:
     SeekingCoordinator& operator=(SeekingCoordinator&&) = delete;
 
     void service_callback(RequestPtr request, ResponsePtr response);
-    static rj_geometry::Point invalidPoint() { return rj_geometry::Point{-1, -1}; }
 
 private:
     /**
@@ -62,9 +61,9 @@ private:
      *
      * @return rj_geometry::Point The target point
      */
-    rj_geometry::Point get_open_point(int robot_id, const WorldState world_state,
-                                      rj_geometry::Point current_position,
-                                      const FieldDimensions& field_dimensions) const;
+    std::shared_ptr<rj_geometry::Point> get_open_point(
+        int robot_id, const WorldState& world_state, rj_geometry::Point current_position,
+        const FieldDimensions& field_dimensions) const;
 
     /**
      * @brief Calculates which point is the best by iteratively searching around the robot
@@ -80,7 +79,7 @@ private:
      */
     rj_geometry::Point calculate_open_point(double current_prec, double min_prec,
                                             rj_geometry::Point current_point, int robot_id,
-                                            const WorldState world_state,
+                                            const WorldState& world_state,
                                             const FieldDimensions& field_dimensions) const;
 
     /**
@@ -105,13 +104,14 @@ private:
      *
      * @return double The evaluation of that target point
      */
-    [[nodiscard]] double eval_point(rj_geometry::Point ball_pos, rj_geometry::Point current_point,
-                                    int robot_id, const WorldState world_state,
+    [[nodiscard]] double eval_point(rj_geometry::Point ball_pos,
+                                    std::shared_ptr<rj_geometry::Point> current_point, int robot_id,
+                                    const WorldState& world_state,
                                     const FieldDimensions& field_dimensions) const;
 
     WorldState last_world_state_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    std::array<rj_geometry::Point, kNumShells> seeker_points_{rj_geometry::Point{-1, -1}};
+    std::array<std::shared_ptr<rj_geometry::Point>, kNumShells> seeker_points_{nullptr};
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
     std::array<bool, kNumShells> is_seeking_{false};
 
