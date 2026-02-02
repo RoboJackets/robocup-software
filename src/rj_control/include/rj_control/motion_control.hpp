@@ -33,6 +33,7 @@ DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
 DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
 DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
 DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
+DECLARE_FLOAT64(params::kMotionControlParamModule, path_lookahead_distance);
 
 namespace testing {
 
@@ -98,6 +99,11 @@ private:
     PlayState::State play_state_ = PlayState::State::Halt;
 
     planning::Trajectory trajectory_;
+
+    // Track progress along the current trajectory to prevent backward snapping.
+    double last_path_progress_ = 0.0;
+    bool last_progress_valid_ = false;
+    RJ::Time last_trajectory_begin_time_{};
 
     rclcpp::Subscription<planning::Trajectory::Msg>::SharedPtr trajectory_sub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;

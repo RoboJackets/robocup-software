@@ -1,5 +1,9 @@
 #include "rj_control/motion_control.hpp"
 
+#include <algorithm>
+#include <cmath>
+#include <limits>
+
 namespace control {
 
 using planning::RobotInstant;
@@ -28,6 +32,209 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
                "Kd for translation ((m/s)/(m/s))");
 DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
              "Windup limit for translation (unknown units)");
+DEFINE_FLOAT64(params::kMotionControlParamModule, path_lookahead_distance, 0.1,
+               "Lookahead distance along the trajectory for PID error (m)");
+
+namespace {
+
+struct PathProjection {
+    rj_geometry::Point closest_point;
+    double s_closest = 0.0;
+    double total_length = 0.0;
+    bool valid = false;
+};
+
+double trajectory_length(const planning::Trajectory& trajectory) {
+    const auto& instants = trajectory.instants();
+    if (instants.size() < 2) {
+        return 0.0;
+    }
+    double length = 0.0;
+    for (size_t i = 0; i + 1 < instants.size(); ++i) {
+        length += (instants[i + 1].pose.position() - instants[i].pose.position()).mag();
+    }
+    return length;
+}
+
+PathProjection project_to_trajectory_forward(const planning::Trajectory& trajectory,
+                                             const rj_geometry::Point& query, double min_s) {
+    PathProjection result;
+    const auto& instants = trajectory.instants();
+    if (instants.size() < 2) {
+        return result;
+    }
+
+    double best_dist_sq = std::numeric_limits<double>::infinity();
+    double length_so_far = 0.0;
+    const double kEps = 1e-6;
+
+    for (size_t i = 0; i + 1 < instants.size(); ++i) {
+        rj_geometry::Point p0 = instants[i].pose.position();
+        rj_geometry::Point p1 = instants[i + 1].pose.position();
+        rj_geometry::Point delta = p1 - p0;
+        double seg_len_sq = delta.magsq();
+        double seg_len = 0.0;
+        double t = 0.0;
+        rj_geometry::Point nearest = p0;
+
+        if (seg_len_sq > 1e-12) {
+            seg_len = std::sqrt(seg_len_sq);
+            double t_proj = (query - p0).dot(delta) / seg_len_sq;
+            // Enforce forward progress by clamping to the portion of the segment beyond min_s.
+            double seg_start_s = length_so_far;
+            double seg_end_s = length_so_far + seg_len;
+
+            if (seg_end_s + kEps < min_s) {
+                length_so_far += seg_len;
+                continue;  // Entire segment is behind min_s.
+            }
+
+            double t_min = 0.0;
+            if (min_s > seg_start_s) {
+                t_min = (min_s - seg_start_s) / seg_len;
+            }
+
+            t = std::clamp(t_proj, t_min, 1.0);
+            nearest = p0 + delta * t;
+        }
+
+        double dist_sq = (query - nearest).magsq();
+        if (dist_sq < best_dist_sq) {
+            best_dist_sq = dist_sq;
+            result.closest_point = nearest;
+            result.s_closest = length_so_far + t * seg_len;
+            result.valid = true;
+        }
+
+        length_so_far += seg_len;
+    }
+
+    result.total_length = length_so_far;
+    return result;
+}
+
+rj_geometry::Point point_at_distance(const planning::Trajectory& trajectory, double distance) {
+    const auto& instants = trajectory.instants();
+    if (instants.empty()) {
+        return rj_geometry::Point();
+    }
+    if (instants.size() == 1 || distance <= 0.0) {
+        return instants.front().pose.position();
+    }
+
+    double remaining = distance;
+    for (size_t i = 0; i + 1 < instants.size(); ++i) {
+        rj_geometry::Point p0 = instants[i].pose.position();
+        rj_geometry::Point p1 = instants[i + 1].pose.position();
+        double seg_len = (p1 - p0).mag();
+        if (seg_len <= 1e-12) {
+            continue;
+        }
+        if (remaining <= seg_len) {
+            double t = remaining / seg_len;
+            return p0 + (p1 - p0) * t;
+        }
+        remaining -= seg_len;
+    }
+
+    return instants.back().pose.position();
+}
+
+rj_geometry::Point tangent_at_distance(const planning::Trajectory& trajectory, double distance,
+                                       rj_geometry::Point* out_unit_dir, double* out_seg_len) {
+    const auto& instants = trajectory.instants();
+    rj_geometry::Point last_dir{1, 0};
+    if (instants.size() < 2) {
+        if (out_unit_dir) {
+            *out_unit_dir = last_dir;
+        }
+        if (out_seg_len) {
+            *out_seg_len = 0.0;
+        }
+        return instants.empty() ? rj_geometry::Point() : instants.front().pose.position();
+    }
+
+    double remaining = distance;
+    for (size_t i = 0; i + 1 < instants.size(); ++i) {
+        rj_geometry::Point p0 = instants[i].pose.position();
+        rj_geometry::Point p1 = instants[i + 1].pose.position();
+        rj_geometry::Point delta = p1 - p0;
+        double seg_len = delta.mag();
+        if (seg_len <= 1e-12) {
+            continue;
+        }
+        last_dir = delta / seg_len;
+
+        if (remaining <= seg_len) {
+            double t = remaining / seg_len;
+            if (out_unit_dir) {
+                *out_unit_dir = last_dir;
+            }
+            if (out_seg_len) {
+                *out_seg_len = seg_len;
+            }
+            return p0 + delta * t;
+        }
+        remaining -= seg_len;
+    }
+
+    if (out_unit_dir) {
+        *out_unit_dir = last_dir;
+    }
+    if (out_seg_len) {
+        *out_seg_len = 0.0;
+    }
+    return instants.back().pose.position();
+}
+
+bool tangent_speed_at_distance(const planning::Trajectory& trajectory, double distance,
+                               rj_geometry::Point* out_dir, double* out_speed) {
+    const auto& instants = trajectory.instants();
+    if (instants.size() < 2) {
+        return false;
+    }
+
+    double remaining = distance;
+    rj_geometry::Point dir{1, 0};
+
+    for (size_t i = 0; i + 1 < instants.size(); ++i) {
+        rj_geometry::Point p0 = instants[i].pose.position();
+        rj_geometry::Point p1 = instants[i + 1].pose.position();
+        rj_geometry::Point delta = p1 - p0;
+        double seg_len = delta.mag();
+        if (seg_len <= 1e-12) {
+            continue;
+        }
+        dir = delta / seg_len;
+
+        double speed0 = instants[i].velocity.linear().mag();
+        double speed1 = instants[i + 1].velocity.linear().mag();
+
+        if (remaining <= seg_len) {
+            double t = remaining / seg_len;
+            double speed = speed0 + (speed1 - speed0) * t;
+            if (out_dir) {
+                *out_dir = dir;
+            }
+            if (out_speed) {
+                *out_speed = speed;
+            }
+            return true;
+        }
+        remaining -= seg_len;
+    }
+
+    // If distance is beyond total length, use last segment values.
+    if (out_dir) {
+        *out_dir = dir;
+    }
+    if (out_speed) {
+        *out_speed = instants.back().velocity.linear().mag();
+    }
+    return true;
+}
+
+}  // namespace
 
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
@@ -88,12 +295,21 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         return;
     }
 
+    // Reset progress tracking on new trajectories.
+    if (!last_progress_valid_ || trajectory.begin_time() != last_trajectory_begin_time_) {
+        last_path_progress_ = 0.0;
+        last_progress_valid_ = true;
+        last_trajectory_begin_time_ = trajectory.begin_time();
+    }
+
     update_params();
 
     // We run this at 60Hz, so we want to do motion control off of the goal
     // position for the next frame. Evaluate the trajectory there.
     RJ::Seconds dt(1.0 / 60);
     RJ::Time eval_time = state.timestamp + dt;
+
+    double total_traj_length = trajectory_length(trajectory);
 
     std::optional<RobotInstant> maybe_target = trajectory.evaluate(eval_time);
     bool at_end = eval_time > trajectory.end_time();
@@ -106,12 +322,44 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
     std::optional<Pose> maybe_pose_target;
     Twist velocity_target = Twist::zero();
+    std::optional<rj_geometry::Point> maybe_closest_point;
+    std::optional<rj_geometry::Point> maybe_lookahead_point;
+    rj_geometry::Point feedforward_linear = rj_geometry::Point{0, 0};
+    double feedforward_angular = 0.0;
 
     // Set up goals from our target motion instant.
     if (maybe_target) {
         auto target = maybe_target.value();
         maybe_pose_target = target.pose;
-        velocity_target = target.velocity;
+        feedforward_angular = target.velocity.angular();
+
+        PathProjection projection =
+            project_to_trajectory_forward(trajectory, state.pose.position(),
+                                          std::min(last_path_progress_, total_traj_length));
+        if (projection.valid && projection.total_length > 0.0) {
+            double lookahead_distance = std::max(0.0, PARAM_path_lookahead_distance);
+            double min_forward_slack = 0.02;  // meters of allowed backward tolerance
+            double min_s = std::max(0.0, std::min(projection.s_closest, projection.total_length));
+            min_s = std::min(min_s + min_forward_slack, projection.total_length);
+            double s_target =
+                std::clamp(projection.s_closest + lookahead_distance, min_s, projection.total_length);
+            rj_geometry::Point lookahead_point = point_at_distance(trajectory, s_target);
+            maybe_closest_point = projection.closest_point;
+            maybe_lookahead_point = lookahead_point;
+            maybe_pose_target->position() = lookahead_point;
+            last_path_progress_ = projection.s_closest;
+
+            rj_geometry::Point dir;
+            double speed = 0.0;
+            if (tangent_speed_at_distance(trajectory, s_target, &dir, &speed) && dir.mag() > 1e-6) {
+                feedforward_linear = dir * speed;
+            } else {
+                feedforward_linear = target.velocity.linear();
+            }
+        } else {
+            feedforward_linear = target.velocity.linear();
+        }
+        velocity_target = Twist(feedforward_linear, feedforward_angular);
     }
 
     // TODO(Kyle): Calculate acceleration and use it to improve response.
@@ -159,10 +407,16 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         // Debug drawing
         using rj_geometry::Circle;
         using rj_geometry::Segment;
-        if (at_end) {
-            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), QColor(255, 0, 0, 0));
+        if (maybe_lookahead_point) {
+            drawer_.draw_circle(Circle(maybe_lookahead_point.value(), .15),
+                                at_end ? QColor(255, 0, 0, 0) : QColor(0, 255, 0, 0));
         } else if (maybe_target) {
-            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15), QColor(0, 255, 0, 0));
+            drawer_.draw_circle(Circle(maybe_target->pose.position(), .15),
+                                at_end ? QColor(255, 0, 0, 0) : QColor(0, 255, 0, 0));
+        }
+
+        if (maybe_closest_point) {
+            drawer_.draw_circle(Circle(maybe_closest_point.value(), .10), QColor(255, 255, 0, 0));
         }
 
         // Line for velocity when we have a target
@@ -178,7 +432,11 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
     if (maybe_target) {
         RobotState desired_state;
-        desired_state.pose = maybe_target->pose;
+        if (maybe_pose_target) {
+            desired_state.pose = *maybe_pose_target;
+        } else {
+            desired_state.pose = maybe_target->pose;
+        }
         desired_state.velocity = velocity_target;
         desired_state.timestamp = maybe_target->stamp;
         desired_state.visible = true;
