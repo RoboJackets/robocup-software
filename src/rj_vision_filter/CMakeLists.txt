@@ -25,6 +25,23 @@ find_package(rj_config_client REQUIRED)
 find_package(rj_topic_utils REQUIRED)
 find_package(rj_constants REQUIRED)
 
+set(RJ_VISION_FILTER_DEPS
+  rj_geometry
+  rj_common
+  rj_msgs
+  Boost
+  Eigen3
+  eigen3_cmake_module
+  rj_param_utils
+  rclcpp
+  rj_utils
+  spdlog
+  rclcpp_components
+  rj_config_client
+  rj_topic_utils
+  rj_constants
+)
+
 add_executable(${PROJECT_NAME}_node
   src/main.cpp
   src/ball/ball_bounce.cpp
@@ -96,38 +113,12 @@ target_include_directories(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}_node
   PUBLIC
-  rj_geometry
-  rj_common
-  rj_msgs
-  Boost
-  Eigen3
-  eigen3_cmake_module
-  rj_param_utils
-  rclcpp
-  rj_utils
-  spdlog
-  rclcpp_components
-  rj_config_client
-  rj_topic_utils
-  rj_constants
+  ${RJ_VISION_FILTER_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rj_geometry
-  rj_common
-  rj_msgs
-  Boost
-  Eigen3
-  eigen3_cmake_module
-  rj_param_utils
-  rclcpp
-  rj_utils
-  spdlog
-  rclcpp_components
-  rj_config_client
-  rj_topic_utils
-  rj_constants
+  ${RJ_VISION_FILTER_DEPS}
 )
 
 install(

@@ -35,6 +35,7 @@ rosidl_generate_interfaces(
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
   msg/MotionSetpoint.msg
+  msg/Latency.msg
 
   msg/LinearMotionInstant.msg
   msg/MotionCommand.msg
