@@ -85,10 +85,19 @@ Offense::State Offense::next_state() {
         case PASSING: {
             if (check_is_done()) {
                 pass_ball(pass_to_robot_id_);
-                return DEFAULT;
+                return PASSING_FINISHED;
             }
 
             return PASSING;
+        }
+
+        case PASSING_FINISHED: {
+            // Wait for PassReceivedRequest from receiver (handled in
+            // receive_communication_request) or timeout.
+            if (timed_out()) {
+                return DEFAULT;
+            }
+            return PASSING_FINISHED;
         }
 
         case STEALING: {
@@ -118,15 +127,18 @@ Offense::State Offense::next_state() {
         case RECEIVING: {
             // If we got it, cool, we have it!
             if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
+                send_pass_received_to_passer(face_robot_id);
                 return POSSESSION_START;
             }
 
             if (ball_in_red()) {
+                send_pass_received_to_passer(face_robot_id);
                 return DEFAULT;
             }
 
             // If we failed to get it in time
             if (timed_out()) {
+                send_pass_received_to_passer(face_robot_id);
                 return DEFAULT;
             }
 
@@ -205,6 +217,12 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
             double dist = target_robot_pos.dist_to(this_robot_pos);
             intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
+            return intent;
+        }
+
+        case PASSING_FINISHED: {
+            // Stay in place until we receive PassReceivedRequest from receiver.
+            intent.motion_command = planning::MotionCommand{};
             return intent;
         }
 
@@ -307,6 +325,11 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
                 seeker_request->seeking_point_x, seeker_request->seeking_point_y};
         } else {
             seeker_points_.erase(seeker_request->robot_id);
+        }
+    } else if (std::get_if<communication::PassReceivedRequest>(&request.request)) {
+        // Receiver has controlled the ball; we can leave PASSING_FINISHED.
+        if (current_state_ == PASSING_FINISHED) {
+            current_state_ = DEFAULT;
         }
     }
 

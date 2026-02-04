@@ -148,6 +148,12 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
             acknowledge_ball_in_transit(*ball_in_transit_request);
         // SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
         comm_response.response = ball_in_transit_acknowledge;
+    } else if (std::get_if<communication::PassReceivedRequest>(&request.request)) {
+        // Receiver notifies passer that ball was received. Passer handles state
+        // transition in Offense::receive_communication_request.
+        communication::Acknowledge acknowledge{};
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
     } else {
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
@@ -210,6 +216,20 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = incoming_ball_request;
     communication_request.target_agents = {target_robot};
+    communication_request.broadcast = false;
+    communication_request.urgent = true;
+
+    communication_requests_.push_back(communication_request);
+}
+
+void Position::send_pass_received_to_passer(u_int8_t passer_robot_id) {
+    communication::PassReceivedRequest pass_received_request{};
+    pass_received_request.from_robot_id = robot_id_;
+    communication::generate_uid(pass_received_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = pass_received_request;
+    communication_request.target_agents = {passer_robot_id};
     communication_request.broadcast = false;
     communication_request.urgent = true;
 

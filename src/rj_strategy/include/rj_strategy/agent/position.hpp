@@ -174,6 +174,15 @@ public:
     virtual void send_pass_confirmation(u_int8_t target_robot);
 
     /**
+     * @brief tell the passer that this robot has received/controlled the ball.
+     * Called by the receiver when it has the ball so the passer can leave
+     * PASSING_FINISHED and return to DEFAULT.
+     *
+     * @param passer_robot_id the robot that passed the ball (recipient of this message)
+     */
+    virtual void send_pass_received_to_passer(u_int8_t passer_robot_id);
+
+    /**
      * @brief acknowledges the pass confirmation from another robot
      *
      * @param incoming_ball_request the request that a ball will be coming to this robot

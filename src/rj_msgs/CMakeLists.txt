@@ -73,6 +73,7 @@ rosidl_generate_interfaces(
   request/LeaveWallRequest.msg
   request/ResetScorerRequest.msg
   request/IncomingBallRequest.msg
+  request/PassReceivedRequest.msg
 
   # Agent Response Messages
   response/ScorerResponse.msg

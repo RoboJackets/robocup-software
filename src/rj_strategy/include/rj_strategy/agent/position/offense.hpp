@@ -54,6 +54,7 @@ private:
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
         PASSING,           // Pass the ball
+        PASSING_FINISHED,  // Kicked the ball, waiting for receiver to confirm
         STEALING,          // Getting the ball
         RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
@@ -100,6 +101,8 @@ private:
                 return RJ::Seconds{-1};
             case PASSING:
                 return RJ::Seconds{5};
+            case PASSING_FINISHED:
+                return RJ::Seconds{5};
             case STEALING:
                 return RJ::Seconds{10};
             case RECEIVING_START:
@@ -126,6 +129,8 @@ private:
                 return "POSSESSION_START";
             case PASSING:
                 return "PASSING";
+            case PASSING_FINISHED:
+                return "PASSING_FINISHED";
             case STEALING:
                 return "STEALING";
             case RECEIVING_START:
