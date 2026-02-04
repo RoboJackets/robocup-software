@@ -44,6 +44,7 @@ public:
 private:
     static constexpr int kMaxWallers{2};
     static constexpr RJ::Seconds kMarkingGroupJoinTimeout{2.0};
+    static constexpr float kMarkingDistanceFactor{0.55f};
 
     /**
      * @brief The derived_get_task method returns the task for the defensive robot

@@ -13,7 +13,7 @@
 namespace strategy {
 
 /**
- * @brief Client for interacting with the KickerPicker coordinator.
+ * @brief Client for interacting with the marking coordinator.
  *
  * Manages membership in the kicker group and tracks the currently selected kicker.
  */

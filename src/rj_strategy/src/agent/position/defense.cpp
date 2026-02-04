@@ -202,9 +202,8 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
                 .pose.position();
 
         rj_geometry::Point ballPoint = last_world_state_->ball.position;
-        rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(0.55f);
-        planning::LinearMotionInstant goal{targetPoint + targetToBall,
-                                           rj_geometry::Point{0.0, 0.0}};
+        rj_geometry::Point targetToBall = (ballPoint - targetPoint).normalized(kMarkingDistanceFactor);
+        planning::LinearMotionInstant goal{targetPoint + targetToBall};
         // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint +
         // targetToBall).y());
         intent.motion_command =
