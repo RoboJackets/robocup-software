@@ -40,8 +40,7 @@ Defense::State Defense::update_state() {
             });
             break;
         case WALLING:
-            if (!client_handles_->waller->am_i_member())
-                next_state = IDLING;
+            if (!client_handles_->waller->am_i_member()) next_state = IDLING;
             break;
         case SEARCHING:
             break;
