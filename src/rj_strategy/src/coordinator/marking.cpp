@@ -76,9 +76,8 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
                 uint8_t enemy_id = marking_list_[i];
                 const auto& i_robot = last_world_state_.get_robot(true, i);
                 const auto& enemy_robot = last_world_state_.get_robot(false, enemy_id);
-                double dist =
-                    (i_robot.pose.position().dist_to(enemy_robot.pose.position())) -
-                    (robot_requesting_pos.dist_to(enemy_robot.pose.position()));
+                double dist = (i_robot.pose.position().dist_to(enemy_robot.pose.position())) -
+                              (robot_requesting_pos.dist_to(enemy_robot.pose.position()));
                 if (dist > better_distance) {
                     better_distance = dist;
                     kick_out_this_robot_id = i;
