@@ -69,7 +69,7 @@ void Marking::service_callback(RequestPtr request, ResponsePtr response) {
         double better_distance = 0;
         uint8_t kick_out_this_robot_id = kInvalidRobotId;
         const auto& robot_requesting = last_world_state_.get_robot(true, request->robot_id);
-        RJ::geometry::Point robot_requesting_pos = robot_requesting.pose.position();
+        rj_geometry::Point robot_requesting_pos = robot_requesting.pose.position();
         // Kicked out robot is one that is furthest from its marker and new robot is closer than it
         for (size_t i = 0; i < kNumShells; ++i) {
             if (marking_list_[i] != kInvalidRobotId) {
