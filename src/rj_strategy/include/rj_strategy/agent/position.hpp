@@ -42,6 +42,7 @@
 
 // Coordinators
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"
+#include "rj_strategy/coordinator/waller_client.hpp"
 
 // tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
@@ -51,6 +52,7 @@ namespace strategy {
 // Client Handles for coordinators
 struct ClientHandles {
     std::unique_ptr<KickerPickerClient> kicker_picker;
+    std::unique_ptr<WallerClient> waller;
 };
 
 /*
