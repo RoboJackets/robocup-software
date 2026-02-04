@@ -28,6 +28,7 @@ Defense::State Defense::update_state() {
 
     switch (current_state_) {
         case IDLING:
+            // Defensive Priority goes Walling > Marking > Zoning > Idle
             next_state = JOINING_WALL;
             break;
         case JOINING_WALL:
@@ -39,6 +40,8 @@ Defense::State Defense::update_state() {
             });
             break;
         case WALLING:
+            if (!client_handles_->waller->am_i_member())
+                next_state = IDLING;
             break;
         case SEARCHING:
             break;

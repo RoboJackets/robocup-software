@@ -5,7 +5,7 @@ namespace strategy {
 WallerClient::WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
     : node_{std::move(node)}, robot_id_{robot_id} {
     client_ = node_->create_client<rj_msgs::srv::Waller>("waller_srv");
-    walling_robots_.fill(-1);
+    walling_robots_.fill(std::numeric_limits<uint8_t>::max());
 }
 
 void WallerClient::join_group(StatusCallback callback) {
@@ -83,7 +83,7 @@ void WallerClient::leave_group(StatusCallback callback) {
             am_i_member_ = false;
 
             subscription_.reset();
-            walling_robots_.fill(-1);
+            walling_robots_.fill(std::numeric_limits<uint8_t>::max());
             num_wallers_ = 0;
 
             if (callback) {
