@@ -162,6 +162,15 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
 
+    // Adding two more obstacles that extend past 
+    real_obstacles.add(std::make_shared<rj_geometry::Rect>(
+        rj_geometry::Point(0.5f, -0.15f),
+        rj_geometry::Point(-0.5f, -0.7f)));
+
+    real_obstacles.add(std::make_shared<rj_geometry::Rect>(
+        rj_geometry::Point(-0.5f, 9.15f),
+        rj_geometry::Point(0.5f, 9.7f)));
+
     const auto def_area_obstacles = global_state_.def_area_obstacles();
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     const bool is_goalie = goalie_id == robot_id_;
@@ -267,7 +276,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
-    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.field_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.publish();
 

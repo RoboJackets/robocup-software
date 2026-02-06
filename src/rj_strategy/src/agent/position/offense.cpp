@@ -294,6 +294,8 @@ bool Offense::check_if_open(int target_robot_shell) {
         min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
     }
 
+    min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(from_robot_position));
+
     // If the current robot is far enough away from other robots and there
     // are no other robots
     // in the passing line, process the request Currently, max_receive_distance is used to
@@ -476,17 +478,17 @@ bool Offense::can_steal_ball() const {
     auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
     auto our_dist = (current_pos - ball_position).mag();
-    for (auto enemy : this->last_world_state_->their_robots) {
-        auto dist = (enemy.pose.position() - ball_position).mag();
-        if (dist < our_dist) {
-            closest = false;
-            break;
-        }
-    }
+    // for (auto enemy : this->last_world_state_->their_robots) {
+    //     auto dist = (enemy.pose.position() - ball_position).mag();
+    //     if (dist < our_dist) {
+    //         closest = false;
+    //         break;
+    //     }
+    // }
 
-    if (!closest) {
-        return closest;
-    }
+    // if (!closest) {
+    //     return closest;
+    // }
 
     for (auto pal : this->last_world_state_->our_robots) {
         // if (pal.robot_id_ == robot_id_) {

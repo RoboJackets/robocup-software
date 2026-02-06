@@ -61,7 +61,7 @@
       max_rotational_accel: 3.0
       max_rotational_speed: 3.0
       max_translational_accel: 2.0
-      max_translational_speed: 2.0
+      max_translational_speed: 3.0
     escape:
       goal_change_threshold: 0.9
       step_size: 0.1
