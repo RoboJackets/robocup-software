@@ -1,5 +1,8 @@
 #include "rj_planning/planner_for_robot.hpp"
 
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/rect.hpp>
+
 namespace planning {
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
@@ -162,6 +165,12 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto global_obstacles = global_state_.global_obstacles();
     rj_geometry::ShapeSet real_obstacles = global_obstacles;
 
+    // Add extra static obstacles (e.g. rectangular region to avoid)
+    // Rect is defined by two diagonal corners (min and max in field coordinates)
+    real_obstacles.add(std::make_shared<rj_geometry::Rect>(
+        rj_geometry::Point(1.0f, -0.5f),  // corner 1 (meters)
+        rj_geometry::Point(1.5f, 0.5f)));  // corner 2 (meters)
+
     const auto def_area_obstacles = global_state_.def_area_obstacles();
     rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
     const bool is_goalie = goalie_id == robot_id_;
@@ -265,9 +274,10 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     // draw robot's desired endpoint
     debug_draw_.draw_circle(rj_geometry::Circle(path.back(), kRobotRadius), Qt::black);
 
-    // draw obstacles for this robot
+    // draw obstacles for this robot (field_obstacles includes global + any added in
+    // make_request; virtual_obstacles are separate)
     // TODO: these will stack atop each other, since each robot draws obstacles
-    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.field_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
     debug_draw_.publish();
 

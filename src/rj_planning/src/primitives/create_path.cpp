@@ -1,5 +1,9 @@
 #include "rj_planning/primitives/create_path.hpp"
 
+#include <algorithm>
+#include <queue>
+#include <unordered_map>
+
 using namespace rj_geometry;
 
 namespace planning::CreatePath {
@@ -69,6 +73,169 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     return path;
 }
 
+Trajectory astar(const LinearMotionInstant& start, const LinearMotionInstant& goal,
+                 const MotionConstraints& motion_constraints, RJ::Time start_time,
+                 const rj_geometry::ShapeSet& static_obstacles,
+                 const FieldDimensions* field_dimensions) {
+    // Grid-based A* with 4-directional movement (up/down/left/right).
+    // Uses Euclidean distance (dist_to) as the heuristic — a generous
+    // (admissible) approximation that assumes no obstacles.
+    // Caps iterations to stay fast; returns empty trajectory on failure
+    // so the caller can fall back to RRT.
+
+    constexpr double kCellSize = 0.1;        // grid resolution in meters
+    constexpr int kMaxIterations = 2000;      // hard cap on node expansions
+
+    using GridCell = std::pair<int, int>;
+
+    // ---- coordinate conversions ----
+    auto to_grid = [&](const Point& pt) -> GridCell {
+        return {static_cast<int>(std::round(pt.x() / kCellSize)),
+                static_cast<int>(std::round(pt.y() / kCellSize))};
+    };
+
+    auto to_point = [&](const GridCell& cell) -> Point {
+        return Point(cell.first * kCellSize, cell.second * kCellSize);
+    };
+
+    GridCell start_cell = to_grid(start.position);
+    GridCell goal_cell = to_grid(goal.position);
+
+    // trivial case: already on the goal cell
+    if (start_cell == goal_cell) {
+        return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
+    }
+
+    // ---- field-bounds helper ----
+    double half_width = field_dimensions->width() / 2.0 + 0.2;
+    double half_length = field_dimensions->length() / 2.0 + 0.2;
+    Point center = field_dimensions->center_point();
+
+    auto in_bounds = [&](const GridCell& cell) -> bool {
+        Point pt = to_point(cell);
+        auto offset = pt - center;
+        return std::abs(offset.x()) <= half_width && std::abs(offset.y()) <= half_length;
+    };
+
+    // ---- collision helper (uses ShapeSet::hit which inflates by kRobotRadius) ----
+    auto is_free = [&](const GridCell& cell) -> bool {
+        if (!in_bounds(cell)) return false;
+        return !static_obstacles.hit(to_point(cell));
+    };
+
+    // bail early if start or goal cell is blocked
+    if (!is_free(start_cell) || !is_free(goal_cell)) {
+        return Trajectory{{}};
+    }
+
+    // ---- heuristic: straight-line distance (generous / admissible) ----
+    Point goal_pt = to_point(goal_cell);
+    auto heuristic = [&](const GridCell& cell) -> double {
+        return to_point(cell).dist_to(goal_pt);
+    };
+
+    // ---- hash for GridCell (std::pair<int,int>) ----
+    struct GridCellHash {
+        size_t operator()(const GridCell& cell) const {
+            size_t seed = 0;
+            boost::hash_combine(seed, cell.first);
+            boost::hash_combine(seed, cell.second);
+            return seed;
+        }
+    };
+
+    // ---- priority-queue node ----
+    struct AStarNode {
+        GridCell cell;
+        double f;  // f = g + h
+        bool operator>(const AStarNode& other) const { return f > other.f; }
+    };
+
+    // ---- A* bookkeeping ----
+    std::priority_queue<AStarNode, std::vector<AStarNode>, std::greater<AStarNode>> open_set;
+    std::unordered_map<GridCell, double, GridCellHash> g_score;
+    std::unordered_map<GridCell, GridCell, GridCellHash> came_from;
+
+    g_score[start_cell] = 0.0;
+    open_set.push({start_cell, heuristic(start_cell)});
+
+    // 4 cardinal directions: right, left, up, down
+    constexpr int dx[] = {1, -1, 0, 0};
+    constexpr int dy[] = {0, 0, 1, -1};
+
+    int iterations = 0;
+    bool found = false;
+
+    while (!open_set.empty() && iterations < kMaxIterations) {
+        iterations++;
+        AStarNode current = open_set.top();
+        open_set.pop();
+
+        // goal reached
+        if (current.cell == goal_cell) {
+            found = true;
+            break;
+        }
+
+        // skip stale queue entries (a better path was already found)
+        double current_g = g_score.count(current.cell) ? g_score[current.cell]
+                                                       : std::numeric_limits<double>::infinity();
+        if (current.f > current_g + heuristic(current.cell) + 1e-9) {
+            continue;
+        }
+
+        // expand 4 neighbors
+        for (int i = 0; i < 4; i++) {
+            GridCell neighbor = {current.cell.first + dx[i], current.cell.second + dy[i]};
+
+            if (!is_free(neighbor)) continue;
+
+            double tentative_g = current_g + kCellSize;
+
+            if (!g_score.count(neighbor) || tentative_g < g_score[neighbor]) {
+                g_score[neighbor] = tentative_g;
+                came_from[neighbor] = current.cell;
+                open_set.push({neighbor, tentative_g + heuristic(neighbor)});
+            }
+        }
+    }
+
+    if (!found) {
+        return Trajectory{{}};  // exceeded iteration budget — let RRT handle it
+    }
+
+    // ---- reconstruct raw grid path (goal → start, then reverse) ----
+    std::vector<Point> grid_path;
+    GridCell trace = goal_cell;
+    while (trace != start_cell) {
+        grid_path.push_back(to_point(trace));
+        trace = came_from[trace];
+    }
+    grid_path.push_back(to_point(start_cell));
+    std::reverse(grid_path.begin(), grid_path.end());
+
+    // ---- simplify: keep only turning points (where the cardinal direction changes) ----
+    std::vector<Point> waypoints;
+    waypoints.push_back(start.position);  // exact continuous start
+    for (size_t i = 1; i + 1 < grid_path.size(); i++) {
+        double dx1 = grid_path[i].x() - grid_path[i - 1].x();
+        double dy1 = grid_path[i].y() - grid_path[i - 1].y();
+        double dx2 = grid_path[i + 1].x() - grid_path[i].x();
+        double dy2 = grid_path[i + 1].y() - grid_path[i].y();
+        // direction changed → this is a turning point
+        if (std::abs(dx1 - dx2) > 1e-9 || std::abs(dy1 - dy2) > 1e-9) {
+            waypoints.push_back(grid_path[i]);
+        }
+    }
+    waypoints.push_back(goal.position);  // exact continuous goal
+
+    // ---- build trajectory via Bezier + velocity profiling (same as rrt/simple) ----
+    BezierPath bezier(waypoints, start.velocity, goal.velocity, motion_constraints);
+    Trajectory trajectory = profile_velocity(bezier, start.velocity.mag(), goal.velocity.mag(),
+                                             motion_constraints, start_time);
+    return trajectory;
+}
+
 static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
@@ -124,6 +291,16 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                 return trajectory;
             }
         }
+    }
+
+    // Try A* grid search — fast 4-directional planner that avoids static obstacles.
+    // If it finds a collision-free trajectory, use it; otherwise fall through to RRT.
+    Trajectory astar_trajectory =
+        CreatePath::astar(start, goal, motion_constraints, start_time, static_obstacles,
+                          field_dimensions);
+    if (!astar_trajectory.empty() &&
+        !trajectory_hits_static(astar_trajectory, static_obstacles, start_time, nullptr)) {
+        return astar_trajectory;
     }
 
     // If all else fails, use rrt to ensure obstacle avoidance

@@ -39,6 +39,17 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                         const std::vector<DynamicObstacle>& dynamic_obstacles,
                         const FieldDimensions* field_dimensions, unsigned int robot_id);
 
+/**
+ * Grid-based A* path planner using 4-directional movement (up/down/left/right).
+ * Uses Euclidean distance as the heuristic for a generous estimate.
+ * Designed to be fast; returns an empty trajectory if no path is found within
+ * a limited number of iterations, allowing the caller to fall back to RRT.
+ */
+Trajectory astar(const LinearMotionInstant& start, const LinearMotionInstant& goal,
+                 const MotionConstraints& motion_constraints, RJ::Time start_time,
+                 const rj_geometry::ShapeSet& static_obstacles,
+                 const FieldDimensions* field_dimensions);
+
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,
                                                   unsigned int robot_id);
