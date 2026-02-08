@@ -127,6 +127,11 @@ target_include_directories(seeking_coordinator_node
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+
+ament_target_dependencies(seeking_coordinator_node
+  ${RJ_STRATEGY_DEPS}
+)
+
 # Waller Node
 add_executable(waller_node
   ${RJ_STRATEGY_SRC}
@@ -140,7 +145,6 @@ target_include_directories(waller_node
   $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(seeking_coordinator_node
 ament_target_dependencies(waller_node
   ${RJ_STRATEGY_DEPS}
 )
