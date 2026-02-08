@@ -53,7 +53,6 @@ set(RJ_STRATEGY_SRC
   src/agent/position/penalty_player.cpp
   src/agent/position/pivot_test.cpp
   src/agent/position/robot_factory_position.cpp
-  src/agent/position/seeker.cpp
   src/agent/position/smartidling.cpp
   src/agent/position/solo_offense.cpp
   src/agent/position/zoner.cpp
@@ -63,6 +62,7 @@ set(RJ_STRATEGY_SRC
 
   # Coordinators
   src/coordinator/kicker_picker_client.cpp
+  src/coordinator/seeking_client.cpp
   src/coordinator/waller_client.cpp
 )
 
@@ -115,6 +115,23 @@ ament_target_dependencies(kicker_picker_node
   ${RJ_STRATEGY_DEPS}
 )
 
+# Seeker Node
+add_executable(seeking_coordinator_node
+  ${RJ_STRATEGY_SRC}
+  src/coordinator/seeking_client.cpp
+  src/coordinator/seeking_coordinator.cpp
+)
+
+target_include_directories(seeking_coordinator_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(seeking_coordinator_node
+  ${RJ_STRATEGY_DEPS}
+)
+
 # Waller Node
 add_executable(waller_node
   ${RJ_STRATEGY_SRC}
@@ -163,7 +180,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node waller_node agent_action_clients
+  TARGETS straight_line_test_node kicker_picker_node seeking_coordinator_node waller_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 

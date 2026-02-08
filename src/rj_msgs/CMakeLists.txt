@@ -60,6 +60,7 @@ rosidl_generate_interfaces(
 
   # Coordinators
   msg/KickerPicker.msg
+  msg/SeekingCoordinator.msg
   msg/Waller.msg
 
   # Agent Request Messages
@@ -68,7 +69,6 @@ rosidl_generate_interfaces(
   request/PassRequest.msg
   request/ScorerRequest.msg
   request/BallInTransitRequest.msg
-  request/SeekerRequest.msg
   request/PositionRequest.msg
   request/LeaveWallRequest.msg
   request/ResetScorerRequest.msg
@@ -86,6 +86,7 @@ rosidl_generate_interfaces(
   # Services
   srv/AgentCommunication.srv
   srv/KickerPicker.srv
+  srv/SeekingCoordinator.srv
   srv/Waller.srv
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv

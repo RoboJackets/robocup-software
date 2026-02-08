@@ -2,11 +2,9 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
+Offense::Offense(int r_id) : Position{r_id, "Offense"} {}
 
-Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
-    position_name_ = "Offense";
-}
+Offense::Offense(Position&& other) : Position{std::move(other)} { position_name_ = "Offense"; }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
@@ -15,10 +13,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     if (current_state_ != new_state) {
         reset_timeout();
 
-        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
-        if (current_state_ == SEEKING) {
-            broadcast_seeker_request(rj_geometry::Point{}, false);
-        }
+        SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
     }
 
     current_state_ = new_state;
@@ -39,24 +34,22 @@ Offense::State Offense::next_state() {
         }
 
         case SEEKING_START: {
-            // Unconditionally only stay in this state for one tick.
-            return SEEKING;
+            if (client_handles_->seeking_client->am_i_member())
+                return SEEKING;
+            else
+                return SEEKING_START;
         }
 
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
+                client_handles_->seeking_client->leave_group();
                 return STEALING;
-            }
-
-            // If we need to get a new seeking target, restart seeking
-            if (check_is_done() ||
-                last_world_state_->get_robot(true, robot_id_).velocity.linear().mag() <= 0.01) {
-                return SEEKING_START;
             }
 
             return SEEKING;
         }
+
         case POSSESSION_START: {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
@@ -99,7 +92,7 @@ Offense::State Offense::next_state() {
 
             // If another robot becomes closer, leave state
             if (!can_steal_ball()) {
-                return SEEKING;
+                return SEEKING_START;
             }
 
             if (timed_out()) {
@@ -162,17 +155,24 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case SEEKING_START: {
-            // Calculate a new seeking point
-            seeker_.reset_target();
-            seeker_.set_seeker_points(seeker_points_);
-            std::optional<RobotIntent> actual_intent =
-                seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-            broadcast_seeker_request(seeker_.get_target_point(), true);
-            return actual_intent;
+            client_handles_->seeking_client->join_group();
+            intent.motion_command = planning::MotionCommand{};
+            return intent;
         }
 
         case SEEKING: {
-            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
+            if (client_handles_->seeking_client->selected_target() == nullptr) {
+                intent.motion_command = planning::MotionCommand{};
+                return intent;
+            }
+            planning::PathTargetFaceOption face_option = planning::FaceBall{};
+            bool ignore_ball = false;
+            planning::LinearMotionInstant goal{
+                *(client_handles_->seeking_client->selected_target()),
+                rj_geometry::Point{0.0, 0.0}};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+            return intent;
         }
 
         case POSSESSION_START: {
@@ -300,14 +300,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
         comm_response.response = response;
-    } else if (const communication::SeekerRequest* seeker_request =
-                   std::get_if<communication::SeekerRequest>(&request.request)) {
-        if (seeker_request->adding) {
-            seeker_points_[seeker_request->robot_id] = rj_geometry::Point{
-                seeker_request->seeking_point_x, seeker_request->seeking_point_y};
-        } else {
-            seeker_points_.erase(seeker_request->robot_id);
-        }
     }
 
     return comm_response;
@@ -512,18 +504,11 @@ bool Offense::ball_in_red() const {
             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
             !field_dimensions_.field_rect().contains_point(ball_pos));
 }
-void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
-    communication::SeekerRequest seeker_request{};
-    communication::generate_uid(seeker_request);
-    seeker_request.robot_id = robot_id_;
-    seeker_request.seeking_point_x = seeking_point.x();
-    seeker_request.seeking_point_y = seeking_point.y();
-    seeker_request.adding = adding;
 
-    communication::PosAgentRequestWrapper communication_request{};
-    communication_request.request = seeker_request;
-    communication_request.urgent = false;
-    communication_request.broadcast = true;
-    communication_requests_.push_back(communication_request);
+void Offense::die() {
+    if (client_handles_->seeking_client->am_i_member()) {
+        client_handles_->seeking_client->leave_group();
+    }
 }
+
 }  // namespace strategy

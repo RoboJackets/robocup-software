@@ -1,0 +1,5 @@
+# Request a robot to be added to or removed from seekers
+uint8 robot_id     # ID of the robot (0 to kNumShells-1)
+bool wants_to_seek # True to add robot to seekers, false to remove.
+---
+bool success      # Always true

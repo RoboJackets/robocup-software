@@ -247,6 +247,13 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_strategy",
+                executable="seeking_coordinator_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_strategy",
                 executable="waller_node",
                 output="screen",
                 parameters=[param_config_filepath],

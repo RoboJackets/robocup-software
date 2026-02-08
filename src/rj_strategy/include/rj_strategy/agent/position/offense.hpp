@@ -17,7 +17,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/seeker.hpp"
+#include "rj_strategy/coordinator/seeking_client.hpp"
 
 namespace strategy {
 
@@ -41,6 +41,8 @@ public:
 
     std::string get_current_state() override;
 
+    void die() override;
+
 private:
     /**
      * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
@@ -49,7 +51,7 @@ private:
 
     enum State {
         DEFAULT,           // Decide what to do
-        SEEKING_START,     // Calculate seeking point
+        SEEKING_START,     // Join seeker group
         SEEKING,           // Get open
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
@@ -164,8 +166,7 @@ private:
 
     int pass_to_robot_id_ = 0;
 
-    /* RoleInterface Members */
-    Seeker seeker_;
+    // TODO: Remove rj_geometry::Point seeker_target_;
 
     // Used to cache targets between states
     rj_geometry::Point target_;
@@ -227,10 +228,6 @@ private:
      * @return whether the ball is in an area that non-goalies cannot reach.
      */
     bool ball_in_red() const;
-
-    void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
-
-    std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
 
 }  // namespace strategy

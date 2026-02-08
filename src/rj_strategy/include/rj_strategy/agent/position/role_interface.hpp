@@ -25,7 +25,7 @@ namespace strategy {
  * all handled by the Planner Node.
  *
  * Similiarly, this abstract superclass serves as an interface for all roles
- * (ie. Waller, Marker, Seeker, etc.) to follow when being created. These roles
+ * (ie. Waller, Marker, etc.) to follow when being created. These roles
  * will take in a robot intent from the Defense/Offense classes and output a new
  * robot intent with the robot's next point depending on their role. The Defense/
  * Offense classes will decide on what role the robot is currently playing based

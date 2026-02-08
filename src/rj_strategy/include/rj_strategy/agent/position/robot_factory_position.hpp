@@ -151,6 +151,8 @@ private:
     }
 
     bool set_position_override_if_requested();
+
+    std::shared_ptr<ClientHandles> clientHandles_;
 };
 
 }  // namespace strategy
