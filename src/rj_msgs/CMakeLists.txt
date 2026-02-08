@@ -61,6 +61,7 @@ rosidl_generate_interfaces(
   # Coordinators
   msg/KickerPicker.msg
   msg/SeekingCoordinator.msg
+  msg/Waller.msg
 
   # Agent Request Messages
   request/JoinWallRequest.msg
@@ -86,6 +87,7 @@ rosidl_generate_interfaces(
   srv/AgentCommunication.srv
   srv/KickerPicker.srv
   srv/SeekingCoordinator.srv
+  srv/Waller.srv
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv

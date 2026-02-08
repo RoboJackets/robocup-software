@@ -251,6 +251,13 @@ def generate_launch_description():
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_strategy",
+                executable="waller_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
             )
         ]
     )

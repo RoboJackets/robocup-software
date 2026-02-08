@@ -19,6 +19,7 @@
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/latency.hpp>
 
+// Set RobotId to -1 for Global Profiling
 class Registry : public rclcpp::Node {
 public:
     Registry();
@@ -28,9 +29,9 @@ private:
     void topic_callback(const rj_msgs::msg::Latency& msg);
 
     std::string get_curr_datetime();
+    void print_data(std::ofstream& file, int registry_index);
 
-    // registry[robot_id][label] -> latency sampling
-    std::array<std::unordered_map<std::string, std::vector<uint64_t>>, kNumShells> registry_{};
+    std::array<std::unordered_map<std::string, std::vector<uint64_t>>, kNumShells + 1> registry_{};
     rclcpp::Subscription<rj_msgs::msg::Latency>::SharedPtr subscription_{};
     size_t max_rows_{};
 };

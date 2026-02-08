@@ -4,15 +4,15 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.0
-    max_velocity: 1.0
-    rotation_kd: 0.0
+    max_acceleration: 2.0
+    max_velocity: 0.5
+    rotation_kd: 0.9
     rotation_ki: 0.0
-    rotation_kp: 0.0
+    rotation_kp: 10.0
     rotation_windup: 0
-    translation_kd: 0.3
+    translation_kd: 0.45
     translation_ki: 0.0
-    translation_kp: 0.6
+    translation_kp: 3.0
     translation_windup: 0
     use_sim_time: false
 
@@ -47,7 +47,7 @@
   ros__parameters:
     collect:
       approach_accel_scale: 0.7
-      approach_dist_target: 0.04
+      approach_dist_target: 0.15
       ball_speed_approach_direction_cutoff: 0.1
       control_accel_scale: 0.5
       dist_cutoff_to_approach: 1.0
@@ -60,7 +60,7 @@
     constraints:
       max_rotational_accel: 3.0
       max_rotational_speed: 3.0
-      max_translational_accel: 3.0
+      max_translational_accel: 2.0
       max_translational_speed: 2.0
     escape:
       goal_change_threshold: 0.9
