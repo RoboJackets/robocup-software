@@ -130,7 +130,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     RJ::Time hit_time = RJ::Time::max();
 
     bool should_partial_replan =
-        trajectory_hits_static(previous_trajectory, params.obstacles, start_time, &hit_time);
+        trajectory_hits_obstacles(previous_trajectory, params.obstacles, start_time, &hit_time);
     if (should_partial_replan) {
         if (hit_time - start_time < partial_replan_lead_time() * 2) {
             return full_replan(params);

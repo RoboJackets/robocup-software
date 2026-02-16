@@ -18,7 +18,7 @@ namespace planning {
  * @param hit_time   The time of the collision (output parameter).
  * @return           Whether or not there is a collision.
  */
-bool trajectory_hits_static(const Trajectory& trajectory, const ObstacleSet& obstacles,
+bool trajectory_hits_obstacles(const Trajectory& trajectory, const ObstacleSet& obstacles,
                             RJ::Time start_time, RJ::Time* hit_time);
 
 }  // namespace planning

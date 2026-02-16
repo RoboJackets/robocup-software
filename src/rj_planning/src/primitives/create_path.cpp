@@ -34,7 +34,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        !trajectory_hits_static(straight_trajectory, obstacles, start_time, nullptr)) {
+        !trajectory_hits_obstacles(straight_trajectory, obstacles, start_time, nullptr)) {
         return straight_trajectory;
     }
 
@@ -67,7 +67,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.dist_to(goal.position) < kRobotRadius ||
-        (!trajectory_hits_static(straight_trajectory, obstacles, start_time, nullptr))) {
+        (!trajectory_hits_obstacles(straight_trajectory, obstacles, start_time, nullptr))) {
         return straight_trajectory;
     }
 
@@ -96,7 +96,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                 CreatePath::simple(start, goal, motion_constraints, start_time, {intermediate});
 
             // If the trajectory does not hit an obstacle, it is valid
-            if ((!trajectory_hits_static(trajectory, obstacles, start_time, nullptr))) {
+            if ((!trajectory_hits_obstacles(trajectory, obstacles, start_time, nullptr))) {
                 auto angle = (final_inter - start.position).angle();
                 cached_intermediate_tuple_[robot_id] = {abs(angle), signbit(angle) ? -1 : 1,
                                                         (final_inter - start.position).mag()};
