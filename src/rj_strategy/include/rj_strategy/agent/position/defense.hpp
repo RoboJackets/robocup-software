@@ -16,8 +16,8 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/coordinator/waller.hpp"
 #include "rj_strategy/coordinator/marking.hpp"
+#include "rj_strategy/coordinator/waller.hpp"
 
 namespace strategy {
 
@@ -72,7 +72,6 @@ private:
     State update_state();
     State current_state_ = JOINING_WALL;
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
-
 
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
