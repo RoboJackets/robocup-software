@@ -16,8 +16,8 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/waller.hpp"
 #include "rj_strategy/agent/position/marker.hpp"
+#include "rj_strategy/agent/position/waller.hpp"
 
 namespace strategy {
 
