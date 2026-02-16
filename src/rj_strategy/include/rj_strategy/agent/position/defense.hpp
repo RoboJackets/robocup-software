@@ -14,10 +14,10 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>
-
-#include "rj_strategy/agent/position.hpp"
 #include <rj_strategy/coordinator/marking.hpp>
 #include <rj_strategy/coordinator/waller.hpp>
+
+#include "rj_strategy/agent/position.hpp"
 
 namespace strategy {
 
