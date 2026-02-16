@@ -138,7 +138,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // TODO(jacksherling): this is a hacky solution for us to stop kicking the ball by
             // accident in kickoff, not an actual league rule
             min_dist_from_ball = 0.2;
-            max_robot_speed = 10.0;
+            max_robot_speed = 1.4;
             max_dribbler_speed = 255;
             max_kick_speed = 6.5;
             break;
@@ -148,7 +148,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0;
             // Unbounded speed. Setting to -1 or 0 crashes planner, so use large
             // number instead.
-            max_robot_speed = 10.0;
+            max_robot_speed = 1.4;
             max_dribbler_speed = 255;
             max_kick_speed = 6.5;
             break;
@@ -181,7 +181,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         // If override speed set to negative, assume infinity.
         // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
         motion_command = intent.motion_command;
-        constraints.mot.max_speed = 10.0f;
+        constraints.mot.max_speed = 2.0f;
     } else {
         motion_command = intent.motion_command;
         constraints.mot.max_speed = max_robot_speed;
@@ -244,7 +244,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     try {
         trajectory = unsafe_plan_for_robot(request);
     } catch (std::runtime_error exception) {
-        // SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PelannerForRobot {} error caught: {}", robot_id_, exception.what());
         // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = default_path_planner_.get();

@@ -1,0 +1,5 @@
+# Request a robot to be added to or removed from the waller selection group
+uint8 robot_id     # ID of the robot (0 to kNumShells-1)
+bool joining       # True to add robot to waller group, false to remove it
+---
+bool success      # True if the ACTION succeded (True for joining means successfully joined, for leaving means successfully left)

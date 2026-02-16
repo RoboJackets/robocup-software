@@ -18,6 +18,15 @@ find_package(rj_constants REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_utils REQUIRED)
 
+set(RJ_CONFIG_CLIENT_DEPS
+  rclcpp
+  rj_msgs
+  fmt
+  rj_constants
+  rj_common
+  rj_utils
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/config_client.cpp
   src/config_client_node.cpp
@@ -47,22 +56,12 @@ target_include_directories(${PROJECT_NAME}_node
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  rj_msgs
-  fmt
-  rj_constants
-  rj_common
-  rj_utils
+  ${RJ_CONFIG_CLIENT_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node
   PUBLIC
-  rclcpp
-  rj_msgs
-  fmt
-  rj_constants
-  rj_common
-  rj_utils
+  ${RJ_CONFIG_CLIENT_DEPS}
 )
 
 install(

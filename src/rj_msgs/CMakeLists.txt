@@ -35,6 +35,7 @@ rosidl_generate_interfaces(
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
   msg/MotionSetpoint.msg
+  msg/Latency.msg
 
   msg/LinearMotionInstant.msg
   msg/MotionCommand.msg
@@ -60,6 +61,7 @@ rosidl_generate_interfaces(
   # Coordinators
   msg/KickerPicker.msg
   msg/Marking.msg
+  msg/Waller.msg
 
   # Agent Request Messages
   request/JoinWallRequest.msg
@@ -86,6 +88,7 @@ rosidl_generate_interfaces(
   srv/AgentCommunication.srv
   srv/KickerPicker.srv
   srv/Marking.srv
+  srv/Waller.srv
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
