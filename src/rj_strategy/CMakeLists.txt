@@ -123,6 +123,11 @@ add_executable(marking_node
 )
 
 target_include_directories(marking_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 # Waller Node
 add_executable(waller_node
   ${RJ_STRATEGY_SRC}
