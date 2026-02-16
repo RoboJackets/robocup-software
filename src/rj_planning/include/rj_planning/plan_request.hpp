@@ -147,9 +147,9 @@ void fill_obstacles(const PlanRequest& in, ObstacleSet& out_obstacles, bool avoi
 
 // Obstacle padding constants
 namespace obstacle {
-constexpr float kVelocityScaling = 0.5f;          // How far ahead to project velocity for padding
+constexpr float kVelocityScaling = 0.3f;          // How far ahead to project velocity for padding
 constexpr float kVelocityWidthScaling = 0.1f;     // How much to inflate width based on velocity
-constexpr float kPaddingRadiusMultiplier = 1.5f;  // Multiplier for obstacle padding radius
+constexpr float kPaddingRadiusMultiplier = 1.0f;  // Multiplier for obstacle padding radius
 }  // namespace obstacle
 
 /**
