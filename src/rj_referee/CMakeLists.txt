@@ -23,6 +23,21 @@ find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
 
+set(RJ_REFEREE_DEPS
+  rclcpp
+  rclcpp_components
+  Boost
+  fmt
+  spdlog
+  rj_common
+  rj_constants
+  rj_param_utils
+  rj_utils
+  rj_msgs
+  rj_protos
+  rj_config_client
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/referee_base.cpp
   src/external_referee.cpp
@@ -82,50 +97,17 @@ target_include_directories(internal_referee_node
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
+  ${RJ_REFEREE_DEPS}
 )
 
 ament_target_dependencies(external_referee_node
   PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
+  ${RJ_REFEREE_DEPS}
 )
 
 ament_target_dependencies(internal_referee_node
   PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
+  ${RJ_REFEREE_DEPS}
 )
 
 install(

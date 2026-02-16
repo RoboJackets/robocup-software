@@ -110,6 +110,13 @@ def generate_launch_description():
             # Note the order doesn't matter here: ROS nodes launch in some
             # random order (there are Executors to change that)
             Node(
+                package="rj_benchmarking",
+                executable="rj_benchmarking_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown()
+            ),
+            Node(
                 package="rj_vision_receiver",
                 executable="rj_vision_receiver_node",
                 output="screen",
@@ -240,6 +247,13 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_strategy",
+                executable="waller_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+              package="rj_strategy",
                 executable="marking_node",
                 output="screen",
                 parameters=[param_config_filepath],

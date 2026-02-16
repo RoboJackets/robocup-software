@@ -16,7 +16,7 @@ DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 10.0,
                "Kp for rotation ((rad/s)/rad)");
 DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
                "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.0,
+DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.9,
                "Kd for rotation ((rad/s)/(rad/s))");
 DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
              "Windup limit for rotation (unknown units)");

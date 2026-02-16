@@ -27,6 +27,23 @@ find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
 
+set(RJ_RADIO_DEPS
+  spdlog
+  rclcpp
+  rclcpp_components
+  Boost
+  Flann
+  rj_common
+  rj_msgs
+  rj_protos
+  rj_utils
+  rj_param_utils
+  rj_strategy
+  rj_geometry
+  rj_planning
+  rj_constants
+)
+
 add_executable(network_radio_node
   src/network_radio.cpp
   src/radio.cpp
@@ -65,38 +82,12 @@ target_include_directories(sim_radio_node
 
 ament_target_dependencies(network_radio_node
   PUBLIC
-  spdlog
-  rclcpp
-  rclcpp_components
-  Boost
-  Flann
-  rj_common
-  rj_msgs
-  rj_protos
-  rj_utils
-  rj_param_utils
-  rj_strategy
-  rj_geometry
-  rj_planning
-  rj_constants
+  ${RJ_RADIO_DEPS}
 )
 
 ament_target_dependencies(sim_radio_node
   PUBLIC
-  spdlog
-  rclcpp
-  rclcpp_components
-  Boost
-  Flann
-  rj_common
-  rj_msgs
-  rj_protos
-  rj_utils
-  rj_param_utils
-  rj_strategy
-  rj_geometry
-  rj_planning
-  rj_constants
+  ${RJ_RADIO_DEPS}
 )
 
 install(

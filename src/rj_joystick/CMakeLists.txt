@@ -24,6 +24,18 @@ find_package(rj_param_utils REQUIRED)
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
 
+set(RJ_JOYSTICK_DEPS
+  fmt
+  rclcpp
+  spdlog
+  rj_utils
+  rj_common
+  rj_constants
+  rj_msgs
+  rj_param_utils
+  rclcpp_components
+)
+
 add_executable(manual_control_node
   src/manual_control_node.cpp
   src/sdl_manual_control.cpp
@@ -45,15 +57,7 @@ target_include_directories(manual_control_node
 
 ament_target_dependencies(manual_control_node
   PUBLIC
-  fmt
-  rclcpp
-  spdlog
-  rj_utils
-  rj_common
-  rj_constants
-  rj_msgs
-  rj_param_utils
-  rclcpp_components
+  ${RJ_JOYSTICK_DEPS}
 )
 
 install(

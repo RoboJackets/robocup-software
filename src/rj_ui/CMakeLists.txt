@@ -84,6 +84,31 @@ set(SRC_FILES
   qt/log_icons.qrc
 )
 
+set(RJ_UI_DEPS
+  rclcpp
+  Qt5
+  ament_index_cpp
+  Boost
+  Protobuf
+  spdlog
+  std_msgs
+  fmt
+  Flann
+  rj_common
+  rj_param_utils
+  rj_protos
+  rj_geometry
+  rj_utils
+  rj_planning
+  rj_constants
+  rj_convert
+  rj_msgs
+  rj_strategy
+  rj_referee
+  rj_config_client
+  rj_topic_utils
+)
+
 add_library(${PROJECT_NAME} SHARED
   ${SRC_FILES}
 )
@@ -167,80 +192,17 @@ target_link_libraries(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}_node
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 ament_target_dependencies(log_viewer_node
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 install(
