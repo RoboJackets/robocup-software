@@ -23,21 +23,6 @@ Defense::State Defense::update_state() {
     double distance_to_ball = robot_position.dist_to(ball_position);
 
     // Update state based on coordinator async calls resolving
-    if (pending_marking_state_) {
-        // Defensive check: Only transition if we are still in the process of entering.
-        // We might have timed out and moved to another state in the meantime.
-        pending_marking_state_ = false;
-        if (current_state_ != ENTERING_MARKING) {
-            return IDLING;
-        }
-
-        if (client_handles_->marking->am_i_member() && client_handles_->marking->am_i_marking()) {
-            return MARKING;
-        } else {
-            return IDLING;
-        }
-    }
-
     State next_state = current_state_;
 
     switch (current_state_) {
@@ -94,7 +79,9 @@ Defense::State Defense::update_state() {
 
                 client_handles_->marking->join_group([this](const bool is_member) {
                     if (is_member) {
-                        pending_marking_state_ = true;
+                        current_state_ = MARKING;
+                    } else {
+                        current_state_ = IDLING;
                     }
                 });
             }
