@@ -11,8 +11,8 @@ MotionControlNode::MotionControlNode()
 
     auto drawing_publisher = create_publisher<rj_drawing_msgs::msg::DebugDraw>(
         viz::topics::kDebugDrawTopic, rclcpp::QoS(10));
-    for (int i = 0; i < kNumShells; i++) {
-        controllers_.emplace_back(i, this);
+    for (size_t i = 0; i < kNumShells; i++) {
+        controllers_.emplace_back(static_cast<int>(i), this);
     }
 }
 

@@ -239,7 +239,7 @@ void AgentActionClient::get_communication() {
         return;
     }
 
-    for (int i = 0; i < optional_communication_request.size(); i++) {
+    while (!optional_communication_request.empty()) {
         auto communication_request = optional_communication_request.front();
         optional_communication_request.pop_front();
 

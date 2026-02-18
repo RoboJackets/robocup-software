@@ -110,6 +110,14 @@ void ExternalReferee::setup_referee_multicast() {
 void ExternalReferee::update() { io_service_.poll(); }
 
 void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
     const auto& [command_enum, maybe_placement_point] = command;
 
     if (command == last_command_) {
@@ -173,6 +181,12 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
             set_play_state(PlayState::ball_placement(BLUE, placement_point));
             break;
     }
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
     last_command_ = command;
 }

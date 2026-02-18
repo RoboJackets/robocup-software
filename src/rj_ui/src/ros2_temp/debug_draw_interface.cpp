@@ -32,7 +32,7 @@ void DebugDrawInterface::run() {
                                                 color_to_qt(segment.color),
                                                 QString::fromStdString(layer));
         }
-        for (const auto& pose : debug_draw->poses) {
+        for ([[maybe_unused]] const auto& pose : debug_draw->poses) {
             // TODO(#1584): Handle poses
         }
         for (const auto& path : debug_draw->paths) {

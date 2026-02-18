@@ -14,8 +14,6 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
 
     BallState ball = plan_request.world_state->ball;
 
-    const RJ::Time cur_time = plan_request.start.stamp;
-
     const MotionCommand& command = plan_request.motion_command;
 
     // The direction we will try and bounce the ball when we dampen it to

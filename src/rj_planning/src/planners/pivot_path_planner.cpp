@@ -18,25 +18,6 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 
-    // TODO(Kyle): These need real constants
-    const bool pivot_target_unchanged =
-        cached_pivot_target_.has_value() &&
-        cached_pivot_target_.value().dist_to(pivot_target) < kRobotMouthWidth / 2;
-    bool pivot_point_unchanged =
-        cached_pivot_point_.has_value() &&
-        cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2;
-
-    // if (pivot_target_unchanged && pivot_point_unchanged) {
-    //     return previous_;
-    // }
-
-    // if (pivot_point_unchanged) {
-    //     pivot_point = *cached_pivot_point_;
-    // }
-    // if (pivot_target_unchanged) {
-    //     pivot_target = *cached_pivot_target_;
-    // }
-
     cached_pivot_target_ = pivot_target;
     cached_pivot_point_ = pivot_point;
 

@@ -330,8 +330,9 @@ void ProtobufTree::addBytes(QTreeWidgetItem* parent, const std::string& bytes) {
     // Set data
     for (int i = 0; i < n; ++i) {
         QTreeWidgetItem* item = parent->child(i);
-        QString text;
-        text.sprintf("0x%02x", bytes[i]);
+        QString text = QString("0x%1")
+                           .arg(static_cast<unsigned char>(bytes[i]), 2, 16, QChar('0'))
+                           .toUpper();
         item->setText(Column_Value, text);
     }
 }

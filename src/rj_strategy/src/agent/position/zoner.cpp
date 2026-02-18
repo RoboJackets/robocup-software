@@ -116,6 +116,8 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
             return intent;
         }
     }
+
+    return intent;
 }
 
 rj_geometry::Point Zoner::find_centroid(const std::vector<rj_geometry::Point> opp_poses) {

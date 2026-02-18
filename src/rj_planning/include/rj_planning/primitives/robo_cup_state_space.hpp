@@ -42,10 +42,10 @@ public:
         return source + dir * step_size;
     }
 
-    rj_geometry::Point intermediateState(const rj_geometry::Point& source,
-                                        const rj_geometry::Point& target,
-                                        double min_step_size,
-                                        double max_step_size) const override {
+    rj_geometry::Point intermediateState([[maybe_unused]] const rj_geometry::Point& source,
+                                        [[maybe_unused]] const rj_geometry::Point& target,
+                                        [[maybe_unused]] double min_step_size,
+                                        [[maybe_unused]] double max_step_size) const override {
         throw std::runtime_error("Adaptive stepsize control not implemented");
     }
 

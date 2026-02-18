@@ -6,10 +6,10 @@ using ip::udp;
 namespace radio {
 
 NetworkRadio::NetworkRadio()
-    : control_message_socket_(io_service_),
+    : send_buffers_(kNumShells),
+      control_message_socket_(io_service_),
       robot_status_socket_(io_service_),
-      alive_robots_socket_(io_service_),
-      send_buffers_(kNumShells) {
+      alive_robots_socket_(io_service_) {
     control_message_socket_.open(udp::v4());
     control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
 
@@ -67,6 +67,8 @@ void NetworkRadio::poll_receive() {
 }
 
 void NetworkRadio::switch_team(bool blue_team) {
+    (void)blue_team;
+
     // TODO (Nate): Send some command to the base station to switch teams.
 }
 

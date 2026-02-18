@@ -28,12 +28,14 @@ Pivot::State Pivot::next_state() {
                 count_++;
                 return IDLE;
             }
+            [[fallthrough]];
         }
         case OPP_GOAL: {
             if (check_is_done()) {
                 count_++;
                 return IDLE;
             }
+            [[fallthrough]];
         }
         case IDLE: {
             if (current_play_state_.is_playing()) {

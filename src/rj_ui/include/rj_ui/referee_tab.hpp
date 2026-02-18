@@ -5,7 +5,7 @@
 #include "ui_RefereeTab.h"
 
 class RefereeTab : public QWidget {
-    Q_OBJECT;
+    Q_OBJECT
 
 public:
     RefereeTab(QWidget* parent = nullptr);

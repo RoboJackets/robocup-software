@@ -20,7 +20,7 @@
  */
 class RobotStatusWidget : public QWidget {
 public:
-    RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
+    RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = {});
 
     void loadFromLogFrame(
         const Packet::RadioRx& rx,

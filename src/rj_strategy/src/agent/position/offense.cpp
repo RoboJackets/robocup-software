@@ -151,6 +151,8 @@ Offense::State Offense::next_state() {
             return SHOOTING;
         }
     }
+
+    return current_state_;
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
@@ -257,6 +259,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             return intent;
         }
     }
+
+    return intent;
 }
 
 bool Offense::check_if_open(int target_robot_shell) {
@@ -318,9 +322,13 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
     for (u_int32_t i = 0; i < response.responses.size(); i++) {
         if (const communication::Acknowledge* acknowledge =
                 std::get_if<communication::Acknowledge>(&response.responses[i])) {
+            (void)acknowledge;
+
             // if the acknowledgement is from an incoming pass request -> pass the ball
             if (const communication::IncomingBallRequest* incoming_ball_request =
                     std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
+                (void)incoming_ball_request;
+
                 // SPDLOG_INFO("Robot {} received incoming ball request",
                 // robot_id_);
 

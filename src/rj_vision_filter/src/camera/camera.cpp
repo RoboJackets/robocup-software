@@ -163,7 +163,8 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
         const CameraBall& camera_ball = ball_list.at(i);
         bool was_used = used_camera_ball.at(i);
 
-        if (!was_used && kalman_ball_list_.size() < PARAM_max_num_kalman_balls) {
+        if (!was_used &&
+            kalman_ball_list_.size() < static_cast<size_t>(PARAM_max_num_kalman_balls)) {
             kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball);
         }
     }

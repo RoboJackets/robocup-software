@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cerrno>
 #include <csignal>
 #include <cstdio>
 #include <cstring>
@@ -52,11 +53,11 @@ int main(int argc, char* argv[]) {
     int fd = open("/dev/random", O_RDONLY);
     if (fd >= 0) {
         if (read(fd, &seed, sizeof(seed)) != sizeof(seed)) {
-            fprintf(stderr, "Can't read /dev/random, using zero seed: %m\n");
+            fprintf(stderr, "Can't read /dev/random, using zero seed: %s\n", std::strerror(errno));
         }
         close(fd);
     } else {
-        fprintf(stderr, "Can't open /dev/random, using zero seed: %m\n");
+        fprintf(stderr, "Can't open /dev/random, using zero seed: %s\n", std::strerror(errno));
     }
 
     QApplication app(argc, argv);
@@ -193,7 +194,7 @@ int main(int argc, char* argv[]) {
         QString log_file = application_run_directory().filePath("./logs/") +
                            QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
         if (!processor->open_log(log_file)) {
-            printf("Failed to open %s: %m\n", (const char*)log_file.toLatin1());
+            printf("Failed to open %s: %s\n", log_file.toLatin1().constData(), std::strerror(errno));
         }
     }
 

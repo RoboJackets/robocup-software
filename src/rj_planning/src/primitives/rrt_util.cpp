@@ -28,6 +28,8 @@ void draw_bi_rrt(const RRT::BiRRT<Point>& bi_rrt, DebugDrawer* debug_drawer, uns
 
 vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
                              const vector<Point>& waypoints, bool straight_line) {
+    (void)straight_line;
+
     auto state_space =
         std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
     RRT::BiRRT<Point> bi_rrt(state_space, Point::hash, 2);
@@ -50,7 +52,7 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
     }
     vector<Point> points = bi_rrt.getPath();
     RRT::SmoothPath(points, *state_space);
-    return std::move(points);
+    return points;
 }
 
 vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,

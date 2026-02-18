@@ -1,6 +1,7 @@
 #include "rj_ui/main_window.hpp"
 
 #include <ctime>
+#include <cerrno>
 #include <fstream>
 #include <mutex>
 #include <optional>
@@ -66,12 +67,12 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
 
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
+      _processor(processor),
+      _has_external_ref(has_external_ref),
       _updateCount(0),
       _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
-      _processor(processor),
       context_(processor->context()),
-      _has_external_ref(has_external_ref),
       _game_settings(rj_convert::convert_to_ros(context_->game_settings)) {
     context__mutex = processor->loop_mutex();
 
@@ -208,11 +209,11 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _executor_thread = std::thread([this]() { _executor.spin(); });
 
     // Connect up all the test position buttons and dropdowns to their listeners
-    for (int i = 0; i < kNumShells; ++i) {
-        robot_pos_selectors[i] =
-            findChild<QComboBox*>(QString::fromStdString("robotPosition_" + std::to_string(i)));
-        position_reset_buttons[i] =
-            findChild<QPushButton*>(QString::fromStdString("positionReset_" + std::to_string(i)));
+    for (size_t i = 0; i < kNumShells; ++i) {
+        robot_pos_selectors[i] = findChild<QComboBox*>(
+            QString::fromStdString("robotPosition_" + std::to_string(i)));
+        position_reset_buttons[i] = findChild<QPushButton*>(
+            QString::fromStdString("positionReset_" + std::to_string(i)));
     }
 }
 
@@ -369,8 +370,6 @@ void MainWindow::updateViews() {
         _logMemory->setText(
             QString("Log: %1 kiB").arg(QString::number((context_->logs.size_bytes + 512) / 1024)));
     }
-
-    auto value = _ui.logHistoryLocation->value();
 
     std::shared_ptr<LogFrame> live_frame;
     RJ::Time start_time;
@@ -550,7 +549,8 @@ void MainWindow::updateViews() {
             auto maybe_robot =
                 [&]() -> std::optional<std::reference_wrapper<const Packet::LogFrame_Robot>> {
                 for (int i = 0; i < currentFrame->self_size(); i++) {
-                    if (currentFrame->self(i).shell() == shell) {
+                    if (currentFrame->self(i).shell() ==
+                        static_cast<google::protobuf::int32>(shell)) {
                         return currentFrame->self(i);
                     }
                 }
@@ -596,7 +596,7 @@ void MainWindow::updateViews() {
 
                 // The item's widget is managed by Qt
                 // (setItemWidget takes ownership).
-                statusWidget = new RobotStatusWidget();  // NOLINT
+                statusWidget = new RobotStatusWidget(nullptr, {});  // NOLINT
                 item->setSizeHint(statusWidget->minimumSizeHint());
                 _ui.robotStatusList->setItemWidget(item, statusWidget);
             } else {
@@ -908,6 +908,9 @@ void MainWindow::on_actionNyanStyle_triggered() {
 // Manual control commands
 
 void MainWindow::on_actionDampedRotation_toggled(bool value) {
+#if !MANUAL
+    (void)value;
+#endif
 #if MANUAL
     cout << "DampedRotation is ";
     if (value)
@@ -921,6 +924,9 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
 }
 
 void MainWindow::on_actionDampedTranslation_toggled(bool value) {
+#if !MANUAL
+    (void)value;
+#endif
 #if MANUAL
     cout << "DampedTranslation is ";
     if (value)
@@ -951,7 +957,7 @@ void MainWindow::on_actionStart_Logging_triggered() {
             QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 
         if (!_processor->open_log(logFile)) {
-            printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
+            printf("Failed to open %s: %s\n", logFile.toLatin1().constData(), std::strerror(errno));
         } else {
             _ui.actionStart_Logging->setText(QString("Now Logging to:") + logFile);
             _ui.actionStart_Logging->setEnabled(false);
@@ -1045,18 +1051,25 @@ void MainWindow::on_actionTeamYellow_triggered() {
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
+#if !MANUAL
+    (void)value;
+#endif
 #if MANUAL
     context_->game_settings.joystick_config.manualID = value - 1;
 #endif
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
+#if !MANUAL
+    (void)value;
+#endif
 #if MANUAL
     context_->game_settings.joystick_config.useFieldOrientedDrive = value;
 #endif
 }
 
 void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
+    (void)value;
     // TODO(Kyle): Reimplement multiple manual
 }
 
@@ -1327,21 +1340,21 @@ void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
 }
 
 void MainWindow::setGoalieDropdown(int robot) {
-    for (int i = 0; i < robot_pos_selectors.size(); ++i) {
-        if (i != robot) {
+    for (size_t i = 0; i < robot_pos_selectors.size(); ++i) {
+        if (static_cast<int>(i) != robot) {
             robot_pos_selectors.at(i)->setEnabled(true);
         } else {
             robot_pos_selectors.at(i)->setCurrentIndex(0);
             robot_pos_selectors.at(i)->setEnabled(false);
-            onResetButtonClicked(i);
+            onResetButtonClicked(static_cast<int>(i));
         }
     }
 }
 
 void MainWindow::populate_override_position_dropdowns() {
-    for (int i = 0; i < kNumShells; i++) {
+    for (size_t i = 0; i < kNumShells; i++) {
         robot_pos_selectors[i]->clear();
-        for (int j = 0; j < overriding_position_labels.size(); j++) {
+        for (size_t j = 0; j < overriding_position_labels.size(); j++) {
             robot_pos_selectors[i]->addItem(QString::fromStdString(overriding_position_labels[j]));
         }
     }

@@ -117,7 +117,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
                 squared_max_tangential_acceleration = 0;
             }
 
-            double max_tangential_acceleration = std::sqrt(squared_max_tangential_acceleration);
+            max_tangential_acceleration = std::sqrt(squared_max_tangential_acceleration);
         }
 
         if (!std::isfinite(max_tangential_acceleration)) {
@@ -170,7 +170,7 @@ Trajectory profile_velocity(const BezierPath& path, double initial_speed, double
         // Add point n in
         trajectory.append_instant(RobotInstant{pose, twist, current_time});
     }
-    return std::move(trajectory);
+    return trajectory;
 }
 
 }  // namespace planning

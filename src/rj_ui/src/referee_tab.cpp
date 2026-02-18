@@ -4,11 +4,11 @@
 
 #include "ui_RefereeTab.h"
 
-void command(char ch) {}
+void command(char ch) { (void)ch; }
 
 RefereeTab::RefereeTab(QWidget* /*parent*/) { ui.setupUi(this); }
 
-void RefereeTab::on_externalReferee_toggled(bool value) {}
+void RefereeTab::on_externalReferee_toggled(bool value) { (void)value; }
 
 void RefereeTab::on_actionHalt_triggered() { command('H'); }
 

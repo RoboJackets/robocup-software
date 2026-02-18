@@ -15,7 +15,7 @@
  */
 class RobotWidget : public QWidget {
 public:
-    RobotWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
+    RobotWidget(QWidget* parent = nullptr, Qt::WindowFlags f = {});
 
     void setBlueTeam(bool blueTeam);
     bool blueTeam() const;

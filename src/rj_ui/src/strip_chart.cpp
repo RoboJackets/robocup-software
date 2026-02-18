@@ -109,7 +109,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
         }
 
         int start = 0;
-        if (chartSize < _history->size()) {
+        if (static_cast<size_t>(chartSize) < _history->size()) {
             start = static_cast<int>(_history->size()) - chartSize;
         }
 

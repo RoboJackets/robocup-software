@@ -98,6 +98,9 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 void PlannerForRobot::plan_hypothetical_robot_path(
     const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
     std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
+    (void)request;
+    (void)response;
+
     /* const auto intent = rj_convert::convert_from_ros(request->intent); */
     /* auto plan_request = make_request(intent); */
     /* auto trajectory = safe_plan_for_robot(plan_request); */
@@ -117,7 +120,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
 
     float min_dist_from_ball{};
     float max_robot_speed{};
-    float max_dribbler_speed{};
     float max_kick_speed{};
 
     // Global Overrides
@@ -125,13 +127,11 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         case PlayState::State::Halt:
             min_dist_from_ball = 0;
             max_robot_speed = 0;
-            max_dribbler_speed = 0;
             max_kick_speed = 0;
             break;
         case PlayState::State::Stop:
             min_dist_from_ball = 0.5;
             max_robot_speed = 1.5;
-            max_dribbler_speed = 0;
             max_kick_speed = 0;
             break;
         case PlayState::State::Setup:
@@ -139,7 +139,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // accident in kickoff, not an actual league rule
             min_dist_from_ball = 0.2;
             max_robot_speed = 1.4;
-            max_dribbler_speed = 255;
             max_kick_speed = 6.5;
             break;
         case PlayState::State::Playing:
@@ -149,7 +148,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // Unbounded speed. Setting to -1 or 0 crashes planner, so use large
             // number instead.
             max_robot_speed = 1.4;
-            max_dribbler_speed = 255;
             max_kick_speed = 6.5;
             break;
     }
@@ -243,7 +241,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     Trajectory trajectory;
     try {
         trajectory = unsafe_plan_for_robot(request);
-    } catch (std::runtime_error exception) {
+    } catch (const std::runtime_error& exception) {
         SPDLOG_WARN("PelannerForRobot {} error caught: {}", robot_id_, exception.what());
         // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 

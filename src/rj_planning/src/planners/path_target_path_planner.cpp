@@ -21,7 +21,6 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     }
 
     LinearMotionInstant target_instant = command.target;
-    Point goal_point = target_instant.position;
 
     // Cache the start and goal instants for is_done()
     cached_target_instant_ = target_instant;

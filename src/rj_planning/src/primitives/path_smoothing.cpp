@@ -23,7 +23,7 @@ static void fit_cubic_bezier(Point vi, Point vf, const std::vector<Point>& point
 
     int num_curves = static_cast<int>(points.size()) - 1;
 
-    if (ks.size() != num_curves) {
+    if (ks.size() != static_cast<size_t>(num_curves)) {
         throw std::invalid_argument("Expected ks.size() == points.size() - 1");
     }
 
@@ -181,7 +181,7 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     size_t num_curves = control_.size();
 
     // First, find the curve to use.
-    int index = static_cast<unsigned long>(s * num_curves);
+    size_t index = static_cast<size_t>(s * num_curves);
 
     // This will only happen when s = 1 - in that case, we actually want to use
     // the last segment.
@@ -190,7 +190,7 @@ void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::P
     }
 
     // The remainder, from [0, 1] of how much of the curve at [index] is left.
-    double t = s * num_curves - index;
+    double t = s * num_curves - static_cast<double>(index);
 
     // Control points for this curve.
     Point p0 = control_[index].p0;

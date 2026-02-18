@@ -109,6 +109,8 @@ private:
             case SHOOTING:
                 return RJ::Seconds{3};
         }
+
+        return RJ::Seconds{-1};
     }
 
     // For debugging
@@ -135,6 +137,8 @@ private:
             case SHOOTING:
                 return "SHOOTING";
         }
+
+        return "UNKNOWN";
     }
 
     /**
