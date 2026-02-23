@@ -7,10 +7,13 @@ project(rj_robocup_docs)
 # ======================================================================
 # Find package
 # ======================================================================
-find_package(Doxygen)
-find_package(Sphinx)
+# Ensure an install target exists so colcon does not warn.
+install(FILES CMakeLists.txt DESTINATION share/${PROJECT_NAME})
 
-if(NOT (${Doxygen_FOUND} AND ${Sphinx_FOUND}))
+find_package(Doxygen QUIET)
+find_program(SPHINX_EXECUTABLE NAMES sphinx-build)
+
+if(NOT (Doxygen_FOUND AND SPHINX_EXECUTABLE))
   message(STATUS "Doxygen and Sphinx not found. Not creating documentation targets.")
   return()
 endif()

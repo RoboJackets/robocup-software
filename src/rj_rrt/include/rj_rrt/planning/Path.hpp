@@ -37,12 +37,12 @@ void DownSampleVector(std::vector<T>& states, size_t maxSize) {
  */
 template <typename T>
 void SmoothPath(std::vector<T>& pts, const StateSpace<T>& stateSpace) {
-    int span = 2;
+    std::size_t span = 2;
     while (span < pts.size()) {
         bool changed = false;
-        for (int i = 0; i + span < pts.size(); i++) {
+        for (std::size_t i = 0; i + span < pts.size(); i++) {
             if (stateSpace.transitionValid(pts[i], pts[i + span])) {
-                for (int x = 1; x < span; x++) {
+                for (std::size_t x = 1; x < span; x++) {
                     pts.erase(pts.begin() + i + 1);
                 }
                 changed = true;

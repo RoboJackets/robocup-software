@@ -95,7 +95,7 @@ TEST(Tree, ASC) {
     // Check to see if the nodes in the tree have uniform stepsize or varied.
     // Stepsizes should vary
     bool varied = false;
-    for (int i = 1; !varied && i < path.size() - 2; i++) {
+    for (std::size_t i = 1; !varied && i + 2 < path.size(); i++) {
         Vector2d pathA = path[i] - path[i - 1];
         Vector2d pathB = path[i] - path[i + 1];
         double n = pathA.norm() / pathB.norm();

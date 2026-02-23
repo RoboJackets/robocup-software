@@ -217,7 +217,7 @@ void RRTWidget::paint(QPainter* p) {
         QPainterPath path(vecToPoint(_previousSolution[0]));
 
         Vector2d prevControlDiff = -_startVel * VelocityDrawingMultiplier;
-        for (int i = 1; i < _previousSolution.size(); i++) {
+        for (std::size_t i = 1; i < _previousSolution.size(); i++) {
             Vector2d waypoint = _previousSolution[i];
             Vector2d prevWaypoint = _previousSolution[i - 1];
 
@@ -331,8 +331,6 @@ void RRTWidget::drawTree(QPainter& painter, const Tree<Vector2d>& rrt,
     }
 }
 
-#pragma mark Mouse Events
-
 bool RRTWidget::mouseInGrabbingRange(QMouseEvent* event, const Vector2d& pt) {
     double dx = event->pos().x() - pt.x();
     double dy = event->pos().y() - pt.y();
@@ -386,7 +384,7 @@ void RRTWidget::mouseMoveEvent(QMouseEvent* event) {
     if (_draggingItem != DraggingNone || _editingObstacles) update();
 }
 
-void RRTWidget::mouseReleaseEvent(QMouseEvent* event) {
+void RRTWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
     _draggingItem = DraggingNone;
     _editingObstacles = false;
 }

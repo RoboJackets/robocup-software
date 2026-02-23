@@ -28,7 +28,7 @@ class Node {
 public:
     Node(const T& state, Node<T>* parent = nullptr, int dimensions = 2,
          std::function<void(T, double*)> TToArray = NULL)
-        : _parent(parent), _state(state), _vec(dimensions) {
+        : _vec(dimensions), _state(state), _parent(parent) {
         if (_parent) {
             _parent->_children.push_back(this);
         }
@@ -131,7 +131,8 @@ public:
     Tree(std::shared_ptr<StateSpace<T>> stateSpace, std::function<size_t(T)> hashT, int dimensions,
          bool forward = true, std::function<T(double*)> arrayToT = NULL,
          std::function<void(T, double*)> TToArray = NULL)
-        : _kdtree(flann::KDTreeSingleIndexParams()), _dimensions(dimensions), _nodemap(20, hashT) {
+        : _nodemap(20, hashT), _dimensions(dimensions),
+          _kdtree(flann::KDTreeSingleIndexParams()) {
         _stateSpace = stateSpace;
         _forward = forward;
         _arrayToT = arrayToT;
@@ -289,25 +290,24 @@ public:
      * @state. This method searches a k-d tree of the points to determine
      */
     Node<T>* nearest(const T& state, double* distanceOut = nullptr) {
-        Node<T>* best = nullptr;
-
         // k-NN search (O(log(N)))
         flann::Matrix<double> query;
         if (NULL == _TToArray) {
-            query = flann::Matrix<double>((double*)&state, 1, sizeof(state) / sizeof(0.0));
+            query = flann::Matrix<double>((double*)&state, 1, _dimensions);
         } else {
             std::vector<double> data(_dimensions);
             _TToArray(state, data.data());
-            query = flann::Matrix<double>(data.data(), 1, sizeof(state) / sizeof(0.0));
+            query = flann::Matrix<double>(data.data(), 1, _dimensions);
         }
         std::vector<int> i(query.rows);
         flann::Matrix<int> indices(i.data(), query.rows, 1);
         std::vector<double> d(query.rows);
         flann::Matrix<double> dists(d.data(), query.rows, 1);
 
-        int n = _kdtree.knnSearch(query, indices, dists, 1, flann::SearchParams());
-
-        if (distanceOut) *distanceOut = _stateSpace->distance(state, best->state());
+        const int results = _kdtree.knnSearch(query, indices, dists, 1, flann::SearchParams());
+        if (results <= 0) {
+            return nullptr;
+        }
 
         T point;
         if (NULL == _arrayToT) {
@@ -316,7 +316,15 @@ public:
             point = _arrayToT(_kdtree.getPoint(indices[0][0]));
         }
 
-        return _nodemap[point];
+        auto nodeItr = _nodemap.find(point);
+        if (nodeItr == _nodemap.end()) {
+            return nullptr;
+        }
+        Node<T>* best = nodeItr->second;
+        if (distanceOut) {
+            *distanceOut = _stateSpace->distance(state, best->state());
+        }
+        return best;
     }
 
     /**
