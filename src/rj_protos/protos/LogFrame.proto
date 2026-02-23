@@ -85,8 +85,8 @@ message LogFrame {
     repeated Referee raw_refbox = 27;
     repeated RadioRx radio_rx = 3;
 
-    // Deprecated field kept for compatability with old logs
-    repeated bytes raw_referee = 2;
+    // Reserved field numbers for removed deprecated fields
+    reserved 2, 18;
 
     // Which team are we playing as?
     optional bool blue_team = 4;
@@ -144,13 +144,6 @@ message LogFrame {
 
     // True if our goal is on the +X side of vision
     optional bool defend_plus_x = 17;
-
-    // Name of the current play
-    // NOTE: with the transition to a python-based gameplay system, we no longer
-    // log this.
-    //       Instead, we log the "Behavior Tree", which has the play name and
-    //       all subbehavior names.
-    optional string play = 18;
 
     // True if using each half of the field
     optional bool use_our_half = 19 [default = true];

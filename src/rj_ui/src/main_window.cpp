@@ -648,19 +648,8 @@ void MainWindow::updateStatus() {
         return;
     }
 
-#if 0
-    if (_processor->gameplay_module()->check_playbook_status()) {
-        playIndicatorStatus(false);
-    }
-#endif
-
     // Some conditions are different in simulation
     bool sim = _game_settings.simulation;
-
-    // TODO(Kyle): Figure out later if radio works.
-    //    if (!sim) {
-    //        updateRadioBaseStatus(_processor->is_radio_open());
-    //    }
 
     // Get processing thread status
     Processor::Status ps = _processor->status();

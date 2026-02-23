@@ -181,9 +181,6 @@ message Referee {
     // coordinate system. Obviously, the yellow team will play on the opposite half.
     optional bool blue_team_on_positive_half = 10;
 
-    // The game event that caused the referee command.
-    // deprecated in favor of game_events.
-    //    optional Game_Event game_event = 11 [deprecated = true];
     reserved 11;
 
     // The command that will be issued after the current stoppage and ball placement to continue the
