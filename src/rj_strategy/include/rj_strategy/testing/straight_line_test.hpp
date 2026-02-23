@@ -2,6 +2,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
 #include <rj_common/robot_intent.hpp>
@@ -16,6 +17,7 @@
 #include <rj_param_utils/global_params.hpp>
 #include <rj_utils/logging.hpp>
 #include <std_msgs/msg/bool.hpp>
+#include <rj_geometry/point.hpp>
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/line.hpp"
@@ -42,7 +44,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr line_direction_sub_;
+    rclcpp::Subscription<rj_geometry_msgs::msg::Line>::SharedPtr line_direction_sub_;
 
     // subscription callbacks
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -50,7 +52,7 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
-    void line_direction_callback(const std_msgs::msg::Bool::SharedPtr& msg);
+    void line_direction_callback(const rj_geometry_msgs::msg::Line::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
@@ -101,7 +103,8 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
-    bool vertical_ = false;
+    rj_geometry::Point start_{-1, -1};
+    rj_geometry::Point end_{-1, -1};
 };  // class StraightLineTest
 
 }  // namespace strategy
