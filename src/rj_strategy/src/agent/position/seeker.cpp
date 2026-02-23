@@ -91,11 +91,12 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
         x = field_dimensions.field_x_left_coord() + border_buffer;
     }
 
-    // Y Border
+    // Y Border: constrain seeking to opponent's half of the field
+    double min_y = field_dimensions.center_field_loc().y();
     if (p.y() > field_dimensions.their_goal_loc().y() - border_buffer) {
         y = field_dimensions.their_goal_loc().y() - border_buffer;
-    } else if (p.y() < field_dimensions.our_goal_loc().y() + border_buffer) {
-        y = field_dimensions.our_goal_loc().y() + border_buffer;
+    } else if (p.y() < min_y) {
+        y = min_y;
     }
 
     // Goalie Boxes

@@ -99,7 +99,7 @@ Offense::State Offense::next_state() {
 
             // If another robot becomes closer, leave state
             if (!can_steal_ball()) {
-                return SEEKING;
+                return SEEKING_START;
             }
 
             if (timed_out()) {
