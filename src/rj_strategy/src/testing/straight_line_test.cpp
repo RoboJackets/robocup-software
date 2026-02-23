@@ -43,7 +43,7 @@ StraightLineTest::StraightLineTest(int r_id)
         [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
     line_direction_sub_ = create_subscription<rj_geometry_msgs::msg::Line>(
-        "line_direction", 1,
+        "line", 1,
         [this](const rj_geometry_msgs::msg::Line::SharedPtr msg) { line_direction_callback(msg); });
 
     int hz = 10;

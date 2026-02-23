@@ -22,8 +22,10 @@
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 
-// Note: The direction of the line can be changed by running:
-// `ros2 topic pub -1 line_direction std_msgs/msg/Bool "{data: VERTICAL}"`
+// run test by using the command `make run-sim-line-test`
+// Note: The the line can be changed by running following command in another terminal window:
+// Make sure to source bash and ros in other window
+// `ros2 topic pub -1 line rj_geometry_msgs/msg/Line "{pt: [{x: 0, y: 0}, {x: 1, y: 1}]}"`
 
 namespace strategy {
 
