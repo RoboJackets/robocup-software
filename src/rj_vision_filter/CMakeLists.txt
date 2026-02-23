@@ -42,8 +42,7 @@ set(RJ_VISION_FILTER_DEPS
   rj_constants
 )
 
-add_executable(${PROJECT_NAME}_node
-  src/main.cpp
+set(RJ_VISION_FILTER_SRC
   src/ball/ball_bounce.cpp
   src/ball/camera_ball.cpp
   src/ball/kalman_ball.cpp
@@ -65,32 +64,13 @@ add_executable(${PROJECT_NAME}_node
 )
 
 add_library(${PROJECT_NAME}
-  src/ball/ball_bounce.cpp
-  src/ball/camera_ball.cpp
-  src/ball/kalman_ball.cpp
-  src/ball/world_ball.cpp
-  src/camera/camera.cpp
-  src/camera/world.cpp
-  src/filter/kalman_filter.cpp
-  src/filter/kalman_filter_2d.cpp
-  src/filter/kalman_filter3_d.cpp
-  src/kick/detector/fast_kick_detector.cpp
-  src/kick/detector/slow_kick_detector.cpp
-  src/kick/estimator/chip_kick_estimator.cpp
-  src/kick/estimator/flat_kick_estimator.cpp
-  src/kick/kick_event.cpp
-  src/robot/camera_robot.cpp
-  src/robot/kalman_robot.cpp
-  src/robot/world_robot.cpp
-  src/vision_filter.cpp
+  ${RJ_VISION_FILTER_SRC}
 )
 
-target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-  Eigen3::Eigen
-  spdlog
+add_executable(${PROJECT_NAME}_node
+  src/main.cpp
 )
+target_link_libraries(${PROJECT_NAME}_node PRIVATE ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
@@ -109,11 +89,6 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(${PROJECT_NAME}_node
-  PUBLIC
-  ${RJ_VISION_FILTER_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}

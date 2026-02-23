@@ -39,30 +39,39 @@ ifdef CCACHE_PATH
   CCACHE_CMAKE_ARGS = --cmake-args -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
 endif
 
+# Use all available cores for local builds (capped for CI)
+ifeq ($(CIRCLECI), true)
+  PARALLEL_WORKERS=2
+else ifdef CI
+  PARALLEL_WORKERS=4
+else
+  PARALLEL_WORKERS=$(shell nproc 2>/dev/null || echo 4)
+endif
+
 all-perf:
-	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
+	colcon build --parallel-workers $(PARALLEL_WORKERS) $(CCACHE_CMAKE_ARGS)
 # perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
 perf: all-perf
 
 # used in GH Actions build-and-test
 all:
-	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
+	colcon build --parallel-workers $(PARALLEL_WORKERS) $(CCACHE_CMAKE_ARGS)
 # debug: slow executable, but many debug symbols (e.g. for GDB)
 debug: all
 
 # NOT used in build-and-test
 all_including_tests:
-	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
+	colcon build --parallel-workers $(PARALLEL_WORKERS) $(CCACHE_CMAKE_ARGS)
 
 all-release:
-	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
+	colcon build --parallel-workers $(PARALLEL_WORKERS) $(CCACHE_CMAKE_ARGS)
 # release: fast executable, no debug symbols
 release: all-release
 
 # run if build-release-debug/ exists from a previous build
 # and no CMake files or launch.py files have been changed
 again:
-	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
+	colcon build --parallel-workers $(PARALLEL_WORKERS) $(CCACHE_CMAKE_ARGS)
 
 perf_docker:
 	MAKEFLAGS='-j5' colcon build --parallel-workers 1 --executor sequential --cmake-args \

@@ -39,17 +39,16 @@ set(RJ_CONTROL_DEPS
   rj_convert
 )
 
-add_executable(motion_control_node
-  src/motion_control_node.cpp
-  src/motion_control.cpp
-  src/pid.cpp
-)
-
 add_library(${PROJECT_NAME} SHARED
   src/motion_control_node.cpp
   src/motion_control.cpp
   src/pid.cpp
 )
+
+add_executable(motion_control_node
+  src/motion_control_node.cpp
+)
+target_link_libraries(motion_control_node PRIVATE ${PROJECT_NAME})
 
 target_include_directories(motion_control_node
   PUBLIC
@@ -61,11 +60,6 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
-)
-
-target_link_libraries(motion_control_node
-  PUBLIC
-  ${FLANN_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}

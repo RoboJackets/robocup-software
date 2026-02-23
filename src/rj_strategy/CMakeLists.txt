@@ -84,84 +84,33 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Straight Line Test Node
 add_executable(straight_line_test_node
-  ${RJ_STRATEGY_SRC}
   src/testing/straight_line_test.cpp
 )
-
-target_include_directories(straight_line_test_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(straight_line_test_node
-  ${RJ_STRATEGY_DEPS}
-)
+target_link_libraries(straight_line_test_node PRIVATE ${PROJECT_NAME})
 
 # Kicker Picker Node
 add_executable(kicker_picker_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/kicker_picker_client.cpp
   src/coordinator/kicker_picker.cpp
 )
-
-target_include_directories(kicker_picker_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(kicker_picker_node
-  ${RJ_STRATEGY_DEPS}
-)
+target_link_libraries(kicker_picker_node PRIVATE ${PROJECT_NAME})
 
 # Marking Node
 add_executable(marking_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/marking_client.cpp
   src/coordinator/marking.cpp
 )
+target_link_libraries(marking_node PRIVATE ${PROJECT_NAME})
 
-target_include_directories(marking_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
 # Waller Node
 add_executable(waller_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/waller_client.cpp
   src/coordinator/waller.cpp
 )
-
-target_include_directories(waller_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(marking_node
-  ${RJ_STRATEGY_DEPS}
-)
-ament_target_dependencies(waller_node
-  ${RJ_STRATEGY_DEPS}
-)
+target_link_libraries(waller_node PRIVATE ${PROJECT_NAME})
 
 # Agent Action Clients
 add_executable(agent_action_clients
-  ${RJ_STRATEGY_SRC}
   src/agent/agent_action_client.cpp
 )
-
-target_include_directories(agent_action_clients
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(agent_action_clients
-  ${RJ_STRATEGY_DEPS}
-)
+target_link_libraries(agent_action_clients PRIVATE ${PROJECT_NAME})
 
 install(
   DIRECTORY include/

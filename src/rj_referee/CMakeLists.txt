@@ -45,32 +45,16 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 add_executable(external_referee_node
-  src/external_referee.cpp
   src/external_referee_main.cpp
-  src/referee_base.cpp
 )
+target_link_libraries(external_referee_node PRIVATE ${PROJECT_NAME})
 
 add_executable(internal_referee_node
-  src/internal_referee.cpp
   src/internal_referee_main.cpp
-  src/referee_base.cpp
 )
+target_link_libraries(internal_referee_node PRIVATE ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
-)
-
-target_link_libraries(external_referee_node
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
-)
-
-target_link_libraries(internal_referee_node
   PUBLIC
   Boost::boost
   fmt
@@ -96,16 +80,6 @@ target_include_directories(internal_referee_node
 )
 
 ament_target_dependencies(${PROJECT_NAME}
-  PUBLIC
-  ${RJ_REFEREE_DEPS}
-)
-
-ament_target_dependencies(external_referee_node
-  PUBLIC
-  ${RJ_REFEREE_DEPS}
-)
-
-ament_target_dependencies(internal_referee_node
   PUBLIC
   ${RJ_REFEREE_DEPS}
 )

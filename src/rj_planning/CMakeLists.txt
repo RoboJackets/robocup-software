@@ -107,25 +107,9 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Planner Node
 add_executable(planner_node
-  ${RJ_PLANNING_SRC}
   src/main.cpp
 )
-
-target_include_directories(planner_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_link_libraries(planner_node
-  PUBLIC
-  ${RJ_PLANNING_LIBS}
-)
-
-ament_target_dependencies(planner_node
-  PUBLIC
-  ${RJ_PLANNING_DEPS}
-)
+target_link_libraries(planner_node PRIVATE ${PROJECT_NAME})
 
 install(
   DIRECTORY include/

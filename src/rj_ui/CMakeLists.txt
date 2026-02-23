@@ -116,13 +116,13 @@ add_library(${PROJECT_NAME} SHARED
 add_executable(${PROJECT_NAME}_node
   # Source Files
   src/main.cpp
-  ${SRC_FILES}
 )
+target_link_libraries(${PROJECT_NAME}_node PRIVATE ${PROJECT_NAME})
 
 add_executable(log_viewer_node
   src/log_viewer_main.cpp
-  ${SRC_FILES}
 )
+target_link_libraries(log_viewer_node PRIVATE ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}_node
   PUBLIC
@@ -145,36 +145,6 @@ target_include_directories(${PROJECT_NAME}
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
-)
-
-target_link_libraries(log_viewer_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
-)
-
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
   Boost::boost
@@ -188,16 +158,6 @@ target_link_libraries(${PROJECT_NAME}
   spdlog
   fmt
   ${FLANN_LIBRARIES}
-)
-
-ament_target_dependencies(${PROJECT_NAME}_node
-  PUBLIC
-  ${RJ_UI_DEPS}
-)
-
-ament_target_dependencies(log_viewer_node
-  PUBLIC
-  ${RJ_UI_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
