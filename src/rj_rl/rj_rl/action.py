@@ -2,12 +2,14 @@
 
 Defines the discrete action set available to each controlled robot and
 provides utilities for converting between action indices and simulation
-commands.
+commands. Field dimensions come from the shared ``constants`` module.
 """
 from enum import IntEnum
 from typing import Tuple
 
 import numpy as np
+
+from . import constants
 
 
 class ActionType(IntEnum):

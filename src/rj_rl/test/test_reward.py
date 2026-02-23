@@ -2,6 +2,7 @@
 import numpy as np
 import pytest
 
+from rj_rl import constants
 from rj_rl.config import RewardConfig
 from rj_rl.reward import RewardComputer
 
@@ -12,7 +13,9 @@ class TestRewardComputer:
     def setup_method(self):
         self.config = RewardConfig()
         self.computer = RewardComputer(
-            config=self.config, opp_goal_x=4.5, field_length=9.0
+            config=self.config,
+            opp_goal_x=constants.YELLOW_GOAL_X,
+            field_length=constants.FIELD_LENGTH,
         )
 
     def test_goal_scored_gives_positive_reward(self):
@@ -100,7 +103,10 @@ class TestRewardComputer:
             ball_progress=0.0,
             time_penalty=0.0,
         )
-        computer = RewardComputer(config, opp_goal_x=4.5, field_length=9.0)
+        computer = RewardComputer(
+            config, opp_goal_x=constants.YELLOW_GOAL_X,
+            field_length=constants.FIELD_LENGTH,
+        )
         reward = computer.compute(
             ball_pos=np.array([0.0, 0.0]),
             prev_ball_pos=np.array([0.0, 0.0]),

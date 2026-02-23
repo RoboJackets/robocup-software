@@ -3,6 +3,7 @@
 Usage:
     python -m scripts.train
     python -m scripts.train --timesteps 50000 --seed 123
+    python -m scripts.train --use-sim  # requires running grSim
 """
 import argparse
 import sys
@@ -44,6 +45,13 @@ def main() -> None:
         default=3e-4,
         help="Learning rate.",
     )
+    parser.add_argument(
+        "--use-sim",
+        action="store_true",
+        default=False,
+        help="Use grSim simulator (must be running). "
+             "Falls back to internal physics if not available.",
+    )
 
     args = parser.parse_args()
 
@@ -54,6 +62,7 @@ def main() -> None:
 
     np.random.seed(args.seed)
 
+    mode = "grSim" if args.use_sim else "fallback physics"
     print("=" * 60)
     print("RoboCup SSL Reinforcement Learning Training")
     print("=" * 60)
@@ -61,9 +70,14 @@ def main() -> None:
     print(f"  Seed:          {args.seed}")
     print(f"  Learning rate: {args.lr}")
     print(f"  Save dir:      {args.save_dir}")
+    print(f"  Simulator:     {mode}")
     print("=" * 60)
 
-    trainer = Trainer(config=config, save_dir=args.save_dir)
+    trainer = Trainer(
+        config=config,
+        save_dir=args.save_dir,
+        use_sim=args.use_sim,
+    )
     results = trainer.train(total_timesteps=args.timesteps)
 
     print("\n" + "=" * 60)

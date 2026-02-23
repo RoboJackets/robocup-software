@@ -1,36 +1,12 @@
 """Configuration management for the RL system.
 
-Provides default configuration values and utilities for loading/merging
-user-provided configuration overrides.
+Provides RL-specific configuration values. Physical constants (field
+dimensions, robot/ball geometry) are not duplicated here — they come
+from the shared ``constants`` module which mirrors
+``rj_constants/constants.hpp``.
 """
 from dataclasses import dataclass, field as dataclass_field
 from typing import Dict, Any, List
-
-
-@dataclass
-class FieldConfig:
-    """Physical dimensions of the SSL field (meters)."""
-
-    length: float = 9.0
-    width: float = 6.0
-    goal_width: float = 1.0
-    goal_depth: float = 0.18
-    boundary_width: float = 0.3
-
-
-@dataclass
-class PhysicsConfig:
-    """Physics simulation parameters."""
-
-    dt: float = 0.016  # ~60 Hz simulation step
-    ball_max_speed: float = 6.5  # m/s
-    ball_friction: float = 0.4  # deceleration m/s^2
-    robot_max_speed: float = 3.0  # m/s
-    robot_max_acceleration: float = 3.0  # m/s^2
-    robot_radius: float = 0.09  # meters
-    ball_radius: float = 0.021  # meters
-    kick_speed: float = 5.0  # m/s
-    robot_max_angular_speed: float = 6.0  # rad/s
 
 
 @dataclass
@@ -77,10 +53,12 @@ class EnvConfig:
 
 @dataclass
 class RLConfig:
-    """Top-level RL configuration container."""
+    """Top-level RL configuration container.
 
-    field: FieldConfig = dataclass_field(default_factory=FieldConfig)
-    physics: PhysicsConfig = dataclass_field(default_factory=PhysicsConfig)
+    Physical constants (field dimensions, robot/ball radius, etc.) are
+    provided by the ``constants`` module and are NOT duplicated here.
+    """
+
     reward: RewardConfig = dataclass_field(default_factory=RewardConfig)
     training: TrainingConfig = dataclass_field(default_factory=TrainingConfig)
     env: EnvConfig = dataclass_field(default_factory=EnvConfig)
@@ -94,8 +72,6 @@ class RLConfig:
         """
         cfg = cls()
         section_map = {
-            "field": (cfg.field, FieldConfig),
-            "physics": (cfg.physics, PhysicsConfig),
             "reward": (cfg.reward, RewardConfig),
             "training": (cfg.training, TrainingConfig),
             "env": (cfg.env, EnvConfig),

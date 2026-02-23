@@ -2,10 +2,12 @@
 
 Provides composable reward components that can be weighted and combined
 to guide learning. Each reward component is a pure function that takes
-the current and previous state and returns a scalar reward.
+the current and previous state and returns a scalar reward. Physical
+constants come from the shared ``constants`` module.
 """
 import numpy as np
 
+from . import constants
 from .config import RewardConfig
 
 
@@ -86,7 +88,7 @@ class RewardComputer:
         min_dist = np.min(distances)
 
         # Reward inversely proportional to distance, capped at robot radius
-        possession_threshold = 0.15  # ~robot radius + ball radius
+        possession_threshold = constants.ROBOT_RADIUS + constants.BALL_RADIUS
         if min_dist < possession_threshold:
             return self.config.ball_possession
         return self.config.ball_possession * max(

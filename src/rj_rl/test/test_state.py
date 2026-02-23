@@ -2,7 +2,7 @@
 import numpy as np
 import pytest
 
-from rj_rl.config import FieldConfig
+from rj_rl import constants
 from rj_rl.state import StateEncoder
 
 
@@ -10,8 +10,7 @@ class TestStateEncoder:
     """Tests for the StateEncoder class."""
 
     def setup_method(self):
-        self.field = FieldConfig()
-        self.encoder = StateEncoder(self.field, num_teammates=5, num_opponents=6)
+        self.encoder = StateEncoder(num_teammates=5, num_opponents=6)
 
     def test_observation_size(self):
         # 14 base + 5*2 teammates + 6*2 opponents = 36
@@ -87,5 +86,10 @@ class TestStateEncoder:
         assert obs[19] == 0.0  # 3rd teammate y
 
     def test_custom_num_agents(self):
-        encoder = StateEncoder(self.field, num_teammates=2, num_opponents=3)
+        encoder = StateEncoder(num_teammates=2, num_opponents=3)
         assert encoder.observation_size == 14 + 2 * 2 + 3 * 2  # 24
+
+    def test_uses_shared_constants(self):
+        """Normalization uses constants from the shared module."""
+        assert self.encoder._half_length == constants.HALF_FIELD_LENGTH
+        assert self.encoder._half_width == constants.HALF_FIELD_WIDTH

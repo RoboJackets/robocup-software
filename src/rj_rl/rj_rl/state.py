@@ -3,10 +3,13 @@
 Converts the raw simulation state (robot positions, ball state, etc.) into
 a normalized numpy array suitable for neural network input, and decodes
 network outputs back into simulation-level actions.
+
+Normalization uses field dimensions from the shared ``constants`` module
+(mirroring ``rj_constants/constants.hpp``) rather than duplicating them.
 """
 import numpy as np
 
-from .config import FieldConfig
+from . import constants
 
 
 class StateEncoder:
@@ -23,26 +26,26 @@ class StateEncoder:
         [14:16N+14] - teammate positions (x, y) per teammate (normalized)
         [cont.]     - opponent positions (x, y) per opponent (normalized)
 
+    Normalization uses field dimensions from ``constants`` (matching
+    ``rj_constants/constants.hpp``).
+
     Args:
-        field_config: Field dimensions for normalization.
         num_teammates: Number of teammate robots (excluding the controlled one).
         num_opponents: Number of opponent robots.
     """
 
     def __init__(
         self,
-        field_config: FieldConfig,
         num_teammates: int = 5,
         num_opponents: int = 6,
     ):
-        self.field = field_config
         self.num_teammates = num_teammates
         self.num_opponents = num_opponents
 
-        # Normalization factors
-        self._half_length = field_config.length / 2.0
-        self._half_width = field_config.width / 2.0
-        self._max_speed = 6.5  # generous upper bound for velocity normalization
+        # Normalization factors from shared constants
+        self._half_length = constants.HALF_FIELD_LENGTH
+        self._half_width = constants.HALF_FIELD_WIDTH
+        self._max_speed = constants.SIM_ROBOT_MAX_KICK_SPEED  # generous upper bound
 
     @property
     def observation_size(self) -> int:

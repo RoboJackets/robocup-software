@@ -24,12 +24,14 @@ class Trainer:
     Args:
         config: Full RL configuration.
         save_dir: Directory for saving checkpoints (default: "checkpoints").
+        use_sim: If True, connect to grSim simulator for physics.
     """
 
     def __init__(
         self,
         config: Optional[RLConfig] = None,
         save_dir: str = "checkpoints",
+        use_sim: bool = False,
     ):
         if config is None:
             config = RLConfig()
@@ -37,7 +39,7 @@ class Trainer:
         self.config = config
         self.save_dir = save_dir
 
-        self.env = RoboCupEnv(config)
+        self.env = RoboCupEnv(config, use_sim=use_sim)
         self.agent = PPOAgent(
             obs_size=self.env.observation_size,
             action_size=self.env.action_size,

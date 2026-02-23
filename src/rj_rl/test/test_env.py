@@ -2,6 +2,7 @@
 import numpy as np
 import pytest
 
+from rj_rl import constants
 from rj_rl.config import RLConfig
 from rj_rl.env import RoboCupEnv
 from rj_rl.action import ActionType
@@ -24,6 +25,13 @@ class TestRoboCupEnvInit:
         obs = env.reset()
         assert len(env.blue_robots) == 3
         assert len(env.yellow_robots) == 3
+
+    def test_uses_shared_constants(self):
+        """Field dimensions come from the shared constants module."""
+        env = RoboCupEnv()
+        assert env._half_length == constants.HALF_FIELD_LENGTH
+        assert env._half_width == constants.HALF_FIELD_WIDTH
+        assert env._goal_half_width == constants.HALF_GOAL_WIDTH
 
 
 class TestRoboCupEnvReset:
@@ -105,28 +113,28 @@ class TestRoboCupEnvStep:
 
 
 class TestRoboCupEnvPhysics:
-    """Tests for environment physics."""
+    """Tests for environment physics (fallback mode)."""
 
     def test_ball_position_changes_when_kicked(self):
         env = RoboCupEnv()
         env.reset(seed=42)
-        initial_ball = env.ball.pos.copy()
+        initial_ball = env.ball_pos.copy()
         # Move robot to ball and kick
         for _ in range(200):
             env.step(ActionType.SHOOT_ON_GOAL)
         # Ball should have moved
-        assert not np.allclose(env.ball.pos, initial_ball, atol=0.1)
+        assert not np.allclose(env.ball_pos, initial_ball, atol=0.1)
 
     def test_robots_stay_in_bounds(self):
         env = RoboCupEnv()
         env.reset(seed=42)
-        half_l = env._half_length
-        half_w = env._half_width
+        half_l = constants.HALF_FIELD_LENGTH
+        half_w = constants.HALF_FIELD_WIDTH
         for _ in range(100):
             env.step(ActionType.POSITION_OFFENSE)
         for robot in env.blue_robots + env.yellow_robots:
-            assert abs(robot.pos[0]) <= half_l + 0.01
-            assert abs(robot.pos[1]) <= half_w + 0.01
+            assert abs(robot["pos"][0]) <= half_l + 0.01
+            assert abs(robot["pos"][1]) <= half_w + 0.01
 
     def test_ball_stays_in_bounds_or_scores(self):
         env = RoboCupEnv()
@@ -137,4 +145,4 @@ class TestRoboCupEnvPhysics:
                 break
         # Ball should be within field bounds (or a goal was scored)
         if not done:
-            assert abs(env.ball.pos[1]) <= env._half_width + 0.1
+            assert abs(env.ball_pos[1]) <= constants.HALF_FIELD_WIDTH + 0.1

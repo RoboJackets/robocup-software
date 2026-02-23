@@ -1,9 +1,9 @@
 # rj_rl — Reinforcement Learning for RoboCup SSL Strategy
 
-A self-contained reinforcement learning framework for learning RoboCup
-Small-Sized League (SSL) strategy. Uses a built-in 2D physics simulation
-and a PPO (Proximal Policy Optimization) agent implemented entirely with
-numpy, so no external deep learning frameworks are required.
+A reinforcement learning framework for learning RoboCup Small-Sized League
+(SSL) strategy. Integrates with the existing **grSim** simulator (the same
+one used by the rest of the stack) and reuses physical constants from
+`rj_constants/constants.hpp` — no duplicated physics or geometry.
 
 ## Quick Start
 
@@ -14,8 +14,11 @@ cd src/rj_rl
 # Install in development mode
 pip install -e .
 
-# Run training (short run for testing)
+# Run training (short run, uses fallback physics when grSim is not running)
 python -m scripts.train --timesteps 5000 --seed 42
+
+# Run training with grSim (start grSim first)
+python -m scripts.train --timesteps 50000 --use-sim
 
 # Run tests
 python -m pytest test/ -v
@@ -25,28 +28,57 @@ python -m pytest test/ -v
 
 ```
 rj_rl/
-├── env.py        Gym-compatible 2D environment with SSL-like physics
-├── state.py      State encoding: world state → normalized observation vector
-├── action.py     Discrete action space (move, shoot, pass, defend, …)
-├── reward.py     Composable reward functions (goals, possession, progress)
-├── network.py    Numpy-based MLP (actor-critic policy network)
-├── agent.py      PPO agent with GAE advantage estimation
-├── trainer.py    Training loop with logging and checkpointing
-└── config.py     Dataclass-based configuration (field, physics, rewards, training)
+├── constants.py   Shared physical constants (mirrors rj_constants/constants.hpp)
+├── env.py         Gym-compatible environment backed by grSim
+├── sim_client.py  gRSim UDP protobuf communication (same protocol as sim_radio.cpp)
+├── state.py       State encoding: world state → normalized observation vector
+├── action.py      Discrete action space (move, shoot, pass, defend, …)
+├── reward.py      Composable reward functions (goals, possession, progress)
+├── network.py     Numpy-based MLP (actor-critic policy network)
+├── agent.py       PPO agent with GAE advantage estimation
+├── trainer.py     Training loop with logging and checkpointing
+├── config.py      RL-specific configuration (reward weights, training params)
+└── proto_gen/     Generated Python protobuf bindings for SSL simulator protocol
 ```
+
+## Integration with the Existing Simulator
+
+The RL environment communicates with **grSim** using the same UDP protobuf
+protocol as the C++ `sim_radio` node (`src/rj_radio/src/sim_radio.cpp`):
+
+| Protocol Message     | Direction | Purpose                        |
+|---------------------|-----------|--------------------------------|
+| `RobotControl`      | → grSim   | Robot velocity/kick commands   |
+| `SSL_WrapperPacket` | ← grSim   | Vision data (robot/ball state) |
+| `SimulatorCommand`  | → grSim   | Teleport ball/robots (resets)  |
+
+Network ports match the existing configuration in
+`rj_common/include/rj_common/network.hpp`:
+- Vision: 10020, Commands: 10301/10302, Control: 10300
+
+## Shared Constants (No Duplication)
+
+Physical constants are defined **once** in `constants.py`, mirroring the
+values from the C++ codebase:
+
+| Constant          | Source                          | Value     |
+|-------------------|---------------------------------|-----------|
+| `ROBOT_RADIUS`    | `rj_constants/constants.hpp`    | 0.090 m   |
+| `BALL_RADIUS`     | `rj_constants/constants.hpp`    | 0.0215 m  |
+| `BALL_DECEL`      | `rj_constants/constants.hpp`    | −0.4 m/s² |
+| `FIELD_LENGTH`    | SSL Division B standard         | 9.0 m     |
+| `FIELD_WIDTH`     | SSL Division B standard         | 6.0 m     |
+| `GOAL_WIDTH`      | SSL Division B standard         | 1.0 m     |
+| `ROBOTS_PER_TEAM` | `rj_constants/constants.hpp`    | 6         |
+| `SIM_*_PORT`      | `rj_common/network.hpp`         | 10020 etc |
 
 ## How It Works
 
 ### Environment (`env.py`)
-The environment simulates a simplified RoboCup SSL game:
-- 2D field with configurable dimensions (default 9m × 6m)
-- Up to 6 robots per team with acceleration-based movement
-- Ball physics with friction, wall bouncing, and robot collisions
-- Goal detection when the ball crosses the goal line
-- Heuristic opponents and teammates for realistic dynamics
-
-The RL agent controls **one robot** and receives observations about the
-full game state (robot positions/velocities, ball state, goal positions).
+The environment provides a Gym interface (`reset`, `step`) backed by grSim:
+- **With grSim**: Sends robot commands and reads vision data via UDP
+- **Fallback mode**: Lightweight internal physics using shared constants
+  (for testing/CI when grSim is not running)
 
 ### Actions (`action.py`)
 Seven discrete actions:
@@ -79,7 +111,8 @@ PPO with:
 
 ## Configuration
 
-All parameters are exposed through dataclasses in `config.py`:
+Only RL-specific parameters are configured here. Physical constants come
+from `constants.py` (mirroring the C++ codebase):
 
 ```python
 from rj_rl.config import RLConfig
@@ -90,22 +123,6 @@ config.training.total_timesteps = 200000
 config.reward.goal_scored = 20.0
 config.env.num_blue_robots = 3
 ```
-
-## Integration with Existing Strategy
-
-The trained policy can be integrated with the existing ROS2 strategy
-system by:
-
-1. **Loading a trained model** in a new ROS2 node that subscribes to
-   `world_state` and `play_state` topics.
-2. **Converting ROS2 messages** to the observation format using
-   `StateEncoder`.
-3. **Querying the policy** with `agent.select_action(obs)` to get
-   the action.
-4. **Publishing the resulting action** as a `RobotIntent` message.
-
-This can replace or augment existing Position implementations in
-`rj_strategy` without modifying the core planning/control pipeline.
 
 ## Extending
 
@@ -124,7 +141,13 @@ This can replace or augment existing Position implementations in
    `PPOAgent` (methods: `select_action`, `update`, `save`, `load`)
 2. Pass it to `Trainer` or use it directly
 
-### Switching to PyTorch / TensorFlow
-Replace `NumpyMLP` in `network.py` with a framework-native network.
-The `PolicyNetwork` interface (`get_action_and_value`, `get_value`,
-`save`, `load`) remains the same.
+### Regenerating protobuf bindings
+If the `.proto` files in `src/rj_protos/protos/` change:
+```bash
+python -m grpc_tools.protoc \
+  --proto_path=src/rj_protos/protos \
+  --python_out=src/rj_rl/rj_rl/proto_gen \
+  ssl_simulation_robot_control.proto ssl_simulation_control.proto \
+  ssl_gc_common.proto ssl_vision_wrapper.proto ssl_vision_detection.proto \
+  ssl_vision_geometry.proto ssl_simulation_config.proto ssl_simulation_error.proto
+```

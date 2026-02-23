@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 
-from .config import RLConfig, TrainingConfig
+from .config import TrainingConfig
 from .network import PolicyNetwork
 
 
