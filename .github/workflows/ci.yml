@@ -29,9 +29,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/ccache
-          key: ccache-${{ github.base_ref }}-${{ github.sha }}
+          key: ccache-${{ github.base_ref || github.ref_name }}-${{ github.sha }}
           restore-keys: |
-            ccache-${{ github.base_ref }}-
+            ccache-${{ github.base_ref || github.ref_name }}-
             ccache-
 
       - name: Zero ccache stats

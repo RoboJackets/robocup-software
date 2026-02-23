@@ -34,8 +34,8 @@ define cmake_build_target_perf
 endef
 
 # Use ccache if available for faster rebuilds
-CCACHE_LAUNCHER := $(shell command -v ccache 2>/dev/null)
-ifdef CCACHE_LAUNCHER
+CCACHE_PATH := $(shell command -v ccache 2>/dev/null)
+ifdef CCACHE_PATH
   CCACHE_CMAKE_ARGS = --cmake-args -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
 endif
 
