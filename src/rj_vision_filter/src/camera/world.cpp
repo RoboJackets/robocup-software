@@ -96,7 +96,11 @@ void World::calc_ball_bounce() {
 
 void World::update_world_objects(RJ::Time calc_time) {
     // Fill robots_yellow_/blue with what robots we want and remove the rest
-    ball_ = WorldBall();
+    // Note: we intentionally do NOT reset ball_ here. When the ball is
+    // temporarily not visible (e.g. during dribbling when it is occluded by
+    // the robot), we want to keep the last known valid ball state instead of
+    // defaulting to position (0, 0). The ball_ will be overwritten below
+    // whenever healthy Kalman ball filters are available.
 
     std::fill(robots_yellow_.begin(), robots_yellow_.end(), WorldRobot());
     std::fill(robots_blue_.begin(), robots_blue_.end(), WorldRobot());
