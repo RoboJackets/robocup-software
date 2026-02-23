@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
 #include <boost/circular_buffer.hpp>
+
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/filter/kalman_filter_2d.hpp>
 #include <rj_vision_filter/params.hpp>
@@ -25,9 +26,8 @@ public:
      * initialize the velocity smartly
      * @param config Vision filter configuration
      */
-    KalmanBall(unsigned int camera_id, RJ::Time creation_time,
-               CameraBall init_measurement, const WorldBall& previous_world_ball,
-               const VisionFilterConfig& config);
+    KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBall init_measurement,
+               const WorldBall& previous_world_ball, const VisionFilterConfig& config);
 
     /**
      * Predicts one time step forward

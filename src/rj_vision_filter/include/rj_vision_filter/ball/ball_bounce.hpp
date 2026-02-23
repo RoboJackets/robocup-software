@@ -1,10 +1,11 @@
 #pragma once
 
+#include <vector>
+
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 class BallBounce {
@@ -30,10 +31,9 @@ public:
      * @return Whether the ball bounces or not
      */
     static bool calc_ball_bounce(const KalmanBall& ball,
-                               const std::vector<WorldRobot>& yellow_robots,
-                               const std::vector<WorldRobot>& blue_robots,
-                               rj_geometry::Point& out_new_vel,
-                               const VisionFilterConfig& config);
+                                 const std::vector<WorldRobot>& yellow_robots,
+                                 const std::vector<WorldRobot>& blue_robots,
+                                 rj_geometry::Point& out_new_vel, const VisionFilterConfig& config);
 
 private:
     /**

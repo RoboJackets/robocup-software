@@ -23,8 +23,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
-               const std::vector<Point>& bias_waypoints,
-               const PlanningConfig& config) {
+               const std::vector<Point>& bias_waypoints, const PlanningConfig& config) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -95,7 +94,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // Generate list of intermediate points
-    std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal, robot_id, config);
+    std::vector<rj_geometry::Point> intermediates =
+        get_intermediates(start, goal, robot_id, config);
 
     for (int i = 0; i < config.intermediate.num_intermediates; i++) {
         rj_geometry::Point final_inter = intermediates[i];
@@ -161,7 +161,6 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         // Generate random tuples of distances and angles
         inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
     }
-
 
     // Sort the list of tuples by the magnitude of angle
     // This ensures that we take paths with

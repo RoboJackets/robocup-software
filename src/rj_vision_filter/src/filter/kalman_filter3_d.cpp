@@ -7,7 +7,7 @@ namespace vision_filter {
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
 KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
-                                const VisionFilterConfig& config)
+                               const VisionFilterConfig& config)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),

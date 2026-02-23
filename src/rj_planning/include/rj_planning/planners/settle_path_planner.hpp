@@ -57,16 +57,14 @@ private:
     // Calculate the delta position to get the robot in the correct location
     // And the face point to get the bounce right
     // If no target_bounce_direction is given, just get in front and face the ball
-    void calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
-                            double* angle_out, rj_geometry::Point* delta_robot_pos,
-                            rj_geometry::Point* face_pos,
-                            const PlanningConfig& config);
+    void calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant, double* angle_out,
+                                rj_geometry::Point* delta_robot_pos, rj_geometry::Point* face_pos,
+                                const PlanningConfig& config);
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start_instant,
-                               rj_geometry::Point delta_pos,
-                               const PlanningConfig& config);
+                                 rj_geometry::Point delta_pos, const PlanningConfig& config);
 
     // Figures out when to move to each state
     // (only in the standard transition)

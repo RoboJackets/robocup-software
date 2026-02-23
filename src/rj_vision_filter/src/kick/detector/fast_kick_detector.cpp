@@ -78,7 +78,8 @@ bool FastKickDetector::detect_kick() {
     rj_geometry::Point accel = dv / (config_->vision_loop_dt * state_history_.size());
 
     // Check for large accelerations and only going from slow->fast transitions
-    return accel.mag() > config_->kick_detector.fast_acceleration_trigger && v_start.mag() < v_end.mag();
+    return accel.mag() > config_->kick_detector.fast_acceleration_trigger &&
+           v_start.mag() < v_end.mag();
 }
 
 WorldRobot FastKickDetector::get_closest_robot() {

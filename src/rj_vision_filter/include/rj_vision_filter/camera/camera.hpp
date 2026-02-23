@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+#include <vector>
+
 #include <rj_vision_filter/ball/ball_bounce.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
@@ -10,7 +12,6 @@
 #include <rj_vision_filter/robot/camera_robot.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 /**

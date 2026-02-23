@@ -44,8 +44,7 @@ class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
-                    const GlobalState& global_state,
-                    const PlanningConfig* planning_config);
+                    const GlobalState& global_state, const PlanningConfig* planning_config);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;

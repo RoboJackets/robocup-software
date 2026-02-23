@@ -36,10 +36,9 @@ void draw_bi_rrt(const RRT::BiRRT<rj_geometry::Point>& bi_rrt,
  * @return A vector of points representing some clear path from the start to
  *      the end.
  */
-std::vector<rj_geometry::Point> generate_rrt(
-    rj_geometry::Point start, rj_geometry::Point goal,
-    const rj_geometry::ShapeSet& obstacles,
-    const std::vector<rj_geometry::Point>& waypoints = {},
-    const PlanningConfig& config = PlanningConfig{});
+std::vector<rj_geometry::Point> generate_rrt(rj_geometry::Point start, rj_geometry::Point goal,
+                                             const rj_geometry::ShapeSet& obstacles,
+                                             const std::vector<rj_geometry::Point>& waypoints = {},
+                                             const PlanningConfig& config = PlanningConfig{});
 
 }  // namespace planning

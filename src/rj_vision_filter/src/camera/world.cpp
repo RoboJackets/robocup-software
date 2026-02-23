@@ -146,8 +146,8 @@ void World::update_world_objects(RJ::Time calc_time) {
 
     for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
-            robots_yellow_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::YELLOW, i, kalman_robots_yellow.at(i), config_);
+            robots_yellow_.at(i) = WorldRobot(calc_time, WorldRobot::Team::YELLOW, i,
+                                              kalman_robots_yellow.at(i), config_);
         }
     }
 

@@ -27,9 +27,8 @@ PlannerNode::PlannerNode()
     robot_trajectories_ = std::make_shared<TrajectoryCollection>();
     robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
-        auto planner =
-            std::make_unique<PlannerForRobot>(i, this, robot_trajectories_, global_state_,
-                                              &planning_config_);
+        auto planner = std::make_unique<PlannerForRobot>(i, this, robot_trajectories_,
+                                                         global_state_, &planning_config_);
         robot_planners_.emplace_back(std::move(planner));
     }
 }
@@ -138,25 +137,21 @@ PlanningConfig PlannerNode::load_planning_config() {
                            config.constraints.max_rotational_accel,
                            config.constraints.max_rotational_accel);
 
-    this->get_parameter_or("replanner.pos_change_threshold",
-                           config.replanner.pos_change_threshold,
+    this->get_parameter_or("replanner.pos_change_threshold", config.replanner.pos_change_threshold,
                            config.replanner.pos_change_threshold);
-    this->get_parameter_or("replanner.vel_change_threshold",
-                           config.replanner.vel_change_threshold,
+    this->get_parameter_or("replanner.vel_change_threshold", config.replanner.vel_change_threshold,
                            config.replanner.vel_change_threshold);
     this->get_parameter_or("replanner.partial_replan_lead_time",
                            config.replanner.partial_replan_lead_time,
                            config.replanner.partial_replan_lead_time);
-    this->get_parameter_or("replanner.off_path_threshold",
-                           config.replanner.off_path_threshold,
+    this->get_parameter_or("replanner.off_path_threshold", config.replanner.off_path_threshold,
                            config.replanner.off_path_threshold);
 
     this->get_parameter_or("rrt.enable_debug_drawing", config.rrt.enable_debug_drawing,
                            config.rrt.enable_debug_drawing);
     this->get_parameter_or("rrt.step_size", config.rrt.step_size, config.rrt.step_size);
     this->get_parameter_or("rrt.goal_bias", config.rrt.goal_bias, config.rrt.goal_bias);
-    this->get_parameter_or("rrt.waypoint_bias", config.rrt.waypoint_bias,
-                           config.rrt.waypoint_bias);
+    this->get_parameter_or("rrt.waypoint_bias", config.rrt.waypoint_bias, config.rrt.waypoint_bias);
     this->get_parameter_or("rrt.min_iterations", config.rrt.min_iterations,
                            config.rrt.min_iterations);
     this->get_parameter_or("rrt.max_iterations", config.rrt.max_iterations,
@@ -175,8 +170,7 @@ PlanningConfig PlannerNode::load_planning_config() {
     this->get_parameter_or("intermediate.step_size", config.intermediate.step_size,
                            config.intermediate.step_size);
 
-    this->get_parameter_or("escape.step_size", config.escape.step_size,
-                           config.escape.step_size);
+    this->get_parameter_or("escape.step_size", config.escape.step_size, config.escape.step_size);
     this->get_parameter_or("escape.goal_change_threshold", config.escape.goal_change_threshold,
                            config.escape.goal_change_threshold);
 

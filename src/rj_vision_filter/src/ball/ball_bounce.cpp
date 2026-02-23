@@ -223,7 +223,7 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
 }
 
 bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
-                              const VisionFilterConfig& config) {
+                               const VisionFilterConfig& config) {
     rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * config.vision_loop_dt;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;
