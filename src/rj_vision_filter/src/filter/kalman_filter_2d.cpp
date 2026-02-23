@@ -2,21 +2,12 @@
 
 #include <cmath>
 
-#include <rj_param_utils/vision/vision_params.hpp>
-
 namespace vision_filter {
-
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, init_covariance, 100.0,
-                  "Initial covariance of the filter. Controls how fast it gets "
-                  "to the target.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, process_noise, 0.1,
-                  "Controls how quickly it reacts to changes in ball accelerations.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
-                  "Controls how much it trusts measurements from the camera.")
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel)
+KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
+                                const VisionFilterConfig& config)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
@@ -29,7 +20,7 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
-    double p = ball::PARAM_init_covariance;
+    double p = config.ball.init_covariance;
     P_k1_k1_ << p, 0, 0, 0,
                 0, p, 0, 0,
                 0, 0, p, 0,
@@ -40,7 +31,7 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // TODO(1565): Allow variable dt to decouple predict, update and merging.
     // State transition matrix (A)
     // Pos, velocity integrator. Assume constant velocity
-    double dt = PARAM_vision_loop_dt;
+    double dt = config.vision_loop_dt;
     F_k_ << 1, dt,  0,  0,
             0,  1,  0,  0,
             0,  0,  1, dt,
@@ -73,7 +64,7 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // Taken from Tiger's AutoRef. Most likely found through integration of
     // error through the state matrices. See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
-    p = ball::PARAM_process_noise;
+    p = config.ball.process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -87,7 +78,7 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = ball::PARAM_observation_noise;
+    double o = config.ball.observation_noise;
     // clang-format off
     R_k_ << o, 0,
             0, o;

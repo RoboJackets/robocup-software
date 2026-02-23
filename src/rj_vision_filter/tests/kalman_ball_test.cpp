@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <rj_vision_filter/ball/kalman_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 
 namespace vision_filter {
@@ -10,8 +11,9 @@ TEST(KalmanBall, invalid_world_ball) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
 
     rj_geometry::Point rv = kb.get_vel();
     rj_geometry::Point rp = kb.get_pos();
@@ -31,15 +33,16 @@ TEST(KalmanBall, valid_world_ball) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
     kb.set_vel(p);
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, cfg);
 
-    KalmanBall kb2 = KalmanBall(c_id, t, b, wb);
+    KalmanBall kb2 = KalmanBall(c_id, t, b, wb, cfg);
 
     rj_geometry::Point rv = kb2.get_vel();
     rj_geometry::Point rp = kb2.get_pos();
@@ -56,8 +59,9 @@ TEST(KalmanBall, predict) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
     kb.set_vel(p);
 
     kb.predict(RJ::now());
@@ -79,8 +83,9 @@ TEST(KalmanBall, predict_and_update) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
     kb.set_vel(p);
 
     kb.predict_and_update(RJ::now(), b);
@@ -102,8 +107,9 @@ TEST(KalmanBall, is_unhealthy) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
 
     kb.predict(RJ::now() + RJ::Seconds(10));
 
@@ -116,8 +122,9 @@ TEST(KalmanBall, max_measurement_size) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
     kb.set_vel(p);
 
     for (int i = 0; i < 100; i++) {
@@ -135,8 +142,9 @@ TEST(KalmanBall, getters) {
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
+    VisionFilterConfig cfg;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
 
     rj_geometry::Point rpc = kb.get_pos_cov();
     rj_geometry::Point rvc = kb.get_vel_cov();

@@ -5,6 +5,7 @@
 #include <boost/circular_buffer.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/filter/kalman_filter3_d.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
 
 namespace vision_filter {
@@ -23,10 +24,12 @@ public:
      * @param init_measurement Initial robot measurement
      * @param previous_world_robot World robot from last frame (or invalid world
      * robot)
+     * @param config Vision filter configuration
      */
     KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
                 CameraRobot init_measurement,
-                const WorldRobot& previous_world_robot);
+                const WorldRobot& previous_world_robot,
+                const VisionFilterConfig& config);
 
     /**
      * Predicts one time step forward
@@ -112,6 +115,7 @@ public:
     const boost::circular_buffer<CameraRobot>& get_prev_measurements() const;
 
 private:
+    const VisionFilterConfig& config_;
     RJ::Time last_update_time_;
     RJ::Time last_predict_time_;
 

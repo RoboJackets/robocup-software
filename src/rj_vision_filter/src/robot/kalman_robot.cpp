@@ -4,21 +4,19 @@
 #include <algorithm>
 #include <cmath>
 
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kalman_robot, max_time_outside_vision, 0.5,
-                  "Max number of seconds without a measurement before the object is deleted")
-using kalman_robot::PARAM_max_time_outside_vision;
 
 KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
-                         CameraRobot init_measurement, const WorldRobot& previous_world_robot)
-    : last_update_time_(creation_time),
+                         CameraRobot init_measurement, const WorldRobot& previous_world_robot,
+                         const VisionFilterConfig& config)
+    : config_(config),
+      last_update_time_(creation_time),
       last_predict_time_(creation_time),
-      previous_measurements_(kick::detector::PARAM_slow_kick_hist_length),
+      previous_measurements_(config.kick_detector.slow_kick_hist_length),
       unwrap_theta_ctr_(0),
-      health_(filter::health::PARAM_init),
+      health_(static_cast<int>(config.filter_health.init)),
       robot_id_(init_measurement.get_robot_id()),
       camera_id_(camera_id) {
     rj_geometry::Pose init_pose = init_measurement.get_pose();
@@ -29,7 +27,7 @@ KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
         init_twist.angular() = previous_world_robot.get_omega();
     }
 
-    filter_ = KalmanFilter3D(init_pose, init_twist);
+    filter_ = KalmanFilter3D(init_pose, init_twist, config_);
 
     previous_measurements_.push_back(init_measurement);
     previous_theta_ = init_twist.angular();
@@ -39,7 +37,8 @@ void KalmanRobot::predict(RJ::Time current_time) {
     last_predict_time_ = current_time;
 
     // Decrement but make sure you don't go too low
-    health_ = std::max(health_ - filter::health::PARAM_dec, filter::health::PARAM_min);
+    health_ = std::max(health_ - static_cast<int>(config_.filter_health.dec),
+                       static_cast<int>(config_.filter_health.min));
 
     filter_.predict();
 }
@@ -49,7 +48,8 @@ void KalmanRobot::predict_and_update(RJ::Time current_time, CameraRobot update_r
     last_update_time_ = current_time;
 
     // Increment but make sure you don't go too high
-    health_ = std::min(health_ + filter::health::PARAM_inc, filter::health::PARAM_max);
+    health_ = std::min(health_ + static_cast<int>(config_.filter_health.inc),
+                       static_cast<int>(config_.filter_health.max));
 
     // Keep last X camera observations in list for kick detection and filtering
     previous_measurements_.push_back(update_robot);
@@ -73,7 +73,7 @@ void KalmanRobot::predict_and_update(RJ::Time current_time, CameraRobot update_r
 
 bool KalmanRobot::is_unhealthy() const {
     bool updated_recently = RJ::Seconds(last_predict_time_ - last_update_time_) <
-                            RJ::Seconds(PARAM_max_time_outside_vision);
+                            RJ::Seconds(config_.kalman_robot.max_time_outside_vision);
 
     return !updated_recently;
 }

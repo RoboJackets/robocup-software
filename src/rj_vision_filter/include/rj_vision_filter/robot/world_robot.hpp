@@ -3,6 +3,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <list>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 
 namespace vision_filter {
@@ -27,9 +28,11 @@ public:
      * @param team The team color
      * @param kalman_robots List of kalman robots from each of the cameras to
      * merger
+     * @param config Vision filter configuration
      */
     WorldRobot(RJ::Time calc_time, Team team, int robot_id,
-               const std::list<KalmanRobot>& kalman_robots);
+               const std::list<KalmanRobot>& kalman_robots,
+               const VisionFilterConfig& config);
 
     /**
      * @return If the robot actually represents a real robot

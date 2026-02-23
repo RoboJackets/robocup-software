@@ -2,6 +2,7 @@
 
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 #include <vector>
 
@@ -31,7 +32,8 @@ public:
     static bool calc_ball_bounce(const KalmanBall& ball,
                                const std::vector<WorldRobot>& yellow_robots,
                                const std::vector<WorldRobot>& blue_robots,
-                               rj_geometry::Point& out_new_vel);
+                               rj_geometry::Point& out_new_vel,
+                               const VisionFilterConfig& config);
 
 private:
     /**
@@ -42,7 +44,8 @@ private:
      * @param ball The ball we want to check for intersection with
      * @param robot The robot we what to check for intersection with
      */
-    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot);
+    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
+                              const VisionFilterConfig& config);
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell

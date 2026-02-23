@@ -5,6 +5,7 @@
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -17,6 +18,8 @@ namespace vision_filter {
  */
 class SlowKickDetector {
 public:
+    explicit SlowKickDetector(const VisionFilterConfig& config) : config_(&config) {}
+    SlowKickDetector() = default;
     /**
      * Adds a record to our history list
      *
@@ -55,7 +58,8 @@ private:
      * @note robots and balls should be time synced
      */
     static bool check_all_validators(const std::vector<WorldRobot>& robot,
-                                   const std::vector<WorldBall>& ball);
+                                   const std::vector<WorldBall>& ball,
+                                   const VisionFilterConfig& config);
 
     /**
      * If ball and robots were close and are now far away
@@ -66,7 +70,8 @@ private:
      * @note robots and balls should be time synced
      */
     static bool distance_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+                                  const std::vector<WorldBall>& ball,
+                                  const VisionFilterConfig& config);
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -77,7 +82,8 @@ private:
      * @note robots and balls should be time synced
      */
     static bool velocity_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+                                  const std::vector<WorldBall>& ball,
+                                  const VisionFilterConfig& config);
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -100,8 +106,10 @@ private:
      * @note robots and balls should be time synced
      */
     static bool in_front_validator(const std::vector<WorldRobot>& robot,
-                                 const std::vector<WorldBall>& ball);
+                                 const std::vector<WorldBall>& ball,
+                                 const VisionFilterConfig& config);
 
     std::deque<VisionState> state_history_;
+    const VisionFilterConfig* config_ = nullptr;
 };
 }  // namespace vision_filter

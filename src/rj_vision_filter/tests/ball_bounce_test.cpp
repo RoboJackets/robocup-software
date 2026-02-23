@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <rj_vision_filter/ball/ball_bounce.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -11,14 +12,15 @@ TEST(BallBounce, no_input) {
     rj_geometry::Point p = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
 
     std::vector<WorldRobot> yellow;
     std::vector<WorldRobot> blue;
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -28,7 +30,8 @@ TEST(BallBounce, invalid_robot) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     std::vector<WorldRobot> yellow;
@@ -37,7 +40,7 @@ TEST(BallBounce, invalid_robot) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -47,19 +50,20 @@ TEST(BallBounce, no_intersection) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(1, 1);
     double th = 1;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -67,7 +71,7 @@ TEST(BallBounce, no_intersection) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -77,19 +81,20 @@ TEST(BallBounce, wrong_direction) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(1, 0);
     double th = 1;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -97,7 +102,7 @@ TEST(BallBounce, wrong_direction) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -107,19 +112,20 @@ TEST(BallBounce, too_far) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(-1, 0);
     double th = 1;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -127,7 +133,7 @@ TEST(BallBounce, too_far) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -137,19 +143,20 @@ TEST(BallBounce, flat_intersect_side) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(-.1, 0);
     double th = 3.14 / 2;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -157,7 +164,7 @@ TEST(BallBounce, flat_intersect_side) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -170,19 +177,20 @@ TEST(BallBounce, flat_intersect_mouth) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(-.1, 0);
     double th = 0;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -190,7 +198,7 @@ TEST(BallBounce, flat_intersect_mouth) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -203,19 +211,20 @@ TEST(BallBounce, angle_intersect_side) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(-0.1, -0.06);
     double th = 3.14;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -223,7 +232,7 @@ TEST(BallBounce, angle_intersect_side) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -237,19 +246,20 @@ TEST(BallBounce, angle_intersect_mouth) {
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
-    KalmanBall kb = KalmanBall(1, tc, cb, wb);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(1, tc, cb, wb, cfg);
     kb.set_vel(rj_geometry::Point(-1, 0));
 
     rj_geometry::Point p2 = rj_geometry::Point(-0.06, -0.04);
     double th = 1 * 3.14 / 4;
     CameraRobot cr = CameraRobot(tc, rj_geometry::Pose(p2, th), 1);
     WorldRobot wr1;
-    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
+    KalmanRobot kr = KalmanRobot(1, tc, cr, wr1, cfg);
 
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, cfg);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -257,7 +267,7 @@ TEST(BallBounce, angle_intersect_mouth) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, cfg);
 
     // Straight left with a 45 degree wall causes ball to go straight up
     EXPECT_TRUE(is_bounce);

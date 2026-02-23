@@ -1,4 +1,5 @@
 #include "rj_vision_filter/ball/world_ball.hpp"
+#include "rj_vision_filter/params.hpp"
 
 #include <gtest/gtest.h>
 
@@ -12,7 +13,8 @@ TEST(WorldBall, invalid) {
 TEST(WorldBall, no_ball) {
     std::list<KalmanBall> kbl;
 
-    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl));
+    VisionFilterConfig cfg;
+    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl, cfg));
 }
 
 TEST(WorldBall, one_ball) {
@@ -22,12 +24,13 @@ TEST(WorldBall, one_ball) {
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    VisionFilterConfig cfg;
+    KalmanBall kb = KalmanBall(c_id, t, b, w, cfg);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, cfg);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();
@@ -57,14 +60,15 @@ TEST(WorldBall, two_ball) {
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb1 = KalmanBall(c_id, t, b1, w);
-    KalmanBall kb2 = KalmanBall(c_id, t, b2, w);
+    VisionFilterConfig cfg;
+    KalmanBall kb1 = KalmanBall(c_id, t, b1, w, cfg);
+    KalmanBall kb2 = KalmanBall(c_id, t, b2, w, cfg);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, cfg);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();

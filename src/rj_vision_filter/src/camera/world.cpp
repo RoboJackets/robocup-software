@@ -1,24 +1,16 @@
 #include <rj_constants/constants.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/camera/world.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_kick_timeout, 1.0,
-                  "Only replace fast kick estimates when this much time has "
-                  "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_kick_timeout, 0.5,
-                  "Only replace slow kick estimates when this much time has "
-                  "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, same_kick_timeout, 0.5,
-                  "Only replace fast kick estimate with a slow when the two "
-                  "times are within this amount.")
-using namespace kick::detector;
 
-World::World()
-    : last_update_time_{RJ::Time{RJ::Time::duration(0)}},
-      cameras_(PARAM_max_num_cameras),
+World::World(const VisionFilterConfig& config)
+    : config_(config),
+      last_update_time_{RJ::Time{RJ::Time::duration(0)}},
+      cameras_(config.max_num_cameras),
       robots_yellow_(kNumShells, WorldRobot()),
-      robots_blue_(kNumShells, WorldRobot()) {}
+      robots_blue_(kNumShells, WorldRobot()),
+      fast_kick_(config),
+      slow_kick_(config) {}
 
 void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
     update_with_camera_frame(calc_time, {frame}, false);
@@ -28,14 +20,14 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
                                      bool update_all) {
     calc_ball_bounce();
 
-    std::vector<bool> camera_updated(PARAM_max_num_cameras, false);
+    std::vector<bool> camera_updated(config_.max_num_cameras, false);
 
     // TODO: Take only the newest frame if 2 come in for the same camera
 
     for (const CameraFrame& frame : new_frames) {
         // Make sure camera from frame is created, if not, make it
         if (!cameras_.at(frame.camera_id).get_is_valid()) {
-            cameras_.at(frame.camera_id) = Camera(frame.camera_id);
+            cameras_.at(frame.camera_id) = Camera(frame.camera_id, config_);
         }
 
         // Take the non-sorted list from the frame and make a list for the
@@ -149,20 +141,20 @@ void World::update_world_objects(RJ::Time calc_time) {
 
     // Only replace the invalid result if we have measurements on any camera
     if (!kalman_balls.empty()) {
-        ball_ = WorldBall(calc_time, kalman_balls);
+        ball_ = WorldBall(calc_time, kalman_balls, config_);
     }
 
     for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
             robots_yellow_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::YELLOW, i, kalman_robots_yellow.at(i));
+                WorldRobot(calc_time, WorldRobot::Team::YELLOW, i, kalman_robots_yellow.at(i), config_);
         }
     }
 
     for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
             robots_blue_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i));
+                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i), config_);
         }
     }
 }
@@ -189,9 +181,9 @@ void World::detect_kicks(RJ::Time calc_time) {
         // There is a kick recorded already
     } else {
         const RJ::Seconds time_since_best_event(best_kick_estimate_.get_kick_time() - calc_time);
-        const RJ::Seconds same_kick_timeout(PARAM_same_kick_timeout);
-        const RJ::Seconds slow_kick_timeout(PARAM_slow_kick_timeout);
-        const RJ::Seconds fast_kick_timeout(PARAM_fast_kick_timeout);
+        const RJ::Seconds same_kick_timeout(config_.kick_detector.same_kick_timeout);
+        const RJ::Seconds slow_kick_timeout(config_.kick_detector.slow_kick_timeout);
+        const RJ::Seconds fast_kick_timeout(config_.kick_detector.fast_kick_timeout);
 
         // Try using the slow kick if:
         //      - It refers to the current best kick event (and probably is a

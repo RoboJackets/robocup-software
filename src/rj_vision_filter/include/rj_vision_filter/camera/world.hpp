@@ -7,6 +7,7 @@
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -16,7 +17,7 @@ namespace vision_filter {
  */
 class World {
 public:
-    World();
+    explicit World(const VisionFilterConfig& config);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -95,6 +96,11 @@ private:
      * @param calc_time Current iteration time
      */
     void detect_kicks(RJ::Time calc_time);
+
+    /**
+     * @brief Configuration parameters.
+     */
+    const VisionFilterConfig& config_;
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to

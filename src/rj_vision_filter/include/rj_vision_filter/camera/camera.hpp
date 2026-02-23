@@ -6,6 +6,7 @@
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/camera/camera_frame.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
@@ -26,8 +27,9 @@ public:
      * Creates a valid camera with a specific id
      *
      * @param camera_id ID of this camera
+     * @param config Vision filter configuration parameters
      */
-    Camera(int camera_id);
+    Camera(int camera_id, const VisionFilterConfig& config);
 
     /**
      * Returns whether this camera is valid and initialized correctly
@@ -203,6 +205,7 @@ private:
         RJ::Time calc_time, std::vector<std::list<KalmanRobot>>& robot_list_list);
 
     bool is_valid_;
+    const VisionFilterConfig* config_ = nullptr;
 
     int camera_id_{};
     std::list<KalmanBall> kalman_ball_list_;

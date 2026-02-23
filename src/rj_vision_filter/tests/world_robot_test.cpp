@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -12,7 +13,8 @@ TEST(WorldRobot, invalid) {
 TEST(WorldRobot, no_robot) {
     std::list<KalmanRobot> kbl;
 
-    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl));
+    VisionFilterConfig cfg;
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, cfg));
 }
 
 TEST(WorldRobot, one_robot) {
@@ -23,12 +25,13 @@ TEST(WorldRobot, one_robot) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    VisionFilterConfig cfg;
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, cfg);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, cfg);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();
@@ -70,14 +73,15 @@ TEST(WorldRobot, two_robot) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb1 = KalmanRobot(c_id, t, b1, w);
-    KalmanRobot kb2 = KalmanRobot(c_id, t, b2, w);
+    VisionFilterConfig cfg;
+    KalmanRobot kb1 = KalmanRobot(c_id, t, b1, w, cfg);
+    KalmanRobot kb2 = KalmanRobot(c_id, t, b2, w, cfg);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, cfg);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();

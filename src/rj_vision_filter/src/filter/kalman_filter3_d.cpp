@@ -2,24 +2,12 @@
 
 #include <cmath>
 
-#include <rj_param_utils/vision/vision_params.hpp>
-
 namespace vision_filter {
-
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, init_covariance, 100.0,
-                  "Initial covariance of the filter. Controls how fast it gets "
-                  "to the target.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, process_noise, 0.5,
-                  "Controls how quickly it reacts to changes in ball accelerations.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, observation_noise, 2.0,
-                  "Controls how much it trusts measurements from the camera.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
-                  "Scales the covariance and noise to radians instead of "
-                  "meters. Shouldn't matter too much, but it's here.")
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
-KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist)
+KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
+                                const VisionFilterConfig& config)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
@@ -29,8 +17,8 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
-    double p = robot::PARAM_init_covariance;
-    double s = robot::PARAM_orientation_scale;
+    double p = config.robot.init_covariance;
+    double s = config.robot.orientation_scale;
     // clang-format off
     P_k1_k1_ << p,   0,   0,   0,   0,   0,
                 0,   p,   0,   0,   0,   0,
@@ -44,7 +32,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
 
     // State transition matrix (A)
     // Pos, velocity, theta integrator. Assume constant velocity
-    double dt = PARAM_vision_loop_dt;
+    double dt = config.vision_loop_dt;
     // clang-format off
     F_k_ << 1, dt,  0,  0,  0,  0,
             0,  1,  0,  0,  0,  0,
@@ -84,7 +72,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // sigma^2) Note: T is the sample period Taken from Tiger's AutoRef. Most
     // likely found through integration of error through the state matrices See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
-    p = robot::PARAM_process_noise;
+    p = config.robot.process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -100,7 +88,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = robot::PARAM_observation_noise;
+    double o = config.robot.observation_noise;
     // clang-format off
     R_k_ << o,   0,   0,
             0,   o,   0,

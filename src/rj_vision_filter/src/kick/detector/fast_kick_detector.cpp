@@ -4,15 +4,9 @@
 #include <limits>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 
 namespace vision_filter {
-
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_acceleration_trigger, 750.0,
-                  "How large of an acceleration is needed to trigger this "
-                  "detector in m/s^2. ")
-using kick::detector::PARAM_fast_acceleration_trigger;
 
 bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
@@ -20,12 +14,12 @@ bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   KickEvent& kick_event) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
-    if (state_history_.size() > static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
+    if (state_history_.size() > static_cast<size_t>(config_->kick_detector.fast_kick_hist_length)) {
         state_history_.pop_front();
     }
 
     // If we don't have enough, just return
-    if (state_history_.size() < static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
+    if (state_history_.size() < static_cast<size_t>(config_->kick_detector.fast_kick_hist_length)) {
         return false;
     }
 
@@ -72,8 +66,8 @@ bool FastKickDetector::detect_kick() {
         state_history_.at(end_idx).ball.get_pos() - state_history_.at(end_idx - 1).ball.get_pos();
 
     // Velocity at the start and end measurements
-    rj_geometry::Point v_start = dp_start / PARAM_vision_loop_dt;
-    rj_geometry::Point v_end = dp_end / PARAM_vision_loop_dt;
+    rj_geometry::Point v_start = dp_start / config_->vision_loop_dt;
+    rj_geometry::Point v_end = dp_end / config_->vision_loop_dt;
 
     // Change in velocity between start and end measurements
     rj_geometry::Point dv = v_end - v_start;
@@ -81,10 +75,10 @@ bool FastKickDetector::detect_kick() {
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to
     // have to retune it
-    rj_geometry::Point accel = dv / (PARAM_vision_loop_dt * state_history_.size());
+    rj_geometry::Point accel = dv / (config_->vision_loop_dt * state_history_.size());
 
     // Check for large accelerations and only going from slow->fast transitions
-    return accel.mag() > PARAM_fast_acceleration_trigger && v_start.mag() < v_end.mag();
+    return accel.mag() > config_->kick_detector.fast_acceleration_trigger && v_start.mag() < v_end.mag();
 }
 
 WorldRobot FastKickDetector::get_closest_robot() {

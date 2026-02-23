@@ -6,21 +6,83 @@
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_utils/logging_macros.hpp>
 
 namespace vision_filter {
-DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
-               "The rate in Hz at which VisionFilter publishes ball and robot "
-               "observations.")
+
+VisionFilterConfig VisionFilter::load_config() {
+    VisionFilterConfig cfg;
+    this->get_parameter("vision_loop_dt", cfg.vision_loop_dt);
+    this->get_parameter("max_num_cameras", cfg.max_num_cameras);
+    this->get_parameter("publish_hz", cfg.publish_hz);
+
+    this->get_parameter("filter.health.init", cfg.filter_health.init);
+    this->get_parameter("filter.health.inc", cfg.filter_health.inc);
+    this->get_parameter("filter.health.dec", cfg.filter_health.dec);
+    this->get_parameter("filter.health.max", cfg.filter_health.max);
+    this->get_parameter("filter.health.min", cfg.filter_health.min);
+
+    this->get_parameter("ball.init_covariance", cfg.ball.init_covariance);
+    this->get_parameter("ball.process_noise", cfg.ball.process_noise);
+    this->get_parameter("ball.observation_noise", cfg.ball.observation_noise);
+
+    this->get_parameter("robot.init_covariance", cfg.robot.init_covariance);
+    this->get_parameter("robot.process_noise", cfg.robot.process_noise);
+    this->get_parameter("robot.observation_noise", cfg.robot.observation_noise);
+    this->get_parameter("robot.orientation_scale", cfg.robot.orientation_scale);
+
+    this->get_parameter("camera.mhkf_radius_cutoff", cfg.camera.mhkf_radius_cutoff);
+    this->get_parameter("camera.use_mhkf", cfg.camera.use_mhkf);
+    this->get_parameter("camera.max_num_kalman_balls", cfg.camera.max_num_kalman_balls);
+    this->get_parameter("camera.max_num_kalman_robots", cfg.camera.max_num_kalman_robots);
+
+    this->get_parameter("vision_filter.bounce.robot_body_lin_dampen",
+                        cfg.bounce.robot_body_lin_dampen);
+    this->get_parameter("vision_filter.bounce.robot_mouth_lin_dampen",
+                        cfg.bounce.robot_mouth_lin_dampen);
+    this->get_parameter("vision_filter.bounce.robot_body_angle_dampen",
+                        cfg.bounce.robot_body_angle_dampen);
+    this->get_parameter("vision_filter.bounce.robot_mouth_angle_dampen",
+                        cfg.bounce.robot_mouth_angle_dampen);
+
+    this->get_parameter("world_ball.ball_merger_power", cfg.world_ball.ball_merger_power);
+    this->get_parameter("world_robot.robot_merger_power", cfg.world_robot.robot_merger_power);
+
+    this->get_parameter("kalman_ball.max_time_outside_vision",
+                        cfg.kalman_ball.max_time_outside_vision);
+    this->get_parameter("kalman_robot.max_time_outside_vision",
+                        cfg.kalman_robot.max_time_outside_vision);
+
+    this->get_parameter("kick.detector.fast_acceleration_trigger",
+                        cfg.kick_detector.fast_acceleration_trigger);
+    this->get_parameter("kick.detector.fast_kick_hist_length",
+                        cfg.kick_detector.fast_kick_hist_length);
+    this->get_parameter("kick.detector.fast_kick_timeout", cfg.kick_detector.fast_kick_timeout);
+    this->get_parameter("kick.detector.same_kick_timeout", cfg.kick_detector.same_kick_timeout);
+    this->get_parameter("kick.detector.slow_any_robot_past_dist",
+                        cfg.kick_detector.slow_any_robot_past_dist);
+    this->get_parameter("kick.detector.slow_kick_hist_length",
+                        cfg.kick_detector.slow_kick_hist_length);
+    this->get_parameter("kick.detector.slow_kick_timeout", cfg.kick_detector.slow_kick_timeout);
+    this->get_parameter("kick.detector.slow_max_kick_angle",
+                        cfg.kick_detector.slow_max_kick_angle);
+    this->get_parameter("kick.detector.slow_min_ball_speed",
+                        cfg.kick_detector.slow_min_ball_speed);
+    this->get_parameter("kick.detector.slow_one_robot_within_dist",
+                        cfg.kick_detector.slow_one_robot_within_dist);
+    this->get_parameter("kick.detector.slow_robot_dist_filter_cutoff",
+                        cfg.kick_detector.slow_robot_dist_filter_cutoff);
+    return cfg;
+}
 
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       config_client_{this},
       team_color_queue_{this, referee::topics::kTeamColorTopic},
-      param_provider_{this, kVisionFilterParamModule} {
+      config_(load_config()),
+      world_(config_) {
     // Create a timer that calls predict on all of the Kalman filters.
-    const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
+    const std::chrono::duration<double> predict_timer_period(config_.vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 

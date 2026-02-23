@@ -5,6 +5,7 @@
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -19,6 +20,8 @@ namespace vision_filter {
  */
 class FastKickDetector {
 public:
+    explicit FastKickDetector(const VisionFilterConfig& config) : config_(&config) {}
+    FastKickDetector() = default;
     /**
      * Adds a record to our history list
      *
@@ -50,5 +53,6 @@ private:
     WorldRobot get_closest_robot();
 
     std::deque<VisionState> state_history_;
+    const VisionFilterConfig* config_ = nullptr;
 };
 }  // namespace vision_filter

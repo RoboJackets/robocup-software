@@ -1,6 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_param_utils/global_params.hpp>
 #include <rj_vision_filter/vision_filter.hpp>
 
 int main(int argc, char** argv) {
@@ -10,7 +9,6 @@ int main(int argc, char** argv) {
                        .allow_undeclared_parameters(true)
                        .automatically_declare_parameters_from_overrides(true);
     const auto node = std::make_shared<vision_filter::VisionFilter>(options);
-    start_global_param_provider(node.get(), kGlobalParamServerNode);
     executor.add_node(node);
 
     executor.spin();

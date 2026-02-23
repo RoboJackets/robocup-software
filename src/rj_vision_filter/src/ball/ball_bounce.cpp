@@ -5,30 +5,8 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/line.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_lin_dampen, 0.9,
-                  "Linear velocity dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_lin_dampen, 0.3,
-                  "Linear velocity dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-using vision_filter::bounce::PARAM_robot_body_angle_dampen;
-using vision_filter::bounce::PARAM_robot_body_lin_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_angle_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
 
 /**
  * Note 0 case returns -1 instead of 0
@@ -43,17 +21,18 @@ int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>
 bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
                                   const std::vector<WorldRobot>& blue_robots,
-                                  rj_geometry::Point& out_new_vel) {
+                                  rj_geometry::Point& out_new_vel,
+                                  const VisionFilterConfig& config) {
     // Figures out if there is an intersection and what the resulting velocity
     // should be
-    auto find_end_vel = [&ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
+    auto find_end_vel = [&ball, &out_new_vel, &config](const std::vector<WorldRobot>& robots) {
         for (const WorldRobot& robot : robots) {
             if (!robot.get_is_valid()) {
                 continue;
             }
 
             // Make sure ball is intersecting next frame
-            if (!ball_in_robot(ball, robot)) {
+            if (!ball_in_robot(ball, robot, config)) {
                 continue;
             }
 
@@ -177,12 +156,12 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 intersect_pt_reflection_vector.normalized();
 
             // Scale magnitude of velocity by a percentage
-            double dampen_lin_coeff = PARAM_robot_body_lin_dampen;
-            double dampen_angle_coeff = PARAM_robot_body_angle_dampen;
+            double dampen_lin_coeff = config.bounce.robot_body_lin_dampen;
+            double dampen_angle_coeff = config.bounce.robot_body_angle_dampen;
 
             if (did_hit_mouth) {
-                dampen_lin_coeff = PARAM_robot_mouth_lin_dampen;
-                dampen_angle_coeff = PARAM_robot_mouth_angle_dampen;
+                dampen_lin_coeff = config.bounce.robot_mouth_lin_dampen;
+                dampen_angle_coeff = config.bounce.robot_mouth_angle_dampen;
             }
 
             //                   C------D
@@ -243,8 +222,9 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
     return bounce_found;
 }
 
-bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) {
-    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * PARAM_vision_loop_dt;
+bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
+                              const VisionFilterConfig& config) {
+    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * config.vision_loop_dt;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;
 }
