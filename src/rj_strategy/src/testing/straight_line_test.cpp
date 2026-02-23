@@ -91,7 +91,7 @@ void StraightLineTest::line_direction_callback(const rj_geometry_msgs::msg::Line
         
         SPDLOG_INFO("TESTING START: ({}, {})", start_[0], start_[1]);
         SPDLOG_INFO("TESTING END: ({}, {})", end_[0], end_[1]);
-        current_position_ = std::make_unique<Line>(robot_id_, true);
+        current_position_ = std::make_unique<Line>(robot_id_, start_, end_);
     }
 }
 

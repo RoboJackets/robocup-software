@@ -8,10 +8,19 @@ Line::Line(int r_id) : Position{r_id, "Line"} {}
 
 Line::Line(int r_id, bool vertical) : Position{r_id, "Line"}, vertical_{vertical} {}
 
+Line::Line(int r_id, rj_geometry::Point start, rj_geometry::Point end)
+    : Position {r_id, "Line"}
+    , start_ {start}
+    , end_ {end}
+{}
+
 std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     if (check_is_done()) {
         forward_ = !forward_;
     }
+
+    SPDLOG_INFO("TESTING START IN LINE.CPP: ({}, {})", start_[0], start_[1]);
+    SPDLOG_INFO("TESTING END IN LINE.CPP: ({}, {})", end_[0], end_[1]);
 
     if (vertical_) {
         if (forward_) {
