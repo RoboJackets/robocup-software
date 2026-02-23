@@ -31,7 +31,7 @@ public:
 private:
     std::array<uint8_t, kNumShells> walling_robots_;
     uint8_t num_wallers_ = 0;
-    static constexpr int kMaxWallers = 4;
+    static constexpr int kMaxWallers = 2;
 
     void update_wallers();
 };

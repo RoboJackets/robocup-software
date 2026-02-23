@@ -2,11 +2,9 @@
 
 namespace strategy {
 
-Defense::Defense(int r_id) : Position(r_id, "Defense"), marker_{field_dimensions_} {}
+Defense::Defense(int r_id) : Position(r_id, "Defense") {}
 
-Defense::Defense(Position&& other) : Position{std::move(other)}, marker_{field_dimensions_} {
-    position_name_ = "Defense";
-}
+Defense::Defense(Position&& other) : Position{std::move(other)} { position_name_ = "Defense"; }
 
 std::optional<RobotIntent> Defense::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -18,17 +16,17 @@ std::string Defense::get_current_state() {
 }
 
 Defense::State Defense::update_state() {
-    State next_state = current_state_;
-    // handle transitions between states
     WorldState* world_state = last_world_state_;
 
     rj_geometry::Point robot_position = world_state->get_robot(true, robot_id_).pose.position();
     rj_geometry::Point ball_position = world_state->ball.position;
     double distance_to_ball = robot_position.dist_to(ball_position);
 
+    // Update state based on coordinator async calls resolving
+    State next_state = current_state_;
+
     switch (current_state_) {
         case IDLING:
-            // Defensive Priority goes Walling > Marking > Zoning > Idle
             next_state = JOINING_WALL;
             break;
         case JOINING_WALL:
@@ -67,18 +65,37 @@ Defense::State Defense::update_state() {
             }
             break;
         case MARKING:
-            if (marker_.get_target() == -1 || marker_.target_out_of_bounds(world_state)) {
-                next_state = ENTERING_MARKING;
+            if (!client_handles_->marking->am_i_member() ||
+                !client_handles_->marking->am_i_marking()) {
+                next_state = IDLING;
             }
             break;
         case ENTERING_MARKING:
-            marker_.choose_target(world_state);
-            int target_id = marker_.get_target();
-            if (target_id == -1) {
-                next_state = ENTERING_MARKING;
-            } else {
-                next_state = MARKING;
+            // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
+
+            if (!sent_join_marking_group_request_) {
+                sent_join_marking_group_request_ = true;
+                request_time_ = RJ::now();
+
+                client_handles_->marking->join_group([this](const bool is_member) {
+                    if (is_member) {
+                        current_state_ = MARKING;
+                    } else {
+                        current_state_ = IDLING;
+                    }
+                });
             }
+            auto elapsed = RJ::now() - request_time_;
+            if (elapsed > kMarkingGroupJoinTimeout) {
+                // reset flag
+                sent_join_marking_group_request_ = false;
+                // ensure not in coordinator group
+                client_handles_->marking->leave_group();
+                SPDLOG_INFO("Robot {}: Timeout on join group, IDLING now", robot_id_);
+                next_state = IDLING;
+            }
+
+            break;
     }
 
     return next_state;
@@ -152,8 +169,20 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
     } else if (current_state_ == MARKING) {
-        // Marker marker = Marker((u_int8_t) robot_id_);
-        return marker_.get_task(intent, last_world_state_, this->field_dimensions_);
+        rj_geometry::Point targetPoint =
+            last_world_state_->get_robot(false, client_handles_->marking->who_am_i_marking())
+                .pose.position();
+
+        rj_geometry::Point ballPoint = last_world_state_->ball.position;
+        rj_geometry::Point targetToBall =
+            (ballPoint - targetPoint).normalized(kMarkingDistanceFactor);
+        planning::LinearMotionInstant goal{targetPoint + targetToBall};
+        // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint +
+        // targetToBall).y());
+        intent.motion_command =
+            planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
+
+        return intent;
     }
 
     return std::nullopt;

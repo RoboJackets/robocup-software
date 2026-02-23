@@ -42,6 +42,7 @@
 
 // Coordinators
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"
+#include "rj_strategy/coordinator/marking_client.hpp"
 #include "rj_strategy/coordinator/waller_client.hpp"
 
 // tell compiler this class exists, but no need to import the whole header
@@ -49,9 +50,9 @@ class AgentActionClient;
 
 namespace strategy {
 
-// Client Handles for coordinators
 struct ClientHandles {
     std::unique_ptr<KickerPickerClient> kicker_picker;
+    std::unique_ptr<MarkingClient> marking;
     std::unique_ptr<WallerClient> waller;
 };
 
@@ -320,11 +321,11 @@ protected:
     // protected to allow WorldState to be accessed directly by deriveed
     WorldState* last_world_state_;
 
-    // Current goalie
-    int goalie_id_;
-
     // Client Handles
     std::shared_ptr<ClientHandles> client_handles_;
+
+    // Current goalie
+    int goalie_id_;
 
 private:
     /**

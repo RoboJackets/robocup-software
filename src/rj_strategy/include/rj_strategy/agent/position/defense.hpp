@@ -16,7 +16,8 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
-#include "rj_strategy/agent/position/marker.hpp"
+#include "rj_strategy/coordinator/marking.hpp"
+#include "rj_strategy/coordinator/waller.hpp"
 
 namespace strategy {
 
@@ -43,6 +44,8 @@ public:
     void revive() override;
 
 private:
+    static constexpr RJ::Seconds kMarkingGroupJoinTimeout{2.0};
+    static constexpr float kMarkingDistanceFactor{0.55f};
     /**
      * @brief The derived_get_task method returns the task for the defensive robot
      *  to do based on the game situation. The method will continuously look to assign
@@ -67,11 +70,13 @@ private:
     };
 
     State update_state();
-    State current_state_ = IDLING;
+    State current_state_ = JOINING_WALL;
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    int get_marker_target_id();
-    Marker marker_;
+    bool sent_join_marking_group_request_ = false;
+    RJ::Time request_time_;
+
+    bool pending_marking_state_ = false;
 };
 
 }  // namespace strategy
