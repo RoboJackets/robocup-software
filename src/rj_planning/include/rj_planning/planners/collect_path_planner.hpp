@@ -7,6 +7,7 @@
 #include <rj_geometry/point.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
 #include "rj_planning/primitives/replanner.hpp"

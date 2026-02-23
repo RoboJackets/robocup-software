@@ -213,7 +213,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
             start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            plan_request.shell_id,
+            plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -325,7 +326,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
             start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
-            plan_request.shell_id);
+            plan_request.shell_id,
+            plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
@@ -466,12 +468,14 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
         dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
                                               plan_request.constraints.mot, start_instant.stamp,
                                               static_obstacles, dynamic_obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id);
+                                              plan_request.field_dimensions, plan_request.shell_id,
+                                              plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
     } else {
         dampen_end = CreatePath::intermediate(
             previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
             previous_.last().stamp, static_obstacles, dynamic_obstacles,
-            plan_request.field_dimensions, plan_request.shell_id);
+            plan_request.field_dimensions, plan_request.shell_id,
+            plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
     }
 
     dampen_end.set_debug_text("Damping");

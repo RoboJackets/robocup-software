@@ -44,7 +44,8 @@ class PlannerForRobot {
 public:
     PlannerForRobot(int robot_id, rclcpp::Node* node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
-                    const GlobalState& global_state);
+                    const GlobalState& global_state,
+                    const PlanningConfig* planning_config);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
@@ -154,6 +155,7 @@ private:
     int robot_id_;
     std::shared_ptr<TrajectoryCollection> robot_trajectories_;
     const GlobalState& global_state_;
+    const PlanningConfig* planning_config_;
 
     bool had_break_beam_ = false;
 

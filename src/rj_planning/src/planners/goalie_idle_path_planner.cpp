@@ -32,7 +32,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
                               plan_request.field_dimensions, plan_request.constraints,
-                              angle_function, plan_request.shell_id, RJ::Seconds(3.0)},
+                              angle_function, plan_request.shell_id, RJ::Seconds(3.0),
+                              plan_request.planning_config},
         std::move(previous_));
 
     // Debug drawing

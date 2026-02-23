@@ -4,11 +4,13 @@ namespace planning {
 
 PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  std::shared_ptr<TrajectoryCollection> robot_trajectories,
-                                 const GlobalState& global_state)
+                                 const GlobalState& global_state,
+                                 const PlanningConfig* planning_config)
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
       global_state_{global_state},
+      planning_config_{planning_config},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("planning_{}", robot_id)} {
@@ -205,7 +207,8 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        min_dist_from_ball,
                        kick_speed,
                        intent.trigger_mode,
-                       intent.dribbler_mode};
+                       intent.dribbler_mode,
+                       planning_config_};
 }
 
 Trajectory PlannerForRobot::unsafe_plan_for_robot(const planning::PlanRequest& request) {
@@ -276,7 +279,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+           RJ::now() < global_state_.world_state()->last_updated_time +
+                          RJ::Seconds(planning_config_ ? planning_config_->timeout : 0.1);
 }
 
 bool PlannerForRobot::is_done() const {
