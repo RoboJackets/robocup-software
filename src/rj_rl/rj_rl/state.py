@@ -84,26 +84,26 @@ class StateEncoder:
         idx = 0
 
         # Robot state
-        obs[idx: idx + 2] = self._normalize_pos(robot_pos)
+        obs[idx:idx + 2] = self._normalize_pos(robot_pos)
         idx += 2
-        obs[idx: idx + 2] = self._normalize_vel(robot_vel)
+        obs[idx:idx + 2] = self._normalize_vel(robot_vel)
         idx += 2
         obs[idx] = np.cos(robot_heading)
         obs[idx + 1] = np.sin(robot_heading)
         idx += 2
 
         # Ball state
-        obs[idx: idx + 2] = self._normalize_pos(ball_pos)
+        obs[idx:idx + 2] = self._normalize_pos(ball_pos)
         idx += 2
-        obs[idx: idx + 2] = self._normalize_vel(ball_vel)
+        obs[idx:idx + 2] = self._normalize_vel(ball_vel)
         idx += 2
 
         # Goal positions
-        obs[idx: idx + 2] = self._normalize_pos(
+        obs[idx:idx + 2] = self._normalize_pos(
             np.array([own_goal_x, 0.0])
         )
         idx += 2
-        obs[idx: idx + 2] = self._normalize_pos(
+        obs[idx:idx + 2] = self._normalize_pos(
             np.array([opp_goal_x, 0.0])
         )
         idx += 2
@@ -111,14 +111,14 @@ class StateEncoder:
         # Teammate positions
         n_tm = min(len(teammate_positions), self.num_teammates)
         for i in range(n_tm):
-            obs[idx: idx + 2] = self._normalize_pos(teammate_positions[i])
+            obs[idx:idx + 2] = self._normalize_pos(teammate_positions[i])
             idx += 2
         idx += (self.num_teammates - n_tm) * 2  # skip unused slots (zeros)
 
         # Opponent positions
         n_op = min(len(opponent_positions), self.num_opponents)
         for i in range(n_op):
-            obs[idx: idx + 2] = self._normalize_pos(opponent_positions[i])
+            obs[idx:idx + 2] = self._normalize_pos(opponent_positions[i])
             idx += 2
 
         return obs
