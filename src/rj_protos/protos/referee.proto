@@ -97,27 +97,19 @@ message Referee {
         DIRECT_FREE_YELLOW = 8;
         // The blue team may take a direct free kick.
         DIRECT_FREE_BLUE = 9;
-        // The yellow team may take an indirect free kick.
-        INDIRECT_FREE_YELLOW = 10 [deprecated = true];
-        // The blue team may take an indirect free kick.
-        INDIRECT_FREE_BLUE = 11 [deprecated = true];
         // The yellow team is currently in a timeout.
         TIMEOUT_YELLOW = 12;
         // The blue team is currently in a timeout.
         TIMEOUT_BLUE = 13;
-        // The yellow team just scored a goal.
-        // For information only.
-        // Deprecated: Use the score field from the team infos instead. That way, you can also
-        // detect revoked goals.
-        GOAL_YELLOW = 14 [deprecated = true];
-        // The blue team just scored a goal. See also GOAL_YELLOW.
-        GOAL_BLUE = 15 [deprecated = true];
         // Equivalent to STOP, but the yellow team must pick up the ball and
         // drop it in the Designated Position.
         BALL_PLACEMENT_YELLOW = 16;
         // Equivalent to STOP, but the blue team must pick up the ball and drop
         // it in the Designated Position.
         BALL_PLACEMENT_BLUE = 17;
+
+        // Reserved values for removed deprecated commands
+        reserved 10, 11, 14, 15;
     }
     required Command command = 4;
 

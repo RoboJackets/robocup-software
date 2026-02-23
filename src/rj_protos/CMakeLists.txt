@@ -50,8 +50,6 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include>
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-declarations)
-
 ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 ament_export_dependencies(Protobuf)
 

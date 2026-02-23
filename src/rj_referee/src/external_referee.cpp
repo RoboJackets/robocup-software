@@ -161,11 +161,6 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
         case Referee::TIMEOUT_BLUE:
             set_play_state(PlayState::halt());
             break;
-        case Referee::GOAL_YELLOW:
-        case Referee::GOAL_BLUE:
-        case Referee::INDIRECT_FREE_BLUE:
-        case Referee::INDIRECT_FREE_YELLOW:
-            break;
         case Referee::BALL_PLACEMENT_YELLOW:
             set_play_state(PlayState::ball_placement(YELLOW, placement_point));
             break;
