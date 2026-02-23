@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_rrt/Tree.hpp>
 
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
@@ -51,9 +51,10 @@ public:
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
     static rj_geometry::Point find_non_blocked_goal(
         rj_geometry::Point pt, std::optional<rj_geometry::Point> prev_pt,
-        const rj_geometry::ShapeSet& obstacles, int max_itr = 300);
+        const rj_geometry::ShapeSet& obstacles, int max_itr = 300,
+        const PlanningConfig& config = PlanningConfig{});
 
-    static double step_size() { return escape::PARAM_step_size; }
+    static double step_size(const PlanningConfig& config) { return config.escape.step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
     [[nodiscard]] bool is_done() const override;

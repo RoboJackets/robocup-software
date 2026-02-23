@@ -8,9 +8,8 @@
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
@@ -41,6 +40,7 @@ public:
         const AngleFunction& angle_function;
         unsigned int robot_id;
         std::optional<RJ::Seconds> hold_time = std::nullopt;
+        const PlanningConfig* config = nullptr;
     };
 
     /**
@@ -59,21 +59,25 @@ public:
      * @brief The threshold by which the goal needs to change before we require
      * a replan.
      */
-    static double goal_pos_change_threshold() { return replanner::PARAM_pos_change_threshold; }
+    static double goal_pos_change_threshold(const PlanningConfig& config) {
+        return config.replanner.pos_change_threshold;
+    }
 
     /**
      * @brief The threshold by which the goal velocity needs to change before we require
      * a replan.
      */
-    static double goal_vel_change_threshold() { return replanner::PARAM_vel_change_threshold; }
+    static double goal_vel_change_threshold(const PlanningConfig& config) {
+        return config.replanner.vel_change_threshold;
+    }
 
     /**
      * @brief The duration of the previous path to reuse (from the beginning) in
      * a partial replan. This will be used if possible, although in some cases a
      * full replan will be required.
      */
-    static RJ::Seconds partial_replan_lead_time() {
-        return RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+    static RJ::Seconds partial_replan_lead_time(const PlanningConfig& config) {
+        return RJ::Seconds(config.replanner.partial_replan_lead_time);
     }
 
 private:
@@ -91,17 +95,18 @@ private:
 
     // Whether the trajectory has deviated from the path and requires a replan.
     static bool veered_off_path(const Trajectory& trajectory, RobotInstant actual,
-                              RJ::Time now);
+                              RJ::Time now, const PlanningConfig& config);
 
     // Whether the goal has changed past the `goal_pos_change_threshold()`.
     static bool goal_changed(const LinearMotionInstant& prev_goal,
-                            const LinearMotionInstant& goal);
+                            const LinearMotionInstant& goal,
+                            const PlanningConfig& config);
 
     // Get the partial path starting at `now`, plus the partial replan lead time
     // duration.
     static Trajectory partial_path(const Trajectory& prev_trajectory,
-                                  RJ::Time now) {
-        RJ::Time end_time = now + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+                                  RJ::Time now, const PlanningConfig& config) {
+        RJ::Time end_time = now + RJ::Seconds(config.replanner.partial_replan_lead_time);
         return prev_trajectory.sub_trajectory(prev_trajectory.begin_time(),
                                             end_time);
     }

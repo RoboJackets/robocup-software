@@ -17,6 +17,7 @@
 #include <rj_planning/obstacle.hpp>
 
 #include "rj_planning/global_state.hpp"
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/trajectory_collection.hpp"
 
 namespace planning {
@@ -37,7 +38,8 @@ struct PlanRequest {
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float kick_speed = 0,
                 RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN,
-                RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT)
+                RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT,
+                const PlanningConfig* planning_config = nullptr)
         : start(start),
           motion_command(command),  // NOLINT
           constraints(constraints),
@@ -54,7 +56,8 @@ struct PlanRequest {
           min_dist_from_ball(min_dist_from_ball),
           kick_speed(kick_speed),
           trigger_mode(trigger_mode),
-          dribbler_mode(dribbler_mode) {}
+          dribbler_mode(dribbler_mode),
+          planning_config(planning_config) {}
 
     /**
      * The robot's starting state.
@@ -137,6 +140,8 @@ struct PlanRequest {
 
     RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
     RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT;
+
+    const PlanningConfig* planning_config = nullptr;
 };
 
 /**

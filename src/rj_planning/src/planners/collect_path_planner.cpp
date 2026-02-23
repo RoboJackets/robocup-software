@@ -39,7 +39,7 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     RJ::Seconds partial_path_time = 0ms;
 
     // How much of the previous path to steal
-    const RJ::Seconds partial_replan_lead_time(Replanner::partial_replan_lead_time());
+    const RJ::Seconds partial_replan_lead_time(Replanner::partial_replan_lead_time(*plan_request.planning_config));
 
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
@@ -76,12 +76,12 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
         //
         // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
         average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity,
-                                                  collect::PARAM_target_point_lowpass_gain);
+                                                  plan_request.planning_config->collect.target_point_lowpass_gain);
     }
 
     // Approach direction is the direction we move towards the ball and through
     // it
-    if (ball.velocity.mag() < collect::PARAM_ball_speed_approach_direction_cutoff) {
+    if (ball.velocity.mag() < plan_request.planning_config->collect.ball_speed_approach_direction_cutoff) {
         // Move directly to the ball
         approach_direction_ = (ball.position - start_instant.position()).norm();
     } else {
@@ -149,13 +149,13 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     double dist = (start_instant->position() - ball.position).mag() - kRobotMouthRadius;
 
     // If we are in range to the slow dist
-    if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+    if (dist < request.planning_config->collect.approach_dist_target + kRobotMouthRadius &&
         (current_state_ == COARSE_APPROACH)) {
         current_state_ = FINE_APPROACH;
     }
 
     // If the ball gets knocked far away, go back to CoarseApproach
-    if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+    if (dist > request.planning_config->collect.approach_dist_target + kRobotMouthRadius &&
         current_state_ == FINE_APPROACH) {
         current_state_ = COARSE_APPROACH;
     }
@@ -220,14 +220,14 @@ Trajectory CollectPathPlanner::coarse_approach(
     // Setup targets for path planner
     Point target_slow_pos =
         ball.position -
-        (collect::PARAM_approach_dist_target + kRobotMouthRadius) * approach_direction_;
+        (plan_request.planning_config->collect.approach_dist_target + kRobotMouthRadius) * approach_direction_;
     Point target_slow_vel =
-        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
+        average_ball_vel_ + approach_direction_ * plan_request.planning_config->collect.touch_delta_speed;
 
     // Force the path to use the same target if it doesn't move too much
     if (!path_coarse_target_initialized_ ||
         (path_coarse_target_ - target_slow_pos).mag() >
-            (collect::PARAM_approach_dist_target - collect::PARAM_dist_cutoff_to_control) / 2) {
+            (plan_request.planning_config->collect.approach_dist_target - plan_request.planning_config->collect.dist_cutoff_to_control) / 2) {
         path_coarse_target_ = target_slow_pos;
     }
 
@@ -240,7 +240,9 @@ Trajectory CollectPathPlanner::coarse_approach(
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                 plan_request.planning_config};
 
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
@@ -263,7 +265,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
                                          const rj_geometry::ShapeSet& static_obstacles,
                                          const std::vector<DynamicObstacle>& dynamic_obstacles) {
     const double max_ball_angle_change_for_path_reset =
-        settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
+        plan_request.planning_config->settle.max_ball_angle_for_reset * M_PI / 180.0f;
 
     BallState ball = plan_request.world_state->ball;
 
@@ -274,7 +276,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     // If the ball changed directions or magnitude really quickly, do a reset of
     // target
     if (average_ball_vel_.angle_between(ball.velocity) > max_ball_angle_change_for_path_reset ||
-        (average_ball_vel_ - ball.velocity).mag() > settle::PARAM_max_ball_vel_for_path_reset) {
+        (average_ball_vel_ - ball.velocity).mag() > plan_request.planning_config->settle.max_ball_vel_for_path_reset) {
         first_intercept_target_found_ = false;
         average_ball_vel_initialized_ = false;
     }
@@ -288,8 +290,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-    for (double dist = settle::PARAM_search_start_dist; dist < settle::PARAM_search_end_dist;
-         dist += settle::PARAM_search_inc_dist) {
+    for (double dist = plan_request.planning_config->settle.search_start_dist; dist < plan_request.planning_config->settle.search_end_dist;
+         dist += plan_request.planning_config->settle.search_inc_dist) {
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
 
@@ -334,7 +336,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() && best_buffer > RJ::Seconds(settle::PARAM_intercept_buffer_time)) {
+        if (!path.empty() && best_buffer > RJ::Seconds(plan_request.planning_config->settle.intercept_buffer_time)) {
             break;
         }
     }
@@ -393,7 +395,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     } else {
         avg_instantaneous_intercept_target_ =
             apply_low_pass_filter<Point>(avg_instantaneous_intercept_target_, ball_vel_intercept,
-                                         settle::PARAM_target_point_gain);
+                                         plan_request.planning_config->settle.target_point_gain);
     }
 
     // Shortcuts the crazy path planner to just move into the path of the ball
@@ -408,7 +410,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     // and in front of it
     // just move directly to the path location
     Segment ball_line = Segment(
-        ball.position, ball.position + average_ball_vel_.norm() * settle::PARAM_search_end_dist);
+        ball.position, ball.position + average_ball_vel_.norm() * plan_request.planning_config->settle.search_end_dist);
     Point closest_pt = ball_line.nearest_point(start_instant.position());
 
     Point ball_to_pt_dir = closest_pt - ball.position;
@@ -419,13 +421,13 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     // the target point found in the algorithm is further than we are or just
     // about equal
     if (in_front_of_ball &&
-        (closest_pt - start_instant.position()).mag() < settle::PARAM_shortcut_dist &&
+        (closest_pt - start_instant.position()).mag() < plan_request.planning_config->settle.shortcut_dist &&
         first_intercept_target_found_ &&
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
-            settle::PARAM_shortcut_dist) {
+            plan_request.planning_config->settle.shortcut_dist) {
         LinearMotionInstant target{closest_pt,
-                                   settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
+                                   plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -462,7 +464,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
     LinearMotionInstant target_robot_intersection{
-        path_intercept_target_, settle::PARAM_ball_speed_percent_for_dampen * average_ball_vel_};
+        path_intercept_target_, plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
 
     Replanner::PlanParams params{start_instant,
                                  target_robot_intersection,
@@ -471,7 +473,9 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                 plan_request.planning_config};
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();
@@ -625,12 +629,12 @@ Trajectory CollectPathPlanner::fine_approach(
     // Setup targets for path planner
     Point target_hit_pos = ball.position - kRobotMouthRadius * approach_direction_;
     Point target_hit_vel =
-        average_ball_vel_ + approach_direction_ * collect::PARAM_touch_delta_speed;
+        average_ball_vel_ + approach_direction_ * plan_request.planning_config->collect.touch_delta_speed;
 
     LinearMotionInstant target_hit{target_hit_pos, target_hit_vel};
 
     // Decrease accel at the end so we more smoothly touch the ball
-    motion_constraints_hit.max_acceleration *= collect::PARAM_approach_accel_scale;
+    motion_constraints_hit.max_acceleration *= plan_request.planning_config->collect.approach_accel_scale;
     // Prevent a last minute accel at the end if the approach dist allows for
     // acceleration in the trapezoid
     motion_constraints_hit.max_speed =
@@ -642,7 +646,9 @@ Trajectory CollectPathPlanner::fine_approach(
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(ball.position),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                 plan_request.planning_config};
 
     Trajectory path_hit = Replanner::create_plan(params, previous_);
     path_hit.set_debug_text("fine");
@@ -682,7 +688,9 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                 plan_request.planning_config};
 
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");

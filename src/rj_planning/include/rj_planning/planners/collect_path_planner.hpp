@@ -46,7 +46,7 @@ public:
 private:
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void check_solution_validity(BallState ball, RobotInstant start);
+    void check_solution_validity(BallState ball, RobotInstant start, const PlanningConfig& config);
 
     void process_state_transition(const PlanRequest& request, BallState ball,
                                   RobotInstant* start_instant);

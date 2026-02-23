@@ -8,10 +8,10 @@
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_rrt/BiRRT.hpp>
 #include <rj_rrt/planning/Path.hpp>
 
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/robo_cup_state_space.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
@@ -39,6 +39,7 @@ void draw_bi_rrt(const RRT::BiRRT<rj_geometry::Point>& bi_rrt,
 std::vector<rj_geometry::Point> generate_rrt(
     rj_geometry::Point start, rj_geometry::Point goal,
     const rj_geometry::ShapeSet& obstacles,
-    const std::vector<rj_geometry::Point>& waypoints = {});
+    const std::vector<rj_geometry::Point>& waypoints = {},
+    const PlanningConfig& config = PlanningConfig{});
 
 }  // namespace planning

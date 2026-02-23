@@ -8,7 +8,6 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"

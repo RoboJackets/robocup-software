@@ -79,7 +79,8 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    double radius = pivot::PARAM_radius_multiplier * command.pivot_radius;
+    double radius = (request.planning_config ? request.planning_config->pivot.radius_multiplier
+                                              : 1.5) * command.pivot_radius;
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 

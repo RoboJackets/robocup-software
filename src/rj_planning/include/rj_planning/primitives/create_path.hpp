@@ -8,6 +8,7 @@
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/rrt_util.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
@@ -23,7 +24,8 @@ Trajectory rrt(const LinearMotionInstant& start,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const rj_geometry::ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles = {},
-               const std::vector<rj_geometry::Point>& bias_waypoints = {});
+               const std::vector<rj_geometry::Point>& bias_waypoints = {},
+               const PlanningConfig& config = PlanningConfig{});
 
 /**
  * Generate a smooth path from start to goal disregarding obstacles.
@@ -37,9 +39,11 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const rj_geometry::ShapeSet& static_obstacles,
                         const std::vector<DynamicObstacle>& dynamic_obstacles,
-                        const FieldDimensions* field_dimensions, unsigned int robot_id);
+                        const FieldDimensions* field_dimensions, unsigned int robot_id,
+                        const PlanningConfig& config = PlanningConfig{});
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,
-                                                  unsigned int robot_id);
+                                                  unsigned int robot_id,
+                                                  const PlanningConfig& config = PlanningConfig{});
 }  // namespace planning::CreatePath
