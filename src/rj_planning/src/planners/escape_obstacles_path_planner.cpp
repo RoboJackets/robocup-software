@@ -7,8 +7,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
 
-    rj_geometry::ShapeSet obstacles;
-    fill_obstacles(plan_request, &obstacles, nullptr, true, nullptr);
+    ObstacleSet obstacles;
+    fill_obstacles(plan_request, obstacles, true);
 
     if (!obstacles.hit(start_instant.position())) {
         // Keep moving, but slow down the current velocity. This allows us to
@@ -29,12 +29,13 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 
     LinearMotionInstant goal{unblocked, Point()};
 
-    rj_geometry::ShapeSet path_obstacles;
-    rj_geometry::Circle ball{plan_request.world_state->ball.position, kBallRadius};
-    path_obstacles.add(std::make_shared<rj_geometry::Circle>(ball));
+    ObstacleSet path_obstacles;
+    auto ball_shape =
+        std::make_shared<rj_geometry::Circle>(plan_request.world_state->ball.position, kBallRadius);
+    path_obstacles.add(std::make_shared<Obstacle>(ball_shape, ball_shape));
 
     auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
-                                           start_instant.stamp, path_obstacles, {},
+                                           start_instant.stamp, path_obstacles,
                                            plan_request.field_dimensions, plan_request.shell_id);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
@@ -46,8 +47,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 }
 
 Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optional<Point> prev_goal,
-                                                        const ShapeSet& obstacles, int max_itr) {
-    if (obstacles.hit(goal)) {
+                                                        const ObstacleSet& obstacles, int max_itr) {
+    if (obstacles.obstacle_hit(goal)) {
         auto state_space =
             std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
         RRT::Tree<Point> rrt(state_space, Point::hash, 2);
@@ -64,13 +65,13 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
             RRT::Node<Point>* new_node = rrt.grow();
 
             // if the new point is not blocked, it becomes the new goal
-            if (new_node && !obstacles.hit(new_node->state())) {
+            if (new_node && !obstacles.obstacle_hit(new_node->state())) {
                 new_goal = new_node->state();
                 break;
             }
         }
 
-        if (!prev_goal || obstacles.hit(*prev_goal)) return new_goal;
+        if (!prev_goal || obstacles.obstacle_hit(*prev_goal)) return new_goal;
 
         // Only use this newly-found point if it's closer to the desired goal by
         // at least a certain threshold

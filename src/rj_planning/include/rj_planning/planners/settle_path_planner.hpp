@@ -75,21 +75,16 @@ private:
                                 double angle, rj_geometry::Point delta_pos);
 
     // State functions
-    Trajectory intercept(const PlanRequest& plan_request,
-                         RobotInstant start_instant,
-                         const rj_geometry::ShapeSet& static_obstacles,
-                         const std::vector<DynamicObstacle>& dynamic_obstacles,
-                         rj_geometry::Point delta_pos, rj_geometry::Point face_pos);
+    Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
+                         const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                         rj_geometry::Point face_pos);
 
     // Dampen doesn't need to take obstacles into account.
     Trajectory dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                      const rj_geometry::ShapeSet& static_obstacles,
-                      const std::vector<DynamicObstacle>& dynamic_obstacles,
-                      rj_geometry::Point delta_pos, rj_geometry::Point face_pos);
+                      const ObstacleSet& obstacles, rj_geometry::Point delta_pos,
+                      rj_geometry::Point face_pos);
 
-    Trajectory invalid(const PlanRequest& plan_request,
-                       const rj_geometry::ShapeSet& static_obstacles,
-                       const std::vector<DynamicObstacle>& dynamic_obstacles);
+    Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
 
     std::optional<rj_geometry::Point> target_bounce_direction_;
 
