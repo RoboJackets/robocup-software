@@ -115,7 +115,7 @@ class GrSimClient:
         # Vision socket (receive world state)
         self._vision_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._vision_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self._vision_socket.bind(("", self.vision_port))
+        self._vision_socket.bind((self.sim_address, self.vision_port))
         self._vision_socket.setblocking(False)
 
         # Control socket (send teleport/reset commands)
