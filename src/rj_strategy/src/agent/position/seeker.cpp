@@ -128,6 +128,13 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
         return std::numeric_limits<double>::infinity();
     }
 
+    // Reject points whose pass path from ball goes through either defense area
+    rj_geometry::Segment pass_to_point{ball_pos, current_point};
+    if (std::get<0>(field_dimensions.our_defense_area().intersects(pass_to_point)) ||
+        std::get<0>(field_dimensions.their_defense_area().intersects(pass_to_point))) {
+        return std::numeric_limits<double>::infinity();
+    }
+
     // Line of Sight Heuristic
     double max = 0;
     double curr_dp = 0;
