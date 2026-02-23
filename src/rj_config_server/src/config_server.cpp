@@ -72,6 +72,8 @@ using config_server::GameSettingsMsg;
  */
 GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
     GameSettingsMsg game_settings;
+    game_settings.use_our_half = true;
+    game_settings.use_their_half = true;
     for (size_t i = 1; i < args.size(); i++) {
         const std::string& arg = args.at(i);
         if (arg == "-b") {
