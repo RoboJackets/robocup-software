@@ -5,6 +5,9 @@ on:
     branches: [ "ros2" ]
     paths:
       - 'Dockerfile.ci'
+      - 'util/ubuntu-setup'
+      - 'util/ubuntu-packages.txt'
+      - 'util/requirements3.txt'
   workflow_dispatch: 
 
 jobs:

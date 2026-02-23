@@ -7,21 +7,48 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: osrf/ros:humble-desktop-full
+      image: robojackets/robocup-software:humble
     defaults:
       run:
         shell: bash
+    env:
+      CCACHE_DIR: /tmp/ccache
+      CCACHE_MAXSIZE: 1G
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "6"
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Config git
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
 
-      - name: Run util/ubuntu-setup as sudo
-        run: "./util/ubuntu-setup -y"
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/ccache
+          key: ccache-${{ github.base_ref }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ github.base_ref }}-
+            ccache-
+
+      - name: Zero ccache stats
+        run: ccache -z
 
       - name: Build
-        run: source /opt/ros/humble/setup.bash && colcon build --parallel-workers 4
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --parallel-workers 4 --cmake-args \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            "-DCMAKE_CXX_FLAGS=-g1"
+
+      - name: Print ccache stats
+        if: always()
+        run: ccache -s
 
       - name: Test
         run: source /opt/ros/humble/setup.bash && colcon test

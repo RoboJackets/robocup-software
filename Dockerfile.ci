@@ -19,3 +19,13 @@ COPY . ~/robocup-software
 WORKDIR ~/robocup-software
 
 RUN sudo ./util/ubuntu-setup --yes --no-submodules
+
+# Configure ccache for faster rebuilds
+ENV CCACHE_DIR=/root/.ccache
+ENV CCACHE_COMPRESS=1
+ENV CCACHE_COMPRESSLEVEL=6
+ENV CCACHE_MAXSIZE=1G
+RUN ccache -M 1G || true
+
+# Allow git operations in any directory (for CI checkout paths)
+RUN git config --global --add safe.directory '*'

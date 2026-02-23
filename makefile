@@ -33,34 +33,41 @@ define cmake_build_target_perf
  	cd build-release-debug && cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) -DBUILD_TESTS=ON .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
+# Use ccache if available for faster rebuilds
+CCACHE_LAUNCHER := $(shell command -v ccache 2>/dev/null)
+ifdef CCACHE_LAUNCHER
+  CCACHE_CMAKE_ARGS = --cmake-args -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_C_COMPILER_LAUNCHER=ccache
+endif
+
 all-perf:
-	colcon build --parallel-workers 4
+	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
 # perf (or "RelWithDebInfo"): almost as fast as release, some debug symbols
 perf: all-perf
 
 # used in GH Actions build-and-test
 all:
-	colcon build --parallel-workers 4
+	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
 # debug: slow executable, but many debug symbols (e.g. for GDB)
 debug: all
 
 # NOT used in build-and-test
 all_including_tests:
-	colcon build --parallel-workers 4
+	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
 
 all-release:
-	colcon build --parallel-workers 4
+	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
 # release: fast executable, no debug symbols
 release: all-release
 
 # run if build-release-debug/ exists from a previous build
 # and no CMake files or launch.py files have been changed
 again:
-	colcon build --parallel-workers 4
+	colcon build --parallel-workers 4 $(CCACHE_CMAKE_ARGS)
 
 perf_docker:
 	MAKEFLAGS='-j5' colcon build --parallel-workers 1 --executor sequential --cmake-args \
 	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+	-DCMAKE_C_COMPILER_LAUNCHER=ccache \
 	-DCMAKE_BUILD_TYPE=Debug \
 	-DCMAKE_CXX_FLAGS_DEBUG="-g1" 
 
