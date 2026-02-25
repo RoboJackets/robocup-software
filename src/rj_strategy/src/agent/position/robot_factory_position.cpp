@@ -1,25 +1,35 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
+#include "rj_strategy/agent/position/dribbler.hpp"
 
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
-    : Position(r_id, "RobotFactoryPosition") {
-    client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(node, r_id);
-    client_handles_->waller = std::make_unique<WallerClient>(node, r_id);
-
+    : Position(r_id, "RobotFactoryPosition"), kicker_picker_(std::move(node), r_id) {
     if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+        // Robot 0 stays idle and doesn't move
+        current_position_ = std::make_unique<Idle>(robot_id_);
+    } else if (robot_id_ == 1) {
+        // Robot 1 is always the Dribbler
+        current_position_ = std::make_unique<Dribbler>(robot_id_);
+    } else if (robot_id_ == 2) {
+        // Robot 2 stays idle and doesn't move
+        current_position_ = std::make_unique<Idle>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        // All other robots use SmartIdle for testing
+        current_position_ = std::make_unique<SmartIdle>(robot_id_);
     }
-
-    current_position_->set_client_handles(client_handles_);
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
+    // Robots 0, 1, and 2 maintain their positions and don't change based on goalie_id
+    // Robot 0 and 2 are Idle, Robot 1 is Dribbler
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
+    }
+    
+    // For other robots, handle goalie logic
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -43,8 +53,11 @@ void RobotFactoryPosition::process_play_state() {
         switch (current_play_state_.state()) {
             case PlayState::State::Playing: {
                 // We just became regular playing.
-                // set_default_position();
-                client_handles_->kicker_picker->leave_group();
+                // Robot 0, 1, and 2 maintain their positions (0: Idle, 1: Dribbler, 2: Idle)
+                if (robot_id_ != 0 && robot_id_ != 1 && robot_id_ != 2) {
+                    // set_default_position();
+                    kicker_picker_.leave_group();
+                }
                 break;
             }
 
@@ -74,7 +87,7 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Halt: {
                 // The game has been stopped or halted. In this case, we typically want to keep
                 // our current position. The rules for movement should be handled at a lower level.
-                client_handles_->kicker_picker->leave_group();
+                kicker_picker_.leave_group();
                 handle_stop();
                 break;
             }
@@ -83,23 +96,37 @@ void RobotFactoryPosition::process_play_state() {
     }
 }
 
-void RobotFactoryPosition::handle_stop() { set_default_position(); }
+void RobotFactoryPosition::handle_stop() {
+    // Robot 0, 1, and 2 maintain their positions even when stopped
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+    set_default_position();
+}
 
 void RobotFactoryPosition::handle_penalty_playing() {
-    if (!(client_handles_->kicker_picker->am_i_member() &&
-          client_handles_->kicker_picker->is_selected())) {
+    // Robot 0, 1, and 2 maintain their positions even during penalty playing
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+    if (!(kicker_picker_.am_i_member() && kicker_picker_.is_selected())) {
         set_current_position<SmartIdle>();
     }
 }
 
 void RobotFactoryPosition::handle_setup() {
+    // Robot 0, 1, and 2 maintain their positions even during setup
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+    
     // Set up some restart
     if (current_play_state_.is_our_restart()) {
         // Set up our restart
 
         if ((current_play_state_.is_kickoff() || current_play_state_.is_penalty()) &&
-            !client_handles_->kicker_picker->am_i_member()) {
-            client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
+            !kicker_picker_.am_i_member()) {
+            kicker_picker_.join_group([this](KickerPickerClient::Result result) {
                 if (result.am_i_member && result.kicker_id == robot_id_ &&
                     current_play_state_.is_kickoff()) {
                     set_current_position<FreeKicker>();
@@ -119,13 +146,18 @@ void RobotFactoryPosition::handle_setup() {
 }
 
 void RobotFactoryPosition::handle_ready() {
+    // Robot 0, 1, and 2 maintain their positions even during ready phase
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+    
     // Ready stage for a restart
     // Time to kick
 
     if (current_play_state_.is_our_restart() && current_play_state_.is_free_kick() &&
-        !client_handles_->kicker_picker->am_i_member()) {
+        !kicker_picker_.am_i_member()) {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
-        client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
+        kicker_picker_.join_group([this](KickerPickerClient::Result result) {
             if (result.am_i_member && result.kicker_id == robot_id_) {
                 set_current_position<FreeKicker>();
             } else {
@@ -152,6 +184,12 @@ void RobotFactoryPosition::update_position() {
         return;
     }
 
+    // Robot 0, 1, and 2 maintain their assigned positions - never change
+    // Robot 0: Idle, Robot 1: Dribbler, Robot 2: Idle
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+
     switch (current_play_state_.state()) {
         case PlayState::State::Playing: {
             // We just became regular playing.
@@ -162,6 +200,10 @@ void RobotFactoryPosition::update_position() {
         case PlayState::State::Setup:
         case PlayState::State::Ready: {
             // Currently in setup
+            // Robot 0, 1, and 2 maintain their positions even during restarts
+            if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+                break;
+            }
 
             // This is the only case where we have to do something on every tick
             if (current_play_state_.is_their_restart()) {  // Their restart
@@ -197,6 +239,17 @@ void RobotFactoryPosition::set_default_position() {
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
+    // Robot 0, 1, and 2 maintain their assigned positions - never change
+    if (robot_id_ == 0 || robot_id_ == 1 || robot_id_ == 2) {
+        return;
+    }
+    
+    // All other robots (except goalie) use SmartIdle for testing
+    if (robot_id_ != goalie_id_) {
+        set_current_position<SmartIdle>();
+        return;
+    }
+
     std::vector<RobotPos> robots_copy;
     for (int i = 0; i < static_cast<int>(kNumShells); i++) {
         // Ignore goalie
@@ -220,6 +273,8 @@ void RobotFactoryPosition::set_default_position() {
         i++;
     }
 
+    // This code is now unreachable for non-goalie robots due to the SmartIdle
+    // assignment above, but keeping it for goalie and future use
     // Assigning new position
     // Checking whether we have possesion or if the ball is on their half
     if (our_possession_ || last_world_state_->ball.position.y() >
@@ -253,8 +308,13 @@ RobotFactoryPosition::send_communication_request() {
     // Delegated class
     auto current = current_position_->send_communication_request();
 
-    // Combine the two
-    result.insert(result.end(), current.begin(), current.end());
+    // Robot 0 and 2 are idle and don't send communication requests
+    // Skip adding communication requests for robots 0 and 2
+    if (robot_id_ != 0 && robot_id_ != 2) {
+        // Combine the two
+        result.insert(result.end(), current.begin(), current.end());
+    }
+    // For robots 0 and 2, just return the base class requests (which should be empty)
 
     return result;
 }

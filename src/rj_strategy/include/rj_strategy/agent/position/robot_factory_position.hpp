@@ -19,6 +19,7 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/defense.hpp"
+#include "rj_strategy/agent/position/dribbler.hpp"
 #include "rj_strategy/agent/position/free_kicker.hpp"
 #include "rj_strategy/agent/position/goal_kicker.hpp"
 #include "rj_strategy/agent/position/goalie.hpp"
@@ -116,6 +117,9 @@ private:
     std::unique_ptr<Position> current_position_;
 
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
+
+    // KickerPicker client for managing which robot shoots
+    KickerPickerClient kicker_picker_;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
