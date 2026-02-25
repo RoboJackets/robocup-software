@@ -26,6 +26,7 @@
 #include "rj_strategy/agent/position/line.hpp"
 #include "rj_strategy/agent/position/offense.hpp"
 #include "rj_strategy/agent/position/overriding_positions.hpp"
+#include "rj_strategy/agent/position/rl_position.hpp"
 #include "rj_strategy/agent/position/penalty_non_kicker.hpp"
 #include "rj_strategy/agent/position/penalty_player.hpp"
 #include "rj_strategy/agent/position/pivot_test.hpp"
@@ -112,7 +113,18 @@ public:
 
     void set_override_position(const OverridingPositions& overriding_position);
 
+    /**
+     * When true, non-goalie robots use the trained RL policy instead
+     * of the hand-coded Offense / Defense state machines.
+     */
+    void set_use_rl(bool use_rl) { use_rl_ = use_rl; }
+    bool use_rl() const { return use_rl_; }
+
 private:
+    // >>> TOGGLE THIS to switch between RL strategy and hand-coded strategy <<<
+    // true  = all non-goalie robots use the trained RL policy
+    // false = default hand-coded Offense / Defense state machines
+    bool use_rl_ = false;
     std::unique_ptr<Position> current_position_;
 
     OverridingPositions override_play_position_{OverridingPositions::AUTO};

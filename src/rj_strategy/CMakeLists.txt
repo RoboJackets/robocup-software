@@ -51,6 +51,7 @@ set(RJ_STRATEGY_SRC
   src/agent/position/penalty_non_kicker.cpp
   src/agent/position/penalty_player.cpp
   src/agent/position/pivot_test.cpp
+  src/agent/position/rl_position.cpp
   src/agent/position/robot_factory_position.cpp
   src/agent/position/seeker.cpp
   src/agent/position/smartidling.cpp

@@ -221,6 +221,12 @@ void RobotFactoryPosition::set_default_position() {
         i++;
     }
 
+    // When the RL flag is set, all non-goalie robots use the learned policy
+    if (use_rl_) {
+        set_current_position<RLPosition>();
+        return;
+    }
+
     // Assigning new position
     // Checking whether we have possesion or if the ball is on their half
     if (our_possession_ || last_world_state_->ball.position.y() >
@@ -337,6 +343,10 @@ bool RobotFactoryPosition::set_position_override_if_requested() {
         }
         case strategy::OverridingPositions::IDLE: {
             set_current_position<Idle>();
+            return true;
+        }
+        case strategy::OverridingPositions::RL_POSITION: {
+            set_current_position<RLPosition>();
             return true;
         }
         default: {

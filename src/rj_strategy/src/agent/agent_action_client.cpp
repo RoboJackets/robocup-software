@@ -16,6 +16,25 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
     current_position_ = std::make_unique<RobotFactoryPosition>(r_id, node_);
 
+    // RL strategy toggle: set via ROS param "use_rl_strategy" (default false)
+    if (!node_->has_parameter("use_rl_strategy")) {
+        node_->declare_parameter("use_rl_strategy", false);
+    }
+    bool use_rl = node_->get_parameter("use_rl_strategy").as_bool();
+    current_position_->set_use_rl(use_rl);
+    if (use_rl) {
+        SPDLOG_INFO("Robot {}: RL strategy ENABLED", r_id);
+    }
+
+    // Optional: path to exported RL weights
+    if (!node_->has_parameter("rl_weights_path")) {
+        node_->declare_parameter("rl_weights_path", std::string{""});
+    }
+    std::string rl_path = node_->get_parameter("rl_weights_path").as_string();
+    if (!rl_path.empty()) {
+        strategy::RLPosition::set_weights_path(rl_path);
+    }
+
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 

@@ -19,6 +19,7 @@ enum OverridingPositions {
     SMART_IDLE,
     ZONER,
     IDLE,
+    RL_POSITION,
 };
 
 }  // namespace strategy
