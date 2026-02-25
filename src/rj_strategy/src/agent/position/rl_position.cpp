@@ -310,8 +310,8 @@ std::optional<RobotIntent> RLPosition::action_to_intent(int action, RobotIntent 
             double field_len = field_dimensions_.length();
             double field_w = field_dimensions_.width();
             double target_y = field_len * 0.25;
-            double target_x = std::clamp(static_cast<double>(ball_pos.x()),
-                                         -field_w / 2.0, field_w / 2.0);
+            double target_x =
+                std::clamp(static_cast<double>(ball_pos.x()), -field_w / 2.0, field_w / 2.0);
             planning::LinearMotionInstant target{rj_geometry::Point{target_x, target_y}};
             intent.motion_command =
                 planning::MotionCommand{"path_target", target, planning::FaceBall{}};
@@ -402,8 +402,6 @@ void RLPosition::derived_acknowledge_pass() {}
 void RLPosition::derived_pass_ball() {}
 void RLPosition::derived_acknowledge_ball_in_transit() {}
 
-std::string RLPosition::get_current_state() {
-    return "RL:" + last_action_name_;
-}
+std::string RLPosition::get_current_state() { return "RL:" + last_action_name_; }
 
 }  // namespace strategy
