@@ -107,10 +107,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
             auto offset = intermediate - field_dimensions->center_point();
 
             // Ignore out-of-bounds intermediate points
-            // The offset 0.2m is chosen because the sim prevents you from moving
-            // more than 0.2m away from the border lines
-            if (abs(offset.x()) > field_dimensions->width() / 2 + 0.2 ||
-                abs(offset.y()) > field_dimensions->length() / 2 + 0.2) {
+            if (abs(offset.x()) > field_dimensions->width() / 2 ||
+                abs(offset.y()) > field_dimensions->length() / 2) {
                 continue;
             }
             Trajectory trajectory =
