@@ -337,12 +337,11 @@ private:
     rj_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;
 
-    std::vector<std::string> overriding_position_labels{"Auto",           "Offense",
-                                                        "Defense",        "Free Kicker",
-                                                        "Penalty Player", "Penalty Non-Kicker",
-                                                        "Solo Offense",   "Smart Idle",
-                                                        "Zoner",          "Idle",
-                                                        "RL Position"};
+    std::vector<std::string> overriding_position_labels{
+        "Auto",         "Offense",        "Defense",
+        "Free Kicker",  "Penalty Player", "Penalty Non-Kicker",
+        "Solo Offense", "Smart Idle",     "Zoner",
+        "Idle",         "RL Position"};
 
     void populate_override_position_dropdowns();
 };
