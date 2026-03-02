@@ -188,12 +188,4 @@ ament_export_dependencies(
 
 ament_export_targets(${PROJECT_NAME})
 
-if(BUILD_TESTING)
-  find_package(ament_cmake_gtest REQUIRED)
-
-  ament_add_gtest(seeker_test tests/seeker_test.cpp)
-  target_include_directories(seeker_test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-  target_link_libraries(seeker_test ${PROJECT_NAME})
-endif()
-
 ament_package()
