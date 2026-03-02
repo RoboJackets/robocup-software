@@ -1,15 +1,10 @@
 #include "rj_strategy/testing/straight_line_test.hpp"
 
-DEFINE_FLOAT64("straight_line_test", start_x, 1.0,
-               "starting point x coordinate");
-DEFINE_FLOAT64("straight_line_test", start_y, 7.0,
-               "starting point y coordinate");
-DEFINE_FLOAT64("straight_line_test", end_x, -1.0,
-               "ending point x coordinate");
-DEFINE_FLOAT64("straight_line_test", end_y, 7.0,
-               "ending point y coordinate");
-DEFINE_FLOAT64("straight_line_test", robot_id, 1,
-               "robot_id for line_test");
+DEFINE_FLOAT64("straight_line_test", start_x, 1.0, "starting point x coordinate");
+DEFINE_FLOAT64("straight_line_test", start_y, 7.0, "starting point y coordinate");
+DEFINE_FLOAT64("straight_line_test", end_x, -1.0, "ending point x coordinate");
+DEFINE_FLOAT64("straight_line_test", end_y, 7.0, "ending point y coordinate");
+DEFINE_FLOAT64("straight_line_test", robot_id, 1, "robot_id for line_test");
 
 namespace strategy {  // put code inside of namespace for extra uses
 
@@ -66,7 +61,7 @@ StraightLineTest::StraightLineTest(int r_id)
         rj_geometry::Point(static_cast<double>(PARAM_start_x), static_cast<double>(PARAM_start_y));
     end_ = rj_geometry::Point(static_cast<double>(PARAM_end_x), static_cast<double>(PARAM_end_y));
     target_robot_id_ = static_cast<uint8_t>(PARAM_robot_id);
-    
+
     // initiates default
     current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
 }
