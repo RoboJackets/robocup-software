@@ -1,5 +1,16 @@
 #include "rj_strategy/testing/straight_line_test.hpp"
 
+DEFINE_FLOAT64("straight_line_test", start_x, 1.0,
+               "starting point x coordinate");
+DEFINE_FLOAT64("straight_line_test", start_y, 7.0,
+               "starting point y coordinate");
+DEFINE_FLOAT64("straight_line_test", end_x, -1.0,
+               "ending point x coordinate");
+DEFINE_FLOAT64("straight_line_test", end_y, 7.0,
+               "ending point y coordinate");
+DEFINE_FLOAT64("straight_line_test", robot_id, 1,
+               "robot_id for line_test");
+
 namespace strategy {  // put code inside of namespace for extra uses
 
 using RobotMove = rj_msgs::action::RobotMove;
@@ -12,9 +23,9 @@ StraightLineTest::StraightLineTest(int r_id)
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)),
-      current_position_{std::make_unique<Line>(r_id)},  // uniq ptr for curr_pos (line, which is child of position)
+      current_position_{std::make_unique<Line>(
+          r_id)},  // uniq ptr for curr_pos (line, which is child of position)
       robot_id_{r_id} {
-
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     current_state_publisher_ = create_publisher<AgentStateMsg>(
@@ -42,13 +53,20 @@ StraightLineTest::StraightLineTest(int r_id)
         "config/game_settings", 1,
         [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    line_direction_sub_ = create_subscription<rj_geometry_msgs::msg::Line>(
+    line_direction_sub_ = create_subscription<rj_msgs::msg::LineTest>(
         "line", 1,
-        [this](const rj_geometry_msgs::msg::Line::SharedPtr msg) { line_direction_callback(msg); });
+        [this](const rj_msgs::msg::LineTest::SharedPtr msg) { line_direction_callback(msg); });
 
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&StraightLineTest::get_task, this));
+
+    start_ =
+        rj_geometry::Point(static_cast<double>(PARAM_start_x), static_cast<double>(PARAM_start_y));
+    end_ = rj_geometry::Point(static_cast<double>(PARAM_end_x), static_cast<double>(PARAM_end_y));
+    target_robot_id_ = static_cast<uint8_t>(PARAM_robot_id);
+
+    current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
 }
 
 void StraightLineTest::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -79,19 +97,18 @@ void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::
     is_simulated_ = msg->simulation;
 }
 
-void StraightLineTest::line_direction_callback(const rj_geometry_msgs::msg::Line::SharedPtr& msg) {
-    rj_geometry::Point start {msg->pt[0].x, msg->pt[0].y};
-    rj_geometry::Point end {msg->pt[1].x, msg->pt[1].y};
+void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg) {
+    rj_geometry::Point start{msg->pt[0].x, msg->pt[0].y};
+    rj_geometry::Point end{msg->pt[1].x, msg->pt[1].y};
+    uint8_t r_id{msg->r_id};
 
-    if (start[0] != start_[0] || start[1] != start_[1] 
-        || end[0] != start_[0] || end[1] != end_[1]) {
-        
+    if (start[0] != start_[0] || start[1] != start_[1] || end[0] != start_[0] ||
+        end[1] != end_[1] || r_id != target_robot_id_) {
         start_ = start;
         end_ = end;
-        
-        SPDLOG_INFO("TESTING START: ({}, {})", start_[0], start_[1]);
-        SPDLOG_INFO("TESTING END: ({}, {})", end_[0], end_[1]);
-        current_position_ = std::make_unique<Line>(robot_id_, start_, end_);
+        target_robot_id_ = r_id;
+
+        current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
     }
 }
 

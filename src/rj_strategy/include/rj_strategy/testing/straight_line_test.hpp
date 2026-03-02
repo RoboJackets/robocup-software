@@ -14,6 +14,7 @@
 #include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <rj_msgs/msg/line_test.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_utils/logging.hpp>
 #include <std_msgs/msg/bool.hpp>
@@ -25,7 +26,13 @@
 // run test by using the command `make run-sim-line-test`
 // Note: The the line can be changed by running following command in another terminal window:
 // Make sure to source bash and ros in other window
-// `ros2 topic pub -1 line rj_geometry_msgs/msg/Line "{pt: [{x: 0, y: 0}, {x: 1, y: 1}]}"`
+// `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 0, y: 0}, {x: 1, y: 1}], r_id: 1}"`
+
+DECLARE_FLOAT64("straight_line_test", start_x);
+DECLARE_FLOAT64("straight_line_test", start_y);
+DECLARE_FLOAT64("straight_line_test", end_x);
+DECLARE_FLOAT64("straight_line_test", end_y);
+DECLARE_FLOAT64("straight_line_test", robot_id);
 
 namespace strategy {
 
@@ -46,7 +53,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<rj_geometry_msgs::msg::Line>::SharedPtr line_direction_sub_;
+    rclcpp::Subscription<rj_msgs::msg::LineTest>::SharedPtr line_direction_sub_;
 
     // subscription callbacks
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -54,7 +61,7 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
-    void line_direction_callback(const rj_geometry_msgs::msg::Line::SharedPtr& msg);
+    void line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
@@ -105,8 +112,9 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
-    rj_geometry::Point start_{-1, -1};
-    rj_geometry::Point end_{-1, -1};
+    rj_geometry::Point start_;
+    rj_geometry::Point end_;
+    uint8_t target_robot_id_;
 };  // class StraightLineTest
 
 }  // namespace strategy
