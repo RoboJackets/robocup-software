@@ -75,8 +75,7 @@ private:
                                 double angle, rj_geometry::Point delta_pos);
 
     // State functions
-    Trajectory intercept(const PlanRequest& plan_request,
-                         RobotInstant start_instant,
+    Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
                          const rj_geometry::ShapeSet& static_obstacles,
                          const std::vector<DynamicObstacle>& dynamic_obstacles,
                          rj_geometry::Point delta_pos, rj_geometry::Point face_pos);

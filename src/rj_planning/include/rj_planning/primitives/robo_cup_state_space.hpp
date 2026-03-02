@@ -55,8 +55,7 @@ public:
         // allows the RRT to start inside an obstacle, but prevents it from
         // entering a new obstacle.
         for (const auto& shape : obstacles_.shapes()) {
-            if (shape->hit(rj_geometry::Segment(from, to)) && !shape->hit(from))
-                return false;
+            if (shape->hit(rj_geometry::Segment(from, to)) && !shape->hit(from)) return false;
         }
         return true;
     }

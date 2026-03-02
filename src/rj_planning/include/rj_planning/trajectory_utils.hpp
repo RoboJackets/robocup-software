@@ -21,9 +21,8 @@ namespace planning {
  * @param hit_time   The time of the collision (output parameter).
  * @return           Whether or not there is a collision.
  */
-bool trajectory_hits_static(const Trajectory& trajectory,
-                          const rj_geometry::ShapeSet& obstacles,
-                          RJ::Time start_time, RJ::Time* hit_time);
+bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
+                            RJ::Time start_time, RJ::Time* hit_time);
 
 /**
  * @brief Whether the given trajectory intersects any of the dynamic obstacles
@@ -37,9 +36,7 @@ bool trajectory_hits_static(const Trajectory& trajectory,
  * @return                 Whether or not there is a collision.
  */
 bool trajectory_hits_dynamic(const Trajectory& trajectory,
-                           const std::vector<DynamicObstacle>& obstacles,
-                           RJ::Time start_time,
-                           rj_geometry::Circle* out_hit_obstacle,
-                           RJ::Time* out_hit_time);
+                             const std::vector<DynamicObstacle>& obstacles, RJ::Time start_time,
+                             rj_geometry::Circle* out_hit_obstacle, RJ::Time* out_hit_time);
 
 }  // namespace planning
