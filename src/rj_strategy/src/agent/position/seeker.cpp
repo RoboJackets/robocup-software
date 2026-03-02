@@ -94,8 +94,8 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
     // Y Border
     if (p.y() > field_dimensions.their_goal_loc().y() - border_buffer) {
         y = field_dimensions.their_goal_loc().y() - border_buffer;
-    } else if (p.y() < field_dimensions.our_goal_loc().y() + border_buffer) {
-        y = field_dimensions.our_goal_loc().y() + border_buffer;
+    } else if (p.y() < field_dimensions.center_field_loc().y()) {
+        y = field_dimensions.center_field_loc().y();
     }
 
     // Goalie Boxes
