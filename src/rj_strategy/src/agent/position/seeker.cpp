@@ -98,18 +98,27 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
         y = field_dimensions.our_goal_loc().y() + border_buffer;
     }
 
-    // Goalie Boxes
-    if ((y < 1.2 || y > 7.8) && fabs(x) < 1.2) {
-        if (y > 4.5) {
-            y = 8.0 - border_buffer;
-        } else {
-            y = 1.0 + border_buffer;
-        }
+    // Defense Areas (goal boxes) — keep seeker out of both defense areas
+    rj_geometry::Rect our_box = field_dimensions.our_defense_area();
+    rj_geometry::Rect their_box = field_dimensions.their_defense_area();
 
-        if (x > .5) {
-            x = 1.0 + border_buffer;
+    if (our_box.contains_point(rj_geometry::Point(x, y))) {
+        // Push outside our defense area
+        y = our_box.maxy() + border_buffer;
+        if (x > 0) {
+            x = our_box.maxx() + border_buffer;
         } else {
-            x = -1.0 - border_buffer;
+            x = our_box.minx() - border_buffer;
+        }
+    }
+
+    if (their_box.contains_point(rj_geometry::Point(x, y))) {
+        // Push outside their defense area
+        y = their_box.miny() - border_buffer;
+        if (x > 0) {
+            x = their_box.maxx() + border_buffer;
+        } else {
+            x = their_box.minx() - border_buffer;
         }
     }
 
@@ -122,13 +131,13 @@ double Seeker::eval_point(rj_geometry::Point ball_pos, rj_geometry::Point curren
     // Determines 'how good' a point is
     // A higher value is a worse point
 
-    // Does not go into the goalie boxes
-    rj_geometry::Rect goal_box{rj_geometry::Point{1, 8}, rj_geometry::Point{-1, 9}};
-    if (goal_box.contains_point(current_point)) {
+    // Does not go into either defense area (goal boxes)
+    if (field_dimensions.our_defense_area().contains_point(current_point) ||
+        field_dimensions.their_defense_area().contains_point(current_point)) {
         return std::numeric_limits<double>::infinity();
     }
 
-    // Reject points whose path from ball goes through either defense area
+    // Reject points whose pass path from ball goes through either defense area
     rj_geometry::Segment ball_to_point{ball_pos, current_point};
     if (std::get<0>(field_dimensions.our_defense_area().intersects(ball_to_point)) ||
         std::get<0>(field_dimensions.their_defense_area().intersects(ball_to_point))) {

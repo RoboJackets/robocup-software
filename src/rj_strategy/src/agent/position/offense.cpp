@@ -265,13 +265,6 @@ bool Offense::check_if_open(int target_robot_shell) {
     rj_geometry::Point from_robot_position =
         last_world_state_->get_robot(true, target_robot_shell).pose.position();
     rj_geometry::Segment pass_path{from_robot_position, robot_position};
-
-    // Reject passes whose path goes through either defense area (goal box)
-    if (std::get<0>(field_dimensions_.our_defense_area().intersects(pass_path)) ||
-        std::get<0>(field_dimensions_.their_defense_area().intersects(pass_path))) {
-        return false;
-    }
-
     double min_robot_dist = 10000;
     float min_path_dist = 10000;
 
