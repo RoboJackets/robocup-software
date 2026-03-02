@@ -23,16 +23,53 @@
 
 namespace control {
 
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
+// DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
+// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
+// DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
+
+MotionControl::MotionControl(int shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
+    std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
+
+    // declare params
+    // robot specific
+    node->declare_parameter(param_prefix + ".translation_kp", 0.6);
+    node->declare_parameter(param_prefix + ".translation_ki", 0.0);
+    node->declare_parameter(param_prefix + ".translation_kd", 0.3);
+    node->declare_parameter(param_prefix + ".rotation_kp", 10.0);
+    node->declare_parameter(param_prefix + ".rotation_ki", 0.0);
+    node->declare_parameter(param_prefix + ".rotation_kd", 0.9);
+
+    // shared between robots
+    node->declare_parameter("translation_windup", 0);
+    node->declare_parameter("rotation_windup", 50);
+    node->declare_parameter("max_velocity", 2.4);
+    node->declare_parameter("max_acceleration", 3.0);
+    node->declare_paramter("max_angular_velocity", 5.0);
+
+    // populate params
+    // robot specific
+    node->get_parameter(param_prefix + ".translation_kp", translation_kp_);
+    node->get_parameter(param_prefix + ".translation_ki", translation_ki_);
+    node->get_parameter(param_prefix + ".translation_kd", translation_kd_);
+    node->get_parameter(param_prefix + ".rotation_kp", rotation_kp_);
+    node->get_parameter(param_prefix + ".rotation_ki", rotation_ki_);
+    node->get_parameter(param_prefix + ".rotation_kd", rotation_kd_);
+    
+    // shared between robots
+    node->get_parameter("translation_windup", translation_windup_);
+    node->get_parameter("rotation_windup", rotation_windup_);
+    node->get_parameter("max_velocity", max_velocity_);
+    node->get_parameter("max_acceleration", max_acceleration_);
+    node->get_parameter("max_angular_velocity", max_angular_velocity_);
+
+}
 
 namespace testing {
 
@@ -107,6 +144,23 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
+
+    // Robot-specific PID gains
+    double translation_kp_;
+    double translation_ki_;
+    double translation_kd_;
+
+    double rotation_kp_;
+    double rotation_ki_;
+    double rotation_kd_;
+
+    // Shared limits
+    double max_velocity_;
+    double max_acceleration_;
+    double max_angular_velocity_;
+
+    int translation_windup_;
+    int rotation_windup_;
 };
 
 }  // namespace control

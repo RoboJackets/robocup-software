@@ -6,28 +6,28 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
-               "Maximum acceleration limit (motion control) (m/s^2)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
-               "Maximum velocity limit (motion control) (m/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
-               "Maximum angular velocity limit (motion control) (rad/s)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 10.0,
-               "Kp for rotation ((rad/s)/rad)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
-               "Ki for rotation ((rad/s)/(rad*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.9,
-               "Kd for rotation ((rad/s)/(rad/s))");
-DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
-             "Windup limit for rotation (unknown units)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 0.6,
-               "Kp for translation ((m/s)/m)");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
-               "Ki for translation ((m/s)/(m*s))");
-DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
-               "Kd for translation ((m/s)/(m/s))");
-DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
-             "Windup limit for translation (unknown units)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, max_acceleration, 3.0,
+//                "Maximum acceleration limit (motion control) (m/s^2)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, max_velocity, 2.4,
+//                "Maximum velocity limit (motion control) (m/s)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, max_angular_velocity, 5.0,
+//                "Maximum angular velocity limit (motion control) (rad/s)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kp, 10.0,
+//                "Kp for rotation ((rad/s)/rad)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_ki, 0.0,
+//                "Ki for rotation ((rad/s)/(rad*s))");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, rotation_kd, 0.9,
+//                "Kd for rotation ((rad/s)/(rad/s))");
+// DEFINE_INT64(params::kMotionControlParamModule, rotation_windup, 0,
+//              "Windup limit for rotation (unknown units)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kp, 0.6,
+//                "Kp for translation ((m/s)/m)");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, translation_ki, 0.0,
+//                "Ki for translation ((m/s)/(m*s))");
+// DEFINE_FLOAT64(params::kMotionControlParamModule, translation_kd, 0.3,
+//                "Kd for translation ((m/s)/(m/s))");
+// DEFINE_INT64(params::kMotionControlParamModule, translation_windup, 0,
+//              "Windup limit for translation (unknown units)");
 
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     : shell_id_(shell_id),
@@ -188,9 +188,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
-    target_vel.linear().clamp(PARAM_max_velocity);
+    target_vel.linear().clamp(max_velocity_);
     target_vel.angular() =
-        std::clamp(target_vel.angular(), -PARAM_max_angular_velocity, PARAM_max_angular_velocity);
+        std::clamp(target_vel.angular(), -max_angular_velocity_, max_angular_velocity_);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
@@ -211,20 +211,20 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
 
 void MotionControl::update_params() {
     // Update PID parameters
-    position_x_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_x_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_x_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_x_controller_.setWindup(PARAM_translation_windup);
+    position_x_controller_.kp = static_cast<float>(translation_kp_);
+    position_x_controller_.ki = static_cast<float>(translation_ki_);
+    position_x_controller_.kd = static_cast<float>(translation_kd_);
+    position_x_controller_.setWindup(translation_windup_);
 
-    position_y_controller_.kp = static_cast<float>(PARAM_translation_kp);
-    position_y_controller_.ki = static_cast<float>(PARAM_translation_ki);
-    position_y_controller_.kd = static_cast<float>(PARAM_translation_kd);
-    position_y_controller_.setWindup(PARAM_translation_windup);
+    position_y_controller_.kp = static_cast<float>(translation_kp_);
+    position_y_controller_.ki = static_cast<float>(translation_ki_);
+    position_y_controller_.kd = static_cast<float>(translation_kd_);
+    position_y_controller_.setWindup(translation_windup_);
 
-    angle_controller_.kp = static_cast<float>(PARAM_rotation_kp);
-    angle_controller_.ki = static_cast<float>(PARAM_rotation_ki);
-    angle_controller_.kd = static_cast<float>(PARAM_rotation_kd);
-    angle_controller_.setWindup(PARAM_rotation_windup);
+    angle_controller_.kp = static_cast<float>(rotation_kp_);
+    angle_controller_.ki = static_cast<float>(rotation_ki_);
+    angle_controller_.kd = static_cast<float>(rotation_kd_);
+    angle_controller_.setWindup(rotation_windup_);
 }
 
 void MotionControl::reset() {
