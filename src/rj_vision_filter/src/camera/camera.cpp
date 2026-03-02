@@ -19,7 +19,8 @@ void Camera::process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
                                  const std::vector<WorldRobot>& blue_robots) {
     for (KalmanBall& b : kalman_ball_list_) {
         rj_geometry::Point new_vel;
-        bool is_collision = BallBounce::calc_ball_bounce(b, yellow_robots, blue_robots, new_vel, *config_);
+        bool is_collision =
+            BallBounce::calc_ball_bounce(b, yellow_robots, blue_robots, new_vel, *config_);
 
         if (is_collision) {
             b.set_vel(new_vel);
@@ -89,7 +90,8 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
     // frame or two
     if (kalman_ball_list_.empty()) {
         CameraBall avg_ball = CameraBall::combine_balls(ball_list);
-        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball, *config_);
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
+                                       *config_);
 
         return;
     }
@@ -116,18 +118,18 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
             // This is so the ball doesn't move outside the kalman filter
             // position radius when the ball instantly stops (like in sim)
             if (dist < config_->camera.mhkf_radius_cutoff + kalman_ball.get_vel().mag()) {
-        std::vector<CameraBall>& measurement_balls = applied_balls_list.at(kalman_ball_idx);
+                std::vector<CameraBall>& measurement_balls = applied_balls_list.at(kalman_ball_idx);
 
-        // We had at least one measurement near this ball
-        if (!measurement_balls.empty()) {
-            CameraBall avg_ball = CameraBall::combine_balls(measurement_balls);
-            kalman_ball.predict_and_update(calc_time, avg_ball);
+                // We had at least one measurement near this ball
+                if (!measurement_balls.empty()) {
+                    CameraBall avg_ball = CameraBall::combine_balls(measurement_balls);
+                    kalman_ball.predict_and_update(calc_time, avg_ball);
 
-            // There aren't any measurements so just predict
-        } else {
-            kalman_ball.predict(calc_time);
-        }
-    }
+                    // There aren't any measurements so just predict
+                } else {
+                    kalman_ball.predict(calc_time);
+                }
+            }
 
     // Any balls not used, create a kalman ball at that position
     //
@@ -140,8 +142,10 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
         const CameraBall& camera_ball = ball_list.at(i);
         bool was_used = used_camera_ball.at(i);
 
-        if (!was_used && kalman_ball_list_.size() < static_cast<size_t>(config_->camera.max_num_kalman_balls)) {
-            kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball, *config_);
+        if (!was_used &&
+            kalman_ball_list_.size() < static_cast<size_t>(config_->camera.max_num_kalman_balls)) {
+            kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball,
+                                           *config_);
         }
     }
 }
@@ -154,7 +158,8 @@ void Camera::update_balls_akf(RJ::Time calc_time, const std::vector<CameraBall>&
     // If we have no existing filters, create a new one from average of
     // everything
     if (kalman_ball_list_.empty()) {
-        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball, *config_);
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
+                                       *config_);
 
         return;
     }
@@ -279,8 +284,8 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     for (const CameraRobot& camera_robot : single_robot_list) {
         bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!was_used &&
-            single_kalman_robot_list.size() < static_cast<size_t>(config_->camera.max_num_kalman_robots)) {
+        if (!was_used && single_kalman_robot_list.size() <
+                             static_cast<size_t>(config_->camera.max_num_kalman_robots)) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
                                                   previous_world_robot, *config_);
         }

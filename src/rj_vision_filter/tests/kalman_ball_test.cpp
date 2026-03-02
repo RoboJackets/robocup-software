@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <rj_vision_filter/ball/kalman_ball.hpp>
-#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 TEST(KalmanBall, invalid_world_ball) {

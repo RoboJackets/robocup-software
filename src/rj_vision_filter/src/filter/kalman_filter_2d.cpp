@@ -7,7 +7,7 @@ namespace vision_filter {
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
 KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
-                                const VisionFilterConfig& config)
+                               const VisionFilterConfig& config)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel

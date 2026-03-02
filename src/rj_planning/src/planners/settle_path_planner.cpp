@@ -37,8 +37,8 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     // Smooth out the ball velocity a little bit so we can get a better estimate
     // of intersect points
     if (first_ball_vel_found_) {
-        average_ball_vel_ = apply_low_pass_filter<Point>(average_ball_vel_, ball.velocity,
-                                                         plan_request.planning_config->settle.ball_vel_gain);
+        average_ball_vel_ = apply_low_pass_filter<Point>(
+            average_ball_vel_, ball.velocity, plan_request.planning_config->settle.ball_vel_gain);
     } else {
         average_ball_vel_ = ball.velocity;
         first_ball_vel_found_ = true;
@@ -50,7 +50,8 @@ Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
     double angle = start_instant.heading();
     Point delta_pos;
     Point face_pos;
-    calc_delta_pos_for_dir(ball, start_instant, &angle, &delta_pos, &face_pos, *plan_request.planning_config);
+    calc_delta_pos_for_dir(ball, start_instant, &angle, &delta_pos, &face_pos,
+                           *plan_request.planning_config);
 
     // Check and see if we should reset the entire thing if we are super far off
     // course or the ball state changes significantly
@@ -176,12 +177,13 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-    int num_iterations =
-        std::ceil((plan_request.planning_config->settle.search_end_dist - plan_request.planning_config->settle.search_start_dist) /
-                  plan_request.planning_config->settle.search_inc_dist);
+    int num_iterations = std::ceil((plan_request.planning_config->settle.search_end_dist -
+                                    plan_request.planning_config->settle.search_start_dist) /
+                                   plan_request.planning_config->settle.search_inc_dist);
 
     for (int iteration = 0; iteration < num_iterations; iteration++) {
-        double dist = plan_request.planning_config->settle.search_start_dist + iteration * plan_request.planning_config->settle.search_inc_dist;
+        double dist = plan_request.planning_config->settle.search_start_dist +
+                      iteration * plan_request.planning_config->settle.search_inc_dist;
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
 
@@ -228,7 +230,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() && best_buffer > RJ::Seconds(plan_request.planning_config->settle.intercept_buffer_time)) {
+        if (!path.empty() &&
+            best_buffer > RJ::Seconds(plan_request.planning_config->settle.intercept_buffer_time)) {
             break;
         }
     }
@@ -304,7 +307,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     // and in front of it
     // just move directly to the path location
     Segment ball_line = Segment(
-        ball.position, ball.position + average_ball_vel_.norm() * plan_request.planning_config->settle.search_end_dist);
+        ball.position, ball.position + average_ball_vel_.norm() *
+                                           plan_request.planning_config->settle.search_end_dist);
     Point closest_pt = ball_line.nearest_point(start_instant.position()) + delta_pos;
 
     Point ball_to_pt_dir = closest_pt - ball.position;
@@ -315,13 +319,15 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     // the target point found in the algorithm is further than we are or just
     // about equal
     if (in_front_of_ball &&
-        (closest_pt - start_instant.position()).mag() < plan_request.planning_config->settle.shortcut_dist &&
+        (closest_pt - start_instant.position()).mag() <
+            plan_request.planning_config->settle.shortcut_dist &&
         first_intercept_target_found_ &&
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
             plan_request.planning_config->settle.shortcut_dist) {
-        LinearMotionInstant target{closest_pt,
-                                   plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
+        LinearMotionInstant target{
+            closest_pt,
+            plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -352,7 +358,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
     LinearMotionInstant target_robot_intersection{
-        path_intercept_target_, plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
+        path_intercept_target_,
+        plan_request.planning_config->settle.ball_speed_percent_for_dampen * average_ball_vel_};
 
     Replanner::PlanParams params{start_instant,
                                  target_robot_intersection,
@@ -465,11 +472,11 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     Trajectory dampen_end;
 
     if (previous_.empty()) {
-        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
-                                              plan_request.constraints.mot, start_instant.stamp,
-                                              static_obstacles, dynamic_obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id,
-                                              plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
+        dampen_end = CreatePath::intermediate(
+            start_instant.linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            start_instant.stamp, static_obstacles, dynamic_obstacles, plan_request.field_dimensions,
+            plan_request.shell_id,
+            plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{});
     } else {
         dampen_end = CreatePath::intermediate(
             previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,

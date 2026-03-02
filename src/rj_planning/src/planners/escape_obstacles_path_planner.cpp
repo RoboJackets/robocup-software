@@ -6,8 +6,8 @@ namespace planning {
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
-    const PlanningConfig config = plan_request.planning_config ? *plan_request.planning_config
-                                                               : PlanningConfig{};
+    const PlanningConfig config =
+        plan_request.planning_config ? *plan_request.planning_config : PlanningConfig{};
 
     rj_geometry::ShapeSet obstacles;
     fill_obstacles(plan_request, &obstacles, nullptr, true, nullptr);
@@ -35,10 +35,9 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     rj_geometry::Circle ball{plan_request.world_state->ball.position, kBallRadius};
     path_obstacles.add(std::make_shared<rj_geometry::Circle>(ball));
 
-    auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
-                                           start_instant.stamp, path_obstacles, {},
-                                           plan_request.field_dimensions, plan_request.shell_id,
-                                           config);
+    auto result = CreatePath::intermediate(
+        start_instant.linear_motion(), goal, motion_constraints, start_instant.stamp,
+        path_obstacles, {}, plan_request.field_dimensions, plan_request.shell_id, config);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 

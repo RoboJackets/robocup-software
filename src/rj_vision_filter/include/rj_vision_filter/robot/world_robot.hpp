@@ -1,8 +1,9 @@
 #pragma once
 
+#include <list>
+
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <list>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 
@@ -31,8 +32,7 @@ public:
      * @param config Vision filter configuration
      */
     WorldRobot(RJ::Time calc_time, Team team, int robot_id,
-               const std::list<KalmanRobot>& kalman_robots,
-               const VisionFilterConfig& config);
+               const std::list<KalmanRobot>& kalman_robots, const VisionFilterConfig& config);
 
     /**
      * @return If the robot actually represents a real robot

@@ -122,10 +122,12 @@ bool SlowKickDetector::distance_validator(const std::vector<WorldRobot>& robot,
         dist.at(i) = (robot.at(i).get_pos() - ball.at(i).get_pos()).mag();
     }
 
-    int num_close = std::count_if(dist.begin(), dist.end(),
-                                  [&config](double i) { return i < config.kick_detector.slow_one_robot_within_dist; });
-    int num_far = std::count_if(dist.begin(), dist.end(),
-                                [&config](double i) { return i > config.kick_detector.slow_any_robot_past_dist; });
+    int num_close = std::count_if(dist.begin(), dist.end(), [&config](double i) {
+        return i < config.kick_detector.slow_one_robot_within_dist;
+    });
+    int num_far = std::count_if(dist.begin(), dist.end(), [&config](double i) {
+        return i > config.kick_detector.slow_any_robot_past_dist;
+    });
 
     return num_close == 1 && num_far > 0;
 }
@@ -141,8 +143,9 @@ bool SlowKickDetector::velocity_validator(const std::vector<WorldRobot>& /*robot
         vel.at(i) = (ball.at(i + 1).get_pos() - ball.at(i).get_pos()).mag() / config.vision_loop_dt;
     }
 
-    bool all_above =
-        std::all_of(vel.begin(), vel.end(), [&config](double i) { return i > config.kick_detector.slow_min_ball_speed; });
+    bool all_above = std::all_of(vel.begin(), vel.end(), [&config](double i) {
+        return i > config.kick_detector.slow_min_ball_speed;
+    });
 
     return all_above;
 }

@@ -280,8 +280,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
            RJ::now() < global_state_.world_state()->last_updated_time +
-                          RJ::Seconds(planning_config_ ? planning_config_->timeout
-                                                       : PlanningConfig{}.timeout);
+                           RJ::Seconds(planning_config_ ? planning_config_->timeout
+                                                        : PlanningConfig{}.timeout);
 }
 
 bool PlannerForRobot::is_done() const {

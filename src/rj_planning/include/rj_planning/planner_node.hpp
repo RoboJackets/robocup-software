@@ -19,9 +19,9 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_planning/plan_request.hpp"
-#include "rj_planning/planning_params.hpp"
 #include "rj_planning/planner_for_robot.hpp"
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planning_params.hpp"
 #include "rj_planning/trajectory_collection.hpp"
 
 namespace planning {

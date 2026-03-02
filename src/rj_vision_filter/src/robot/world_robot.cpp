@@ -58,11 +58,11 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
         double vel_uncertantity =
             std::sqrt(pose_std_dev.position().magsq() + std::pow(twist_std_dev.angular(), 2));
 
-        double filter_pos_weight =
-            std::pow(pos_uncertantity * filter_uncertantity, -config.world_robot.robot_merger_power);
+        double filter_pos_weight = std::pow(pos_uncertantity * filter_uncertantity,
+                                            -config.world_robot.robot_merger_power);
 
-        double filter_vel_weight =
-            std::pow(vel_uncertantity * filter_uncertantity, -config.world_robot.robot_merger_power);
+        double filter_vel_weight = std::pow(vel_uncertantity * filter_uncertantity,
+                                            -config.world_robot.robot_merger_power);
 
         pos_cartesian_avg += filter_pos_weight * robot.get_pos();
         theta_cartesian_avg += rj_geometry::Point(filter_pos_weight * cos(robot.get_theta()),

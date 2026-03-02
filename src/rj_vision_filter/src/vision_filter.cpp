@@ -64,10 +64,8 @@ VisionFilterConfig VisionFilter::load_config() {
     this->get_parameter("kick.detector.slow_kick_hist_length",
                         cfg.kick_detector.slow_kick_hist_length);
     this->get_parameter("kick.detector.slow_kick_timeout", cfg.kick_detector.slow_kick_timeout);
-    this->get_parameter("kick.detector.slow_max_kick_angle",
-                        cfg.kick_detector.slow_max_kick_angle);
-    this->get_parameter("kick.detector.slow_min_ball_speed",
-                        cfg.kick_detector.slow_min_ball_speed);
+    this->get_parameter("kick.detector.slow_max_kick_angle", cfg.kick_detector.slow_max_kick_angle);
+    this->get_parameter("kick.detector.slow_min_ball_speed", cfg.kick_detector.slow_min_ball_speed);
     this->get_parameter("kick.detector.slow_one_robot_within_dist",
                         cfg.kick_detector.slow_one_robot_within_dist);
     this->get_parameter("kick.detector.slow_robot_dist_filter_cutoff",
