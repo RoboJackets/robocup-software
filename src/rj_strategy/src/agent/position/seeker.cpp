@@ -103,22 +103,30 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
     rj_geometry::Rect their_box = field_dimensions.their_defense_area();
 
     if (our_box.contains_point(rj_geometry::Point(x, y))) {
-        // Push outside our defense area
-        y = our_box.maxy() + border_buffer;
-        if (x > 0) {
-            x = our_box.maxx() + border_buffer;
-        } else {
+        // Push outside our defense area via nearest edge
+        double dist_top = our_box.maxy() - y;
+        double dist_left = x - our_box.minx();
+        double dist_right = our_box.maxx() - x;
+        if (dist_top <= dist_left && dist_top <= dist_right) {
+            y = our_box.maxy() + border_buffer;
+        } else if (dist_left < dist_right) {
             x = our_box.minx() - border_buffer;
+        } else {
+            x = our_box.maxx() + border_buffer;
         }
     }
 
     if (their_box.contains_point(rj_geometry::Point(x, y))) {
-        // Push outside their defense area
-        y = their_box.miny() - border_buffer;
-        if (x > 0) {
-            x = their_box.maxx() + border_buffer;
-        } else {
+        // Push outside their defense area via nearest edge
+        double dist_bottom = y - their_box.miny();
+        double dist_left = x - their_box.minx();
+        double dist_right = their_box.maxx() - x;
+        if (dist_bottom <= dist_left && dist_bottom <= dist_right) {
+            y = their_box.miny() - border_buffer;
+        } else if (dist_left < dist_right) {
             x = their_box.minx() - border_buffer;
+        } else {
+            x = their_box.maxx() + border_buffer;
         }
     }
 
