@@ -51,10 +51,9 @@ private:
     void process_state_transition(const PlanRequest& request, BallState ball,
                                   RobotInstant* start_instant);
 
-    Trajectory coarse_approach(
-        const PlanRequest& plan_request, RobotInstant start,
-        const rj_geometry::ShapeSet& static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles);
+    Trajectory coarse_approach(const PlanRequest& plan_request, RobotInstant start,
+                               const rj_geometry::ShapeSet& static_obstacles,
+                               const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory intercept(const PlanRequest& plan_request, RobotInstant start_instant,
                          const rj_geometry::ShapeSet& static_obstacles,
@@ -65,10 +64,9 @@ private:
                       const rj_geometry::ShapeSet& static_obstacles,
                       const std::vector<DynamicObstacle>& dynamic_obstacles);
 
-    Trajectory fine_approach(
-        const PlanRequest& plan_request, RobotInstant start_instant,
-        const rj_geometry::ShapeSet& static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles);
+    Trajectory fine_approach(const PlanRequest& plan_request, RobotInstant start_instant,
+                             const rj_geometry::ShapeSet& static_obstacles,
+                             const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory invalid(const PlanRequest& plan_request,
                        const rj_geometry::ShapeSet& static_obstacles,
