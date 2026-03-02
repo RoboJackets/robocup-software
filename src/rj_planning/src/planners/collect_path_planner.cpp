@@ -125,8 +125,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     }
 
     // Dampen -> Fine Approach if ball is sufficiently slow
-    if (average_ball_vel_.mag() < kDampenBallSpeedThreshold &&
-        current_state_ == State::Dampen) {
+    if (average_ball_vel_.mag() < kDampenBallSpeedThreshold && current_state_ == State::Dampen) {
         current_state_ = State::FineApproach;
     }
 
