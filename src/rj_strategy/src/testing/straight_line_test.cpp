@@ -61,11 +61,13 @@ StraightLineTest::StraightLineTest(int r_id)
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&StraightLineTest::get_task, this));
 
+    // sets defaults from yaml config
     start_ =
         rj_geometry::Point(static_cast<double>(PARAM_start_x), static_cast<double>(PARAM_start_y));
     end_ = rj_geometry::Point(static_cast<double>(PARAM_end_x), static_cast<double>(PARAM_end_y));
     target_robot_id_ = static_cast<uint8_t>(PARAM_robot_id);
-
+    
+    // initiates default
     current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
 }
 
@@ -97,6 +99,7 @@ void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::
     is_simulated_ = msg->simulation;
 }
 
+// listens for user publish of new movement command
 void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg) {
     rj_geometry::Point start{msg->pt[0].x, msg->pt[0].y};
     rj_geometry::Point end{msg->pt[1].x, msg->pt[1].y};
