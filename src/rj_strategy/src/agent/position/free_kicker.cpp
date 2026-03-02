@@ -11,8 +11,6 @@ FreeKicker::FreeKicker(Position&& other) : Position{std::move(other)} {
 std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
     // Penalty Kicker kicks the ball into the goal
 
-    // SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
-
     rj_geometry::Point goal_corner{
         this->field_dimensions_.their_goal_loc().x() + 0.5 * this->field_dimensions_.goal_width(),
         this->field_dimensions_.their_goal_loc().y()};

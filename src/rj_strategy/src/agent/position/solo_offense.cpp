@@ -11,9 +11,6 @@ SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
     State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
     current_state_ = new_state;
 
     // Calculate task based on state
@@ -38,8 +35,6 @@ SoloOffense::State SoloOffense::next_state() {
             closest_dist = robot_dist;
         }
     }
-
-    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
 
     if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
         field_dimensions_.their_defense_area().contains_point(current_point) ||
@@ -106,14 +101,7 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case KICK: {
-            // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position -
-            // last_world_state_->get_robot(true,
-            // robot_id_).pose.position()).normalized(scaleFactor); point +=
-            // last_world_state_->get_robot(true, robot_id_).pose.position();
-            // planning::LinearMotionInstant target{point};
             planning::LinearMotionInstant target{calculate_best_shot()};
-            // planning::LinearMotionInstant target{last_world_state_->ball.position};
             auto kick_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = kick_cmd;

@@ -15,7 +15,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     if (current_state_ != new_state) {
         reset_timeout();
 
-        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
         if (current_state_ == SEEKING) {
             broadcast_seeker_request(rj_geometry::Point{}, false);
         }
@@ -230,15 +229,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case RECEIVING: {
             // intercept the ball
-            // if ball fast, use settle, otherwise collect
-            // if (last_world_state_->ball.velocity.mag() > 0.75) {
-            // auto settle_cmd = planning::MotionCommand{"settle"};
-            // intent.motion_command = settle_cmd;
-            // intent.dribbler_speed = 255.0;
-            // } else {
             auto collect_cmd = planning::MotionCommand{"collect"};
             intent.motion_command = collect_cmd;
-            // }
 
             return intent;
         }
@@ -297,8 +289,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
 
         if (check_if_open(pass_request->from_robot_id)) response.direct_open = true;
 
-        // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
-
         comm_response.response = response;
     } else if (const communication::SeekerRequest* seeker_request =
                    std::get_if<communication::SeekerRequest>(&request.request)) {
@@ -313,7 +303,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
     return comm_response;
 }
 
-// Receiving a response. THis means we initiated a request earlier
+// Receiving a response. This means we initiated a request earlier
 void Offense::receive_communication_response(communication::AgentPosResponseWrapper response) {
     for (u_int32_t i = 0; i < response.responses.size(); i++) {
         if (const communication::Acknowledge* acknowledge =
@@ -321,35 +311,21 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
             // if the acknowledgement is from an incoming pass request -> pass the ball
             if (const communication::IncomingBallRequest* incoming_ball_request =
                     std::get_if<communication::IncomingBallRequest>(&response.associated_request)) {
-                // SPDLOG_INFO("Robot {} received incoming ball request",
-                // robot_id_);
-
                 // Chosen Robot has told us they are ready to receive
                 current_state_ = PASSING;
                 pass_to_robot_id_ = response.received_robot_ids[i];
-
-                // pass_ball(response.received_robot_ids[i]);
             }
 
         } else if (const communication::PassResponse* pass_response =
                        std::get_if<communication::PassResponse>(&response.responses[i])) {
             // get the associated pass request for this response
-            // SPDLOG_INFO("Robot {} receives pass response", robot_id_);
 
             // Robot has told us they are open
             if (const communication::PassRequest* sent_pass_request =
                     std::get_if<communication::PassRequest>(&response.associated_request)) {
-                // SPDLOG_INFO(
-                // "Robot {} found associated request from {}: direct: {}, direct_open: {}",
-                // robot_id_, response.received_robot_ids[i], sent_pass_request->direct,
-                // pass_response->direct_open);
-
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
-                    // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
-                    // pass_to_robot_id_ = response.received_robot_ids[i];
-                    // current_state_ = PASSING;
                 }
             }
         }
@@ -362,14 +338,7 @@ void Offense::derived_acknowledge_pass() {
     reset_timeout();
 }
 
-void Offense::derived_pass_ball() {
-    // When we have the ball we send out a pass request.
-    // However, if we've since started shooting, just do that.
-    // Otherwise, we can now pass because somebody has accepted our pass.
-    // if (current_state_ != SHOOTING) {
-    // current_state_ = PASSING;
-    // }
-}
+void Offense::derived_pass_ball() {}
 
 void Offense::derived_acknowledge_ball_in_transit() {
     // The ball is coming to me
@@ -466,9 +435,6 @@ bool Offense::can_steal_ball() const {
     }
 
     for (auto pal : this->last_world_state_->our_robots) {
-        // if (pal.robot_id_ == robot_id_) {
-        // continue;
-        // }
         auto dist = (pal.pose.position() - ball_position).mag();
         if (dist < our_dist) {
             closest = false;
@@ -477,8 +443,6 @@ bool Offense::can_steal_ball() const {
     }
 
     return closest;
-
-    // return distance_to_ball() < kStealBallRadius;
 }
 
 rj_geometry::Point Offense::calculate_best_shot() const {

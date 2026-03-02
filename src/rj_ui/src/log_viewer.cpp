@@ -18,26 +18,6 @@ using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
 
-// void usage(const char* prog) {
-//     fprintf(stderr, "Usage: %s <filename.log>\n", prog);
-//     exit(1);
-// }
-
-// int main(int argc, char* argv[]) {
-//     QApplication app(argc, argv);
-
-//     if (argc != 2) {
-//         usage(argv[0]);
-//     }
-
-//     LogViewer win;
-
-//     win.readFrames(argv[1]);
-//     win.showMaximized();
-
-//     return QApplication::exec();
-// }
-
 LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     ui.setupUi(this);
 

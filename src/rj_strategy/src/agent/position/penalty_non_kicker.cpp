@@ -24,37 +24,8 @@ void PenaltyNonKicker::derived_pass_ball(){
 void PenaltyNonKicker::derived_acknowledge_ball_in_transit() {}
 
 std::optional<RobotIntent> PenaltyNonKicker::derived_get_task(RobotIntent intent) {
-    // latest_state_ = update_state();
     return state_to_task(intent);
 };
-
-// SmartIdle::State SmartIdle::update_state() {
-//     switch (latest_state_) {
-//         case IDLING: {
-//         	bool travel_upwards = false;
-//         	double y_pos = last_world_state_->ball.position.y();
-//             if (y_pos - field_dimensions_.their_goal_loc().y() > 0) {
-//                 travel_upwards = true;
-//             }
-//             if ((!travel_upwards && y_pos - last_world_state_->get_robot(true,
-//             this->robot_id_).pose.position().y() > 0) || (travel_upwards && y_pos -
-//             last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
-//                 return GET_AWAY;
-//             }
-//             break;
-//         }
-//         case GET_AWAY: {
-//             if ((travel_upwards && y_pos - last_world_state_->get_robot(true,
-//             this->robot_id_).pose.position().y() > 0) || (!travel_upwards && y_pos -
-//             last_world_state_->get_robot(true, this->robot_id_).pose.position().y() < 0))  {
-//               {
-//                 return IDLING;
-//             }
-//             break;
-//         }
-//     }
-//     return latest_state_;
-// }
 
 std::optional<RobotIntent> PenaltyNonKicker::state_to_task(RobotIntent intent) {
     double y_pos = last_world_state_->ball.position.y();

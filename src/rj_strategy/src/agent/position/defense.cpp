@@ -71,8 +71,6 @@ Defense::State Defense::update_state() {
             }
             break;
         case ENTERING_MARKING:
-            // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
-
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
@@ -177,8 +175,6 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         rj_geometry::Point targetToBall =
             (ballPoint - targetPoint).normalized(kMarkingDistanceFactor);
         planning::LinearMotionInstant goal{targetPoint + targetToBall};
-        // SPDLOG_INFO("Location to mark: {}, {}", (targetPoint + targetToBall).x(), (targetPoint +
-        // targetToBall).y());
         intent.motion_command =
             planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
 

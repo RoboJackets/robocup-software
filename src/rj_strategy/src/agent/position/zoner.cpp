@@ -87,7 +87,6 @@ std::optional<RobotIntent> Zoner::state_to_task(RobotIntent intent) {
                     opp_poses.emplace_back(opp.pose.position());
                 }
             }
-            // SPDLOG_INFO("opp pose size: {}", opp_poses.size());
 
             rj_geometry::Point target_point{};
             if (opp_poses.size() >= 2) {

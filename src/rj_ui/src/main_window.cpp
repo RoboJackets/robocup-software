@@ -321,23 +321,6 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 }
 
 void MainWindow::updateViews() {
-    // TODO(Kyle): Re-enable manual control
-#if MANUAL
-    int manual = context_->game_settings.joystick_config.manualID;
-    if ((manual >= 0 || _ui.manualID->isEnabled()) && !context_->joystick_valid) {
-        // Joystick is gone - turn off manual control
-        _ui.manualID->setCurrentIndex(0);
-        context_->game_settings.joystick_config.manualID = -1;
-        _ui.manualID->setEnabled(false);
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), false);
-    } else if (!_ui.manualID->isEnabled() && context_->joystick_valid) {
-        // Joystick reconnected
-        _ui.manualID->setEnabled(true);
-        _ui.joystickTab->setVisible(true);
-        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), true);
-    }
-#endif
-
     PlayState play_state = PlayState::halt();
     MatchState match_state;
     TeamInfo our_info;
@@ -707,14 +690,6 @@ void MainWindow::updateStatus() {
         return;
     }
 
-#if MANUAL
-    if (context_->game_settings.joystick_config.manualID >= 0) {
-        // Mixed auto/manual control
-        status("MANUAL", StatusType::Status_Warning);
-        return;
-    }
-#endif
-
     // Driving the robots helps isolate radio problems by verifying radio TX,
     // so test this after manual driving.
     if (curTime - ps.last_radio_rx_time > RJ::Seconds(1)) {
@@ -780,11 +755,6 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
 void MainWindow::on_fieldView_robotSelected(int shell) {
     if (context_->joystick_valid) {
         _ui.manualID->setCurrentIndex(shell + 1);
-
-#if MANUAL
-        std::lock_guard<std::mutex> lock(*context__mutex);
-        _game_settings.joystick_config.manualID = shell;
-#endif
     }
 }
 
@@ -896,31 +866,9 @@ void MainWindow::on_actionNyanStyle_triggered() {
 
 // Manual control commands
 
-void MainWindow::on_actionDampedRotation_toggled(bool value) {
-#if MANUAL
-    cout << "DampedRotation is ";
-    if (value)
-        cout << "Enabled" << endl;
-    else
-        cout << "Disabled" << endl;
+void MainWindow::on_actionDampedRotation_toggled(bool value) {}
 
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->game_settings.joystick_config.dampedRotation = value;
-#endif
-}
-
-void MainWindow::on_actionDampedTranslation_toggled(bool value) {
-#if MANUAL
-    cout << "DampedTranslation is ";
-    if (value)
-        cout << "Enabled" << endl;
-    else
-        cout << "Disabled" << endl;
-
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->game_settings.joystick_config.dampedTranslation = value;
-#endif
-}
+void MainWindow::on_actionDampedTranslation_toggled(bool value) {}
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
@@ -960,15 +908,7 @@ void MainWindow::on_actionSeed_triggered() {
 }
 
 // Joystick settings
-void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
-#if MANUAL
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->game_settings.joystick_config.useKickOnBreakBeam =
-        _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
-#endif
-}
-
-// choose between kick on break beam and immeditate
+void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {}
 
 // Log controls
 void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
@@ -1033,21 +973,11 @@ void MainWindow::on_actionTeamYellow_triggered() {
     update_cache(_game_settings.request_blue_team, false, &_game_settings_valid);
 }
 
-void MainWindow::on_manualID_currentIndexChanged(int value) {
-#if MANUAL
-    context_->game_settings.joystick_config.manualID = value - 1;
-#endif
-}
+void MainWindow::on_manualID_currentIndexChanged(int value) {}
 
-void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
-#if MANUAL
-    context_->game_settings.joystick_config.useFieldOrientedDrive = value;
-#endif
-}
+void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {}
 
-void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
-    // TODO(Kyle): Reimplement multiple manual
-}
+void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {}
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1, &_game_settings_valid);
