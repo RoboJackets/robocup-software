@@ -116,8 +116,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     }
     RJ::Time now = params.start.stamp;
 
-    if (previous.empty() ||
-        goal_changed(previous.last().linear_motion(), params.goal)) {
+    if (previous.empty() || goal_changed(previous.last().linear_motion(), params.goal)) {
         return full_replan(params);
     }
 
