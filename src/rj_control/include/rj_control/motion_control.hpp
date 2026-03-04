@@ -34,43 +34,6 @@ namespace control {
 // DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
 // DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
 
-MotionControl::MotionControl(int shell_id, rclcpp::Node* node) : shell_id_(shell_id) {
-    std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
-
-    // declare params
-    // robot specific
-    node->declare_parameter(param_prefix + ".translation_kp", 0.6);
-    node->declare_parameter(param_prefix + ".translation_ki", 0.0);
-    node->declare_parameter(param_prefix + ".translation_kd", 0.3);
-    node->declare_parameter(param_prefix + ".rotation_kp", 10.0);
-    node->declare_parameter(param_prefix + ".rotation_ki", 0.0);
-    node->declare_parameter(param_prefix + ".rotation_kd", 0.9);
-
-    // shared between robots
-    node->declare_parameter("translation_windup", 0);
-    node->declare_parameter("rotation_windup", 50);
-    node->declare_parameter("max_velocity", 2.4);
-    node->declare_parameter("max_acceleration", 3.0);
-    node->declare_paramter("max_angular_velocity", 5.0);
-
-    // populate params
-    // robot specific
-    node->get_parameter(param_prefix + ".translation_kp", translation_kp_);
-    node->get_parameter(param_prefix + ".translation_ki", translation_ki_);
-    node->get_parameter(param_prefix + ".translation_kd", translation_kd_);
-    node->get_parameter(param_prefix + ".rotation_kp", rotation_kp_);
-    node->get_parameter(param_prefix + ".rotation_ki", rotation_ki_);
-    node->get_parameter(param_prefix + ".rotation_kd", rotation_kd_);
-    
-    // shared between robots
-    node->get_parameter("translation_windup", translation_windup_);
-    node->get_parameter("rotation_windup", rotation_windup_);
-    node->get_parameter("max_velocity", max_velocity_);
-    node->get_parameter("max_acceleration", max_acceleration_);
-    node->get_parameter("max_angular_velocity", max_angular_velocity_);
-
-}
-
 namespace testing {
 
 class MotionControlTest;
@@ -116,7 +79,7 @@ private:
      */
     void update_params();
 
-    static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
+    void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 
     int shell_id_;
 
