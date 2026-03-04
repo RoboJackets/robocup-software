@@ -326,8 +326,10 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
             field_dimensions_.our_defense_area().hit(pass_trajectory) ||
             field_dimensions_.their_defense_area().hit(pass_trajectory);
 
-        if (check_if_open(pass_request->from_robot_id) && has_open_shot() &&
-            !crosses_penalty_area) {
+        bool too_close = passer_pos.dist_to(receiver_pos) < kMinPassDistance;
+            
+
+        if (check_if_open(pass_request->from_robot_id) && can_i_shoot()) {
             response.direct_open = true;
         }
 
@@ -452,6 +454,38 @@ bool Offense::has_open_shot() const {
     return min_dist > kEnemyTooCloseRadius;
 }
 
+bool Offense::can_i_shoot() const {
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
+
+    rj_geometry::Point best_shot = calculate_best_shot();
+
+    rj_geometry::Point robot_to_goal = best_shot - robot_position;
+
+    double min_dist = std::numeric_limits<double>::infinity();
+
+    for (const RobotState& enemy : last_world_state_->their_robots) {
+        if (field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            continue;
+        }
+
+        rj_geometry::Point enemy_vec = enemy.pose.position() - robot_position;
+
+        // Skip enemies behind us relative to the shot direction
+        if (enemy_vec.dot(robot_to_goal) < 0) {
+            continue;
+        }
+
+        // Project enemy vector onto shot line, then get perpendicular distance
+        auto projection = (enemy_vec.dot(robot_to_goal) / robot_to_goal.dot(robot_to_goal));
+        enemy_vec = enemy_vec - (projection) * robot_to_goal;
+
+        min_dist = std::min(min_dist, enemy_vec.mag());
+    }
+
+    return min_dist > kEnemyTooCloseRadius*2;
+}
+
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
@@ -531,7 +565,7 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     rj_geometry::Point increment(0.05, 0);
     rj_geometry::Point curr_point =
         their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 18; i++) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
             best_distance = distance;

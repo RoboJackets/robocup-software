@@ -96,7 +96,7 @@ void World::calc_ball_bounce() {
 
 void World::update_world_objects(RJ::Time calc_time) {
     // Fill robots_yellow_/blue with what robots we want and remove the rest
-    ball_ = WorldBall();
+    //ball_ = WorldBall();
 
     std::fill(robots_yellow_.begin(), robots_yellow_.end(), WorldRobot());
     std::fill(robots_blue_.begin(), robots_blue_.end(), WorldRobot());

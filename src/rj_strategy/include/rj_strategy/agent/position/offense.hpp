@@ -192,6 +192,8 @@ private:
     // Used to tell if an enemy is close enough to block a shot
     static constexpr double kEnemyTooCloseRadius{kStealBallRadius};
 
+    static constexpr double kMinPassDistance{0.5};
+
     /* Utility functions for State or Task Calculation */
 
     /**
@@ -223,6 +225,12 @@ private:
      * @param target_robot_shell the robot shell to check if open
      */
     bool check_if_open(int target_robot_shell);
+
+    /**
+     * @return whether or not a robot is capable of shooting from their pos
+     */
+    bool can_i_shoot() const;
+    
     
     /**
      * @return the target (within the goal) that would be the most clear shot

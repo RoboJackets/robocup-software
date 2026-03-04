@@ -197,14 +197,6 @@ communication::PassResponse Position::receive_pass_request(
     communication::PassResponse pass_response{};
     communication::generate_uid(pass_response);
 
-    if (pass_request.direct) {
-        // Handle direct pass request
-        pass_response.direct_open = true;
-    } else {
-        // TODO: Handle indirect pass request
-        pass_response.direct_open = false;
-    }
-
     return pass_response;
 }
 
