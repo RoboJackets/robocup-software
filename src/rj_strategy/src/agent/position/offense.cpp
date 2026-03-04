@@ -303,6 +303,38 @@ bool Offense::check_if_open(int target_robot_shell) {
     return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance);
 }
 
+bool Offense::can_i_shoot() const {
+    rj_geometry::Point robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
+
+    rj_geometry::Point best_shot = calculate_best_shot();
+
+    rj_geometry::Point robot_to_goal = best_shot - robot_position;
+
+    double min_dist = std::numeric_limits<double>::infinity();
+
+    for (const RobotState& enemy : last_world_state_->their_robots) {
+        if (field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            continue;
+        }
+
+        rj_geometry::Point enemy_vec = enemy.pose.position() - robot_position;
+
+        // Skip enemies behind us relative to the shot direction
+        if (enemy_vec.dot(robot_to_goal) < 0) {
+            continue;
+        }
+
+        // Project enemy vector onto shot line, then get perpendicular distance
+        auto projection = (enemy_vec.dot(robot_to_goal) / robot_to_goal.dot(robot_to_goal));
+        enemy_vec = enemy_vec - (projection) * robot_to_goal;
+
+        min_dist = std::min(min_dist, enemy_vec.mag());
+    }
+
+    return min_dist > 0.1;
+}
+
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
     communication::AgentPosRequestWrapper request) {
     communication::PosAgentResponseWrapper comm_response =
@@ -315,7 +347,9 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
 
         auto response = Position::receive_pass_request(*pass_request);
 
-        if (check_if_open(pass_request->from_robot_id)) response.direct_open = true;
+        if (check_if_open(pass_request->from_robot_id) && can_i_shoot()) {
+            response.direct_open = true;
+        }
 
         // SPDLOG_INFO("Robot {} accepts pass", robot_id_);
 
