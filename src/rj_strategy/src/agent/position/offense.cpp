@@ -92,6 +92,13 @@ Offense::State Offense::next_state() {
         }
 
         case PASSING_FINISHED: {
+            // Failsafe: if the ball is still near the passer after the kick
+            // failsafe window, the kick failed — notify the receiver and reset.
+            if (kick_failed()) {
+                send_kick_failed_to_receiver(pass_to_robot_id_);
+                return DEFAULT;
+            }
+
             // Wait for PassReceivedRequest from receiver (handled in
             // receive_communication_request) or timeout.
             if (timed_out()) {
@@ -347,6 +354,10 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         if (current_state_ == PASSING_FINISHED) {
             current_state_ = DEFAULT;
         }
+        // Kick failed: passer notifies receiver to abort receiving.
+        if (current_state_ == RECEIVING || current_state_ == RECEIVING_START) {
+            current_state_ = DEFAULT;
+        }
     }
 
     return comm_response;
@@ -583,6 +594,24 @@ bool Offense::ball_in_red() const {
             field_dimensions_.their_defense_area().contains_point(ball_pos) ||
             !field_dimensions_.field_rect().contains_point(ball_pos));
 }
+bool Offense::kick_failed() const {
+    return (last_time_ + kKickFailsafeTimeout < RJ::now()) &&
+           (distance_to_ball() < kOwnBallRadius);
+}
+
+void Offense::send_kick_failed_to_receiver(u_int8_t receiver_robot_id) {
+    communication::PassReceivedRequest pass_received_request{};
+    pass_received_request.from_robot_id = robot_id_;
+    communication::generate_uid(pass_received_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = pass_received_request;
+    communication_request.target_agents = {receiver_robot_id};
+    communication_request.broadcast = false;
+    communication_request.urgent = true;
+    communication_requests_.push_back(communication_request);
+}
+
 void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding) {
     communication::SeekerRequest seeker_request{};
     communication::generate_uid(seeker_request);

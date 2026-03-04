@@ -194,6 +194,10 @@ private:
 
     static constexpr double kMinPassDistance{0.5};
 
+    // If the ball hasn't left the passer within this window after the kick
+    // command fires, the kick is considered failed and both robots reset.
+    static constexpr RJ::Seconds kKickFailsafeTimeout{2.0};
+
     /* Utility functions for State or Task Calculation */
 
     /**
@@ -241,6 +245,19 @@ private:
      * @return whether the ball is in an area that non-goalies cannot reach.
      */
     bool ball_in_red() const;
+
+    /**
+     * @return true when in PASSING_FINISHED and the kick failsafe timeout has
+     *         elapsed while the ball is still within possession range of this robot.
+     */
+    bool kick_failed() const;
+
+    /**
+     * @brief Notify the receiver that the kick failed so it can abort and
+     *        return to default behaviour. Uses the same PassReceivedRequest
+     *        message type that the receiver normally sends to the passer.
+     */
+    void send_kick_failed_to_receiver(u_int8_t receiver_robot_id);
 
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
