@@ -223,12 +223,7 @@ private:
      * @param target_robot_shell the robot shell to check if open
      */
     bool check_if_open(int target_robot_shell);
-
-    /**
-     * @return true if this agent has a clear shot on goal from its current
-     * position (no opponent blocking the path), false otherwise.
-     */
-    bool can_i_shoot() const;
+    
     /**
      * @return the target (within the goal) that would be the most clear shot
      */
