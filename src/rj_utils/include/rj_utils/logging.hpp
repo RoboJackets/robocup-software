@@ -33,11 +33,11 @@ inline void fatal_throw(spdlog::string_view_t fmt, const Args&... args) {
     SPDLOG_CRITICAL(__VA_ARGS__); \
     throw std::runtime_error(fmt::format(__VA_ARGS__))
 
-inline void debug_log(const std::string& e) { spdlog::debug(e); }
+inline void debug_log(const std::string& e) { spdlog::debug(e); } //NOLINT(readability-identifier-length)
 
-inline void debug_log(const std::exception& e) { spdlog::debug(e.what()); }
+inline void debug_log(const std::exception& e) { spdlog::debug(e.what()); } //NOLINT(readability-identifier-length)
 
-inline void debug_log_if(const std::string& e, bool condition) {
+inline void debug_log_if(const std::string& e, bool condition) { //NOLINT(readability-identifier-length)
     if (condition) {
         debug_log(e);
     }
@@ -45,7 +45,7 @@ inline void debug_log_if(const std::string& e, bool condition) {
 
 template <class T,
           typename std::enable_if<std::is_base_of<std::exception, T>::value, int>::type = 0>
-inline void debug_throw(const T& e) {
+inline void debug_throw(const T& e) { //NOLINT(readability-identifier-length)
     debug_log(e);
     if (kThrowDebugExceptions) {
         throw e;

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+PKG_PREFIX=$(ros2 pkg prefix rj_ui)
+APP_DIR="${PKG_PREFIX}/share/rj_ui"
+
+cd "${APP_DIR}"
+
+exec ./bin/rj-ui-linux_x64

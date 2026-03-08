@@ -44,6 +44,7 @@ public:
     [[nodiscard]] bool is_free_kick() const { return restart() == Restart::Free; }
     [[nodiscard]] bool is_penalty() const { return restart() == Restart::Penalty; }
     [[nodiscard]] bool is_placement() const { return restart() == Restart::Placement; }
+    [[nodiscard]] double max_speed() const { return state_ == State::Stop ? 1.5 : 4.0; }
 
     [[nodiscard]] std::optional<rj_geometry::Point> ball_placement_point() const {
         if (is_placement()) {

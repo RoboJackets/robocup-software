@@ -120,6 +120,7 @@ private:
 // ============================================================================
 template <typename T, int queue_size>
 AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::AsyncMessageQueue(
+    //NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     const std::string& node_name, const std::string& topic_name)
     : node_{rclcpp::Node::make_shared(node_name)},
       queue_{node_.get(), topic_name} {
@@ -139,6 +140,7 @@ AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::get_all() {
 // ============================================================================
 template <typename T>
 AsyncMessageQueue<T, MessagePolicy::kQueue, 1>::AsyncMessageQueue(
+    //NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     const std::string& node_name, const std::string& topic_name)
     : node_{rclcpp::Node::make_shared(node_name)},
       queue_{node_.get(), topic_name} {
@@ -155,6 +157,7 @@ std::unique_ptr<T> AsyncMessageQueue<T, MessagePolicy::kQueue, 1>::get() {
 // ============================================================================
 template <typename T>
 AsyncMessageQueue<T, MessagePolicy::kLatest>::AsyncMessageQueue(
+    //NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     const std::string& node_name, const std::string& topic_name,
     const T& default_value)
     : node_{rclcpp::Node::make_shared(node_name)},
@@ -166,6 +169,7 @@ AsyncMessageQueue<T, MessagePolicy::kLatest>::AsyncMessageQueue(
 // ============================================================================
 template <typename T>
 AsyncMessageQueue<T, MessagePolicy::kLatest>::AsyncMessageQueue(
+    //NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     const std::string& node_name, const std::string& topic_name)
     : node_{rclcpp::Node::make_shared(node_name)},
       queue_{node_.get(), topic_name} {

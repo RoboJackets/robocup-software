@@ -17,7 +17,14 @@ public:
      * @param init_pos initial position
      * @param init_vel initial velocity
      */
-    KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel);
+    KalmanFilter2D(
+        rj_geometry::Point init_pos,
+        rj_geometry::Point init_vel,
+        double vision_loop_dt = 1.0 / 60.0,
+        double ball_initial_covariance = 100.0,
+        double ball_process_noise = 0.1,
+        double ball_observation_noise = 2.0
+    );
 
     /**
      * Predicts with update
@@ -30,22 +37,22 @@ public:
     /**
      * @return Current position estimate
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return Current velocity estimate
      */
-    rj_geometry::Point get_vel() const;
+    [[nodiscard]] rj_geometry::Point get_vel() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    rj_geometry::Point get_pos_cov() const;
+    [[nodiscard]] rj_geometry::Point get_pos_cov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    rj_geometry::Point get_vel_cov() const;
+    [[nodiscard]] rj_geometry::Point get_vel_cov() const;
 
     /**
      * Set's state velocity given XY velocity

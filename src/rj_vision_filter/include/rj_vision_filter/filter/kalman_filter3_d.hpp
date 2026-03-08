@@ -18,7 +18,15 @@ public:
      * @param init_pose initial pose
      * @param init_twist initial twist
      */
-    KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist);
+    KalmanFilter3D(
+        rj_geometry::Pose init_pose,
+        rj_geometry::Twist init_twist,
+        double vision_loop_dt = 1.0 / 60.0,
+        double robot_initial_covariance = 100.0,
+        double robot_process_noise = 0.5,
+        double robot_observation_noise = 2.0,
+        double robot_orientation_scale = 1.0
+    );
 
     /**
      * Predicts with update
@@ -31,41 +39,41 @@ public:
     /**
      * @return Current position estimate
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return Current heading angle estimate
      */
-    double get_theta() const;
+    [[nodiscard]] double get_theta() const;
 
     /**
      * @return Current velocity estimate
      */
-    rj_geometry::Point get_vel() const;
+    [[nodiscard]] rj_geometry::Point get_vel() const;
 
     /**
      * @return Current heading angle velocity estimate
      */
-    double get_omega() const;
+    [[nodiscard]] double get_omega() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    rj_geometry::Point get_pos_cov() const;
+    [[nodiscard]] rj_geometry::Point get_pos_cov() const;
 
     /**
      * @return Current heading covariance
      */
-    double get_theta_cov() const;
+    [[nodiscard]] double get_theta_cov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    rj_geometry::Point get_vel_cov() const;
+    [[nodiscard]] rj_geometry::Point get_vel_cov() const;
 
     /**
      * @return Current heading angle velocity covariance
      */
-    double get_omega_cov() const;
+    [[nodiscard]] double get_omega_cov() const;
 };
 }  // namespace vision_filter

@@ -1,5 +1,9 @@
+#pragma once
+
 #include <list>
 #include <vector>
+
+#include <rclcpp/rclcpp.hpp>
 
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
@@ -16,7 +20,11 @@ namespace vision_filter {
  */
 class World {
 public:
-    World();
+    /**
+     * @brief Construct a new World Detector
+     *
+     */
+    World(std::shared_ptr<rclcpp::Node> vision_filter_node);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -52,22 +60,22 @@ public:
     /**
      * @return Best estimate of the ball
      */
-    const WorldBall& get_world_ball() const;
+    [[nodiscard]] const WorldBall& get_world_ball() const;
 
     /**
      * @return List of the best estimates of all the yellow robots
      */
-    const std::vector<WorldRobot>& get_robots_yellow() const;
+    [[nodiscard]] const std::vector<WorldRobot>& get_robots_yellow() const;
 
     /**
      * @return List of the best estimates of all the blue robots
      */
-    const std::vector<WorldRobot>& get_robots_blue() const;
+    [[nodiscard]] const std::vector<WorldRobot>& get_robots_blue() const;
 
     /**
      * @return The best kick estimate over the last few seconds
      */
-    const KickEvent& get_best_kick_estimate() const;
+    [[nodiscard]] const KickEvent& get_best_kick_estimate() const;
 
     /**
      * @return Timestamp of the latest vision receiver message that was used to
@@ -97,6 +105,21 @@ private:
     void detect_kicks(RJ::Time calc_time);
 
     /**
+     * @brief Fetch parameter values from the ros runtime
+     * 
+     */
+    void initialize_parameters();
+
+    /**
+     * @brief Called when the ros parameter runtime updates
+     * 
+     * @param params 
+     * @return true 
+     * @return false 
+     */
+    bool update_parameters(const std::vector<rclcpp::Parameter>& params);
+
+    /**
      * @brief Timestamp of the latest vision receiver message that was used to
      * updated the states. Initialized with RJ::Time::min().
      */
@@ -111,5 +134,21 @@ private:
     FastKickDetector fast_kick_;
     SlowKickDetector slow_kick_;
     KickEvent best_kick_estimate_;
+
+    // A shared pointer to the vision filter node (used for registering callbacks for parameters)
+    std::shared_ptr<rclcpp::Node> vision_filter_node_;
+    // A parameter callback to update ros parameters
+    std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle> param_cb_handle_;
+
+    // The timeout for a same kick
+    RJ::Seconds same_kick_timeout_ = {};
+    // The timeout for a slow kick
+    RJ::Seconds slow_kick_timeout_ = {};
+    // The timeout for a fast kick
+    RJ::Seconds fast_kick_timeout_ = {};
+    // Multiplier to scale the weighted average coefficient to be nonlinear for the ball
+    double ball_merger_power_ = 1.5;
+    // Multipler to scale the weighted average coefficients to be nonlinear for the robots
+    double robot_merger_power_ = 1.5;
 };
 }  // namespace vision_filter

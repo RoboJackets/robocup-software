@@ -26,6 +26,7 @@ ConfigClient::ConfigClient(rclcpp::Node* node)
         node->create_client<SetFieldDimensionsSrv>(config_server::topics::kFieldDimensionsSrv);
 }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 bool ConfigClient::connected() const {
     const bool has_game_settings = game_settings_.has_value();
     const bool has_field_dimensions = field_dimensions_.has_value();

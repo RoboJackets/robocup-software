@@ -18,10 +18,10 @@
   <depend>rj_protos</depend>
   <depend>rj_utils</depend>
   <depend>rj_param_utils</depend>
-  <depend>rj_strategy</depend>
   <depend>rj_geometry</depend>
-  <depend>rj_planning</depend>
   <depend>rj_constants</depend>
+  <depend>rj_control_msgs</depend>
+  <depend>rj_control_extensions</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

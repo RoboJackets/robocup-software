@@ -1,0 +1,277 @@
+#pragma once
+
+#include <mutex>
+#include <string>
+#include <variant>
+#include <vector>
+
+#include <rj_common/time.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_agent_msgs/msg/agent_request.hpp>
+#include <rj_agent_msgs/msg/agent_response.hpp>
+#include <rj_agent_msgs/msg/agent_response_variant.hpp>
+
+// Requests
+#include "rj_agent_communication/requests/ball_in_transit_request.hpp"
+#include "rj_agent_communication/requests/incoming_ball_request.hpp"
+#include "rj_agent_communication/requests/join_wall_request.hpp"
+#include "rj_agent_communication/requests/leave_wall_request.hpp"
+#include "rj_agent_communication/requests/pass_request.hpp"
+#include "rj_agent_communication/requests/position_request.hpp"
+#include "rj_agent_communication/requests/reset_scorer_request.hpp"
+#include "rj_agent_communication/requests/scorer_request.hpp"
+#include "rj_agent_communication/requests/seeker_request.hpp"
+#include "rj_agent_communication/requests/test_request.hpp"
+
+// Responses
+#include "rj_agent_communication/responses/acknowledge.hpp"
+#include "rj_agent_communication/responses/join_wall_response.hpp"
+#include "rj_agent_communication/responses/leave_wall_response.hpp"
+#include "rj_agent_communication/responses/pass_response.hpp"
+#include "rj_agent_communication/responses/position_response.hpp"
+#include "rj_agent_communication/responses/scorer_response.hpp"
+#include "rj_agent_communication/responses/test_response.hpp"
+
+namespace communication {
+
+/**
+ * @brief a conglomeration of the different request types.
+ */
+using AgentRequest = std::variant<
+    BallInTransitRequest,
+    IncomingBallRequest,
+    JoinWallRequest,
+    LeaveWallRequest,
+    PassRequest,
+    PositionRequest,
+    ResetScorerRequest,
+    ScorerRequest,
+    SeekerRequest,
+    TestRequest
+>;
+
+/**
+ * @brief a conglomeration of the different response types.
+ */
+using AgentResponseVariant = std::variant<
+    Acknowledge,
+    JoinWallResponse,
+    LeaveWallResponse,
+    PassResponse,
+    PositionResponse,
+    ScorerResponse,
+    TestResponse
+>;
+
+/**
+ * @brief response message that is sent from the receiver of the request to the
+ * sender of the request with an accompanying response.
+ *
+ * The agent response is the actual thing that gets sent from a receiver back
+ * to the sender.
+ *
+ */
+struct AgentResponse {
+    AgentRequest associated_request;
+    AgentResponseVariant response;
+};
+
+//NOLINTNEXTLINE(readability-identifier-length)
+bool operator==(const AgentResponse& a, const AgentResponse& b);
+
+/**
+ * @brief Wraps a communication request by giving the intended destination of the
+ * communication.
+ *
+ * positions will create this and send it to their agent action client which will
+ * send out the request according to their specifications.
+ *
+ */
+struct PosAgentRequestWrapper {
+    AgentRequest request;
+    std::vector<uint8_t> target_agents;
+    bool broadcast;
+    bool urgent;
+};
+
+/**
+ * @brief Wraps a communication response to ensure symmetry for agent-to-agent
+ * communication.
+ *
+ * this wrapper is placed on agent responses to promote symmetry across the request
+ * response system to make understanding easier.  All this struct does is make explicit
+ * that this response is going from the position to the agent.
+ *
+ */
+struct PosAgentResponseWrapper {
+    AgentResponseVariant response;
+};
+
+/**
+ * @brief Wraps a communication request to ensure symmetry for agent-to-agent
+ * communication.
+ *
+ * Like the PosAgentResponseWrapper, this struct does nothing other than make the request
+ * response system more symmetrical and (hopefully) more easy to understand.  All this struct
+ * does is make it explicit that this request is being passed from the agent to the agent to
+ * the position.
+ *
+ */
+struct AgentPosRequestWrapper {
+    AgentRequest request;
+};
+
+/**
+ * @brief Wraps a communication response by giving the robot the communication is from.
+ *
+ * the AgentPosResponseWrapper is the actual thing being passed from the agent to the position
+ * once either the timeout period was reached or enough responses were received.  Ideally, the
+ * contents of this wrapper should contain all of the non-message specific fields that a position
+ * will need to handle a response.
+ *
+ */
+struct AgentPosResponseWrapper {
+    AgentRequest associated_request;
+    std::vector<uint8_t> to_robot_ids;
+    std::vector<uint8_t> received_robot_ids;
+    bool broadcast;
+    bool urgent;
+    RJ::Time created;
+    std::vector<AgentResponseVariant> responses;
+};
+
+}  // namespace communication
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<communication::AgentRequest, rj_agent_msgs::msg::AgentRequest> {
+    static rj_agent_msgs::msg::AgentRequest to_ros(const communication::AgentRequest& from) {
+        rj_agent_msgs::msg::AgentRequest result;
+        if (const auto* join_wall_request =
+                std::get_if<communication::JoinWallRequest>(&from)) {
+            result.join_wall_request.emplace_back(convert_to_ros(*join_wall_request));
+        } else if (const auto* test_request =
+                       std::get_if<communication::TestRequest>(&from)) {
+            result.test_request.emplace_back(convert_to_ros(*test_request));
+        } else if (const auto* pass_request =
+                       std::get_if<communication::PassRequest>(&from)) {
+            result.pass_request.emplace_back(convert_to_ros(*pass_request));
+        } else if (const auto* scorer_request =
+                       std::get_if<communication::ScorerRequest>(&from)) {
+            result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
+        } else if (const auto* ball_in_transit_request =
+                       std::get_if<communication::BallInTransitRequest>(&from)) {
+            result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
+        } else if (const auto* seeker_request =
+                       std::get_if<communication::SeekerRequest>(&from)) {
+            result.seeker_request.emplace_back(convert_to_ros(*seeker_request));
+        } else if (const auto* position_request =
+                       std::get_if<communication::PositionRequest>(&from)) {
+            result.position_request.emplace_back(convert_to_ros(*position_request));
+        } else if (const auto* leave_wall_request =
+                       std::get_if<communication::LeaveWallRequest>(&from)) {
+            result.leave_wall_request.emplace_back(convert_to_ros(*leave_wall_request));
+        } else if (const auto* reset_scorer_request =
+                       std::get_if<communication::ResetScorerRequest>(&from)) {
+            result.reset_scorer_request.emplace_back(convert_to_ros(*reset_scorer_request));
+        } else if (const auto* incoming_ball_request =
+                       std::get_if<communication::IncomingBallRequest>(&from)) {
+            result.incoming_ball_request.emplace_back(convert_to_ros(*incoming_ball_request));
+        } else {
+            throw std::runtime_error("Invalid variant of AgentRequest");
+        }
+        return result;
+    }
+
+    static communication::AgentRequest from_ros(const rj_agent_msgs::msg::AgentRequest& from) {
+        communication::AgentRequest result;
+        if (!from.join_wall_request.empty()) {
+            result = convert_from_ros(from.join_wall_request.front());
+        } else if (!from.test_request.empty()) {
+            result = convert_from_ros(from.test_request.front());
+        } else if (!from.pass_request.empty()) {
+            result = convert_from_ros(from.pass_request.front());
+        } else if (!from.scorer_request.empty()) {
+            result = convert_from_ros(from.scorer_request.front());
+        } else if (!from.ball_in_transit_request.empty()) {
+            result = convert_from_ros(from.ball_in_transit_request.front());
+        } else if (!from.seeker_request.empty()) {
+            result = convert_from_ros(from.seeker_request.front());
+        } else if (!from.position_request.empty()) {
+            result = convert_from_ros(from.position_request.front());
+        } else if (!from.leave_wall_request.empty()) {
+            result = convert_from_ros(from.leave_wall_request.front());
+        } else if (!from.reset_scorer_request.empty()) {
+            result = convert_from_ros(from.reset_scorer_request.front());
+        } else if (!from.incoming_ball_request.empty()) {
+            result = convert_from_ros(from.incoming_ball_request.front());
+        } else {
+            throw std::runtime_error("Invalid variant of AgentRequest");
+        }
+        return result;
+    }
+};
+
+ASSOCIATE_CPP_ROS(communication::AgentRequest, rj_agent_msgs::msg::AgentRequest);
+
+template <>
+struct RosConverter<communication::AgentResponse, rj_agent_msgs::msg::AgentResponse> {
+    static rj_agent_msgs::msg::AgentResponse to_ros(const communication::AgentResponse& from) {
+        rj_agent_msgs::msg::AgentResponse result;
+        result.associated_request = convert_to_ros(from.associated_request);
+        if (const auto* scorer_response =
+                std::get_if<communication::ScorerResponse>(&(from.response))) {
+            result.response.scorer_response.emplace_back(convert_to_ros(*scorer_response));
+        } else if (const auto* leave_wall_response =
+                       std::get_if<communication::LeaveWallResponse>(&(from.response))) {
+            result.response.leave_wall_response.emplace_back(convert_to_ros(*leave_wall_response));
+        } else if (const auto* position_response =
+                       std::get_if<communication::PositionResponse>(&(from.response))) {
+            result.response.position_response.emplace_back(convert_to_ros(*position_response));
+        } else if (const auto* test_response =
+                       std::get_if<communication::TestResponse>(&(from.response))) {
+            result.response.test_response.emplace_back(convert_to_ros(*test_response));
+        } else if (const auto* pass_response =
+                       std::get_if<communication::PassResponse>(&(from.response))) {
+            result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
+        } else if (const auto* acknowledge =
+                       std::get_if<communication::Acknowledge>(&(from.response))) {
+            result.response.acknowledge.emplace_back(convert_to_ros(*acknowledge));
+        } else if (const auto* join_wall_response =
+                       std::get_if<communication::JoinWallResponse>(&(from.response))) {
+            result.response.join_wall_response.emplace_back(convert_to_ros(*join_wall_response));
+        } else {
+            throw std::runtime_error("Invalid variant of AgentResponse");
+        }
+        return result;
+    }
+
+    static communication::AgentResponse from_ros(
+        const rj_agent_msgs::msg::AgentResponse& from) {
+        communication::AgentResponse result;
+        result.associated_request = convert_from_ros(from.associated_request);
+        if (!from.response.scorer_response.empty()) {
+            result.response = convert_from_ros(from.response.scorer_response.front());
+        } else if (!from.response.leave_wall_response.empty()) {
+            result.response = convert_from_ros(from.response.leave_wall_response.front());
+        } else if (!from.response.position_response.empty()) {
+            result.response = convert_from_ros(from.response.position_response.front());
+        } else if (!from.response.test_response.empty()) {
+            result.response = convert_from_ros(from.response.test_response.front());
+        } else if (!from.response.pass_response.empty()) {
+            result.response = convert_from_ros(from.response.pass_response.front());
+        } else if (!from.response.acknowledge.empty()) {
+            result.response = convert_from_ros(from.response.acknowledge.front());
+        } else if (!from.response.join_wall_response.empty()) {
+            result.response = convert_from_ros(from.response.join_wall_response.front());
+        } else {
+            throw std::runtime_error("Invalid variant of AgentResponse");
+        }
+        return result;
+    }
+};
+
+ASSOCIATE_CPP_ROS(communication::AgentResponse, rj_agent_msgs::msg::AgentResponse);
+
+}  // namespace rj_convert

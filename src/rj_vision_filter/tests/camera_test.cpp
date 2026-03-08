@@ -4,16 +4,19 @@
 #include <rj_vision_filter/camera/camera.hpp>
 
 namespace vision_filter {
+
+//NOLINTNEXTLINE
 TEST(Camera, invalid_camera) {
-    Camera c = Camera();
+    Camera c = Camera(); //NOLINT(readability-identifier-length)
 
     EXPECT_FALSE(c.get_is_valid());
 }
 
+//NOLINTNEXTLINE
 TEST(Camera, valid_camera) {
-    Camera c = Camera(1);
+    Camera c = Camera(1); //NOLINT(readability-identifier-length)
 
-    std::list<KalmanBall> kb = c.get_kalman_balls();
+    const std::list<KalmanBall>& kb = c.get_kalman_balls(); //NOLINT(readability-identifier-length)
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
     std::vector<std::list<KalmanRobot>> krb = c.get_kalman_robots_blue();
 
@@ -25,11 +28,12 @@ TEST(Camera, valid_camera) {
     EXPECT_EQ(krb.at(0).size(), 0);
 }
 
+//NOLINTNEXTLINE
 TEST(Camera, update_no_frame_empty) {
-    Camera c = Camera(1);
+    Camera c = Camera(1); //NOLINT(readability-identifier-length)
     c.update_without_frame(RJ::now());
 
-    std::list<KalmanBall> kb = c.get_kalman_balls();
+    std::list<KalmanBall> kb = c.get_kalman_balls(); //NOLINT(readability-identifier-length)
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
     std::vector<std::list<KalmanRobot>> krb = c.get_kalman_robots_blue();
 
@@ -41,20 +45,21 @@ TEST(Camera, update_no_frame_empty) {
     EXPECT_EQ(krb.at(0).size(), 0);
 }
 
+//NOLINTNEXTLINE
 TEST(Camera, update_with_frame_empty) {
-    Camera c = Camera(1);
-    RJ::Time t = RJ::now();
+    Camera c = Camera(1); //NOLINT(readability-identifier-length)
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
 
-    std::vector<CameraBall> b;
-    std::vector<std::list<CameraRobot>> yr(kNumShells);
-    std::vector<std::list<CameraRobot>> br(kNumShells);
-    WorldBall wb;
+    std::vector<CameraBall> b; //NOLINT(readability-identifier-length)
+    std::vector<std::list<CameraRobot>> yr(kNumShells); //NOLINT(readability-identifier-length)
+    std::vector<std::list<CameraRobot>> br(kNumShells); //NOLINT(readability-identifier-length)
+    WorldBall wb; //NOLINT(readability-identifier-length)
     std::vector<WorldRobot> wry(kNumShells, WorldRobot());
     std::vector<WorldRobot> wrb(kNumShells, WorldRobot());
 
     c.update_with_frame(t, b, yr, br, wb, wry, wrb);
 
-    std::list<KalmanBall> kb = c.get_kalman_balls();
+    std::list<KalmanBall> kb = c.get_kalman_balls(); //NOLINT(readability-identifier-length)
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
     std::vector<std::list<KalmanRobot>> krb = c.get_kalman_robots_blue();
 
@@ -66,14 +71,15 @@ TEST(Camera, update_with_frame_empty) {
     EXPECT_EQ(krb.at(0).size(), 0);
 }
 
+//NOLINTNEXTLINE
 TEST(Camera, update_with_single_frame) {
-    Camera c = Camera(1);
-    RJ::Time t = RJ::now();
+    Camera c = Camera(1); //NOLINT(readability-identifier-length)
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
 
-    std::vector<CameraBall> b;
-    std::vector<std::list<CameraRobot>> yr(kNumShells);
-    std::vector<std::list<CameraRobot>> br(kNumShells);
-    WorldBall wb;
+    std::vector<CameraBall> b; //NOLINT(readability-identifier-length)
+    std::vector<std::list<CameraRobot>> yr(kNumShells); //NOLINT(readability-identifier-length)
+    std::vector<std::list<CameraRobot>> br(kNumShells); //NOLINT(readability-identifier-length)
+    WorldBall wb; //NOLINT(readability-identifier-length)
     std::vector<WorldRobot> wry(kNumShells, WorldRobot());
     std::vector<WorldRobot> wrb(kNumShells, WorldRobot());
 
@@ -87,7 +93,7 @@ TEST(Camera, update_with_single_frame) {
 
     c.update_with_frame(t, b, yr, br, wb, wry, wrb);
 
-    std::list<KalmanBall> kb = c.get_kalman_balls();
+    std::list<KalmanBall> kb = c.get_kalman_balls(); //NOLINT(readability-identifier-length)
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
     std::vector<std::list<KalmanRobot>> krb = c.get_kalman_robots_blue();
 

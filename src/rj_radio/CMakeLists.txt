@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rj_radio)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -22,10 +25,10 @@ find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_param_utils REQUIRED)
-find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
+find_package(rj_control_msgs REQUIRED)
+find_package(rj_control_extensions REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
@@ -38,28 +41,28 @@ set(RJ_RADIO_DEPS
   rj_protos
   rj_utils
   rj_param_utils
-  rj_strategy
   rj_geometry
-  rj_planning
   rj_constants
+  rj_control_msgs
+  rj_control_extensions
 )
 
-add_executable(network_radio_node
-  src/network_radio.cpp
-  src/radio.cpp
-)
+# add_executable(network_radio_node
+#   src/network_radio.cpp
+#   src/radio.cpp
+# )
 
 add_executable(sim_radio_node
   src/sim_radio.cpp
   src/radio.cpp
 )
 
-target_link_libraries(network_radio_node
-  PUBLIC
-  spdlog
-  Boost::boost
-  ${FLANN_LIBRARIES}
-)
+# target_link_libraries(network_radio_node
+#   PUBLIC
+#   spdlog
+#   Boost::boost
+#   ${FLANN_LIBRARIES}
+# )
 
 target_link_libraries(sim_radio_node
   PUBLIC
@@ -68,11 +71,11 @@ target_link_libraries(sim_radio_node
   ${FLANN_LIBRARIES}
 )
 
-target_include_directories(network_radio_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
+# target_include_directories(network_radio_node
+#   PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#   $<INSTALL_INTERFACE:include>
+# )
 
 target_include_directories(sim_radio_node
   PUBLIC
@@ -80,10 +83,10 @@ target_include_directories(sim_radio_node
   $<INSTALL_INTERFACE:include>
 )
 
-ament_target_dependencies(network_radio_node
-  PUBLIC
-  ${RJ_RADIO_DEPS}
-)
+# ament_target_dependencies(network_radio_node
+#   PUBLIC
+#   ${RJ_RADIO_DEPS}
+# )
 
 ament_target_dependencies(sim_radio_node
   PUBLIC
@@ -96,7 +99,7 @@ install(
 )
 
 install(
-  TARGETS network_radio_node sim_radio_node
+  TARGETS sim_radio_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

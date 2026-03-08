@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
 #include <rj_geometry/point.hpp>
 #include <list>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
@@ -26,42 +27,46 @@ public:
      * @param calc_time Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
      */
-    WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls);
+    WorldBall(
+        RJ::Time calc_time,
+        const std::list<KalmanBall>& kalman_balls,
+        double ball_merger_power = 1.5
+    );
 
     /**
      * @return If the ball actually represents a real ball
      */
-    bool get_is_valid() const;
+    [[nodiscard]] bool get_is_valid() const;
 
     /**
      * @return The best estimated position of the ball
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return The best estimated velocity of the ball
      */
-    rj_geometry::Point get_vel() const;
+    [[nodiscard]] rj_geometry::Point get_vel() const;
 
     /**
      * @return The average position covariance of the filter
      */
-    double get_pos_cov() const;
+    [[nodiscard]] double get_pos_cov() const;
 
     /**
      * @return The average velocity covariance of the filter
      */
-    double get_vel_cov() const;
+    [[nodiscard]] double get_vel_cov() const;
 
     /**
      * @return List of all the building kalman balls for this world ball
      */
-    const std::list<KalmanBall>& get_ball_components() const;
+    [[nodiscard]] const std::list<KalmanBall>& get_ball_components() const;
 
     /**
      * @return Time of creation for this world ball
      */
-    RJ::Time get_time() const;
+    [[nodiscard]] RJ::Time get_time() const;
 
 private:
     bool is_valid_;
@@ -71,5 +76,8 @@ private:
     double vel_cov_{};
     std::list<KalmanBall> ball_components_;
     RJ::Time time_;
+
+    // Multiplier to scale the weighted average coefficient to be nonlinear
+    double ball_merger_power_ = 1.5;
 };
 }  // namespace vision_filter

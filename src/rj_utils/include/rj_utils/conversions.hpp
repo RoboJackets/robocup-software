@@ -1,7 +1,6 @@
 #pragma once
 
 #include <rj_protos/ssl_vision_wrapper.pb.h>
-#include <rj_protos/ssl_vision_wrapper.pb.h>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
@@ -38,7 +37,7 @@ namespace rj_convert {
 template<>
 struct RosConverter<SSL_DetectionRobot, DetectionRobotMsg> {
 	static DetectionRobotMsg to_ros(const SSL_DetectionRobot& from) {
-		DetectionRobotMsg to;
+		DetectionRobotMsg to; //NOLINT(readability-identifier-length)
 		
 		convert_to_ros(from.confidence(), &to.confidence);
 		convert_to_ros(from.robot_id(), &to.robot_id);
@@ -53,7 +52,7 @@ struct RosConverter<SSL_DetectionRobot, DetectionRobotMsg> {
 	}
 	
 	static SSL_DetectionRobot from_ros(const DetectionRobotMsg& from) {
-		SSL_DetectionRobot to;
+		SSL_DetectionRobot to; //NOLINT(readability-identifier-length)
 		
 		to.set_confidence(convert_from_ros(from.confidence));
 		to.set_robot_id(convert_from_ros(from.robot_id));
@@ -73,7 +72,7 @@ ASSOCIATE_CPP_ROS(SSL_DetectionRobot, DetectionRobotMsg)
 template <>
 struct RosConverter<SSL_DetectionBall, DetectionBallMsg> {
     static DetectionBallMsg to_ros(const SSL_DetectionBall& from) {
-        DetectionBallMsg to;
+        DetectionBallMsg to; //NOLINT(readability-identifier-length)
 
         convert_to_ros(from.confidence(), &to.confidence);
         convert_to_ros(from.area(), &to.area);
@@ -87,7 +86,7 @@ struct RosConverter<SSL_DetectionBall, DetectionBallMsg> {
     }
 
     static SSL_DetectionBall from_ros(const DetectionBallMsg& from) {
-        SSL_DetectionBall to;
+        SSL_DetectionBall to; //NOLINT(readability-identifier-length)
 
         to.set_confidence(convert_from_ros(from.confidence));
         to.set_area(convert_from_ros(from.area));

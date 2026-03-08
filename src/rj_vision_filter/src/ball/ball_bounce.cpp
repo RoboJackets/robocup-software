@@ -5,30 +5,21 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/line.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_lin_dampen, 0.9,
-                  "Linear velocity dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_lin_dampen, 0.3,
-                  "Linear velocity dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-using vision_filter::bounce::PARAM_robot_body_angle_dampen;
-using vision_filter::bounce::PARAM_robot_body_lin_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_angle_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
+
+BallBounce::BallBounce(const std::shared_ptr<rclcpp::Node>& vision_filter_node) {
+    initialize_parameters(vision_filter_node);
+
+    param_cb_handle_ = vision_filter_node->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) -> rcl_interfaces::msg::SetParametersResult
+    {
+        rcl_interfaces::msg::SetParametersResult result;
+        result.successful = update_parameters(params);
+
+        return result;
+    });
+}
 
 /**
  * Note 0 case returns -1 instead of 0
@@ -40,13 +31,14 @@ using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
  */
 int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10); }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
                                   const std::vector<WorldRobot>& blue_robots,
                                   rj_geometry::Point& out_new_vel) {
     // Figures out if there is an intersection and what the resulting velocity
     // should be
-    auto find_end_vel = [&ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
+    auto find_end_vel = [this, &ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
         for (const WorldRobot& robot : robots) {
             if (!robot.get_is_valid()) {
                 continue;
@@ -177,12 +169,13 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 intersect_pt_reflection_vector.normalized();
 
             // Scale magnitude of velocity by a percentage
-            double dampen_lin_coeff = PARAM_robot_body_lin_dampen;
-            double dampen_angle_coeff = PARAM_robot_body_angle_dampen;
+            //NOLINTNEXTLINE
+            double dampen_lin_coeff = robot_body_linear_dampening_;
+            double dampen_angle_coeff = robot_body_angle_dampening_;
 
             if (did_hit_mouth) {
-                dampen_lin_coeff = PARAM_robot_mouth_lin_dampen;
-                dampen_angle_coeff = PARAM_robot_mouth_angle_dampen;
+                dampen_lin_coeff = robot_mouth_linear_dampening_;
+                dampen_angle_coeff = robot_mouth_angle_dampening_;
             }
 
             //                   C------D
@@ -243,8 +236,8 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
     return bounce_found;
 }
 
-bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) {
-    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * PARAM_vision_loop_dt;
+bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) const {
+    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * vision_loop_dt_;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;
 }
@@ -262,13 +255,13 @@ std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(const
     rj_geometry::Point ball_vel = ball.get_pos() + ball.get_vel() - robot.get_pos();
 
     // Magnitude of the line
-    rj_geometry::Point d = ball_vel - ball_pos;
-    double dr = d.mag();
+    rj_geometry::Point d = ball_vel - ball_pos; //NOLINT(readability-identifier-length)
+    double dr = d.mag(); //NOLINT(readability-identifier-length)
     // Determinant
     double det = ball_pos.x() * ball_vel.y() - ball_pos.y() * ball_vel.x();
     // Assume that two spheres intersection, is similar to the addition of their
     // radius and a point
-    double r = kRobotRadius + kBallRadius;
+    double r = kRobotRadius + kBallRadius; //NOLINT(readability-identifier-length)
 
     // If the ball really isn't moving, just assume no intersection
     // since the math will go to inf
@@ -276,18 +269,22 @@ std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(const
         return out;
     }
 
+    //NOLINTNEXTLINE(readability-identifier-length)
     double x1 = det * d.y() + sign(d.y()) * d.x() * sqrt(r * r * dr * dr - det * det);
     x1 /= dr * dr;
     x1 += robot.get_pos().x();
 
+    //NOLINTNEXTLINE(readability-identifier-length)
     double y1 = -det * d.x() + abs(d.y()) * d.x() * sqrt(r * r * dr * dr - det * det);
     y1 /= dr * dr;
     y1 += robot.get_pos().y();
 
+    //NOLINTNEXTLINE(readability-identifier-length)
     double x2 = det * d.y() - sign(d.y()) * d.x() * sqrt(r * r * dr * dr - det * det);
     x2 /= dr * dr;
     x2 += robot.get_pos().x();
 
+    //NOLINTNEXTLINE(readability-identifier-length)
     double y2 = -det * d.x() - abs(d.y()) * sqrt(r * r * dr * dr - det * det);
     y2 /= dr * dr;
     y2 += robot.get_pos().y();
@@ -311,4 +308,33 @@ std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(const
 
     return out;
 }
+
+void BallBounce::initialize_parameters(const std::shared_ptr<rclcpp::Node>& vision_filter_node) {
+    vision_filter_node->get_parameter<double>("vision_filter.bounce.robot_body_angle_dampen", robot_body_angle_dampening_);
+    vision_filter_node->get_parameter<double>("vision_filter.bounce.robot_body_lin_dampen", robot_body_linear_dampening_);
+    vision_filter_node->get_parameter<double>("vision_filter.bounce.robot_mouth_angle_dampen", robot_mouth_angle_dampening_);
+    vision_filter_node->get_parameter<double>("vision_filter.bounce.robot_mouth_lin_dampen", robot_mouth_linear_dampening_);
+    vision_filter_node->get_parameter<double>("vision_loop_dt", vision_loop_dt_);
+}
+
+bool BallBounce::update_parameters(const std::vector<rclcpp::Parameter>& params) {
+    bool result = true;
+
+    for (const auto& param : params) {
+        if (param.get_name() == "vision_filter.bounce.robot_body_angle_dampen") {
+            robot_body_angle_dampening_ = param.as_double();
+        } else if (param.get_name() == "vision_filter.bounce.robot_body_lin_dampen") {
+            robot_body_linear_dampening_ = param.as_double();
+        } else if (param.get_name() == "vision_filter.bounce.robot_mouth_angle_dampen") {
+            robot_mouth_angle_dampening_ = param.as_double();
+        } else if (param.get_name() == "vision_filter.bounce.robot_mouth_lin_dampen") {
+            robot_mouth_linear_dampening_ = param.as_double();
+        } else if (param.get_name() == "vision_loop_dt") {
+            vision_loop_dt_ = param.as_double();
+        }
+    }
+
+    return result;
+}
+
 }  // namespace vision_filter

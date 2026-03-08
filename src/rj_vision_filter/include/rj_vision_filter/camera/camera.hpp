@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
 #include <list>
 #include <rj_vision_filter/ball/ball_bounce.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
@@ -22,17 +23,22 @@ public:
      */
     Camera();
 
+    Camera(int camera_id);
+
     /**
      * Creates a valid camera with a specific id
      *
      * @param camera_id ID of this camera
      */
-    Camera(int camera_id);
+    Camera(
+        int camera_id,
+        const std::shared_ptr<rclcpp::Node>& vision_filter_node
+    );
 
     /**
      * Returns whether this camera is valid and initialized correctly
      */
-    bool get_is_valid() const;
+    [[nodiscard]] bool get_is_valid() const;
 
     /**
      * Tries to predict bounces off the best known estimation of the robots
@@ -79,17 +85,17 @@ public:
     /**
      * @return A list of the kalman balls associated with the camera
      */
-    const std::list<KalmanBall>& get_kalman_balls() const;
+    [[nodiscard]] const std::list<KalmanBall>& get_kalman_balls() const;
 
     /**
      * @return A vector of yellow kalman robot lists
      */
-    const std::vector<std::list<KalmanRobot>>& get_kalman_robots_yellow() const;
+    [[nodiscard]] const std::vector<std::list<KalmanRobot>>& get_kalman_robots_yellow() const;
 
     /**
      * @return A vector of blue kalman robot lists
      */
-    const std::vector<std::list<KalmanRobot>>& get_kalman_robots_blue() const;
+    [[nodiscard]] const std::vector<std::list<KalmanRobot>>& get_kalman_robots_blue() const;
 
 private:
     /**
@@ -193,6 +199,21 @@ private:
     void remove_invalid_robots();
 
     /**
+     * @brief Initialize the ros parameters necessary for the camera
+     * 
+     */
+    void initialize_parameters(const std::shared_ptr<rclcpp::Node>& vision_filter_node);
+
+    /**
+     * @brief Called when the ros parameters for the camera are updated
+     * 
+     * @param params 
+     * @return true 
+     * @return false 
+     */
+    bool update_parameters(const std::vector<rclcpp::Parameter>& params);
+
+    /**
      * Predicts all robots in the given list
      * Simplifies some copy paste
      *
@@ -208,5 +229,19 @@ private:
     std::list<KalmanBall> kalman_ball_list_;
     std::vector<std::list<KalmanRobot>> kalman_robot_yellow_list_;
     std::vector<std::list<KalmanRobot>> kalman_robot_blue_list_;
+
+    BallBounce ball_bounce_filter_;
+
+    // Should we use mkhf (otherwise we will use akf)
+    bool use_mkhf_ = true;
+    // The cutoff radius for when to associate measurements to kalman objects
+    double mhkf_radius_cutoff_ = 0.5;
+    // The maximum number of Kalman balls for this specific camera
+    int max_num_kalman_balls_ = 10;
+    // The maximum number of kalman robots for this specific camera
+    int max_num_kalman_robots_ = 10;
+
+    // A shared pointer to the param update callback
+    std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle> param_cb_handle_;
 };
 }  // namespace vision_filter

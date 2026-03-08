@@ -1,0 +1,1 @@
+class s{#e=new Map;registerEncoder(e,t){const n=this.#e.get(e);return this.#e.set(e,t),n}get(e){return this.#e.get(e)}delete(e){return this.#e.delete(e)}clear(){this.#e.clear()}}export{s as TypeEncoderMap};

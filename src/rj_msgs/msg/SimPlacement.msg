@@ -1,0 +1,2 @@
+RobotPlacement[] robots
+BallPlacement ball

@@ -274,8 +274,7 @@ template <typename T>
 MessageQueue<T, MessagePolicy::kLatest>::MessageQueue(
     rclcpp::Node* node, const std::string& topic, const T& default_value,
     const rclcpp::SubscriptionOptions& subscription_options)
-    : node_{node} {
-    latest_ = std::make_shared<T>();
+    : node_{node}, latest_(std::make_shared<T>()) {
     *latest_ = default_value;
 
     const auto callback = [this](typename T::SharedPtr msg) {

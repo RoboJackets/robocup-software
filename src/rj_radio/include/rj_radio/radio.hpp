@@ -6,22 +6,15 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/radio/robot_status.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/strategy/positions.hpp>
+#include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/manipulator_setpoint.hpp>
-#include <rj_msgs/msg/motion_setpoint.hpp>
-#include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/team_color.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_control_extensions/control_command.hpp>
 
 namespace radio {
-
-constexpr auto kRadioParamModule = "radio";
-DECLARE_FLOAT64(kRadioParamModule, timeout);
 
 /**
  * @brief Sends and receives information to/from our robots.
@@ -46,13 +39,12 @@ protected:
      * @brief Send a control message to the corresponding robot.
      *
      * @param robot_id The robot to send to
-     * @param motion The (x (m/s), y (m/s), z (rad/s)) velocities for the robot to move at
-     * @param manipulator The Shoot Mode, Trigger Mode, Kick Speed, and Dribbler Speed for the Robot
-     * @param role The position for the robot
+     * @param control_command The control command for the robot
      */
-    virtual void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                                      const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                      strategy::Positions role) = 0;
+    virtual void send_control_message(
+        uint8_t robot_id,
+        const control::ControlCommand& control_command
+    ) = 0;
 
     /**
      * @brief Poll the receiver service for Messages.
@@ -91,13 +83,11 @@ private:
      *
      */
     void tick();
+
     // Time between consecutive calls to tick().
     std::chrono::milliseconds tick_period_ = std::chrono::milliseconds(100);
     // Ros timer to trigger tick every tick_period
     rclcpp::TimerBase::SharedPtr tick_timer_;
-
-    // The position of each robot
-    std::array<strategy::Positions, kNumShells> positions_;
 
     // Ros publishers to send robot statuses
     std::array<rclcpp::Publisher<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells>
@@ -106,28 +96,18 @@ private:
     // Ros publisher to update alive robots
     rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
 
-    // Ros subscribers to receive velocity commands, which are sent to the robot
-    std::array<rclcpp::Subscription<rj_msgs::msg::MotionSetpoint>::SharedPtr, kNumShells>
-        motion_subs_;
+    // Ros subscribers to receive control commands to send to the robot
+    std::array<rclcpp::Subscription<control::ControlCommand::Msg>::SharedPtr, kNumShells>
+        control_subs_;
+    // Cached Control Commands
+    std::array<control::ControlCommand, kNumShells> control_commands_;
     // Last Update Timestamps (per robot)
     std::array<RJ::Time, kNumShells> last_updates_ = {};
-    // Cached last velocity command
-    std::array<rj_msgs::msg::MotionSetpoint::SharedPtr, kNumShells> motions_;
-
-    // Ros subscribers to receive auxillary control (i.e. shoot_mode, trigger_mode, kick_speed, and
-    // dribbler_speed) which are stored and sent to the robot
-    std::array<rclcpp::Subscription<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
-        manipulator_subs_;
-    // Cached auxillary control information
-    std::array<rj_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;
 
     // Ros subscriber for the team's color.
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
     // Whether or not the current team color is blue
     bool blue_team_;
-
-    // Ros param provider for initializing the radio node
-    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace radio

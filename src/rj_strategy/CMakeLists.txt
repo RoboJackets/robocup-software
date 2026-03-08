@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rj_strategy)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -79,22 +82,6 @@ target_include_directories(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  ${RJ_STRATEGY_DEPS}
-)
-
-# Straight Line Test Node
-add_executable(straight_line_test_node
-  ${RJ_STRATEGY_SRC}
-  src/testing/straight_line_test.cpp
-)
-
-target_include_directories(straight_line_test_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(straight_line_test_node
   ${RJ_STRATEGY_DEPS}
 )
 

@@ -1,0 +1,62 @@
+<script>/**
+ * @license lucide-svelte v0.562.0 - ISC
+ *
+ * ISC License
+ *
+ * Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2023 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2025.
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * ---
+ *
+ * The MIT License (MIT) (for portions derived from Feather)
+ *
+ * Copyright (c) 2013-2023 Cole Bemis
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+import Icon from '../Icon.svelte';
+const iconNode = [["path", { "d": "M11.051 7.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.867l-1.156-1.152a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z" }], ["circle", { "cx": "12", "cy": "12", "r": "10" }]];
+/**
+ * @component @name CircleStar
+ * @description Lucide SVG icon component, renders SVG Element with children.
+ *
+ * @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMTEuMDUxIDcuNjE2YTEgMSAwIDAgMSAxLjkwOS4wMjRsLjczNyAxLjQ1MmExIDEgMCAwIDAgLjczNy41MzVsMS42MzQuMjU2YTEgMSAwIDAgMSAuNTg4IDEuODA2bC0xLjE3MiAxLjE2OGExIDEgMCAwIDAtLjI4Mi44NjZsLjI1OSAxLjYxM2ExIDEgMCAwIDEtMS41NDEgMS4xMzRsLTEuNDY1LS43NWExIDEgMCAwIDAtLjkxMiAwbC0xLjQ2NS43NWExIDEgMCAwIDEtMS41MzktMS4xMzNsLjI1OC0xLjYxM2ExIDEgMCAwIDAtLjI4Mi0uODY3bC0xLjE1Ni0xLjE1MmExIDEgMCAwIDEgLjU3Mi0xLjgyMmwxLjYzMy0uMjU2YTEgMSAwIDAgMCAuNzM3LS41MzV6IiAvPgogIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIiAvPgo8L3N2Zz4K) - https://lucide.dev/icons/circle-star
+ * @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
+ *
+ * @param {Object} props - Lucide icons props and any valid SVG attribute
+ * @returns {FunctionalComponent} Svelte component
+ *
+ */
+</script>
+
+<Icon name="circle-star" {...$$props} iconNode={iconNode}>
+  <slot/>
+</Icon>

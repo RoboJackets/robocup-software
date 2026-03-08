@@ -3,11 +3,10 @@
 namespace referee {
 
 RefereeBase::RefereeBase(const std::string& name)
-    : Node{name, rclcpp::NodeOptions{}
-                     .automatically_declare_parameters_from_overrides(true)
-                     .allow_undeclared_parameters(true)},
-      param_provider_(this, kRefereeParamModule),
+    : Node{name, rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true)},
       config_client_{this} {
+    get_parameter<std::string>("team_name", our_name_);
+
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);
@@ -23,12 +22,29 @@ RefereeBase::RefereeBase(const std::string& name)
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
     world_state_sub_ = create_subscription<WorldState::Msg>(
+        //NOLINTNEXTLINE(performance-unnecessary-value-param)
         vision_filter::topics::kWorldStateTopic, 1, [this](WorldState::Msg::SharedPtr msg) {
             auto ball_state = rj_convert::convert_from_ros(msg->ball);
             if (spin_kick_detector(ball_state.position)) {
                 send();
             }
         });
+
+    param_cb_handle_ = add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) -> rcl_interfaces::msg::SetParametersResult
+        {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "team_name") {
+                    set_team_name(param.as_string());
+                }
+            }
+
+            return result;
+        }
+    );
 }
 
 void RefereeBase::set_period(MatchState::Period period) { match_state_.period = period; }

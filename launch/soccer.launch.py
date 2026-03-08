@@ -76,7 +76,6 @@ def generate_launch_description():
             DeclareLaunchArgument("team_flag", default_value="-y"),
             DeclareLaunchArgument("ref_flag", default_value="-noref"),
             DeclareLaunchArgument("direction_flag", default_value="plus"),
-            DeclareLaunchArgument("use_internal_ref", default_value="True"),
             DeclareLaunchArgument("run_sim", default_value="True"),
             DeclareLaunchArgument("sim_flag", default_value="-sim"),
             DeclareLaunchArgument(

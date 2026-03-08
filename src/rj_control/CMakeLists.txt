@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rj_control)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -15,6 +18,10 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(Flann REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(fmt REQUIRED)
+find_package(rj_control_msgs REQUIRED)
+find_package(rj_control_extensions REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
@@ -22,12 +29,20 @@ find_package(rj_param_utils REQUIRED)
 find_package(rj_topic_utils REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_planning REQUIRED)
 find_package(rj_convert REQUIRED)
+find_package(osqp REQUIRED)
+find_package(OsqpEigen REQUIRED)
 
 set(RJ_CONTROL_DEPS
+  rclcpp
   std_msgs
+  spdlog
   Flann
+  fmt
+  osqp
+  OsqpEigen
+  rj_control_msgs
+  rj_control_extensions
   rj_utils
   rj_constants
   rj_msgs
@@ -35,26 +50,47 @@ set(RJ_CONTROL_DEPS
   rj_topic_utils
   rj_common
   rj_geometry
-  rj_planning
   rj_convert
 )
 
-add_executable(motion_control_node
-  src/motion_control_node.cpp
-  src/motion_control.cpp
-  src/pid.cpp
+set(RJ_CONTROL_LIBS
+  spdlog
+  fmt
+  osqp::osqpstatic
+  OsqpEigen::OsqpEigen
+  ${FLANN_LIBRARIES}
 )
 
+set(RJ_CONTROL_SRC
+  # Controllers
+  src/controllers/controller.cpp
+  src/controllers/position_controller.cpp
+  src/controllers/pose_controller.cpp
+  src/controllers/shoot_controller.cpp
+  src/controllers/collect_controller.cpp
+  src/controllers/pass_controller.cpp
+  src/controllers/dribble_controller.cpp
+  src/controllers/clear_controller.cpp
+  src/controllers/mark_robot_controller.cpp
+  src/controllers/rotate_controller.cpp
+
+  # Skills
+  src/skills/go_to_pose.cpp
+  src/skills/go_to_position.cpp
+  src/skills/rotate.cpp
+
+  # Barrier Certificates
+  src/barriers/linear_cbf.cpp
+  src/barriers/cubic_cbf.cpp
+
+  # Utilities
+  src/utilities/translational_pid.cpp
+  src/utilities/rotational_pid.cpp
+)
+
+# RJ Control Library
 add_library(${PROJECT_NAME} SHARED
-  src/motion_control_node.cpp
-  src/motion_control.cpp
-  src/pid.cpp
-)
-
-target_include_directories(motion_control_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
+  ${RJ_CONTROL_SRC}
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -63,25 +99,35 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(motion_control_node
-  PUBLIC
-  ${FLANN_LIBRARIES}
-)
-
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-  ${FLANN_LIBRARIES}
-)
-
-ament_target_dependencies(motion_control_node
-  PUBLIC
-  rclcpp
-  ${RJ_CONTROL_DEPS}
+  ${RJ_CONTROL_LIBS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
+  ${RJ_CONTROL_DEPS}
+)
+
+# Control Node
+add_executable(control_node
+  ${RJ_CONTROL_SRC}
+  src/control_node.cpp
+)
+
+target_include_directories(control_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(control_node
+  PUBLIC
+  ${RJ_CONTROL_LIBS}
+)
+
+ament_target_dependencies(control_node
+  PUBLIC
   ${RJ_CONTROL_DEPS}
 )
 
@@ -91,8 +137,8 @@ install(
 )
 
 install(
-  TARGETS motion_control_node
-  DESTINATION lib/${PROJECT_NAME}
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
 )
 
 install(
@@ -104,17 +150,28 @@ install(
   INCLUDES DESTINATION include
 )
 
+install(
+  TARGETS control_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_export_dependencies(
   ${RJ_CONTROL_DEPS}
 )
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  
-  # Motion Control Tests
-  ament_add_gtest(motion_control_test tests/motion_control_test.cpp)
-  target_include_directories(motion_control_test PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
-  target_link_libraries(motion_control_test ${PROJECT_NAME})
+
+  set(RJ_CONTROL_TESTS
+    linear_cbf_test
+    cubic_cbf_test
+  )
+
+  foreach(TEST IN LISTS RJ_CONTROL_TESTS)
+    ament_add_gtest(${TEST} tests/${TEST}.cpp)
+    target_include_directories(${TEST} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+    target_link_libraries(${TEST} ${PROJECT_NAME} ${RJ_CONTROL_LIBS})
+  endforeach()
 endif()
 
 ament_export_targets(${PROJECT_NAME})

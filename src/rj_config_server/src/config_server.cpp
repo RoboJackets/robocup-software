@@ -6,6 +6,8 @@
 #include <rj_utils/logging_macros.hpp>
 
 namespace config_server {
+
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
                            const GameSettingsMsg& game_settings)
     : Node{"config_server", node_options},
@@ -79,7 +81,7 @@ GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
         } else if (arg == "-y") {
             game_settings.request_blue_team = false;
         } else if (arg == "-sim") {
-            game_settings.simulation = false;
+            game_settings.simulation = true;
         } else if (arg == "-defend") {
             i++;
             const std::string& direction = args.at(i);

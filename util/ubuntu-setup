@@ -163,6 +163,26 @@ PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $PACKAGES
 
+# Install OSQP for the Controller
+git clone --depth 1 --branch v1.0.0. https://github.com/osqp/osqp && \
+    cd osqp && \
+    mkdir build && \
+    cd build && \
+    cmake -G "Unix Makefiles" .. && \
+    sudo cmake --build . --target install && \
+    cd ../..
+
+# Install OSQP-Eigen for the Controller
+wget https://github.com/gbionics/osqp-eigen/archive/refs/tags/v0.11.0.zip && \
+    unzip v0.11.0.zip && \
+    cd osqp-eigen-0.11.0 && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    make install && \
+    cd ../..
+
 # install python3 requirements
 python3 -m pip install pip==22.1
 pip3 install -r $BASE/util/requirements3.txt

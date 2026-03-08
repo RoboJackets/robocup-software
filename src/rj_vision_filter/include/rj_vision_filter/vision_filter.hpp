@@ -11,7 +11,6 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
@@ -32,9 +31,15 @@ public:
     using BallStateMsg = rj_msgs::msg::BallState;
 
     /**
-     * Initialize the vision filter and all callbacks.
+     * Create the vision filter and all callbacks.
      */
-    VisionFilter(const rclcpp::NodeOptions& options);
+    VisionFilter();
+
+    /**
+     * @brief Initialize the vision filter and related fields
+     * 
+     */
+    void initialize();
 
 private:
     /**
@@ -90,7 +95,7 @@ private:
     /**
      * @brief State of the world, ie. robots and ball.
      */
-    World world_;
+    std::optional<World> world_ = std::nullopt;
 
     using TeamColorMsgQueue =
         rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
@@ -113,7 +118,5 @@ private:
      * @brief Publisher for WorldStateMsg.
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
-
-    ::params::LocalROS2ParamProvider param_provider_;
 };
 }  // namespace vision_filter

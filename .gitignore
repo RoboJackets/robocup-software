@@ -57,3 +57,6 @@ build/
 install/
 log/
 latency/
+
+# Tar files
+**/*.tar

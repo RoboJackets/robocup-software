@@ -151,6 +151,7 @@ struct FieldDimensions {
      * Parameterized constructor - creates the values and structs to be passed into the
      * FieldDimensions topic.
      */
+    //NOLINTNEXTLINE
     FieldDimensions(float length, float width, float border, float line_width, float goal_width,
                     float goal_depth, float goal_height, float penalty_short_dist,
                     float penalty_long_dist, float center_radius, float center_diameter,
@@ -182,17 +183,18 @@ struct FieldDimensions {
      * Returns a FieldDimensions struct but with the field size changed by a scalar factor.
      */
     FieldDimensions operator*(float scalar) const {
-        return FieldDimensions(length_ * scalar, width_ * scalar, border_ * scalar,
+        return {length_ * scalar, width_ * scalar, border_ * scalar,
                                line_width_ * scalar, goal_width_ * scalar, goal_depth_ * scalar,
                                goal_height_ * scalar, penalty_short_dist_ * scalar,
                                penalty_long_dist_ * scalar, center_radius_ * scalar,
                                center_diameter_ * scalar, goal_flat_ * scalar,
-                               floor_length_ * scalar, floor_width_ * scalar);
+                               floor_length_ * scalar, floor_width_ * scalar};
     }
 
     /**
      * Returns a boolean value regarding whether 2 FieldDimensions structs are equal.
      */
+    //NOLINTNEXTLINE(readability-identifier-length)
     bool operator==(const FieldDimensions& a) const {
         return !(std::abs(length() - a.length()) > FLT_EPSILON ||
                  std::abs(width() - a.width()) > FLT_EPSILON ||
@@ -210,6 +212,7 @@ struct FieldDimensions {
                  std::abs(floor_width() - a.floor_width()) > FLT_EPSILON);
     }
 
+    //NOLINTNEXTLINE(readability-identifier-length)
     bool operator!=(const FieldDimensions& a) const { return !(*this == a); }
 
     /**

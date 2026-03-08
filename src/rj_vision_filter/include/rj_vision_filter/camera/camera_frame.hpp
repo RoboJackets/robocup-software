@@ -36,25 +36,21 @@ public:
      * @brief Constructor from DetectionFrameMsg.
      * @param msg
      */
-    CameraFrame(const DetectionFrameMsg& msg,
-                const rj_geometry::TransformMatrix& world_to_team,
-                double team_angle)
+    CameraFrame(const DetectionFrameMsg& msg)
         : t_capture{rj_convert::convert_from_ros(msg.t_capture)},
           camera_id{static_cast<int>(msg.camera_id)},
           camera_balls{},
           camera_robots_yellow{},
           camera_robots_blue{} {
         for (const DetectionBallMsg& ball_msg : msg.balls) {
-            camera_balls.emplace_back(t_capture, ball_msg, world_to_team);
+            camera_balls.emplace_back(t_capture, ball_msg);
         }
 
         for (const DetectionRobotMsg& robot_msg : msg.robots_blue) {
-            camera_robots_blue.emplace_back(t_capture, robot_msg, world_to_team,
-                                          team_angle);
+            camera_robots_blue.emplace_back(t_capture, robot_msg);
         }
         for (const DetectionRobotMsg& robot_msg : msg.robots_yellow) {
-            camera_robots_yellow.emplace_back(t_capture, robot_msg, world_to_team,
-                                            team_angle);
+            camera_robots_yellow.emplace_back(t_capture, robot_msg);
         }
     }
 

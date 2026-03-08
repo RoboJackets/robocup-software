@@ -1,0 +1,9 @@
+radio:
+  ros__parameters:
+    robots: [3, 4, 5]
+    hz: 100
+    csn: 0
+    ce: 4
+    irq: 14
+    pa: "low"
+    channel: 0

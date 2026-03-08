@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
 #include <deque>
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -19,6 +20,8 @@ namespace vision_filter {
  */
 class FastKickDetector {
 public:
+    FastKickDetector(const std::shared_ptr<rclcpp::Node>& vision_filter_node);
+
     /**
      * Adds a record to our history list
      *
@@ -33,10 +36,13 @@ public:
      * @note kick_event is only filled if it returns true
      * It is not touched otherwise
      */
-    bool add_record(RJ::Time calc_time, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellow_robots,
-                   const std::vector<WorldRobot>& blue_robots,
-                   KickEvent& kick_event);
+    bool add_record(
+        RJ::Time calc_time,
+        const WorldBall& ball,
+        const std::vector<WorldRobot>& yellow_robots,
+        const std::vector<WorldRobot>& blue_robots,
+        KickEvent& kick_event
+    );
 
 private:
     /**
@@ -50,5 +56,15 @@ private:
     WorldRobot get_closest_robot();
 
     std::deque<VisionState> state_history_;
+
+    // The time delta (in seconds) between vision loops
+    double vision_loop_dt_ = 1.0 / 60.0;
+    // How large of an acceleration is needed to trigger the detector (m/s^2)
+    double fast_acceleration_trigger_ = 750.0;
+    // The length of the fast history buffer
+    int fast_kick_hist_length_ = 3;
+
+    // Callback called when the ros parameters change
+    std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle> param_cb_handle_;
 };
 }  // namespace vision_filter

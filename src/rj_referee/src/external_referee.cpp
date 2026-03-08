@@ -5,19 +5,6 @@ namespace referee {
 using referee_module_enums::Command;
 using referee_module_enums::Stage;
 
-/// Distance in meters that the ball must travel for a kick to be detected
-static const float kKickThreshold = kBallRadius * 3;
-
-/// How many milliseconds the ball must be more than KickThreshold meters away
-/// from its position when the referee indicated Ready for us to detect the ball
-/// as having been kicked.
-static const int kKickVerifyTimeMs = 250;
-
-// Whether we cancel ball placement on a halt.
-// If we want ball placement to continue after
-// the ref halts/stops, make this false
-static const bool kCancelBallPlaceOnHalt = true;
-
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     this->get_parameter("team_name", param_team_name_);
     SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
@@ -42,6 +29,7 @@ void ExternalReferee::start_receive() {
         });
 }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void ExternalReferee::receive_packet(const boost::system::error_code& error, size_t num_bytes) {
     if (error != boost::system::errc::success) {
         SPDLOG_ERROR("Error receiving: ", error);
@@ -53,7 +41,7 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     // }
 
     Referee ref_packet;
-    if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
+    if (!ref_packet.ParseFromArray(recv_buffer_.data(), static_cast<int>(num_bytes))) {
         SPDLOG_ERROR("Got BAD packet of {} bytes from {}", num_bytes, sender_endpoint_);
         SPDLOG_ERROR("Address: {}", fmt::ptr(&kRefereeSourceAddress));
         return;
@@ -62,7 +50,7 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     // Publish the raw packet
     RawProtobufMsg msg;
     msg.data.resize(ref_packet.ByteSizeLong());
-    if (!ref_packet.SerializeToArray(msg.data.data(), msg.data.size())) {
+    if (!ref_packet.SerializeToArray(msg.data.data(), static_cast<int>(msg.data.size()))) {
         EZ_ERROR("Failed to serialize referee packet.");
     }
     raw_ref_pub_->publish(msg);
@@ -117,8 +105,8 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
     }
 
     // We keep track of yellow's play state by default, so yellow has ours=true.
-    constexpr auto YELLOW = true;
-    constexpr auto BLUE = false;
+    constexpr auto kYellow = true;
+    constexpr auto kBlue = false;
 
     if (!maybe_placement_point.has_value()) {
         SPDLOG_WARN("Placement point not set but placement command given!");
@@ -140,37 +128,32 @@ void ExternalReferee::handle_command(const ExternalReferee::Command& command) {
             set_play_state(PlayState::playing());
             break;
         case Referee::PREPARE_KICKOFF_YELLOW:
-            set_play_state(PlayState::setup_kickoff(YELLOW));
+            set_play_state(PlayState::setup_kickoff(kYellow));
             break;
         case Referee::PREPARE_KICKOFF_BLUE:
-            set_play_state(PlayState::setup_kickoff(BLUE));
+            set_play_state(PlayState::setup_kickoff(kBlue));
             break;
         case Referee::PREPARE_PENALTY_YELLOW:
-            set_play_state(PlayState::setup_penalty(YELLOW));
+            set_play_state(PlayState::setup_penalty(kYellow));
             break;
         case Referee::PREPARE_PENALTY_BLUE:
-            set_play_state(PlayState::setup_penalty(BLUE));
+            set_play_state(PlayState::setup_penalty(kBlue));
             break;
         case Referee::DIRECT_FREE_YELLOW:
-            set_play_state(PlayState::ready_free_kick(YELLOW));
+            set_play_state(PlayState::ready_free_kick(kYellow));
             break;
         case Referee::DIRECT_FREE_BLUE:
-            set_play_state(PlayState::ready_free_kick(BLUE));
+            set_play_state(PlayState::ready_free_kick(kBlue));
             break;
         case Referee::TIMEOUT_YELLOW:
         case Referee::TIMEOUT_BLUE:
             set_play_state(PlayState::halt());
             break;
-        case Referee::GOAL_YELLOW:
-        case Referee::GOAL_BLUE:
-        case Referee::INDIRECT_FREE_BLUE:
-        case Referee::INDIRECT_FREE_YELLOW:
-            break;
         case Referee::BALL_PLACEMENT_YELLOW:
-            set_play_state(PlayState::ball_placement(YELLOW, placement_point));
+            set_play_state(PlayState::ball_placement(kYellow, placement_point));
             break;
         case Referee::BALL_PLACEMENT_BLUE:
-            set_play_state(PlayState::ball_placement(BLUE, placement_point));
+            set_play_state(PlayState::ball_placement(kBlue, placement_point));
             break;
     }
 

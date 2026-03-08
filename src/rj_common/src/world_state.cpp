@@ -106,23 +106,3 @@ std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) con
     // Otherwise, use t = (vf - vi) / a
     return RJ::Seconds(speed - std::sqrt(vf_sq)) / soccer::physics::PARAM_ball_decay_constant;
 }
-
-planning::Trajectory BallState::make_trajectory() const {
-    using namespace rj_geometry;
-
-    // The trajectory interface fits cubic splines. Luckily, a cubic spline
-    // between two instants that can be connected by a constant acceleration
-    // (like we have here) will be, and so we can use this for our trajectory.
-    // The start point is the current instant in time, and the endpoint is the
-    // stopping point.
-    planning::RobotInstant instant0;
-    instant0.pose = Pose(position, 0);
-    instant0.velocity = Twist(velocity, 0);
-    instant0.stamp = timestamp;
-
-    Point stop_position;
-    RJ::Time stop_time = timestamp + query_stop_time(&stop_position);
-    planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::zero(), stop_time};
-
-    return planning::Trajectory({instant0, instant1});
-}

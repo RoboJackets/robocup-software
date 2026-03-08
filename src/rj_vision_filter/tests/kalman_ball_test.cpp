@@ -4,17 +4,19 @@
 #include <rj_vision_filter/ball/world_ball.hpp>
 
 namespace vision_filter {
+
+//NOLINTNEXTLINE
 TEST(KalmanBall, invalid_world_ball) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
 
-    rj_geometry::Point rv = kb.get_vel();
-    rj_geometry::Point rp = kb.get_pos();
+    rj_geometry::Point rv = kb.get_vel(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point rp = kb.get_pos(); //NOLINT(readability-identifier-length)
 
     EXPECT_EQ(rp.x(), p.x());
     EXPECT_EQ(rp.y(), p.y());
@@ -25,24 +27,25 @@ TEST(KalmanBall, invalid_world_ball) {
     EXPECT_GT(kb.get_health(), 0);
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, valid_world_ball) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
     kb.set_vel(p);
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl); //NOLINT(readability-identifier-length)
 
     KalmanBall kb2 = KalmanBall(c_id, t, b, wb);
 
-    rj_geometry::Point rv = kb2.get_vel();
-    rj_geometry::Point rp = kb2.get_pos();
+    rj_geometry::Point rv = kb2.get_vel(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point rp = kb2.get_pos(); //NOLINT(readability-identifier-length)
 
     EXPECT_EQ(rp.x(), p.x());
     EXPECT_EQ(rp.y(), p.y());
@@ -50,20 +53,21 @@ TEST(KalmanBall, valid_world_ball) {
     EXPECT_EQ(rv.y(), p.y());
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, predict) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
     kb.set_vel(p);
 
     kb.predict(RJ::now());
 
-    rj_geometry::Point rp = kb.get_pos();
-    rj_geometry::Point rv = kb.get_vel();
+    rj_geometry::Point rp = kb.get_pos(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point rv = kb.get_vel(); //NOLINT(readability-identifier-length)
 
     EXPECT_GT(rp.x(), p.x());
     EXPECT_GT(rp.y(), p.y());
@@ -73,20 +77,21 @@ TEST(KalmanBall, predict) {
     EXPECT_EQ(rv.y(), p.y());
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, predict_and_update) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
     kb.set_vel(p);
 
     kb.predict_and_update(RJ::now(), b);
 
-    rj_geometry::Point rp = kb.get_pos();
-    rj_geometry::Point rv = kb.get_vel();
+    rj_geometry::Point rp = kb.get_pos(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point rv = kb.get_vel(); //NOLINT(readability-identifier-length)
 
     EXPECT_NEAR(rp.x(), p.x(), 0.1);
     EXPECT_NEAR(rp.y(), p.y(), 0.01);
@@ -96,28 +101,30 @@ TEST(KalmanBall, predict_and_update) {
     EXPECT_LT(rv.y(), p.y());
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, is_unhealthy) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
 
     kb.predict(RJ::now() + RJ::Seconds(10));
 
     EXPECT_TRUE(kb.is_unhealthy());
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, max_measurement_size) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
     kb.set_vel(p);
 
     for (int i = 0; i < 100; i++) {
@@ -129,19 +136,20 @@ TEST(KalmanBall, max_measurement_size) {
     EXPECT_LT(list.size(), 10);
 }
 
+//NOLINTNEXTLINE
 TEST(KalmanBall, getters) {
-    RJ::Time t = RJ::now();
-    rj_geometry::Point p = rj_geometry::Point(1, 1);
-    CameraBall b = CameraBall(t, p);
+    RJ::Time t = RJ::now(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point p = rj_geometry::Point(1, 1); //NOLINT(readability-identifier-length)
+    CameraBall b = CameraBall(t, p); //NOLINT(readability-identifier-length)
     int c_id = 1;
-    WorldBall w;
+    WorldBall w; //NOLINT(readability-identifier-length)
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w); //NOLINT(readability-identifier-length)
 
     rj_geometry::Point rpc = kb.get_pos_cov();
     rj_geometry::Point rvc = kb.get_vel_cov();
-    rj_geometry::Point rp = kb.get_pos();
-    rj_geometry::Point rv = kb.get_vel();
+    rj_geometry::Point rp = kb.get_pos(); //NOLINT(readability-identifier-length)
+    rj_geometry::Point rv = kb.get_vel(); //NOLINT(readability-identifier-length)
 
     kb.set_vel(p);
     rj_geometry::Point rv2 = kb.get_vel();

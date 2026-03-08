@@ -1,0 +1,91 @@
+FROM ros:humble-ros-base AS builder
+
+WORKDIR /ws
+
+# Install Dependencies
+RUN apt-get update -y
+RUN apt-get upgrade -y 
+RUN apt-get install -y qtbase5-dev \
+    qtchooser \
+    qt5-qmake \
+    qtbase5-dev-tools \
+    qttools5-dev-tools \
+    libqt5opengl5-dev \
+    libqt5svg5-dev \
+    qtdeclarative5-dev \
+    libboost-all-dev \
+    build-essential \
+    libeigen3-dev \
+    protobuf-compiler \
+    libprotobuf-dev \
+    libfmt-dev
+
+# Install dependencies
+COPY ./src/rj_constants/package.xml /ws/src/rj_constants/package.xml
+COPY ./src/rj_geometry_msgs/package.xml /ws/src/rj_geometry_msgs/package.xml
+COPY ./src/rj_drawing_msgs/package.xml /ws/src/rj_drawing_msgs/package.xml
+COPY ./src/rj_convert/package.xml /ws/src/rj_convert/package.xml
+COPY ./src/rj_protos/package.xml /ws/src/rj_protos/package.xml
+COPY ./src/rj_geometry/package.xml /ws/src/rj_geometry/package.xml
+COPY ./src/rj_param_utils/package.xml /ws/src/rj_param_utils/package.xml
+COPY ./src/rj_msgs/package.xml /ws/src/rj_msgs/package.xml
+COPY ./src/rj_utils/package.xml /ws/src/rj_utils/package.xml
+COPY ./src/rj_common/package.xml /ws/src/rj_common/package.xml
+COPY ./src/rj_base_station/package.xml /ws/src/rj_base_station/package.xml
+
+RUN . /opt/ros/humble/setup.sh && rosdep install --from-paths /ws/src --ignore-src -r -y
+
+# Install rj_constants
+COPY ./src/rj_constants /ws/src/rj_constants
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_constants
+
+# Install rj_geometry_msgs
+COPY ./src/rj_geometry_msgs /ws/src/rj_geometry_msgs
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_geometry_msgs
+
+# Install rj_drawing_msgs
+COPY ./src/rj_drawing_msgs /ws/src/rj_drawing_msgs
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_drawing_msgs
+
+# Install rj_convert
+COPY ./src/rj_convert /ws/src/rj_convert
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_convert
+
+# Install rj_protos
+COPY ./src/rj_protos /ws/src/rj_protos
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_protos
+
+# Install rj_geometry
+COPY ./src/rj_geometry /ws/src/rj_geometry
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_geometry
+
+# Install rj_param_utils
+COPY ./src/rj_param_utils /ws/src/rj_param_utils
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_param_utils
+
+# Install rj_msgs
+COPY ./src/rj_msgs /ws/src/rj_msgs
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_msgs
+
+# Install rj_utils
+COPY ./src/rj_utils /ws/src/rj_utils
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_utils
+
+# Install rj_common
+COPY ./src/rj_common /ws/src/rj_common
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_common
+
+# Install rj_base_station
+COPY ./src/rj_base_station /ws/src/rj_base_station
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_base_station
+
+FROM ros:humble-ros-base AS runner
+
+WORKDIR /ws
+
+COPY --from=builder /ws/install ./install
+
+# Copy and Run the Entrypoint
+COPY ./docker/base_station/base-station-entrypoint.sh /ws/entrypoint.sh
+RUN chmod +x /ws/entrypoint.sh
+ENTRYPOINT ["/ws/entrypoint.sh"]

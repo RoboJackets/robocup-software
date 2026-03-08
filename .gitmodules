@@ -1,3 +1,9 @@
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = https://github.com/robojackets/style-configs
+[submodule "src/rj_base_station/external/RF24"]
+	path = src/rj_base_station/external/RF24
+	url = https://github.com/nRF24/RF24
+[submodule "src/rj_base_station/external/pigpio"]
+	path = src/rj_base_station/external/pigpio
+	url = https://github.com/joan2937/pigpio

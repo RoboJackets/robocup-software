@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rj_msgs)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -21,7 +24,6 @@ rosidl_generate_interfaces(
   action/RobotMove.action
 
   # Messages
-  msg/AgentState.msg
   msg/AliveRobots.msg
   msg/BallState.msg
   msg/BallPlacement.msg
@@ -36,6 +38,8 @@ rosidl_generate_interfaces(
   msg/MatchState.msg
   msg/MotionSetpoint.msg
   msg/Latency.msg
+  msg/ControllerSelect.msg
+  msg/SimPlacement.msg
 
   msg/LinearMotionInstant.msg
   msg/MotionCommand.msg
@@ -53,37 +57,10 @@ rosidl_generate_interfaces(
   msg/WorldState.msg
   msg/OverridePosition.msg
 
-  # Communication
-  msg/AgentRequest.msg
-  msg/AgentResponse.msg
-  msg/AgentResponseVariant.msg
-
   # Coordinators
   msg/KickerPicker.msg
 
-  # Agent Request Messages
-  request/JoinWallRequest.msg
-  request/TestRequest.msg
-  request/PassRequest.msg
-  request/ScorerRequest.msg
-  request/BallInTransitRequest.msg
-  request/SeekerRequest.msg
-  request/PositionRequest.msg
-  request/LeaveWallRequest.msg
-  request/ResetScorerRequest.msg
-  request/IncomingBallRequest.msg
-
-  # Agent Response Messages
-  response/ScorerResponse.msg
-  response/LeaveWallResponse.msg
-  response/PositionResponse.msg
-  response/TestResponse.msg
-  response/PassResponse.msg
-  response/Acknowledge.msg
-  response/JoinWallResponse.msg
-
   # Services
-  srv/AgentCommunication.srv
   srv/KickerPicker.srv
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
@@ -91,7 +68,6 @@ rosidl_generate_interfaces(
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
-  srv/SimPlacement.srv
   srv/SetManual.srv
 
   DEPENDENCIES

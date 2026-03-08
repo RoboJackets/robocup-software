@@ -1,0 +1,5 @@
+vision_receiver:
+  ros__parameters:
+    port: 10006
+    hz: 120.0
+    use_sim_time: false

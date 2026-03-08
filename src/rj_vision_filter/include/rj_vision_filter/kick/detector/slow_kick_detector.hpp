@@ -1,5 +1,6 @@
 #pragma once
 
+#include <rclcpp/rclcpp.hpp>
 #include <rj_geometry/point.hpp>
 #include <deque>
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -17,6 +18,7 @@ namespace vision_filter {
  */
 class SlowKickDetector {
 public:
+    SlowKickDetector(const std::shared_ptr<rclcpp::Node>& vision_filter_node);
     /**
      * Adds a record to our history list
      *
@@ -44,7 +46,7 @@ private:
      *
      * @return whether a kick event was detected
      */
-    bool detect_kick(KickEvent* kick_event);
+    [[nodiscard]] bool detect_kick(KickEvent* kick_event) const;
 
     /**
      * Checks to see if all the different tests to detect kicks are true
@@ -54,8 +56,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool check_all_validators(const std::vector<WorldRobot>& robot,
-                                   const std::vector<WorldBall>& ball);
+    [[nodiscard]] bool check_all_validators(const std::vector<WorldRobot>& robot,
+                                   const std::vector<WorldBall>& ball) const;
 
     /**
      * If ball and robots were close and are now far away
@@ -65,8 +67,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distance_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+    [[nodiscard]] bool distance_validator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -76,8 +78,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool velocity_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+    [[nodiscard]] bool velocity_validator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -99,9 +101,29 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool in_front_validator(const std::vector<WorldRobot>& robot,
-                                 const std::vector<WorldBall>& ball);
+    [[nodiscard]] bool in_front_validator(const std::vector<WorldRobot>& robot,
+                                 const std::vector<WorldBall>& ball) const;
 
     std::deque<VisionState> state_history_;
+
+    // Doesn't check any robots past this distance in meters for optimization
+    double slow_robot_dist_filter_cutoff_ = 3.0;
+    // Only one ball measurement within this distance of the robot
+    double slow_one_robot_within_dist_ = 0.15;
+    // At least one ball measurement past this distance of the robot
+    double slow_any_robot_past_dist_ = 0.16;
+    // Ball has to be this fast
+    double slow_min_ball_speed_ = 0.6;
+    // Max angle difference between velocity vector and robot heading
+    double slow_max_kick_angle_ = 0.34;
+    // The length of the slow kick history buffer
+    int slow_kick_hist_length_ = 5;
+    // The length of the fast kick history buffer
+    int fast_kick_hist_length_ = 3;
+    // The time between vision loops
+    double vision_loop_dt_ = 1.0 / 60.0;
+
+    // Callback to update the ros parameters for the filter
+    std::shared_ptr<rclcpp::node_interfaces::OnSetParametersCallbackHandle> param_cb_handle_;
 };
 }  // namespace vision_filter

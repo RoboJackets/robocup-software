@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(rj_common)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -39,16 +42,11 @@ set(RJ_COMMON_DEPS
 add_library(${PROJECT_NAME} SHARED
   src/debug_drawer.cpp
   src/field_dimensions.cpp
-  src/logger.cpp
   src/multicast.cpp
   src/qt_utils.cpp
   src/referee_enums.cpp
-  src/robot_intent.cpp
   src/transforms.cpp
   src/world_state.cpp
-  src/planning/motion_command.cpp
-  src/planning/trajectory.cpp
-  src/radio/packet_convert.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
@@ -99,7 +97,6 @@ if(BUILD_TESTING)
   set(RJ_COMMON_TESTS
     ball_test
     game_state_test
-    logger_test
     rj_common_convert_test
     world_state_test 
   )

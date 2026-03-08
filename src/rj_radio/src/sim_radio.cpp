@@ -7,7 +7,7 @@ using namespace boost::asio;
 namespace radio {
 
 static SimulatorCommand convert_placement_to_proto(
-    const rj_msgs::srv::SimPlacement::Request& placement) {
+    const rj_msgs::msg::SimPlacement& placement) {
     SimulatorCommand packet;
     auto* control = packet.mutable_control();
     if (!placement.ball.position.empty()) {
@@ -23,8 +23,8 @@ static SimulatorCommand convert_placement_to_proto(
 
     if (!placement.ball.velocity.empty()) {
         const auto& velocity = placement.ball.velocity.at(0);
-        control->mutable_teleport_ball()->set_vx(velocity.x);
-        control->mutable_teleport_ball()->set_vy(velocity.y);
+        control->mutable_teleport_ball()->set_vx(static_cast<float>(velocity.x));
+        control->mutable_teleport_ball()->set_vy(static_cast<float>(velocity.y));
         control->mutable_teleport_ball()->set_vz(0);
     }
 
@@ -97,19 +97,19 @@ SimRadio::SimRadio(bool blue_team)
     buffer_.resize(1024);
     start_receive();
 
-    const auto& placement_callback =
-        [this](const rj_msgs::srv::SimPlacement::Request::SharedPtr request,  // NOLINT
-               [[maybe_unused]] const rj_msgs::srv::SimPlacement::Response::SharedPtr
-                   response) {  // NOLINT
-            send_sim_command(convert_placement_to_proto(*request));
-        };
-    sim_placement_service_ = create_service<rj_msgs::srv::SimPlacement>(
-        sim::topics::kSimPlacementSrv, placement_callback);
+    sim_placement_subscription_ = create_subscription<rj_msgs::msg::SimPlacement>(
+        sim::topics::kSimPlacementSrv, rclcpp::QoS(1),
+        //NOLINTNEXTLINE(performance-unnecessary-value-param)
+        [this](const rj_msgs::msg::SimPlacement::SharedPtr msg) {
+            send_sim_command(convert_placement_to_proto(*msg));
+        }
+    );
 }
 
-void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                                    const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                    strategy::Positions role) {
+void SimRadio::send_control_message(
+    uint8_t robot_id,
+    const control::ControlCommand& control_command
+) {
     RobotControl sim_packet;
 
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
@@ -119,8 +119,7 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
         return;
     }
     last_sent_diff_.at(robot_id) = RJ::now();
-    RobotCommand* sim_robot = sim_packet.add_robot_commands();
-    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
+    control_command.as_sim_command(robot_id, sim_packet.add_robot_commands());
 
     std::string out;
     sim_packet.SerializeToString(&out);
@@ -145,7 +144,10 @@ void SimRadio::start_receive() {
                           });
 }
 
-void SimRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
+void SimRadio::receive_packet(
+    [[maybe_unused]] const boost::system::error_code& error,
+    [[maybe_unused]] std::size_t num_bytes
+) {
     std::string data(buffer_.begin(), buffer_.end());
     handle_receive(data);
     start_receive();
@@ -158,10 +160,13 @@ void SimRadio::handle_receive(const std::string& data) {
 
     for (int pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
         rj_msgs::msg::RobotStatus status_ros;
-        RobotStatus status;
         const RobotFeedback& sim_status = packet.feedback(pkt_idx);
-        ConvertRx::sim_to_status(sim_status, &status);
-        ConvertRx::status_to_ros(status, &status_ros);
+        status_ros.robot_id = sim_status.id();
+        status_ros.battery_percent = 1.0;
+        status_ros.blue_team = blue_team_;
+        status_ros.has_ball_sense = sim_status.dribbler_ball_contact();
+        status_ros.kicker_healthy = true;
+        status_ros.kicker_charged = true;
 
         publish_robot_status(status_ros.robot_id, status_ros);
     }
@@ -232,6 +237,5 @@ int main(int argc, char** argv) {
     rj_utils::set_spdlog_default_ros2("processor");
 
     auto radio = std::make_shared<radio::SimRadio>();
-    start_global_param_provider(radio.get(), kGlobalParamServerNode);
     rclcpp::spin(radio);
 }

@@ -1,41 +1,44 @@
 #include <rj_constants/constants.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/camera/world.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_kick_timeout, 1.0,
-                  "Only replace fast kick estimates when this much time has "
-                  "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_kick_timeout, 0.5,
-                  "Only replace slow kick estimates when this much time has "
-                  "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, same_kick_timeout, 0.5,
-                  "Only replace fast kick estimate with a slow when the two "
-                  "times are within this amount.")
-using namespace kick::detector;
 
-World::World()
+World::World(std::shared_ptr<rclcpp::Node> vision_filter_node)
     : last_update_time_{RJ::Time{RJ::Time::duration(0)}},
-      cameras_(PARAM_max_num_cameras),
       robots_yellow_(kNumShells, WorldRobot()),
-      robots_blue_(kNumShells, WorldRobot()) {}
+      robots_blue_(kNumShells, WorldRobot()),
+      fast_kick_(vision_filter_node),
+      slow_kick_(vision_filter_node),
+      vision_filter_node_(std::move(vision_filter_node)) {
+    initialize_parameters();
+
+    param_cb_handle_ = vision_filter_node_->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) -> rcl_interfaces::msg::SetParametersResult
+    {
+        rcl_interfaces::msg::SetParametersResult result;
+        result.successful = update_parameters(params);
+
+        return result;
+    });
+}
 
 void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
-    update_with_camera_frame(calc_time, {frame}, false);
+    update_with_camera_frame(calc_time, {
+        frame}, false);
 }
 
 void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
                                      bool update_all) {
     calc_ball_bounce();
 
-    std::vector<bool> camera_updated(PARAM_max_num_cameras, false);
+    std::vector<bool> camera_updated(cameras_.size(), false);
 
-    // TODO: Take only the newest frame if 2 come in for the same camera
+    // TODO (UNKNOWN): Take only the newest frame if 2 come in for the same camera
 
     for (const CameraFrame& frame : new_frames) {
         // Make sure camera from frame is created, if not, make it
         if (!cameras_.at(frame.camera_id).get_is_valid()) {
-            cameras_.at(frame.camera_id) = Camera(frame.camera_id);
+            cameras_.at(frame.camera_id) = Camera(frame.camera_id, vision_filter_node_);
         }
 
         // Take the non-sorted list from the frame and make a list for the
@@ -94,6 +97,7 @@ void World::calc_ball_bounce() {
     }
 }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void World::update_world_objects(RJ::Time calc_time) {
     // Fill robots_yellow_/blue with what robots we want and remove the rest
     ball_ = WorldBall();
@@ -116,8 +120,8 @@ void World::update_world_objects(RJ::Time calc_time) {
 
             if (!camera_balls.empty()) {
                 // Sort by health of the kalman filter
-                camera_balls.sort([](KalmanBall& a, KalmanBall& b) -> bool {
-                    return a.get_health() > b.get_health();
+                camera_balls.sort([](KalmanBall& ball_a, KalmanBall& ball_b) -> bool {
+                    return ball_a.get_health() > ball_b.get_health();
                 });
 
                 kalman_balls.push_back(camera_balls.front());
@@ -126,8 +130,8 @@ void World::update_world_objects(RJ::Time calc_time) {
             // Take the best kalman filter from the camera
             for (size_t i = 0; i < camera_robots_yellow.size(); i++) {
                 if (!camera_robots_yellow.at(i).empty()) {
-                    camera_robots_yellow.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
-                        return a.get_health() > b.get_health();
+                    camera_robots_yellow.at(i).sort([](KalmanRobot& robot_a, KalmanRobot& robot_b) -> bool {
+                        return robot_a.get_health() > robot_b.get_health();
                     });
 
                     kalman_robots_yellow.at(i).push_back(camera_robots_yellow.at(i).front());
@@ -137,8 +141,8 @@ void World::update_world_objects(RJ::Time calc_time) {
             // Take the best kalman filter from the camera
             for (size_t i = 0; i < camera_robots_blue.size(); i++) {
                 if (!camera_robots_blue.at(i).empty()) {
-                    camera_robots_blue.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
-                        return a.get_health() > b.get_health();
+                    camera_robots_blue.at(i).sort([](KalmanRobot& robot_a, KalmanRobot& robot_b) -> bool {
+                        return robot_a.get_health() > robot_b.get_health();
                     });
 
                     kalman_robots_blue.at(i).push_back(camera_robots_blue.at(i).front());
@@ -149,20 +153,20 @@ void World::update_world_objects(RJ::Time calc_time) {
 
     // Only replace the invalid result if we have measurements on any camera
     if (!kalman_balls.empty()) {
-        ball_ = WorldBall(calc_time, kalman_balls);
+        ball_ = WorldBall(calc_time, kalman_balls, ball_merger_power_);
     }
 
     for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
             robots_yellow_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::YELLOW, i, kalman_robots_yellow.at(i));
+                WorldRobot(calc_time, WorldRobot::Team::YELLOW, static_cast<int>(i), kalman_robots_yellow.at(i), robot_merger_power_);
         }
     }
 
     for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
             robots_blue_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i));
+                WorldRobot(calc_time, WorldRobot::Team::BLUE, static_cast<int>(i), kalman_robots_blue.at(i), robot_merger_power_);
         }
     }
 }
@@ -189,24 +193,21 @@ void World::detect_kicks(RJ::Time calc_time) {
         // There is a kick recorded already
     } else {
         const RJ::Seconds time_since_best_event(best_kick_estimate_.get_kick_time() - calc_time);
-        const RJ::Seconds same_kick_timeout(PARAM_same_kick_timeout);
-        const RJ::Seconds slow_kick_timeout(PARAM_slow_kick_timeout);
-        const RJ::Seconds fast_kick_timeout(PARAM_fast_kick_timeout);
 
         // Try using the slow kick if:
         //      - It refers to the current best kick event (and probably is a
         //      better estimate)
         //      - The old kick timed out and should be updated
-        if (is_slow_kick && (time_since_best_event < same_kick_timeout ||
-                             time_since_best_event > slow_kick_timeout)) {
+        if (is_slow_kick && (time_since_best_event < same_kick_timeout_ ||
+                             time_since_best_event > slow_kick_timeout_)) {
             best_kick_estimate_ = slow_event;
 
             // Try using the fast kick if the old kick timed out
-        } else if (is_fast_kick && time_since_best_event > fast_kick_timeout) {
+        } else if (is_fast_kick && time_since_best_event > fast_kick_timeout_) {
             best_kick_estimate_ = fast_event;
 
             // Remove the old kick if it's completely time out
-        } else if (time_since_best_event > slow_kick_timeout + fast_kick_timeout) {
+        } else if (time_since_best_event > slow_kick_timeout_ + fast_kick_timeout_) {
             best_kick_estimate_ = KickEvent();
         }
     }
@@ -219,4 +220,36 @@ const std::vector<WorldRobot>& World::get_robots_yellow() const { return robots_
 const std::vector<WorldRobot>& World::get_robots_blue() const { return robots_blue_; }
 
 const KickEvent& World::get_best_kick_estimate() const { return best_kick_estimate_; }
+
+void World::initialize_parameters() {
+    cameras_ = std::vector<Camera>(vision_filter_node_->get_parameter("max_num_cameras").as_int());
+    same_kick_timeout_ = RJ::Seconds(vision_filter_node_->get_parameter("kick.detector.same_kick_timeout").as_double());
+    slow_kick_timeout_ = RJ::Seconds(vision_filter_node_->get_parameter("kick.detector.slow_kick_timeout").as_double());
+    fast_kick_timeout_ = RJ::Seconds(vision_filter_node_->get_parameter("kick.detector.fast_kick_timeout").as_double());
+    vision_filter_node_->get_parameter<double>("world_ball.ball_merger_power", ball_merger_power_);
+    vision_filter_node_->get_parameter<double>("world_robot.robot_merger_power", robot_merger_power_);
+}
+
+bool World::update_parameters(const std::vector<rclcpp::Parameter>& params) {
+    bool success = true;
+
+    for (const auto& param : params) {
+        if (param.get_name() == "max_num_cameras") {
+            success = false;
+        } else if (param.get_name() == "kick.detector.same_kick_timeout") {
+            same_kick_timeout_ = RJ::Seconds(param.get_value<double>());
+        } else if (param.get_name() == "kick.detector.slow_kick_timeout") {
+            slow_kick_timeout_ = RJ::Seconds(param.get_value<double>());
+        } else if (param.get_name() == "kick.detector.fast_kick_timeout") {
+            fast_kick_timeout_ = RJ::Seconds(param.get_value<double>());
+        } else if (param.get_name() == "world_ball.ball_merger_power") {
+            ball_merger_power_ = param.as_double();
+        } else if (param.get_name() == "world_robot.robot_merger_power") {
+            robot_merger_power_ = param.as_double();
+        }
+    }
+
+    return success;
+}
+
 }  // namespace vision_filter

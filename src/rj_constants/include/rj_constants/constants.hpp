@@ -38,3 +38,5 @@ inline constexpr double kAvoidBallDistance = 0.01;
 
 inline const std::string kTeamNameLower = "robojackets";
 inline const std::string kTeamName = "RoboJackets";
+
+// Ball Decay Constant

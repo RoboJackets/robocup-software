@@ -25,18 +25,17 @@ public:
      * @brief Constructor from DetectionBallMsg.
      * @param msg
      */
-    CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg,
-               const rj_geometry::TransformMatrix& world_to_team);
+    CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg);
 
     /**
      * @return Time this measurement was captured
      */
-    RJ::Time get_time_captured() const;
+    [[nodiscard]] RJ::Time get_time_captured() const;
 
     /**
      * @return Position of the measurement
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * Combines all the balls in the list and returns a ball

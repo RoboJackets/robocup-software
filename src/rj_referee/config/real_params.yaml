@@ -1,0 +1,3 @@
+external_referee:
+  ros__parameters:
+    team_name: RoboJackets

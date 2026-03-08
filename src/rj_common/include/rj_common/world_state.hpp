@@ -10,9 +10,6 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
 
-#include "rj_common/planning/instant.hpp"
-#include "rj_common/planning/trajectory.hpp"
-
 /**
  * @brief Contains robot motion state data
  * @details This class contains data that comes from the vision system
@@ -131,12 +128,6 @@ struct BallState {
      */
     [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(
         double distance) const;
-
-    /**
-     * @brief Create a trajectory for the ball.
-     * @return A trajectory for this ball to follow. Angles are meaningless.
-     */
-    [[nodiscard]] planning::Trajectory make_trajectory() const;
 };
 
 struct WorldState {

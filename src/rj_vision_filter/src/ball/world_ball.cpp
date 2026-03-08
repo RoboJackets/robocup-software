@@ -1,19 +1,19 @@
 #include <cmath>
 
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_utils/logging.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,
-                  "Multiplier to scale the weighted average coefficient"
-                  "to be nonlinear.")
-using world_ball::PARAM_ball_merger_power;
 
 WorldBall::WorldBall() : is_valid_(false) {}
 
-WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls)
-    : is_valid_(true), time_(calc_time) {
+WorldBall::WorldBall(
+    RJ::Time calc_time,
+    const std::list<KalmanBall>& kalman_balls,
+    double ball_merger_power
+)
+    : is_valid_(true), time_(calc_time), ball_merger_power_(ball_merger_power) {
+
     rj_geometry::Point pos_avg = rj_geometry::Point(0, 0);
     rj_geometry::Point vel_avg = rj_geometry::Point(0, 0);
     double total_pos_weight = 0;
@@ -21,7 +21,7 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (PARAM_ball_merger_power < 1 || PARAM_ball_merger_power > 2) {
+    if (ball_merger_power_ < 1 || ball_merger_power_ > 2) {
         SPDLOG_WARN("ball_merger_power should be between 1 and 2");
     }
 
@@ -55,10 +55,10 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
         // Weight better estimates higher
         double filter_pos_weight =
-            std::pow(pos_uncertantity * filter_uncertantity, -PARAM_ball_merger_power);
+            std::pow(pos_uncertantity * filter_uncertantity, -ball_merger_power_);
 
         double filter_vel_weight =
-            std::pow(vel_uncertantity * filter_uncertantity, -PARAM_ball_merger_power);
+            std::pow(vel_uncertantity * filter_uncertantity, -ball_merger_power_);
 
         pos_avg += filter_pos_weight * ball.get_pos();
         vel_avg += filter_vel_weight * ball.get_vel();
@@ -72,8 +72,8 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
     pos_ = pos_avg;
     vel_ = vel_avg;
-    pos_cov_ = total_pos_weight / kalman_balls.size();
-    vel_cov_ = total_vel_weight / kalman_balls.size();
+    pos_cov_ = total_pos_weight / static_cast<double>(kalman_balls.size());
+    vel_cov_ = total_vel_weight / static_cast<double>(kalman_balls.size());
     ball_components_ = kalman_balls;
 }
 

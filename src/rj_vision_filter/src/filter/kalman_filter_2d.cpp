@@ -2,21 +2,18 @@
 
 #include <cmath>
 
-#include <rj_param_utils/vision/vision_params.hpp>
-
 namespace vision_filter {
-
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, init_covariance, 100.0,
-                  "Initial covariance of the filter. Controls how fast it gets "
-                  "to the target.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, process_noise, 0.1,
-                  "Controls how quickly it reacts to changes in ball accelerations.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
-                  "Controls how much it trusts measurements from the camera.")
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel)
+KalmanFilter2D::KalmanFilter2D(
+    rj_geometry::Point init_pos,
+    rj_geometry::Point init_vel,
+    double vision_loop_dt, //NOLINT(bugprone-easily-swappable-parameters)
+    double ball_initial_covariance,
+    double ball_process_noise,
+    double ball_observation_noise
+)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
@@ -29,7 +26,8 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
-    double p = ball::PARAM_init_covariance;
+    //NOLINTNEXTLINE(readability-identifier-length)
+    double p = ball_initial_covariance;
     P_k1_k1_ << p, 0, 0, 0,
                 0, p, 0, 0,
                 0, 0, p, 0,
@@ -40,7 +38,8 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // TODO(1565): Allow variable dt to decouple predict, update and merging.
     // State transition matrix (A)
     // Pos, velocity integrator. Assume constant velocity
-    double dt = PARAM_vision_loop_dt;
+    //NOLINTNEXTLINE(readability-identifier-length)
+    double dt = vision_loop_dt;
     F_k_ << 1, dt,  0,  0,
             0,  1,  0,  0,
             0,  0,  1, dt,
@@ -73,7 +72,7 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // Taken from Tiger's AutoRef. Most likely found through integration of
     // error through the state matrices. See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
-    p = ball::PARAM_process_noise;
+    p = ball_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -87,7 +86,8 @@ KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point i
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = ball::PARAM_observation_noise;
+    //NOLINTNEXTLINE(readability-identifier-length)
+    double o = ball_observation_noise;
     // clang-format off
     R_k_ << o, 0,
             0, o;
@@ -101,19 +101,19 @@ void KalmanFilter2D::predict_with_update(rj_geometry::Point observation) {
 }
 
 rj_geometry::Point KalmanFilter2D::get_pos() const {
-    return rj_geometry::Point(x_k_k_(0), x_k_k_(2));
+    return {x_k_k_(0), x_k_k_(2)};
 }
 
 rj_geometry::Point KalmanFilter2D::get_vel() const {
-    return rj_geometry::Point(x_k_k_(1), x_k_k_(3));
+    return {x_k_k_(1), x_k_k_(3)};
 }
 
 rj_geometry::Point KalmanFilter2D::get_pos_cov() const {
-    return rj_geometry::Point(P_k_k_(0, 0), P_k_k_(2, 2));
+    return {P_k_k_(0, 0), P_k_k_(2, 2)};
 }
 
 rj_geometry::Point KalmanFilter2D::get_vel_cov() const {
-    return rj_geometry::Point(P_k_k_(1, 1), P_k_k_(3, 3));
+    return {P_k_k_(1, 1), P_k_k_(3, 3)};
 }
 
 void KalmanFilter2D::set_vel(rj_geometry::Point new_vel) {

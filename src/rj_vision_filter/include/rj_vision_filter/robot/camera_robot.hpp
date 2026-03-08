@@ -27,37 +27,33 @@ public:
      * Constructor that takes in a DetectionRobotMsg.
      * @param time_captured
      * @param msg
-     * @param world_to_team
-     * @param team_angle
      */
-    CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg,
-                const rj_geometry::TransformMatrix& world_to_team,
-                double team_angle);
+    CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg);
 
     /**
      * @return the time the detection was captured
      */
-    RJ::Time get_time_captured() const;
+    [[nodiscard]] RJ::Time get_time_captured() const;
 
     /**
      * @return the position of the measurement
      */
-    rj_geometry::Point get_pos() const;
+    [[nodiscard]] rj_geometry::Point get_pos() const;
 
     /**
      * @return the heading of the measurement
      */
-    double get_theta() const;
+    [[nodiscard]] double get_theta() const;
 
     /**
      * @return the robot ID of the measurement
      */
-    int get_robot_id() const;
+    [[nodiscard]] int get_robot_id() const;
 
     /**
      * @return the pose of the measurement
      */
-    rj_geometry::Pose get_pose() const;
+    [[nodiscard]] rj_geometry::Pose get_pose() const;
 
     /**
      * Combines all the robots in the list and returns a robot

@@ -1,0 +1,54 @@
+vision_filter:
+  ros__parameters:
+    ball:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      process_noise: 0.1
+    camera:
+      max_num_kalman_balls: 10
+      max_num_kalman_robots: 10
+      mhkf_radius_cutoff: 0.5
+      use_mhkf: true
+    filter:
+      health:
+        dec: 1
+        inc: 2
+        init: 2
+        max: 20
+        min: 1
+    kalman_ball:
+      max_time_outside_vision: 0.2
+    kalman_robot:
+      max_time_outside_vision: 0.5
+    kick:
+      detector:
+        fast_acceleration_trigger: 750.0
+        fast_kick_hist_length: 3
+        fast_kick_timeout: 1.0
+        same_kick_timeout: 0.5
+        slow_any_robot_past_dist: 0.16
+        slow_kick_hist_length: 5
+        slow_kick_timeout: 0.5
+        slow_max_kick_angle: 0.34
+        slow_min_ball_speed: 0.6
+        slow_one_robot_within_dist: 0.15
+        slow_robot_dist_filter_cutoff: 3.0
+    max_num_cameras: 12
+    publish_hz: 120.0
+    robot:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      orientation_scale: 1.0
+      process_noise: 0.5
+    use_sim_time: false
+    vision_filter:
+      bounce:
+        robot_body_angle_dampen: 0.0
+        robot_body_lin_dampen: 0.9
+        robot_mouth_angle_dampen: 0.0
+        robot_mouth_lin_dampen: 0.3
+    vision_loop_dt: 0.016666666666666666
+    world_ball:
+      ball_merger_power: 1.5
+    world_robot:
+      robot_merger_power: 1.5

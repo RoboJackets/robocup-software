@@ -6,54 +6,55 @@
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_utils/logging_macros.hpp>
 
 namespace vision_filter {
-DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
-               "The rate in Hz at which VisionFilter publishes ball and robot "
-               "observations.")
 
-VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
-    : rclcpp::Node{"vision_filter", options},
+VisionFilter::VisionFilter()
+    : rclcpp::Node{"vision_filter", rclcpp::NodeOptions().automatically_declare_parameters_from_overrides(true)},
       config_client_{this},
-      team_color_queue_{this, referee::topics::kTeamColorTopic},
-      param_provider_{this, kVisionFilterParamModule} {
+      team_color_queue_{this, referee::topics::kTeamColorTopic}
+{
     // Create a timer that calls predict on all of the Kalman filters.
-    const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
-    auto publish_callback = [this]() { publish_state(); };
-    publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
+    publish_timer_ = create_wall_timer(
+        std::chrono::duration<double>(get_parameter("vision_loop_dt").as_double()),
+        [this]() { if (world_.has_value()) { publish_state(); } }
+    );
 
     // Create a subscriber for the DetectionFrameMsg
-    constexpr int kQueueSize = 10;
-    const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        auto team_color = team_color_queue_.get();
-        if (!config_client_.connected() || team_color == nullptr) {
-            return;
-        }
-
-        const double current_team_angle = team_angle();
-        const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
-        auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);
-        world_.update_single_camera(RJ::now(), frame);
-    };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
-        vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(kQueueSize), callback);
+        vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(10),
+        [this](const DetectionFrameMsg::UniquePtr msg) {
+            if (world_.has_value()) {
+                auto team_color = team_color_queue_.get();
+                if (!config_client_.connected() || team_color == nullptr) {
+                    return;
+                }
+
+                auto frame = CameraFrame(*msg);
+                world_->update_single_camera(RJ::now(), frame);
+            }
+        }
+    );
 
     // Create publishers.
     world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStateTopic, 10);
 }
 
+void VisionFilter::initialize() {
+    world_ = World(shared_from_this());
+}
+
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
     return rj_msgs::build<WorldStateMsg>()
-        .last_update_time(rj_convert::convert_to_ros(world_.last_update_time()))
+        .last_update_time(rj_convert::convert_to_ros(world_->last_update_time()))
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))
         .ball(build_ball_state_msg());
 }
 
 VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg() const {
-    const WorldBall& wb = world_.get_world_ball();
+    const WorldBall& wb = world_->get_world_ball(); //NOLINT(readability-identifier-length)
 
     BallStateMsg msg{};
     msg.stamp = rj_convert::convert_to_ros(wb.get_time());
@@ -65,12 +66,12 @@ VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg() const {
 
 std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
     bool blue_team) const {
-    const auto& robots = blue_team ? world_.get_robots_blue() : world_.get_robots_yellow();
+    const auto& robots = blue_team ? world_->get_robots_blue() : world_->get_robots_yellow();
 
     // Fill our robots
     std::vector<RobotStateMsg> robot_state_msgs(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
-        const WorldRobot& wr = robots.at(i);
+        const WorldRobot& wr = robots.at(i); //NOLINT(readability-identifier-length)
 
         RobotState robot_state;
         robot_state.visible = wr.get_is_valid();
@@ -89,7 +90,6 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 void VisionFilter::publish_state() {
     std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.get();
     if (team_color == nullptr) {
-        EZ_WARN_THROTTLE(1000, "Returning because team_color is nullptr");
         return;
     }
 

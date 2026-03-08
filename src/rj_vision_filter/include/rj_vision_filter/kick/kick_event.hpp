@@ -51,22 +51,22 @@ public:
     /**
      * @return true if the kick is a valid one
      */
-    bool get_is_valid() const;
+    [[nodiscard]] bool get_is_valid() const;
 
     /**
      * @return time we think a robot kicked
      */
-    RJ::Time get_kick_time() const;
+    [[nodiscard]] RJ::Time get_kick_time() const;
 
     /**
      * @return robot we think kicked
      */
-    WorldRobot get_kicking_robot() const;
+    [[nodiscard]] WorldRobot get_kicking_robot() const;
 
     /**
      * @return vision states since that time we kicked
      */
-    const std::deque<VisionState>& get_states_since_kick() const;
+    [[nodiscard]] const std::deque<VisionState>& get_states_since_kick() const;
 
 private:
     // If it's a valid kick event object

@@ -4,19 +4,17 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_param_utils/vision/vision_params.hpp>
-
 namespace vision_filter {
-
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_robot, robot_merger_power, 1.5,
-                  "Multiplier to scale the weighted average coefficient "
-                  "to be nonlinear.")
-using world_robot::PARAM_robot_merger_power;
 
 WorldRobot::WorldRobot() : is_valid_(false) {}
 
-WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
-                       const std::list<KalmanRobot>& kalman_robots)
+WorldRobot::WorldRobot(
+    RJ::Time calc_time,
+    Team team,
+    int robot_id,
+    const std::list<KalmanRobot>& kalman_robots,
+    double robot_merger_power
+)
     : team_(team), robot_id_(robot_id), time_(calc_time), is_valid_(true) {
     // Theta's are converted to rect coords then back to polar to convert
     rj_geometry::Point pos_cartesian_avg;
@@ -28,7 +26,7 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (PARAM_robot_merger_power < 1 || PARAM_robot_merger_power > 2) {
+    if (robot_merger_power < 1 || robot_merger_power > 2) {
         SPDLOG_WARN("robot_merger_power must be between 1 and 2");
     }
 
@@ -65,10 +63,10 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
             std::sqrt(pose_std_dev.position().magsq() + std::pow(twist_std_dev.angular(), 2));
 
         double filter_pos_weight =
-            std::pow(pos_uncertantity * filter_uncertantity, -PARAM_robot_merger_power);
+            std::pow(pos_uncertantity * filter_uncertantity, -robot_merger_power);
 
         double filter_vel_weight =
-            std::pow(vel_uncertantity * filter_uncertantity, -PARAM_robot_merger_power);
+            std::pow(vel_uncertantity * filter_uncertantity, -robot_merger_power);
 
         pos_cartesian_avg += filter_pos_weight * robot.get_pos();
         theta_cartesian_avg += rj_geometry::Point(filter_pos_weight * cos(robot.get_theta()),
@@ -89,8 +87,8 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
     pose_.heading() = atan2(theta_cartesian_avg.y(), theta_cartesian_avg.x());
     twist_.linear() = twist_avg.linear();
     twist_.angular() = twist_avg.angular();
-    pos_cov_ = total_pos_weight / kalman_robots.size();
-    vel_cov_ = total_vel_weight / kalman_robots.size();
+    pos_cov_ = total_pos_weight / static_cast<double>(kalman_robots.size());
+    vel_cov_ = total_vel_weight / static_cast<double>(kalman_robots.size());
     robot_components_ = kalman_robots;
 }
 

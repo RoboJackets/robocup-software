@@ -1,0 +1,42 @@
+import { IOBuffer } from 'iobuffer';
+import type { DecodedApng, DecodedPng, DecoderInputType, PngDecoderOptions } from './types.ts';
+export default class PngDecoder extends IOBuffer {
+    private readonly _checkCrc;
+    private _inflator;
+    private readonly _png;
+    private readonly _apng;
+    private _end;
+    private _hasPalette;
+    private _palette;
+    private _hasTransparency;
+    private _transparency;
+    private _compressionMethod;
+    private _filterMethod;
+    private _interlaceMethod;
+    private _colorType;
+    private _isAnimated;
+    private _numberOfFrames;
+    private _numberOfPlays;
+    private _frames;
+    private _writingDataChunks;
+    constructor(data: DecoderInputType, options?: PngDecoderOptions);
+    decode(): DecodedPng;
+    decodeApng(): DecodedApng;
+    private decodeChunk;
+    private decodeApngChunk;
+    private decodeIHDR;
+    private decodeACTL;
+    private decodeFCTL;
+    private decodePLTE;
+    private decodeIDAT;
+    private decodeFDAT;
+    private decodetRNS;
+    private decodeiCCP;
+    private decodepHYs;
+    private decodeApngImage;
+    private disposeFrame;
+    private addFrameDataToCanvas;
+    private decodeImage;
+    private pushDataToFrame;
+}
+//# sourceMappingURL=png_decoder.d.ts.map

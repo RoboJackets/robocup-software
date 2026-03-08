@@ -2,22 +2,49 @@
 #include <cmath>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 
 namespace vision_filter {
 
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_robot_dist_filter_cutoff, 3.0,
-                  "Doesn't check any robots past this distance in m for optimization.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_one_robot_within_dist, 0.15,
-                  "Only one ball measurement within this distance of the robot.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_any_robot_past_dist, 0.16,
-                  "At least one ball measurement past this distance of the robot.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_min_ball_speed, 0.6,
-                  "Ball has to be this fast.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_max_kick_angle, 0.34,
-                  "Max angle difference between velocity vector and robot heading.")
-using namespace kick::detector;
+SlowKickDetector::SlowKickDetector(const std::shared_ptr<rclcpp::Node>& vision_filter_node) {
+    vision_filter_node->get_parameter<double>("kick.detector.slow_robot_dist_filter_cutoff", slow_robot_dist_filter_cutoff_);
+    vision_filter_node->get_parameter<double>("kick.detector.slow_one_robot_within_dist", slow_one_robot_within_dist_);
+    vision_filter_node->get_parameter<double>("kick.detector.slow_any_robot_past_dist", slow_any_robot_past_dist_);
+    vision_filter_node->get_parameter<double>("kick.detector.slow_min_ball_speed", slow_min_ball_speed_);
+    vision_filter_node->get_parameter<double>("kick.detector.slow_max_kick_angle", slow_max_kick_angle_);
+    vision_filter_node->get_parameter<int>("kick.detector.slow_kick_hist_length", slow_kick_hist_length_);
+    vision_filter_node->get_parameter<int>("kick.detector.fast_kick_hist_length", fast_kick_hist_length_);
+    vision_filter_node->get_parameter<double>("vision_loop_dt", vision_loop_dt_);
+    
+    param_cb_handle_ = vision_filter_node->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) -> rcl_interfaces::msg::SetParametersResult
+    {
+        rcl_interfaces::msg::SetParametersResult result;
+        result.successful = true;
+
+        for (const auto& param : params) {
+            if (param.get_name() == "kick.detector.slow_robot_dist_filter_cutoff") {
+                slow_robot_dist_filter_cutoff_ = param.as_double();
+            } else if (param.get_name() == "kick.detector.slow_one_robot_with_dist") {
+                slow_one_robot_within_dist_ = param.as_double();
+            } else if (param.get_name() == "kick.detector.slow_any_robot_past_dist") {
+                slow_any_robot_past_dist_ = param.as_double();
+            } else if (param.get_name() == "kick.detector.slow_min_ball_speed") {
+                slow_min_ball_speed_ = param.as_double();
+            } else if (param.get_name() == "kick.detector.slow_max_kick_angle") {
+                slow_max_kick_angle_ = param.as_double();
+            } else if (param.get_name() == "kick.detector.slow_kick_hist_length") {
+                slow_kick_hist_length_ = static_cast<int>(param.as_int());
+            } else if (param.get_name() == "kick.detector.fast_kick_hist_length") {
+                fast_kick_hist_length_ = static_cast<int>(param.as_int());
+            } else if (param.get_name() == "vision_loop_dt") {
+                vision_loop_dt_ = param.as_double();
+            }
+        }
+
+        return result;
+    });
+}
 
 bool SlowKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
@@ -25,19 +52,19 @@ bool SlowKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   KickEvent* kick_event) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
-    if (state_history_.size() > static_cast<size_t>(kick::detector::PARAM_slow_kick_hist_length)) {
+    if (state_history_.size() > static_cast<size_t>(slow_kick_hist_length_)) {
         state_history_.pop_front();
     }
 
     // If we don't have enough, just return
-    if (state_history_.size() < static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
+    if (state_history_.size() < static_cast<size_t>(fast_kick_hist_length_)) {
         return false;
     }
 
     // Make sure all the balls are valid
     // Otherwise we can't do anything
     bool all_valid = std::all_of(state_history_.begin(), state_history_.end(),
-                                 [](VisionState& v) { return v.ball.get_is_valid(); });
+                                 [](VisionState& v) { return v.ball.get_is_valid(); }); //NOLINT(readability-identifier-length)
 
     if (!all_valid) {
         return false;
@@ -46,7 +73,7 @@ bool SlowKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
     return detect_kick(kick_event);
 }
 
-bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
+bool SlowKickDetector::detect_kick(KickEvent* kick_event) const {
     // Find all the robots who have enough samples
     // Cut out any that are too far
     // Test validators on all of them
@@ -60,7 +87,7 @@ bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
     for (size_t i = 0; i < state_history_.at(0).yellow_robots.size(); i++) {
         bool all_valid =
             std::all_of(state_history_.begin(), state_history_.end(),
-                        [i](VisionState& v) { return v.yellow_robots.at(i).get_is_valid(); });
+                        [i](const VisionState& v) { return v.yellow_robots.at(i).get_is_valid(); }); //NOLINT(readability-identifier-length)
 
         // If not all the robots of this specific id are valid
         // check the next one
@@ -88,7 +115,7 @@ bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
     for (size_t i = 0; i < state_history_.at(0).blue_robots.size(); i++) {
         bool all_valid =
             std::all_of(state_history_.begin(), state_history_.end(),
-                        [i](VisionState& v) { return v.blue_robots.at(i).get_is_valid(); });
+                        [i](const VisionState& v) { return v.blue_robots.at(i).get_is_valid(); }); //NOLINT(readability-identifier-length)
 
         // If not all the robots of this specific id are valid
         // check the next one
@@ -115,13 +142,13 @@ bool SlowKickDetector::detect_kick(KickEvent* kick_event) {
 }
 
 bool SlowKickDetector::check_all_validators(const std::vector<WorldRobot>& robot,
-                                            const std::vector<WorldBall>& ball) {
+                                            const std::vector<WorldBall>& ball) const {
     return distance_validator(robot, ball) && velocity_validator(robot, ball) &&
            distance_increasing_validator(robot, ball) && in_front_validator(robot, ball);
 }
 
 bool SlowKickDetector::distance_validator(const std::vector<WorldRobot>& robot,
-                                          const std::vector<WorldBall>& ball) {
+                                          const std::vector<WorldBall>& ball) const {
     // Make sure the first one is very close
     // And all the others are not
     // and if one or more are past the far distance
@@ -133,26 +160,28 @@ bool SlowKickDetector::distance_validator(const std::vector<WorldRobot>& robot,
         dist.at(i) = (robot.at(i).get_pos() - ball.at(i).get_pos()).mag();
     }
 
+    //NOLINTNEXTLINE
     int num_close = std::count_if(dist.begin(), dist.end(),
-                                  [](double i) { return i < PARAM_slow_one_robot_within_dist; });
+                                  [this](double i) { return i < slow_one_robot_within_dist_; }); //NOLINT(readability-identifier-length)
+    //NOLINTNEXTLINE
     int num_far = std::count_if(dist.begin(), dist.end(),
-                                [](double i) { return i > PARAM_slow_any_robot_past_dist; });
+                                [this](double i) { return i > slow_any_robot_past_dist_; }); //NOLINT(readability-identifier-length)
 
     return num_close == 1 && num_far > 0;
 }
 
 bool SlowKickDetector::velocity_validator(const std::vector<WorldRobot>& /*robot*/,
-                                          const std::vector<WorldBall>& ball) {
+                                          const std::vector<WorldBall>& ball) const {
     // Make sure all ball velocities are above a certain amount
 
     std::vector<double> vel(ball.size() - 1, 0);
 
     for (size_t i = 0; i < ball.size() - 1; i++) {
-        vel.at(i) = (ball.at(i + 1).get_pos() - ball.at(i).get_pos()).mag() / PARAM_vision_loop_dt;
+        vel.at(i) = (ball.at(i + 1).get_pos() - ball.at(i).get_pos()).mag() / vision_loop_dt_;
     }
 
     bool all_above =
-        std::all_of(vel.begin(), vel.end(), [](double i) { return i > PARAM_slow_min_ball_speed; });
+        std::all_of(vel.begin(), vel.end(), [this](double i) { return i > slow_min_ball_speed_; }); //NOLINT(readability-identifier-length)
 
     return all_above;
 }
@@ -175,7 +204,7 @@ bool SlowKickDetector::distance_increasing_validator(const std::vector<WorldRobo
 }
 
 bool SlowKickDetector::in_front_validator(const std::vector<WorldRobot>& robot,
-                                          const std::vector<WorldBall>& ball) {
+                                          const std::vector<WorldBall>& ball) const {
     // Make sure the ball is within a certain angle of the mouth
 
     // robot and ball are the same
@@ -187,7 +216,7 @@ bool SlowKickDetector::in_front_validator(const std::vector<WorldRobot>& robot,
 
         double angle = normal.angle_between(robot_to_ball);
 
-        if (angle > PARAM_slow_max_kick_angle) {
+        if (angle > slow_max_kick_angle_) {
             return false;
         }
     }

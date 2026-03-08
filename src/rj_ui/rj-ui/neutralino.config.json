@@ -1,0 +1,30 @@
+{
+  "applicationId": "js.neutralino.zero",
+  "version": "1.0.0",
+  "defaultMode": "window",
+  "documentRoot": "/dist/",
+  "url": "/",
+  "enableServer": true,
+  "enableNativeAPI": true,
+  "nativeAllowList": [
+    "app.*"
+  ],
+  "modes": {
+    "window": {
+      "title": "RJ Robocup UI",
+      "width": 1000,
+      "height": 700,
+      "enableInspector": true,
+      "injectGlobals": true,
+      "injectClientLibrary": true
+    }
+  },
+  "cli": {
+    "binaryName": "rj-ui",
+    "resourcesPath": "/dist/",
+    "frontendLibrary": {
+      "patchFile": "/index.html",
+      "devUrl": "http://localhost:5173"
+    }
+  }
+}

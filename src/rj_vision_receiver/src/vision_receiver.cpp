@@ -12,8 +12,6 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
-
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
@@ -23,8 +21,7 @@ VisionReceiver::VisionReceiver()
                                   .allow_undeclared_parameters(true)},
       config_{this},
       port_{-1},
-      socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule) {
+      socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* below, vision_interface should be IP where vision receiver pubs to (in
@@ -83,6 +80,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
@@ -223,6 +221,7 @@ void VisionReceiver::start_receive() {
         });
 }
 
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void VisionReceiver::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
     // Check for error
     if (static_cast<bool>(error)) {
@@ -233,7 +232,7 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
     // Parse the protobuf message and tack on the receive time.
     StampedSSLWrapperPacket::UniquePtr stamped_packet = std::make_unique<StampedSSLWrapperPacket>();
     stamped_packet->receive_time = get_clock()->now();
-    if (!stamped_packet->wrapper.ParseFromArray(&recv_buffer_[0], num_bytes)) {
+    if (!stamped_packet->wrapper.ParseFromArray(recv_buffer_.data(), static_cast<int>(num_bytes))) {
         EZ_ERROR_STREAM("Got bad packet of " << num_bytes << " bytes from "
                                              << sender_endpoint_.address() << ":"
                                              << sender_endpoint_.port());
@@ -244,6 +243,7 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
     packets_.push(std::move(stamped_packet));
 }
 
+//NOLINTNEXTLINE(readability-identifier-length)
 bool VisionReceiver::in_used_half(bool defend_plus_x, double x) const {
     const bool use_their_half = config_.game_settings().use_their_half;
     const bool use_our_half = config_.game_settings().use_our_half;
@@ -257,6 +257,7 @@ bool VisionReceiver::in_used_half(bool defend_plus_x, double x) const {
 /*
  * Updates the geometry packet in `Context` based on data from the vision packet
  */
+//NOLINTNEXTLINE(readability-function-cognitive-complexity)
 void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_size) {
     if (field_size.field_lines_size() == 0) {
         return;
@@ -295,39 +296,39 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     if (penalty_long_dist != 0 && penalty_short_dist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
         const FieldDimensions new_field_dim{
-            field_size.field_length() / 1000.0f,
-            field_size.field_width() / 1000.0f,
+            static_cast<float>(field_size.field_length()) / 1000.0f,
+            static_cast<float>(field_size.field_width()) / 1000.0f,
             field_border,
             thickness,
-            field_size.goal_width() / 1000.0f,
-            field_size.goal_depth() / 1000.0f,
+            static_cast<float>(field_size.goal_width()) / 1000.0f,
+            static_cast<float>(field_size.goal_depth()) / 1000.0f,
             FieldDimensions::kDefaultDimensions.goal_height(),
             penalty_short_dist / 1000.0f,
             penalty_long_dist / 1000.0f,
             center->radius() / 1000.0f + adj,
             (center->radius()) * 2 / 1000.0f + adj,
             displacement / 1000.0f,
-            (field_size.field_length() / 1000.0f + (field_border)*2),
-            (field_size.field_width() / 1000.0f + (field_border)*2)};
+            (static_cast<float>(field_size.field_length()) / 1000.0f + (field_border)*2),
+            (static_cast<float>(field_size.field_width()) / 1000.0f + (field_border)*2)};
         config_.update_field_dimensions(rj_convert::convert_to_ros<FieldDimensions>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
         const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
 
         const FieldDimensions new_field_dim{
-            field_size.field_length() / 1000.0f,
-            field_size.field_width() / 1000.0f,
+            static_cast<float>(field_size.field_length()) / 1000.0f,
+            static_cast<float>(field_size.field_width()) / 1000.0f,
             field_border,
             thickness,
-            field_size.goal_width() / 1000.0f,
-            field_size.goal_depth() / 1000.0f,
+            static_cast<float>(field_size.goal_width()) / 1000.0f,
+            static_cast<float>(field_size.goal_depth()) / 1000.0f,
             FieldDimensions::kDefaultDimensions.goal_height(),
             default_dim.penalty_short_dist(),
             default_dim.penalty_long_dist(),
             center->radius() / 1000.0f + adj,
             (center->radius()) * 2 / 1000.0f + adj,
             displacement / 1000.0f,
-            (field_size.field_length() / 1000.0f + (field_border)*2),
-            (field_size.field_width() / 1000.0f + (field_border)*2)};
+            (static_cast<float>(field_size.field_length()) / 1000.0f + (field_border)*2),
+            (static_cast<float>(field_size.field_width()) / 1000.0f + (field_border)*2)};
 
         config_.update_field_dimensions(rj_convert::convert_to_ros(new_field_dim));
     } else {

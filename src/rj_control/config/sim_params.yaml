@@ -1,0 +1,167 @@
+robot_0:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
+
+robot_1:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
+
+robot_2:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
+
+robot_3:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
+
+robot_4:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
+
+robot_5:
+  control:
+    ros__parameters:
+      hz: 30
+      pid:
+        translational:
+          max_output: 4.0
+          p:
+            gain: 2.5
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 2.3
+            limit: -1.0
+        rotation:
+          max_output: 7.0
+          p:
+            gain: 1.0
+            limit: -1.0
+          i:
+            gain: 0.0
+            limit: -1.0
+          d:
+            gain: 0.0
+            limit: -1.0
