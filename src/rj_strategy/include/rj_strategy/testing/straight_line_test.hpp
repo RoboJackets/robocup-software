@@ -118,11 +118,11 @@ private:
     uint8_t target_robot_id_;
 
     // default field dimensions
-    float width_min_{ -3 };
-    float width_max_{ 3 };
-    float height_min_{ 0 };
-    float height_max_{ 9 };
-    bool field_dimensions_set_ { false };
+    float width_min_{-3};
+    float width_max_{3};
+    float height_min_{0};
+    float height_max_{9};
+    bool field_dimensions_set_{false};
 };  // class StraightLineTest
 
 }  // namespace strategy
