@@ -96,7 +96,7 @@ private:
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{5};
             case POSSESSION_START:
                 return RJ::Seconds{-1};
             case PASSING:

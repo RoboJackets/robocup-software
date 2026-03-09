@@ -79,6 +79,8 @@ Offense::State Offense::next_state() {
                 return SHOOTING;
             }
 
+            broadcast_direct_pass_request();
+
             return POSSESSION;
         }
 
@@ -307,7 +309,7 @@ bool Offense::check_if_open(int target_robot_shell) {
     // are no other robots
     // in the passing line, process the request Currently, max_receive_distance is used to
     // determine when we are open, but this may need to change
-    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance);
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance/2);
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
@@ -575,8 +577,8 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
     rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 18; i++) {
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment*2;
+    for (int i = 0; i < 17; i++) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
             best_distance = distance;
