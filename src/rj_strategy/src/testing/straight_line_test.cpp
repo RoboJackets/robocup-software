@@ -117,8 +117,8 @@ void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::Sha
         return;
     }
 
-    if (start[0] != start_[0] || start[1] != start_[1] || end[0] != end_[0] ||
-        end[1] != end_[1] || r_id != target_robot_id_) {
+    if (start[0] != start_[0] || start[1] != start_[1] || end[0] != end_[0] || end[1] != end_[1] ||
+        r_id != target_robot_id_) {
         start_ = start;
         end_ = end;
         target_robot_id_ = r_id;
