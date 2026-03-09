@@ -26,7 +26,8 @@
 // run test by using the command `make run-sim-line-test`
 // Note: The the line can be changed by running following command in another terminal window:
 // Make sure to source bash and ros in other window
-// `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 0, y: 0}, {x: 1, y: 1}], r_id: 1}"`
+// Example command:
+// `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 2, y: 2}, {x: -2, y: 8}], r_id: 2}"`
 
 DECLARE_FLOAT64("straight_line_test", start_x);
 DECLARE_FLOAT64("straight_line_test", start_y);
@@ -115,6 +116,13 @@ private:
     rj_geometry::Point start_;
     rj_geometry::Point end_;
     uint8_t target_robot_id_;
+
+    // default field dimensions
+    float width_min_{ -3 };
+    float width_max_{ 3 };
+    float height_min_{ 0 };
+    float height_max_{ 9 };
+    bool field_dimensions_set_ { false };
 };  // class StraightLineTest
 
 }  // namespace strategy
