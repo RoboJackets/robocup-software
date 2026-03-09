@@ -7,6 +7,7 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
+
 #include "rj_msgs/msg/pass_received_request.hpp"
 
 namespace strategy::communication {
@@ -43,7 +44,6 @@ struct RosConverter<strategy::communication::PassReceivedRequest,
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PassReceivedRequest,
-                  rj_msgs::msg::PassReceivedRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::PassReceivedRequest, rj_msgs::msg::PassReceivedRequest);
 
 }  // namespace rj_convert

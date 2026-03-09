@@ -309,7 +309,7 @@ bool Offense::check_if_open(int target_robot_shell) {
     // are no other robots
     // in the passing line, process the request Currently, max_receive_distance is used to
     // determine when we are open, but this may need to change
-    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance/2);
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance / 2);
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
@@ -325,18 +325,16 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         auto response = Position::receive_pass_request(*pass_request);
 
         rj_geometry::Point passer_pos =
-        last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
+            last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
         rj_geometry::Point receiver_pos =
             last_world_state_->get_robot(true, robot_id_).pose.position();
         rj_geometry::Segment pass_trajectory{passer_pos, receiver_pos};
 
         // If the pass is over any defense area, do not pass
-        bool crosses_penalty_area =
-            field_dimensions_.our_defense_area().hit(pass_trajectory) ||
-            field_dimensions_.their_defense_area().hit(pass_trajectory);
+        bool crosses_penalty_area = field_dimensions_.our_defense_area().hit(pass_trajectory) ||
+                                    field_dimensions_.their_defense_area().hit(pass_trajectory);
 
         bool too_close = passer_pos.dist_to(receiver_pos) < kMinPassDistance;
-            
 
         if (check_if_open(pass_request->from_robot_id) && can_i_shoot()) {
             response.direct_open = true;
@@ -491,12 +489,12 @@ bool Offense::can_i_shoot() const {
 
         // Project enemy vector onto shot line, then get perpendicular distance
         auto projection = (enemy_vec.dot(robot_to_goal) / robot_to_goal.dot(robot_to_goal));
-        enemy_vec = enemy_vec - (projection) * robot_to_goal;
+        enemy_vec = enemy_vec - (projection)*robot_to_goal;
 
         min_dist = std::min(min_dist, enemy_vec.mag());
     }
 
-    return min_dist > kEnemyTooCloseRadius*2;
+    return min_dist > kEnemyTooCloseRadius * 2;
 }
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
@@ -577,7 +575,7 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     double best_distance = -1.0;
     rj_geometry::Point increment(0.05, 0);
     rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment*2;
+        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment * 2;
     for (int i = 0; i < 17; i++) {
         double distance = distance_from_their_robots(ball_position, curr_point);
         if (distance > best_distance) {
@@ -597,8 +595,7 @@ bool Offense::ball_in_red() const {
             !field_dimensions_.field_rect().contains_point(ball_pos));
 }
 bool Offense::kick_failed() const {
-    return (last_time_ + kKickFailsafeTimeout < RJ::now()) &&
-           (distance_to_ball() < kOwnBallRadius);
+    return (last_time_ + kKickFailsafeTimeout < RJ::now()) && (distance_to_ball() < kOwnBallRadius);
 }
 
 void Offense::send_kick_failed_to_receiver(u_int8_t receiver_robot_id) {

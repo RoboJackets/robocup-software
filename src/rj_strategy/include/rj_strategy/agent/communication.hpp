@@ -35,10 +35,10 @@ namespace strategy::communication {
 /**
  * @brief a conglomeration of the different request types.
  */
-using AgentRequest = std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest,
-                                  BallInTransitRequest, SeekerRequest, PositionRequest,
-                                  LeaveWallRequest, ResetScorerRequest, IncomingBallRequest,
-                                  PassReceivedRequest>;
+using AgentRequest =
+    std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest, BallInTransitRequest,
+                 SeekerRequest, PositionRequest, LeaveWallRequest, ResetScorerRequest,
+                 IncomingBallRequest, PassReceivedRequest>;
 
 /**
  * @brief a conglomeration of the different response types.
@@ -163,8 +163,7 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result.incoming_ball_request.emplace_back(convert_to_ros(*incoming_ball_request));
         } else if (const auto* pass_received_request =
                        std::get_if<strategy::communication::PassReceivedRequest>(&from)) {
-            result.pass_received_request.emplace_back(
-                convert_to_ros(*pass_received_request));
+            result.pass_received_request.emplace_back(convert_to_ros(*pass_received_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
