@@ -11,6 +11,7 @@ public:
     Line(Position&& other);
     Line(int r_id);
     Line(int r_id, bool forward);
+    Line(int r_id, rj_geometry::Point start, rj_geometry::Point end, uint8_t target_rid);
     ~Line() override = default;
     Line(const Line& other) = default;
     Line(Line&& other) = default;
@@ -22,5 +23,9 @@ private:
     bool forward_ = true;
     bool vertical_ = false;
     bool face_target_ = false;
+
+    rj_geometry::Point start_;
+    rj_geometry::Point end_;
+    uint8_t target_rid_;
 };
 }  // namespace strategy
