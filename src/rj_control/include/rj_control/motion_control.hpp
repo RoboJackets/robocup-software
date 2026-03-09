@@ -107,6 +107,7 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
     // Robot-specific PID gains
     double translation_kp_;

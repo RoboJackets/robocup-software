@@ -38,22 +38,6 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
             std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
 
-    // declare params
-    // robot specific
-    // node->declare_parameter(param_prefix + ".translation_kp", 0.6);
-    // node->declare_parameter(param_prefix + ".translation_ki", 0.0);
-    // node->declare_parameter(param_prefix + ".translation_kd", 0.3);
-    // node->declare_parameter(param_prefix + ".rotation_kp", 10.0);
-    // node->declare_parameter(param_prefix + ".rotation_ki", 0.0);
-    // node->declare_parameter(param_prefix + ".rotation_kd", 0.9);
-
-    // // shared between robots
-    // node->declare_parameter("translation_windup", 0);
-    // node->declare_parameter("rotation_windup", 50);
-    // node->declare_parameter("max_velocity", 2.4);
-    // node->declare_parameter("max_acceleration", 3.0);
-    // node->declare_parameter("max_angular_velocity", 5.0);
-
     // populate params
     // robot specific
     node->get_parameter(param_prefix + ".translation_kp", translation_kp_);
@@ -69,6 +53,30 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     node->get_parameter("max_velocity", max_velocity_);
     node->get_parameter("max_acceleration", max_acceleration_);
     node->get_parameter("max_angular_velocity", max_angular_velocity_);
+
+    param_callback_handle_ = node->add_on_set_parameters_callback(
+        [this, param_prefix](const std::vector<rclcpp::Parameter>& params) {
+        rcl_interfaces::msg::SetParametersResult result;
+        result.successful = true;
+
+        for (const auto& param : params) {
+            const auto& name = param.get_name();
+
+            if (name == param_prefix + ".translation_kp")       translation_kp_ = param.as_double();
+            else if (name == param_prefix + ".translation_ki")  translation_ki_ = param.as_double();
+            else if (name == param_prefix + ".translation_kd")  translation_kd_ = param.as_double();
+            else if (name == param_prefix + ".rotation_kp")     rotation_kp_ = param.as_double();
+            else if (name == param_prefix + ".rotation_ki")     rotation_ki_ = param.as_double();
+            else if (name == param_prefix + ".rotation_kd")     rotation_kd_ = param.as_double();
+            else if (name == "translation_windup")              translation_windup_ = param.as_int();
+            else if (name == "rotation_windup")                 rotation_windup_ = param.as_int();
+            else if (name == "max_velocity")                    max_velocity_ = param.as_double();
+            else if (name == "max_acceleration")                max_acceleration_ = param.as_double();
+            else if (name == "max_angular_velocity")            max_angular_velocity_ = param.as_double();
+        }
+
+        return result;
+    });
         
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
