@@ -84,13 +84,15 @@ void StraightLineTest::field_dimensions_callback(
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
 
-    if (field_dimensions_set_) { return; }
-    
+    if (field_dimensions_set_) {
+        return;
+    }
+
     width_max_ = field_dimensions_.width() / 2.0f;
     width_min_ = -width_max_;
 
     height_max_ = field_dimensions_.length();
-    
+
     field_dimensions_set_ = true;
 }
 
@@ -108,10 +110,9 @@ void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::Sha
     rj_geometry::Point start{msg->pt[0].x, msg->pt[0].y};
     rj_geometry::Point end{msg->pt[1].x, msg->pt[1].y};
     uint8_t r_id{msg->r_id};
-    
-    if (start[0] <= width_min_ || end[0] <= width_min_ ||
-        start[0] >= width_max_ || end[0] >= width_max_ ||
-        start[1] <= height_min_ || end[1] <= height_min_ ||
+
+    if (start[0] <= width_min_ || end[0] <= width_min_ || start[0] >= width_max_ ||
+        end[0] >= width_max_ || start[1] <= height_min_ || end[1] <= height_min_ ||
         start[1] >= height_max_ || end[1] >= height_max_) {
         SPDLOG_INFO("Point Locations Off the FieldDimensions");
         return;
