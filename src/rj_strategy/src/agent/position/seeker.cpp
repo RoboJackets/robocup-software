@@ -17,6 +17,7 @@ std::optional<RobotIntent> Seeker::get_task(RobotIntent intent, const WorldState
     planning::PathTargetFaceOption face_option = planning::FaceBall{};
     bool ignore_ball = false;
     planning::LinearMotionInstant goal{target_pt_, rj_geometry::Point{0.0, 0.0}};
+    SPDLOG_INFO("SEEKER POINT (ROBOT: {}): {}, {}", robot_id_, target_pt_.x(), target_pt_.y());
     intent.motion_command = planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
 
     return intent;
@@ -94,8 +95,8 @@ rj_geometry::Point Seeker::correct_point(rj_geometry::Point p,
     // Y Border
     if (p.y() > field_dimensions.their_goal_loc().y() - border_buffer) {
         y = field_dimensions.their_goal_loc().y() - border_buffer;
-    } else if (p.y() < field_dimensions.our_goal_loc().y() + border_buffer) {
-        y = field_dimensions.our_goal_loc().y() + border_buffer;
+    } else if (p.y() < field_dimensions.center_field_loc().y() + border_buffer) {
+        y = field_dimensions.center_field_loc().y() + border_buffer;
     }
 
     // Goalie Boxes

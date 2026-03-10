@@ -47,7 +47,7 @@ Goalie::State Goalie::update_state() {
     rj_geometry::Point ball_pt = world_state->ball.position;
 
     bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
-    if (ball_is_slow && ball_in_box) {
+    if (ball_in_box) {
         // TODO: add pivot logic once its is_done
         return CLEARING;
     }
@@ -96,9 +96,13 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.dribbler_mode = RobotIntent::DribblerMode::ON;
         return intent;
     } else if (latest_state_ == CLEARING) {
-        planning::LinearMotionInstant target{clear_point_};
-        auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
+        auto ball_pt = last_world_state_->ball.position;
+        auto robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+        planning::LinearMotionInstant target{ball_pt};
+        auto line_kick_cmd = planning::MotionCommand{"path_target", target};
+        line_kick_cmd.ignore_ball = true;
         intent.motion_command = line_kick_cmd;
+        
 
         // note: the way this is set up makes it impossible to
         // shoot on time without breakbeam

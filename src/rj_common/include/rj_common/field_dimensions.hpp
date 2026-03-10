@@ -104,6 +104,8 @@ struct FieldDimensions {
 
     [[nodiscard]] rj_geometry::Rect our_goal_area() const { return our_goal_area_; }
     [[nodiscard]] rj_geometry::Rect their_goal_area() const { return their_goal_area_; }
+    [[nodiscard]] rj_geometry::Rect behind_our_goal_area() const { return behind_our_goal_area_; }
+    [[nodiscard]] rj_geometry::Rect behind_their_goal_area() const { return behind_their_goal_area_; }
 
     /*
      * Provides a rect that is a padded version of their goalbox.
@@ -241,6 +243,15 @@ struct FieldDimensions {
             their_left_goal_post_coordinate_,
             their_right_goal_post_coordinate_ + rj_geometry::Point(0, goal_depth_));
 
+        behind_our_goal_area_ = rj_geometry::Rect(
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, 0),
+            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_, -border_)
+        );
+        behind_their_goal_area_ = rj_geometry::Rect(
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, length_),
+            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_, length_ + border_)
+        );
+
         our_left_corner_ = rj_geometry::Point(field_x_left_coord_, 0.0);
         our_right_corner_ = rj_geometry::Point(field_x_right_coord_, 0.0);
         their_left_corner_ = rj_geometry::Point(field_x_left_coord_, length_);
@@ -335,6 +346,8 @@ private:
     rj_geometry::Rect their_penalty_area_coordinates_;
     rj_geometry::Rect our_goal_area_;
     rj_geometry::Rect their_goal_area_;
+    rj_geometry::Rect behind_our_goal_area_;
+    rj_geometry::Rect behind_their_goal_area_;
     rj_geometry::Point our_left_goal_post_coordinate_;
     rj_geometry::Point our_right_goal_post_coordinate_;
     rj_geometry::Point their_left_goal_post_coordinate_;

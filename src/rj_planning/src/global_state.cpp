@@ -86,10 +86,10 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     auto our_defense_area{
         std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_defense_area())};
 
-    auto our_goal_area{std::make_shared<rj_geometry::Rect>(last_field_dimensions_.our_goal_area())};
+    auto our_goal_area{std::make_shared<rj_geometry::Rect>(last_field_dimensions_.behind_our_goal_area())};
 
     auto their_goal_area{
-        std::make_shared<rj_geometry::Rect>(last_field_dimensions_.their_goal_area())};
+        std::make_shared<rj_geometry::Rect>(last_field_dimensions_.behind_their_goal_area())};
 
     // Sometimes there is a greater distance we need to keep:
     // https://robocup-ssl.github.io/ssl-rules/sslrules.html#_robot_too_close_to_opponent_defense_area

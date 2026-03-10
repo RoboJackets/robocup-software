@@ -121,7 +121,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         return full_replan(params);
     }
 
-    // If we get here, we definitely should have a valid previous trajectory
+// If we get here, we definitely should have a valid previous trajectory
     // and so it should have a valid creation time (or we would have thrown).
     RJ::Time previous_created_time = previous.time_created().value();
 

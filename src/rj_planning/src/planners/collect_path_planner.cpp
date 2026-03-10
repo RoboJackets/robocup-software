@@ -193,7 +193,8 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     }
 
     // If we are in FineApproach and we have the ball, terminate
-    is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
+    is_ball_sense_ = (request.ball_sense || dist < planning::collect::PARAM_dist_cutoff_to_control)
+         && current_state_ == FINE_APPROACH;
 }
 
 Trajectory CollectPathPlanner::coarse_approach(
