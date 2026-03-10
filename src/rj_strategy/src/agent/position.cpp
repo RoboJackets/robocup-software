@@ -29,7 +29,13 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
         return intent;
     }
     // delegate to derived class to complete behavior
-    return derived_get_task(intent);
+    auto result = derived_get_task(intent);
+
+    if (debug_draw_enabled_ && debug_drawer_) {
+        debug_drawer_->publish();
+    }
+
+    return result;
 }
 
 void Position::set_time_left(double time_left) { time_left_ = time_left; }
@@ -84,6 +90,10 @@ bool Position::assert_world_state_valid() {
 
 void Position::set_client_handles(std::shared_ptr<ClientHandles> client_handles) {
     client_handles_ = client_handles;
+}
+
+void Position::set_debug_drawer(std::shared_ptr<rj_drawing::RosDebugDrawer> drawer) {
+    debug_drawer_ = std::move(drawer);
 }
 
 std::deque<communication::PosAgentRequestWrapper> Position::send_communication_request() {

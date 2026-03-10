@@ -115,6 +115,9 @@ public:
 private:
     std::unique_ptr<Position> current_position_;
 
+    // Persistent handle to the debug drawer so it survives position swaps
+    std::shared_ptr<rj_drawing::RosDebugDrawer> strategy_debug_drawer_;
+
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
