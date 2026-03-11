@@ -149,6 +149,9 @@ private:
     template <class Pos>
     void set_current_position() {
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
+            if (!current_position_->can_role_change()) {
+                return;
+            }
             // This line requires Pos to implement the constructor Pos(Position&&)
             current_position_->die();
             current_position_ = std::make_unique<Pos>(std::move(*current_position_));
