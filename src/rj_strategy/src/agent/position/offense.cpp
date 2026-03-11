@@ -28,6 +28,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
 
     current_state_ = new_state;
 
+    // Example of how to draw text on the debug drawer for position/strategy debugging
     if (debug_draw_enabled_ && debug_drawer_) {
         auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
         debug_drawer_->draw_text(std::string(state_to_name(current_state_)), robot_pos);
