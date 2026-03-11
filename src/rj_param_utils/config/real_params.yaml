@@ -4,15 +4,52 @@
 
 /control:
   ros__parameters:
+    robot_0:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_1:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_2:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_3:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_4:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_5:
+      rotation_kd: 0.9
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
     max_acceleration: 2.0
+    max_angular_velocity: 1.0
     max_velocity: 0.5
-    rotation_kd: 0.9
-    rotation_ki: 0.0
-    rotation_kp: 10.0
     rotation_windup: 0
-    translation_kd: 0.45
-    translation_ki: 0.0
-    translation_kp: 3.0
     translation_windup: 0
     use_sim_time: false
 
