@@ -2,13 +2,18 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
+Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {
+    debug_draw_enabled_ = true;
+}
 
 Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
     position_name_ = "Offense";
+    debug_draw_enabled_ = true;
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
+
+
     // Get next state, and if different, reset clock
     State new_state = next_state();
 
@@ -22,6 +27,11 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     }
 
     current_state_ = new_state;
+
+    if (debug_draw_enabled_ && debug_drawer_) {
+        auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+        debug_drawer_->draw_text(std::string(state_to_name(current_state_)), robot_pos);
+    }
 
     // Calculate task based on state
     return state_to_task(intent);
