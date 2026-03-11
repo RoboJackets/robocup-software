@@ -62,8 +62,6 @@ void Position::update_field_dimensions(const FieldDimensions& field_dims) {
     field_dimensions_ = field_dims;
 }
 
-bool Position::can_role_change() const { return true; }
-
 void Position::update_alive_robots(std::array<bool, kNumShells> alive_robots) {
     alive_robots_ = alive_robots;
 

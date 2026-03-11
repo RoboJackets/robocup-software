@@ -39,7 +39,6 @@ public:
     void derived_pass_ball() override;
     void derived_acknowledge_ball_in_transit() override;
     std::string get_current_state() override;
-    bool can_role_change() const override;
 
     void die() override;
     void revive() override;
@@ -74,7 +73,6 @@ private:
     State current_state_ = JOINING_WALL;
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-    bool pending_waller_join_request_ = false;
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
 };

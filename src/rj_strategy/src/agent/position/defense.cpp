@@ -15,10 +15,6 @@ std::string Defense::get_current_state() {
     return std::string{"Defense"} + std::to_string(static_cast<int>(current_state_));
 }
 
-bool Defense::can_role_change() const {
-    return !pending_waller_join_request_ && !sent_join_marking_group_request_;
-}
-
 Defense::State Defense::update_state() {
     WorldState* world_state = last_world_state_;
 
@@ -34,17 +30,12 @@ Defense::State Defense::update_state() {
             next_state = JOINING_WALL;
             break;
         case JOINING_WALL:
-            if (!pending_waller_join_request_) {
-                pending_waller_join_request_ = true;
-                client_handles_->waller->join_group([this](WallerClient::Result result) {
-                    pending_waller_join_request_ = false;
-
-                    if (result.success)
-                        current_state_ = WALLING;
-                    else
-                        current_state_ = ENTERING_MARKING;
-                });
-            }
+            client_handles_->waller->join_group([this](WallerClient::Result result) {
+                if (result.success)
+                    current_state_ = WALLING;
+                else
+                    current_state_ = ENTERING_MARKING;
+            });
             break;
         case WALLING:
             if (!client_handles_->waller->am_i_member()) next_state = IDLING;
@@ -87,8 +78,6 @@ Defense::State Defense::update_state() {
                 request_time_ = RJ::now();
 
                 client_handles_->marking->join_group([this](const bool is_member) {
-                    sent_join_marking_group_request_ = false;
-
                     if (is_member) {
                         current_state_ = MARKING;
                     } else {
@@ -98,6 +87,8 @@ Defense::State Defense::update_state() {
             }
             auto elapsed = RJ::now() - request_time_;
             if (elapsed > kMarkingGroupJoinTimeout) {
+                // reset flag
+                sent_join_marking_group_request_ = false;
                 // ensure not in coordinator group
                 client_handles_->marking->leave_group();
                 SPDLOG_INFO("Robot {}: Timeout on join group, IDLING now", robot_id_);

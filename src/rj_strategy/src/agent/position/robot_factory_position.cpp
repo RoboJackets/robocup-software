@@ -20,7 +20,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
-    [[maybe_unused]] RobotIntent intent) {
+    RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -32,6 +32,11 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
 
     // Every tick, update position based on PlayState
     update_position();
+
+    if (robot_id_ == kChaserRobotId && override_play_position_ == OverridingPositions::AUTO &&
+        current_play_state_.state() == PlayState::State::Playing) {
+        return get_robot_two_task(std::move(intent));
+    }
 
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }
@@ -209,18 +214,19 @@ void RobotFactoryPosition::set_default_position() {
                                         .pose.position()
                                         .dist_to(ball_position) < kRobotHasBallRadius;
 
-        if (ball_on_their_half) {
-            robot_two_forced_pass_started_ = false;
-            set_current_position<Offense>();
-        } else {
-            set_current_position<Defense>();
+        set_current_position<Defense>();
 
-            if (robot_has_ball && !robot_two_forced_pass_started_) {
-                current_position_->pass_ball(kPrimaryOffenseRobotId);
-                robot_two_forced_pass_started_ = true;
-            } else if (!robot_has_ball) {
-                robot_two_forced_pass_started_ = false;
-            }
+        if (robot_has_ball) {
+            robot_two_ball_control_ticks_++;
+        } else {
+            robot_two_ball_control_ticks_ = 0;
+            robot_two_forced_pass_started_ = false;
+        }
+
+        if (!ball_on_their_half && robot_two_ball_control_ticks_ >= kRobotHasBallTicks &&
+            !robot_two_forced_pass_started_) {
+            current_position_->pass_ball(kPrimaryOffenseRobotId);
+            robot_two_forced_pass_started_ = true;
         }
         return;
     }
@@ -271,6 +277,50 @@ void RobotFactoryPosition::set_default_position() {
             set_current_position<Offense>();
         }
     }
+}
+
+std::optional<RobotIntent> RobotFactoryPosition::get_robot_two_task(RobotIntent intent) {
+    const auto ball_position = last_world_state_->ball.position;
+    const auto robot_position = last_world_state_->get_robot(true, robot_id_).pose.position();
+    const bool ball_on_their_half =
+        ball_position.y() > field_dimensions_.center_field_loc().y() - kBallDiameter;
+
+    if (!ball_on_their_half) {
+        return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+    }
+
+    robot_two_ball_control_ticks_ = 0;
+    robot_two_forced_pass_started_ = false;
+
+    const double distance_to_ball = robot_position.dist_to(ball_position);
+    if (distance_to_ball < kRobotHasBallRadius && alive_robots_[kPrimaryOffenseRobotId]) {
+        const auto target_robot_pos =
+            last_world_state_->get_robot(true, kPrimaryOffenseRobotId).pose.position();
+        planning::LinearMotionInstant target{target_robot_pos};
+        intent.motion_command = planning::MotionCommand{"line_kick", target};
+        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 4.0;
+        intent.is_active = true;
+        return intent;
+    }
+
+    if (distance_to_ball < kRobotPressBallRadius) {
+        intent.motion_command = planning::MotionCommand{"collect"};
+        return intent;
+    }
+
+    rj_geometry::Point target = field_dimensions_.their_half().center();
+    if (alive_robots_[kPrimaryOffenseRobotId]) {
+        const auto offense_pos =
+            last_world_state_->get_robot(true, kPrimaryOffenseRobotId).pose.position();
+        target = (target + offense_pos) / 2.0;
+        target.y() = std::max(target.y(), field_dimensions_.center_field_loc().y() + 0.3);
+    }
+
+    planning::LinearMotionInstant goal{target, rj_geometry::Point{0.0, 0.0}};
+    intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
+    return intent;
 }
 
 std::deque<communication::PosAgentRequestWrapper>

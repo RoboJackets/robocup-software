@@ -93,7 +93,6 @@ public:
     virtual void update_field_dimensions(const FieldDimensions& field_dimensions);
     virtual void update_alive_robots(std::array<bool, kNumShells> alive_robots);
     virtual const std::string get_name();
-    virtual bool can_role_change() const;
 
     // returns the current state of the robot
     virtual std::string get_current_state() = 0;
