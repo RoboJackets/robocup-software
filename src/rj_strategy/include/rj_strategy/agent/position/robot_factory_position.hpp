@@ -115,19 +115,12 @@ public:
 private:
     static constexpr int kPrimaryOffenseRobotId = 1;
     static constexpr int kChaserRobotId = 2;
-    static constexpr double kRobotHasBallRadius = kRobotRadius + 0.1;
-    static constexpr double kRobotPressBallRadius = 0.75;
-    static constexpr int kRobotHasBallTicks = 3;
 
     std::unique_ptr<Position> current_position_;
 
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
-    bool robot_two_forced_pass_started_{false};
-    int robot_two_ball_control_ticks_{0};
-
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
-    std::optional<RobotIntent> get_robot_two_task(RobotIntent intent);
 
     void set_default_position();
 
