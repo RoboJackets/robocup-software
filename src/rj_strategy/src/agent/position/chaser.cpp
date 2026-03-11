@@ -261,7 +261,7 @@ bool Chaser::check_if_open(int from_robot_id) const {
     for (const auto& bot : last_world_state_->their_robots) {
         const auto opp_pos = bot.pose.position();
         min_robot_dist = std::min(min_robot_dist, robot_position.dist_to(opp_pos));
-        min_path_dist = std::min(min_path_dist, pass_path.dist_to(opp_pos));
+        min_path_dist = std::min(min_path_dist, static_cast<double>(pass_path.dist_to(opp_pos)));
     }
 
     return min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance;
