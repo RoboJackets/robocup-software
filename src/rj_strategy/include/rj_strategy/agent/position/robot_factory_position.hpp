@@ -113,9 +113,15 @@ public:
     void set_override_position(const OverridingPositions& overriding_position);
 
 private:
+    static constexpr int kPrimaryOffenseRobotId = 1;
+    static constexpr int kChaserRobotId = 2;
+    static constexpr double kRobotHasBallRadius = kRobotRadius + 0.1;
+
     std::unique_ptr<Position> current_position_;
 
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
+
+    bool robot_two_forced_pass_started_{false};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 

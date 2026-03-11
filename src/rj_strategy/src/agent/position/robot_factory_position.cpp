@@ -10,7 +10,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
+    } else if (robot_id_ == kPrimaryOffenseRobotId) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -19,8 +19,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     current_position_->set_client_handles(client_handles_);
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -195,6 +195,36 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (robot_id_ == kPrimaryOffenseRobotId) {
+        robot_two_forced_pass_started_ = false;
+        set_current_position<Offense>();
+        return;
+    }
+
+    if (robot_id_ == kChaserRobotId) {
+        const auto ball_position = last_world_state_->ball.position;
+        const bool ball_on_their_half =
+            ball_position.y() > field_dimensions_.center_field_loc().y() - kBallDiameter;
+        const bool robot_has_ball = last_world_state_->get_robot(true, robot_id_)
+                                        .pose.position()
+                                        .dist_to(ball_position) < kRobotHasBallRadius;
+
+        if (ball_on_their_half) {
+            robot_two_forced_pass_started_ = false;
+            set_current_position<Offense>();
+        } else {
+            set_current_position<Defense>();
+
+            if (robot_has_ball && !robot_two_forced_pass_started_) {
+                current_position_->pass_ball(kPrimaryOffenseRobotId);
+                robot_two_forced_pass_started_ = true;
+            } else if (!robot_has_ball) {
+                robot_two_forced_pass_started_ = false;
+            }
+        }
+        return;
+    }
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
