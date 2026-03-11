@@ -23,17 +23,6 @@
 
 namespace control {
 
-// DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
-// DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
-// DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
-// DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
-
 namespace testing {
 
 class MotionControlTest;
