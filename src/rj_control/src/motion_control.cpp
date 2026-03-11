@@ -13,8 +13,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
       drawer_(
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("motion_control/{}", std::to_string(shell_id))) {
-
-            std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
+    std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
 
     // populate params
     // robot specific
@@ -24,7 +23,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     node->get_parameter(param_prefix + ".rotation_kp", rotation_kp_);
     node->get_parameter(param_prefix + ".rotation_ki", rotation_ki_);
     node->get_parameter(param_prefix + ".rotation_kd", rotation_kd_);
-    
+
     // shared between robots
     node->get_parameter("translation_windup", translation_windup_);
     node->get_parameter("rotation_windup", rotation_windup_);
@@ -34,28 +33,39 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
     param_callback_handle_ = node->add_on_set_parameters_callback(
         [this, param_prefix](const std::vector<rclcpp::Parameter>& params) {
-        rcl_interfaces::msg::SetParametersResult result;
-        result.successful = true;
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
 
-        for (const auto& param : params) {
-            const auto& name = param.get_name();
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
 
-            if (name == param_prefix + ".translation_kp")       translation_kp_ = param.as_double();
-            else if (name == param_prefix + ".translation_ki")  translation_ki_ = param.as_double();
-            else if (name == param_prefix + ".translation_kd")  translation_kd_ = param.as_double();
-            else if (name == param_prefix + ".rotation_kp")     rotation_kp_ = param.as_double();
-            else if (name == param_prefix + ".rotation_ki")     rotation_ki_ = param.as_double();
-            else if (name == param_prefix + ".rotation_kd")     rotation_kd_ = param.as_double();
-            else if (name == "translation_windup")              translation_windup_ = param.as_int();
-            else if (name == "rotation_windup")                 rotation_windup_ = param.as_int();
-            else if (name == "max_velocity")                    max_velocity_ = param.as_double();
-            else if (name == "max_acceleration")                max_acceleration_ = param.as_double();
-            else if (name == "max_angular_velocity")            max_angular_velocity_ = param.as_double();
-        }
+                if (name == param_prefix + ".translation_kp")
+                    translation_kp_ = param.as_double();
+                else if (name == param_prefix + ".translation_ki")
+                    translation_ki_ = param.as_double();
+                else if (name == param_prefix + ".translation_kd")
+                    translation_kd_ = param.as_double();
+                else if (name == param_prefix + ".rotation_kp")
+                    rotation_kp_ = param.as_double();
+                else if (name == param_prefix + ".rotation_ki")
+                    rotation_ki_ = param.as_double();
+                else if (name == param_prefix + ".rotation_kd")
+                    rotation_kd_ = param.as_double();
+                else if (name == "translation_windup")
+                    translation_windup_ = param.as_int();
+                else if (name == "rotation_windup")
+                    rotation_windup_ = param.as_int();
+                else if (name == "max_velocity")
+                    max_velocity_ = param.as_double();
+                else if (name == "max_acceleration")
+                    max_acceleration_ = param.as_double();
+                else if (name == "max_angular_velocity")
+                    max_angular_velocity_ = param.as_double();
+            }
 
-        return result;
-    });
-        
+            return result;
+        });
+
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
     target_state_pub_ = node->create_publisher<RobotState::Msg>(
