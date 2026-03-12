@@ -15,11 +15,6 @@ find_package(fmt REQUIRED)
 
 add_executable(global_param_server_node
   src/global_param_server.cpp
-  src/global_params.cpp
-  src/param.cpp
-  src/ros2_global_param_provider.cpp
-  src/ros2_local_param_provider.cpp
-  src/ros2_param_provider.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -47,7 +42,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(global_param_server_node
-  fmt
+  ${PROJECT_NAME}
 )
 
 target_include_directories(global_param_server_node

@@ -39,16 +39,17 @@ set(RJ_CONTROL_DEPS
   rj_convert
 )
 
-add_executable(motion_control_node
-  src/motion_control_node.cpp
+set(RJ_CONTROL_LIB_SRC
   src/motion_control.cpp
   src/pid.cpp
 )
 
-add_library(${PROJECT_NAME} SHARED
+add_executable(motion_control_node
   src/motion_control_node.cpp
-  src/motion_control.cpp
-  src/pid.cpp
+)
+
+add_library(${PROJECT_NAME} SHARED
+  ${RJ_CONTROL_LIB_SRC}
 )
 
 target_include_directories(motion_control_node
@@ -65,7 +66,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(motion_control_node
   PUBLIC
-  ${FLANN_LIBRARIES}
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}

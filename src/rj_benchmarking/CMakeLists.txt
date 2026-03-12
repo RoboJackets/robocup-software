@@ -60,7 +60,6 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Benchmarking Node
 add_executable(${PROJECT_NAME}_node
-    ${BENCHMARKING_SRC}
     src/main.cpp
 )
 
@@ -72,7 +71,7 @@ target_include_directories(${PROJECT_NAME}_node
 
 target_link_libraries(${PROJECT_NAME}_node
     PUBLIC
-    ${BENCHMARKING_LIBS}
+    ${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node

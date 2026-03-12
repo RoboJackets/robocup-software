@@ -45,15 +45,11 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 add_executable(external_referee_node
-  src/external_referee.cpp
   src/external_referee_main.cpp
-  src/referee_base.cpp
 )
 
 add_executable(internal_referee_node
-  src/internal_referee.cpp
   src/internal_referee_main.cpp
-  src/referee_base.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -65,16 +61,12 @@ target_link_libraries(${PROJECT_NAME}
 
 target_link_libraries(external_referee_node
   PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(internal_referee_node
   PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  ${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}

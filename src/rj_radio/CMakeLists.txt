@@ -44,28 +44,44 @@ set(RJ_RADIO_DEPS
   rj_constants
 )
 
+add_library(${PROJECT_NAME}_base SHARED
+  src/radio.cpp
+)
+
 add_executable(network_radio_node
   src/network_radio.cpp
-  src/radio.cpp
 )
 
 add_executable(sim_radio_node
   src/sim_radio.cpp
-  src/radio.cpp
+)
+
+target_include_directories(${PROJECT_NAME}_base
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(${PROJECT_NAME}_base
+  PUBLIC
+  spdlog
+  Boost::boost
+  ${FLANN_LIBRARIES}
+)
+
+ament_target_dependencies(${PROJECT_NAME}_base
+  PUBLIC
+  ${RJ_RADIO_DEPS}
 )
 
 target_link_libraries(network_radio_node
   PUBLIC
-  spdlog
-  Boost::boost
-  ${FLANN_LIBRARIES}
+  ${PROJECT_NAME}_base
 )
 
 target_link_libraries(sim_radio_node
   PUBLIC
-  spdlog
-  Boost::boost
-  ${FLANN_LIBRARIES}
+  ${PROJECT_NAME}_base
 )
 
 target_include_directories(network_radio_node
@@ -93,6 +109,13 @@ ament_target_dependencies(sim_radio_node
 install(
   DIRECTORY include/
   DESTINATION include
+)
+
+install(
+  TARGETS ${PROJECT_NAME}_base
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 install(

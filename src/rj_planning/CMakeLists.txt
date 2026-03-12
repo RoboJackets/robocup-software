@@ -104,7 +104,6 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Planner Node
 add_executable(planner_node
-  ${RJ_PLANNING_SRC}
   src/main.cpp
 )
 
@@ -116,7 +115,7 @@ target_include_directories(planner_node
 
 target_link_libraries(planner_node
   PUBLIC
-  ${RJ_PLANNING_LIBS}
+  ${PROJECT_NAME}
 )
 
 ament_target_dependencies(planner_node
