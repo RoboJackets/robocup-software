@@ -234,8 +234,7 @@ private:
      * @return whether or not a robot is capable of shooting from their pos
      */
     bool can_i_shoot() const;
-    
-    
+
     /**
      * @return the target (within the goal) that would be the most clear shot
      */
