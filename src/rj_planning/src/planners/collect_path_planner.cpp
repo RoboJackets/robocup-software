@@ -193,7 +193,7 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     }
 
     // If we are in FineApproach and we have the ball, terminate
-    is_ball_sense_ = (request.ball_sense || dist < planning::collect::PARAM_dist_cutoff_to_control)
+    is_ball_sense_ = ((start_instant->position() - ball.position).mag() < kRobotRadius)
          && current_state_ == FINE_APPROACH;
 }
 
