@@ -12,12 +12,12 @@
       translation_ki: 0.0
       translation_kp: 3.0
     robot_1:
-      rotation_kd: 0.9
+      rotation_kd: 0
       rotation_ki: 0.0
-      rotation_kp: 10.0
-      translation_kd: 0.45
+      rotation_kp: 5
+      translation_kd: 0
       translation_ki: 0.0
-      translation_kp: 3.0
+      translation_kp: 1.5
     robot_2:
       rotation_kd: 0.9
       rotation_ki: 0.0
@@ -48,7 +48,7 @@
       translation_kp: 3.0
     max_acceleration: 2.0
     max_angular_velocity: 1.0
-    max_velocity: 0.5
+    max_velocity: 1.0
     rotation_windup: 0
     translation_windup: 0
     use_sim_time: false
