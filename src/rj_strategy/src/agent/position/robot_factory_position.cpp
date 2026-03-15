@@ -200,7 +200,7 @@ void RobotFactoryPosition::set_default_position() {
         return;
     }
 
-    if (robot_id_ == kChaserRobotId) {
+    if (robot_id_ == kSwitchingRobotId) {
         const auto ball_position = last_world_state_->ball.position;
         const bool ball_on_their_half =
             ball_position.y() > field_dimensions_.center_field_loc().y() - kBallDiameter;
@@ -208,7 +208,7 @@ void RobotFactoryPosition::set_default_position() {
         if (ball_on_their_half) {
             set_current_position<Offense>();
         } else {
-            set_current_position<Defense>();
+            set_current_position<FreeKicker>();
         }
         return;
     }

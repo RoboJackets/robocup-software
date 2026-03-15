@@ -114,7 +114,7 @@ public:
 
 private:
     static constexpr int kPrimaryOffenseRobotId = 1;
-    static constexpr int kChaserRobotId = 2;
+    static constexpr int kSwitchingRobotId = 2;
 
     std::unique_ptr<Position> current_position_;
 
