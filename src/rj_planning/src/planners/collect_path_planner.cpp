@@ -11,7 +11,8 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
         return Trajectory{};
     }
 
-    BallState ball = plan_request.world_state->ball;
+    active_ball_ = get_active_ball(plan_request);
+    const BallState& ball = active_ball_;
 
     const RJ::Time cur_time = plan_request.start.stamp;
 
@@ -128,6 +129,52 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     return previous_;
 }
 
+BallState CollectPathPlanner::get_active_ball(const PlanRequest& request) {
+    const BallState& observed_ball = request.world_state->ball;
+    if (!visual_ball_sense_) {
+        last_visible_ball_initialized_ = false;
+        return observed_ball;
+    }
+
+    if (observed_ball.visible) {
+        last_visible_ball_ = observed_ball;
+        last_visible_ball_initialized_ = true;
+        return observed_ball;
+    }
+
+    if (last_visible_ball_initialized_ &&
+        request.start.stamp - last_visible_ball_.timestamp <= kVisionBallRetentionWindow) {
+        if (request.start.stamp <= last_visible_ball_.timestamp) {
+            return last_visible_ball_;
+        }
+        return last_visible_ball_.predict_at(request.start.stamp);
+    }
+
+    return observed_ball;
+}
+
+bool CollectPathPlanner::has_vision_ball_sense(const BallState& observed_ball,
+                                               const RobotInstant& start_instant) const {
+    if (!visual_ball_sense_ || observed_ball.visible || current_state_ != FINE_APPROACH ||
+        !last_visible_ball_initialized_) {
+        return false;
+    }
+
+    if (start_instant.stamp - last_visible_ball_.timestamp > kVisionBallRetentionWindow) {
+        return false;
+    }
+
+    const Point mouth_position =
+        start_instant.position() + Point::direction(start_instant.heading()) * kRobotMouthRadius;
+    const Point predicted_ball_position =
+        start_instant.stamp <= last_visible_ball_.timestamp
+            ? last_visible_ball_.position
+            : last_visible_ball_.predict_at(start_instant.stamp).position;
+    const double max_ball_mouth_dist = kBallRadius + collect::PARAM_dist_cutoff_to_control;
+
+    return mouth_position.dist_to(predicted_ball_position) <= max_ball_mouth_dist;
+}
+
 void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball,
                                                   RobotInstant* start_instant) {
     // If the ball is moving, intercept
@@ -188,12 +235,14 @@ void CollectPathPlanner::process_state_transition(const PlanRequest& request, Ba
     }
 
     // If we are in FineApproach and we have the ball, terminate
-    is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
+    is_ball_sense_ =
+        current_state_ == FINE_APPROACH &&
+        (request.ball_sense || has_vision_ball_sense(request.world_state->ball, *start_instant));
 }
 
 Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
                                                const ObstacleSet& obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = active_ball_;
 
     // There are two paths that get combined together
     //
@@ -255,7 +304,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     const double max_ball_angle_change_for_path_reset =
         settle::PARAM_max_ball_angle_for_reset * M_PI / 180.0f;
 
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = active_ball_;
 
     rj_geometry::Point face_pos =
         start_instant.position() +
@@ -491,7 +540,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     // TODO(Kyle): Realize the ball will probably bounce off the robot
     // so we can use that vector to stop
     // Save vector and use that?
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = active_ball_;
 
     rj_geometry::Point face_pos =
         start_instant.position() +
@@ -587,7 +636,7 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
 Trajectory CollectPathPlanner::fine_approach(const PlanRequest& plan_request,
                                              RobotInstant start_instant,
                                              const ObstacleSet& obstacles) {
-    BallState ball = plan_request.world_state->ball;
+    BallState ball = active_ball_;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
     MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
 
@@ -662,7 +711,7 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                  obstacles,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
-                                 AngleFns::face_point(plan_request.world_state->ball.position),
+                                 AngleFns::face_point(active_ball_.position),
                                  plan_request.shell_id};
 
     Trajectory path = Replanner::create_plan(params, previous_);
@@ -677,6 +726,8 @@ void CollectPathPlanner::reset() {
     average_ball_vel_initialized_ = false;
     path_coarse_target_initialized_ = false;
     is_ball_sense_ = false;
+    last_visible_ball_initialized_ = false;
+    active_ball_ = BallState();
 }
 
 bool CollectPathPlanner::is_done() const { return is_ball_sense_; }
