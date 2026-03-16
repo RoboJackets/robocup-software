@@ -208,6 +208,8 @@ void RobotFactoryPosition::set_default_position() {
 
     if (robot_id_ == kSwitchingRobotId) {
         if (ball_on_their_half()) {
+            client_handles_->waller->leave_group();
+            client_handles_->marking->leave_group();
             set_current_position<Offense>();
         } else {
             set_current_position<Idle>();
@@ -274,8 +276,37 @@ bool RobotFactoryPosition::switching_robot_should_clear() const {
     }
 
     if (!last_world_state_->ball.visible ||
-        field_dimensions_.our_defense_area().contains_point(last_world_state_->ball.position)) {
+        field_dimensions_.our_defense_area().contains_point(last_world_state_->ball.position) ||
+        field_dimensions_.their_defense_area().contains_point(last_world_state_->ball.position) ||
+        !field_dimensions_.field_rect().contains_point(last_world_state_->ball.position)) {
         return false;
+    }
+
+    const auto ball_position = last_world_state_->ball.position;
+    const auto switching_robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
+    const double switching_robot_ball_dist = switching_robot_position.dist_to(ball_position);
+
+    for (const auto& enemy : last_world_state_->their_robots) {
+        if (!enemy.visible) {
+            continue;
+        }
+
+        if (enemy.pose.position().dist_to(ball_position) < switching_robot_ball_dist) {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
+        if (i == robot_id_ || i == goalie_id_ || !alive_robots_[i] ||
+            !last_world_state_->our_robots[i].visible) {
+            continue;
+        }
+
+        if (last_world_state_->our_robots[i].pose.position().dist_to(ball_position) <
+            switching_robot_ball_dist) {
+            return false;
+        }
     }
 
     return true;
@@ -285,6 +316,10 @@ std::optional<RobotIntent> RobotFactoryPosition::get_switching_robot_task(RobotI
     if (current_play_state_.state() != PlayState::State::Playing ||
         robot_id_ != kSwitchingRobotId) {
         return std::nullopt;
+    }
+
+    if (!ball_on_their_half() && !client_handles_->waller->am_i_member()) {
+        client_handles_->waller->join_group();
     }
 
     if (!ball_on_their_half() && switching_robot_should_clear()) {
@@ -302,15 +337,15 @@ std::optional<RobotIntent> RobotFactoryPosition::get_switching_robot_task(RobotI
     }
 
     if (!ball_on_their_half()) {
+        if (const auto walling_point =
+                client_handles_->waller->get_walling_point(last_world_state_, field_dimensions_)) {
+            planning::LinearMotionInstant goal{walling_point.value()};
+            intent.motion_command =
+                planning::MotionCommand{"path_target", goal, planning::FaceBall{}};
+            return intent;
+        }
+
         rj_geometry::Point target = field_dimensions_.our_half().center();
-        if (last_world_state_->ball.visible) {
-            target = (target + last_world_state_->ball.position) / 2.0;
-        }
-
-        if (field_dimensions_.our_defense_area().contains_point(target)) {
-            target = field_dimensions_.our_half().center();
-        }
-
         planning::LinearMotionInstant goal{target, rj_geometry::Point{0.0, 0.0}};
         intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{},
                                                         true};

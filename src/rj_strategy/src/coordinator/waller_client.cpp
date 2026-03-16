@@ -36,6 +36,7 @@ void WallerClient::join_group(StatusCallback callback) {
                 if (callback) {
                     callback(Result{false});
                 }
+                return;
             }
 
             am_i_member_ = true;
