@@ -82,7 +82,12 @@ ament_target_dependencies(${PROJECT_NAME}
   ${RJ_STRATEGY_DEPS}
 )
 
-# Straight Line Test Node
+# Rotate Test Node
+add_executable(rotate_test_node
+  ${RJ_STRATEGY_SRC}
+  src/testing/rotate_test.cpp
+)
+
 add_executable(straight_line_test_node
   ${RJ_STRATEGY_SRC}
   src/testing/straight_line_test.cpp
@@ -94,7 +99,17 @@ target_include_directories(straight_line_test_node
   $<INSTALL_INTERFACE:include>
 )
 
+target_include_directories(rotate_test_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
 ament_target_dependencies(straight_line_test_node
+  ${RJ_STRATEGY_DEPS}
+)
+
+ament_target_dependencies(rotate_test_node
   ${RJ_STRATEGY_DEPS}
 )
 
@@ -178,7 +193,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
+  TARGETS  rotate_test_node straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 

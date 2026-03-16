@@ -20,6 +20,7 @@ public:
     ~Rotate() override = default;
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+    std::string get_current_state() override;
 
 private:
     bool clockwise_ = true;

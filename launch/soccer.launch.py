@@ -49,6 +49,7 @@ def generate_launch_description():
     run_sim = LaunchConfiguration("run_sim")
     sim_flag = LaunchConfiguration("sim_flag")
     run_line_test = LaunchConfiguration("run_line_test")
+    run_rotate_test = LaunchConfiguration("run_rotate_test")
 
     use_internal_ref = LaunchConfiguration("use_internal_ref")
     ref_flag = LaunchConfiguration("ref_flag")
@@ -101,6 +102,7 @@ def generate_launch_description():
                 ],
             ),
             DeclareLaunchArgument("run_line_test", default_value="False"),
+            DeclareLaunchArgument("run_rotate_test", default_value="False"),
             stdout_linebuf_envvar,
             # Node spawns all of the ROS nodes, defined in main() of various
             # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
@@ -208,6 +210,14 @@ def generate_launch_description():
                 condition=IfCondition(PythonExpression([run_line_test])),
                 package="rj_strategy",
                 executable="straight_line_test_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                condition=IfCondition(PythonExpression([run_rotate_test])),
+                package="rj_strategy",
+                executable="rotate_test_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

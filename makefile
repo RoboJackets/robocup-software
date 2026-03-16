@@ -62,7 +62,7 @@ perf_docker:
 	MAKEFLAGS='-j5' colcon build --parallel-workers 1 --executor sequential --cmake-args \
 	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
 	-DCMAKE_BUILD_TYPE=Debug \
-	-DCMAKE_CXX_FLAGS_DEBUG="-g1" 
+	-DCMAKE_CXX_FLAGS_DEBUG="-g1"
 
 # run soccer with default flags
 # TODO: lots of the default flags are for sim, except run_sim
@@ -86,6 +86,9 @@ run-our-stack:
 run-line-test-stack:
 	ros2 launch ./launch/soccer.launch.py run_sim:=True run_line_test:=True
 
+run-rotate-test-sim:
+	ros2 launch ./launch/soccer.launch.py run_sim:=True run_rotate_test:=True
+
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
 	ros2 launch ./launch/soccer.launch.py run_sim:=True use_internal_ref:=False
@@ -107,6 +110,9 @@ run-manual:
 
 run-real-line-test:
 	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False run_line_test:=True
+
+run-real-rotate-test:
+	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False run_rotate_test:=True
 
 # same as run-real, with different server port
 run-alt-real:
