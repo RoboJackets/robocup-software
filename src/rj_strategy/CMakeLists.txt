@@ -47,6 +47,7 @@ set(RJ_STRATEGY_SRC
   src/agent/position/goalie.cpp
   src/agent/position/idle.cpp
   src/agent/position/line.cpp
+  src/agent/position/rotate.cpp
   src/agent/position/offense.cpp
   src/agent/position/penalty_non_kicker.cpp
   src/agent/position/penalty_player.cpp
