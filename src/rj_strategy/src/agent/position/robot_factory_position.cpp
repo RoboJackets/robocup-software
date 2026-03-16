@@ -210,7 +210,7 @@ void RobotFactoryPosition::set_default_position() {
         if (ball_on_their_half()) {
             set_current_position<Offense>();
         } else {
-            set_current_position<Defense>();
+            set_current_position<Idle>();
         }
         return;
     }
@@ -278,24 +278,6 @@ bool RobotFactoryPosition::switching_robot_should_clear() const {
         return false;
     }
 
-    const auto ball_position = last_world_state_->ball.position;
-    const auto switching_robot_position =
-        last_world_state_->get_robot(true, robot_id_).pose.position();
-    const double switching_robot_ball_dist = switching_robot_position.dist_to(ball_position);
-
-    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
-        if (i == robot_id_ || i == goalie_id_ || !alive_robots_[i] ||
-            !last_world_state_->our_robots[i].visible) {
-            continue;
-        }
-
-        const double teammate_ball_dist =
-            last_world_state_->our_robots[i].pose.position().dist_to(ball_position);
-        if (teammate_ball_dist < switching_robot_ball_dist) {
-            return false;
-        }
-    }
-
     return true;
 }
 
@@ -316,6 +298,22 @@ std::optional<RobotIntent> RobotFactoryPosition::get_switching_robot_task(RobotI
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = kWallChuckerKickSpeed;
         intent.is_active = true;
+        return intent;
+    }
+
+    if (!ball_on_their_half()) {
+        rj_geometry::Point target = field_dimensions_.our_half().center();
+        if (last_world_state_->ball.visible) {
+            target = (target + last_world_state_->ball.position) / 2.0;
+        }
+
+        if (field_dimensions_.our_defense_area().contains_point(target)) {
+            target = field_dimensions_.our_half().center();
+        }
+
+        planning::LinearMotionInstant goal{target, rj_geometry::Point{0.0, 0.0}};
+        intent.motion_command = planning::MotionCommand{"path_target", goal, planning::FaceBall{},
+                                                        true};
         return intent;
     }
 
