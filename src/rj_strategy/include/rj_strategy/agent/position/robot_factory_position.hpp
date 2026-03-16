@@ -115,12 +115,19 @@ public:
 private:
     static constexpr int kPrimaryOffenseRobotId = 1;
     static constexpr int kSwitchingRobotId = 2;
+    static constexpr double kWallChuckerKickSpeed = 4.0;
 
     std::unique_ptr<Position> current_position_;
 
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    bool ball_on_their_half() const;
+
+    bool switching_robot_should_clear() const;
+
+    std::optional<RobotIntent> get_switching_robot_task(RobotIntent intent);
 
     void set_default_position();
 

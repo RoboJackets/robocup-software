@@ -33,6 +33,12 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
     // Every tick, update position based on PlayState
     update_position();
 
+    if (override_play_position_ == OverridingPositions::AUTO) {
+        if (const auto switching_robot_intent = get_switching_robot_task(intent)) {
+            return switching_robot_intent;
+        }
+    }
+
     return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }
 
@@ -201,14 +207,10 @@ void RobotFactoryPosition::set_default_position() {
     }
 
     if (robot_id_ == kSwitchingRobotId) {
-        const auto ball_position = last_world_state_->ball.position;
-        const bool ball_on_their_half =
-            ball_position.y() > field_dimensions_.center_field_loc().y() - kBallDiameter;
-
-        if (ball_on_their_half) {
+        if (ball_on_their_half()) {
             set_current_position<Offense>();
         } else {
-            set_current_position<FreeKicker>();
+            set_current_position<Defense>();
         }
         return;
     }
@@ -259,6 +261,65 @@ void RobotFactoryPosition::set_default_position() {
             set_current_position<Offense>();
         }
     }
+}
+
+bool RobotFactoryPosition::ball_on_their_half() const {
+    return last_world_state_->ball.position.y() >
+           field_dimensions_.center_field_loc().y() - kBallDiameter;
+}
+
+bool RobotFactoryPosition::switching_robot_should_clear() const {
+    if (robot_id_ != kSwitchingRobotId || ball_on_their_half()) {
+        return false;
+    }
+
+    if (!last_world_state_->ball.visible ||
+        field_dimensions_.our_defense_area().contains_point(last_world_state_->ball.position)) {
+        return false;
+    }
+
+    const auto ball_position = last_world_state_->ball.position;
+    const auto switching_robot_position =
+        last_world_state_->get_robot(true, robot_id_).pose.position();
+    const double switching_robot_ball_dist = switching_robot_position.dist_to(ball_position);
+
+    for (int i = 0; i < static_cast<int>(kNumShells); i++) {
+        if (i == robot_id_ || i == goalie_id_ || !alive_robots_[i] ||
+            !last_world_state_->our_robots[i].visible) {
+            continue;
+        }
+
+        const double teammate_ball_dist =
+            last_world_state_->our_robots[i].pose.position().dist_to(ball_position);
+        if (teammate_ball_dist < switching_robot_ball_dist) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+std::optional<RobotIntent> RobotFactoryPosition::get_switching_robot_task(RobotIntent intent) {
+    if (current_play_state_.state() != PlayState::State::Playing ||
+        robot_id_ != kSwitchingRobotId) {
+        return std::nullopt;
+    }
+
+    if (!ball_on_their_half() && switching_robot_should_clear()) {
+        rj_geometry::Point clear_target{
+            field_dimensions_.their_goal_loc().x() + 0.5 * field_dimensions_.goal_width(),
+            field_dimensions_.their_goal_loc().y()};
+
+        planning::LinearMotionInstant target{clear_target};
+        intent.motion_command = planning::MotionCommand{"line_kick", target};
+        intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = kWallChuckerKickSpeed;
+        intent.is_active = true;
+        return intent;
+    }
+
+    return std::nullopt;
 }
 
 std::deque<communication::PosAgentRequestWrapper>

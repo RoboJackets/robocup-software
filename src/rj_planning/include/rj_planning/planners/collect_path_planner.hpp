@@ -48,11 +48,6 @@ private:
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start);
 
-    [[nodiscard]] BallState get_active_ball(const PlanRequest& request);
-
-    [[nodiscard]] bool has_vision_ball_sense(const BallState& observed_ball,
-                                             const RobotInstant& start_instant) const;
-
     void process_state_transition(const PlanRequest& request, BallState ball,
                                   RobotInstant* start_instant);
 
@@ -96,17 +91,6 @@ private:
 
     // Do we have the ball in the robot
     bool is_ball_sense_ = false;
-
-    // Toggle the vision-based fallback for simulated ball sense during collect.
-    bool visual_ball_sense_ = true;
-
-    // Use a short-lived cached ball estimate to bridge the vision dropout that
-    // happens when the ball enters the mouth.
-    BallState active_ball_;
-    BallState last_visible_ball_;
-    bool last_visible_ball_initialized_ = false;
-
-    static constexpr RJ::Seconds kVisionBallRetentionWindow{0.25};
 
     // Threshold for switching from dampen to fine approach
     static constexpr double kDampenBallSpeedThreshold{0.75};
