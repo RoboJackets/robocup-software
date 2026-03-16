@@ -140,13 +140,8 @@ Offense::State Offense::next_state() {
                 return POSSESSION_START;
             }
 
-            if (ball_in_red()) {
-                send_pass_received_to_passer(face_robot_id);
-                return DEFAULT;
-            }
-
-            // If we failed to get it in time
-            if (timed_out()) {
+            // If we failed to get it in time or if ball is out of reach
+            if (ball_in_red() || timed_out()) {
                 send_pass_received_to_passer(face_robot_id);
                 return DEFAULT;
             }
@@ -309,7 +304,8 @@ bool Offense::check_if_open(int target_robot_shell) {
     // are no other robots
     // in the passing line, process the request Currently, max_receive_distance is used to
     // determine when we are open, but this may need to change
-    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance / 2);
+    // /2 is there to help create more leniency when passing
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance/2);
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
@@ -350,7 +346,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
             seeker_points_.erase(seeker_request->robot_id);
         }
     } else if (std::get_if<communication::PassReceivedRequest>(&request.request)) {
-        // Receiver has controlled the ball; we can leave PASSING_FINISHED.
+        // Receiver has controlled the ball, we can leave PASSING_FINISHED.
         if (current_state_ == PASSING_FINISHED) {
             current_state_ = DEFAULT;
         }
