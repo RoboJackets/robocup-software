@@ -208,8 +208,12 @@ void RobotFactoryPosition::set_default_position() {
 
     if (robot_id_ == kSwitchingRobotId) {
         if (ball_on_their_half()) {
-            client_handles_->waller->leave_group();
-            client_handles_->marking->leave_group();
+            if (client_handles_->waller->am_i_member()) {
+                client_handles_->waller->leave_group();
+            }
+            if (client_handles_->marking->am_i_member()) {
+                client_handles_->marking->leave_group();
+            }
             set_current_position<Offense>();
         } else {
             set_current_position<Idle>();
@@ -298,7 +302,7 @@ bool RobotFactoryPosition::switching_robot_should_clear() const {
     }
 
     for (int i = 0; i < static_cast<int>(kNumShells); i++) {
-        if (i == robot_id_ || i == goalie_id_ || !alive_robots_[i] ||
+        if (i == robot_id_ || i == goalie_id_ || i == kPrimaryOffenseRobotId || !alive_robots_[i] ||
             !last_world_state_->our_robots[i].visible) {
             continue;
         }
@@ -318,11 +322,15 @@ std::optional<RobotIntent> RobotFactoryPosition::get_switching_robot_task(RobotI
         return std::nullopt;
     }
 
-    if (!ball_on_their_half() && !client_handles_->waller->am_i_member()) {
+    const bool should_clear = !ball_on_their_half() && switching_robot_should_clear();
+
+    if (should_clear && client_handles_->waller->am_i_member()) {
+        client_handles_->waller->leave_group();
+    } else if (!ball_on_their_half() && !client_handles_->waller->am_i_member()) {
         client_handles_->waller->join_group();
     }
 
-    if (!ball_on_their_half() && switching_robot_should_clear()) {
+    if (should_clear) {
         rj_geometry::Point clear_target{
             field_dimensions_.their_goal_loc().x() + 0.5 * field_dimensions_.goal_width(),
             field_dimensions_.their_goal_loc().y()};

@@ -99,10 +99,13 @@ std::optional<rj_geometry::Point> WallerClient::get_walling_point(
     const WorldState* world_state, FieldDimensions field_dimensions) const {
     if (!am_i_member_) return std::nullopt;
 
+    auto waller_it = std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_);
+    if (num_wallers_ == 0 || waller_it == walling_robots_.end()) {
+        return std::nullopt;
+    }
+
     auto waller_geometry = calculate_wall_geometry(world_state, field_dimensions);
-    auto waller_pos =
-        std::distance(walling_robots_.begin(),
-                      std::find(walling_robots_.begin(), walling_robots_.end(), robot_id_));
+    auto waller_pos = std::distance(walling_robots_.begin(), waller_it);
 
     // Target point where the waller should end up
     auto target_point = get_target_position(waller_geometry, waller_pos);
