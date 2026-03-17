@@ -128,67 +128,131 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     return previous_;
 }
 
-void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball,
-                                                  RobotInstant* start_instant) {
-    // If the ball is moving, intercept
-    // if not, regularly approach
-    if (current_state_ == COARSE_APPROACH &&
-        average_ball_vel_.mag() > kInterceptVelocityThreshold) {
-        current_state_ = INTERCEPT;
-    } else if (current_state_ == INTERCEPT &&
-               average_ball_vel_.mag() < kInterceptVelocityThreshold) {
-        current_state_ = COARSE_APPROACH;
-    }
+// void CollectPathPlanner::process_state_transition(const PlanRequest& request, BallState ball,
+//                                                   RobotInstant* start_instant) {
 
-    // Do the transitions
+//     double dist = (start_instant->position() - ball.position).mag() - kRobotMouthRadius;
+//     bool ball_moving_fast = average_ball_vel_.mag() > kInterceptVelocityThreshold;
+
+//     switch (current_state_)
+//     {
+//         case COARSE_APPROACH:
+//             /* code */
+//             break;
+        
+//         default:
+//             break;
+//     }
+
+//     // If the ball is moving, intercept
+//     // if not, regularly approach
+//     if (current_state_ == COARSE_APPROACH &&
+//         average_ball_vel_.mag() > kInterceptVelocityThreshold) {
+//         current_state_ = INTERCEPT;
+//     } else if (current_state_ == INTERCEPT &&
+//                average_ball_vel_.mag() < kInterceptVelocityThreshold) {
+//         current_state_ = COARSE_APPROACH;
+//     }
+
+//     // Do the transitions
+    
+
+//     // If we are in range to the slow dist
+//     if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+//         (current_state_ == COARSE_APPROACH)) {
+//         current_state_ = FINE_APPROACH;
+//     }
+
+//     // If the ball gets knocked far away, go back to CoarseApproach
+//     if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
+//         current_state_ == FINE_APPROACH) {
+//         current_state_ = COARSE_APPROACH;
+//     }
+
+//     // Intercept -> Dampen, PrevPath and almost at the end of the path
+//     if (!previous_.empty() && start_instant->stamp > previous_.begin_time() &&
+//         start_instant->stamp <= previous_.end_time()) {
+//         rj_geometry::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
+
+//         Trajectory path_so_far =
+//             previous_.sub_trajectory(previous_.begin_time(), start_instant->stamp);
+//         double bot_dist_to_ball_movement_line =
+//             ball_movement_line.dist_to(path_so_far.last().position());
+
+//         // Intercept -> Dampen
+//         // Almost intersecting the ball path and
+//         // Almost at end of the target path or
+//         // Already in line with the ball
+//         // Within X seconds of the end of path
+//         bool inline_with_ball = bot_dist_to_ball_movement_line < kRobotMouthRadius / 2;
+//         bool in_front_of_ball =
+//             average_ball_vel_.angle_between(start_instant->position() - ball.position) < M_PI / 2;
+
+//         if (in_front_of_ball && inline_with_ball && current_state_ == INTERCEPT) {
+//             // Start the next section of the path from the end of our current
+//             // path
+//             *start_instant = path_so_far.last();
+//             current_state_ = DAMPEN;
+//         }
+//     }
+
+//     // Dampen -> Fine Approach if ball is sufficiently slow
+//     if (average_ball_vel_.mag() < kDampenBallSpeedThreshold && current_state_ == DAMPEN) {
+//         current_state_ = FINE_APPROACH;
+//     }
+
+//     // If we are in FineApproach and we have the ball, terminate
+//     is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
+// }
+
+void CollectPathPlanner::process_state_transition(...) {
     double dist = (start_instant->position() - ball.position).mag() - kRobotMouthRadius;
+    bool ball_moving_fast = average_ball_vel_.mag() > kInterceptVelocityThreshold;
 
-    // If we are in range to the slow dist
-    if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius &&
-        (current_state_ == COARSE_APPROACH)) {
-        current_state_ = FINE_APPROACH;
+    switch (current_state_) {
+        case COARSE_APPROACH:
+            if (ball_moving_fast)
+                current_state_ = INTERCEPT;
+            else if (dist < collect::PARAM_approach_dist_target + kRobotMouthRadius)
+                current_state_ = FINE_APPROACH;
+            break;
+
+        case FINE_APPROACH:
+            if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius)
+                current_state_ = COARSE_APPROACH;
+            is_ball_sense_ = request.ball_sense;
+            break;
+
+        case INTERCEPT:
+            if (!ball_moving_fast) {
+                current_state_ = COARSE_APPROACH;
+            } else if (is_robot_inline_with_ball(start_instant)) {
+                Trajectory path_so_far = previous_.sub_trajectory(
+                    previous_.begin_time(), start_instant->stamp);
+                
+                rj_geometry::Line ball_movement_line(
+                    ball.position, ball.position + average_ball_vel_);
+                
+                double bot_dist_to_ball_movement_line = 
+                    ball_movement_line.dist_to(path_so_far.last().position());
+                
+                bool inline_with_ball = bot_dist_to_ball_movement_line < kRobotMouthRadius / 2;
+                bool in_front_of_ball = 
+                    average_ball_vel_.angle_between(
+                        start_instant->position() - ball.position) < M_PI / 2;
+                
+                if (in_front_of_ball && inline_with_ball) {
+                    *start_instant = path_so_far.last();
+                    current_state_ = DAMPEN;
+                }
+            }
+            break;
+
+        case DAMPEN:
+            if (average_ball_vel_.mag() < kDampenBallSpeedThreshold)
+                current_state_ = FINE_APPROACH;
+            break;
     }
-
-    // If the ball gets knocked far away, go back to CoarseApproach
-    if (dist > collect::PARAM_approach_dist_target + kRobotMouthRadius &&
-        current_state_ == FINE_APPROACH) {
-        current_state_ = COARSE_APPROACH;
-    }
-
-    // Intercept -> Dampen, PrevPath and almost at the end of the path
-    if (!previous_.empty() && start_instant->stamp > previous_.begin_time() &&
-        start_instant->stamp <= previous_.end_time()) {
-        rj_geometry::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
-
-        Trajectory path_so_far =
-            previous_.sub_trajectory(previous_.begin_time(), start_instant->stamp);
-        double bot_dist_to_ball_movement_line =
-            ball_movement_line.dist_to(path_so_far.last().position());
-
-        // Intercept -> Dampen
-        // Almost intersecting the ball path and
-        // Almost at end of the target path or
-        // Already in line with the ball
-        // Within X seconds of the end of path
-        bool inline_with_ball = bot_dist_to_ball_movement_line < kRobotMouthRadius / 2;
-        bool in_front_of_ball =
-            average_ball_vel_.angle_between(start_instant->position() - ball.position) < M_PI / 2;
-
-        if (in_front_of_ball && inline_with_ball && current_state_ == INTERCEPT) {
-            // Start the next section of the path from the end of our current
-            // path
-            *start_instant = path_so_far.last();
-            current_state_ = DAMPEN;
-        }
-    }
-
-    // Dampen -> Fine Approach if ball is sufficiently slow
-    if (average_ball_vel_.mag() < kDampenBallSpeedThreshold && current_state_ == DAMPEN) {
-        current_state_ = FINE_APPROACH;
-    }
-
-    // If we are in FineApproach and we have the ball, terminate
-    is_ball_sense_ = request.ball_sense && current_state_ == FINE_APPROACH;
 }
 
 Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
