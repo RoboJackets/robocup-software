@@ -305,7 +305,7 @@ bool Offense::check_if_open(int target_robot_shell) {
     // in the passing line, process the request Currently, max_receive_distance is used to
     // determine when we are open, but this may need to change
     // /2 is there to help create more leniency when passing
-    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance/2);
+    return (min_robot_dist > max_receive_distance && min_path_dist > max_receive_distance / 2);
 }
 
 communication::PosAgentResponseWrapper Offense::receive_communication_request(
