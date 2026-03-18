@@ -145,9 +145,9 @@ Offense::State Offense::next_state() {
             if (check_is_done()) {
                 return DEFAULT;
             }
-            if (distance_to_ball() > kOwnBallRadius) {
-                return DEFAULT;
-            }
+            // if (distance_to_ball() > kOwnBallRadius) {
+            //     return DEFAULT;
+            // }
             return SHOOTING;
         }
     }
@@ -191,9 +191,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case PASSING: {
             rj_geometry::Point target_robot_pos =
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
+            rj_geometry::Point ball_pos = last_world_state_->ball.position;
             planning::LinearMotionInstant target{target_robot_pos};
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, ball_pos};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
@@ -246,10 +247,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case SHOOTING: {
             // rotate kick best shot
             target_ = calculate_best_shot();
-
+            rj_geometry::Point ball_pos = last_world_state_->ball.position;
             planning::LinearMotionInstant target{calculate_best_shot()};
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"line_pivot", target, planning::FaceTarget{}, false, ball_pos};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::AT_END;

@@ -39,6 +39,7 @@ LinePivotPathPlanner::State LinePivotPathPlanner::next_state(const PlanRequest& 
 
     if (current_state_ == LINE && (target_point.dist_to(current_point) < 0.3) && (vel < 0.3) &&
         (!plan_request.play_state.is_stop())) {
+        SPDLOG_INFO("Switching to pivot because we're close enough to target and slow enough");
         return PIVOT;
     }
     if (current_state_ == PIVOT && (pivot_point.dist_to(current_point) > (dist_from_point * 5))) {
