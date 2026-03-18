@@ -47,7 +47,7 @@
       translation_ki: 0.0
       translation_kp: 3.0
     max_acceleration: 2.0
-    max_angular_velocity: 1.0
+    max_angular_velocity: 5.0
     max_velocity: 1.0
     rotation_windup: 0
     translation_windup: 0
@@ -65,12 +65,12 @@
       robot:
         chip_angle: 40.0
         max_acceleration: 2.0
-        max_chip_speed: 4.0
+        max_chip_speed: 15.0
         max_dribbler_speed: 2000.0
-        max_kick_speed: 7.0
+        max_kick_speed: 15.0
         max_speed: 2.0
         min_chip_speed: 0.5
-        min_kick_speed: 1.0
+        min_kick_speed: 0.0
         min_safe_kick_power: 64
         robot_radius: 0.09
     use_sim_time: false

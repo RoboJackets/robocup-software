@@ -46,7 +46,7 @@ Offense::State Offense::next_state() {
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
-                return STEALING;
+                return POSSESSION_START;
             }
 
             // If we need to get a new seeking target, restart seeking
@@ -161,9 +161,9 @@ Offense::State Offense::next_state() {
             if (check_is_done()) {
                 return DEFAULT;
             }
-            if (distance_to_ball() > kOwnBallRadius) {
-                return DEFAULT;
-            }
+            // if (distance_to_ball() > kOwnBallRadius) {
+            //     return DEFAULT;
+            // }
             return SHOOTING;
         }
     }
@@ -193,14 +193,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case POSSESSION_START: {
             target_ = calculate_best_shot();
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
+            intent.motion_command = planning::MotionCommand{};
+
             return intent;
         }
 
         case POSSESSION: {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
+            intent.motion_command = planning::MotionCommand{};
+
             return intent;
         }
 
@@ -209,10 +209,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
             planning::LinearMotionInstant target{target_robot_pos};
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 
             // Adjusts kick speed based on distance.
             // Details: TIGERS 2019 eTDP, rj_gameplay/passer.py
@@ -220,7 +220,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
             double dist = target_robot_pos.dist_to(this_robot_pos);
-            intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
+            intent.kick_speed = 15;
             return intent;
         }
 
@@ -231,7 +231,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case STEALING: {
-            auto collect_cmd = planning::MotionCommand{"collect"};
+            auto collect_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{last_world_state_->ball.position}, planning::FaceBall{}};
             intent.motion_command = collect_cmd;
 
             return intent;
@@ -270,12 +270,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             target_ = calculate_best_shot();
 
             planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
-            intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = 4.0;
+            // auto pivot_cmd =
+            //     planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            // intent.motion_command = pivot_cmd;
+            // intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+            auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+            intent.motion_command = shoot_cmd;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 15.0;
             return intent;
         }
     }
@@ -521,7 +523,7 @@ bool Offense::can_steal_ball() const {
     // Ball in red zone or not
     if (ball_in_red()) {
         return false;
-    }
+    } 
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 

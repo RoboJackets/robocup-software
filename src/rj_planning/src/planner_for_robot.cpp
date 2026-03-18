@@ -140,7 +140,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0.2;
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
         case PlayState::State::Playing:
         default:
@@ -150,7 +150,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // number instead.
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
     }
 

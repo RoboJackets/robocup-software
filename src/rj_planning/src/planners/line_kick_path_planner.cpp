@@ -25,7 +25,7 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         //
         // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
         //
-        average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
+        average_ball_vel_ = ball.velocity;
     }
 
     process_state_transition();

@@ -250,10 +250,10 @@ struct FieldDimensions {
 
         our_defense_area_ = rj_geometry::Rect(
             rj_geometry::Point(penalty_long_dist_ / 2 + line_width_, penalty_short_dist_),
-            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, 0));
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, 0-border_));
 
         their_defense_area_ =
-            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, length_),
+            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, length_ + border_),
                               rj_geometry::Point(penalty_long_dist_ / 2 + line_width_,
                                                  length_ - penalty_short_dist_));
 
