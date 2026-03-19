@@ -228,7 +228,7 @@ void RobotFactoryPosition::set_default_position() {
         // Offensive mode
         // Closest 2 robots on defense, rest on offense
         if (i <= 1) {
-            set_current_position<Defense>();
+            set_current_position<Offense>();
         } else {
             set_current_position<Offense>();
         }
@@ -236,7 +236,7 @@ void RobotFactoryPosition::set_default_position() {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
         if (i <= 3) {
-            set_current_position<Defense>();
+            set_current_position<Offense>();
         } else {
             set_current_position<Offense>();
         }

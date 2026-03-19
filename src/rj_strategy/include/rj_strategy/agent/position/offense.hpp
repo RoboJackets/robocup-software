@@ -98,7 +98,7 @@ private:
             case POSSESSION:
                 return RJ::Seconds{5};
             case POSSESSION_START:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{5};
             case PASSING:
                 return RJ::Seconds{5};
             case PASSING_FINISHED:
