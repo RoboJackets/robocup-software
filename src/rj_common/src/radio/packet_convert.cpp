@@ -8,9 +8,7 @@ using soccer::robot::PARAM_max_dribbler_speed;
 using soccer::robot::PARAM_chip_angle;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_kick_speed) /
-                                                  (PARAM_max_kick_speed - PARAM_min_kick_speed)) *
-                                kMaxKick);
+    return static_cast<uint8_t>(kick_speed);
 }
 
 static uint8_t chipper_speed_to_strength(double kick_speed) {

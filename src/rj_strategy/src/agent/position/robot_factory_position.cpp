@@ -230,7 +230,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 1) {
             set_current_position<Offense>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<Defense>();
         }
     } else {
         // Defensive mode
@@ -238,7 +238,7 @@ void RobotFactoryPosition::set_default_position() {
         if (i <= 3) {
             set_current_position<Offense>();
         } else {
-            set_current_position<Offense>();
+            set_current_position<Defense>();
         }
     }
 }

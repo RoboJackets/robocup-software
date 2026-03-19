@@ -264,6 +264,13 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
     debug_draw_.draw_shapes(request.field_obstacles, QColor(255, 0, 0, 30));
+    
+    // maybe this draws stuff now on stop?
+    if (request.min_dist_from_ball > 0.0f) {
+        const float ball_obstacle_radius = kBallRadius + kAvoidBallDistance + request.min_dist_from_ball;
+        debug_draw_.draw_circle(rj_geometry::Circle(request.world_state->ball.position, ball_obstacle_radius), QColor(255, 140, 0, 120));
+    }
+
     debug_draw_.publish();
 
     return trajectory;

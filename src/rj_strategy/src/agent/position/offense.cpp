@@ -91,6 +91,10 @@ Offense::State Offense::next_state() {
         }
 
         case PASSING: {
+            if (!can_steal_ball() || (can_steal_ball() && has_open_shot())) {
+                send_kick_failed_to_receiver(pass_to_robot_id_);
+                return DEFAULT;
+            }
             if (check_is_done()) {
                 pass_ball(pass_to_robot_id_);
                 return PASSING_FINISHED;
@@ -226,7 +230,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
             double dist = target_robot_pos.dist_to(this_robot_pos);
-            intent.kick_speed = std::max(std::sqrt(dist) / 4, 1.) * 15;
+            // NOTE THIS IS AN INTEGER VALUE
+            if (dist < 0.6) {
+                intent.kick_speed = 5;
+            } else if (dist < 1.8) {
+                intent.kick_speed = 6;
+            } else {
+                intent.kick_speed = 7;
+            }
             return intent;
         }
 
@@ -286,7 +297,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 15.0;
+            intent.kick_speed = 7; // NOTE THIS IS AN INTEGER VALUE
             return intent;
         }
     }
@@ -434,9 +445,9 @@ bool Offense::has_open_shot() const {
     for (const RobotState& enemy : last_world_state_->their_robots) {
         // Ignore enemies within their defense area
         // this ignores the enemy goalie, which will almost always be in the way of the shot anyway
-        // if (this->field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
-        //     continue;
-        // }
+        if (this->field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            continue;
+        }
 
         // Vector from enemy to ball
         rj_geometry::Point enemy_vec = enemy.pose.position() - ball_position;
@@ -469,9 +480,9 @@ bool Offense::can_i_shoot() const {
     double min_dist = std::numeric_limits<double>::infinity();
 
     for (const RobotState& enemy : last_world_state_->their_robots) {
-        // if (field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
-        //     continue;
-        // }
+        if (field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
+            continue;
+        }
 
         rj_geometry::Point enemy_vec = enemy.pose.position() - robot_position;
 
