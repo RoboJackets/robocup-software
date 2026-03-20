@@ -24,7 +24,7 @@
       rotation_kp: 5.0
       translation_kd: 0.45
       translation_ki: 0.0
-      translation_kp: 1.0
+      translation_kp: 3.0
     robot_3:
       rotation_kd: 0.5
       rotation_ki: 0.0
@@ -35,7 +35,7 @@
     robot_4:
       rotation_kd: 0.5
       rotation_ki: 0.0
-      rotation_kp: 5.0
+      rotation_kp: 10.0
       translation_kd: 0.45
       translation_ki: 0.0
       translation_kp: 3.0

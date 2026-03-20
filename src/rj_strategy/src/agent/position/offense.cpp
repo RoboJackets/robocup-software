@@ -215,6 +215,10 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case PASSING: {
+            auto vel = last_world_state_->get_robot(true, pass_to_robot_id_).velocity.linear().mag();
+            if (vel > 0.15) {
+                return intent;
+            }
             rj_geometry::Point target_robot_pos =
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
             planning::LinearMotionInstant target{target_robot_pos};
@@ -257,14 +261,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case RECEIVING_START: {
             // Turn to face the ball
 
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-
-            planning::LinearMotionInstant stay_in_place{current_pos};
-
-            intent.motion_command =
-                planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
-
-            return intent;
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
         }
 
         case RECEIVING: {
@@ -275,14 +272,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.motion_command = settle_cmd;
             // intent.dribbler_speed = 255.0;
             // } else {
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
 
-            planning::LinearMotionInstant stay_in_place{current_pos};
-
-            intent.motion_command =
-                planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
-
-            return intent;
         }
 
         case SHOOTING: {
@@ -341,7 +332,6 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // If the robot recieves a PassRequest, only process it if we are open
 
         auto response = Position::receive_pass_request(*pass_request);
-        SPDLOG_INFO("Robot {} is sending a pass response", robot_id_);
         response.direct_open = true;
 
         comm_response.response = response;

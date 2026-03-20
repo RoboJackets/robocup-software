@@ -205,7 +205,7 @@ void RobotFactoryPosition::set_default_position() {
             continue;
         }
         if (alive_robots_[i]) {
-            robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
+            robots_copy.emplace_back(i, i);
         }
     }
 
@@ -229,13 +229,13 @@ void RobotFactoryPosition::set_default_position() {
         // Closest 2 robots on defense, rest on offense
         if (i <= 1) {
             set_current_position<Offense>();
-        } else {
+        } else {  
             set_current_position<Defense>();
         }
     } else {
         // Defensive mode
         // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
+        if (i <= 0) {
             set_current_position<Offense>();
         } else {
             set_current_position<Defense>();

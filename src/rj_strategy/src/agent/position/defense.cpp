@@ -212,7 +212,10 @@ void Defense::derived_acknowledge_ball_in_transit() {
     chasing_ball = false;
 }
 
-void Defense::die() { client_handles_->waller->leave_group(); }
+void Defense::die() { 
+    SPDLOG_INFO("{} dead", robot_id_);
+    client_handles_->waller->leave_group(); 
+}
 
 void Defense::revive() { current_state_ = JOINING_WALL; }
 
