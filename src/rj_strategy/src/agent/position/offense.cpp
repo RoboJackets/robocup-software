@@ -170,7 +170,7 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
-            if (ball_in_red() || check_is_done() || !has_open_shot() || !can_steal_ball()) {
+            if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() || !has_open_shot() || !can_steal_ball()) {
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {
@@ -560,15 +560,6 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
-// Checks whether ball is out of range for stealing/receiving
-bool Offense::ball_in_red() const {
-    auto& ball_pos = last_world_state_->ball.position;
-    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
-            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-            field_dimensions_.our_goal_area().contains_point(ball_pos) ||
-            field_dimensions_.their_goal_area().contains_point(ball_pos) ||
-            !field_dimensions_.field_rect().contains_point(ball_pos));
-}
 bool Offense::kick_failed() const {
     return (last_time_ + kKickFailsafeTimeout < RJ::now()) && (distance_to_ball() < kOwnBallRadius);
 }
