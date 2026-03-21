@@ -271,7 +271,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                                        RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->body_w = static_cast<int16_t>(motion.velocity_z_radps *
                                        RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->dribbler_speed = std::max(12.5f, std::min(manipulator.dribbler_speed, 125.0f));
+    rtp->dribbler_speed = std::max(0.0f, std::min(manipulator.dribbler_speed, 125.0f));
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);
     } else {
