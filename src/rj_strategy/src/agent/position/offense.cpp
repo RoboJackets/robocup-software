@@ -141,7 +141,7 @@ Offense::State Offense::next_state() {
             }
 
             // If we failed to get it in time or if ball is out of reach
-            if (ball_in_red() || timed_out()) {
+            if (!ball_in_play_area(last_world_state_, field_dimensions_) || timed_out()) {
                 send_pass_received_to_passer(face_robot_id);
                 return DEFAULT;
             }
@@ -170,6 +170,9 @@ Offense::State Offense::next_state() {
 }
 
 std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
+    ball_in_their_goalie_box(last_world_state_, field_dimensions_); // TESTING: this should work lol
+    SPDLOG_INFO("hello bro");
+
     switch (current_state_) {
         case DEFAULT: {
             // Do nothing: empty motion command
@@ -518,8 +521,8 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
-    // Ball in red zone or not
-    if (ball_in_red()) {
+    // If ball is not legally accessible, obviously can't steal
+    if (!ball_in_play_area(last_world_state_, field_dimensions_)) {
         return false;
     }
     // Ball location
@@ -583,13 +586,6 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
-// Checks whether ball is out of range for stealing/receiving
-bool Offense::ball_in_red() const {
-    auto& ball_pos = last_world_state_->ball.position;
-    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
-            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-            !field_dimensions_.field_rect().contains_point(ball_pos));
-}
 bool Offense::kick_failed() const {
     return (last_time_ + kKickFailsafeTimeout < RJ::now()) && (distance_to_ball() < kOwnBallRadius);
 }
