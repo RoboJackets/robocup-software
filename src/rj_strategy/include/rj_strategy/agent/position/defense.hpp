@@ -67,6 +67,7 @@ private:
         FACING,            // turning to face the passing robot
         MARKING,           // Following closely to an offense robot
         ENTERING_MARKING,  // Choosing/waiting for a robot to mark
+        SHOOTING,          // Shooting into goal, when ball on our side and closest robot to ball
     };
 
     State update_state();

@@ -63,6 +63,7 @@ Offense::State Offense::next_state() {
                 return SEEKING_START;
             }
             if (has_open_shot() || timed_out()) {
+                target_ = calculate_best_shot();
                 return SHOOTING;
             }
 
@@ -82,6 +83,7 @@ Offense::State Offense::next_state() {
             }
 
             if (has_open_shot() || timed_out()) {
+                target_ = calculate_best_shot();
                 return SHOOTING;
             }
 
@@ -278,7 +280,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case SHOOTING: {
             // rotate kick best shot
-            target_ = calculate_best_shot();
 
             planning::LinearMotionInstant target{calculate_best_shot()};
             // auto pivot_cmd =

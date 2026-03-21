@@ -25,6 +25,29 @@ Defense::State Defense::update_state() {
     // Update state based on coordinator async calls resolving
     State next_state = current_state_;
 
+    // if closest robot (regardless of current state), kick the ball to the goal
+
+    uint selected_kicker = -1;
+    uint min_distance = std::numeric_limits<double>::infinity();
+
+    for (uint8_t i = 0; i < kNumShells; ++i) {
+        rj_geometry::Point robot_pos = world_state->get_robot(true, i).pose.position();
+        double distance = robot_pos.dist_to(ball_position);
+        if (distance < min_distance) {
+            min_distance = distance;
+            selected_kicker = i;
+        }
+    }
+
+    if (robot_id_ == selected_kicker) 
+    {
+        if (client_handles_->waller->am_i_member()) { client_handles_->waller->leave_group(); }
+        if (client_handles_->marking->am_i_member()) { client_handles_->marking->leave_group(); }
+
+        next_state = SHOOTING;
+        return next_state;
+    }
+
     switch (current_state_) {
         case IDLING:
             next_state = JOINING_WALL;
@@ -70,6 +93,8 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
             break;
+        case SHOOTING:
+            if (check_is_done()) { next_state = IDLING; }
         case ENTERING_MARKING:
             // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
 
@@ -107,6 +132,13 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
         // DO NOTHING
+    } else if (current_state_ == SHOOTING) {
+        planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
+        auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+        intent.motion_command = shoot_cmd;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = 7.0; // NOTE THIS IS AN INTEGER VALUE
+        return intent;
     } else if (current_state_ == SEARCHING) {
         // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
     } else if (current_state_ == RECEIVING) {

@@ -226,7 +226,7 @@ void RobotFactoryPosition::set_default_position() {
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
-        // Closest 2 robots on defense, rest on offense
+        // 2 offense, rest defense 
         if (i <= 1) {
             set_current_position<Offense>();
         } else {  
@@ -234,7 +234,7 @@ void RobotFactoryPosition::set_default_position() {
         }
     } else {
         // Defensive mode
-        // Closest 4 robots on defense, rest on offense
+        // 1 offense, rest defense
         if (i <= 0) {
             set_current_position<Offense>();
         } else {
