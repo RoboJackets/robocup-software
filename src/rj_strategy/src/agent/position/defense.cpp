@@ -26,6 +26,7 @@ Defense::State Defense::update_state() {
     State next_state = current_state_;
 
     // if closest robot (regardless of current state), kick the ball to the goal
+    if (field_dimensions_.our_half().contains_point(ball_position) && world_state->ball.velocity.mag() < 0.5) {
 
     uint selected_kicker = -1;
     uint min_distance = std::numeric_limits<double>::infinity();
@@ -46,6 +47,8 @@ Defense::State Defense::update_state() {
 
         next_state = SHOOTING;
         return next_state;
+    }
+
     }
 
     switch (current_state_) {
