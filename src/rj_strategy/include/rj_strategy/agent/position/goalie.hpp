@@ -86,7 +86,7 @@ private:
     // current state of Goalie (state machine)
     State latest_state_ = IDLING;
 
-    rj_geometry::Point penalty_location();
+    rj_geometry::Point penalty_location(WorldState* world_state);
 };
 
 }  // namespace strategy
