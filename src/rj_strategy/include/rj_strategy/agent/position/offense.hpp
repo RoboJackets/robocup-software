@@ -260,6 +260,8 @@ private:
 
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
 
+    int get_kick_speed(double distance_to_other_robot);
+
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
 
