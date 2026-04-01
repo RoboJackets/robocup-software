@@ -105,13 +105,6 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         intent.motion_command = empty_motion_cmd;
         return intent;
         // DO NOTHING
-    } else if (current_state_ == SHOOTING) {
-        planning::LinearMotionInstant target{field_dimensions_.their_goal_loc()};
-        auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
-        intent.motion_command = shoot_cmd;
-        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 7.0;  // NOTE THIS IS AN INTEGER VALUE
-        return intent;
     } else if (current_state_ == SEARCHING) {
         // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
     } else if (current_state_ == RECEIVING) {
