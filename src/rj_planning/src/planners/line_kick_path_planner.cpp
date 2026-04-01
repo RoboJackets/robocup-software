@@ -88,11 +88,13 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
 
     LinearMotionInstant target{ball.position};
     LinearMotionInstant current = plan_request.start.linear_motion();
-    
+
     MotionConstraints mot = plan_request.constraints.mot;
     mot.max_speed *= 0.6;
     auto traj = CreatePath::simple(current, target, mot, plan_request.start.stamp);
-    plan_angles(&traj, plan_request.start, AngleFns::face_point(plan_request.motion_command.target.position), plan_request.constraints.rot);
+    plan_angles(&traj, plan_request.start,
+                AngleFns::face_point(plan_request.motion_command.target.position),
+                plan_request.constraints.rot);
     traj.stamp(RJ::now());
 
     return traj;
@@ -108,13 +110,14 @@ void LineKickPathPlanner::process_state_transition(const PlanRequest& plan_reque
         current_state_ = FINAL_APPROACH;
         prev_path_ = Trajectory{};
     }
-    
+
     auto us_to_ball = us - ball;
     auto ball_to_goal = ball - plan_request.motion_command.target.position;
     auto projection = (us_to_ball.dot(ball_to_goal) / ball_to_goal.dot(ball_to_goal));
     us_to_ball = us_to_ball - (projection)*ball_to_goal;
 
-    if (current_state_ == FINAL_APPROACH && (us_to_ball.mag() > kRobotRadius || us.dist_to(ball) > distance_from_ball)) {
+    if (current_state_ == FINAL_APPROACH &&
+        (us_to_ball.mag() > kRobotRadius || us.dist_to(ball) > distance_from_ball)) {
         current_state_ = INITIAL_APPROACH;
     }
 }

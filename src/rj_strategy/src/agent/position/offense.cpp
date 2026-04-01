@@ -217,7 +217,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case PASSING: {
-            auto vel = last_world_state_->get_robot(true, pass_to_robot_id_).velocity.linear().mag();
+            auto vel =
+                last_world_state_->get_robot(true, pass_to_robot_id_).velocity.linear().mag();
             if (vel > 0.15) {
                 return intent;
             }
@@ -247,7 +248,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case STEALING: {
-            auto collect_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{last_world_state_->ball.position}, planning::FaceBall{}};
+            auto collect_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{last_world_state_->ball.position},
+                planning::FaceBall{}};
             intent.motion_command = collect_cmd;
 
             return intent;
@@ -268,17 +271,17 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.dribbler_speed = 255.0;
             // } else {
             return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
-
         }
 
         case SHOOTING: {
             // link kick because collect is garbage
             planning::LinearMotionInstant target{calculate_best_shot()};
 
-            auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+            auto shoot_cmd =
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 7; // NOTE THIS IS AN INTEGER VALUE
+            intent.kick_speed = 7;  // NOTE THIS IS AN INTEGER VALUE
             return intent;
         }
     }
@@ -509,7 +512,7 @@ bool Offense::can_steal_ball() const {
     // Ball in red zone or not
     if (ball_in_red()) {
         return false;
-    } 
+    }
     // Ball location
     rj_geometry::Point ball_position = this->last_world_state_->ball.position;
 
@@ -604,6 +607,5 @@ int Offense::get_kick_speed(double distance_to_other_robot) {
 
     return 7;
 }
-
 
 }  // namespace strategy

@@ -110,7 +110,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
         intent.motion_command = shoot_cmd;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 7.0; // NOTE THIS IS AN INTEGER VALUE
+        intent.kick_speed = 7.0;  // NOTE THIS IS AN INTEGER VALUE
         return intent;
     } else if (current_state_ == SEARCHING) {
         // TODO(https://app.clickup.com/t/8677qektb): Define defensive searching behavior
@@ -217,9 +217,7 @@ void Defense::derived_acknowledge_ball_in_transit() {
     chasing_ball = false;
 }
 
-void Defense::die() { 
-    client_handles_->waller->leave_group(); 
-}
+void Defense::die() { client_handles_->waller->leave_group(); }
 
 void Defense::revive() { current_state_ = JOINING_WALL; }
 
