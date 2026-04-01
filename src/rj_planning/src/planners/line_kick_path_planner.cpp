@@ -33,13 +33,13 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         case INITIAL_APPROACH:
             prev_path_ = initial(plan_request);
             if (prev_path_.empty()) {
-                SPDLOG_INFO("initial empty");
+                SPDLOG_INFO("Initial Path Empty!");
             }
             break;
         case FINAL_APPROACH:
             prev_path_ = final(plan_request);
             if (prev_path_.empty()) {
-                SPDLOG_INFO("final empty");
+                SPDLOG_INFO("Final Path Empty!");
             }
             break;
     }
@@ -70,11 +70,6 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
                                    FacePoint{plan_request.motion_command.target.position}};
     modified_request.motion_command = modified_command;
 
-    SPDLOG_INFO("Current: ({}, {})", plan_request.start.linear_motion().position.x(), plan_request.start.linear_motion().position.y());
-    SPDLOG_INFO("Ball: ({}, {})", ball_position.x(), ball_position.y());
-    SPDLOG_INFO("Goal: ({}, {})", plan_request.motion_command.target.position.x(), plan_request.motion_command.target.position.y());
-    SPDLOG_INFO("Target: ({}, {})", target.position.x(), target.position.y());
-
     return path_target_.plan(modified_request);
 }
 
@@ -99,12 +94,7 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
     auto traj = CreatePath::simple(current, target, mot, plan_request.start.stamp);
     plan_angles(&traj, plan_request.start, AngleFns::face_point(plan_request.motion_command.target.position), plan_request.constraints.rot);
     traj.stamp(RJ::now());
-    SPDLOG_INFO("start: ({}, {})", current.position.x(), current.position.y());
-    SPDLOG_INFO("ball: ({}, {})", ball.position.x(), ball.position.y());
 
-    for (int i = 0; i < traj.num_instants(); i++) {
-        SPDLOG_INFO("instant: ({}, {})", traj.instant_at(i).pose.position().x(), traj.instant_at(i).pose.position().y());
-    }
     return traj;
 }
 
@@ -116,7 +106,6 @@ void LineKickPathPlanner::process_state_transition(const PlanRequest& plan_reque
     auto us = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
     if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
         current_state_ = FINAL_APPROACH;
-        SPDLOG_INFO("RESET");
         prev_path_ = Trajectory{};
     }
     

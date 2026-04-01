@@ -45,7 +45,7 @@ Offense::State Offense::next_state() {
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
-                return POSSESSION_START;
+                return STEALING;
             }
 
             // If we need to get a new seeking target, restart seeking
@@ -235,15 +235,8 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             rj_geometry::Point this_robot_pos =
                 last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
-            double dist = target_robot_pos.dist_to(this_robot_pos);
-            // NOTE THIS IS AN INTEGER VALUE
-            if (dist < 0.6) {
-                intent.kick_speed = 5;
-            } else if (dist < 1.8) {
-                intent.kick_speed = 6;
-            } else {
-                intent.kick_speed = 7;
-            }
+            intent.kick_speed = get_kick_speed(target_robot_pos.dist_to(this_robot_pos));
+
             return intent;
         }
 
@@ -279,13 +272,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case SHOOTING: {
-            // rotate kick best shot
-
+            // link kick because collect is garbage
             planning::LinearMotionInstant target{calculate_best_shot()};
-            // auto pivot_cmd =
-            //     planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
-            // intent.motion_command = pivot_cmd;
-            // intent.dribbler_mode = RobotIntent::DribblerMode::ON;
+
             auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
@@ -530,22 +519,8 @@ bool Offense::can_steal_ball() const {
     auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
     auto our_dist = (current_pos - ball_position).mag();
-    // for (auto enemy : this->last_world_state_->their_robots) {
-    //     auto dist = (enemy.pose.position() - ball_position).mag();
-    //     if (dist < our_dist) {
-    //         closest = false;
-    //         break;
-    //     }
-    // }
-
-    // if (!closest) {
-    //     return closest;
-    // }
 
     for (auto pal : this->last_world_state_->our_robots) {
-        // if (pal.robot_id_ == robot_id_) {
-        // continue;
-        // }
         auto dist = (pal.pose.position() - ball_position).mag();
         if (dist < our_dist) {
             closest = false;
@@ -553,8 +528,6 @@ bool Offense::can_steal_ball() const {
         }
     }
     return closest;
-
-    // return distance_to_ball() < kStealBallRadius;
 }
 
 rj_geometry::Point Offense::calculate_best_shot() const {
@@ -621,4 +594,16 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
 }
+
+int Offense::get_kick_speed(double distance_to_other_robot) {
+    if (distance_to_other_robot < 0.6) {
+        return 5;
+    } else if (distance_to_other_robot < 1.8) {
+        return 6;
+    }
+
+    return 7;
+}
+
+
 }  // namespace strategy

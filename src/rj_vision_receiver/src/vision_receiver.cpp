@@ -331,9 +331,9 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
 
         config_.update_field_dimensions(rj_convert::convert_to_ros(new_field_dim));
     } else {
-        // EZ_ERROR_STREAM(
-            // "Error: failed to decode SSL geometry packet. Not resizing "
-            // "field.");
+        EZ_ERROR_STREAM(
+            "Error: failed to decode SSL geometry packet. Not resizing "
+            "field.");
     }
 }
 }  // namespace vision_receiver

@@ -205,7 +205,7 @@ void RobotFactoryPosition::set_default_position() {
             continue;
         }
         if (alive_robots_[i]) {
-            robots_copy.emplace_back(i, i);
+            robots_copy.emplace_back(i, last_world_state_->our_robots[i].pose.position().y());
         }
     }
 
@@ -226,19 +226,19 @@ void RobotFactoryPosition::set_default_position() {
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
-        // 2 offense, rest defense 
+        // Closest 2 robots on defense, rest on offense
         if (i <= 1) {
-            set_current_position<Offense>();
-        } else {  
             set_current_position<Defense>();
+        } else {
+            set_current_position<Offense>();
         }
     } else {
         // Defensive mode
-        // 1 offense, rest defense
-        if (i <= 0) {
-            set_current_position<Offense>();
-        } else {
+        // Closest 4 robots on defense, rest on offense
+        if (i <= 3) {
             set_current_position<Defense>();
+        } else {
+            set_current_position<Offense>();
         }
     }
 }

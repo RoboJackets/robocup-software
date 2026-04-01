@@ -184,7 +184,6 @@ void Position::broadcast_direct_pass_request() {
     communication::generate_uid(pass_request);
     pass_request.direct = true;
     pass_request.from_robot_id = robot_id_;
-    SPDLOG_INFO("Robot {} is sending a pass request", robot_id_);
 
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = pass_request;

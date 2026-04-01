@@ -25,32 +25,6 @@ Defense::State Defense::update_state() {
     // Update state based on coordinator async calls resolving
     State next_state = current_state_;
 
-    // if closest robot (regardless of current state), kick the ball to the goal
-    if (field_dimensions_.our_half().contains_point(ball_position) && world_state->ball.velocity.mag() < 0.5) {
-
-    uint selected_kicker = -1;
-    uint min_distance = std::numeric_limits<double>::infinity();
-
-    for (uint8_t i = 0; i < kNumShells; ++i) {
-        rj_geometry::Point robot_pos = world_state->get_robot(true, i).pose.position();
-        double distance = robot_pos.dist_to(ball_position);
-        if (distance < min_distance) {
-            min_distance = distance;
-            selected_kicker = i;
-        }
-    }
-
-    if (robot_id_ == selected_kicker) 
-    {
-        if (client_handles_->waller->am_i_member()) { client_handles_->waller->leave_group(); }
-        if (client_handles_->marking->am_i_member()) { client_handles_->marking->leave_group(); }
-
-        next_state = SHOOTING;
-        return next_state;
-    }
-
-    }
-
     switch (current_state_) {
         case IDLING:
             next_state = JOINING_WALL;
@@ -96,11 +70,7 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
             break;
-        case SHOOTING:
-            if (check_is_done()) { next_state = IDLING; }
         case ENTERING_MARKING:
-            // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
-
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
@@ -248,7 +218,6 @@ void Defense::derived_acknowledge_ball_in_transit() {
 }
 
 void Defense::die() { 
-    SPDLOG_INFO("{} dead", robot_id_);
     client_handles_->waller->leave_group(); 
 }
 

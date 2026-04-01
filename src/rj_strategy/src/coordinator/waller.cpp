@@ -15,7 +15,6 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
                 walling_robots_.end()) {
                 walling_robots_[num_wallers_] = request->robot_id;
                 num_wallers_++;
-                SPDLOG_INFO("{} joining waller", request->robot_id);
                 update_wallers();
             }
             response->success = true;
@@ -25,7 +24,6 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
         if (it != walling_robots_.end()) {
             num_wallers_--;
             *it = std::numeric_limits<uint8_t>::max();
-            SPDLOG_INFO("{} leaving waller", request->robot_id);
             update_wallers();
         }
         response->success = true;
