@@ -25,16 +25,22 @@ Trajectory LineKickPathPlanner::plan(const PlanRequest& plan_request) {
         //
         // e.g. new_avg_vel = (0.8 * avg_vel) + (0.2 * new_vel)
         //
-        average_ball_vel_ = apply_low_pass_filter(average_ball_vel_, ball.velocity, 0.8);
+        average_ball_vel_ = ball.velocity;
     }
 
-    process_state_transition();
+    process_state_transition(plan_request);
     switch (current_state_) {
         case INITIAL_APPROACH:
             prev_path_ = initial(plan_request);
+            if (prev_path_.empty()) {
+                SPDLOG_INFO("Initial Path Empty!");
+            }
             break;
         case FINAL_APPROACH:
             prev_path_ = final(plan_request);
+            if (prev_path_.empty()) {
+                SPDLOG_INFO("Final Path Empty!");
+            }
             break;
     }
     prev_path_.stamp(RJ::now());
@@ -46,14 +52,14 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     const BallState& ball = plan_request.world_state->ball;
 
     // Distance to stay away from the ball
-    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
+    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 1;
 
     // In case the ball is (slowly) moving
     auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn}).position;
 
     // Along the vector from the goal to ball
     auto goal_to_ball = (plan_request.motion_command.target.position - ball_position);
-    auto offset_from_ball = distance_from_ball * goal_to_ball.normalized();
+    auto offset_from_ball = goal_to_ball.normalized(distance_from_ball);
 
     // Create an updated MotionCommand and forward to PathTargetPathPlaner
     PlanRequest modified_request = plan_request;
@@ -69,6 +75,9 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
 
 Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
     const BallState& ball = plan_request.world_state->ball;
+    if (!prev_path_.empty()) {
+        return prev_path_;
+    }
 
     // Velocity is the speed (parameter) times the unit vector in the correct direction
     auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
@@ -77,22 +86,39 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
     // Create an updated MotionCommand and forward to PathTargetPathPlaner
     PlanRequest modified_request = plan_request;
 
-    LinearMotionInstant target{ball.position, vel};
+    LinearMotionInstant target{ball.position};
+    LinearMotionInstant current = plan_request.start.linear_motion();
 
-    MotionCommand modified_command{"path_target", target,
-                                   FacePoint{plan_request.motion_command.target.position}};
+    MotionConstraints mot = plan_request.constraints.mot;
+    mot.max_speed *= 0.6;
+    auto traj = CreatePath::simple(current, target, mot, plan_request.start.stamp);
+    plan_angles(&traj, plan_request.start,
+                AngleFns::face_point(plan_request.motion_command.target.position),
+                plan_request.constraints.rot);
+    traj.stamp(RJ::now());
 
-    modified_command.ignore_ball = true;
-    modified_request.motion_command = modified_command;
-
-    return path_target_.plan(modified_request);
+    return traj;
 }
 
-void LineKickPathPlanner::process_state_transition() {
+void LineKickPathPlanner::process_state_transition(const PlanRequest& plan_request) {
     // Let PathTarget decide when the first stage is done
     // Possible problem: can PathTarget get stuck and loop infinitely?
-    if (current_state_ == INITIAL_APPROACH && path_target_.is_done()) {
+    auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
+    auto ball = plan_request.world_state->ball.position;
+    auto us = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
+    if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
         current_state_ = FINAL_APPROACH;
+        prev_path_ = Trajectory{};
+    }
+
+    auto us_to_ball = us - ball;
+    auto ball_to_goal = ball - plan_request.motion_command.target.position;
+    auto projection = (us_to_ball.dot(ball_to_goal) / ball_to_goal.dot(ball_to_goal));
+    us_to_ball = us_to_ball - (projection)*ball_to_goal;
+
+    if (current_state_ == FINAL_APPROACH &&
+        (us_to_ball.mag() > kRobotRadius || us.dist_to(ball) > distance_from_ball)) {
+        current_state_ = INITIAL_APPROACH;
     }
 }
 

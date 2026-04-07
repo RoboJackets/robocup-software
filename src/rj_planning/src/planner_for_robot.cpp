@@ -142,7 +142,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0.2;
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
         case PlayState::State::Playing:
         default:
@@ -152,7 +152,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // number instead.
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
     }
 
@@ -266,6 +266,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
     debug_draw_.draw_shapes(request.field_obstacles, QColor(255, 0, 0, 30));
+
     debug_draw_.publish();
 
     return trajectory;

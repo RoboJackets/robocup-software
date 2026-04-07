@@ -71,8 +71,6 @@ Defense::State Defense::update_state() {
             }
             break;
         case ENTERING_MARKING:
-            // SPDLOG_INFO("Robot {}: entering marking", robot_id_);
-
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();

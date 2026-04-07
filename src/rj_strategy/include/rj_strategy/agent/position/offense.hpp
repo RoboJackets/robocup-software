@@ -98,7 +98,7 @@ private:
             case POSSESSION:
                 return RJ::Seconds{5};
             case POSSESSION_START:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{5};
             case PASSING:
                 return RJ::Seconds{5};
             case PASSING_FINISHED:
@@ -259,6 +259,8 @@ private:
     void send_kick_failed_to_receiver(u_int8_t receiver_robot_id);
 
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
+
+    int get_kick_speed(double distance_to_other_robot);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };

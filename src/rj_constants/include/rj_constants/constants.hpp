@@ -14,7 +14,7 @@ inline constexpr size_t kNumShells = 16;
 inline constexpr size_t kRobotsPerTeam = 6;
 
 inline constexpr size_t kMaxDribble = 128;
-inline constexpr size_t kMaxKick = 255;
+inline constexpr size_t kMaxKick = 15;
 
 inline constexpr float kBallDiameter = 0.043f;
 inline constexpr float kBallRadius = kBallDiameter / 2.0f;

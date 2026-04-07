@@ -23,9 +23,9 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     // note: the way this is set up makes it impossible to
     // shoot on time without breakbeam
-    intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+    intent.shoot_mode = RobotIntent::ShootMode::KICK;
     intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-    intent.kick_speed = 4.0;
+    intent.kick_speed = 7.0;
     intent.is_active = true;
 
     return intent;

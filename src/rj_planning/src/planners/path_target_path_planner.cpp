@@ -50,11 +50,12 @@ bool PathTargetPathPlanner::is_done() const {
     // getting to the desired angle.
     //
     // may be related to issue #1506?
-    double position_tolerance = 1e-1;
-    double velocity_tolerance = 1e-1;
+    double position_tolerance = 1e-2;
+    double velocity_tolerance = 1e-2;
     return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
                                               cached_target_instant_.value(), position_tolerance,
-                                              velocity_tolerance);
+                                              velocity_tolerance) &&
+           cached_target_instant_;
     // TODO(Kevin): in theory this should work as LinearMotionInstant has
     // tolerance built into its == overload, but in practice it doesn't
     /* return cached_start_instant_ == cached_target_instant_; */
