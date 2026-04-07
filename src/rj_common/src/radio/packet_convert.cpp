@@ -8,9 +8,7 @@ using soccer::robot::PARAM_max_dribbler_speed;
 using soccer::robot::PARAM_chip_angle;
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_kick_speed) /
-                                                  (PARAM_max_kick_speed - PARAM_min_kick_speed)) *
-                                kMaxKick);
+    return static_cast<uint8_t>(kick_speed);
 }
 
 static uint8_t chipper_speed_to_strength(double kick_speed) {
@@ -273,7 +271,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                                        RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->body_w = static_cast<int16_t>(motion.velocity_z_radps *
                                        RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp->dribbler_speed = manipulator.dribbler_speed;
+    rtp->dribbler_speed = std::max(0.0f, std::min(manipulator.dribbler_speed, 125.0f));
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);
     } else {

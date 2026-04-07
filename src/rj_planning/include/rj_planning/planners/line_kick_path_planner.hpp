@@ -82,7 +82,7 @@ private:
     /**
      * Decides if the intial approach is complete and updates internal state as necessary.
      */
-    void process_state_transition();
+    void process_state_transition(const PlanRequest& plan_request);
 };
 
 }  // namespace planning

@@ -15,7 +15,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     if (current_state_ != new_state) {
         reset_timeout();
 
-        // SPDLOG_INFO("Robot {}: now {}", robot_id_, state_to_name(current_state_));
         if (current_state_ == SEEKING) {
             broadcast_seeker_request(rj_geometry::Point{}, false);
         }
@@ -60,7 +59,11 @@ Offense::State Offense::next_state() {
         case POSSESSION_START: {
             // If we can make a shot, take it
             // If we need to stop possessing now, shoot.
+            if (!can_steal_ball()) {
+                return SEEKING_START;
+            }
             if (has_open_shot() || timed_out()) {
+                target_ = calculate_best_shot();
                 return SHOOTING;
             }
 
@@ -75,7 +78,12 @@ Offense::State Offense::next_state() {
         case POSSESSION: {
             // If we can make a shot, make it.
             // If we need to stop possessing now, shoot.
+            if (!can_steal_ball()) {
+                return SEEKING_START;
+            }
+
             if (has_open_shot() || timed_out()) {
+                target_ = calculate_best_shot();
                 return SHOOTING;
             }
 
@@ -85,6 +93,10 @@ Offense::State Offense::next_state() {
         }
 
         case PASSING: {
+            if (!can_steal_ball() || (can_steal_ball() && has_open_shot())) {
+                send_kick_failed_to_receiver(pass_to_robot_id_);
+                return DEFAULT;
+            }
             if (check_is_done()) {
                 pass_ball(pass_to_robot_id_);
                 return PASSING_FINISHED;
@@ -135,7 +147,7 @@ Offense::State Offense::next_state() {
 
         case RECEIVING: {
             // If we got it, cool, we have it!
-            if (check_is_done() && distance_to_ball() < kOwnBallRadius) {
+            if (check_is_done() && can_steal_ball()) {
                 send_pass_received_to_passer(face_robot_id);
                 return POSSESSION_START;
             }
@@ -158,12 +170,12 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
-            if (check_is_done()) {
+            if (ball_in_red() || check_is_done() || !has_open_shot() || !can_steal_ball()) {
                 return DEFAULT;
             }
-            if (distance_to_ball() > kOwnBallRadius) {
-                return DEFAULT;
-            }
+            // if (distance_to_ball() > kOwnBallRadius) {
+            //     return DEFAULT;
+            // }
             return SHOOTING;
         }
     }
@@ -196,34 +208,39 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case POSSESSION_START: {
             target_ = calculate_best_shot();
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
+            intent.motion_command = planning::MotionCommand{};
+
             return intent;
         }
 
         case POSSESSION: {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
+            intent.motion_command = planning::MotionCommand{};
+
             return intent;
         }
 
         case PASSING: {
+            auto vel =
+                last_world_state_->get_robot(true, pass_to_robot_id_).velocity.linear().mag();
+            if (vel > 0.15) {
+                return intent;
+            }
             rj_geometry::Point target_robot_pos =
                 last_world_state_->get_robot(true, pass_to_robot_id_).pose.position();
             planning::LinearMotionInstant target{target_robot_pos};
             auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 
             // Adjusts kick speed based on distance.
             // Details: TIGERS 2019 eTDP, rj_gameplay/passer.py
             rj_geometry::Point this_robot_pos =
                 last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
-            double dist = target_robot_pos.dist_to(this_robot_pos);
-            intent.kick_speed = std::sqrt((std::pow(kFinalBallSpeed, 2)) - (2 * kBallDecel * dist));
+            intent.kick_speed = get_kick_speed(target_robot_pos.dist_to(this_robot_pos));
+
             return intent;
         }
 
@@ -234,7 +251,9 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case STEALING: {
-            auto collect_cmd = planning::MotionCommand{"collect"};
+            auto collect_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{last_world_state_->ball.position},
+                planning::FaceBall{}};
             intent.motion_command = collect_cmd;
 
             return intent;
@@ -243,14 +262,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case RECEIVING_START: {
             // Turn to face the ball
 
-            auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-
-            planning::LinearMotionInstant stay_in_place{current_pos};
-
-            intent.motion_command =
-                planning::MotionCommand{"path_target", stay_in_place, planning::FaceBall{}};
-
-            return intent;
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
         }
 
         case RECEIVING: {
@@ -261,24 +273,18 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             // intent.motion_command = settle_cmd;
             // intent.dribbler_speed = 255.0;
             // } else {
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            // }
-
-            return intent;
+            return seeker_.get_task(std::move(intent), last_world_state_, field_dimensions_);
         }
 
         case SHOOTING: {
-            // rotate kick best shot
-            target_ = calculate_best_shot();
-
+            // link kick because collect is garbage
             planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
-            intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = 4.0;
+
+            auto shoot_cmd =
+                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+            intent.motion_command = shoot_cmd;
+            intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+            intent.kick_speed = 7;  // NOTE THIS IS AN INTEGER VALUE
             return intent;
         }
     }
@@ -322,22 +328,7 @@ communication::PosAgentResponseWrapper Offense::receive_communication_request(
         // If the robot recieves a PassRequest, only process it if we are open
 
         auto response = Position::receive_pass_request(*pass_request);
-
-        rj_geometry::Point passer_pos =
-            last_world_state_->get_robot(true, pass_request->from_robot_id).pose.position();
-        rj_geometry::Point receiver_pos =
-            last_world_state_->get_robot(true, robot_id_).pose.position();
-        rj_geometry::Segment pass_trajectory{passer_pos, receiver_pos};
-
-        // If the pass is over any defense area, do not pass
-        bool crosses_penalty_area = field_dimensions_.our_defense_area().hit(pass_trajectory) ||
-                                    field_dimensions_.their_defense_area().hit(pass_trajectory);
-
-        bool too_close = passer_pos.dist_to(receiver_pos) < kMinPassDistance;
-
-        if (check_if_open(pass_request->from_robot_id) && can_i_shoot()) {
-            response.direct_open = true;
-        }
+        response.direct_open = true;
 
         comm_response.response = response;
     } else if (const communication::SeekerRequest* seeker_request =
@@ -395,7 +386,7 @@ void Offense::receive_communication_response(communication::AgentPosResponseWrap
 
                 if (sent_pass_request->direct && pass_response->direct_open) {
                     // if direct -> pass to first robot
-                    // SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
+                    SPDLOG_INFO("Robot {} is sending a pass confirmation", robot_id_);
                     send_pass_confirmation(response.received_robot_ids[i]);
                     // pass_to_robot_id_ = response.received_robot_ids[i];
                     // current_state_ = PASSING;
@@ -534,32 +525,15 @@ bool Offense::can_steal_ball() const {
     auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
 
     auto our_dist = (current_pos - ball_position).mag();
-    // for (auto enemy : this->last_world_state_->their_robots) {
-    //     auto dist = (enemy.pose.position() - ball_position).mag();
-    //     if (dist < our_dist) {
-    //         closest = false;
-    //         break;
-    //     }
-    // }
-
-    // if (!closest) {
-    //     return closest;
-    // }
 
     for (auto pal : this->last_world_state_->our_robots) {
-        // if (pal.robot_id_ == robot_id_) {
-        // continue;
-        // }
         auto dist = (pal.pose.position() - ball_position).mag();
         if (dist < our_dist) {
             closest = false;
             break;
         }
     }
-
     return closest;
-
-    // return distance_to_ball() < kStealBallRadius;
 }
 
 rj_geometry::Point Offense::calculate_best_shot() const {
@@ -586,6 +560,15 @@ rj_geometry::Point Offense::calculate_best_shot() const {
     return best_shot;
 }
 
+// Checks whether ball is out of range for stealing/receiving
+bool Offense::ball_in_red() const {
+    auto& ball_pos = last_world_state_->ball.position;
+    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
+            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
+            field_dimensions_.our_goal_area().contains_point(ball_pos) ||
+            field_dimensions_.their_goal_area().contains_point(ball_pos) ||
+            !field_dimensions_.field_rect().contains_point(ball_pos));
+}
 bool Offense::kick_failed() const {
     return (last_time_ + kKickFailsafeTimeout < RJ::now()) && (distance_to_ball() < kOwnBallRadius);
 }
@@ -617,4 +600,15 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
 }
+
+int Offense::get_kick_speed(double distance_to_other_robot) {
+    if (distance_to_other_robot < 0.6) {
+        return 5;
+    } else if (distance_to_other_robot < 1.8) {
+        return 6;
+    }
+
+    return 7;
+}
+
 }  // namespace strategy
