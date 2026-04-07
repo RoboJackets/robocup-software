@@ -18,7 +18,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
 
     // toggles direction if motion complete
     if (check_is_done()) {
-        forward_ = !forward_;
+        // forward_ = !forward_;
     }
 
     if (forward_) {
@@ -28,7 +28,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                                                           start_,
                                                           rj_geometry::Point{0.0, 0.0},
                                                       },
-                                                      planning::FaceTarget(), true};
+                                                      planning::FaceAngle{0}, true};
         intent.motion_command = motion_command;
     } else {
         // move to end
@@ -37,7 +37,7 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
                                                           end_,
                                                           rj_geometry::Point{0.0, 0.0},
                                                       },
-                                                      planning::FaceTarget(), true};
+                                                      planning::FaceAngle{0}, true};
         intent.motion_command = motion_command;
     }
 

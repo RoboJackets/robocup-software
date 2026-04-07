@@ -7,14 +7,14 @@ DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_speed, 2.0, "Maximum ro
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_acceleration, 2.0,
                   "Maximum robot acceleration, m/s^2")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_dribbler_speed, 2000.0, "Maximum robot dribbler speed, revolutions per minute")
-DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, min_kick_speed, 1.0,
+DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, min_kick_speed, 0.0,
                   "Minimum kick speed extrapolated to speed at kick power 0, m/s")
-DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_kick_speed, 7.0,
+DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_kick_speed, 15.0,
                   "Maximum kick speed at kick power 255, m/s")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, chip_angle, 40, "Chip angle, degrees")
-DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, min_chip_speed, 0.5,
+DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, min_chip_speed, 0.0,
                   "Minimum chip speed extrapolated to speed at kick power 0, m/s")
-DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_chip_speed, 7.0,
+DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, max_chip_speed, 15.0,
                   "Maximum chip speed at kick power 255, m/s")
 DEFINE_NS_FLOAT64(kGlobalParamModule, soccer::robot, robot_radius, 0.09, "Robot radius, m")
 DEFINE_NS_INT64(kGlobalParamModule, soccer::robot, min_safe_kick_power, 64,
