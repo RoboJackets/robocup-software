@@ -232,16 +232,6 @@ private:
     bool check_if_open(int target_robot_shell);
 
     /**
-     * @return whether or not a robot is capable of shooting from their pos
-     */
-    bool can_i_shoot() const;
-
-    /**
-     * @return the target (within the goal) that would be the most clear shot
-     */
-    rj_geometry::Point calculate_best_shot() const;
-
-    /**
      * @return true when in PASSING_FINISHED and the kick failsafe timeout has
      *         elapsed while the ball is still within possession range of this robot.
      */
@@ -255,8 +245,6 @@ private:
     void send_kick_failed_to_receiver(u_int8_t receiver_robot_id);
 
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
-
-    int get_kick_speed(double distance_to_other_robot);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };
