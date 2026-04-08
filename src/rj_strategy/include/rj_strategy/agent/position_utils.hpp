@@ -24,15 +24,16 @@
  * This file is just to collect a bunch of common utilities.
  * Longterm TODO:
  *  - a lot functions in here do pairwise distance between various objects. can we have a
- * coordinator that does a grand pairwise distance we can just reference? Rules:
+ *    coordinator that does a grand pairwise distance we can just reference?
+ * Rules:
  *  - these functions have to be stateless and context-free
  *  - try to keep big object args as const references (to minimize overhead)
  *  - try to keep the execution time minimal (to minimize overhead)
  *  - try to keep function names unnecessarily verbose and accurate (to minimize headache)
  *  - remember that if you change something, other people may be using that; don't fundamentally
- * change invariants if you're doing something a little different, do it in your own file, or add a
- * new util, avoid revising where possible
- *  - if you love me, do not use auto. figure out what type you want
+ *    change invariants if you're doing something a little different, do it in your own file,
+ *    or add a new util, avoid revising where possible
+ *  - please don't use auto. figure out what type you want :)
  */
 
 // namespace strategy {
