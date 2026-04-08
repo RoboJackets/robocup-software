@@ -144,6 +144,7 @@ inline double shot_clearance(const rj_geometry::Point& origin, const rj_geometry
 
 /**
  * @brief Gets a good shot worth taking, given our pratical realities.
+ * Use this function and rest assured it will go in on an undefended goal.
  * 
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param field_dimensions (often named field_dimensions_ in Position subclasses)
@@ -157,9 +158,8 @@ inline rj_geometry::Point calculate_a_shot([[maybe_unused]] const WorldState* wo
 }
 
 /**
- * @brief Gets a the best shot available, given perfect aim.
- * 
- * Motion intents take an integer from [0,15]. This provides that.
+ * @brief Gets a the best shot available, given excellent aim.
+ * The definition of "best" may need refining, but I think my approach is sound. 
  * 
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param field_dimensions (often named field_dimensions_ in Position subclasses)
@@ -264,6 +264,8 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
 // Kick calculation
 /**
  * @brief Provides a good suggestion for kick speed, designed for passing.
+ * 
+ * Motion intents take an integer from [0,15]. This provides that.
  * 
  * @param distance_to_target distance from kicker to target (m)
  * @param intended_velo_at_target the velocity you want the ball to be going when it reaches the target (m/s)

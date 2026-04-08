@@ -417,7 +417,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 bool Offense::has_open_shot() const {
     rj_geometry::Point best_shot = calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
     double clearance_angle = shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
-    return clearance_angle >= 0.09; // if there's >= 5 degrees (0.09 radians) of clearance, that's an open shot
+    return clearance_angle >= 0.05; // if there's >= 3 degrees (0.05 radians) of clearance, that's an open shot
 }
 
 
