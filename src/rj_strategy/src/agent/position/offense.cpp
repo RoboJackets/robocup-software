@@ -281,7 +281,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = max_kick_speed();
+            intent.kick_speed = max_kick_speed(); // Integer value in [0,15]
             return intent;
         }
     }
