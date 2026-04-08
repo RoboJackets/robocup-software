@@ -8,175 +8,108 @@ SoloOffense::SoloOffense(Position&& other) : Position{std::move(other)} {
 
 SoloOffense::SoloOffense(int r_id) : Position{r_id, "SoloOffense"} {}
 
-std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
-    // Get next state, and if different, reset clock
-    State new_state = next_state();
-    // if (new_state != current_state_) {
-    // }
-    // SPDLOG_INFO("New State: {}", std::to_string(static_cast<int>(new_state)));
-    current_state_ = new_state;
+std::string SoloOffense::get_current_state() {
+    return std::string{"Solo Offense ("} + std::to_string(robot_id_) + std::string{") - "} + std::string{state_to_name(current_state_)};
+}
 
-    // Calculate task based on state
+std::optional<RobotIntent> SoloOffense::derived_get_task(RobotIntent intent) {
+    State new_state = next_state();
+    current_state_ = new_state;
     return state_to_task(intent);
 }
 
-std::string SoloOffense::get_current_state() {
-    return std::string{"Solo Offense"} + std::to_string(static_cast<int>(current_state_));
-}
-
 SoloOffense::State SoloOffense::next_state() {
-    // handle transitions between current state
-    double closest_dist = std::numeric_limits<double>::infinity();
-    auto current_point = last_world_state_->ball.position;
+    RobotState& me = last_world_state_->get_robot(true, robot_id_);
 
-    for (int i = 0; i < 6; i++) {
-        RobotState robot = last_world_state_->get_robot(false, i);
-        rj_geometry::Point opp_pos = robot.pose.position();
-        auto robot_dist = opp_pos.dist_to(current_point);
-        if (robot_dist < closest_dist) {
-            marking_id_ = i;
-            closest_dist = robot_dist;
-        }
-    }
-
-    // SPDLOG_INFO("Closest dist: {}, i-{}", closest_dist,  marking_id_);
-
-    if (closest_dist < (0.5) || field_dimensions_.their_goal_area().contains_point(current_point) ||
-        field_dimensions_.their_defense_area().contains_point(current_point) ||
-        !field_dimensions_.field_coordinates().contains_point(current_point)) {
+    if (!ball_in_play_area(last_world_state_, field_dimensions_)) {
+        return IDLE;
+    } // High-level conditional: SoloOffense does not think when the ball is not playable
+    if (we_have_ball(last_world_state_, 2*kRobotRadius) && !robot_has_ball(last_world_state_, me, 2*kRobotRadius)) {
+        return IDLE;
+    } // High-level conditional: SoloOffense does not think when teammates are handling the ball
+    if (they_have_ball(last_world_state_, 2*kRobotRadius)) {
         return MARKER;
-    }
+    } // High-level conditional: SoloOffense is bullyable; if the opponents have the ball, they give up shooting and camp the ball
+    // ^^ that's particularly bad strategy, it's legal for opponents to just roll up on us, but whatever, this is a test Position
+
+
     switch (current_state_) {
+        case IDLE: {
+            // When thinking, SoloOffense will immediately leave IDLE.
+            kick_target_ = planning::LinearMotionInstant{calculate_best_shot(last_world_state_, field_dimensions_, 0.1, true)};
+            return kick_strategy_;
+        }
         case MARKER: {
-            return TO_BALL;
+            // If the opponent has lost possession (see above), SoloOffense will attempt a collect.
+            kick_target_ = planning::LinearMotionInstant{calculate_best_shot(last_world_state_, field_dimensions_, 0.1, true)};
+            return kick_strategy_;
         }
         case TO_BALL: {
-            if (check_is_done()) {
-                return ROTATE;
-            }
-            return TO_BALL;
+            // If a collect is successful, go to a rotate kick.
+            if (check_is_done()) { return ROTATE; }
+            else { return TO_BALL; }
+            // TODO: the else statement needs logic for a failed collect
+            // the high-level conditionals catch normal game cases, but suppose a HALT interrupts a TO_BALL state, would it resume in TO_BALL? 
         }
         case ROTATE: {
-            if (check_is_done()) {
-                counter_ = 0;
-                kick_ = true;
-                return MARKER;
-            }
-            return ROTATE;
+            // TODO: this state needs logic to go back to IDLE early if we drop the ball while rotating.
+            // If a kick is successful, restart the logic tree.
+            if (check_is_done()) { return IDLE; }
+            else { return ROTATE; }
         }
         case KICK: {
-            if (!kick_ ||
-                (last_world_state_->get_robot(true, robot_id_).pose.position() - current_point)
-                        .mag() > kRobotRadius * 5) {
-                return TO_BALL;
-            }
-            return KICK;
+            // If a kick is successful, restart the logic tree.
+            if (check_is_done()) { return IDLE; }
+            else { return ROTATE; }
+        }
+        default: {
+            return current_state_; // unreachable, but compiler wants it
         }
     }
-    return current_state_;
 }
 
 std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
     switch (current_state_) {
+        case IDLE: {
+            return intent; // TODO: how to notate an idling intent?
+        }
         case MARKER: {
-            auto marker_target_pos =
-                last_world_state_->get_robot(false, marking_id_).pose.position();
-            auto target =
-                marker_target_pos +
-                (field_dimensions_.our_goal_loc() - marker_target_pos).normalized(kRobotRadius * 5);
-            auto mark_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}, true};
+            // We want to be 5 radii from the ball toward the goal; blocking shots! baskingball :)
+            rj_geometry::Point ball_pos = last_world_state_->ball.position;
+            rj_geometry::Point defending_pos = field_dimensions_.our_goal_loc();
+            rj_geometry::Point offset_vector = (defending_pos - ball_pos).normalized(kRobotRadius * 5); 
+            rj_geometry::Point target_pos = ball_pos + offset_vector;
+            
+            auto mark_cmd = planning::MotionCommand{"path_target", planning::LinearMotionInstant{target_pos}, planning::FaceBall{}, true};
             intent.motion_command = mark_cmd;
-
             return intent;
         }
         case TO_BALL: {
-            auto pivot_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = pivot_cmd;
+            // Gather up the ball into the dribbler.
+            auto collect_cmd = planning::MotionCommand{"collect"};
+            intent.motion_command = collect_cmd;
             return intent;
         }
         case ROTATE: {
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", target, planning::FaceTarget{}, false};
+            // Rotate toward the goal, then shoot.
+            auto pivot_cmd = planning::MotionCommand{"rotate", kick_target_, planning::FaceTarget{}, false};
             intent.motion_command = pivot_cmd;
             intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = 4.0;
+            intent.kick_speed = max_kick_speed();
             return intent;
         }
         case KICK: {
-            // double scaleFactor = 0.1;
-            // rj_geometry::Point point = (last_world_state_->ball.position -
-            // last_world_state_->get_robot(true,
-            // robot_id_).pose.position()).normalized(scaleFactor); point +=
-            // last_world_state_->get_robot(true, robot_id_).pose.position();
-            // planning::LinearMotionInstant target{point};
-            planning::LinearMotionInstant target{calculate_best_shot()};
-            // planning::LinearMotionInstant target{last_world_state_->ball.position};
-            auto kick_cmd =
-                planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+            // Drive behind the ball, then shoot with a run-up.
+            auto kick_cmd = planning::MotionCommand{"line_kick", kick_target_, planning::FaceTarget{}, true};
             intent.motion_command = kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
-            counter_++;
-            if (counter_ > 15) {
-                kick_ = false;
-            }
-
+            intent.kick_speed = max_kick_speed();
             return intent;
         }
     }
     return intent;
 }
 
-rj_geometry::Point SoloOffense::calculate_best_shot() const {
-    // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
-
-    // Ball location
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-
-    rj_geometry::Point best_shot = their_goal_pos;
-    double best_distance = -1.0;
-    rj_geometry::Point increment(0.05, 0);
-    rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment;
-    for (int i = 0; i < 19; i++) {
-        double distance = distance_from_their_robots(ball_position, curr_point);
-        if (distance > best_distance) {
-            best_distance = distance;
-            best_shot = curr_point;
-        }
-        curr_point = curr_point + increment;
-    }
-    return best_shot;
-}
-
-double SoloOffense::distance_from_their_robots(rj_geometry::Point tail,
-                                               rj_geometry::Point head) const {
-    rj_geometry::Point vec = head - tail;
-    auto& their_robots = this->last_world_state_->their_robots;
-
-    double min_angle = -0.5;
-    for (auto enemy : their_robots) {
-        rj_geometry::Point enemy_vec = enemy.pose.position() - tail;
-        if (enemy_vec.dot(vec) < 0) {
-            continue;
-        }
-        auto projection = (enemy_vec.dot(vec) / vec.dot(vec));
-        enemy_vec = enemy_vec - (projection)*vec;
-        double distance = enemy_vec.mag();
-        if (distance < (kRobotRadius + kBallRadius)) {
-            return -1.0;
-        }
-        double angle = distance / projection;
-        if ((min_angle < 0) || (angle < min_angle)) {
-            min_angle = angle;
-        }
-    }
-    return min_angle;
-}
 }  // namespace strategy

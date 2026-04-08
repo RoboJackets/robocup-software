@@ -22,6 +22,8 @@
 
 /**
  * This file is just to collect a bunch of common utilities.
+ * Longterm TODO:
+ *  - a lot functions in here do pairwise distance between various objects. can we have a coordinator that does a grand pairwise distance we can just reference?
  * Rules:
  *  - these functions have to be stateless and context-free
  *  - try to keep big object args as const references (to minimize overhead)
@@ -121,9 +123,9 @@ inline bool ball_in_play_area(const WorldState* world_state, const FieldDimensio
  */
 inline double shot_clearance(const rj_geometry::Point& origin, const rj_geometry::Point& shot, const WorldState* world_state) {
     rj_geometry::Point shot_vec = shot - origin;
-    const auto& their_robots = world_state->their_robots; // TODO: no full auto in geometry_utils.hpp, what type is this?
+    const std::vector<RobotState>& their_robots = world_state->their_robots;
     double min_angle = M_PI_2;
-    for (const auto& enemy : their_robots) { // TODO: our robots are not programmed to dodge our own shots, frankly, we may need to consider them opponents
+    for (const RobotState& enemy : their_robots) { // TODO: our robots are not programmed to dodge our own shots, frankly, we may need to consider them opponents
         rj_geometry::Point enemy_vec = enemy.pose.position() - origin;
         if (enemy_vec.dot(shot_vec) < 0) {
             continue; // if the enemy is behind us, ignore them
@@ -201,7 +203,65 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state, con
     return best_shot;
 }
 
-// Misc calculation
+// Possession calculation
+// TODO: these functions should also account for rotation. a robot doesn't have possession if the ball is sitting at its rear motors
+// TODO: overload these functions so that we can have some default possession_radius, such that people using it don't need to turn on they brain
+/**
+ * @brief Determines whether the enemy has possession of the ball.
+ * 
+ * @param world_state (often named last_world_state_ in Position subclasses)
+ * @param possession_radius the distance at which a robot is defined to "have" the ball (m)
+ * @return do they have ball
+ */
+inline bool they_have_ball(const WorldState* world_state, double possession_radius) {
+    const std::vector<RobotState>& theirs = world_state->their_robots;
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    for (const RobotState& enemy : theirs) {
+        rj_geometry::Point enemy_pos = enemy.pose.position();
+        if (distance(ball_pos, enemy_pos) < possession_radius) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Determines whether our team has possession of the ball.
+ * 
+ * @param world_state (often named last_world_state_ in Position subclasses)
+ * @param possession_radius the distance at which a robot is defined to "have" the ball (m)
+ * @return do we have ball
+ */
+inline bool we_have_ball(const WorldState* world_state, double possession_radius) {
+    const std::vector<RobotState>& ours = world_state->our_robots;
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    for (const RobotState& teammate : ours) {
+        rj_geometry::Point teammate_pos = teammate.pose.position();
+        if (distance(ball_pos, teammate_pos) < possession_radius) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * @brief Determines whether a specific robot has possession of the ball.
+ * 
+ * @param world_state (often named last_world_state_ in Position subclasses)
+ * @param possession_radius the distance at which a robot is defined to "have" the ball (m)
+ * @return does it have ball
+ */
+inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot, double possession_radius) {
+    rj_geometry::Point ball_pos = world_state->ball.position;
+    rj_geometry::Point robot_pos = robot.pose.position();
+    if (distance(ball_pos, robot_pos) < possession_radius) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Kick calculation
 /**
  * @brief Provides a good suggestion for kick speed, designed for passing.
  * 
