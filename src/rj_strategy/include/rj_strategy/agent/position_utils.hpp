@@ -29,8 +29,8 @@
  *  - try to keep big object args as const references (to minimize overhead)
  *  - try to keep the execution time minimal (to minimize overhead)
  *  - try to keep function names unnecessarily verbose and accurate (to minimize headache)
- *  - currently, I am not worried about bloat in this file
- *      if you add util, add it here, not in your strategy cpp
+ *  - remember that if you change something, other people may be using that; don't fundamentally change invariants
+ *      if you're doing something a little different, do it in your own file, or add a new util, avoid revising where possible
  *  - if you love me, do not use auto. figure out what type you want
  */
 
