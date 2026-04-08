@@ -12,8 +12,6 @@ Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_i
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
-
-
     // Get next state, and if different, reset clock
     State new_state = next_state();
 
