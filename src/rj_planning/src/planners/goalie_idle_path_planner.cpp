@@ -22,7 +22,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Create a new PathTargetMotionCommand to fill in with desired idle_pt
-    auto idle_pt = get_idle_pt(plan_request.world_state);
+    auto idle_pt = get_idle_pt(plan_request.world_state, plan_request.field_dimensions);
     LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
@@ -46,17 +46,23 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
-    rj_geometry::Point ball_pos = world_state->ball.position;
-    // TODO(Kevin): make this depend on team +/-x
-    rj_geometry::Point goal_pt{0.0, 0.0};
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state, const FieldDimensions* field_dimensions) {
+    const rj_geometry::Point current_pos =
+        world_state->get_robot(true, 0).pose.position();
 
-    double goalie_dist = 0.5;
-    rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
-    idle_pt *= goalie_dist;
-    // TODO(Kevin): clamp y to 0 so goalie doesn't go backwards
+    static bool screen_dir = true;
+    
+    rj_geometry::Point left_pt = {field_dimensions->our_left_goal_post_coordinate().x(), 0.5}; // {1.0, 0.5}; // TODO: make the planner use field dimensions instead of hardcoding
+    rj_geometry::Point right_pt = {field_dimensions->our_right_goal_post_coordinate().x(), 0.5}; // {-1.0, 0.5}; // TODO: same as above
 
-    return idle_pt;
+    rj_geometry::Point target = screen_dir ? left_pt : right_pt;
+
+    // switch directions when close
+    if (current_pos.dist_to(target) <= 0.05) {
+        screen_dir = !screen_dir;
+    }
+
+    return target;
 }
 
 void GoalieIdlePathPlanner::reset() {}
