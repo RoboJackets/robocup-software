@@ -170,6 +170,10 @@ inline rj_geometry::Point calculate_a_shot([[maybe_unused]] const WorldState* wo
 inline rj_geometry::Point calculate_best_shot(const WorldState* world_state, const FieldDimensions& field_dimensions, double granularity, bool ignore_posts) {
     // Geometry
     rj_geometry::Point their_goal_pos = field_dimensions.their_goal_loc(); // returns center of goal
+    if (granularity <= 0.0) { // protection
+        SPDLOG_ERROR("Invalid granularity value passed into calculate_best_shot, must use a positive float.");
+        return their_goal_pos;
+    }
     double goal_width = field_dimensions.goal_width();
     rj_geometry::Point negXmost_shot = their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0.0);
     rj_geometry::Point posXmost_shot = their_goal_pos + rj_geometry::Point(goal_width / 2.0, 0.0);
@@ -261,7 +265,7 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
     }
 }
 
-// Kick calculation
+// Kick speed calculation
 /**
  * @brief Provides a good suggestion for kick speed, designed for passing.
  * 
