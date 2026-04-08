@@ -33,14 +33,15 @@ public:
 
 private:
     enum State {
-        IDLE,       // The nothing doer
-        MARKER,     // Aggressively sit between ball and goal pos
-        TO_BALL,    // Collect
-        ROTATE,     // After successful collect, aim and fire
-        KICK        // The more naive line kick
+        IDLE,     // The nothing doer
+        MARKER,   // Aggressively sit between ball and goal pos
+        TO_BALL,  // Collect
+        ROTATE,   // After successful collect, aim and fire
+        KICK      // The more naive line kick
     };
-    State kick_strategy_ = TO_BALL; // set to TO_BALL for collect kicking, set to KICK for line kicking
-    planning::LinearMotionInstant kick_target_; // aiming point
+    State kick_strategy_ =
+        TO_BALL;  // set to TO_BALL for collect kicking, set to KICK for line kicking
+    planning::LinearMotionInstant kick_target_;  // aiming point
 
     State current_state_ = IDLE;
 

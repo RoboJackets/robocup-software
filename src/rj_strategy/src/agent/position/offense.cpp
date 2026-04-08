@@ -170,7 +170,8 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
-            if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() || !has_open_shot() || !can_steal_ball()) {
+            if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() ||
+                !has_open_shot() || !can_steal_ball()) {
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {
@@ -275,13 +276,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case SHOOTING: {
             // link kick because collect is garbage
-            planning::LinearMotionInstant target{calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true)};
+            planning::LinearMotionInstant target{
+                calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true)};
 
             auto shoot_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = max_kick_speed(); // Integer value in [0,15]
+            intent.kick_speed = max_kick_speed();  // Integer value in [0,15]
             return intent;
         }
     }
@@ -415,9 +417,12 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
-    rj_geometry::Point best_shot = calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
-    double clearance_angle = shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
-    return clearance_angle >= 0.05; // if there's >= 3 degrees (0.05 radians) of clearance, that's an open shot
+    rj_geometry::Point best_shot =
+        calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
+    double clearance_angle =
+        shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
+    return clearance_angle >=
+           0.05;  // if there's >= 3 degrees (0.05 radians) of clearance, that's an open shot
 }
 
 
