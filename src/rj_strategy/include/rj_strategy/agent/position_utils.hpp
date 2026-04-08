@@ -34,7 +34,7 @@
  *  - if you love me, do not use auto. figure out what type you want
  */
 
-namespace strategy {
+// namespace strategy {
 
 // Example
 /**
@@ -297,4 +297,4 @@ inline int max_kick_speed() {
     return 7;
 }
 
-} // namespace strategy
+// } // namespace strategy
