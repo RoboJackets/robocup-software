@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME} SHARED
   src/stadium_shape.cpp
   src/transform_matrix.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC

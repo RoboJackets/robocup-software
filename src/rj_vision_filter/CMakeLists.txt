@@ -46,7 +46,7 @@ add_executable(${PROJECT_NAME}_node
   src/main.cpp
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   src/ball/ball_bounce.cpp
   src/ball/camera_ball.cpp
   src/ball/kalman_ball.cpp
@@ -66,6 +66,7 @@ add_library(${PROJECT_NAME}
   src/robot/world_robot.cpp
   src/vision_filter.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_link_libraries(${PROJECT_NAME}_node
   PRIVATE

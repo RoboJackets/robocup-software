@@ -70,6 +70,7 @@ set(RJ_STRATEGY_SRC
 add_library(${PROJECT_NAME} SHARED
   ${RJ_STRATEGY_SRC}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
