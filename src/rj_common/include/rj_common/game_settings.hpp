@@ -3,6 +3,7 @@
 #include <optional>
 
 #include <rj_common/referee_enums.hpp>
+#include <rj_common/motion_test.hpp>
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
@@ -30,6 +31,8 @@ struct GameSettings {
     bool use_their_half = true;
 
     bool paused = false;
+    int motion_test_robot_id = -1;
+    MotionTestType motion_test_type = MotionTestType::NONE;
 
     struct JoystickConfig {
         int manual_id = -1;
@@ -54,6 +57,8 @@ struct RosConverter<GameSettings, GameSettings::Msg> {
         convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
         convert_to_ros(from.use_our_half, &to.use_our_half);
         convert_to_ros(from.use_their_half, &to.use_their_half);
+        convert_to_ros(from.motion_test_robot_id, &to.motion_test_robot_id);
+        convert_to_ros(static_cast<int>(from.motion_test_type), &to.motion_test_type);
         return to;
     }
 
@@ -65,6 +70,8 @@ struct RosConverter<GameSettings, GameSettings::Msg> {
         convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
         convert_to_ros(from.use_our_half, &to.use_our_half);
         convert_to_ros(from.use_their_half, &to.use_their_half);
+        convert_to_ros(from.motion_test_robot_id, &to.motion_test_robot_id);
+        to.motion_test_type = motion_test_type_from_int(from.motion_test_type);
         return to;
     }
 };

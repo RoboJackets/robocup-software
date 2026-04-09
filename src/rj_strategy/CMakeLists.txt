@@ -55,6 +55,7 @@ set(RJ_STRATEGY_SRC
   src/agent/position/seeker.cpp
   src/agent/position/smartidling.cpp
   src/agent/position/solo_offense.cpp
+  src/agent/position/test_subject.cpp
   src/agent/position/zoner.cpp
 
   # Communication

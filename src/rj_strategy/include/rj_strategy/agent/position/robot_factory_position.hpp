@@ -31,6 +31,7 @@
 #include "rj_strategy/agent/position/pivot_test.hpp"
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
+#include "rj_strategy/agent/position/test_subject.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
 
 namespace strategy {
@@ -114,6 +115,13 @@ public:
         current_position_->send_pass_received_to_passer(passer_robot_id);
     }
 
+    void set_motion_test_robot_id(int robot_id) { motion_test_robot_id_ = robot_id; }
+
+    void set_motion_test_type(MotionTestType motion_test_type) override {
+        Position::set_motion_test_type(motion_test_type);
+        current_position_->set_motion_test_type(motion_test_type);
+    }
+
     void set_override_position(const OverridingPositions& overriding_position);
 
 private:
@@ -124,6 +132,8 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     void set_default_position();
+
+    int motion_test_robot_id_{-1};
 
     PlayState last_play_state_{PlayState::halt()};
 

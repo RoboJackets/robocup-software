@@ -13,6 +13,7 @@
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_state.hpp>
+#include <rj_common/motion_test.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
@@ -248,6 +249,8 @@ public:
      * @brief setter for goalie id
      */
     virtual void set_goalie_id(int goalie_id);
+    virtual void set_motion_test_type(MotionTestType motion_test_type);
+    [[nodiscard]] MotionTestType motion_test_type() const;
 
     /**
      * @brief allows RobotFactoryPosition to synchronize with its client handles
@@ -335,6 +338,9 @@ protected:
 
     // Current goalie
     int goalie_id_;
+
+    // Current selected motion test from MotionTest tab.
+    MotionTestType motion_test_type_{MotionTestType::NONE};
 
 private:
     /**

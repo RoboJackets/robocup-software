@@ -12,3 +12,10 @@ bool use_our_half
 bool use_their_half
 
 bool paused
+
+# Motion test robot selection. -1 means "None".
+int32 motion_test_robot_id
+
+# Motion test selection enum.
+# 0=NONE, 1=YELLOW_STRAIGHT, 2=BLUE_STRAIGHT, 3=BORDER_FIELD, 4=DEFAULT_FIELD.
+int32 motion_test_type

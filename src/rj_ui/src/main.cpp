@@ -12,6 +12,7 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <fcntl.h>
+#include <rj_common/motion_test.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <unistd.h>
@@ -176,6 +177,8 @@ int main(int argc, char* argv[]) {
     context->game_settings.request_blue_team = blue_team;
     context->game_settings.defend_plus_x = defend_plus;
     context->game_settings.request_goalie_id = 0;
+    context->game_settings.motion_test_robot_id = -1;
+    context->game_settings.motion_test_type = MotionTestType::NONE;
 
     // If we're reading a log file, we should start off paused.
     context->game_settings.paused = !read_log_file.empty();

@@ -114,6 +114,11 @@ private Q_SLOTS:
     void on_actionTeamYellow_triggered();
     void on_actionTeamBlue_triggered();
     void on_manualID_currentIndexChanged(int value);
+    void on_motionTestRobotSelector_currentIndexChanged(int value);
+    void on_motionTestButton1_clicked();
+    void on_motionTestButton2_clicked();
+    void on_motionTestButton3_clicked();
+    void on_motionTestButton4_clicked();
     void on_goalieID_currentIndexChanged(int value);
 
     void on_actionUse_Field_Oriented_Controls_toggled(bool value);

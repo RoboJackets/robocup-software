@@ -28,5 +28,9 @@
     <file>vision-unavailable.svg</file>
     <file>radio-connected.svg</file>
     <file>radio-disconnected.svg</file>
+    <file>motion_test/YellowStraight.svg</file>
+    <file>motion_test/BorderField.svg</file>
+    <file>motion_test/DefaultField.svg</file>
+    <file>motion_test/BlueStraight.svg</file>
   </qresource>
 </RCC>

@@ -40,6 +40,12 @@ void Position::set_goal_canceled() { goal_canceled_ = true; }
 
 void Position::set_goalie_id(int goalie_id) { goalie_id_ = goalie_id; }
 
+void Position::set_motion_test_type(MotionTestType motion_test_type) {
+    motion_test_type_ = motion_test_type;
+}
+
+MotionTestType Position::motion_test_type() const { return motion_test_type_; }
+
 bool Position::check_is_done() {
     if (is_done_) {
         is_done_ = false;

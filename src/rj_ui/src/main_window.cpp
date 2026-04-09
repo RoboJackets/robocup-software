@@ -27,6 +27,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
+#include <rj_common/motion_test.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
@@ -82,6 +83,29 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _ui.logTree->history(&_longHistory);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
+
+    // Initialize motion test tab
+    _ui.motionTestButton1->setIcon(QIcon(":/icons/motion_test/YellowStraight.svg"));
+    _ui.motionTestButton1->setText("YellowStraight");
+    _ui.motionTestButton1->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    _ui.motionTestButton1->setIconSize(QSize(96, 96));
+
+    _ui.motionTestButton2->setIcon(QIcon(":/icons/motion_test/BlueStraight.svg"));
+    _ui.motionTestButton2->setText("BlueStraight");
+    _ui.motionTestButton2->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    _ui.motionTestButton2->setIconSize(QSize(96, 96));
+
+    _ui.motionTestButton3->setIcon(QIcon(":/icons/motion_test/BorderField.svg"));
+    _ui.motionTestButton3->setText("BorderField");
+    _ui.motionTestButton3->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    _ui.motionTestButton3->setIconSize(QSize(96, 96));
+
+    _ui.motionTestButton4->setIcon(QIcon(":/icons/motion_test/DefaultField.svg"));
+    _ui.motionTestButton4->setText("DefaultField");
+    _ui.motionTestButton4->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    _ui.motionTestButton4->setIconSize(QSize(96, 96));
+    _ui.motionTestRobotSelector->setCurrentIndex(
+        std::clamp(_game_settings.motion_test_robot_id + 1, 0, 16));
 
     // Initialize live/non-live control styles
 
@@ -1048,6 +1072,31 @@ void MainWindow::on_manualID_currentIndexChanged(int value) {
 #if MANUAL
     context_->game_settings.joystick_config.manualID = value - 1;
 #endif
+}
+
+void MainWindow::on_motionTestRobotSelector_currentIndexChanged(int value) {
+    update_cache(_game_settings.motion_test_robot_id, value - 1, &_game_settings_valid);
+}
+
+void MainWindow::on_motionTestButton1_clicked() {
+    update_cache(_game_settings.motion_test_type,
+                 static_cast<int>(MotionTestType::YELLOW_STRAIGHT),
+                 &_game_settings_valid);
+}
+
+void MainWindow::on_motionTestButton2_clicked() {
+    update_cache(_game_settings.motion_test_type, static_cast<int>(MotionTestType::BLUE_STRAIGHT),
+                 &_game_settings_valid);
+}
+
+void MainWindow::on_motionTestButton3_clicked() {
+    update_cache(_game_settings.motion_test_type, static_cast<int>(MotionTestType::BORDER_FIELD),
+                 &_game_settings_valid);
+}
+
+void MainWindow::on_motionTestButton4_clicked() {
+    update_cache(_game_settings.motion_test_type, static_cast<int>(MotionTestType::DEFAULT_FIELD),
+                 &_game_settings_valid);
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {

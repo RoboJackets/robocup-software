@@ -63,6 +63,7 @@ set(RJ_PLANNING_SRC
   src/planners/intercept_path_planner.cpp
   src/planners/line_kick_path_planner.cpp
   src/planners/line_pivot_path_planner.cpp
+  src/planners/path_target_test_path_planner.cpp
   src/planners/path_target_path_planner.cpp
   src/planners/pivot_path_planner.cpp
   src/planners/rotate_path_planner.cpp

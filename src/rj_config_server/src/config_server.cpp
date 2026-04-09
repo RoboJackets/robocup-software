@@ -72,6 +72,8 @@ using config_server::GameSettingsMsg;
  */
 GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
     GameSettingsMsg game_settings;
+    game_settings.motion_test_robot_id = -1;
+    game_settings.motion_test_type = 0;
 
     for (size_t i = 1; i < args.size(); i++) {
         const std::string& arg = args.at(i);

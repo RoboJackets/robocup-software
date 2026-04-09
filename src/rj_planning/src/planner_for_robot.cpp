@@ -16,6 +16,8 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
     path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();
     path_planners_[PathTargetPathPlanner().name()] = std::make_unique<PathTargetPathPlanner>();
+    path_planners_[PathTargetTestPathPlanner().name()] =
+        std::make_unique<PathTargetTestPathPlanner>();
     path_planners_[SettlePathPlanner().name()] = std::make_unique<SettlePathPlanner>();
     path_planners_[CollectPathPlanner().name()] = std::make_unique<CollectPathPlanner>();
     path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();

@@ -22,6 +22,7 @@
 #include "rj_planning/planners/line_kick_path_planner.hpp"
 #include "rj_planning/planners/line_pivot_path_planner.hpp"
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planners/path_target_test_path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
 #include "rj_planning/planners/pivot_path_planner.hpp"
 #include "rj_planning/planners/rotate_path_planner.hpp"

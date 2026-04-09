@@ -2,6 +2,32 @@
 
 namespace strategy {
 
+namespace {
+
+bool should_force_test_subject(int selected_robot_id, int this_robot_id,
+                               const std::array<bool, kNumShells>& alive_robots,
+                               const PlayState& play_state) {
+    // UI uses -1 for "None selected".
+    if (selected_robot_id < 0 || selected_robot_id >= static_cast<int>(kNumShells)) {
+        return false;
+    }
+
+    // If selected robot is not alive, everything should run normally.
+    if (!alive_robots[static_cast<size_t>(selected_robot_id)]) {
+        return false;
+    }
+
+    // Do not force TestSubject while halted.
+    if (play_state.state() == PlayState::State::Halt) {
+        return false;
+    }
+
+    // Force only on the selected robot.
+    return selected_robot_id == this_robot_id;
+}
+
+}  // namespace
+
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition") {
     client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(node, r_id);
@@ -21,6 +47,13 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
+    if (should_force_test_subject(motion_test_robot_id_, robot_id_, alive_robots_,
+                                  current_play_state_)) {
+        set_current_position<TestSubject>();
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
+    }
+
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -195,6 +228,13 @@ void RobotFactoryPosition::update_position() {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (should_force_test_subject(motion_test_robot_id_, robot_id_, alive_robots_,
+                                  current_play_state_)) {
+        // Reserved hook: MotionTest UI can target a specific robot.
+        set_current_position<TestSubject>();
+        return;
+    }
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 

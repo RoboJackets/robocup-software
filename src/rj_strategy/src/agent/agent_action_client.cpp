@@ -130,6 +130,8 @@ void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::S
 
 void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
+    current_position_->set_motion_test_robot_id(msg->motion_test_robot_id);
+    current_position_->set_motion_test_type(motion_test_type_from_int(msg->motion_test_type));
 }
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
