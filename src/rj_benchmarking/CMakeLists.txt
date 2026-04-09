@@ -60,24 +60,12 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Benchmarking Node
 add_executable(${PROJECT_NAME}_node
-    ${BENCHMARKING_SRC}
     src/main.cpp
 )
 
-target_include_directories(${PROJECT_NAME}_node
-    PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-
 target_link_libraries(${PROJECT_NAME}_node
-    PUBLIC
-    ${BENCHMARKING_LIBS}
-)
-
-ament_target_dependencies(${PROJECT_NAME}_node
-    PUBLIC
-    ${BENCHMARKING_DEPS}
+    PRIVATE
+    ${PROJECT_NAME}
 )
 
 install(

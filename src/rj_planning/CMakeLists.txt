@@ -86,6 +86,7 @@ set(RJ_PLANNING_SRC
 add_library(${PROJECT_NAME} SHARED
   ${RJ_PLANNING_SRC}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
