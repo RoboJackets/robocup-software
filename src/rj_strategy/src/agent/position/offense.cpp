@@ -31,8 +31,7 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     // Example of how to draw text on the debug drawer for position/strategy debugging
     if (debug_draw_enabled_ && debug_drawer_) {
         auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-        constexpr double kLabelRadius = 0.15;
-        double angle = (robot_id_ * 2.0 * M_PI) / kRobotsPerTeam; 
+        double angle = (robot_id_ * label_angle_constant) / kRobotsPerTeam; 
         rj_geometry::Point label_offset = {kLabelRadius * std::cos(angle), kLabelRadius * std::sin(angle)};
 
         debug_drawer_->draw_text("Offense/" + std::string(state_to_name(current_state_)), robot_pos + label_offset, Qt::white);

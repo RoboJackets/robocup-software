@@ -320,6 +320,11 @@ protected:
     // farthest distance the robot is willing to go before it declares it has lost the ball
     static constexpr double ball_lost_distance_ = 0.5;
 
+    // constant for label offset in debug drawing
+    static constexpr double kLabelRadius = 0.15;
+
+    static constexpr double label_angle_constant = 2.0 * M_PI;
+
     // vector of alive robots from the agent action client
     std::array<bool, kNumShells> alive_robots_ = {};
 
