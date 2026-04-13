@@ -73,7 +73,7 @@ private:
     State current_state_ = JOINING_WALL;
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
-     static constexpr std::string_view state_to_name(State s) {
+    static constexpr std::string_view state_to_name(State s) {
         switch (s) {
             case IDLING:
                 return "IDLING";
