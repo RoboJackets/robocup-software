@@ -47,7 +47,6 @@ set(RJ_STRATEGY_SRC
   src/agent/position/goalie.cpp
   src/agent/position/idle.cpp
   src/agent/position/line.cpp
-  src/agent/position/marker.cpp
   src/agent/position/offense.cpp
   src/agent/position/penalty_non_kicker.cpp
   src/agent/position/penalty_player.cpp
@@ -63,6 +62,7 @@ set(RJ_STRATEGY_SRC
 
   # Coordinators
   src/coordinator/kicker_picker_client.cpp
+  src/coordinator/marking_client.cpp
   src/coordinator/waller_client.cpp
 )
 
@@ -115,6 +115,18 @@ ament_target_dependencies(kicker_picker_node
   ${RJ_STRATEGY_DEPS}
 )
 
+# Marking Node
+add_executable(marking_node
+  ${RJ_STRATEGY_SRC}
+  src/coordinator/marking_client.cpp
+  src/coordinator/marking.cpp
+)
+
+target_include_directories(marking_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 # Waller Node
 add_executable(waller_node
   ${RJ_STRATEGY_SRC}
@@ -128,6 +140,9 @@ target_include_directories(waller_node
   $<INSTALL_INTERFACE:include>
 )
 
+ament_target_dependencies(marking_node
+  ${RJ_STRATEGY_DEPS}
+)
 ament_target_dependencies(waller_node
   ${RJ_STRATEGY_DEPS}
 )
@@ -163,7 +178,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node waller_node agent_action_clients
+  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 

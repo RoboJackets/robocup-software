@@ -23,17 +23,6 @@
 
 namespace control {
 
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_acceleration);
-DECLARE_FLOAT64(params::kMotionControlParamModule, max_velocity);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, rotation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, rotation_windup);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kp);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_ki);
-DECLARE_FLOAT64(params::kMotionControlParamModule, translation_kd);
-DECLARE_INT64(params::kMotionControlParamModule, translation_windup);
-
 namespace testing {
 
 class MotionControlTest;
@@ -79,7 +68,7 @@ private:
      */
     void update_params();
 
-    static void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
+    void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 
     int shell_id_;
 
@@ -107,6 +96,24 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
+
+    // Robot-specific PID gains
+    double translation_kp_;
+    double translation_ki_;
+    double translation_kd_;
+
+    double rotation_kp_;
+    double rotation_ki_;
+    double rotation_kd_;
+
+    // Shared limits
+    double max_velocity_;
+    double max_acceleration_;
+    double max_angular_velocity_;
+
+    int translation_windup_;
+    int rotation_windup_;
 };
 
 }  // namespace control

@@ -2,15 +2,18 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
+#include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
+#include <rj_msgs/msg/line_test.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
@@ -20,8 +23,17 @@
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 
-// Note: The direction of the line can be changed by running:
-// `ros2 topic pub -1 line_direction std_msgs/msg/Bool "{data: VERTICAL}"`
+// run test by using the command `make run-sim-line-test`
+// Note: The the line can be changed by running following command in another terminal window:
+// Make sure to source bash and ros in other window
+// Example command:
+// `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 2, y: 2}, {x: -2, y: 8}], r_id: 2}"`
+
+DECLARE_FLOAT64("straight_line_test", start_x);
+DECLARE_FLOAT64("straight_line_test", start_y);
+DECLARE_FLOAT64("straight_line_test", end_x);
+DECLARE_FLOAT64("straight_line_test", end_y);
+DECLARE_FLOAT64("straight_line_test", robot_id);
 
 namespace strategy {
 
@@ -42,7 +54,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr line_direction_sub_;
+    rclcpp::Subscription<rj_msgs::msg::LineTest>::SharedPtr line_direction_sub_;
 
     // subscription callbacks
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -50,7 +62,7 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
-    void line_direction_callback(const std_msgs::msg::Bool::SharedPtr& msg);
+    void line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 
@@ -101,7 +113,16 @@ private:
     [[nodiscard]] WorldState* world_state();
     WorldState last_world_state_;
     mutable std::mutex world_state_mutex_;
-    bool vertical_ = false;
+    rj_geometry::Point start_;
+    rj_geometry::Point end_;
+    uint8_t target_robot_id_;
+
+    // default field dimensions
+    float width_min_{-3};
+    float width_max_{3};
+    float height_min_{0};
+    float height_max_{9};
+    bool field_dimensions_set_{false};
 };  // class StraightLineTest
 
 }  // namespace strategy

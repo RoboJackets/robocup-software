@@ -4,55 +4,32 @@ namespace rj_geometry {
 
 Shape* StadiumShape::clone() const { return new StadiumShape(*this); }
 
-void StadiumShape::init(Point c1, Point c2, float r) {
-    rj_geometry::Circle first_circle = rj_geometry::Circle{c1, static_cast<float>(r)};
-    rj_geometry::Circle second_circle = rj_geometry::Circle{c2, static_cast<float>(r)};
+StadiumShape::StadiumShape(Point c1, Point c2, float r) {
+    // Create the two circular end caps
+    auto c1_obs_ptr = std::make_shared<Circle>(c1, r);
+    auto c2_obs_ptr = std::make_shared<Circle>(c2, r);
 
-    rj_geometry::Segment vect{c1, c2};
-    rj_geometry::Point leftToRight{c2.x() - c1.x(), c2.y() - c1.y()};
-    rj_geometry::Point leftToRightN = leftToRight.norm().perp_ccw();
+    // Create the rectangular middle section connecting the circles
+    Point leftToRight{c2.x() - c1.x(), c2.y() - c1.y()};
+    Point leftToRightN = leftToRight.norm().perp_ccw();
 
-    rj_geometry::Point leftTop = c1 + (leftToRightN * r);
-    rj_geometry::Point leftBottom = c1 - (leftToRightN * r);
-    rj_geometry::Point rightTop = c2 + (leftToRightN * r);
-    rj_geometry::Point rightBottom = c2 - (leftToRightN * r);
+    Point leftTop = c1 + (leftToRightN * r);
+    Point leftBottom = c1 - (leftToRightN * r);
+    Point rightTop = c2 + (leftToRightN * r);
+    Point rightBottom = c2 - (leftToRightN * r);
 
-    std::vector<Point> verts = {leftTop, leftBottom, rightTop, rightBottom};
+    std::vector<Point> verts = {leftTop, rightTop, rightBottom, leftBottom};
+    auto rect_obs_ptr = std::make_shared<Polygon>(verts);
 
-    rj_geometry::Polygon rect_obs{verts};
+    // Use CompositeShape's add() method
+    add(c1_obs_ptr);
+    add(rect_obs_ptr);
+    add(c2_obs_ptr);
 
-    std::shared_ptr<rj_geometry::Circle> c1_obs_ptr =
-        std::make_shared<rj_geometry::Circle>(first_circle);
-    std::shared_ptr<rj_geometry::Polygon> rect_obs_ptr =
-        std::make_shared<rj_geometry::Polygon>(rect_obs);
-    std::shared_ptr<rj_geometry::Circle> c2_obs_ptr =
-        std::make_shared<rj_geometry::Circle>(second_circle);
-
-    subshapes_.push_back(c1_obs_ptr);
-    subshapes_.push_back(rect_obs_ptr);
-    subshapes_.push_back(c2_obs_ptr);
-
+    // Also store in drawshapes_ for backward compatibility
     drawshapes_.add(c1_obs_ptr);
     drawshapes_.add(rect_obs_ptr);
     drawshapes_.add(c2_obs_ptr);
-}
-
-bool StadiumShape::contains_point(Point pt) const {
-    for (const auto& subshape : subshapes_) {
-        if (subshape->contains_point(pt)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool StadiumShape::near_point(Point pt, float threshold) const {
-    for (const auto& subshape : subshapes_) {
-        if (subshape->near_point(pt, threshold)) {
-            return true;
-        }
-    }
-    return false;
 }
 
 }  // namespace rj_geometry

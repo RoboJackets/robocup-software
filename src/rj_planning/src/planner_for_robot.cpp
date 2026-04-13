@@ -140,7 +140,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             min_dist_from_ball = 0.2;
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
         case PlayState::State::Playing:
         default:
@@ -150,7 +150,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             // number instead.
             max_robot_speed = 1.4;
             max_dribbler_speed = 255;
-            max_kick_speed = 6.5;
+            max_kick_speed = 15;
             break;
     }
 
@@ -159,14 +159,11 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     const auto& robot = world_state->our_robots.at(robot_id_);
     const auto start = RobotInstant{robot.pose, robot.velocity, robot.timestamp};
 
-    const auto global_obstacles = global_state_.global_obstacles();
-    rj_geometry::ShapeSet real_obstacles = global_obstacles;
-
     const auto def_area_obstacles = global_state_.def_area_obstacles();
-    rj_geometry::ShapeSet virtual_obstacles = intent.local_obstacles;
+    rj_geometry::ShapeSet field_obstacles = intent.local_obstacles;
     const bool is_goalie = goalie_id == robot_id_;
     if (!is_goalie) {
-        virtual_obstacles.add(def_area_obstacles);
+        field_obstacles.add(def_area_obstacles);
     }
 
     RobotConstraints constraints;
@@ -192,8 +189,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     return PlanRequest{start,
                        motion_command,
                        constraints,
-                       std::move(real_obstacles),
-                       std::move(virtual_obstacles),
+                       std::move(field_obstacles),
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
                        world_state,
@@ -267,8 +263,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
     // draw obstacles for this robot
     // TODO: these will stack atop each other, since each robot draws obstacles
-    debug_draw_.draw_shapes(global_state_.global_obstacles(), QColor(255, 0, 0, 30));
-    debug_draw_.draw_shapes(request.virtual_obstacles, QColor(255, 0, 0, 30));
+    debug_draw_.draw_shapes(request.field_obstacles, QColor(255, 0, 0, 30));
+
     debug_draw_.publish();
 
     return trajectory;

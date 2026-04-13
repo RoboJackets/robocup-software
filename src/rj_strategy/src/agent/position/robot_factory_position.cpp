@@ -5,6 +5,7 @@ namespace strategy {
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
     : Position(r_id, "RobotFactoryPosition") {
     client_handles_->kicker_picker = std::make_unique<KickerPickerClient>(node, r_id);
+    client_handles_->marking = std::make_unique<MarkingClient>(node, r_id);
     client_handles_->waller = std::make_unique<WallerClient>(node, r_id);
 
     if (robot_id_ == 0) {

@@ -18,6 +18,7 @@
 #include "rj_strategy/agent/communication/join_wall_response.hpp"
 #include "rj_strategy/agent/communication/leave_wall_request.hpp"
 #include "rj_strategy/agent/communication/leave_wall_response.hpp"
+#include "rj_strategy/agent/communication/pass_received_request.hpp"
 #include "rj_strategy/agent/communication/pass_request.hpp"
 #include "rj_strategy/agent/communication/pass_response.hpp"
 #include "rj_strategy/agent/communication/position_request.hpp"
@@ -34,9 +35,10 @@ namespace strategy::communication {
 /**
  * @brief a conglomeration of the different request types.
  */
-using AgentRequest = std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest,
-                                  BallInTransitRequest, SeekerRequest, PositionRequest,
-                                  LeaveWallRequest, ResetScorerRequest, IncomingBallRequest>;
+using AgentRequest =
+    std::variant<JoinWallRequest, TestRequest, PassRequest, ScorerRequest, BallInTransitRequest,
+                 SeekerRequest, PositionRequest, LeaveWallRequest, ResetScorerRequest,
+                 IncomingBallRequest, PassReceivedRequest>;
 
 /**
  * @brief a conglomeration of the different response types.
@@ -159,6 +161,9 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         } else if (const auto* incoming_ball_request =
                        std::get_if<strategy::communication::IncomingBallRequest>(&from)) {
             result.incoming_ball_request.emplace_back(convert_to_ros(*incoming_ball_request));
+        } else if (const auto* pass_received_request =
+                       std::get_if<strategy::communication::PassReceivedRequest>(&from)) {
+            result.pass_received_request.emplace_back(convert_to_ros(*pass_received_request));
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
@@ -187,6 +192,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
             result = convert_from_ros(from.reset_scorer_request.front());
         } else if (!from.incoming_ball_request.empty()) {
             result = convert_from_ros(from.incoming_ball_request.front());
+        } else if (!from.pass_received_request.empty()) {
+            result = convert_from_ros(from.pass_received_request.front());
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }

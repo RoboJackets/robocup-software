@@ -54,6 +54,7 @@ private:
         POSSESSION_START,  // Try to shoot and send pass request
         POSSESSION,        // Holding the ball
         PASSING,           // Pass the ball
+        PASSING_FINISHED,  // Kicked the ball, waiting for receiver to confirm
         STEALING,          // Getting the ball
         RECEIVING_START,   // Facing the ball
         RECEIVING,         // Getting the ball from a pass
@@ -95,10 +96,12 @@ private:
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{5};
             case POSSESSION_START:
-                return RJ::Seconds{-1};
+                return RJ::Seconds{5};
             case PASSING:
+                return RJ::Seconds{5};
+            case PASSING_FINISHED:
                 return RJ::Seconds{5};
             case STEALING:
                 return RJ::Seconds{10};
@@ -126,6 +129,8 @@ private:
                 return "POSSESSION_START";
             case PASSING:
                 return "PASSING";
+            case PASSING_FINISHED:
+                return "PASSING_FINISHED";
             case STEALING:
                 return "STEALING";
             case RECEIVING_START:
@@ -187,6 +192,12 @@ private:
     // Used to tell if an enemy is close enough to block a shot
     static constexpr double kEnemyTooCloseRadius{kStealBallRadius};
 
+    static constexpr double kMinPassDistance{0.5};
+
+    // If the ball hasn't left the passer within this window after the kick
+    // command fires, the kick is considered failed and both robots reset.
+    static constexpr RJ::Seconds kKickFailsafeTimeout{2.0};
+
     /* Utility functions for State or Task Calculation */
 
     /**
@@ -218,6 +229,12 @@ private:
      * @param target_robot_shell the robot shell to check if open
      */
     bool check_if_open(int target_robot_shell);
+
+    /**
+     * @return whether or not a robot is capable of shooting from their pos
+     */
+    bool can_i_shoot() const;
+
     /**
      * @return the target (within the goal) that would be the most clear shot
      */
@@ -228,7 +245,22 @@ private:
      */
     bool ball_in_red() const;
 
+    /**
+     * @return true when in PASSING_FINISHED and the kick failsafe timeout has
+     *         elapsed while the ball is still within possession range of this robot.
+     */
+    bool kick_failed() const;
+
+    /**
+     * @brief Notify the receiver that the kick failed so it can abort and
+     *        return to default behaviour. Uses the same PassReceivedRequest
+     *        message type that the receiver normally sends to the passer.
+     */
+    void send_kick_failed_to_receiver(u_int8_t receiver_robot_id);
+
     void broadcast_seeker_request(rj_geometry::Point seeking_point, bool adding);
+
+    int get_kick_speed(double distance_to_other_robot);
 
     std::unordered_map<int, rj_geometry::Point> seeker_points_;
 };

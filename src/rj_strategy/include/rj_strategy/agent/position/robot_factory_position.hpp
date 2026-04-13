@@ -110,6 +110,10 @@ public:
         current_position_->send_pass_confirmation(target_robot);
     }
 
+    void send_pass_received_to_passer(u_int8_t passer_robot_id) override {
+        current_position_->send_pass_received_to_passer(passer_robot_id);
+    }
+
     void set_override_position(const OverridingPositions& overriding_position);
 
 private:
