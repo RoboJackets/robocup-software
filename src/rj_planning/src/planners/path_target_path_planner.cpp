@@ -6,16 +6,13 @@ namespace planning {
 
 Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
+    ObstacleSet obstacles;
     const MotionCommand& command = request.motion_command;
-    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, !command.ignore_ball,
-                   &ball_trajectory);
+    fill_obstacles(request, obstacles, !command.ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(request.start.position())) {
+    if (obstacles.hit(request.start.position())) {
         reset();
         return Trajectory();
     }
@@ -31,8 +28,7 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{request.start, target_instant, static_obstacles,
-                              std::vector<DynamicObstacle>{}, request.field_dimensions,
+        Replanner::PlanParams{request.start, target_instant, obstacles, request.field_dimensions,
                               request.constraints, angle_function, request.shell_id,
                               RJ::Seconds(3.0)},
         std::move(previous_));
@@ -54,11 +50,12 @@ bool PathTargetPathPlanner::is_done() const {
     // getting to the desired angle.
     //
     // may be related to issue #1506?
-    double position_tolerance = 1e-1;
-    double velocity_tolerance = 1e-1;
+    double position_tolerance = 1e-2;
+    double velocity_tolerance = 1e-2;
     return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
                                               cached_target_instant_.value(), position_tolerance,
-                                              velocity_tolerance);
+                                              velocity_tolerance) &&
+           cached_target_instant_;
     // TODO(Kevin): in theory this should work as LinearMotionInstant has
     // tolerance built into its == overload, but in practice it doesn't
     /* return cached_start_instant_ == cached_target_instant_; */

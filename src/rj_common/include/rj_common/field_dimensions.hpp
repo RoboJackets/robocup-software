@@ -249,13 +249,13 @@ struct FieldDimensions {
         center_point_ = rj_geometry::Point(0.0, length_ / 2.0);
 
         our_defense_area_ = rj_geometry::Rect(
-            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_, penalty_short_dist_),
-            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, 0));
+            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_ + 0.25, penalty_short_dist_),
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_ - 0.25, -border_));
 
-        their_defense_area_ =
-            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_, length_),
-                              rj_geometry::Point(penalty_long_dist_ / 2 + line_width_,
-                                                 length_ - penalty_short_dist_));
+        their_defense_area_ = rj_geometry::Rect(
+            rj_geometry::Point(-penalty_long_dist_ / 2 - line_width_ - 0.25, length_ + border_),
+            rj_geometry::Point(penalty_long_dist_ / 2 + line_width_ + 0.25,
+                               length_ - penalty_short_dist_));
 
         their_goal_segment_ = rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, length_),
                                                    rj_geometry::Point(-goal_width_ / 2.0, length_));

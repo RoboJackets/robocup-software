@@ -1,17 +1,25 @@
 #include "rj_strategy/testing/straight_line_test.hpp"
 
-namespace strategy {
+DEFINE_FLOAT64("straight_line_test", start_x, 1.0, "starting point x coordinate");
+DEFINE_FLOAT64("straight_line_test", start_y, 7.0, "starting point y coordinate");
+DEFINE_FLOAT64("straight_line_test", end_x, -1.0, "ending point x coordinate");
+DEFINE_FLOAT64("straight_line_test", end_y, 7.0, "ending point y coordinate");
+DEFINE_FLOAT64("straight_line_test", robot_id, 1, "robot_id for line_test");
+
+namespace strategy {  // put code inside of namespace for extra uses
+
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
-StraightLineTest::StraightLineTest() : StraightLineTest(0) {}
+StraightLineTest::StraightLineTest() : StraightLineTest(0) {}  // creates test for robot 0
 
 StraightLineTest::StraightLineTest(int r_id)
     : rclcpp::Node(::fmt::format("agent_{}_straight_line_node", r_id),
                    rclcpp::NodeOptions{}
                        .automatically_declare_parameters_from_overrides(true)
                        .allow_undeclared_parameters(true)),
-      current_position_{std::make_unique<Line>(r_id)},
+      current_position_{std::make_unique<Line>(
+          r_id)},  // uniq ptr for curr_pos (line, which is child of position)
       robot_id_{r_id} {
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
@@ -40,13 +48,22 @@ StraightLineTest::StraightLineTest(int r_id)
         "config/game_settings", 1,
         [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    line_direction_sub_ = create_subscription<std_msgs::msg::Bool>(
-        "line_direction", 1,
-        [this](const std_msgs::msg::Bool::SharedPtr msg) { line_direction_callback(msg); });
+    line_direction_sub_ = create_subscription<rj_msgs::msg::LineTest>(
+        "line", 1,
+        [this](const rj_msgs::msg::LineTest::SharedPtr msg) { line_direction_callback(msg); });
 
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&StraightLineTest::get_task, this));
+
+    // sets defaults from yaml config
+    start_ =
+        rj_geometry::Point(static_cast<double>(PARAM_start_x), static_cast<double>(PARAM_start_y));
+    end_ = rj_geometry::Point(static_cast<double>(PARAM_end_x), static_cast<double>(PARAM_end_y));
+    target_robot_id_ = static_cast<uint8_t>(PARAM_robot_id);
+
+    // initiates default
+    current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
 }
 
 void StraightLineTest::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
@@ -66,6 +83,17 @@ void StraightLineTest::field_dimensions_callback(
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
+
+    if (field_dimensions_set_) {
+        return;
+    }
+
+    width_max_ = field_dimensions_.width() / 2.0f;
+    width_min_ = -width_max_;
+
+    height_max_ = field_dimensions_.length();
+
+    field_dimensions_set_ = true;
 }
 
 void StraightLineTest::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
@@ -77,10 +105,26 @@ void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::
     is_simulated_ = msg->simulation;
 }
 
-void StraightLineTest::line_direction_callback(const std_msgs::msg::Bool::SharedPtr& msg) {
-    if (msg->data != vertical_) {
-        vertical_ = msg->data;
-        current_position_ = std::make_unique<Line>(robot_id_, vertical_);
+// listens for user publish of new movement command
+void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg) {
+    rj_geometry::Point start{msg->pt[0].x, msg->pt[0].y};
+    rj_geometry::Point end{msg->pt[1].x, msg->pt[1].y};
+    uint8_t r_id{msg->r_id};
+
+    if (start[0] <= width_min_ || end[0] <= width_min_ || start[0] >= width_max_ ||
+        end[0] >= width_max_ || start[1] <= height_min_ || end[1] <= height_min_ ||
+        start[1] >= height_max_ || end[1] >= height_max_) {
+        SPDLOG_INFO("Point Locations Off the FieldDimensions");
+        return;
+    }
+
+    if (start[0] != start_[0] || start[1] != start_[1] || end[0] != end_[0] || end[1] != end_[1] ||
+        r_id != target_robot_id_) {
+        start_ = start;
+        end_ = end;
+        target_robot_id_ = r_id;
+
+        current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
     }
 }
 

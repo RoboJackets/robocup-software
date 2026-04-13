@@ -18,6 +18,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 
+set(RJ_OPTIMIZATION_DEPS
+  fmt
+  spdlog
+  PythonLibs
+  rj_common
+  rj_geometry
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/gradient_ascent_1d.cpp
   src/nelder_mead_2d.cpp
@@ -41,11 +49,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  fmt
-  spdlog
-  PythonLibs
-  rj_common
-  rj_geometry
+  ${RJ_OPTIMIZATION_DEPS}
 )
 
 install(
@@ -63,11 +67,7 @@ install(
 )
 
 ament_export_dependencies(
-  fmt
-  spdlog
-  PythonLibs
-  rj_common
-  rj_geometry
+  ${RJ_OPTIMIZATION_DEPS}
 )
 
 if(BUILD_TESTING)

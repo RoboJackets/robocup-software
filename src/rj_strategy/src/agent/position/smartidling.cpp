@@ -4,7 +4,7 @@ namespace strategy {
 
 SmartIdle::SmartIdle(int r_id) : Position{r_id, "SmartIdle"} {}
 
-SmartIdle::SmartIdle(const Position& other) : Position{other} {}
+SmartIdle::SmartIdle(Position&& other) : Position{std::move(other)} {}
 
 std::string SmartIdle::get_current_state() { return "SmartIdle"; }
 

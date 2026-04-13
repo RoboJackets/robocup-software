@@ -2,10 +2,14 @@
 
 namespace strategy {
 
-Position::Position(int r_id) : robot_id_(r_id) {}
+Position::Position(int r_id) : robot_id_(r_id) {
+    client_handles_ = std::make_shared<ClientHandles>();
+}
 
 Position::Position(int r_id, std::string position_name)
-    : position_name_{std::move(position_name)}, robot_id_{r_id} {};
+    : position_name_{std::move(position_name)}, robot_id_{r_id} {
+    client_handles_ = std::make_shared<ClientHandles>();
+};
 
 std::optional<RobotIntent> Position::get_task(WorldState& world_state,
                                               FieldDimensions& field_dimensions,
@@ -78,6 +82,10 @@ bool Position::assert_world_state_valid() {
     return true;
 }
 
+void Position::set_client_handles(std::shared_ptr<ClientHandles> client_handles) {
+    client_handles_ = client_handles;
+}
+
 std::deque<communication::PosAgentRequestWrapper> Position::send_communication_request() {
     // Return and reset this member
     return std::exchange(communication_requests_, {});
@@ -140,6 +148,12 @@ communication::PosAgentResponseWrapper Position::receive_communication_request(
             acknowledge_ball_in_transit(*ball_in_transit_request);
         // SPDLOG_INFO("Robot {} acknowledges ball in transit request", robot_id_);
         comm_response.response = ball_in_transit_acknowledge;
+    } else if (std::get_if<communication::PassReceivedRequest>(&request.request)) {
+        // Receiver notifies passer that ball was received. Passer handles state
+        // transition in Offense::receive_communication_request.
+        communication::Acknowledge acknowledge{};
+        communication::generate_uid(acknowledge);
+        comm_response.response = acknowledge;
     } else {
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
@@ -183,14 +197,6 @@ communication::PassResponse Position::receive_pass_request(
     communication::PassResponse pass_response{};
     communication::generate_uid(pass_response);
 
-    if (pass_request.direct) {
-        // Handle direct pass request
-        pass_response.direct_open = true;
-    } else {
-        // TODO: Handle indirect pass request
-        pass_response.direct_open = false;
-    }
-
     return pass_response;
 }
 
@@ -202,6 +208,20 @@ void Position::send_pass_confirmation(u_int8_t target_robot) {
     communication::PosAgentRequestWrapper communication_request{};
     communication_request.request = incoming_ball_request;
     communication_request.target_agents = {target_robot};
+    communication_request.broadcast = false;
+    communication_request.urgent = true;
+
+    communication_requests_.push_back(communication_request);
+}
+
+void Position::send_pass_received_to_passer(u_int8_t passer_robot_id) {
+    communication::PassReceivedRequest pass_received_request{};
+    pass_received_request.from_robot_id = robot_id_;
+    communication::generate_uid(pass_received_request);
+
+    communication::PosAgentRequestWrapper communication_request{};
+    communication_request.request = pass_received_request;
+    communication_request.target_agents = {passer_robot_id};
     communication_request.broadcast = false;
     communication_request.urgent = true;
 

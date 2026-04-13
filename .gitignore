@@ -56,3 +56,5 @@ compile_commands.json
 build/
 install/
 log/
+latency/
+_codeql_detected_source_root

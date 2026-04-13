@@ -47,7 +47,6 @@ set(RJ_STRATEGY_SRC
   src/agent/position/goalie.cpp
   src/agent/position/idle.cpp
   src/agent/position/line.cpp
-  src/agent/position/marker.cpp
   src/agent/position/offense.cpp
   src/agent/position/penalty_non_kicker.cpp
   src/agent/position/penalty_player.cpp
@@ -56,7 +55,6 @@ set(RJ_STRATEGY_SRC
   src/agent/position/seeker.cpp
   src/agent/position/smartidling.cpp
   src/agent/position/solo_offense.cpp
-  src/agent/position/waller.cpp
   src/agent/position/zoner.cpp
 
   # Communication
@@ -64,6 +62,8 @@ set(RJ_STRATEGY_SRC
 
   # Coordinators
   src/coordinator/kicker_picker_client.cpp
+  src/coordinator/marking_client.cpp
+  src/coordinator/waller_client.cpp
 )
 
 # rj_strategy library
@@ -115,6 +115,38 @@ ament_target_dependencies(kicker_picker_node
   ${RJ_STRATEGY_DEPS}
 )
 
+# Marking Node
+add_executable(marking_node
+  ${RJ_STRATEGY_SRC}
+  src/coordinator/marking_client.cpp
+  src/coordinator/marking.cpp
+)
+
+target_include_directories(marking_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+# Waller Node
+add_executable(waller_node
+  ${RJ_STRATEGY_SRC}
+  src/coordinator/waller_client.cpp
+  src/coordinator/waller.cpp
+)
+
+target_include_directories(waller_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(marking_node
+  ${RJ_STRATEGY_DEPS}
+)
+ament_target_dependencies(waller_node
+  ${RJ_STRATEGY_DEPS}
+)
+
 # Agent Action Clients
 add_executable(agent_action_clients
   ${RJ_STRATEGY_SRC}
@@ -146,23 +178,12 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node agent_action_clients
+  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_export_dependencies(
-  rclcpp
-  rclcpp_action
-  rclcpp_components
-  spdlog
-  std_msgs
-  rj_msgs
-  rj_constants
-  rj_convert
-  rj_common
-  rj_geometry
-  rj_param_utils
-  rj_utils
+  ${RJ_STRATEGY_DEPS}
 )
 
 ament_export_targets(${PROJECT_NAME})
