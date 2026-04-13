@@ -2,12 +2,27 @@
 
 namespace strategy {
 
-Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {}
+Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {
+    debug_draw_enabled_ = true;
+}
 
-Goalie::Goalie(Position&& other) : Position{std::move(other)} {}
+Goalie::Goalie(Position&& other) : Position{std::move(other)} {
+    position_name_ = "Goalie";
+    debug_draw_enabled_ = true;
+}
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
+
+    if (debug_draw_enabled_ && debug_drawer_) {
+        auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+        constexpr double kLabelRadius = 0.15;
+        double angle = (robot_id_ * 2.0 * M_PI) / kRobotsPerTeam; 
+        rj_geometry::Point label_offset = {kLabelRadius * std::cos(angle), kLabelRadius * std::sin(angle)};
+
+        debug_drawer_->draw_text(position_name_ + "/" + std::string(state_to_name(latest_state_)), robot_pos + label_offset, Qt::white);
+    }
+
     return state_to_task(intent);
 }
 
