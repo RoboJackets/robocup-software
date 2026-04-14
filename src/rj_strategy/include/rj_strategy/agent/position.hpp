@@ -14,8 +14,10 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/robot_intent.hpp>
+#include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>
@@ -254,6 +256,12 @@ public:
      */
     void set_client_handles(std::shared_ptr<ClientHandles> client_handles);
 
+    /**
+     * @brief Sets the debug drawer for this position. When debug_draw_enabled_
+     * is true, draw calls will be published to the sim/UI each tick.
+     */
+    void set_debug_drawer(std::shared_ptr<rj_drawing::RosDebugDrawer> drawer);
+
 protected:
     Position(int r_id, std::string position_name);
 
@@ -321,6 +329,11 @@ protected:
     // farthest distance the robot is willing to go before it declares it has lost the ball
     static constexpr double ball_lost_distance_ = 0.5;
 
+    // constant for label offset in debug drawing
+    static constexpr double kLabelRadius = 0.15;
+
+    static constexpr double label_angle_constant = 2.0 * M_PI;
+
     // vector of alive robots from the agent action client
     std::array<bool, kNumShells> alive_robots_ = {};
 
@@ -335,6 +348,10 @@ protected:
 
     // Current goalie
     int goalie_id_;
+
+    // Debug drawing support: shared across position swaps via move semantics
+    std::shared_ptr<rj_drawing::RosDebugDrawer> debug_drawer_;
+    bool debug_draw_enabled_ = false;
 
 private:
     /**

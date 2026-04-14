@@ -73,6 +73,29 @@ private:
     State current_state_ = JOINING_WALL;
     std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
+    static constexpr std::string_view state_to_name(State s) {
+        switch (s) {
+            case IDLING:
+                return "IDLING";
+            case JOINING_WALL:
+                return "JOINING_WALL";
+            case WALLING:
+                return "WALLING";
+            case SEARCHING:
+                return "SEARCHING";
+            case RECEIVING:
+                return "RECEIVING";
+            case PASSING:
+                return "PASSING";
+            case FACING:
+                return "FACING";
+            case MARKING:
+                return "ENTERING_MARKING";
+            case ENTERING_MARKING:
+                return "ENTERING_MARKING";
+        }
+    }
+
     bool sent_join_marking_group_request_ = false;
     RJ::Time request_time_;
 
