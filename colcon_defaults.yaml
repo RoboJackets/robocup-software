@@ -9,4 +9,4 @@ build:
 
 test:
     event-handlers:
-        - "console_conhesion+"
+        - "console_cohesion+"
