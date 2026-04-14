@@ -120,7 +120,6 @@ target_link_libraries(planner_node
 )
 
 ament_target_dependencies(planner_node
-  PRIVATE
   ${RJ_PLANNING_DEPS}
 )
 

@@ -72,7 +72,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 ament_target_dependencies(motion_control_node
-  PRIVATE
   rclcpp
   ${RJ_CONTROL_DEPS}
 )
