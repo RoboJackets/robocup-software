@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME} SHARED
   src/external_referee.cpp
   src/internal_referee.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 add_executable(external_referee_node
   src/external_referee_main.cpp

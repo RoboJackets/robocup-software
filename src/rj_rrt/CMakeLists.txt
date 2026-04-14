@@ -42,12 +42,12 @@ endif()
 add_library(${PROJECT_NAME} SHARED
     ${RJ_RRT_SRC}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 add_executable(rrt_viewer
     # SRC Files
     src/rrt-viewer/main.cpp
     src/rrt-viewer/RRTWidget.cpp
-    ${RJ_RRT_SRC}
 
     # QT MOC Headers
     include/rj_rrt/rrt-viewer/RRTWidget.hpp
@@ -75,8 +75,8 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(rrt_viewer
-    PUBLIC
-    ${RJ_RRT_LIBS}
+    PRIVATE
+    ${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml
     Qt5::Quick

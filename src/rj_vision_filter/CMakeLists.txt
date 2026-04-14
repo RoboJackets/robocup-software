@@ -93,7 +93,7 @@ target_include_directories(${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node
-  PUBLIC
+  PRIVATE
   ${RJ_VISION_FILTER_DEPS}
 )
 
