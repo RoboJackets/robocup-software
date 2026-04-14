@@ -62,7 +62,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(motion_control_node
-  PRIVATE
   ${PROJECT_NAME}
 )
 
