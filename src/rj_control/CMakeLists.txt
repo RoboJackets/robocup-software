@@ -47,6 +47,7 @@ add_library(${PROJECT_NAME} SHARED
   src/motion_control.cpp
   src/pid.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(motion_control_node
   PUBLIC
@@ -71,7 +72,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 ament_target_dependencies(motion_control_node
-  PUBLIC
+  PRIVATE
   rclcpp
   ${RJ_CONTROL_DEPS}
 )
