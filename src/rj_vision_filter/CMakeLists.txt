@@ -69,7 +69,6 @@ add_library(${PROJECT_NAME} SHARED
 set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_link_libraries(${PROJECT_NAME}_node
-  PRIVATE
   ${PROJECT_NAME}
 )
 

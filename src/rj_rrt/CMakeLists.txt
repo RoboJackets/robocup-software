@@ -75,7 +75,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(rrt_viewer
-    PRIVATE
     ${PROJECT_NAME}
     Qt5::Core
     Qt5::Qml

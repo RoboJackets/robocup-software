@@ -116,7 +116,6 @@ target_include_directories(planner_node
 )
 
 target_link_libraries(planner_node
-  PRIVATE
   ${PROJECT_NAME}
 )
 
