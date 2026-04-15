@@ -44,27 +44,9 @@ set(RJ_VISION_FILTER_DEPS
 
 add_executable(${PROJECT_NAME}_node
   src/main.cpp
-  src/ball/ball_bounce.cpp
-  src/ball/camera_ball.cpp
-  src/ball/kalman_ball.cpp
-  src/ball/world_ball.cpp
-  src/camera/camera.cpp
-  src/camera/world.cpp
-  src/filter/kalman_filter.cpp
-  src/filter/kalman_filter_2d.cpp
-  src/filter/kalman_filter3_d.cpp
-  src/kick/detector/fast_kick_detector.cpp
-  src/kick/detector/slow_kick_detector.cpp
-  src/kick/estimator/chip_kick_estimator.cpp
-  src/kick/estimator/flat_kick_estimator.cpp
-  src/kick/kick_event.cpp
-  src/robot/camera_robot.cpp
-  src/robot/kalman_robot.cpp
-  src/robot/world_robot.cpp
-  src/vision_filter.cpp
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   src/ball/ball_bounce.cpp
   src/ball/camera_ball.cpp
   src/ball/kalman_ball.cpp
@@ -84,12 +66,10 @@ add_library(${PROJECT_NAME}
   src/robot/world_robot.cpp
   src/vision_filter.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-  Eigen3::Eigen
-  spdlog
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -112,7 +92,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node
-  PUBLIC
   ${RJ_VISION_FILTER_DEPS}
 )
 

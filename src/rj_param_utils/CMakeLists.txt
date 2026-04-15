@@ -13,15 +13,6 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(fmt REQUIRED)
 
-add_executable(global_param_server_node
-  src/global_param_server.cpp
-  src/global_params.cpp
-  src/param.cpp
-  src/ros2_global_param_provider.cpp
-  src/ros2_local_param_provider.cpp
-  src/ros2_param_provider.cpp
-)
-
 add_library(${PROJECT_NAME} SHARED
   src/global_params.cpp
   src/param.cpp
@@ -31,11 +22,7 @@ add_library(${PROJECT_NAME} SHARED
   src/planning/planning_params.cpp
   src/vision/vision_params.cpp
 )
-
-ament_target_dependencies(global_param_server_node
-  rclcpp
-  fmt
-)
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
@@ -46,21 +33,17 @@ target_link_libraries(${PROJECT_NAME}
   fmt
 )
 
-target_link_libraries(global_param_server_node
-  fmt
-)
-
-target_include_directories(global_param_server_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
+
+add_executable(global_param_server_node
+  src/global_param_server.cpp
+)
+
+target_link_libraries(global_param_server_node PRIVATE ${PROJECT_NAME})
 
 ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
 

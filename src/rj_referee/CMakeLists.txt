@@ -43,17 +43,14 @@ add_library(${PROJECT_NAME} SHARED
   src/external_referee.cpp
   src/internal_referee.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 add_executable(external_referee_node
-  src/external_referee.cpp
   src/external_referee_main.cpp
-  src/referee_base.cpp
 )
 
 add_executable(internal_referee_node
-  src/internal_referee.cpp
   src/internal_referee_main.cpp
-  src/referee_base.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -64,17 +61,13 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(external_referee_node
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(internal_referee_node
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -83,29 +76,7 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(external_referee_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_include_directories(internal_referee_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
 ament_target_dependencies(${PROJECT_NAME}
-  PUBLIC
-  ${RJ_REFEREE_DEPS}
-)
-
-ament_target_dependencies(external_referee_node
-  PUBLIC
-  ${RJ_REFEREE_DEPS}
-)
-
-ament_target_dependencies(internal_referee_node
   PUBLIC
   ${RJ_REFEREE_DEPS}
 )

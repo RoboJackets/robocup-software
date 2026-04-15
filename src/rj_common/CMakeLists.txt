@@ -50,6 +50,7 @@ add_library(${PROJECT_NAME} SHARED
   src/planning/trajectory.cpp
   src/radio/packet_convert.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC

@@ -72,6 +72,7 @@ set(RJ_STRATEGY_SRC
 add_library(${PROJECT_NAME} SHARED
   ${RJ_STRATEGY_SRC}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -86,7 +87,6 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Straight Line Test Node
 add_executable(straight_line_test_node
-  ${RJ_STRATEGY_SRC}
   src/testing/straight_line_test.cpp
 )
 
@@ -96,14 +96,16 @@ target_include_directories(straight_line_test_node
   $<INSTALL_INTERFACE:include>
 )
 
+target_link_libraries(straight_line_test_node
+  ${PROJECT_NAME}
+)
+
 ament_target_dependencies(straight_line_test_node
   ${RJ_STRATEGY_DEPS}
 )
 
 # Kicker Picker Node
 add_executable(kicker_picker_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/kicker_picker_client.cpp
   src/coordinator/kicker_picker.cpp
 )
 
@@ -113,14 +115,16 @@ target_include_directories(kicker_picker_node
   $<INSTALL_INTERFACE:include>
 )
 
+target_link_libraries(kicker_picker_node
+  ${PROJECT_NAME}
+)
+
 ament_target_dependencies(kicker_picker_node
   ${RJ_STRATEGY_DEPS}
 )
 
 # Marking Node
 add_executable(marking_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/marking_client.cpp
   src/coordinator/marking.cpp
 )
 
@@ -131,8 +135,6 @@ target_include_directories(marking_node
 )
 # Waller Node
 add_executable(waller_node
-  ${RJ_STRATEGY_SRC}
-  src/coordinator/waller_client.cpp
   src/coordinator/waller.cpp
 )
 
@@ -140,6 +142,14 @@ target_include_directories(waller_node
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(marking_node
+  ${PROJECT_NAME}
+)
+
+target_link_libraries(waller_node
+  ${PROJECT_NAME}
 )
 
 ament_target_dependencies(marking_node
@@ -151,7 +161,6 @@ ament_target_dependencies(waller_node
 
 # Agent Action Clients
 add_executable(agent_action_clients
-  ${RJ_STRATEGY_SRC}
   src/agent/agent_action_client.cpp
 )
 
@@ -159,6 +168,10 @@ target_include_directories(agent_action_clients
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(agent_action_clients
+  ${PROJECT_NAME}
 )
 
 ament_target_dependencies(agent_action_clients
