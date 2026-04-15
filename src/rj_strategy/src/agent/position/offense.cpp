@@ -137,7 +137,7 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done()) {
+            if (check_is_done() || distance_to_ball() < 5 * kOwnBallRadius) {
                 return POSSESSION_START;
             }
 
