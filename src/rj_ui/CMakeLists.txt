@@ -84,6 +84,18 @@ set(SRC_FILES
   qt/log_icons.qrc
 )
 
+set(RJ_UI_NODE_AUTOGEN_FILES
+  include/rj_ui/main_window.hpp
+  include/rj_ui/robot_status_widget.hpp
+  qt/MainWindow.ui
+  qt/RobotStatusWidget.ui
+)
+
+set(RJ_UI_LOG_VIEWER_AUTOGEN_FILES
+  include/rj_ui/log_viewer.hpp
+  qt/LogViewer.ui
+)
+
 set(RJ_UI_DEPS
   rclcpp
   Qt5
@@ -114,14 +126,13 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 add_executable(${PROJECT_NAME}_node
-  # Source Files
   src/main.cpp
-  ${SRC_FILES}
+  ${RJ_UI_NODE_AUTOGEN_FILES}
 )
 
 add_executable(log_viewer_node
   src/log_viewer_main.cpp
-  ${SRC_FILES}
+  ${RJ_UI_LOG_VIEWER_AUTOGEN_FILES}
 )
 
 target_include_directories(${PROJECT_NAME}_node
@@ -146,33 +157,13 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(log_viewer_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME} SHARED
   src/parallel_gradient_ascent_1d.cpp
   src/python_function_wrapper.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC

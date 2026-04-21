@@ -8,6 +8,11 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     client_handles_->marking = std::make_unique<MarkingClient>(node, r_id);
     client_handles_->waller = std::make_unique<WallerClient>(node, r_id);
 
+    auto debug_draw_pub =
+        node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10);
+    strategy_debug_drawer_ = std::make_shared<rj_drawing::RosDebugDrawer>(
+        debug_draw_pub, fmt::format("strategy_{}", r_id));
+
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
@@ -17,10 +22,14 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     }
 
     current_position_->set_client_handles(client_handles_);
+    current_position_->set_debug_drawer(strategy_debug_drawer_);
 }
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
+    // Ensure the child position always has the debug drawer (survives position swaps)
+    current_position_->set_debug_drawer(strategy_debug_drawer_);
+
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
