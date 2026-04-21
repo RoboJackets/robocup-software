@@ -85,6 +85,9 @@ private:
     std::array<uint8_t, 2> alive_robots_buffer_{};
     // if alive_robots_[robot_id] = true => robot[robot_id] is alive
     std::array<bool, kNumShells> alive_robots_{};
+    std::array<uint8_t, kNumShells> dead_ticks_{};
+
+    uint8_t kDeadTickTimeout = 5;
 
     // Keep io_service above the socket
     // https://stackoverflow.com/questions/26243008/error-initializing-a-boost-udp-socket-with-a-boost-io-service

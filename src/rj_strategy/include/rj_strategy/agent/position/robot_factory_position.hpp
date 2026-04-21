@@ -32,7 +32,6 @@
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
-#include "rj_strategy/coordinator/kicker_picker_client.hpp"
 
 namespace strategy {
 
@@ -111,12 +110,18 @@ public:
         current_position_->send_pass_confirmation(target_robot);
     }
 
+    void send_pass_received_to_passer(u_int8_t passer_robot_id) override {
+        current_position_->send_pass_received_to_passer(passer_robot_id);
+    }
+
     void set_override_position(const OverridingPositions& overriding_position);
 
 private:
     std::unique_ptr<Position> current_position_;
 
-    KickerPickerClient kicker_picker_;
+    // Persistent handle to the debug drawer so it survives position swaps
+    std::shared_ptr<rj_drawing::RosDebugDrawer> strategy_debug_drawer_;
+
     OverridingPositions override_play_position_{OverridingPositions::AUTO};
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
@@ -145,10 +150,9 @@ private:
     template <class Pos>
     void set_current_position() {
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
-            // This line requires Pos to implement the constructor Pos(const
-            // Position&)
+            // This line requires Pos to implement the constructor Pos(Position&&)
             current_position_->die();
-            current_position_ = std::make_unique<Pos>(*current_position_);
+            current_position_ = std::make_unique<Pos>(std::move(*current_position_));
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }

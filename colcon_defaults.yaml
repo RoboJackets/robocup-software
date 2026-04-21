@@ -1,0 +1,12 @@
+build:
+    cmake-args:
+        - -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        - -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        - -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    parallel-workers: 2
+    event-handlers:
+        - "console_cohesion+"
+
+test:
+    event-handlers:
+        - "console_cohesion+"

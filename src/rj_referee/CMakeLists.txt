@@ -23,22 +23,34 @@ find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
 
+set(RJ_REFEREE_DEPS
+  rclcpp
+  rclcpp_components
+  Boost
+  fmt
+  spdlog
+  rj_common
+  rj_constants
+  rj_param_utils
+  rj_utils
+  rj_msgs
+  rj_protos
+  rj_config_client
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/referee_base.cpp
   src/external_referee.cpp
   src/internal_referee.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 add_executable(external_referee_node
-  src/external_referee.cpp
   src/external_referee_main.cpp
-  src/referee_base.cpp
 )
 
 add_executable(internal_referee_node
-  src/internal_referee.cpp
   src/internal_referee_main.cpp
-  src/referee_base.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -49,17 +61,13 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(external_referee_node
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(internal_referee_node
-  PUBLIC
-  Boost::boost
-  fmt
-  spdlog
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -68,64 +76,9 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(external_referee_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_include_directories(internal_referee_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
-)
-
-ament_target_dependencies(external_referee_node
-  PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
-)
-
-ament_target_dependencies(internal_referee_node
-  PUBLIC
-  rclcpp
-  rclcpp_components
-  Boost
-  fmt
-  spdlog
-  rj_common
-  rj_constants
-  rj_param_utils
-  rj_utils
-  rj_msgs
-  rj_protos
-  rj_config_client
+  ${RJ_REFEREE_DEPS}
 )
 
 install(

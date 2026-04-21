@@ -13,3 +13,4 @@ PositionRequest[<=1] position_request
 LeaveWallRequest[<=1] leave_wall_request
 ResetScorerRequest[<=1] reset_scorer_request
 IncomingBallRequest[<=1] incoming_ball_request
+PassReceivedRequest[<=1] pass_received_request

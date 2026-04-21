@@ -48,6 +48,10 @@ bool operator==(const IncomingBallRequest& a, const IncomingBallRequest& b) {
     return a.request_uid == b.request_uid;
 }
 
+bool operator==(const PassReceivedRequest& a, const PassReceivedRequest& b) {
+    return a.request_uid == b.request_uid;
+}
+
 bool operator==(const ScorerResponse& a, const ScorerResponse& b) {
     return a.response_uid == b.response_uid;
 }
@@ -144,6 +148,13 @@ void generate_uid(ResetScorerRequest& request) {
 }
 
 void generate_uid(IncomingBallRequest& request) {
+    request_uid_mutex.lock();
+    request.request_uid = request_uid;
+    request_uid++;
+    request_uid_mutex.unlock();
+}
+
+void generate_uid(PassReceivedRequest& request) {
     request_uid_mutex.lock();
     request.request_uid = request_uid;
     request_uid++;

@@ -27,44 +27,7 @@ find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
 
-add_executable(network_radio_node
-  src/network_radio.cpp
-  src/radio.cpp
-)
-
-add_executable(sim_radio_node
-  src/sim_radio.cpp
-  src/radio.cpp
-)
-
-target_link_libraries(network_radio_node
-  PUBLIC
-  spdlog
-  Boost::boost
-  ${FLANN_LIBRARIES}
-)
-
-target_link_libraries(sim_radio_node
-  PUBLIC
-  spdlog
-  Boost::boost
-  ${FLANN_LIBRARIES}
-)
-
-target_include_directories(network_radio_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_include_directories(sim_radio_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-ament_target_dependencies(network_radio_node
-  PUBLIC
+set(RJ_RADIO_DEPS
   spdlog
   rclcpp
   rclcpp_components
@@ -81,27 +44,45 @@ ament_target_dependencies(network_radio_node
   rj_constants
 )
 
-ament_target_dependencies(sim_radio_node
+add_library(${PROJECT_NAME} SHARED
+  src/radio.cpp
+)
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(${PROJECT_NAME}
   PUBLIC
   spdlog
-  rclcpp
-  rclcpp_components
-  Boost
-  Flann
-  rj_common
-  rj_msgs
-  rj_protos
-  rj_utils
-  rj_param_utils
-  rj_strategy
-  rj_geometry
-  rj_planning
-  rj_constants
+  Boost::boost
+  ${FLANN_LIBRARIES}
 )
+
+ament_target_dependencies(${PROJECT_NAME}
+  PUBLIC
+  ${RJ_RADIO_DEPS}
+)
+
+add_executable(network_radio_node src/network_radio.cpp)
+add_executable(sim_radio_node src/sim_radio.cpp)
+
+target_link_libraries(network_radio_node PRIVATE ${PROJECT_NAME})
+target_link_libraries(sim_radio_node PRIVATE ${PROJECT_NAME})
 
 install(
   DIRECTORY include/
   DESTINATION include
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 install(

@@ -3,6 +3,7 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_planning/obstacle_set.hpp>
 #include <rj_rrt/2dplane/PlaneStateSpace.hpp>
 
 namespace planning {
@@ -12,7 +13,7 @@ namespace planning {
  */
 class RoboCupStateSpace : public RRT::StateSpace<rj_geometry::Point> {
 public:
-    RoboCupStateSpace(const FieldDimensions& dims, const rj_geometry::ShapeSet& obstacles)
+    RoboCupStateSpace(const FieldDimensions& dims, const ObstacleSet& obstacles)
         : obstacles_(obstacles), field_dimensions_(dims) {}
 
     rj_geometry::Point randomState() const override {
@@ -54,15 +55,16 @@ public:
         // Ensure that @to doesn't hit any obstacles that @from doesn't. This
         // allows the RRT to start inside an obstacle, but prevents it from
         // entering a new obstacle.
-        for (const auto& shape : obstacles_.shapes()) {
-            if (shape->hit(rj_geometry::Segment(from, to)) && !shape->hit(from))
+        for (const auto& obs : obstacles_.obstacles()) {
+            if (obs->hit(rj_geometry::Segment(from, to)) && !obs->hit(from)) {
                 return false;
+            }
         }
         return true;
     }
 
 private:
-    const rj_geometry::ShapeSet& obstacles_;
+    const ObstacleSet& obstacles_;
     const FieldDimensions field_dimensions_;
 };
 

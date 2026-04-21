@@ -21,6 +21,7 @@ NetworkRadio::NetworkRadio()
 
     start_robot_status_receive();
     start_alive_robots_receive();
+    std::fill(dead_ticks_.begin(), dead_ticks_.end(), 0);
 }
 
 void NetworkRadio::start_robot_status_receive() {
@@ -115,12 +116,13 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
     uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
     for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
         if ((alive & (1 << robot_id)) != 0) {
-            alive_robots_[robot_id] = true;
+            dead_ticks_[robot_id] = 0;
         } else {
-            alive_robots_[robot_id] = false;
+            dead_ticks_[robot_id]++;
         }
-    }
 
+        alive_robots_[robot_id] = dead_ticks_[robot_id] <= kDeadTickTimeout;
+    }
     rj_msgs::msg::AliveRobots alive_message{};
     alive_message.alive_robots = alive_robots_;
     publish_alive_robots(alive_message);

@@ -26,7 +26,7 @@ void draw_bi_rrt(const RRT::BiRRT<Point>& bi_rrt, DebugDrawer* debug_drawer, uns
     draw_rrt(bi_rrt.goalTree(), debug_drawer, shell_id);
 }
 
-vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
+vector<Point> run_rrt_helper(Point start, Point goal, const ObstacleSet& obstacles,
                              const vector<Point>& waypoints, bool straight_line) {
     auto state_space =
         std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
@@ -53,7 +53,7 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ShapeSet& obstacles,
     return std::move(points);
 }
 
-vector<Point> generate_rrt(Point start, Point goal, const ShapeSet& obstacles,
+vector<Point> generate_rrt(Point start, Point goal, const ObstacleSet& obstacles,
                            const vector<Point>& waypoints) {
     return run_rrt_helper(start, goal, obstacles, waypoints, false);
 }

@@ -87,6 +87,29 @@ private:
     // current state of Goalie (state machine)
     State latest_state_ = IDLING;
 
+    static constexpr std::string_view state_to_name(State s) {
+        switch (s) {
+            case IDLING:
+                return "IDLING";
+            case BLOCKING:
+                return "BLOCKING";
+            case CLEARING:
+                return "CLEARING";
+            case PREPARING_SHOT:
+                return "PREPARING_SHOT";
+            case BALL_NOT_FOUND:
+                return "BALL_NOT_FOUND";
+            case RECEIVING:
+                return "RECEIVING";
+            case PASSING:
+                return "PASSING";
+            case FACING:
+                return "FACING";
+            case PENALTY:
+                return "PENALTY";
+        }
+    }
+
     rj_geometry::Point penalty_location();
 };
 

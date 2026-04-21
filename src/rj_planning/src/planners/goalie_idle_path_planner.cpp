@@ -7,16 +7,13 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     // an easy way to convert from one PlanRequest to another
 
     // Collect obstacles
-    rj_geometry::ShapeSet static_obstacles;
-    std::vector<DynamicObstacle> dynamic_obstacles;
-    Trajectory ball_trajectory;
+    ObstacleSet obstacles;
     bool ignore_ball = true;
-    fill_obstacles(plan_request, &static_obstacles, &dynamic_obstacles, ignore_ball,
-                   &ball_trajectory);
+    fill_obstacles(plan_request, obstacles, ignore_ball);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(plan_request.start.position())) {
+    if (obstacles.hit(plan_request.start.position())) {
         reset();
         return Trajectory();
     }
@@ -30,9 +27,9 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 
     // call Replanner to generate a Trajectory
     Trajectory trajectory = Replanner::create_plan(
-        Replanner::PlanParams{plan_request.start, target, static_obstacles, dynamic_obstacles,
-                              plan_request.field_dimensions, plan_request.constraints,
-                              angle_function, plan_request.shell_id, RJ::Seconds(3.0)},
+        Replanner::PlanParams{plan_request.start, target, obstacles, plan_request.field_dimensions,
+                              plan_request.constraints, angle_function, plan_request.shell_id,
+                              RJ::Seconds(3.0)},
         std::move(previous_));
 
     // Debug drawing

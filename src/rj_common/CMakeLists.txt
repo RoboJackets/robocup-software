@@ -23,6 +23,19 @@ find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
 
+set(RJ_COMMON_DEPS
+  rj_msgs
+  Eigen3
+  rclcpp
+  rclcpp_components
+  rj_convert
+  rj_protos
+  rj_geometry
+  rj_param_utils
+  rj_utils
+  rj_drawing_msgs
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/debug_drawer.cpp
   src/field_dimensions.cpp
@@ -37,20 +50,12 @@ add_library(${PROJECT_NAME} SHARED
   src/planning/trajectory.cpp
   src/radio/packet_convert.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  rclcpp_components
-  rj_msgs
   Qt5
-  Eigen3
-  rj_protos
-  rj_convert
-  rj_geometry
-  rj_param_utils
-  rj_utils
-  rj_drawing_msgs
+  ${RJ_COMMON_DEPS}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -72,16 +77,7 @@ ament_export_dependencies(
   Qt5Core
   Qt5Network
   Qt5Widgets
-  rj_msgs
-  Eigen3
-  rclcpp
-  rclcpp_components
-  rj_convert
-  rj_protos
-  rj_geometry
-  rj_param_utils
-  rj_utils
-  rj_drawing_msgs
+  ${RJ_COMMON_DEPS}
 )
 
 install(

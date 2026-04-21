@@ -59,7 +59,6 @@ constexpr auto kDebugTextTopic{"gameplay/debug_text"};
 
 namespace planning::topics {
 
-constexpr auto kGlobalObstaclesTopic{"planning/global_obstacles"};
 constexpr auto kDefAreaObstaclesTopic{"planning/def_area_obstacles"};
 
 static inline std::string trajectory_topic(int robot_id) {

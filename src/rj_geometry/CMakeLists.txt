@@ -21,6 +21,15 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
 
+set(RJ_GEOMETRY_DEPS
+  Eigen3
+  fmt
+  rj_protos
+  rj_constants
+  rj_convert
+  rj_geometry_msgs
+)
+
 add_library(${PROJECT_NAME} SHARED
   src/arc.cpp
   src/circle.cpp
@@ -33,6 +42,7 @@ add_library(${PROJECT_NAME} SHARED
   src/stadium_shape.cpp
   src/transform_matrix.cpp
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -42,13 +52,8 @@ target_include_directories(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  Eigen3
   Qt5
-  fmt
-  rj_protos
-  rj_constants
-  rj_convert
-  rj_geometry_msgs
+  ${RJ_GEOMETRY_DEPS}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -74,13 +79,8 @@ install(
 )
 
 ament_export_dependencies(
-  Eigen3
   Qt5Core
-  fmt
-  rj_protos
-  rj_constants
-  rj_convert
-  rj_geometry_msgs
+  ${RJ_GEOMETRY_DEPS}
 )
 
 if(BUILD_TESTING)

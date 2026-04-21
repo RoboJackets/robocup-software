@@ -14,8 +14,10 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/robot_intent.hpp>
+#include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>
@@ -40,10 +42,21 @@
 #include <rj_msgs/msg/position_request.hpp>
 #include <rj_msgs/msg/test_response.hpp>
 
+// Coordinators
+#include "rj_strategy/coordinator/kicker_picker_client.hpp"
+#include "rj_strategy/coordinator/marking_client.hpp"
+#include "rj_strategy/coordinator/waller_client.hpp"
+
 // tell compiler this class exists, but no need to import the whole header
 class AgentActionClient;
 
 namespace strategy {
+
+struct ClientHandles {
+    std::unique_ptr<KickerPickerClient> kicker_picker;
+    std::unique_ptr<MarkingClient> marking;
+    std::unique_ptr<WallerClient> waller;
+};
 
 /*
  * Position is an abstract superclass. Its subclasses handle strategy logic.
@@ -60,7 +73,7 @@ class Position {
 public:
     Position(int r_id);
     virtual ~Position() = default;
-    Position(const Position& other) = default;
+    Position(Position&& other) = default;
 
     /**
      * @brief return a RobotIntent to be sent to PlannerNode by AC; nullopt
@@ -164,6 +177,15 @@ public:
     virtual void send_pass_confirmation(u_int8_t target_robot);
 
     /**
+     * @brief tell the passer that this robot has received/controlled the ball.
+     * Called by the receiver when it has the ball so the passer can leave
+     * PASSING_FINISHED and return to DEFAULT.
+     *
+     * @param passer_robot_id the robot that passed the ball (recipient of this message)
+     */
+    virtual void send_pass_received_to_passer(u_int8_t passer_robot_id);
+
+    /**
      * @brief acknowledges the pass confirmation from another robot
      *
      * @param incoming_ball_request the request that a ball will be coming to this robot
@@ -228,6 +250,17 @@ public:
      * @brief setter for goalie id
      */
     virtual void set_goalie_id(int goalie_id);
+
+    /**
+     * @brief allows RobotFactoryPosition to synchronize with its client handles
+     */
+    void set_client_handles(std::shared_ptr<ClientHandles> client_handles);
+
+    /**
+     * @brief Sets the debug drawer for this position. When debug_draw_enabled_
+     * is true, draw calls will be published to the sim/UI each tick.
+     */
+    void set_debug_drawer(std::shared_ptr<rj_drawing::RosDebugDrawer> drawer);
 
 protected:
     Position(int r_id, std::string position_name);
@@ -296,6 +329,11 @@ protected:
     // farthest distance the robot is willing to go before it declares it has lost the ball
     static constexpr double ball_lost_distance_ = 0.5;
 
+    // constant for label offset in debug drawing
+    static constexpr double kLabelRadius = 0.15;
+
+    static constexpr double label_angle_constant = 2.0 * M_PI;
+
     // vector of alive robots from the agent action client
     std::array<bool, kNumShells> alive_robots_ = {};
 
@@ -305,8 +343,15 @@ protected:
     // protected to allow WorldState to be accessed directly by deriveed
     WorldState* last_world_state_;
 
+    // Client Handles
+    std::shared_ptr<ClientHandles> client_handles_;
+
     // Current goalie
     int goalie_id_;
+
+    // Debug drawing support: shared across position swaps via move semantics
+    std::shared_ptr<rj_drawing::RosDebugDrawer> debug_drawer_;
+    bool debug_draw_enabled_ = false;
 
 private:
     /**

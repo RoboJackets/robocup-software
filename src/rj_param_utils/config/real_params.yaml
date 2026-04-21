@@ -4,15 +4,52 @@
 
 /control:
   ros__parameters:
-    max_acceleration: 1.0
+    robot_0:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 5.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_1:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 5.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_2:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 5.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_3:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 5.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_4:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 10.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    robot_5:
+      rotation_kd: 0.5
+      rotation_ki: 0.0
+      rotation_kp: 5.0
+      translation_kd: 0.45
+      translation_ki: 0.0
+      translation_kp: 3.0
+    max_acceleration: 2.0
+    max_angular_velocity: 1.4
     max_velocity: 1.0
-    rotation_kd: 0.0
-    rotation_ki: 0.0
-    rotation_kp: 0.0
     rotation_windup: 0
-    translation_kd: 0.3
-    translation_ki: 0.0
-    translation_kp: 0.6
     translation_windup: 0
     use_sim_time: false
 
@@ -28,12 +65,12 @@
       robot:
         chip_angle: 40.0
         max_acceleration: 2.0
-        max_chip_speed: 4.0
+        max_chip_speed: 15.0
         max_dribbler_speed: 2000.0
-        max_kick_speed: 7.0
+        max_kick_speed: 15.0
         max_speed: 2.0
         min_chip_speed: 0.5
-        min_kick_speed: 1.0
+        min_kick_speed: 0.0
         min_safe_kick_power: 64
         robot_radius: 0.09
     use_sim_time: false
@@ -47,7 +84,7 @@
   ros__parameters:
     collect:
       approach_accel_scale: 0.7
-      approach_dist_target: 0.04
+      approach_dist_target: 0.15
       ball_speed_approach_direction_cutoff: 0.1
       control_accel_scale: 0.5
       dist_cutoff_to_approach: 1.0
@@ -58,10 +95,10 @@
       vel_cutoff_to_control: 0.3
       velocity_control_scale: 0.5
     constraints:
-      max_rotational_accel: 3.0
-      max_rotational_speed: 3.0
-      max_translational_accel: 3.0
-      max_translational_speed: 2.0
+      max_rotational_accel: 1.4
+      max_rotational_speed: 1.4
+      max_translational_accel: 1.0
+      max_translational_speed: 1.0
     escape:
       goal_change_threshold: 0.9
       step_size: 0.1
@@ -91,6 +128,12 @@
       search_start_dist: 0.0
       shortcut_dist: 0.09
       target_point_gain: 0.5
+    line_test:
+      start_x: 1.0
+      start_y: 1.0
+      end_x: -1.0
+      end_y: 1.0
+      robot_id: 1
     timeout: 0.1
     use_sim_time: false
 

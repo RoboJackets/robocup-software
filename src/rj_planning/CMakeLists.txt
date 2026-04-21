@@ -55,9 +55,6 @@ set(RJ_PLANNING_SRC
   src/planner_node.cpp
   src/trajectory_collection.cpp
   src/trajectory_utils.cpp
-  src/obstacle.cpp
-  src/static_obstacle.cpp
-  src/stadium_obstacle.cpp
 
   # Planners
   src/planners/collect_path_planner.cpp
@@ -88,6 +85,7 @@ set(RJ_PLANNING_SRC
 add_library(${PROJECT_NAME} SHARED
   ${RJ_PLANNING_SRC}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -107,7 +105,6 @@ ament_target_dependencies(${PROJECT_NAME}
 
 # Planner Node
 add_executable(planner_node
-  ${RJ_PLANNING_SRC}
   src/main.cpp
 )
 
@@ -118,12 +115,10 @@ target_include_directories(planner_node
 )
 
 target_link_libraries(planner_node
-  PUBLIC
-  ${RJ_PLANNING_LIBS}
+  ${PROJECT_NAME}
 )
 
 ament_target_dependencies(planner_node
-  PUBLIC
   ${RJ_PLANNING_DEPS}
 )
 

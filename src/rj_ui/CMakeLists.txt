@@ -84,19 +84,55 @@ set(SRC_FILES
   qt/log_icons.qrc
 )
 
+set(RJ_UI_NODE_AUTOGEN_FILES
+  include/rj_ui/main_window.hpp
+  include/rj_ui/robot_status_widget.hpp
+  qt/MainWindow.ui
+  qt/RobotStatusWidget.ui
+)
+
+set(RJ_UI_LOG_VIEWER_AUTOGEN_FILES
+  include/rj_ui/log_viewer.hpp
+  qt/LogViewer.ui
+)
+
+set(RJ_UI_DEPS
+  rclcpp
+  Qt5
+  ament_index_cpp
+  Boost
+  Protobuf
+  spdlog
+  std_msgs
+  fmt
+  Flann
+  rj_common
+  rj_param_utils
+  rj_protos
+  rj_geometry
+  rj_utils
+  rj_planning
+  rj_constants
+  rj_convert
+  rj_msgs
+  rj_strategy
+  rj_referee
+  rj_config_client
+  rj_topic_utils
+)
+
 add_library(${PROJECT_NAME} SHARED
   ${SRC_FILES}
 )
 
 add_executable(${PROJECT_NAME}_node
-  # Source Files
   src/main.cpp
-  ${SRC_FILES}
+  ${RJ_UI_NODE_AUTOGEN_FILES}
 )
 
 add_executable(log_viewer_node
   src/log_viewer_main.cpp
-  ${SRC_FILES}
+  ${RJ_UI_LOG_VIEWER_AUTOGEN_FILES}
 )
 
 target_include_directories(${PROJECT_NAME}_node
@@ -121,33 +157,13 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(log_viewer_node
-  PUBLIC
-  Boost::boost
-  Qt5::Widgets
-  Qt5::Xml
-  Qt5::Core
-  Qt5::OpenGL
-  Qt5::Network
-  Qt5::Svg
-  protobuf::libprotobuf
-  spdlog
-  fmt
-  ${FLANN_LIBRARIES}
+  PRIVATE
+  ${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -167,80 +183,17 @@ target_link_libraries(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}_node
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 ament_target_dependencies(log_viewer_node
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  rclcpp
-  Qt5
-  ament_index_cpp
-  Boost
-  Protobuf
-  spdlog
-  std_msgs
-  fmt
-  Flann
-  rj_common
-  rj_param_utils
-  rj_protos
-  rj_geometry
-  rj_utils
-  rj_planning
-  rj_constants
-  rj_convert
-  rj_msgs
-  rj_strategy
-  rj_referee
-  rj_config_client
-  rj_topic_utils
+  ${RJ_UI_DEPS}
 )
 
 install(
