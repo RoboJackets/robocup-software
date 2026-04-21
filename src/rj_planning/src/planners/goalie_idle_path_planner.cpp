@@ -22,7 +22,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Create a new PathTargetMotionCommand to fill in with desired idle_pt
-    auto idle_pt = get_idle_pt(plan_request.world_state, plan_request.field_dimensions);
+    auto idle_pt = get_idle_pt(plan_request.world_state, plan_request.shell_id);
     LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
@@ -41,28 +41,31 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
             rj_geometry::Circle(target.position, static_cast<float>(draw_radius)), draw_color);
     }
 
+    if (!goalie_positions_initialized) {
+        left_goal_post = {plan_request.field_dimensions->our_left_goal_post_coordinate().x(), y_distance_from_goal};
+        right_goal_post = {plan_request.field_dimensions->our_right_goal_post_coordinate().x(), y_distance_from_goal};
+        goalie_positions_initialized = true;
+    }
+    
     // Cache current Trajectory, return
     previous_ = trajectory;
     return trajectory;
 }
 
-rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state, const FieldDimensions* field_dimensions) {
-    const rj_geometry::Point current_pos =
-        world_state->get_robot(true, 0).pose.position();
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state, int goalie_id) {
+    const rj_geometry::Point current_position =
+        world_state->get_robot(true, goalie_id).pose.position();
+        
+    static bool moving_towards_left = true;
 
-    static bool screen_dir = true;
-    
-    rj_geometry::Point left_pt = {field_dimensions->our_left_goal_post_coordinate().x(), 0.5}; // {1.0, 0.5}; // TODO: make the planner use field dimensions instead of hardcoding
-    rj_geometry::Point right_pt = {field_dimensions->our_right_goal_post_coordinate().x(), 0.5}; // {-1.0, 0.5}; // TODO: same as above
-
-    rj_geometry::Point target = screen_dir ? left_pt : right_pt;
+    goal_target = moving_towards_left ? left_goal_post : right_goal_post;
 
     // switch directions when close
-    if (current_pos.dist_to(target) <= 0.05) {
-        screen_dir = !screen_dir;
+    if (current_position.dist_to(goal_target) <= tolerance_for_switching) {
+        moving_towards_left = !moving_towards_left;
     }
 
-    return target;
+    return goal_target;
 }
 
 void GoalieIdlePathPlanner::reset() {}

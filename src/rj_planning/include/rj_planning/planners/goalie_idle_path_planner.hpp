@@ -35,12 +35,18 @@ public:
      * @return Point for Goalie to stand in when no shot is coming. Expects
      * ball to be slow.
      */
-    static rj_geometry::Point get_idle_pt(const WorldState* world_state, const FieldDimensions* field_dimensions);
+    rj_geometry::Point get_idle_pt(const WorldState* world_state, int goalie_id);
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
 
 private:
     Trajectory previous_{};
+    rj_geometry::Point left_goal_post;
+    rj_geometry::Point right_goal_post;
+    rj_geometry::Point goal_target;
+    static constexpr double y_distance_from_goal = 0.1;
+    static constexpr double tolerance_for_switching = 0.05;
+    bool goalie_positions_initialized = false;
 };
 
 }  // namespace planning
