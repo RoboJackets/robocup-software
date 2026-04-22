@@ -47,12 +47,6 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
 std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
-    if (should_force_test_subject(motion_test_robot_id_, robot_id_, alive_robots_,
-                                  current_play_state_)) {
-        set_current_position<TestSubject>();
-        return current_position_->get_task(*last_world_state_, field_dimensions_,
-                                           current_play_state_);
-    }
 
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
