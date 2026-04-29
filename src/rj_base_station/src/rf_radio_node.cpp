@@ -94,7 +94,7 @@ RFRadioNode::RFRadioNode() : Node("radio"), running_(true) {
     radio_.setChannel(channel);
     radio_.setDataRate(RF24_1MBPS);
     radio_.stopListening();
-    radio_.openReadingPipe(1, rtp::kBaseStationAddresses[blue_team_ ? 0 : 1][0].data());
+    radio_.openReadingPipe(1, rtp::kBaseStationAddresses[blue_team_ ? 0 : 1].data());
 
     chip_ = gpiod_chip_open("/dev/gpiochip0");
     if (!chip_) {
@@ -147,7 +147,7 @@ void RFRadioNode::send_motion_commands() {
             manipulator_setpoints_[robot_id]);
         radio_.write(&message, rtp::ControlMessage::kSize);
     }
-    radio_.openReadingPipe(1, rtp::kBaseStationAddresses[blue_team_ ? 0 : 1][0].data());
+    radio_.openReadingPipe(1, rtp::kBaseStationAddresses[blue_team_ ? 0 : 1].data());
     radio_.startListening();
 }
 

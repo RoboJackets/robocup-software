@@ -27,17 +27,10 @@ namespace rtp {
 /**
  * @brief The radio addresses for the blue and yellow team for both radios
  */
-static constexpr std::array<std::array<std::array<uint8_t, 5>, 2>, 2> kBaseStationAddresses = {
-    {{{
-         // Blue Team
-         {{0xE7, 0xE7, 0xE7, 0xE7, 0xE7}},  // Radio 1
-         {{0xB6, 0xB6, 0xB6, 0xB6, 0xB6}}   // Radio 2
-     }},
-     {{
-         // Yellow Team
-         {{0xA4, 0xA4, 0xA4, 0xA4, 0xA4}},  // Radio 1
-         {{0x63, 0x63, 0x63, 0x63, 0x63}}   // Radio 2
-     }}}};
+static constexpr std::array<std::array<uint8_t, 5>, 2> kBaseStationAddresses = {{
+    {{0xE7, 0xE7, 0xE7, 0xE7, 0xE7}},  // Radio 1
+    {{0xA4, 0xA4, 0xA4, 0xA4, 0xA4}},  // Radio 1
+}};
 
 /**
  * @brief The radio addresses for the robots for both teams. The first index is the team (0 for
