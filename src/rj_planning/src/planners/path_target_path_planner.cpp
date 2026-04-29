@@ -1,5 +1,7 @@
 #include "rj_planning/planners/path_target_path_planner.hpp"
 
+#include <rj_common/utils.hpp>
+
 using namespace rj_geometry;
 
 namespace planning {
@@ -23,8 +25,12 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     // Cache the start and goal instants for is_done()
     cached_target_instant_ = target_instant;
     cached_start_instant_ = request.start.linear_motion();
+    cached_start_heading_ = request.start.heading();
 
     AngleFunction angle_function = get_angle_function(request);
+
+    LinearMotionInstant target_for_angle{target_instant.position, rj_geometry::Point{0, 0}};
+    cached_target_angle_ = angle_function(target_for_angle, cached_start_heading_.value(), nullptr);
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::create_plan(
@@ -42,23 +48,23 @@ bool PathTargetPathPlanner::is_done() const {
         return false;
     }
 
-    // TODO(Kevin): also, should enforce the desired angle
-    // right now there is a convoluted chain
-    // PathTargetPathPlanner->Replanner->plan_angles which plans angles depending
-    // on AngleFunction (either desired face point or desired face angle).
-    // nowhere in the chain is there a check if PathTargetPathPlanner actually is
-    // getting to the desired angle.
-    //
-    // may be related to issue #1506?
     double position_tolerance = 1e-2;
     double velocity_tolerance = 1e-2;
-    return LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
-                                              cached_target_instant_.value(), position_tolerance,
-                                              velocity_tolerance) &&
-           cached_target_instant_;
-    // TODO(Kevin): in theory this should work as LinearMotionInstant has
-    // tolerance built into its == overload, but in practice it doesn't
-    /* return cached_start_instant_ == cached_target_instant_; */
+    if (!LinearMotionInstant::nearly_equals(cached_start_instant_.value(),
+                                            cached_target_instant_.value(), position_tolerance,
+                                            velocity_tolerance)) {
+        return false;
+    }
+
+    if (cached_start_heading_.has_value() && cached_target_angle_.has_value()) {
+        constexpr double angle_tolerance = 0.1;
+        if (std::abs(fix_angle_radians(cached_start_heading_.value() -
+                                       cached_target_angle_.value())) > angle_tolerance) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& request) {

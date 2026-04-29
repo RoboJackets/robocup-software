@@ -64,6 +64,8 @@ private:
     // vars to tell if is_done
     std::optional<LinearMotionInstant> cached_start_instant_;
     std::optional<LinearMotionInstant> cached_target_instant_;
+    std::optional<double> cached_start_heading_;
+    std::optional<double> cached_target_angle_;
 };
 
 }  // namespace planning
