@@ -1,0 +1,19 @@
+/radio_0/radio_0:
+  ros__parameters:
+    robots: [0, 1, 2]
+    hz: 100
+    csn: 0 # pin 8 <- /dev/spidev0.0
+    ce: 25
+    irq: 24
+    pa: "low"
+    channel: 102
+
+/radio_1/radio_1:
+  ros__parameters:
+    robots: [3, 4, 5]
+    hz: 100
+    csn: 12 # pin 16 <- /dev/spidev1.2
+    ce: 26
+    irq: 13
+    pa: "low"
+    channel: 0

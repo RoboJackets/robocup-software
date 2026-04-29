@@ -7,6 +7,7 @@
   <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
   <license>TODO: License declaration</license>
 
+  <depend>rclcpp</depend>
   <depend>eigen3_cmake_modules</depend>
   <depend>qt5</depend>
   <depend>fmt</depend>

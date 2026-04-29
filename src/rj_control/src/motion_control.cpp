@@ -67,6 +67,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
     error_x_pub_ =
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_x", 10);
+
     error_y_pub_ =
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(

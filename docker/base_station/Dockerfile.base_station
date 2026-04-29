@@ -1,0 +1,63 @@
+FROM ros:humble-ros-base AS builder
+
+WORKDIR /ws
+
+# Install Dependencies
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y qtbase5-dev \
+    qtchooser \
+    qt5-qmake \
+    qtbase5-dev-tools \
+    qttools5-dev-tools \
+    libqt5opengl5-dev \
+    libqt5svg5-dev \
+    qtdeclarative5-dev \
+    libboost-all-dev \
+    build-essential \
+    libeigen3-dev \
+    protobuf-compiler \
+    libprotobuf-dev \
+    libfmt-dev \
+    python3-colcon-common-extensions \
+    ros-humble-rcutils
+
+# Install dependencies
+COPY ./src/rj_constants/package.xml /ws/src/rj_constants/package.xml
+COPY ./src/rj_geometry_msgs/package.xml /ws/src/rj_geometry_msgs/package.xml
+COPY ./src/rj_msgs/package.xml /ws/src/rj_msgs/package.xml
+COPY ./src/rj_base_station/package.xml /ws/src/rj_base_station/package.xml
+
+RUN . /opt/ros/humble/setup.sh && rosdep install --from-paths /ws/src --ignore-src -r -y
+
+# Install rj_constants
+COPY ./src/rj_constants /ws/src/rj_constants
+RUN . /opt/ros/humble/setup.sh && colcon build --packages-select rj_constants
+
+# Install rj_geometry_msgs
+COPY ./src/rj_geometry_msgs /ws/src/rj_geometry_msgs
+RUN . /opt/ros/humble/setup.sh && . /ws/install/local_setup.sh && colcon build --packages-select rj_geometry_msgs
+
+# Install rj_msgs
+COPY ./src/rj_msgs /ws/src/rj_msgs
+RUN . /opt/ros/humble/setup.sh && . /ws/install/local_setup.sh && \
+    export LD_LIBRARY_PATH=/opt/ros/humble/lib:${LD_LIBRARY_PATH} && \
+    colcon build --packages-select rj_msgs \
+    --cmake-args -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+
+# Install rj_base_station
+COPY ./src/rj_base_station /ws/src/rj_base_station
+RUN . /opt/ros/humble/setup.sh && . /ws/install/local_setup.sh && colcon build --packages-select rj_base_station
+
+FROM ros:humble-ros-base AS runner
+
+RUN apt-get update && \
+    apt-get install libgpiod2 -y && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /ws/install ./install
+
+# Copy and Run the Entrypoint
+COPY ./docker/base_station/base-station-entrypoint.sh /ws/entrypoint.sh
+RUN chmod +x /ws/entrypoint.sh
+ENTRYPOINT ["/ws/entrypoint.sh"]

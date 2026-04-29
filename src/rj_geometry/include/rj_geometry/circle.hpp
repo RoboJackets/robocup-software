@@ -36,9 +36,7 @@ public:
     // As long as one is specified, the other is calculated lazily.
 
     // Radius squared
-    float radius_sq() const {
-        return rsq_;
-    }
+    float radius_sq() const { return rsq_; }
 
     void radius_sq(float value) {
         rsq_ = value;
@@ -46,9 +44,7 @@ public:
     }
 
     // Radius
-    float radius() const {
-        return r_;
-    }
+    float radius() const { return r_; }
 
     void radius(float value) {
         r_ = value;
@@ -74,8 +70,7 @@ public:
     // are modified, where n is the return value.
     int intersects(const Line& line, Point* i = nullptr) const;
 
-    bool tangent_points(Point src, Point* p1 = nullptr,
-                       Point* p2 = nullptr) const;
+    bool tangent_points(Point src, Point* p1 = nullptr, Point* p2 = nullptr) const;
 
     /// finds the point on the circle closest to @p
     Point nearest_point(Point p) const;
@@ -95,4 +90,4 @@ protected:
     // Radius squared
     float rsq_;
 };
-}
+}  // namespace rj_geometry
