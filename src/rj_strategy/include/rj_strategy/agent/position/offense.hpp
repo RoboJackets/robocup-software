@@ -96,9 +96,9 @@ private:
             case SEEKING:
                 return RJ::Seconds{-1};
             case POSSESSION:
-                return RJ::Seconds{5};
+                return RJ::Seconds{2};
             case POSSESSION_START:
-                return RJ::Seconds{5};
+                return RJ::Seconds{2};
             case PASSING:
                 return RJ::Seconds{5};
             case PASSING_FINISHED:
@@ -190,7 +190,7 @@ private:
     static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
     // Used to tell if an enemy is close enough to block a shot
-    static constexpr double kEnemyTooCloseRadius{kStealBallRadius};
+    static constexpr double kEnemyTooCloseRadius{0.18};
 
     static constexpr double kMinPassDistance{0.5};
 

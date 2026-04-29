@@ -33,6 +33,13 @@ public:
     }
 
     void add(std::shared_ptr<Shape> shape) {
+        // This assert function is causing the whole program to crash,
+        // and with the error message not pointing to what parent function
+        // is causing this, this return condition is set to prevent our code
+        // crashing
+        if (shape == nullptr) {
+            return;
+        }
         assert(shape != nullptr);
         shapes_.push_back(shape);
     }

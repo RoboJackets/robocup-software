@@ -59,7 +59,7 @@ Offense::State Offense::next_state() {
         case SEEKING: {
             // If the ball seems "stealable", we should switch to STEALING
             if (can_steal_ball()) {
-                return STEALING;
+                return SHOOTING;
             }
 
             // If we need to get a new seeking target, restart seeking
@@ -137,7 +137,7 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done()) {
+            if (check_is_done()) { // || distance_to_ball() < kOwnBallRadius
                 return POSSESSION_START;
             }
 
