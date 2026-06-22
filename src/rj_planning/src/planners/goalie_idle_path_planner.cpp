@@ -50,9 +50,9 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
 rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const FieldDimensions* field_dimensions) {
     // Sweep back and forth across the goal mouth
 
-    const double half_goal_width = field_dimensions->goal_width() / 2.0;
+    const double sweep_amplitude = kSweepFraction * field_dimensions->goal_width() / 2.0;
     const double seconds = RJ::Seconds(RJ::now().time_since_epoch()).count();
-    const double x = half_goal_width * std::sin(seconds * kSweepRate);
+    const double x = sweep_amplitude * std::sin(seconds * kSweepRate);
 
     return rj_geometry::Point{x, kGoalLineOffset};
 }

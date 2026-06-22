@@ -45,9 +45,12 @@ private:
 
     // How fast the goalie sweeps across the goal mouth, in rad/s of the
     // underlying sine wave (higher = faster pacing).
-    static constexpr double kSweepRate = 1.0;
+    static constexpr double kSweepRate = 1.2;
     // How far in front of the goal line (m) the goalie idles.
-    static constexpr double kGoalLineOffset = 0.1;
+    static constexpr double kGoalLineOffset = 0.2;
+    // Fraction of the goal width the goalie sweeps across (0-1). 1.0 sweeps
+    // all the way to each post; smaller values keep it nearer the center.
+    static constexpr double kSweepFraction = 0.75;
 };
 
 }  // namespace planning
