@@ -32,21 +32,22 @@ public:
     [[nodiscard]] bool is_done() const override;
 
     /*
-     * @return Point for Goalie to stand in when no shot is coming. Expects
-     * ball to be slow.
+     * @return Point for the goalie to idle at when no shot is coming. Sweeps
+     * back and forth across the goal mouth as a function of time.
      */
-    rj_geometry::Point get_idle_pt(const WorldState* world_state, int goalie_id);
+    static rj_geometry::Point get_idle_pt(const FieldDimensions* field_dimensions);
+
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;
 
 private:
     Trajectory previous_{};
-    rj_geometry::Point left_goal_post;
-    rj_geometry::Point right_goal_post;
-    rj_geometry::Point goal_target;
-    static constexpr double y_distance_from_goal = 0.1;
-    static constexpr double tolerance_for_switching = 0.05;
-    bool goalie_positions_initialized = false;
+
+    // How fast the goalie sweeps across the goal mouth, in rad/s of the
+    // underlying sine wave (higher = faster pacing).
+    static constexpr double kSweepRate = 1.0;
+    // How far in front of the goal line (m) the goalie idles.
+    static constexpr double kGoalLineOffset = 0.1;
 };
 
 }  // namespace planning

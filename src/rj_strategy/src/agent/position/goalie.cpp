@@ -4,7 +4,6 @@ namespace strategy {
 
 Goalie::Goalie(int r_id) : Position(r_id, "Goalie") { debug_draw_enabled_ = true; }
 
-// Goalie::Goalie(const Position& other) : Position{other} {}
 Goalie::Goalie(Position&& other) : Position{std::move(other)} {
     position_name_ = "Goalie";
     debug_draw_enabled_ = true;

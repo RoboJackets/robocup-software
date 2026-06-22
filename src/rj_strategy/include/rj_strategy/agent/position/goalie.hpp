@@ -24,7 +24,6 @@ class Goalie : public Position {
 public:
     Goalie(int r_id);
     ~Goalie() override = default;
-    // Goalie(const Position& other);
     Goalie(Position&& other);
 
     void derived_acknowledge_pass() override;
