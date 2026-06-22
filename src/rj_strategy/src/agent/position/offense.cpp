@@ -63,7 +63,7 @@ Offense::State Offense::next_state() {
                 return SEEKING_START;
             }
             if (has_open_shot() || timed_out()) {
-                target_ = calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
+                target_ = calculate_best_shot(last_world_state_, field_dimensions_);
                 return SHOOTING;
             }
 
@@ -83,7 +83,7 @@ Offense::State Offense::next_state() {
             }
 
             if (has_open_shot() || timed_out()) {
-                target_ = calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
+                target_ = calculate_best_shot(last_world_state_, field_dimensions_);
                 return SHOOTING;
             }
 
@@ -205,7 +205,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case POSSESSION_START: {
-            target_ = calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
+            target_ = calculate_best_shot(last_world_state_, field_dimensions_);
             intent.motion_command = planning::MotionCommand{};
 
             return intent;
@@ -277,7 +277,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         case SHOOTING: {
             // link kick because collect is garbage
             planning::LinearMotionInstant target{
-                calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true)};
+                calculate_best_shot(last_world_state_, field_dimensions_)};
 
             auto shoot_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
@@ -418,7 +418,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 
 bool Offense::has_open_shot() const {
     rj_geometry::Point best_shot =
-        calculate_best_shot(last_world_state_, field_dimensions_, 0.04, true);
+        calculate_best_shot(last_world_state_, field_dimensions_);
     double clearance_angle =
         shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
     return clearance_angle >=

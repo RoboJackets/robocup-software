@@ -26,6 +26,8 @@ inline constexpr float kRobotHeight = 0.150f;
 inline constexpr float kRobotMouthWidth = 0.0635f;
 inline constexpr float kRobotMouthRadius = 0.078f;
 
+inline constexpr float kShotCalculationGranularity = 0.04f;
+
 // Constant for ball deceleration on field
 inline constexpr float kBallDecel{-0.4f};
 

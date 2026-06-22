@@ -40,13 +40,13 @@ SoloOffense::State SoloOffense::next_state() {
         case IDLE: {
             // When thinking, SoloOffense will immediately leave IDLE.
             kick_target_ = planning::LinearMotionInstant{
-                calculate_best_shot(last_world_state_, field_dimensions_, 0.1, true)};
+                calculate_best_shot(last_world_state_, field_dimensions_)};
             return kick_strategy_;
         }
         case MARKER: {
             // If the opponent has lost possession (see above), SoloOffense will attempt a collect.
             kick_target_ = planning::LinearMotionInstant{
-                calculate_best_shot(last_world_state_, field_dimensions_, 0.1, true)};
+                calculate_best_shot(last_world_state_, field_dimensions_)};
             return kick_strategy_;
         }
         case TO_BALL: {
