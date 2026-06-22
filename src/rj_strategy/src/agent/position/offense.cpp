@@ -417,8 +417,7 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
-    rj_geometry::Point best_shot =
-        calculate_best_shot(last_world_state_, field_dimensions_);
+    rj_geometry::Point best_shot = calculate_best_shot(last_world_state_, field_dimensions_);
     double clearance_angle =
         shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
     return clearance_angle >=
