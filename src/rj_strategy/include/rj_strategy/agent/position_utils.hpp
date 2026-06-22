@@ -17,9 +17,9 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_constants/constants.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_constants/constants.hpp>
 
 /**
  * This file is just to collect a bunch of common utilities.
@@ -37,8 +37,6 @@
  *    coordinator that does a grand pairwise distance we can just reference?
  *  - defense area vs penalty area, more in-depth discussion below
  */
-
-
 
 // Field geometry interfacing
 /**
@@ -60,7 +58,7 @@ inline bool ball_on_field(const WorldState* world_state, const FieldDimensions& 
  * done for the sake of rules compliance, so we don't accidentally commit violations upon
  * overshoots. In the future, we should consider how to play tussles at the border of the
  * defense area, but we should use the widened red box.
- * 
+ *
  * If you really want to use the goalie lines, we call this "penalty area" in
  * FieldDimensions. I won't expose it here.
  */
@@ -104,8 +102,6 @@ inline bool ball_in_play_area(const WorldState* world_state,
            !ball_in_our_defense_area(world_state, field_dimensions) &&
            !ball_in_their_defense_area(world_state, field_dimensions);
 }
-
-
 
 // Shot calculation
 /**
@@ -172,13 +168,17 @@ inline rj_geometry::Point calculate_a_shot([[maybe_unused]] const WorldState* wo
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param field_dimensions (often named field_dimensions_ in Position subclasses)
- * @param granularity [OPTIONAL] the spacing between considered points on the goal line (meters) [default: 0.04 (a constant)]
+ * @param granularity [OPTIONAL] the spacing between considered points on the goal line (meters)
+ * [default: 0.04 (a constant)]
  * @param ignore_posts [OPTIONAL] whether to count the goalposts as candidate shots [default: true]
  * @return a point to aim at for the best shot
  */
-inline rj_geometry::Point calculate_best_shot(const WorldState* world_state, const FieldDimensions& field_dimensions, double granularity = kShotCalculationGranularity, bool ignore_posts = true) {
+inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
+                                              const FieldDimensions& field_dimensions,
+                                              double granularity = kShotCalculationGranularity,
+                                              bool ignore_posts = true) {
     // An initial guess can be center of goal.
-    const rj_geometry::Point& enemy_goal_center = field_dimensions.their_goal_loc();  
+    const rj_geometry::Point& enemy_goal_center = field_dimensions.their_goal_loc();
     if (granularity <= 0.0) {
         SPDLOG_ERROR("granularity arg passed into calculate_best_shot must be positive");
         return enemy_goal_center;
@@ -219,17 +219,17 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state, con
     return best_shot;
 }
 
-
-
 // Possession calculation
 /**
  * @brief Determines whether a specific robot has possession of the ball.
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
- * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball (m) [default: kRobotRadius]
+ * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
+ * (m) [default: kRobotRadius]
  * @return does it have ball
  */
-inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot, double possession_radius = kRobotRadius) {
+inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot,
+                           double possession_radius = kRobotRadius) {
     // TODO: this function should probably account for rotation
     //       a robot cannot take dribble possession with its rear wheels
 
@@ -242,7 +242,8 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
  * @brief Determines whether the enemy has possession of the ball.
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
- * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball (m) [default: kRobotRadius]
+ * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
+ * (m) [default: kRobotRadius]
  * @return do they have ball
  */
 inline bool they_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
@@ -259,7 +260,8 @@ inline bool they_have_ball(const WorldState* world_state, double possession_radi
  * @brief Determines whether our team has possession of the ball.
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
- * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball (m) [default: kRobotRadius]
+ * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
+ * (m) [default: kRobotRadius]
  * @return do we have ball
  */
 inline bool we_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
@@ -271,8 +273,6 @@ inline bool we_have_ball(const WorldState* world_state, double possession_radius
     }
     return false;
 }
-
-
 
 // Kick speed calculation
 /**
@@ -288,13 +288,15 @@ inline int calculate_kick_speed(double distance_to_target, double intended_velo_
     // TODO: these numbers are imaginary; based on estimates, NEED to measure
     // This could be a fun collab with the hardware subteam! They could build a light gate!
     // This maps "kick power" to the initial velocity of the ball.
-    const double kick_speed_map[16] = {3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5};
+    const double kick_speed_map[16] = {3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0,  6.5,
+                                       7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5};
     // This notes the deceleration of the ball on the pitch (m/s^2).
     const double ball_deceleration = 1.75;  // ideally, this is parametrized in rqt
 
     // Compute ideal velo (v_final^2 = v_initial^2 - 2ad).
-    double target_velocity = std::sqrt(std::pow(intended_velo_at_target, 2.0) + 2*ball_deceleration*distance_to_target);
-    if (target_velocity > 6.5) { // rules tolerance
+    double target_velocity = std::sqrt(std::pow(intended_velo_at_target, 2.0) +
+                                       2 * ball_deceleration * distance_to_target);
+    if (target_velocity > 6.5) {  // rules tolerance
         target_velocity = 6.5;
     }
 
@@ -311,11 +313,9 @@ inline int calculate_kick_speed(double distance_to_target, double intended_velo_
  * @brief Provides the max allowed kick speed, designed for shooting.
  *
  * Motion intents take an integer from [0,15]. This provides that.
- * 
+ *
  * The max ball speed is 6.5m/s. In Brasil25, using 7 was generally safe.
  *
  * @return 7
  */
-inline int max_kick_speed() {
-    return 7;
-}
+inline int max_kick_speed() { return 7; }
