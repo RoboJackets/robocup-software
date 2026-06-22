@@ -1,9 +1,5 @@
 #include "rj_planning/planners/goalie_idle_path_planner.hpp"
 
-#include <cmath>
-
-#include <rj_common/time.hpp>
-
 namespace planning {
 
 Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
