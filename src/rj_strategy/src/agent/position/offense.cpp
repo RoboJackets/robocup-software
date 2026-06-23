@@ -77,7 +77,7 @@ Offense::State Offense::next_state() {
                 return SEEKING_START;
             }
             if (has_open_shot() || timed_out()) {
-                target_ = calculate_best_shot();
+                target_ = calculate_best_shot(last_world_state_, field_dimensions_);
                 return SHOOTING;
             }
 
@@ -97,7 +97,7 @@ Offense::State Offense::next_state() {
             }
 
             if (has_open_shot() || timed_out()) {
-                target_ = calculate_best_shot();
+                target_ = calculate_best_shot(last_world_state_, field_dimensions_);
                 return SHOOTING;
             }
 
@@ -167,7 +167,7 @@ Offense::State Offense::next_state() {
             }
 
             // If we failed to get it in time or if ball is out of reach
-            if (ball_in_red() || timed_out()) {
+            if (!ball_in_play_area(last_world_state_, field_dimensions_) || timed_out()) {
                 send_pass_received_to_passer(face_robot_id);
                 return DEFAULT;
             }
@@ -184,7 +184,8 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
-            if (ball_in_red() || check_is_done() || !has_open_shot() || !can_steal_ball()) {
+            if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() ||
+                !has_open_shot() || !can_steal_ball()) {
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {
@@ -218,7 +219,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case POSSESSION_START: {
-            target_ = calculate_best_shot();
+            target_ = calculate_best_shot(last_world_state_, field_dimensions_);
             intent.motion_command = planning::MotionCommand{};
 
             return intent;
@@ -250,7 +251,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             rj_geometry::Point this_robot_pos =
                 last_world_state_->get_robot(true, this->robot_id_).pose.position();
 
-            intent.kick_speed = get_kick_speed(target_robot_pos.dist_to(this_robot_pos));
+            intent.kick_speed = calculate_kick_speed(target_robot_pos.dist_to(this_robot_pos), 0.0);
 
             return intent;
         }
@@ -289,13 +290,14 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
 
         case SHOOTING: {
             // link kick because collect is garbage
-            planning::LinearMotionInstant target{calculate_best_shot()};
+            planning::LinearMotionInstant target{
+                calculate_best_shot(last_world_state_, field_dimensions_)};
 
             auto shoot_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = shoot_cmd;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 7;  // NOTE THIS IS AN INTEGER VALUE
+            intent.kick_speed = max_kick_speed();  // Integer value in [0,15]
             return intent;
         }
     }
@@ -429,74 +431,13 @@ void Offense::derived_acknowledge_ball_in_transit() {
 }
 
 bool Offense::has_open_shot() const {
-    // Ball position
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-
-    // Goal target location
-    rj_geometry::Point best_shot = calculate_best_shot();
-
-    double min_dist = std::numeric_limits<double>::infinity();
-
-    // Vector from target to ball
-    rj_geometry::Point ball_to_goal = best_shot - ball_position;
-    for (const RobotState& enemy : last_world_state_->their_robots) {
-        // Ignore enemies within their defense area
-        // this ignores the enemy goalie, which will almost always be in the way of the shot anyway
-        if (this->field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
-            continue;
-        }
-
-        // Vector from enemy to ball
-        rj_geometry::Point enemy_vec = enemy.pose.position() - ball_position;
-
-        // I think this means enemy is behind shot (sid)
-        if (enemy_vec.dot(ball_to_goal) < 0) {
-            continue;
-        }
-
-        // Project enemy vector onto our shot line
-        auto projection = (enemy_vec.dot(ball_to_goal) / ball_to_goal.dot(ball_to_goal));
-        enemy_vec = enemy_vec - (projection)*ball_to_goal;
-
-        // Enemy's distance from our shot line
-        double distance = enemy_vec.mag();
-        min_dist = std::min(min_dist, distance);
-    }
-
-    return min_dist > kEnemyTooCloseRadius;
+    rj_geometry::Point best_shot = calculate_best_shot(last_world_state_, field_dimensions_);
+    double clearance_angle =
+        shot_clearance(last_world_state_->ball.position, best_shot, last_world_state_);
+    return clearance_angle >=
+           0.05;  // if there's >= 3 degrees (0.05 radians) of clearance, that's an open shot
 }
 
-bool Offense::can_i_shoot() const {
-    rj_geometry::Point robot_position =
-        last_world_state_->get_robot(true, robot_id_).pose.position();
-
-    rj_geometry::Point best_shot = calculate_best_shot();
-
-    rj_geometry::Point robot_to_goal = best_shot - robot_position;
-
-    double min_dist = std::numeric_limits<double>::infinity();
-
-    for (const RobotState& enemy : last_world_state_->their_robots) {
-        if (field_dimensions_.their_defense_area().hit(enemy.pose.position())) {
-            continue;
-        }
-
-        rj_geometry::Point enemy_vec = enemy.pose.position() - robot_position;
-
-        // Skip enemies behind us relative to the shot direction
-        if (enemy_vec.dot(robot_to_goal) < 0) {
-            continue;
-        }
-
-        // Project enemy vector onto shot line, then get perpendicular distance
-        auto projection = (enemy_vec.dot(robot_to_goal) / robot_to_goal.dot(robot_to_goal));
-        enemy_vec = enemy_vec - (projection)*robot_to_goal;
-
-        min_dist = std::min(min_dist, enemy_vec.mag());
-    }
-
-    return min_dist > kEnemyTooCloseRadius * 2;
-}
 
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
@@ -523,8 +464,8 @@ double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry:
 }
 
 bool Offense::can_steal_ball() const {
-    // Ball in red zone or not
-    if (ball_in_red()) {
+    // If ball is not legally accessible, obviously can't steal
+    if (!ball_in_play_area(last_world_state_, field_dimensions_)) {
         return false;
     }
     // Ball location
@@ -547,39 +488,6 @@ bool Offense::can_steal_ball() const {
     return closest;
 }
 
-rj_geometry::Point Offense::calculate_best_shot() const {
-    // Goal location
-    rj_geometry::Point their_goal_pos = field_dimensions_.their_goal_loc();
-    double goal_width = field_dimensions_.goal_width();  // 1.0 meters
-
-    // Ball location
-    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
-
-    rj_geometry::Point best_shot = their_goal_pos;
-    double best_distance = -1.0;
-    rj_geometry::Point increment(0.05, 0);
-    rj_geometry::Point curr_point =
-        their_goal_pos - rj_geometry::Point(goal_width / 2.0, 0) + increment * 2;
-    for (int i = 0; i < 17; i++) {
-        double distance = distance_from_their_robots(ball_position, curr_point);
-        if (distance > best_distance) {
-            best_distance = distance;
-            best_shot = curr_point;
-        }
-        curr_point = curr_point + increment;
-    }
-    return best_shot;
-}
-
-// Checks whether ball is out of range for stealing/receiving
-bool Offense::ball_in_red() const {
-    auto& ball_pos = last_world_state_->ball.position;
-    return (field_dimensions_.our_defense_area().contains_point(ball_pos) ||
-            field_dimensions_.their_defense_area().contains_point(ball_pos) ||
-            field_dimensions_.our_goal_area().contains_point(ball_pos) ||
-            field_dimensions_.their_goal_area().contains_point(ball_pos) ||
-            !field_dimensions_.field_rect().contains_point(ball_pos));
-}
 bool Offense::kick_failed() const {
     return (last_time_ + kKickFailsafeTimeout < RJ::now()) && (distance_to_ball() < kOwnBallRadius);
 }
@@ -612,14 +520,5 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_requests_.push_back(communication_request);
 }
 
-int Offense::get_kick_speed(double distance_to_other_robot) {
-    if (distance_to_other_robot < 0.6) {
-        return 5;
-    } else if (distance_to_other_robot < 1.8) {
-        return 6;
-    }
-
-    return 7;
-}
 
 }  // namespace strategy

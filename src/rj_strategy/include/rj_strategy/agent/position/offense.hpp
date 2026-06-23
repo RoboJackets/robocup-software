@@ -18,6 +18,7 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/seeker.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -229,21 +230,6 @@ private:
      * @param target_robot_shell the robot shell to check if open
      */
     bool check_if_open(int target_robot_shell);
-
-    /**
-     * @return whether or not a robot is capable of shooting from their pos
-     */
-    bool can_i_shoot() const;
-
-    /**
-     * @return the target (within the goal) that would be the most clear shot
-     */
-    rj_geometry::Point calculate_best_shot() const;
-
-    /**
-     * @return whether the ball is in an area that non-goalies cannot reach.
-     */
-    bool ball_in_red() const;
 
     /**
      * @return true when in PASSING_FINISHED and the kick failsafe timeout has
