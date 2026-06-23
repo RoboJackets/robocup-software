@@ -293,8 +293,8 @@ inline int calculate_kick_speed(double distance_to_target, double intended_velo_
     // This could be a fun collab with the hardware subteam! They could build a light gate!
 
     // This maps "kick power" to the initial velocity of the ball (m/s).
-    constexpr std::array<double, 16> kick_speed_map = 
-        {3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5};
+    constexpr std::array<double, 16> kick_speed_map = {3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0,  6.5,
+                                                       7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0, 10.5};
     // This notes the deceleration of the ball on the pitch (m/s^2).
     const double ball_deceleration = 1.75;  // ideally, this is parametrized in rqt
 
