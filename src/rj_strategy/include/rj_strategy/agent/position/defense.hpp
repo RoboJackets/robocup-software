@@ -40,6 +40,10 @@ public:
     void derived_acknowledge_ball_in_transit() override;
     std::string get_current_state() override;
 
+    std::string get_state_name() const override {
+        return std::string(state_to_name(current_state_));
+    }
+
     void die() override;
     void revive() override;
 

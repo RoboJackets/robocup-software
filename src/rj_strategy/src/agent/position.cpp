@@ -32,6 +32,12 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
     auto result = derived_get_task(intent);
 
     if (debug_draw_enabled_ && debug_drawer_) {
+        auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+        double angle = (robot_id_ * label_angle_constant) / kRobotsPerTeam;
+        rj_geometry::Point label_offset = {kLabelRadius * std::cos(angle),
+                                           kLabelRadius * std::sin(angle)};
+        debug_drawer_->draw_text(position_name_ + "/" + get_state_name(), robot_pos + label_offset,
+                                 Qt::white);
         debug_drawer_->publish();
     }
 

@@ -2,13 +2,10 @@
 
 namespace strategy {
 
-Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {
-    debug_draw_enabled_ = true;
-}
+Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
 
 Offense::Offense(Position&& other) : Position{std::move(other)}, seeker_{robot_id_} {
     position_name_ = "Offense";
-    debug_draw_enabled_ = true;
 }
 
 std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
@@ -24,17 +21,6 @@ std::optional<RobotIntent> Offense::derived_get_task(RobotIntent intent) {
     }
 
     current_state_ = new_state;
-
-    // Example of how to draw text on the debug drawer for position/strategy debugging
-    if (debug_draw_enabled_ && debug_drawer_) {
-        auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-        double angle = (robot_id_ * label_angle_constant) / kRobotsPerTeam;
-        rj_geometry::Point label_offset = {kLabelRadius * std::cos(angle),
-                                           kLabelRadius * std::sin(angle)};
-
-        debug_drawer_->draw_text("Offense/" + std::string(state_to_name(current_state_)),
-                                 robot_pos + label_offset, Qt::white);
-    }
 
     // Calculate task based on state
     return state_to_task(intent);

@@ -33,6 +33,8 @@ public:
 
     std::string get_current_state() override;
 
+    std::string get_state_name() const override { return std::string(state_to_name(latest_state_)); }
+
 private:
     // point goalie will aim for when clearing balls
     const rj_geometry::Point clear_point_{0.0, 4.5};
