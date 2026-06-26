@@ -13,6 +13,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 

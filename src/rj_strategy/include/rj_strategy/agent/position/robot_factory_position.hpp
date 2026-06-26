@@ -32,6 +32,7 @@
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -130,9 +131,13 @@ private:
 
     PlayState last_play_state_{PlayState::halt()};
 
+    bool double_touch_lock_{false};
+
     void process_play_state();
 
     void update_position();
+
+    bool another_robot_touched_ball() const;
 
     void handle_stop();
 
