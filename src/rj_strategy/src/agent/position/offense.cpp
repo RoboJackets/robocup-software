@@ -123,7 +123,7 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done()) {
+            if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
             }
 
@@ -133,13 +133,7 @@ Offense::State Offense::next_state() {
             }
 
             if (timed_out()) {
-                // If we timed out and the ball is close, assume we have it
-                // (because is_done for settle/collect are not great)
-                if (distance_to_ball() < kOwnBallRadius) {
-                    return POSSESSION_START;
-                } else {
-                    return DEFAULT;
-                }
+                return DEFAULT;
             }
 
             return STEALING;
