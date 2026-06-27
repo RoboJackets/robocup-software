@@ -124,10 +124,12 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             auto face_ball_cmd = planning::MotionCommand{"path_target", motion_instance, face_ball};
             intent.motion_command = face_ball_cmd;
         } else {
-            // intercept the ball
+            // drive up to the ball (no dribbler available, so just approach it)
             chasing_ball = true;
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
+            auto approach_ball_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{ball_position},
+                planning::FaceBall{}};
+            intent.motion_command = approach_ball_cmd;
         }
         return intent;
     } else if (current_state_ == PASSING) {

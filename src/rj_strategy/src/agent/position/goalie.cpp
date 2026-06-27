@@ -51,7 +51,6 @@ Goalie::State Goalie::update_state() {
 
     bool ball_in_box = this->field_dimensions_.our_defense_area().contains_point(ball_pt);
     if (ball_is_slow && ball_in_box) {
-        // TODO: add pivot logic once its is_done
         return CLEARING;
     }
 
@@ -85,19 +84,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         auto goalie_idle_cmd = planning::MotionCommand{"goalie_idle"};
         intent.motion_command = goalie_idle_cmd;
         return intent;
-    } else if (latest_state_ == PREPARING_SHOT) {
-        // pivot around ball...
-        auto ball_pt = last_world_state_->ball.position;
-
-        // ...to face their goal
-        planning::LinearMotionInstant target_instant{clear_point_};
-
-        auto pivot_cmd = planning::MotionCommand{"pivot"};
-        pivot_cmd.target = target_instant;
-        pivot_cmd.pivot_point = ball_pt;
-        intent.motion_command = pivot_cmd;
-        intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-        return intent;
     } else if (latest_state_ == CLEARING) {
         planning::LinearMotionInstant target{clear_point_};
         auto line_kick_cmd = planning::MotionCommand{"line_kick", target};
@@ -109,7 +95,6 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = max_kick_speed();
-        intent.dribbler_mode = RobotIntent::DribblerMode::ON;
         intent.is_active = true;
 
         return intent;
