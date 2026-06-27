@@ -12,6 +12,7 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/role_interface.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -43,8 +44,6 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     enum State { START, SMALL_KICK, LINE_UP, SHOOTING_START, SHOOTING };
-
-    static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
 
     static constexpr double kDistanceToGoalThreshold{3.5};
 
