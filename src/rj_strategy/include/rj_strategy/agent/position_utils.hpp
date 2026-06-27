@@ -250,7 +250,8 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
  * (m) [default: kOwnBallRadius]
  * @return do they have ball
  */
-inline bool they_have_ball(const WorldState* world_state, double possession_radius = kOwnBallRadius) {
+inline bool they_have_ball(const WorldState* world_state,
+                           double possession_radius = kOwnBallRadius) {
     const std::vector<RobotState>& theirs = world_state->their_robots;
     for (const RobotState& opponent : theirs) {
         if (robot_has_ball(world_state, opponent, possession_radius)) {
