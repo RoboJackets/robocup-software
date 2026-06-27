@@ -229,7 +229,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto pivot_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 
             // Adjusts kick speed based on distance.
