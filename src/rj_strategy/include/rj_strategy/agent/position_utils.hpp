@@ -38,6 +38,10 @@
  *  - defense area vs penalty area, more in-depth discussion below
  */
 
+// Used to assume we are capable of manipulating the ball; the distance (m) at which a robot is
+// considered to "have" the ball. Shared default for the possession helpers below.
+constexpr double kOwnBallRadius{kRobotRadius + 0.1};
+
 // Field geometry interfacing
 /**
  * @brief Determines whether the ball is in bounds (whole field rectangle).
@@ -225,11 +229,11 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return does it have ball
  */
 inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot,
-                           double possession_radius = 2 * kRobotRadius) {
+                           double possession_radius = kOwnBallRadius) {
     // TODO: this function should probably account for rotation
     //       a robot cannot take dribble possession with its rear wheels
 
@@ -243,10 +247,10 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return do they have ball
  */
-inline bool they_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
+inline bool they_have_ball(const WorldState* world_state, double possession_radius = kOwnBallRadius) {
     const std::vector<RobotState>& theirs = world_state->their_robots;
     for (const RobotState& opponent : theirs) {
         if (robot_has_ball(world_state, opponent, possession_radius)) {
@@ -261,10 +265,10 @@ inline bool they_have_ball(const WorldState* world_state, double possession_radi
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return do we have ball
  */
-inline bool we_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
+inline bool we_have_ball(const WorldState* world_state, double possession_radius = kOwnBallRadius) {
     const std::vector<RobotState>& ours = world_state->our_robots;
     for (const RobotState& teammate : ours) {
         if (robot_has_ball(world_state, teammate, possession_radius)) {

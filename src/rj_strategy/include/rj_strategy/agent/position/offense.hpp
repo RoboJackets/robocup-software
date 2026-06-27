@@ -191,9 +191,6 @@ private:
     // Used to tell if the ball is close enough to steal
     static constexpr double kStealBallRadius{0.5};
 
-    // Used to assume we are capable of manipulating the ball
-    static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
-
     // Used to tell if an enemy is close enough to block a shot
     static constexpr double kEnemyTooCloseRadius{kStealBallRadius};
 
