@@ -79,8 +79,8 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 0.0;
-            // The point of making a 0 kick speed is to fake dribble since we cannot get the vaccum
+            intent.kick_speed = 1.0;
+            // The point of making a 1.0 kick speed is to fake dribble since we cannot get the vaccum
             // behavior to work
 
             return intent;
@@ -134,7 +134,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
     return intent;
 }
 
-std::string PenaltyPlayer::get_current_state() { return "PenaltyPlayer"; }
+std::string PenaltyPlayer::get_current_state() { return position_name_ + std::to_string(static_cast<int>(latest_state_)); }
 
 double PenaltyPlayer::distance_from_their_robots(rj_geometry::Point tail,
                                                  rj_geometry::Point head) const {
