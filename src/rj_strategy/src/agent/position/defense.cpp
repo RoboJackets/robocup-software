@@ -127,8 +127,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             // drive up to the ball (no dribbler available, so just approach it)
             chasing_ball = true;
             auto approach_ball_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{ball_position},
-                planning::FaceBall{}};
+                "path_target", planning::LinearMotionInstant{ball_position}, planning::FaceBall{}};
             intent.motion_command = approach_ball_cmd;
         }
         return intent;
