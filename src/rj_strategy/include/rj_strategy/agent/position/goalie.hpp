@@ -13,6 +13,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -31,6 +32,10 @@ public:
     void derived_acknowledge_ball_in_transit() override;
 
     std::string get_current_state() override;
+
+    std::string get_state_name() const override {
+        return std::string(state_to_name(latest_state_));
+    }
 
 private:
     // point goalie will aim for when clearing balls

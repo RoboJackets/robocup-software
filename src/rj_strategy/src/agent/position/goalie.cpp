@@ -2,25 +2,14 @@
 
 namespace strategy {
 
-Goalie::Goalie(int r_id) : Position(r_id, "Goalie") { debug_draw_enabled_ = true; }
+Goalie::Goalie(int r_id) : Position(r_id, "Goalie") {}
 
 Goalie::Goalie(Position&& other) : Position{std::move(other)} {
     position_name_ = "Goalie";
-    debug_draw_enabled_ = true;
 }
 
 std::optional<RobotIntent> Goalie::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();
-
-    if (debug_draw_enabled_ && debug_drawer_) {
-        auto robot_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
-        double angle = (robot_id_ * label_angle_constant) / kRobotsPerTeam;
-        rj_geometry::Point label_offset = {kLabelRadius * std::cos(angle),
-                                           kLabelRadius * std::sin(angle)};
-
-        debug_drawer_->draw_text(position_name_ + "/" + std::string(state_to_name(latest_state_)),
-                                 robot_pos + label_offset, Qt::white);
-    }
 
     return state_to_task(intent);
 }
@@ -119,7 +108,7 @@ std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
         // TODO(Kevin): make intent hold a manip msg instead? to be cleaner?
         intent.shoot_mode = RobotIntent::ShootMode::CHIP;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-        intent.kick_speed = 15.0;
+        intent.kick_speed = max_kick_speed();
         intent.dribbler_mode = RobotIntent::DribblerMode::ON;
         intent.is_active = true;
 

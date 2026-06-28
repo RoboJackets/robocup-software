@@ -99,6 +99,8 @@ public:
     // returns the current state of the robot
     virtual std::string get_current_state() = 0;
 
+    virtual std::string get_state_name() const { return "None"; }
+
     /**
      * @brief setter for time_left_
      */
@@ -351,7 +353,7 @@ protected:
 
     // Debug drawing support: shared across position swaps via move semantics
     std::shared_ptr<rj_drawing::RosDebugDrawer> debug_drawer_;
-    bool debug_draw_enabled_ = false;
+    bool debug_draw_enabled_ = true;
 
 private:
     /**

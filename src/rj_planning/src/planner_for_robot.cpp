@@ -130,7 +130,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             break;
         case PlayState::State::Stop:
             min_dist_from_ball = 0.5;
-            max_robot_speed = 1.5;
+            max_robot_speed = 1.4;
             max_dribbler_speed = 0;
             max_kick_speed = 0;
             break;
@@ -142,6 +142,15 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
             max_dribbler_speed = 255;
             max_kick_speed = 15;
             break;
+        case PlayState::State::Ready:
+            if (play_state.is_their_restart() &&
+                (play_state.is_free_kick() || play_state.is_kickoff())) {
+                min_dist_from_ball = 0.5;
+                max_robot_speed = 1.4;
+                max_dribbler_speed = 0;
+                max_kick_speed = 0;
+                break;
+            }
         case PlayState::State::Playing:
         default:
 

@@ -4,7 +4,9 @@ namespace strategy {
 
 PenaltyNonKicker::PenaltyNonKicker(int r_id) : Position{r_id, "PenaltyNonKicker"} {}
 
-PenaltyNonKicker::PenaltyNonKicker(Position&& other) : Position{std::move(other)} {}
+PenaltyNonKicker::PenaltyNonKicker(Position&& other) : Position{std::move(other)} {
+    position_name_ = "PenaltyNonKicker";
+}
 
 std::string PenaltyNonKicker::get_current_state() { return "PenaltyNonKicker"; }
 

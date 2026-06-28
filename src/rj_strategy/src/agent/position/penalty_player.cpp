@@ -5,7 +5,9 @@ namespace strategy {
 // ALSO USED AS KickoffKicker
 PenaltyPlayer::PenaltyPlayer(int r_id) : Position(r_id, "PenaltyPlayer") {}
 
-PenaltyPlayer::PenaltyPlayer(Position&& other) : Position{std::move(other)} {}
+PenaltyPlayer::PenaltyPlayer(Position&& other) : Position{std::move(other)} {
+    position_name_ = "PenaltyPlayer";
+}
 
 std::optional<RobotIntent> PenaltyPlayer::derived_get_task(RobotIntent intent) {
     latest_state_ = update_state();

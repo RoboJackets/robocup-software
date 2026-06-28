@@ -229,7 +229,7 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
  * @return does it have ball
  */
 inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot,
-                           double possession_radius = kRobotRadius) {
+                           double possession_radius = 2 * kRobotRadius) {
     // TODO: this function should probably account for rotation
     //       a robot cannot take dribble possession with its rear wheels
 
@@ -286,7 +286,13 @@ inline bool we_have_ball(const WorldState* world_state, double possession_radius
  */
 inline int calculate_kick_speed(double distance_to_target, double intended_velo_at_target) {
     // Without measurement of anything, we cannot make a cogent estimate of kick speed.
-    return 4;
+    if (distance_to_target < 0.6) {
+        return 5;
+    } else if (distance_to_target < 1.8) {
+        return 6;
+    }
+
+    return 7;
 
     // TODO: these numbers are imaginary; based on estimates, we NEED to measure
     // This is the approach we should take to kick speed, do not delete this.

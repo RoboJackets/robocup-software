@@ -42,7 +42,18 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // Every tick, update position based on PlayState
     update_position();
 
-    return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+    auto task =
+        current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+
+    if (task.has_value() && current_play_state_.is_kickoff() &&
+        !client_handles_->kicker_picker->is_selected()) {
+        task->local_obstacles.add(
+            std::make_shared<rj_geometry::Rect>(field_dimensions_.their_half()));
+        task->local_obstacles.add(std::make_shared<rj_geometry::Circle>(
+            field_dimensions_.center_field_loc(), field_dimensions_.center_radius()));
+    }
+
+    return task;
 }
 
 void RobotFactoryPosition::process_play_state() {
@@ -54,6 +65,13 @@ void RobotFactoryPosition::process_play_state() {
             case PlayState::State::Playing: {
                 // We just became regular playing.
                 // set_default_position();
+
+                if (last_play_state_.is_our_restart() &&
+                    (last_play_state_.is_free_kick() || last_play_state_.is_kickoff()) &&
+                    client_handles_->kicker_picker->is_selected()) {
+                    double_touch_lock_ = true;
+                }
+
                 client_handles_->kicker_picker->leave_group();
                 break;
             }
@@ -93,7 +111,13 @@ void RobotFactoryPosition::process_play_state() {
     }
 }
 
-void RobotFactoryPosition::handle_stop() { set_default_position(); }
+void RobotFactoryPosition::handle_stop() {
+    set_default_position();
+
+    if (dynamic_cast<Offense*>(current_position_.get()) != nullptr) {
+        set_current_position<SmartIdle>();
+    }
+}
 
 void RobotFactoryPosition::handle_penalty_playing() {
     if (!(client_handles_->kicker_picker->am_i_member() &&
@@ -162,6 +186,16 @@ void RobotFactoryPosition::update_position() {
         return;
     }
 
+    if (double_touch_lock_) {
+        if (current_play_state_.state() != PlayState::State::Playing ||
+            another_robot_touched_ball()) {
+            double_touch_lock_ = false;
+        } else {
+            set_current_position<SmartIdle>();
+            return;
+        }
+    }
+
     switch (current_play_state_.state()) {
         case PlayState::State::Playing: {
             // We just became regular playing.
@@ -201,6 +235,24 @@ void RobotFactoryPosition::update_position() {
             break;
         }
     }
+}
+
+bool RobotFactoryPosition::another_robot_touched_ball() const {
+    if (they_have_ball(last_world_state_)) {
+        return true;
+    }
+
+    for (int i = 0; i < static_cast<int>(kNumShells); ++i) {
+        if (i == robot_id_) {
+            continue;
+        }
+
+        if (robot_has_ball(last_world_state_, last_world_state_->our_robots[i])) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void RobotFactoryPosition::set_default_position() {
