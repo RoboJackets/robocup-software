@@ -35,7 +35,7 @@ Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
             const rj_geometry::Point sample = ball.position + ball_dir * dist_along;
 
             // Skip points outside the goalie box.
-            if (!goalie_box.contains_point(sample)) {
+            if (!goalie_box.contains_point(sample) || sample.y() > 0.1) {
                 continue;
             }
 

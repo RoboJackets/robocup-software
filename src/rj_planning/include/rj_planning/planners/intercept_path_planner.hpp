@@ -36,7 +36,7 @@ public:
 private:
     // Number of points sampled along the ball's path when searching for an
     // interception point.
-    static constexpr int kNumSamples = 20;
+    static constexpr int kNumSamples = 30;
 
     // for is_done
     BallState latest_ball_state_;
