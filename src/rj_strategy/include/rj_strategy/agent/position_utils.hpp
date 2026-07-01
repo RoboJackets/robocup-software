@@ -77,7 +77,7 @@ inline bool ball_on_field(const WorldState* world_state, const FieldDimensions& 
 inline bool ball_in_our_defense_area(const WorldState* world_state,
                                      const FieldDimensions& field_dimensions) {
     const rj_geometry::Point& ball_point = world_state->ball.position;
-    return field_dimensions.our_defense_area().contains_point(ball_point);
+return field_dimensions.our_defense_area().contains_point(ball_point);
 }
 
 /**
@@ -191,8 +191,8 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
     // Make a better choice by scanning the goal.
     // Scan linearly over x positions in the goal from post to post.
     const double goal_width = field_dimensions.goal_width();
-    rj_geometry::Point lower_bound = enemy_goal_center - rj_geometry::Point(goal_width / 2.0, 0.0);
-    rj_geometry::Point upper_bound = enemy_goal_center + rj_geometry::Point(goal_width / 2.0, 0.0);
+    rj_geometry::Point lower_bound = enemy_goal_center - rj_geometry::Point(goal_width / 3.0, 0.0);
+    rj_geometry::Point upper_bound = enemy_goal_center + rj_geometry::Point(goal_width / 3.0, 0.0);
     rj_geometry::Point increment(granularity, 0.0);
     if (ignore_posts) {
         lower_bound = lower_bound + increment;
@@ -291,13 +291,13 @@ inline bool we_have_ball(const WorldState* world_state, double possession_radius
  */
 inline int calculate_kick_speed(double distance_to_target, double intended_velo_at_target) {
     // Without measurement of anything, we cannot make a cogent estimate of kick speed.
-    if (distance_to_target < 0.6) {
+    if (distance_to_target < 1) {
+        return 4;
+    } else if (distance_to_target < 2.5) {
         return 5;
-    } else if (distance_to_target < 1.8) {
-        return 6;
     }
 
-    return 7;
+    return 6;
 
     // TODO: these numbers are imaginary; based on estimates, we NEED to measure
     // This is the approach we should take to kick speed, do not delete this.

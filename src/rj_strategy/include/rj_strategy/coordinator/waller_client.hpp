@@ -69,7 +69,7 @@ private:
     std::array<uint8_t, kNumShells> walling_robots_;
     int num_wallers_ = 0;
 
-    static constexpr double kRobotDiameterMultiplier = 1.5;
+    static constexpr double kRobotDiameterMultiplier = 2.5;
 
     struct WallerGeometry {
         double min_wall_radius;
