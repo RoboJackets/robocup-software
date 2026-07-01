@@ -48,10 +48,10 @@ Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
             // Build the trajectory the robot would follow to reach and stop at
             // this point. Its duration accounts for acceleration limits, unlike
             // a naive distance / max_speed estimate.
-            Trajectory candidate = CreatePath::simple(
-                start_instant.linear_motion(),
-                LinearMotionInstant{sample, rj_geometry::Point{0, 0}}, plan_request.constraints.mot,
-                start_instant.stamp);
+            Trajectory candidate =
+                CreatePath::simple(start_instant.linear_motion(),
+                                   LinearMotionInstant{sample, rj_geometry::Point{0, 0}},
+                                   plan_request.constraints.mot, start_instant.stamp);
 
             // First (closest to the ball's start) point we can beat the ball to.
             if (candidate.duration() <= ball_time.value()) {
@@ -67,10 +67,10 @@ Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
     if (!found_intercept) {
         rj_geometry::Point intercept_point;
         ball.query_time_near(robot_pos, &intercept_point);
-        trajectory = CreatePath::simple(
-            start_instant.linear_motion(),
-            LinearMotionInstant{intercept_point, rj_geometry::Point{0, 0}},
-            plan_request.constraints.mot, start_instant.stamp);
+        trajectory =
+            CreatePath::simple(start_instant.linear_motion(),
+                               LinearMotionInstant{intercept_point, rj_geometry::Point{0, 0}},
+                               plan_request.constraints.mot, start_instant.stamp);
     }
 
     std::ostringstream debug_text_out;
