@@ -13,11 +13,11 @@ namespace planning {
  * PathPlanner which tries to intercept the ball along its path as close to the
  * ball's current position as possible.
  *
- * The planner samples points along the ball's predicted path and picks the
- * earliest one (closest to the ball's current position) that the robot can beat
- * the ball to while traveling at max speed, then paths to that point. If the
- * robot cannot beat the ball to any point along its path, it instead aims for
- * the point on the ball's path closest to the robot (the perpendicular
+ * The planner samples points along the ball's predicted path (restricted to our
+ * defense area / the goalie box) and picks the earliest one (closest to the
+ * ball's current position) that the robot can beat the ball to, then paths to
+ * that point. If the robot cannot beat the ball to any such point, it instead
+ * aims for the point on the ball's path closest to the robot (the perpendicular
  * projection), to get as close to the ball's path as possible.
  *
  * Mostly used for the goalie to block shots.
