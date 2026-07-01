@@ -28,6 +28,18 @@ Defense::State Defense::update_state() {
     // Update state based on coordinator async calls resolving
     State next_state = current_state_;
 
+    // If we are the closest robot to a loose ball, break off whatever we are
+    // doing and go steal it. Reachable from any state except the ball-handling
+    // states themselves (STEALING/SHOOTING), so we don't interrupt a steal or
+    // shot already in progress.
+    if (current_state_ != STEALING && current_state_ != SHOOTING && can_steal_ball()) {
+        // Give up any wall/marking slot we were holding before chasing the ball.
+        client_handles_->waller->leave_group();
+        client_handles_->marking->leave_group();
+        SPDLOG_INFO("robot {} ", robot_id_);
+        return STEALING;
+    }
+
     switch (current_state_) {
         case IDLING:
             next_state = JOINING_WALL;
@@ -73,7 +85,7 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
             break;
-        case ENTERING_MARKING:
+        case ENTERING_MARKING: {
             if (!sent_join_marking_group_request_) {
                 sent_join_marking_group_request_ = true;
                 request_time_ = RJ::now();
@@ -96,6 +108,27 @@ Defense::State Defense::update_state() {
                 next_state = IDLING;
             }
 
+            break;
+        }
+        case STEALING:
+            // Once we have possession of the ball, shoot it. SHOOTING is only
+            // reachable from here.
+            if (check_is_done() || distance_to_ball < kOwnBallRadius) {
+                next_state = SHOOTING;
+                break;
+            }
+            // If another robot became closer or the ball is no longer legally
+            // accessible, give up the steal and return to normal defense.
+            if (!can_steal_ball()) {
+                next_state = IDLING;
+            }
+            break;
+        case SHOOTING:
+            // Once we have kicked or lost the ball, return to normal defense.
+            if (check_is_done() || distance_to_ball > ball_lost_distance_ ||
+                !ball_in_play_area(world_state, field_dimensions_)) {
+                next_state = IDLING;
+            }
             break;
     }
 
@@ -185,6 +218,23 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
             planning::MotionCommand{"path_target", goal, planning::FaceBall{}, true};
 
         return intent;
+    } else if (current_state_ == STEALING) {
+        // Drive to the ball to win possession, mirroring the Offense steal.
+        auto collect_cmd = planning::MotionCommand{
+            "path_target", planning::LinearMotionInstant{last_world_state_->ball.position},
+            planning::FaceBall{}};
+        intent.motion_command = collect_cmd;
+        return intent;
+    } else if (current_state_ == SHOOTING) {
+        // Line kick towards the best shot on goal.
+        planning::LinearMotionInstant target{
+            calculate_best_shot(last_world_state_, field_dimensions_)};
+        auto shoot_cmd =
+            planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+        intent.motion_command = shoot_cmd;
+        intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+        intent.kick_speed = max_kick_speed();
+        return intent;
     }
 
     return std::nullopt;
@@ -212,6 +262,37 @@ void Defense::derived_pass_ball() { current_state_ = PASSING; }
 void Defense::derived_acknowledge_ball_in_transit() {
     current_state_ = RECEIVING;
     chasing_ball = false;
+}
+
+bool Defense::can_steal_ball() const {
+    // If ball is not legally accessible, obviously can't steal
+    if (!ball_in_play_area(last_world_state_, field_dimensions_)) {
+        return false;
+    }
+
+    // Only steal when the other team actually has the ball; otherwise leave
+    // ball-winning to our offense and stay in our defensive assignment.
+    if (they_have_ball(last_world_state_)) {
+        return false;
+    }
+
+    // Ball location
+    rj_geometry::Point ball_position = this->last_world_state_->ball.position;
+
+    // Our robot is closest robot to ball
+
+    auto current_pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+
+    auto our_dist = (current_pos - ball_position).mag();
+
+    for (auto pal : this->last_world_state_->our_robots) {
+        auto dist = (pal.pose.position() - ball_position).mag();
+        if (pal.visible && dist < our_dist) {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 void Defense::die() { client_handles_->waller->leave_group(); }
