@@ -115,7 +115,7 @@ private:
             case RECEIVING:
                 return RJ::Seconds{5};
             case SHOOTING:
-                return RJ::Seconds{3};
+                return RJ::Seconds{5};
         }
     }
 
@@ -190,6 +190,13 @@ private:
 
     // Used to tell if the ball is close enough to steal
     static constexpr double kStealBallRadius{0.5};
+
+    // When stealing, approach the ball from the side away from the opponent's
+    // goal so the ball ends up between us and the goal (set up to push it
+    // goalward). This is how far behind the ball, along the goal->ball line, we
+    // aim. Kept below kOwnBallRadius so the robot still reaches possession
+    // range once it arrives.
+    static constexpr double kStealApproachDistance{kRobotRadius + kBallRadius + 0.1};
 
     // Used to tell if an enemy is close enough to block a shot
     static constexpr double kEnemyTooCloseRadius{kStealBallRadius};

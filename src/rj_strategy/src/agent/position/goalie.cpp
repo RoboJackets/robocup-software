@@ -39,6 +39,12 @@ Goalie::State Goalie::update_state() {
         return BALL_NOT_FOUND;
     }
 
+    // if the ball is in our goal (behind the goal line), there's nothing to
+    // block or clear, so just idle
+    if (this->field_dimensions_.our_goal_area().contains_point(world_state->ball.position)) {
+        return IDLING;
+    }
+
     // if a shot is coming, override all and go block it
     if (shot_on_goal_detected(world_state)) {
         return BLOCKING;
