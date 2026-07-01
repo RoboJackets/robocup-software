@@ -82,7 +82,7 @@ Goalie::State Goalie::update_state() {
 
 std::optional<RobotIntent> Goalie::state_to_task(RobotIntent intent) {
     if (latest_state_ == BLOCKING) {
-        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.1}};
+        planning::LinearMotionInstant target{rj_geometry::Point{0.0, 0.2}};
         auto intercept_cmd = planning::MotionCommand{"intercept", target};
         intent.motion_command = intercept_cmd;
         return intent;
