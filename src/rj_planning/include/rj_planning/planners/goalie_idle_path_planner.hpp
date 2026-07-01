@@ -38,7 +38,7 @@ public:
      * @return Point for the goalie to idle at when no shot is coming. Sweeps
      * back and forth across the goal mouth as a function of time.
      */
-    static rj_geometry::Point get_idle_pt(const FieldDimensions* field_dimensions);
+    static rj_geometry::Point get_idle_pt(const WorldState* world_state);
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

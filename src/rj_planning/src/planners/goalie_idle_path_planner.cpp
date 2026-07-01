@@ -19,7 +19,7 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     }
 
     // Create a new PathTargetMotionCommand to fill in with desired idle_pt
-    auto idle_pt = get_idle_pt(plan_request.field_dimensions);
+    auto idle_pt = get_idle_pt(plan_request.world_state);
     LinearMotionInstant target{idle_pt};
 
     // Make robot face ball
@@ -42,15 +42,20 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     previous_ = trajectory;
     return trajectory;
 }
+rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
 
-rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const FieldDimensions* field_dimensions) {
-    // Sweep back and forth across the goal mouth
 
-    const double sweep_amplitude = kSweepFraction * field_dimensions->goal_width() / 2.0;
-    const double seconds = RJ::Seconds(RJ::now().time_since_epoch()).count();
-    const double x = sweep_amplitude * std::sin(seconds * kSweepRate);
+    rj_geometry::Point ball_pos = world_state->ball.position;
 
-    return rj_geometry::Point{x, kGoalLineOffset};
+    // TODO(Kevin): make this depend on team +/-x
+
+    rj_geometry::Point goal_pt{0.0, 0.0};
+    double goalie_dist = 0.5;
+    rj_geometry::Point idle_pt = (ball_pos - goal_pt).norm();
+    idle_pt *= goalie_dist;
+
+    return idle_pt;
+
 }
 
 void GoalieIdlePathPlanner::reset() {}
