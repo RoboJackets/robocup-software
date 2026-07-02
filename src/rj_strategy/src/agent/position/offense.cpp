@@ -123,9 +123,9 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
+            // if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
-            }
+            // }
 
             // If another robot becomes closer, leave state
             if (!can_steal_ball()) {

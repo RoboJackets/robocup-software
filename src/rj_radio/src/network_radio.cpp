@@ -123,6 +123,7 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
 
         alive_robots_[robot_id] = dead_ticks_[robot_id] <= kDeadTickTimeout;
     }
+    alive_robots_[5] = false;
     rj_msgs::msg::AliveRobots alive_message{};
     alive_message.alive_robots = alive_robots_;
     publish_alive_robots(alive_message);

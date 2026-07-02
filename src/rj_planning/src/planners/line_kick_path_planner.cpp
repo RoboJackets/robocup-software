@@ -105,8 +105,12 @@ void LineKickPathPlanner::process_state_transition(const PlanRequest& plan_reque
     // Possible problem: can PathTarget get stuck and loop infinitely?
     auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 4;
     auto ball = plan_request.world_state->ball.position;
+    auto goal = plan_request.motion_command.target.position;
     auto us = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
-    if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
+    auto our_angle = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.heading();
+
+    bool correct_angle = fix_angle_radians(our_angle - (goal - ball).angle()) < degrees_to_radians(3);
+    if (current_state_ == INITIAL_APPROACH && (path_target_.is_done()) && correct_angle) {
         current_state_ = FINAL_APPROACH;
         prev_path_ = Trajectory{};
     }

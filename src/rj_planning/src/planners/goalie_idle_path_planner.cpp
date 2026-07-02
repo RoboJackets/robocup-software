@@ -46,6 +46,7 @@ rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_st
 
 
     rj_geometry::Point ball_pos = world_state->ball.position;
+    ball_pos.y() = std::max(ball_pos.y(), 0.25); 
 
     // TODO(Kevin): make this depend on team +/-x
 

@@ -32,7 +32,7 @@ Defense::State Defense::update_state() {
     // doing and go steal it. Reachable from any state except the ball-handling
     // states themselves (STEALING/SHOOTING), so we don't interrupt a steal or
     // shot already in progress.
-    if (current_state_ != STEALING && current_state_ != SHOOTING && can_steal_ball()) {
+    if (current_state_ != STEALING && current_state_ != SHOOTING && can_steal_ball() && current_play_state_.is_playing()) {
         // Give up any wall/marking slot we were holding before chasing the ball.
         client_handles_->waller->leave_group();
         client_handles_->marking->leave_group();
@@ -113,13 +113,13 @@ Defense::State Defense::update_state() {
         case STEALING:
             // Once we have possession of the ball, shoot it. SHOOTING is only
             // reachable from here.
-            if (check_is_done() || distance_to_ball < kOwnBallRadius) {
+            // if (check_is_done() || distance_to_ball < kOwnBallRadius) {
                 next_state = SHOOTING;
                 break;
-            }
+            // }
             // If another robot became closer or the ball is no longer legally
             // accessible, give up the steal and return to normal defense.
-            if (!can_steal_ball()) {
+            if (!can_steal_ball() || !current_play_state_.is_playing()) {
                 next_state = IDLING;
             }
             break;
@@ -207,6 +207,12 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         rj_geometry::Point targetPoint =
             last_world_state_->get_robot(false, client_handles_->marking->who_am_i_marking())
                 .pose.position();
+
+        if (!field_dimensions_.our_half().contains_point(targetPoint)) {
+            auto empty_motion_cmd = planning::MotionCommand{};
+            intent.motion_command = empty_motion_cmd;
+            return intent;
+        }
 
         rj_geometry::Point ballPoint = last_world_state_->ball.position;
         rj_geometry::Point targetToBall =

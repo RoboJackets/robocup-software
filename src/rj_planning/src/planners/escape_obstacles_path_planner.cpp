@@ -26,15 +26,18 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
         find_non_blocked_goal(start_instant.position(), previous_target_, obstacles, 300);
 
     std::optional<Point> opt_prev_pt;
+    auto robot_to_target = unblocked - start_instant.position();
 
-    LinearMotionInstant goal{unblocked, Point()};
+
+    LinearMotionInstant goal{unblocked + robot_to_target.normalized(0.3), robot_to_target.normalized(0.5)};
+    LinearMotionInstant start{start_instant.position(), robot_to_target.normalized(1.0)};
 
     ObstacleSet path_obstacles;
     auto ball_shape =
         std::make_shared<rj_geometry::Circle>(plan_request.world_state->ball.position, kBallRadius);
     path_obstacles.add(std::make_shared<Obstacle>(ball_shape, ball_shape));
 
-    auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
+    auto result = CreatePath::intermediate(start, goal, motion_constraints,
                                            start_instant.stamp, path_obstacles,
                                            plan_request.field_dimensions, plan_request.shell_id);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);

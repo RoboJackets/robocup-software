@@ -294,10 +294,10 @@ inline int calculate_kick_speed(double distance_to_target, double intended_velo_
     if (distance_to_target < 0.6) {
         return 5;
     } else if (distance_to_target < 1.8) {
-        return 6;
+        return 5;
     }
 
-    return 7;
+    return 6;
 
     // TODO: these numbers are imaginary; based on estimates, we NEED to measure
     // This is the approach we should take to kick speed, do not delete this.
