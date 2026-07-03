@@ -170,6 +170,8 @@ Offense::State Offense::next_state() {
             // robot would stand still in SHOOTING forever.
             if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() ||
                 !has_open_shot() || !can_steal_ball() || timed_out()) {
+                SPDLOG_INFO("{}, {}, {}, {}", !ball_in_play_area(last_world_state_, field_dimensions_), 
+                !has_open_shot(), !can_steal_ball(), timed_out());
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {

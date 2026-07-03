@@ -23,15 +23,15 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     //     forward_ += 1;
     // }
 
-    // if (forward_ == 0) {
-    //     // move to start
-    //     auto motion_command = planning::MotionCommand{"path_target",
-    //                                                   planning::LinearMotionInstant{
-    //                                                       start_,
-    //                                                       rj_geometry::Point{0.0, 0.0},
-    //                                                   },
-    //                                                   planning::FacePoint{rj_geometry::Point{-1.0, 7.0}}, true};
-    //     intent.motion_command = motion_command;
+    if (forward_ == 0) {
+        // move to start
+        auto motion_command = planning::MotionCommand{"rotate",
+                                                      planning::LinearMotionInstant{
+                                                          start_,
+                                                          rj_geometry::Point{0.0, 0.0},
+                                                      }};
+        intent.motion_command = motion_command;
+    }
     // } else if (forward_ == 1) {
     //     // move to end
     //     auto motion_command = planning::MotionCommand{"path_target",
