@@ -64,7 +64,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(Processor* processor, bool has_external_ref, QWidget* parent = nullptr);
+    MainWindow(Processor* processor, bool has_external_ref, bool auto_restart,
+               QWidget* parent = nullptr);
 
     void initialize();
 
@@ -243,6 +244,8 @@ private:
 
     Processor* const _processor;
     bool _has_external_ref;
+    
+    bool _auto_restart;
 
     int current_goalie_num_{0};
 
