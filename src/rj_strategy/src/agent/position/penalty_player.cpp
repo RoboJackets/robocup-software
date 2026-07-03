@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/penalty_player.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -125,7 +126,7 @@ std::optional<RobotIntent> PenaltyPlayer::state_to_task(RobotIntent intent) {
             intent.motion_command = line_kick_cmd;
             intent.shoot_mode = RobotIntent::ShootMode::KICK;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
-            intent.kick_speed = 4.0;
+            intent.kick_speed = max_kick_speed();
 
             return intent;
         }

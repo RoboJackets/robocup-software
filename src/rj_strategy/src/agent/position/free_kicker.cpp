@@ -13,19 +13,19 @@ std::optional<RobotIntent> FreeKicker::derived_get_task(RobotIntent intent) {
 
     // SPDLOG_INFO("Free Kicker {} is running", this->robot_id_);
 
-    if (last_world_state_->ball.position.dist_to(
-            last_world_state_->get_robot(true, robot_id_).pose.position()) >= kOwnBallRadius) {
-        rj_geometry::Point ball_position = last_world_state_->ball.position;
-        rj_geometry::Point their_goal = field_dimensions_.their_goal_loc();
-        rj_geometry::Point goal_to_ball = (ball_position - their_goal).normalized();
-        rj_geometry::Point steal_point =
-            ball_position + goal_to_ball * kStealApproachDistance;
+    // if (last_world_state_->ball.position.dist_to(
+    //         last_world_state_->get_robot(true, robot_id_).pose.position()) >= kOwnBallRadius) {
+    //     rj_geometry::Point ball_position = last_world_state_->ball.position;
+    //     rj_geometry::Point their_goal = field_dimensions_.their_goal_loc();
+    //     rj_geometry::Point goal_to_ball = (ball_position - their_goal).normalized();
+    //     rj_geometry::Point steal_point =
+    //         ball_position + goal_to_ball * kStealApproachDistance;
 
-        auto collect_cmd = planning::MotionCommand{
-            "path_target", planning::LinearMotionInstant{steal_point}, planning::FaceBall{}};
-        intent.motion_command = collect_cmd;
+    //     auto collect_cmd = planning::MotionCommand{
+    //         "path_target", planning::LinearMotionInstant{steal_point}, planning::FaceBall{}};
+    //     intent.motion_command = collect_cmd;
 
-    }
+    // }
 
     planning::LinearMotionInstant target{calculate_best_shot(last_world_state_, field_dimensions_)};
     auto line_kick_cmd = planning::MotionCommand{"line_kick", target};

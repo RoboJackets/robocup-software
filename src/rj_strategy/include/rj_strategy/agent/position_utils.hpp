@@ -40,7 +40,7 @@
 
 // Used to assume we are capable of manipulating the ball; the distance (m) at which a robot is
 // considered to "have" the ball. Shared default for the possession helpers below.
-constexpr double kOwnBallRadius{kRobotRadius + 0.1};
+constexpr double kOwnBallRadius{kRobotRadius + kBallRadius * 2};
 
 // Field geometry interfacing
 /**
@@ -291,13 +291,13 @@ inline bool we_have_ball(const WorldState* world_state, double possession_radius
  */
 inline int calculate_kick_speed(double distance_to_target, double intended_velo_at_target) {
     // Without measurement of anything, we cannot make a cogent estimate of kick speed.
-    if (distance_to_target < 0.6) {
-        return 5;
-    } else if (distance_to_target < 1.8) {
-        return 5;
+    if (distance_to_target < 1.5) {
+        return 3;
+    } else if (distance_to_target < 3.0) {
+        return 4;
     }
 
-    return 6;
+    return 5;
 
     // TODO: these numbers are imaginary; based on estimates, we NEED to measure
     // This is the approach we should take to kick speed, do not delete this.

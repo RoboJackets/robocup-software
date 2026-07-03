@@ -87,13 +87,14 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
                                     last_play_state_.restart() == PlayState::Restart::Free);
 
     // Also add a slack around the box
-    float slack_around_box{0.3f};
+    float slack_around_box{0.15f};
 
-    auto their_defense_area =
-        is_extra_dist_necessary
-            ? std::make_shared<rj_geometry::Rect>(
-                  last_field_dimensions_.their_defense_area_padded(slack_around_box))
-            : std::make_shared<rj_geometry::Rect>(last_field_dimensions_.their_defense_area());
+    if (is_extra_dist_necessary) {
+        slack_around_box += 0.3f;
+    }
+
+    auto their_defense_area = std::make_shared<rj_geometry::Rect>(
+                  last_field_dimensions_.their_defense_area_padded(slack_around_box));
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};

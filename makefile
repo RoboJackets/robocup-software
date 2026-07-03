@@ -100,6 +100,13 @@ run-real:
 run-real-ex:
 	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False
 
+run-real-ex-auto:
+	while true; do \
+		ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False \
+		echo "Launch exited. Restarting in 2 seconds..." \
+		sleep 2 \
+	done
+
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:

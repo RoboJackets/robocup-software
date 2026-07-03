@@ -52,6 +52,15 @@ std::optional<RobotIntent> Line::derived_get_task(RobotIntent intent) {
     //     intent.motion_command = motion_command;
     // }
 
+    if (forward_ == 0) {
+        // move to start
+        auto motion_command = planning::MotionCommand{"rotate",
+                                                      planning::LinearMotionInstant{
+                                                           start_,
+                                                          rj_geometry::Point{0.0, 0.0},
+                                                      },
+                                                      };
+    }
     return intent;
 }
 }  // namespace strategy
