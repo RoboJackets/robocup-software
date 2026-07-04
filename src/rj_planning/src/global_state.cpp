@@ -94,7 +94,7 @@ rj_geometry::ShapeSet GlobalState::create_defense_area_obstacles() {
     }
 
     auto their_defense_area = std::make_shared<rj_geometry::Rect>(
-                  last_field_dimensions_.their_defense_area_padded(slack_around_box));
+        last_field_dimensions_.their_defense_area_padded(slack_around_box));
 
     // Combine both defense areas into ShapeSet
     rj_geometry::ShapeSet def_area_obstacles{};
