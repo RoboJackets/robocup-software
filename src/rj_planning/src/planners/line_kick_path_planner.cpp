@@ -83,20 +83,19 @@ Trajectory LineKickPathPlanner::final(const PlanRequest& plan_request) {
     // Velocity is the speed (parameter) times the unit vector in the correct direction
     auto goal_to_ball = (plan_request.motion_command.target.position - ball.position);
     auto vel = goal_to_ball.normalized() * kFinalRobotSpeed;
- 
+
     // Create an updated MotionCommand and forward to PathTargetPathPlaner
     PlanRequest modified_request = plan_request;
 
     LinearMotionInstant target{ball.position};
     SPDLOG_INFO("line kick final target: ({}, {})", ball.position.x(), ball.position.y());
-    
+
     LinearMotionInstant current = plan_request.start.linear_motion();
 
     MotionConstraints mot = plan_request.constraints.mot;
     mot.max_speed *= 0.9;
     auto traj = CreatePath::simple(current, target, mot, plan_request.start.stamp);
-    plan_angles(&traj, plan_request.start,
-                AngleFns::face_point(ball.position),
+    plan_angles(&traj, plan_request.start, AngleFns::face_point(ball.position),
                 plan_request.constraints.rot);
     traj.stamp(RJ::now());
 
@@ -110,12 +109,14 @@ void LineKickPathPlanner::process_state_transition(const PlanRequest& plan_reque
     auto ball = plan_request.world_state->ball.position;
     auto goal = plan_request.motion_command.target.position;
     auto us = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.position();
-    auto our_angle = plan_request.world_state->get_robot(true, plan_request.shell_id).pose.heading();
+    auto our_angle =
+        plan_request.world_state->get_robot(true, plan_request.shell_id).pose.heading();
 
-    bool correct_angle = fix_angle_radians(our_angle - (goal - ball).angle()) < degrees_to_radians(3);
+    bool correct_angle =
+        fix_angle_radians(our_angle - (goal - ball).angle()) < degrees_to_radians(3);
     if (current_state_ == INITIAL_APPROACH && (path_target_.is_done())) {
         current_state_ = FINAL_APPROACH;
-    prev_path_ = Trajectory{};
+        prev_path_ = Trajectory{};
     }
 
     auto us_to_ball = us - ball;

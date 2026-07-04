@@ -41,7 +41,6 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     static constexpr double kStealApproachDistance{kRobotRadius + kBallRadius + 0.1};
-
 };
 
 }  // namespace strategy
