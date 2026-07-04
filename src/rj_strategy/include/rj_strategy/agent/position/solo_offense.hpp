@@ -39,12 +39,11 @@ private:
     enum State {
         IDLE,     // The nothing doer
         MARKER,   // Aggressively sit between ball and goal pos
-        TO_BALL,  // Collect
-        ROTATE,   // After successful collect, aim and fire
-        KICK      // The more naive line kick
+        TO_BALL,  // Approach the ball
+        KICK      // The line kick
     };
     State kick_strategy_ =
-        TO_BALL;  // set to TO_BALL for collect kicking, set to KICK for line kicking
+        TO_BALL;  // set to TO_BALL to approach before kicking, set to KICK to line kick directly
     planning::LinearMotionInstant kick_target_;  // aiming point
 
     State current_state_ = IDLE;
@@ -57,8 +56,6 @@ private:
                 return "MARKER";
             case TO_BALL:
                 return "TO_BALL";
-            case ROTATE:
-                return "ROTATE";
             case KICK:
                 return "KICK";
             default:

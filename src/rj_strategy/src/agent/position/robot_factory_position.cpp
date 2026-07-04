@@ -69,7 +69,7 @@ void RobotFactoryPosition::process_play_state() {
                 if (last_play_state_.is_our_restart() &&
                     (last_play_state_.is_free_kick() || last_play_state_.is_kickoff()) &&
                     client_handles_->kicker_picker->is_selected()) {
-                    double_touch_lock_ = true;
+                    // double_touch_lock_ = true;
                 }
 
                 client_handles_->kicker_picker->leave_group();
@@ -171,7 +171,7 @@ void RobotFactoryPosition::handle_ready() {
             }
         });
 
-    } else if (current_play_state_.is_their_restart() && current_play_state_.is_free_kick()) {
+    } else if (current_play_state_.is_their_restart() || current_play_state_.is_free_kick()) {
         if (dynamic_cast<Offense*>(current_position_.get()) != nullptr ||
             dynamic_cast<PenaltyPlayer*>(current_position_.get()) != nullptr ||
             dynamic_cast<FreeKicker*>(current_position_.get()) != nullptr) {
@@ -295,8 +295,8 @@ void RobotFactoryPosition::set_default_position() {
         }
     } else {
         // Defensive mode
-        // Closest 4 robots on defense, rest on offense
-        if (i <= 3) {
+        // Closest 3 robots on defense, rest on offense
+        if (i <= 2) {
             set_current_position<Defense>();
         } else {
             set_current_position<Offense>();

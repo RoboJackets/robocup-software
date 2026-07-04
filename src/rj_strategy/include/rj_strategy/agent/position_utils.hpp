@@ -38,6 +38,10 @@
  *  - defense area vs penalty area, more in-depth discussion below
  */
 
+// Used to assume we are capable of manipulating the ball; the distance (m) at which a robot is
+// considered to "have" the ball. Shared default for the possession helpers below.
+constexpr double kOwnBallRadius{kRobotRadius + kBallRadius * 2};
+
 // Field geometry interfacing
 /**
  * @brief Determines whether the ball is in bounds (whole field rectangle).
@@ -73,7 +77,7 @@ inline bool ball_on_field(const WorldState* world_state, const FieldDimensions& 
 inline bool ball_in_our_defense_area(const WorldState* world_state,
                                      const FieldDimensions& field_dimensions) {
     const rj_geometry::Point& ball_point = world_state->ball.position;
-    return field_dimensions.our_defense_area().contains_point(ball_point);
+return field_dimensions.our_defense_area().contains_point(ball_point);
 }
 
 /**
@@ -187,8 +191,8 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
     // Make a better choice by scanning the goal.
     // Scan linearly over x positions in the goal from post to post.
     const double goal_width = field_dimensions.goal_width();
-    rj_geometry::Point lower_bound = enemy_goal_center - rj_geometry::Point(goal_width / 2.0, 0.0);
-    rj_geometry::Point upper_bound = enemy_goal_center + rj_geometry::Point(goal_width / 2.0, 0.0);
+    rj_geometry::Point lower_bound = enemy_goal_center - rj_geometry::Point(goal_width / 3.0, 0.0);
+    rj_geometry::Point upper_bound = enemy_goal_center + rj_geometry::Point(goal_width / 3.0, 0.0);
     rj_geometry::Point increment(granularity, 0.0);
     if (ignore_posts) {
         lower_bound = lower_bound + increment;
@@ -225,11 +229,11 @@ inline rj_geometry::Point calculate_best_shot(const WorldState* world_state,
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return does it have ball
  */
 inline bool robot_has_ball(const WorldState* world_state, const RobotState& robot,
-                           double possession_radius = 2 * kRobotRadius) {
+                           double possession_radius = kOwnBallRadius) {
     // TODO: this function should probably account for rotation
     //       a robot cannot take dribble possession with its rear wheels
 
@@ -243,10 +247,11 @@ inline bool robot_has_ball(const WorldState* world_state, const RobotState& robo
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return do they have ball
  */
-inline bool they_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
+inline bool they_have_ball(const WorldState* world_state,
+                           double possession_radius = kOwnBallRadius) {
     const std::vector<RobotState>& theirs = world_state->their_robots;
     for (const RobotState& opponent : theirs) {
         if (robot_has_ball(world_state, opponent, possession_radius)) {
@@ -261,10 +266,10 @@ inline bool they_have_ball(const WorldState* world_state, double possession_radi
  *
  * @param world_state (often named last_world_state_ in Position subclasses)
  * @param possession_radius [OPTIONAL] the distance at which a robot is defined to "have" the ball
- * (m) [default: kRobotRadius]
+ * (m) [default: kOwnBallRadius]
  * @return do we have ball
  */
-inline bool we_have_ball(const WorldState* world_state, double possession_radius = kRobotRadius) {
+inline bool we_have_ball(const WorldState* world_state, double possession_radius = kOwnBallRadius) {
     const std::vector<RobotState>& ours = world_state->our_robots;
     for (const RobotState& teammate : ours) {
         if (robot_has_ball(world_state, teammate, possession_radius)) {
@@ -286,13 +291,13 @@ inline bool we_have_ball(const WorldState* world_state, double possession_radius
  */
 inline int calculate_kick_speed(double distance_to_target, double intended_velo_at_target) {
     // Without measurement of anything, we cannot make a cogent estimate of kick speed.
-    if (distance_to_target < 0.6) {
-        return 5;
-    } else if (distance_to_target < 1.8) {
-        return 6;
+    if (distance_to_target < 1.5) {
+        return 3;
+    } else if (distance_to_target < 3.0) {
+        return 4;
     }
 
-    return 7;
+    return 5;
 
     // TODO: these numbers are imaginary; based on estimates, we NEED to measure
     // This is the approach we should take to kick speed, do not delete this.
@@ -329,4 +334,4 @@ inline int calculate_kick_speed(double distance_to_target, double intended_velo_
  *
  * @return 7
  */
-inline int max_kick_speed() { return 7; }
+inline int max_kick_speed() { return 15; }

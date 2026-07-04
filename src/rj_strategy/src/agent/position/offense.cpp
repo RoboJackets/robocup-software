@@ -123,9 +123,9 @@ Offense::State Offense::next_state() {
 
         case STEALING: {
             // Go to possession if successful
-            if (check_is_done()) {
+            // if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
                 return POSSESSION_START;
-            }
+            // }
 
             // If another robot becomes closer, leave state
             if (!can_steal_ball()) {
@@ -133,13 +133,7 @@ Offense::State Offense::next_state() {
             }
 
             if (timed_out()) {
-                // If we timed out and the ball is close, assume we have it
-                // (because is_done for settle/collect are not great)
-                if (distance_to_ball() < kOwnBallRadius) {
-                    return POSSESSION_START;
-                } else {
-                    return DEFAULT;
-                }
+                return DEFAULT;
             }
 
             return STEALING;
@@ -170,8 +164,14 @@ Offense::State Offense::next_state() {
         }
 
         case SHOOTING: {
+            // timed_out() guards against getting stuck lined up on the ball
+            // without the break beam ever triggering a kick. Without it, none of
+            // the other conditions become true while parked on the ball, so the
+            // robot would stand still in SHOOTING forever.
             if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() ||
-                !has_open_shot() || !can_steal_ball()) {
+                !has_open_shot() || !can_steal_ball() || timed_out()) {
+                SPDLOG_INFO("{}, {}, {}, {}", !ball_in_play_area(last_world_state_, field_dimensions_), 
+                !has_open_shot(), !can_steal_ball(), timed_out());
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {
@@ -229,7 +229,6 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             auto pivot_cmd =
                 planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
             intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
             intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 
             // Adjusts kick speed based on distance.
@@ -249,9 +248,18 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
         }
 
         case STEALING: {
+            // Approach the ball from the side away from the opponent's goal so
+            // the ball ends up between us and the goal, leaving us set up to
+            // push it goalward. Target a point a fixed distance behind the ball
+            // along the goal->ball line.
+            rj_geometry::Point ball_position = last_world_state_->ball.position;
+            rj_geometry::Point their_goal = field_dimensions_.their_goal_loc();
+            rj_geometry::Point goal_to_ball = (ball_position - their_goal).normalized();
+            rj_geometry::Point steal_point =
+                ball_position + goal_to_ball * kStealApproachDistance;
+
             auto collect_cmd = planning::MotionCommand{
-                "path_target", planning::LinearMotionInstant{last_world_state_->ball.position},
-                planning::FaceBall{}};
+                "path_target", planning::LinearMotionInstant{steal_point}, planning::FaceBall{}};
             intent.motion_command = collect_cmd;
 
             return intent;

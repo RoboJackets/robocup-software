@@ -9,6 +9,7 @@
 #include <rj_geometry/point.hpp>
 
 #include "rj_strategy/agent/position.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {
 
@@ -38,6 +39,9 @@ public:
 
 private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
+
+    static constexpr double kStealApproachDistance{kRobotRadius + kBallRadius + 0.1};
+
 };
 
 }  // namespace strategy

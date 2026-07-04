@@ -23,8 +23,8 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
     RobotIntent intent = RobotIntent{};
     intent.robot_id = robot_id_;
 
-    // if world_state invalid, return empty MotionCommand (equivalent to HALT)
-    if (!assert_world_state_valid()) {
+    // if world_state invalid or dead, return empty MotionCommand (equivalent to HALT)
+    if (!assert_world_state_valid() || !alive) {
         intent.motion_command = planning::MotionCommand{};
         return intent;
     }
