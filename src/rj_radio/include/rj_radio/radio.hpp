@@ -84,6 +84,13 @@ protected:
 
     bool blue_team() const;
 
+    // Timestamp of the last RobotStatus received from each robot. A robot is
+    // considered alive iff it has reported within PARAM_timeout. This mirrors the
+    // signal the UI's robot list is built from (presence of the per-robot radio
+    // status stream), making it the single source of truth for robot aliveness.
+    // Stamped by publish_robot_status(); read by backends to compute aliveness.
+    std::array<RJ::Time, kNumShells> last_status_received_ = {};
+
 private:
     /**
      * @brief Poll the receiver and send empty motion commands to robots that software has
