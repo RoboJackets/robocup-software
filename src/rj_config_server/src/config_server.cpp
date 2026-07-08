@@ -73,6 +73,10 @@ using config_server::GameSettingsMsg;
 GameSettingsMsg parse_game_settings(const std::vector<std::string>& args) {
     GameSettingsMsg game_settings;
 
+    // The config server publishes use_our_half and use_their_half as false, because
+    // parse_game_settings never sets them. Forcing them to true here fixes the grey-field issue.
+    game_settings.use_our_half = true;
+    game_settings.use_their_half = true;
     for (size_t i = 1; i < args.size(); i++) {
         const std::string& arg = args.at(i);
         if (arg == "-b") {
