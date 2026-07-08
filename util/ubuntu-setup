@@ -166,3 +166,7 @@ apt-get install $ARGS $PACKAGES
 # install python3 requirements
 python3 -m pip install pip==22.1
 pip3 install -r $BASE/util/requirements3.txt
+
+echo 'export MAKEFLAGS="-j 1"' >> ~/.bashrc
+echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+
