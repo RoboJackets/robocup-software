@@ -29,18 +29,6 @@ DEFINE_NS_FLOAT64(
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 
-DEFINE_NS_BOOL(kPlanningParamModule, rrt, enable_debug_drawing, false,
-               "Whether to enable RRT debug drawing");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, step_size, 0.15, "Step size for RRT (m)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, goal_bias, 0.3,
-                  "Chance that the RRT will extend directly towards the goal (unitless)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, waypoint_bias, 0.5,
-                  "Chance that the RRT will extend directly towards a waypoint (unitless)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, min_iterations, 50,
-                "Minimum number of RRT iterations to run (unused without RRT* enabled)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, max_iterations, 500,
-                "Maximum number of RRT iterations to run before giving up");
-
 DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_scale, 0.5,
                   "Minimum length for intermediate point (m)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_scale, 1.5,

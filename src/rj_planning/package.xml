@@ -20,7 +20,6 @@
   <depend>rj_convert</depend>
   <depend>rj_msgs</depend>
   <depend>rj_param_utils</depend>
-  <depend>rj_rrt</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

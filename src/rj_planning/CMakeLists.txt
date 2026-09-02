@@ -24,7 +24,6 @@ find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
-find_package(rj_rrt REQUIRED)
 
 set(RJ_PLANNING_DEPS
   rclcpp
@@ -38,7 +37,6 @@ set(RJ_PLANNING_DEPS
   rj_convert
   rj_msgs
   rj_param_utils
-  rj_rrt
   Flann
 )
 
@@ -73,7 +71,6 @@ set(RJ_PLANNING_SRC
   src/primitives/create_path.cpp
   src/primitives/path_smoothing.cpp
   src/primitives/replanner.cpp
-  src/primitives/rrt_util.cpp
   src/primitives/trapezoidal_motion.cpp
   src/primitives/velocity_profiling.cpp
 
@@ -152,7 +149,6 @@ if(BUILD_TESTING)
     angle_planning_test
     bezier_path_test
     conversion_tests
-    create_path_test
     planner_test
     trajectory_test
     trapezoidal_motion_test
