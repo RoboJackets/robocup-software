@@ -10,7 +10,6 @@
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
 #include "rj_planning/primitives/replanner.hpp"
-#include "rj_planning/primitives/rrt_util.hpp"
 
 namespace planning {
 

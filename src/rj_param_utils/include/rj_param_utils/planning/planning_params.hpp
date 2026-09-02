@@ -18,13 +18,6 @@ DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, vel_change_threshold);
 DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, partial_replan_lead_time);
 DECLARE_NS_FLOAT64(kPlanningParamModule, replanner, off_path_threshold);
 
-DECLARE_NS_BOOL(kPlanningParamModule, rrt, enable_debug_drawing);
-DECLARE_NS_FLOAT64(kPlanningParamModule, rrt, step_size);
-DECLARE_NS_FLOAT64(kPlanningParamModule, rrt, goal_bias);
-DECLARE_NS_FLOAT64(kPlanningParamModule, rrt, waypoint_bias);
-DECLARE_NS_INT64(kPlanningParamModule, rrt, min_iterations);
-DECLARE_NS_INT64(kPlanningParamModule, rrt, max_iterations);
-
 DECLARE_NS_FLOAT64(kPlanningParamModule, intermediate, min_scale);
 DECLARE_NS_FLOAT64(kPlanningParamModule, intermediate, max_scale);
 DECLARE_NS_FLOAT64(kPlanningParamModule, intermediate, min_angle);
