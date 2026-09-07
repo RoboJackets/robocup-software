@@ -15,7 +15,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"), "config", "sim_params.yaml"
     )
     bringup_dir = Path(get_package_share_directory("rj_robocup"))
     launch_dir = bringup_dir / "launch"
