@@ -4,11 +4,11 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
+| **Package name** |rj_topic_utils|
+| **Assigned owner(s)** |Pooja Dayaratna|
 | **Reviewer(s)** |  |
-| **Date started revision** |  |
-| **Branch / tracking issue** |  |
+| **Date started revision** |8/31/2026|
+| **Branch / tracking issue** |rj_topic_utils_cleaning|
 
 ## Purpose of This Template
 
@@ -20,10 +20,10 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Codebase role** | _Describe where the package fits and what part of the system it supports._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | The package defines templates for a message queue and an asynchronous message queue.|
+| **Codebase role** | This is a low level utility package that is only used by two packages (rj_vision filter and rj_ui).|
+| **Current responsibilities** |This package is used to create a queue of TeamColor messages in rj_vision_filter and a queue of WorldState messages and RawProtobuf messages in rj_ui. These are the only two packages that rely on it as far as I can tell (rj_control imports the async messge queue header file but never actually uses it anywhere) |
+| **Out of scope** | This package shouldnt handle any logic for specific messages (meaning it should be able to work with any message type). This package should also not attempt to manage the lifecycle of any of the nodes that depend on it.  |
 
 ## 2. Dependency Rules
 
@@ -33,15 +33,15 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** |rclcpp |
+| **Depended on by** | rj_vision_filter, rj_ui |
 
 ### Overlap and Coordination
 
 | Field | Details |
 | --- | --- |
-| **Shared boundaries** | _Identify code, messages, data models, or interfaces shared with another package._ |
-| **Coordination needed** | _List package / package owners, if any, who must coordinate before changes are merged._ |
+| **Shared boundaries** | The standard ros2 message interfaces   |
+| **Coordination needed** | rj_vision filter and rj_ui both currently depend on this package, although no one is working on them right now |
 
 ## 3. Functional Requirements
 
@@ -98,3 +98,4 @@ Summarize the agreed scope, codebase impact, implementation sequence, and final 
 | **Success criteria** | _List objective conditions that demonstrate the work is complete and effective._ |
 
 The final review checklist will be on ClickUp.
+
