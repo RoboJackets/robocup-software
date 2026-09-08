@@ -12,7 +12,6 @@
   <depend>rclcpp_components</depend>
   <depend>spdlog</depend>
   <depend>fmt</depend>
-  <depend>RRT</depend>
 
   <depend>rj_geometry</depend>
   <depend>rj_common</depend>
