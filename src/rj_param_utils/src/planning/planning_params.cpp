@@ -43,9 +43,6 @@ DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, step_size, 0.1,
                   "Step size for testing intermediates (m)");
 
 DEFINE_NS_FLOAT64(
-    kPlanningParamModule, escape, step_size, 0.1,
-    "Step size for the RRT used to find an unblocked point in find_non_blocked_goal()");
-DEFINE_NS_FLOAT64(
     kPlanningParamModule, escape, goal_change_threshold, 0.9,
     "A newly-found unblocked goal must be this much closer to the start position than the "
     "previous point in order to be used (m).");
