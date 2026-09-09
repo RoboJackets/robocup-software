@@ -1,0 +1,40 @@
+{
+  "name": "RoboJackets RoboCup Software",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+
+  "remoteUser": "root",
+  "overrideCommand": false,
+  "init": true,
+
+  "forwardPorts": [6080, 8081],
+
+  "portsAttributes": {
+    "6080": {
+      "label": "RoboCup desktop (noVNC)",
+      "onAutoForward": "notify"
+    },
+    "8081": {
+      "label": "SSL Game Controller",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-python.python",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "cmake.configureOnOpen": false,
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      }
+    }
+  }
+}
