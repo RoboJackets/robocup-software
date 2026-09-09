@@ -1,13 +1,23 @@
 #pragma once
 
-#include <rclcpp/time.hpp>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include <string>
 #include <type_traits>
+#include <vector>
 
 namespace rj_convert {
 
 template <typename CppType, typename RosType>
 struct RosConverter {
     using T = void;
+};
+
+template <typename Type>
+struct RosConverter<Type, Type> {
+    static Type to_ros(const Type& value) { return value; }
+    static Type from_ros(const Type& value) { return value; }
 };
 
 /**
@@ -38,32 +48,27 @@ struct AssociatedCppType {
         using T = CppType;                  \
     };
 
-#define CONVERT_PRIMITIVE(type)                                   \
-    template <>                                                   \
-    struct RosConverter<type, type> {                             \
-        static type to_ros(const type& value) { return value; }   \
-        static type from_ros(const type& value) { return value; } \
-    };                                                            \
+#define ASSOCIATE_PRIMITIVE(type) \
     ASSOCIATE_CPP_ROS(type, type)
 
-CONVERT_PRIMITIVE(int8_t);
-CONVERT_PRIMITIVE(int16_t);
-CONVERT_PRIMITIVE(int32_t);
-CONVERT_PRIMITIVE(int64_t);
+ASSOCIATE_PRIMITIVE(int8_t);
+ASSOCIATE_PRIMITIVE(int16_t);
+ASSOCIATE_PRIMITIVE(int32_t);
+ASSOCIATE_PRIMITIVE(int64_t);
 
-CONVERT_PRIMITIVE(uint8_t);
-CONVERT_PRIMITIVE(uint16_t);
-CONVERT_PRIMITIVE(uint32_t);
-CONVERT_PRIMITIVE(uint64_t);
+ASSOCIATE_PRIMITIVE(uint8_t);
+ASSOCIATE_PRIMITIVE(uint16_t);
+ASSOCIATE_PRIMITIVE(uint32_t);
+ASSOCIATE_PRIMITIVE(uint64_t);
 
-CONVERT_PRIMITIVE(float);
-CONVERT_PRIMITIVE(double);
+ASSOCIATE_PRIMITIVE(float);
+ASSOCIATE_PRIMITIVE(double);
 
-CONVERT_PRIMITIVE(bool);
-CONVERT_PRIMITIVE(std::string);
-CONVERT_PRIMITIVE(std::u16string);
+ASSOCIATE_PRIMITIVE(bool);
+ASSOCIATE_PRIMITIVE(std::string);
+ASSOCIATE_PRIMITIVE(std::u16string);
 
-#undef CONVERT_PRIMITIVE
+#undef ASSOCIATE_PRIMITIVE
 
 template <typename CppItem>
 struct AssociatedRosType<std::vector<CppItem>> {

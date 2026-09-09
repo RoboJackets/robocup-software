@@ -5,6 +5,7 @@
 #include <builtin_interfaces/msg/duration.hpp>
 #include <builtin_interfaces/msg/time.hpp>
 #include <chrono>
+#include <rclcpp/duration.hpp>
 #include <rclcpp/time.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <string>
@@ -74,40 +75,50 @@ inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
 namespace rj_convert {
 
 template <>
-struct RosConverter<RJ::Time, rclcpp::Time> {
+struct [[deprecated("Use builtin_interfaces::msg::Time conversion instead")]]
+    RosConverter<RJ::Time, rclcpp::Time> {
     static rclcpp::Time to_ros(const RJ::Time& value) {
-        const int64_t nanos =
+        const auto nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(
                 value.time_since_epoch())
                 .count();
-
         return rclcpp::Time{nanos};
     }
+
     static RJ::Time from_ros(const rclcpp::Time& value) {
-        const std::chrono::nanoseconds dur(value.nanoseconds());
-        return RJ::Time{dur};
+        return RJ::Time{std::chrono::nanoseconds(value.nanoseconds())};
     }
 };
 
 template <>
 struct RosConverter<RJ::Time, builtin_interfaces::msg::Time> {
-    static rclcpp::Time to_ros(const RJ::Time& value) {
-        return RosConverter<RJ::Time, rclcpp::Time>::to_ros(value);
+    static builtin_interfaces::msg::Time to_ros(const RJ::Time& value) {
+        const auto nanos =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                value.time_since_epoch())
+                .count();
+        builtin_interfaces::msg::Time result;
+        result.sec = static_cast<int32_t>(nanos / 1000000000);
+        result.nanosec = static_cast<uint32_t>(nanos % 1000000000);
+        return result;
     }
-    static RJ::Time from_ros(const rclcpp::Time& value) {
-        return RosConverter<RJ::Time, rclcpp::Time>::from_ros(value);
+    static RJ::Time from_ros(const builtin_interfaces::msg::Time& value) {
+        return RJ::Time{std::chrono::seconds(value.sec) +
+                        std::chrono::nanoseconds(value.nanosec)};
     }
 };
-//std::chrono::duration_cast<std::chrono::nanoseconds>(value).count()
+
 template <>
-struct RosConverter<RJ::Seconds, rclcpp::Duration> {
+struct [[deprecated("Use builtin_interfaces::msg::Duration conversion instead")]]
+    RosConverter<RJ::Seconds, rclcpp::Duration> {
     static rclcpp::Duration to_ros(const RJ::Seconds& value) {
         return rclcpp::Duration(
             std::chrono::duration_cast<std::chrono::nanoseconds>(value));
     }
+
     static RJ::Seconds from_ros(const rclcpp::Duration& value) {
-        const std::chrono::nanoseconds dur(value.nanoseconds());
-        return std::chrono::duration_cast<RJ::Seconds>(dur);
+        return std::chrono::duration_cast<RJ::Seconds>(
+            std::chrono::nanoseconds(value.nanoseconds()));
     }
 };
 
@@ -115,11 +126,18 @@ ASSOCIATE_CPP_ROS(RJ::Time, builtin_interfaces::msg::Time);
 
 template <>
 struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
-    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
-        return RosConverter<RJ::Seconds, rclcpp::Duration>::to_ros(value);
+    static builtin_interfaces::msg::Duration to_ros(const RJ::Seconds& value) {
+        const auto nanos =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(value).count();
+        builtin_interfaces::msg::Duration result;
+        result.sec = static_cast<int32_t>(nanos / 1000000000);
+        result.nanosec = static_cast<uint32_t>(nanos % 1000000000);
+        return result;
     }
-    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
-        return RosConverter<RJ::Seconds, rclcpp::Duration>::from_ros(value);
+    static RJ::Seconds from_ros(const builtin_interfaces::msg::Duration& value) {
+        return std::chrono::duration_cast<RJ::Seconds>(
+            std::chrono::seconds(value.sec) +
+            std::chrono::nanoseconds(value.nanosec));
     }
 };
 
