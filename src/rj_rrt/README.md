@@ -1,59 +1,50 @@
-# RRT [![CircleCI](https://circleci.com/gh/RoboJackets/rrt.svg?style=svg)](https://circleci.com/gh/RoboJackets/rrt)
+# Package Documentation
 
-C++ RRT (Rapidly-exploring Random Tree) implementation
+Reusable assessment, refactor, and verification template.
 
+| Package Details | Entry |
+| --- | --- |
+| **Package name** |  |
+| **Assigned owner(s)** |  |
+| **Reviewer(s)** |  |
+| **Date started revision** |  |
 
-## Interactive RRT Viewer
+## 1. Package Identity and Tier
 
-This project contains an interactive RRT viewer.  The source and destination points can be dragged with a mouse.  Here's a screenshot:
+Define the package's purpose and fixed architectural classification before work starts.
 
-![Interactive RRT](doc/images/rrt-viewer-screenshot.png)
+| Field | Details |
+| --- | --- |
+| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
+| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
+| **Out of scope** | _State what this package must not own or attempt to solve._ |
 
+## 2. Dependency Rules
 
-## Dependencies
+Map package relationships before adding, deleting, or moving code. Dependency direction should remain downward through the tier stack.
 
-The following are required in order to build this project:
+### Dependency Summary
 
-* cmake >= 3.2.0
-* Qt 5.5+
-    - (The following dependencies are only needed for the rrt viewer)
-    - QtDeclarative 5
-    - QtQuick2.5+
-    - QtQuick Controls
-    - QtQuick Dialogs
-* Eigen
-* ninja
-* ccache
-* libflann-dev
-* libboost-all-dev
-
-To install all needed dependencies on Ubuntu 16.04, run:
-
-```{.sh}
-sudo apt-get -y install qt5-default libeigen3-dev g++ ninja-build cmake clang-format-3.6 ccache libflann-dev qtdeclarative5-dev qtdeclarative5-qtquick2-plugin qml-module-qtquick-{controls,dialogs} libboost-all-dev
-```
+| Field | Details |
+| --- | --- |
+| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
+| **Depended on by** | _List packages, executables, or systems that consume this package._ |
 
 
-## Building
+## 3. Operational Expectations
 
-Run `make` in the main directory to build the `rrt-viewer` program and the `test-runner` program, which are placed in the `build/` folder.
+| Field | Details |
+| --- | --- |
+| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
+| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
+| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
 
-~~~{.sh}
-git submodule update --init
-make
-build/rrt-viewer
-~~~
+## 4. Testing
 
+### Test Coverage and Runtime Quality
 
-## Resources
-
-Here are some good resources for learning more about RRTs:
-
-* http://msl.cs.uiuc.edu/rrt/
-* [Wikipedia](http://en.wikipedia.org/wiki/Rapidly_exploring_random_tree)
-* http://www.cs.cmu.edu/~15780/readings/02iros-errt.pdf
-
-
-## License
-
-This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
+| Field | Details |
+| --- | --- |
+| **Unit testing** | _Describe what unit tests were used on this package and how._ |
+| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
+| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
