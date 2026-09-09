@@ -9,10 +9,6 @@ Reusable assessment, refactor, and verification template.
 | **Reviewer(s)** | Nathanial Wert, Sanat Dhanyamraju |
 | **Date started revision** | 9/1/2026 |
 
-## Purpose of This Template
-
-Use one completed copy per package. Defines what the package is about and its dependencies.
-
 ## 1. Package Identity and Tier
 
 Define the package's purpose and fixed architectural classification before work starts.
@@ -31,19 +27,11 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Leaf node_ |
+| **Depends on** | None |
 | **Depended on by** | rj_geometry , rj_msgs , rj_utils , rj_drawing_msgs |
 
 
-## 3. Functional Requirements
-
-Describe what the package must do before and after the work, including behavior under failure and compatibility constraints.
-
-| Field | Details |
-| --- | --- |
-| **Required behavior** | Must still correctly define ROS2 serializable messages for geometry shapes preserving layouts so that existing RosConverters in rj_geometry still continue to work. |
-
-### Operational Expectations
+## 3. Operational Expectations
 
 | Field | Details |
 | --- | --- |
