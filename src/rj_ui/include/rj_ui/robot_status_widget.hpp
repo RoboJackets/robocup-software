@@ -8,7 +8,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/status.hpp>
-#include <rj_protos/LogFrame.pb.h>
 
 #include "rj_ui/battery_profile.hpp"
 #include "ui_RobotStatusWidget.h"
@@ -21,11 +20,6 @@
 class RobotStatusWidget : public QWidget {
 public:
     RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
-
-    void loadFromLogFrame(
-        const Packet::RadioRx& rx,
-        const std::optional<Packet::LogFrame::Robot>& maybe_robot,
-        bool blueTeam);
 
     [[nodiscard]] int shellID() const;
     void setShellID(int shellID);

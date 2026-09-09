@@ -1788,62 +1788,6 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="treeTab">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <attribute name="title">
-           <string>Tree</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="ProtobufTree" name="logTree">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="columnCount">
-              <number>3</number>
-             </property>
-             <column>
-              <property name="text">
-               <string>Field</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Value</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string>Tag</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-          </layout>
-         </widget>
          <widget class="QWidget" name="layerTab">
           <attribute name="title">
            <string>Layers</string>
@@ -3611,11 +3555,6 @@
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ProtobufTree</class>
-   <extends>QTreeWidget</extends>
-   <header>rj_ui/protobuf_tree.hpp</header>
-  </customwidget>
   <customwidget>
    <class>SimFieldView</class>
    <extends>QWidget</extends>

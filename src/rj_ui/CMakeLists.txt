@@ -48,15 +48,11 @@ set(SRC_FILES
   src/battery_profile.cpp
   src/battery_widget.cpp
   src/field_view.cpp
-  src/log_viewer.cpp
   src/main_window.cpp
   src/processor.cpp
-  src/protobuf_tree.cpp
   src/referee_tab.cpp
   src/robot_status_widget.cpp
   src/robot_widget.cpp
-  src/sim_field_view.cpp
-  src/strip_chart.cpp
   src/style_sheet_manager.cpp
 
   src/ros2_temp/autonomy_interface.cpp
@@ -67,21 +63,16 @@ set(SRC_FILES
 
   # QT MOC Headers (need to be included here so qt generates MOC files properly)
   include/rj_ui/main_window.hpp
-  include/rj_ui/protobuf_tree.hpp
-  include/rj_ui/log_viewer.hpp
   include/rj_ui/referee_tab.hpp
-  include/rj_ui/sim_field_view.hpp
 
   # QT UI Files
   qt/ConfigFileTab.ui
-  qt/LogViewer.ui
   qt/MainWindow.ui
   qt/RefereeTab.ui
   qt/RobotStatusWidget.ui
 
   # QT QRC Files
   qt/main_icons.qrc
-  qt/log_icons.qrc
 )
 
 set(RJ_UI_NODE_AUTOGEN_FILES
@@ -89,11 +80,6 @@ set(RJ_UI_NODE_AUTOGEN_FILES
   include/rj_ui/robot_status_widget.hpp
   qt/MainWindow.ui
   qt/RobotStatusWidget.ui
-)
-
-set(RJ_UI_LOG_VIEWER_AUTOGEN_FILES
-  include/rj_ui/log_viewer.hpp
-  qt/LogViewer.ui
 )
 
 set(RJ_UI_DEPS
@@ -130,19 +116,7 @@ add_executable(${PROJECT_NAME}_node
   ${RJ_UI_NODE_AUTOGEN_FILES}
 )
 
-add_executable(log_viewer_node
-  src/log_viewer_main.cpp
-  ${RJ_UI_LOG_VIEWER_AUTOGEN_FILES}
-)
-
 target_include_directories(${PROJECT_NAME}_node
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-target_include_directories(log_viewer_node
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -157,11 +131,6 @@ target_include_directories(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}_node
-  PRIVATE
-  ${PROJECT_NAME}
-)
-
-target_link_libraries(log_viewer_node
   PRIVATE
   ${PROJECT_NAME}
 )
@@ -186,11 +155,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
   ${RJ_UI_DEPS}
 )
 
-ament_target_dependencies(log_viewer_node
-  PUBLIC
-  ${RJ_UI_DEPS}
-)
-
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
   ${RJ_UI_DEPS}
@@ -199,11 +163,6 @@ ament_target_dependencies(${PROJECT_NAME}
 install(
   DIRECTORY include/
   DESTINATION include
-)
-
-install(
-  TARGETS ${PROJECT_NAME}_node log_viewer_node
-  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(

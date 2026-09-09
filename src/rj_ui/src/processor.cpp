@@ -7,8 +7,7 @@ using namespace google::protobuf;
 // TODO: Remove this and just use the one in Context.
 FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
-Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
-    : read_log_file_(read_log_file), loop_mutex_() {
+Processor::Processor(bool sim, bool blue_team) : loop_mutex_() {
     // Set the logger to ros2.
     rj_utils::set_spdlog_default_ros2("processor");
 
@@ -19,8 +18,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     context_.field_dimensions = *current_dimensions;
 
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-
-    logger_ = std::make_unique<Logger>(&context_);
 
     // ROS2 temp nodes
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
@@ -34,14 +31,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStateTopic);
-
-    if (!read_log_file.empty()) {
-        logger_->read(read_log_file);
-    }
-
-    logger_->start();
-
-    nodes_.push_back(logger_.get());
 }
 
 Processor::~Processor() { stop(); }
@@ -65,14 +54,6 @@ void Processor::run() {
         auto delta_time = start_time - cur_status.last_loop_time;
         framerate_ = RJ::Seconds(1) / delta_time;
         cur_status.last_loop_time = start_time;
-
-        // Don't run processor while we're paused or reading logs after the
-        // first cycle (we need to run one because MainWindow waits on a single
-        // cycle of processor to initialize).
-        while (initialized_ && running_ &&
-               (context_.game_settings.paused || context_.logs.state == Logs::State::kReading)) {
-            std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
-        }
 
         ////////////////
         // Inputs
@@ -122,13 +103,6 @@ void Processor::run() {
         initialized_ = true;
 
         debug_draw_sub_->run();
-
-        {
-            loop_mutex()->lock();
-            // Log this entire frame
-            logger_->run();
-            loop_mutex()->unlock();
-        }
 
         ////////////////
         // Timing

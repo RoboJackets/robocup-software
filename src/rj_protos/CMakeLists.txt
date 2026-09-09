@@ -11,16 +11,10 @@ find_package(Protobuf REQUIRED)
 protobuf_generate_cpp(
   PROTOBUF_SRCS
   PROTOBUF_HDRS
-  protos/Control.proto
   protos/grSim_Commands.proto
   protos/grSim_Packet.proto
   protos/grSim_Replacement.proto
-  protos/LogFrame.proto
-  protos/Point.proto
-  protos/RadioRx.proto
-  protos/RadioTx.proto
   protos/referee.proto
-  protos/Robot.proto
   protos/ssl_gc_common.proto
   protos/ssl_gc_geometry.proto
   protos/ssl_gc_game_event.proto

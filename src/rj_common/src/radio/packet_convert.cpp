@@ -69,51 +69,6 @@ void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
     status->fpga_healthy = true;
 }
 
-void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
-    using namespace std::chrono;
-
-    proto->set_timestamp(duration_cast<microseconds>(status.timestamp.time_since_epoch()).count());
-    proto->set_robot_id(status.shell_id);
-    proto->set_battery(static_cast<float>(status.battery_voltage));
-
-    proto->set_ball_sense_status(status.has_ball ? Packet::BallSenseStatus::HasBall
-                                                 : Packet::BallSenseStatus::NoBall);
-
-    for (int i = 0; i < 5; i++) {
-        proto->add_motor_status(status.motors_healthy[i] ? Packet::MotorStatus::Good
-                                                         : Packet::MotorStatus::Encoder_Failure);
-    }
-
-    // No encoders or RSSI
-
-    switch (status.kicker) {
-        case RobotStatus::KickerState::kFailed:
-            proto->set_kicker_status(Kicker_I2C_OK);
-            break;
-        case RobotStatus::KickerState::kCharging:
-            proto->set_kicker_status(Kicker_Enabled | Kicker_I2C_OK);
-            break;
-        case RobotStatus::KickerState::kCharged:
-            proto->set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
-            break;
-    }
-
-    proto->set_kicker_voltage(status.kicker_voltage);
-    proto->set_fpga_status(status.fpga_healthy ? Packet::FpgaStatus::FpgaGood
-                                               : Packet::FpgaStatus::FpgaError);
-
-    switch (status.version) {
-        case RobotStatus::HardwareVersion::kUnknown:
-            proto->set_hardware_version(Packet::HardwareVersion::Unknown);
-            break;
-        case RobotStatus::HardwareVersion::kFleet2018:
-            proto->set_hardware_version(Packet::HardwareVersion::RJ2018);
-            break;
-        case RobotStatus::HardwareVersion::kSimulated:
-            proto->set_hardware_version(Packet::HardwareVersion::Simulation);
-            break;
-    }
-}
 void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
     rj_convert::convert_to_ros(status.timestamp, &(msg->timestamp));
     msg->robot_id = status.shell_id;
@@ -185,44 +140,6 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
             rtp_message->trigger_mode = 2;
             break;
         default:
-            break;
-    }
-}
-
-void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
-              const MotionSetpoint& setpoint, int shell, Packet::Robot* proto) {
-    if (proto == nullptr) {
-        return;
-    }
-
-    proto->set_uid(shell);
-
-    Packet::Control* control = proto->mutable_control();
-
-    control->set_xvelocity(static_cast<float>(setpoint.xvelocity));
-    control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
-    control->set_avelocity(static_cast<float>(setpoint.avelocity));
-    control->set_dvelocity(trajectory.dribbler_speed);
-    control->set_kcstrength(kicker_speed_to_strength(intent.kick_speed));
-
-    switch (trajectory.shoot_mode) {
-        case RobotIntent::ShootMode::KICK:
-            control->set_shootmode(Packet::Control_ShootMode_KICK);
-            break;
-        case RobotIntent::ShootMode::CHIP:
-            control->set_shootmode(Packet::Control_ShootMode_CHIP);
-            break;
-    }
-
-    switch (trajectory.trigger_mode) {
-        case RobotIntent::TriggerMode::STAND_DOWN:
-            control->set_triggermode(Packet::Control_TriggerMode_STAND_DOWN);
-            break;
-        case RobotIntent::TriggerMode::IMMEDIATE:
-            control->set_triggermode(Packet::Control_TriggerMode_IMMEDIATE);
-            break;
-        case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-            control->set_triggermode(Packet::Control_TriggerMode_ON_BREAK_BEAM);
             break;
     }
 }

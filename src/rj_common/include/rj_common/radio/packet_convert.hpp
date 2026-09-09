@@ -9,9 +9,6 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_param_utils/global_params.hpp>
-#include <rj_protos/RadioRx.pb.h>
-#include <rj_protos/RadioTx.pb.h>
-#include <rj_protos/Robot.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 
@@ -31,7 +28,6 @@
  *  - RTP. This is the packed format we use to send to and from real robots
  *  - sim. This is a protobuf-based format used to communicate with sim
  *  - RobotStatus. This is the in-memory representation used in Context.
- *  - Packet::RadioRx. This is the representation used in the log frame.
  *
  * For Tx (soccer to robot), the structs are similar with one exception:
  * instead of a single equivalent to RobotStatus, in-memory representations of
@@ -43,8 +39,6 @@ namespace ConvertRx {
 void rtp_to_status(const RadioMessage::RobotStatusMessage& rtp, RobotStatus* status);
 
 void sim_to_status(const RobotFeedback& sim, RobotStatus* status);
-
-void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto);
 
 void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg);
 
@@ -60,9 +54,6 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
                 RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team);
-
-void to_proto(const planning::Trajectory& trajectory, const RobotIntent& intent,
-              const MotionSetpoint& setpoint, int shell, Packet::Robot* proto);
 
 void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, RobotCommand* sim);

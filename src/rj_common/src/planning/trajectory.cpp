@@ -183,17 +183,6 @@ Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, insta
 
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<rj_geometry::Point> alt_text_position) const {
-    if (instants_.size() > 1) {
-        Packet::DebugRobotPath* dbg_path = drawer->add_debug_path();
-        dbg_path->set_layer(drawer->find_debug_layer("Motion"));
-
-        for (const RobotInstant& instant : instants_) {
-            Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg_path->add_points();
-            *pt->mutable_pos() = instant.pose.position();
-            *pt->mutable_vel() = instant.velocity.linear();
-        }
-    }
-
     if (debug_text_) {
         rj_geometry::Point text_pos;
 

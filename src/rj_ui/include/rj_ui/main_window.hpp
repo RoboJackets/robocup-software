@@ -78,14 +78,12 @@ public:
 
     void setLive() {
         if (!live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
             _playbackRate = std::nullopt;
         }
     }
 
     void setPlayBackRate(double playbackRate) {
         if (live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
         }
         _playbackRate = playbackRate;
     }
@@ -236,7 +234,6 @@ private:
     void status(const QString& text, StatusType status);
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
-    void updateDebugLayers(const Packet::LogFrame& frame);
 
     Ui_MainWindow _ui{};
     const QStandardItemModel* goalieModel{};
@@ -245,16 +242,6 @@ private:
     bool _has_external_ref;
 
     int current_goalie_num_{0};
-
-    // Log history, copied from Logger.
-    // This is used by other controls to get log data without having to copy it
-    // again from the Logger.
-    std::vector<std::shared_ptr<Packet::LogFrame>> _history{};
-
-    // Longer log history, copied from Logger.
-    // This is used specificially via StripChart and ProtobufTree
-    // To export a larger amount of data.
-    std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
 
     // Arrays containing dropdown and reset button UI objects
     std::array<QComboBox*, kNumShells> robot_pos_selectors{};

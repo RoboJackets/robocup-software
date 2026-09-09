@@ -11,7 +11,6 @@
 
 #include <rj_geometry/util.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
-#include <rj_protos/Point.pb.h>
 
 namespace rj_geometry {
 
@@ -33,11 +32,6 @@ public:
     @param y the y coordinate
     */
     Point(double x = 0, double y = 0) : x_(x), y_(y) {}
-
-    /**
-     * Implicit constructor for creating a Point from a Packet::Point
-     */
-    Point(const Packet::Point& other) : Point(other.x(), other.y()) {}
 
     /**
      * Implicit constructor for creating a Point from a QPointF
@@ -68,13 +62,6 @@ public:
      * to draw stuff and interface with QT
      */
     [[nodiscard]] QPointF to_q_point_f() const { return QPointF(x(), y()); }
-
-    operator Packet::Point() const {
-        Packet::Point out;
-        out.set_x(static_cast<float>(x()));
-        out.set_y(static_cast<float>(y()));
-        return out;
-    }
 
     /**
      * does vector addition

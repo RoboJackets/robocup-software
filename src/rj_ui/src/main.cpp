@@ -169,7 +169,7 @@ int main(int argc, char* argv[]) {
 
     start_global_param_provider("soccer", kGlobalParamServerNode);
 
-    auto processor = std::make_unique<Processor>(sim, blue_team, read_log_file);
+    auto processor = std::make_unique<Processor>(sim, blue_team);
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;
@@ -184,20 +184,6 @@ int main(int argc, char* argv[]) {
     win->initialize();
 
     win->setUseRefChecked(!noref);
-
-    if (!application_run_directory().exists("./logs")) {
-        cerr << "No ./run/logs/ directory - not writing log file" << endl;
-    } else if (!log) {
-        cerr << "Not writing log file" << endl;
-    } else if (read_log_file.empty()) {
-        QString log_file = application_run_directory().filePath("./logs/") +
-                           QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-        if (!processor->open_log(log_file)) {
-            printf("Failed to open %s: %m\n", (const char*)log_file.toLatin1());
-        }
-    }
-
-    win->logFileChanged();
 
     std::thread processor_thread(&Processor::run, processor.get());
 
