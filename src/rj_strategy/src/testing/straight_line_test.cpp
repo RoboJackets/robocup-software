@@ -1,11 +1,5 @@
 #include "rj_strategy/testing/straight_line_test.hpp"
 
-DEFINE_FLOAT64("straight_line_test", start_x, 1.0, "starting point x coordinate");
-DEFINE_FLOAT64("straight_line_test", start_y, 7.0, "starting point y coordinate");
-DEFINE_FLOAT64("straight_line_test", end_x, -1.0, "ending point x coordinate");
-DEFINE_FLOAT64("straight_line_test", end_y, 7.0, "ending point y coordinate");
-DEFINE_FLOAT64("straight_line_test", robot_id, 1, "robot_id for line_test");
-
 namespace strategy {  // put code inside of namespace for extra uses
 
 using RobotMove = rj_msgs::action::RobotMove;
@@ -21,6 +15,21 @@ StraightLineTest::StraightLineTest(int r_id)
       current_position_{std::make_unique<Line>(
           r_id)},  // uniq ptr for curr_pos (line, which is child of position)
       robot_id_{r_id} {
+
+    this->declare_parameter("start_x", 7.0);
+    this->declare_parameter("start_y", -1.0);
+    this->declare_parameter("end_x", 7.0);
+    this->declare_parameter("end_y", 1.0);
+    this->declare_parameter("robot_id", 1);
+
+    this->get_parameter_or("start_x", start_x_, 7.0);
+    this->get_parameter_or("start_y", start_y_, -1.0);
+    this->get_parameter_or("end_x", end_x_, 7.0);
+    this->get_parameter_or("end_y", end_y_, 1.0);
+    this->get_parameter_or("robot_id", target_robot_id_param_, 1);
+
+    SPDLOG_INFO("Start_x: {}", start_x_);
+
     client_ptr_ = rclcpp_action::create_client<RobotMove>(this, "robot_move");
 
     current_state_publisher_ = create_publisher<AgentStateMsg>(
@@ -58,9 +67,9 @@ StraightLineTest::StraightLineTest(int r_id)
 
     // sets defaults from yaml config
     start_ =
-        rj_geometry::Point(static_cast<double>(PARAM_start_x), static_cast<double>(PARAM_start_y));
-    end_ = rj_geometry::Point(static_cast<double>(PARAM_end_x), static_cast<double>(PARAM_end_y));
-    target_robot_id_ = static_cast<uint8_t>(PARAM_robot_id);
+        rj_geometry::Point(static_cast<double>(start_x_), static_cast<double>(start_y_));
+    end_ = rj_geometry::Point(static_cast<double>(end_x_), static_cast<double>(end_y_));
+    target_robot_id_ = static_cast<uint8_t>(target_robot_id_param_);
 
     // initiates default
     current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
@@ -224,7 +233,6 @@ int main(int argc, char** argv) {
     std::vector<rclcpp::Node::SharedPtr> agents;
     for (int i = 0; i < 6; i++) {
         auto agent = std::make_shared<strategy::StraightLineTest>(i);
-        start_global_param_provider(agent.get(), kGlobalParamServerNode);
         agents.push_back(agent);
     }
     for (const auto& agent : agents) {
