@@ -15,14 +15,13 @@
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
-#include "rj_planning/primitives/rrt_util.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
 #include "rj_planning/trajectory_utils.hpp"
 
 namespace planning {
 
 /**
- * @brief Handles the replanning strategy for an RRT plan generator.
+ * @brief Handles the replanning strategy for a plan generator.
  *
  * This is used to avoid constantly replanning.
  * TODO(Kevin): gameplay constantly replans bc it spawns new replanner every time, fix that
