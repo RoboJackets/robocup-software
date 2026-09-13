@@ -17,7 +17,7 @@
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>

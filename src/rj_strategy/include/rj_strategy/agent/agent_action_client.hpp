@@ -14,7 +14,7 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/agent_state.hpp>
