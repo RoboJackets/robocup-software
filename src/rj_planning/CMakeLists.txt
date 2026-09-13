@@ -17,7 +17,6 @@ find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
-find_package(Flann REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_constants REQUIRED)
@@ -37,13 +36,11 @@ set(RJ_PLANNING_DEPS
   rj_convert
   rj_msgs
   rj_param_utils
-  Flann
 )
 
 set(RJ_PLANNING_LIBS
   spdlog
   fmt
-  ${FLANN_LIBRARIES}
 )
 
 set(RJ_PLANNING_SRC
