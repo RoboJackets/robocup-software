@@ -14,8 +14,8 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/time.hpp>
-#include <rj_common/world_state.hpp>
 #include <rj_common/topic_names.hpp>
+#include <rj_common/world_state.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>

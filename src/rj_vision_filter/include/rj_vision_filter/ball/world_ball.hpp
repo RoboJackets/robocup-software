@@ -1,9 +1,10 @@
 #pragma once
 
+#include <list>
+
 #include <rj_geometry/ball.hpp>
 #include <rj_geometry/bot.hpp>
 #include <rj_geometry/point.hpp>
-#include <list>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 
 namespace vision_filter {
