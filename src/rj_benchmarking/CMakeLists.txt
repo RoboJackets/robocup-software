@@ -16,12 +16,14 @@ find_package(fmt REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_msgs REQUIRED)
+find_package(rj_common REQUIRED)
 
 set(BENCHMARKING_DEPS
     fmt
     rclcpp
     spdlog
     rj_msgs
+    rj_common
 )
 
 set(BENCHMARKING_LIBS

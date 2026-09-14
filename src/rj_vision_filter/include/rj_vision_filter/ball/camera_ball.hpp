@@ -1,5 +1,7 @@
 #pragma once
 
+#include <rj_geometry/ball.hpp>
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_common/time.hpp>

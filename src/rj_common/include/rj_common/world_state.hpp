@@ -9,6 +9,7 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
 
+#include "rj_common/game_constants.hpp"
 #include "rj_common/planning/instant.hpp"
 #include "rj_common/planning/trajectory.hpp"
 

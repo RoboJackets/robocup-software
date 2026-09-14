@@ -6,6 +6,7 @@
 #include <rj_common/planning/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/utils.hpp>
+#include <rj_geometry/bot.hpp>
 
 #include "rj_planning/primitives/trapezoidal_motion.hpp"
 

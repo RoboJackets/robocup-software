@@ -15,8 +15,11 @@
 #include <QStyleOption>
 
 #include <rj_common/field_dimensions.hpp>
+#include <rj_common/game_constants.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
+#include <rj_geometry/ball.hpp>
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
