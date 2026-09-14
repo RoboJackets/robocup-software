@@ -10,8 +10,8 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/node.hpp>
-#include <rj_common/utils.hpp>
 #include <rj_common/topic_names.hpp>
+#include <rj_common/utils.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/srv/list_joysticks.hpp>

@@ -6,8 +6,10 @@
  * \file This file contains all the topic name strings to avoid typos.
  * 2026 GRAND REFACTOR QUESTIONS
  * 1. Does it make sense to define all node names in one place? yeah probably
- * 2. Does it make sense to define all node names in one file? maybe not, bound to accumulate merge conflicts, and every time a node name is changed, it triggers a full rebuild of every node
- * 3. I need a refresher on namespaces. Is there a way to see all namespaces that we use? Is this a standard pattern?
+ * 2. Does it make sense to define all node names in one file? maybe not, bound to accumulate merge
+ * conflicts, and every time a node name is changed, it triggers a full rebuild of every node
+ * 3. I need a refresher on namespaces. Is there a way to see all namespaces that we use? Is this a
+ * standard pattern?
  */
 
 namespace config_server::topics {
@@ -46,20 +48,32 @@ constexpr auto kWorldStateTopic{"vision_filter/world_state"};
 }  // namespace vision_filter::topics
 
 namespace gameplay::topics {
-static inline std::string robot_intent_topic(int robot_id) { return "gameplay/robot_intent/robot_" + std::to_string(robot_id); }
+static inline std::string robot_intent_topic(int robot_id) {
+    return "gameplay/robot_intent/robot_" + std::to_string(robot_id);
+}
 constexpr auto kDebugTextTopic{"gameplay/debug_text"};
 }  // namespace gameplay::topics
 
 namespace planning::topics {
-static inline std::string trajectory_topic(int robot_id) { return "planning/trajectory/robot_" + std::to_string(robot_id); }
+static inline std::string trajectory_topic(int robot_id) {
+    return "planning/trajectory/robot_" + std::to_string(robot_id);
+}
 constexpr auto kDefAreaObstaclesTopic{"planning/def_area_obstacles"};
 }  // namespace planning::topics
 
 namespace control::topics {
-static inline std::string manipulator_setpoint_topic(int robot_id) { return "control/manipulator_setpoint/robot_" + std::to_string(robot_id); }
-static inline std::string motion_setpoint_topic(int robot_id) { return "control/motion_setpoint/robot_" + std::to_string(robot_id); }
-static inline std::string desired_state_topic(int robot_id) { return "control/desired_state/robot_" + std::to_string(robot_id); }
-static inline std::string robot_controlled_topic(int robot_id) { return "control/robot_controlled/robot_" + std::to_string(robot_id); }
+static inline std::string manipulator_setpoint_topic(int robot_id) {
+    return "control/manipulator_setpoint/robot_" + std::to_string(robot_id);
+}
+static inline std::string motion_setpoint_topic(int robot_id) {
+    return "control/motion_setpoint/robot_" + std::to_string(robot_id);
+}
+static inline std::string desired_state_topic(int robot_id) {
+    return "control/desired_state/robot_" + std::to_string(robot_id);
+}
+static inline std::string robot_controlled_topic(int robot_id) {
+    return "control/robot_controlled/robot_" + std::to_string(robot_id);
+}
 }  // namespace control::topics
 
 namespace control::params {
@@ -67,6 +81,8 @@ constexpr auto kMotionControlParamModule = "motion_control";
 }  // namespace control::params
 
 namespace radio::topics {
-static inline std::string robot_status_topic(int robot_id) { return "radio/robot_status/robot_" + std::to_string(robot_id); }
+static inline std::string robot_status_topic(int robot_id) {
+    return "radio/robot_status/robot_" + std::to_string(robot_id);
+}
 constexpr auto kAliveRobotsTopic{"radio/alive_robots"};
 }  // namespace radio::topics
