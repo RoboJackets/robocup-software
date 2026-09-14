@@ -3,7 +3,6 @@
 
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>

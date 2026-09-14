@@ -16,7 +16,6 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(Flann REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_topic_utils REQUIRED)
@@ -29,7 +28,6 @@ set(RJ_CONTROL_DEPS
   std_msgs
   Flann
   rj_utils
-  rj_constants
   rj_msgs
   rj_param_utils
   rj_topic_utils

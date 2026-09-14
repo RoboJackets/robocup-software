@@ -2,7 +2,6 @@
 
 #include <set>
 
-#include <rj_constants/constants.hpp>
 #include <rj_protos/referee.pb.h>
 
 #include "rj_common/control/motion_setpoint.hpp"

@@ -16,7 +16,6 @@ find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_msgs REQUIRED)
@@ -30,7 +29,6 @@ set(RJ_REFEREE_DEPS
   fmt
   spdlog
   rj_common
-  rj_constants
   rj_param_utils
   rj_utils
   rj_msgs

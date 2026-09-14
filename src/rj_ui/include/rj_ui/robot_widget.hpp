@@ -6,7 +6,6 @@
 #include <QtWidgets>
 
 #include <rj_common/vision_dot_pattern.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/util.hpp>
 
 /**

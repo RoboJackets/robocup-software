@@ -9,7 +9,6 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/ball_placement.hpp>
 #include <rj_msgs/msg/robot_placement.hpp>
