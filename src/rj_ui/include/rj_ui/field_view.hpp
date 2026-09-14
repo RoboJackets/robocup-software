@@ -49,9 +49,7 @@ public:
         }
     }
 
-    void history(const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* value) {
-        _history = value;
-    }
+    void history(const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* value) { _history = value; }
 
     void rotate(int value);
 
