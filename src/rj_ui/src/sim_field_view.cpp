@@ -18,7 +18,6 @@
 #include "rj_ui/field_view.hpp"
 
 using namespace boost;
-using namespace Packet;
 
 // Converts from meters to m/s for manually shooting the ball
 static const float ShootScale = 5;
@@ -45,17 +44,17 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
     rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
-    std::shared_ptr<LogFrame> frame = currentFrame();
+    std::shared_ptr<rj_ui::LiveFrame> frame = currentFrame();
     if (me->button() == Qt::LeftButton && frame) {
         drag_robot_ = -1;
-        for (const LogFrame::Robot& r : frame->self()) {
+        for (const rj_ui::LiveFrame::Robot& r : frame->self()) {
             if (pos.near_point(r.pos(), kRobotRadius)) {
                 drag_robot_ = r.shell();
                 drag_robot_blue_ = frame->blue_team();
                 break;
             }
         }
-        for (const LogFrame::Robot& r : frame->opp()) {
+        for (const rj_ui::LiveFrame::Robot& r : frame->opp()) {
             if (pos.near_point(r.pos(), kRobotRadius)) {
                 drag_robot_ = r.shell();
                 drag_robot_blue_ = !frame->blue_team();
@@ -155,7 +154,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     FieldView::drawTeamSpace(p);
 
     // Simulator drag-to-shoot
-    std::shared_ptr<LogFrame> frame = currentFrame();
+    std::shared_ptr<rj_ui::LiveFrame> frame = currentFrame();
     if (drag_mode_ == DRAG_SHOOT && frame) {
         p.setPen(QPen(Qt::white, 0.025f));
         rj_geometry::Point ball = frame->ball().pos();

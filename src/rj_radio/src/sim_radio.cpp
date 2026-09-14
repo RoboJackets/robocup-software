@@ -1,7 +1,6 @@
 #include "rj_radio/sim_radio.hpp"
 
 using namespace std;
-using namespace Packet;
 using namespace boost::asio;
 
 namespace radio {

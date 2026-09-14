@@ -1815,7 +1815,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="ProtobufTree" name="logTree">
+            <widget class="QTreeWidget" name="logTree">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -3594,11 +3594,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ProtobufTree</class>
-   <extends>QTreeWidget</extends>
-   <header>rj_ui/protobuf_tree.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>SimFieldView</class>
    <extends>QWidget</extends>
    <header location="global">rj_ui/sim_field_view.hpp</header>
@@ -3607,7 +3602,6 @@
  </customwidgets>
  <resources>
   <include location="main_icons.qrc"/>
-  <include location="log_icons.qrc"/>
  </resources>
  <connections>
   <connection>

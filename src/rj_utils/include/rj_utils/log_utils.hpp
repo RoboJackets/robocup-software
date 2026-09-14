@@ -1,9 +1,9 @@
 #pragma once
 
-#include <rj_protos/LogFrame.pb.h>
-
 #include <QColor>
 #include <QPointF>
+
+#include <rj_geometry/point.hpp>
 
 static inline QColor qcolor(uint32_t value) {
     uint8_t a = value >> 24;
@@ -13,8 +13,8 @@ static inline QColor qcolor(uint32_t value) {
     return QColor(r, g, b, a);
 }
 
-static inline QPointF qpointf(const Packet::Point& pt) {
-    return QPointF(pt.x(), pt.y());
+static inline QPointF qpointf(const rj_geometry::Point& pt) {
+    return pt.to_q_point_f();
 }
 
 static inline uint32_t color(const QColor& color) {

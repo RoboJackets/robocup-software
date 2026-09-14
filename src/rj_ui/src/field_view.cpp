@@ -21,13 +21,12 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
 
 using namespace std;
 
 using namespace boost;
-using namespace Packet;
+using namespace rj_ui;
 
 static QPen redPen(Qt::red, 0);
 static QPen bluePen(Qt::blue, 0);
@@ -82,11 +81,11 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->setText(s);
 }
 
-std::shared_ptr<LogFrame> FieldView::currentFrame() {
+std::shared_ptr<LiveFrame> FieldView::currentFrame() {
     if (_history != nullptr && !_history->empty()) {
         return _history->back();
     }
-    return std::shared_ptr<LogFrame>();
+    return std::shared_ptr<LiveFrame>();
 }
 
 void FieldView::rotate(int value) {
@@ -128,7 +127,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Get the latest LogFrame
-    const std::shared_ptr<LogFrame> frame = currentFrame();
+    const std::shared_ptr<LiveFrame> frame = currentFrame();
 
     if (!frame) {
         // No data available yet
@@ -185,7 +184,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const LiveFrame* frame = _history->back().get();
 
     // Draw the field
     drawField(p, frame);
@@ -194,7 +193,7 @@ void FieldView::drawWorldSpace(QPainter& p) {
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const LiveFrame* frame = _history->back().get();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -237,7 +236,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int ballTrailLength = 60;
     for (unsigned int i = _history->size() - std::min<int>(_history->size(), ballTrailLength);
          i < _history->size(); ++i) {
-        const LogFrame* oldFrame = _history->at(i).get();
+        const LiveFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
 
@@ -375,9 +374,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int pastLocationCount = 40;  // number of past locations to show
     int start = std::max(0, static_cast<int>(_history->size()) - pastLocationCount);
     for (size_t i = start; i < _history->size(); i++) {
-        const LogFrame* oldFrame = _history->at(i).get();
+        const LiveFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr) {
-            for (const LogFrame::Robot& r : oldFrame->self()) {
+            for (const LiveFrame::Robot& r : oldFrame->self()) {
                 pair<int, int> key(1, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
@@ -389,7 +388,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const LogFrame::Robot& r : oldFrame->opp()) {
+            for (const LiveFrame::Robot& r : oldFrame->opp()) {
                 pair<int, int> key(2, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
@@ -421,14 +420,14 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
-    for (const LogFrame::Robot& r : frame->opp()) {
+    for (const LiveFrame::Robot& r : frame->opp()) {
         drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(),
                   r.ball_sense_status() == HasBall);
     }
 
     // Our robots
     int manualID = frame->manual_id();
-    for (const LogFrame::Robot& r : frame->self()) {
+    for (const LiveFrame::Robot& r : frame->self()) {
         QPointF center = qpointf(r.pos());
 
         bool faulty = false;
@@ -519,7 +518,7 @@ void FieldView::drawCoords(QPainter& p) {
     drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const LogFrame* frame) {
+void FieldView::drawField(QPainter& p, const LiveFrame* frame) {
     p.save();
 
     // reset to center

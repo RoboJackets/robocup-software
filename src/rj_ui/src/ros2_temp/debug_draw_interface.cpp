@@ -35,16 +35,6 @@ void DebugDrawInterface::run() {
         for (const auto& pose : debug_draw->poses) {
             // TODO(#1584): Handle poses
         }
-        for (const auto& path : debug_draw->paths) {
-            auto* debug_path = context_->debug_drawer.add_debug_path();
-            for (const auto& point : path.points) {
-                auto* new_point = debug_path->add_points();
-                new_point->mutable_pos()->set_x(point.x);
-                new_point->mutable_pos()->set_y(point.y);
-
-                // TODO(#1584): Use color in trajectory
-            }
-        }
         for (const auto& text : debug_draw->debug_text) {
             context_->debug_drawer.draw_text(
                 QString::fromStdString(text.text), rj_convert::convert_from_ros(text.position),

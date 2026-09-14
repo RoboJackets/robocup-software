@@ -21,8 +21,9 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
+
+#include "rj_ui/live_frame.hpp"
 
 class Logger;
 
@@ -48,7 +49,7 @@ public:
         }
     }
 
-    void history(const std::vector<std::shared_ptr<Packet::LogFrame> >* value) {
+    void history(const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* value) {
         _history = value;
     }
 
@@ -78,7 +79,7 @@ protected:
 
     void drawText(QPainter& p, QPointF pos, const QString& text,
                   bool center = true) const;
-    static void drawField(QPainter& p, const Packet::LogFrame* frame);
+    static void drawField(QPainter& p, const rj_ui::LiveFrame* frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
@@ -97,7 +98,7 @@ protected:
 
 protected:
     // Returns a pointer to the most recent frame, or null if none is available.
-    std::shared_ptr<Packet::LogFrame> currentFrame();
+    std::shared_ptr<rj_ui::LiveFrame> currentFrame();
 
     // Coordinate transformations
     rj_geometry::TransformMatrix _screenToWorld;
@@ -113,7 +114,7 @@ protected:
     // How many degrees to rotate text so it shows up the right way on screen
     int _textRotation{};
 
-    const std::vector<std::shared_ptr<Packet::LogFrame> >* _history{};
+    const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* _history{};
 
     QVector<bool> _layerVisible;
 };

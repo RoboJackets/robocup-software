@@ -49,7 +49,6 @@
 using namespace std;
 using namespace boost;
 using namespace google::protobuf;
-using namespace Packet;
 using namespace Eigen;
 
 constexpr int kHistorySize = 60 * 2;
@@ -66,8 +65,7 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
 
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
-      _updateCount(0),
-      _doubleFrameNumber(-1),
+    _updateCount(0),
       _lastUpdateTime(RJ::now()),
       _processor(processor),
       context_(processor->context()),
@@ -77,19 +75,15 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
-    _ui.fieldView->history(&_history);
-
-    _ui.logTree->history(&_longHistory);
-    _ui.logTree->mainWindow = this;
-    _ui.logTree->updateTimer = &updateTimer;
-
-    // Initialize live/non-live control styles
-
-    _logFile = new QLabel(this);
-    _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logFile->setToolTip("Log File");
-    statusBar()->addPermanentWidget(_logFile);
-
+    _ui.logTree->setVisible(false);
+    _ui.logHistoryLocation->setVisible(false);
+    _ui.logPlaybackRewind->setVisible(false);
+    _ui.logPlaybackPrevFrame->setVisible(false);
+    _ui.logPlaybackPause->setVisible(false);
+    _ui.logPlaybackNextFrame->setVisible(false);
+    _ui.logPlaybackPlay->setVisible(false);
+    _ui.logPlaybackLive->setVisible(false);
+    _ui.actionStart_Logging->setVisible(false);
     _viewFPS = new QLabel(this);
     _viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _viewFPS->setToolTip("Display Framerate");
@@ -101,21 +95,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _procFPS->setToolTip("Processing Framerate");
     calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
     statusBar()->addPermanentWidget(_procFPS);
-
-    _logMemory = new QLabel(this);
-    _logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logMemory->setToolTip("Log Memory Usage");
-    _logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
-    statusBar()->addPermanentWidget(_logMemory);
-
-    _frameNumberItem = new QTreeWidgetItem(_ui.logTree);
-    _frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
-    _frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
-
-    _elapsedTimeItem = new QTreeWidgetItem(_ui.logTree);
-    _elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
-    _elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -156,14 +135,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
-
-    // put all log playback buttons into a vector for easy access later
-    _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPause);
-    _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
-    _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
     // Get the item model from the goalieID boxes so we can disable them
     // properly
@@ -226,8 +197,6 @@ void MainWindow::initialize() {
 
     populate_override_position_dropdowns();
 
-    logFileChanged();
-
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
 
@@ -252,26 +221,6 @@ void MainWindow::initialize() {
         _ui.actionDefendMinusX->setChecked(true);
     }
 
-    // If we're reading logs, we should already have some data. Update frames
-    // for all of it.
-    for (const auto& frame : context_->logs.frames) {
-        updateDebugLayers(*frame);
-    }
-
-    if (context_->logs.state == Logs::State::kReading) {
-        _playbackRate = 0;
-    }
-}
-
-void MainWindow::logFileChanged() {
-    if (context_->logs.state == Logs::State::kWriting) {
-        QString filename_q = QString::fromStdString(context_->logs.filename.value());
-        _logFile->setText(filename_q);
-        _ui.actionStart_Logging->setText(QString("Already Logging to: ") + filename_q);
-        _ui.actionStart_Logging->setEnabled(false);
-    } else {
-        _logFile->setText("Not Recording");
-    }
 }
 
 void MainWindow::addLayer(int i, const QString& name, bool checked) {
@@ -321,6 +270,34 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 }
 
 void MainWindow::updateViews() {
+    {
+        std::lock_guard<std::mutex> lock(*context__mutex);
+        _history.clear();
+        _history.push_back(std::make_shared<rj_ui::LiveFrame>(
+            rj_ui::LiveFrame::from_context(*context_)));
+    }
+    _ui.fieldView->history(&_history);
+    _ui.fieldView->live = true;
+    _ui.fieldView->update();
+
+    ++_updateCount;
+    if (_updateCount == 4) {
+        _updateCount = 0;
+        const RJ::Time now = RJ::now();
+        const auto delta = now - _lastUpdateTime;
+        _lastUpdateTime = now;
+        _viewFPS->setText(QString("View: %1 fps").arg((RJ::Seconds(1) / delta), 0, 'f', 1));
+        _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
+    }
+
+    _ui.behaviorTree->setPlainText(QString::fromStdString(context_->behavior_tree));
+    _ui.refCommand->setText(QString::fromStdString(context_->play_state.get_human_readout()));
+    updateStatus();
+    updateTimer.start(20);
+}
+
+#if 0
+void MainWindow::updateViews_removed() {
     // TODO(Kyle): Re-enable manual control
 #if MANUAL
     int manual = context_->game_settings.joystick_config.manualID;
@@ -631,6 +608,8 @@ void MainWindow::updateViews() {
     updateTimer.start(20);
 }
 
+#endif
+
 void MainWindow::updateStatus() {
     // Guidelines:
     //    Status_Fail is used for severe, usually external, errors such as
@@ -746,12 +725,6 @@ void MainWindow::updateStatus() {
     if (sim) {
         // Everything is good for simulation, but not for competition.
         status("SIMULATION", StatusType::Status_Warning);
-        return;
-    }
-
-    if (!sim && context_->logs.state != Logs::State::kWriting) {
-        // We should record logs during competition
-        status("NOT RECORDING", StatusType::Status_Warning);
         return;
     }
 
@@ -931,6 +904,7 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
     updateTimer.start(30);
 }
 
+#if 0
 void MainWindow::on_actionStart_Logging_triggered() {
     if (context_->logs.state != Logs::State::kWriting) {
         if (!QDir("logs").exists()) {
@@ -950,24 +924,6 @@ void MainWindow::on_actionStart_Logging_triggered() {
 }
 
 // Gameplay commands
-
-void MainWindow::on_actionSeed_triggered() {
-    QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
-    if (!text.isNull()) {
-        long seed = strtol(text.toLatin1(), nullptr, 16);
-        printf("seed %016lx\n", seed);
-        srand48(seed);
-    }
-}
-
-// Joystick settings
-void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
-#if MANUAL
-    std::lock_guard<std::mutex> lock(*context__mutex);
-    context_->game_settings.joystick_config.useKickOnBreakBeam =
-        _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
-#endif
-}
 
 // choose between kick on break beam and immeditate
 
@@ -1019,6 +975,25 @@ void MainWindow::on_logPlaybackPlay_clicked() {
 }
 
 void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
+
+#endif
+
+void MainWindow::on_actionSeed_triggered() {
+    QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
+    if (!text.isNull()) {
+        long seed = strtol(text.toLatin1(), nullptr, 16);
+        printf("seed %016lx\n", seed);
+        srand48(seed);
+    }
+}
+
+void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
+#if MANUAL
+    std::lock_guard<std::mutex> lock(*context__mutex);
+    context_->game_settings.joystick_config.useKickOnBreakBeam =
+        _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
+#endif
+}
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
@@ -1172,7 +1147,8 @@ void MainWindow::on_fastPenaltyYellow_clicked() {
     queued_command_ = setup_penalty_state.advanced_from_normal_start();
 }
 
-bool MainWindow::live() { return !_playbackRate; }
+#if 0
+bool MainWindow::live() { return true; }
 void MainWindow::updateDebugLayers(const LogFrame& frame) {
     // Check if any debug layers have been added
     // (layers should never be removed)
@@ -1188,6 +1164,7 @@ void MainWindow::updateDebugLayers(const LogFrame& frame) {
         _ui.debugLayers->sortItems();
     }
 }
+#endif
 
 /**
  * The following methods are event listeners for the manual position assignments.
