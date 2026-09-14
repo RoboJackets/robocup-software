@@ -1,7 +1,7 @@
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
-#include <rj_constants/constants.hpp>
 
 using namespace std;
 

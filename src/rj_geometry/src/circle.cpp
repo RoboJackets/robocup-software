@@ -1,6 +1,6 @@
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/segment.hpp>
-#include <rj_constants/constants.hpp>
 
 namespace rj_geometry {
 
