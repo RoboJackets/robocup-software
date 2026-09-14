@@ -62,8 +62,6 @@ public:
     // If false, it will draw a red border.
     bool live{};
 
-    bool showRawRobots;
-    bool showRawBalls;
     bool showCoords;
     bool showDotPatterns;
     bool showTeamNames;

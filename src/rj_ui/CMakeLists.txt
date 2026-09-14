@@ -61,7 +61,6 @@ set(SRC_FILES
 
   src/ros2_temp/autonomy_interface.cpp
   src/ros2_temp/debug_draw_interface.cpp
-  src/ros2_temp/raw_vision_packet_sub.cpp
   src/ros2_temp/referee_sub.cpp
   src/ros2_temp/soccer_config_client.cpp
 

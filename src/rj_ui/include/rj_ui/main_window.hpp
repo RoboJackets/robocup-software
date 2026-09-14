@@ -106,8 +106,6 @@ private Q_SLOTS:
     void updateViews();
 
     void on_fieldView_robotSelected(int shell);
-    void on_actionRawBalls_toggled(bool state);
-    void on_actionRawRobots_toggled(bool state);
     void on_actionCoords_toggled(bool state);
     void on_actionDotPatterns_toggled(bool state);
     void on_actionTeam_Names_toggled(bool state);

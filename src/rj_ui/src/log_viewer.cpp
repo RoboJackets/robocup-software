@@ -155,16 +155,6 @@ void LogViewer::on_action180_triggered() { ui.fieldView->rotate(2); }
 
 void LogViewer::on_action270_triggered() { ui.fieldView->rotate(3); }
 
-void LogViewer::on_actionRawBalls_toggled(bool state) {
-    ui.fieldView->showRawBalls = state;
-    ui.fieldView->update();
-}
-
-void LogViewer::on_actionRawRobots_toggled(bool state) {
-    ui.fieldView->showRawRobots = state;
-    ui.fieldView->update();
-}
-
 void LogViewer::on_actionCoords_toggled(bool state) {
     ui.fieldView->showCoords = state;
     ui.fieldView->update();

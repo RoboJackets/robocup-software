@@ -24,7 +24,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     // ROS2 temp nodes
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
-    raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
 
     debug_draw_sub_ =
@@ -85,9 +84,6 @@ void Processor::run() {
 
         // Updates context_->field_dimensions
         config_client_->run();
-
-        // Updates context_->raw_vision_packets
-        raw_vision_packet_sub_->run();
 
         if (context_.field_dimensions != *current_dimensions) {
             SPDLOG_INFO("Updating field geometry based off of vision packet.");

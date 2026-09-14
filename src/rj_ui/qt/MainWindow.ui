@@ -3186,8 +3186,6 @@
     <addaction name="action180"/>
     <addaction name="action270"/>
     <addaction name="separator"/>
-    <addaction name="actionRawBalls"/>
-    <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
     <addaction name="actionTeam_Names"/>
@@ -3286,22 +3284,6 @@
    </property>
    <property name="text">
     <string>270 degrees</string>
-   </property>
-  </action>
-  <action name="actionRawBalls">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Balls</string>
-   </property>
-  </action>
-  <action name="actionRawRobots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Robots</string>
    </property>
   </action>
   <action name="actionDefendMinusX">

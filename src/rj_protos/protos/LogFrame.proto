@@ -3,7 +3,6 @@ package Packet;
 
 import "referee.proto";
 import "Point.proto";
-import "ssl_vision_wrapper.proto";
 import "RadioTx.proto";
 import "RadioRx.proto";
 
@@ -81,7 +80,6 @@ message LogFrame {
     optional LogConfig log_config = 2047;
 
     // Network packets received since the last iteration
-    repeated SSL_WrapperPacket raw_vision = 1;
     repeated Referee raw_refbox = 27;
     repeated RadioRx radio_rx = 3;
 

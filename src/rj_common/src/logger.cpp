@@ -149,12 +149,6 @@ std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     // Debug drawing
     context->debug_drawer.fill_log_frame(log_frame.get());
 
-    // Copy raw vision packets.
-    for (const SSL_WrapperPacket& packet : context->raw_vision_packets) {
-        log_frame->add_raw_vision()->CopyFrom(packet);
-    }
-    context->raw_vision_packets.clear();
-
     // Copy referee packets.
     for (const auto& packet : context->referee_packets) {
         Referee* referee = log_frame->add_raw_refbox();

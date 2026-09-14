@@ -98,7 +98,6 @@ struct Context {
     DebugDrawer debug_drawer;
 
     std::vector<Referee> referee_packets;
-    std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
 

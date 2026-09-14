@@ -44,8 +44,6 @@ static QColor ballColor(0xff, 0x90, 0);
 static QPen ballPen(ballColor, 0);
 
 FieldView::FieldView(QWidget* parent) : QWidget(parent) {
-    showRawRobots = false;
-    showRawBalls = false;
     showCoords = false;
     showDotPatterns = false;
     showTeamNames = false;
@@ -192,41 +190,6 @@ void FieldView::drawWorldSpace(QPainter& p) {
     // Draw the field
     drawField(p, frame);
 
-    // Raw vision
-    if (showRawBalls || showRawRobots) {
-        tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
-        p.setPen(tempPen);
-        for (const SSL_WrapperPacket& wrapper : frame->raw_vision()) {
-            if (!wrapper.has_detection()) {
-                // Useless
-                continue;
-            }
-
-            const SSL_DetectionFrame& detect = wrapper.detection();
-
-            if (showRawRobots) {
-                for (const SSL_DetectionRobot& r : detect.robots_blue()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, true, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-
-                for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, false, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-            }
-
-            if (showRawBalls) {
-                for (const SSL_DetectionBall& b : detect.balls()) {
-                    p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), kBallRadius, kBallRadius);
-                }
-            }
-        }
-    }
 }
 
 void FieldView::drawTeamSpace(QPainter& p) {

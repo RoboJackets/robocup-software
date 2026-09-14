@@ -799,16 +799,6 @@ void MainWindow::on_fieldView_robotSelected(int shell) {
     }
 }
 
-void MainWindow::on_actionRawBalls_toggled(bool state) {
-    _ui.fieldView->showRawBalls = state;
-    _ui.fieldView->update();
-}
-
-void MainWindow::on_actionRawRobots_toggled(bool state) {
-    _ui.fieldView->showRawRobots = state;
-    _ui.fieldView->update();
-}
-
 void MainWindow::on_actionCoords_toggled(bool state) {
     _ui.fieldView->showCoords = state;
     _ui.fieldView->update();

@@ -278,8 +278,6 @@
      <addaction name="action270"/>
     </widget>
     <addaction name="menuRotation"/>
-    <addaction name="actionRawBalls"/>
-    <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
    </widget>
    <addaction name="menuView"/>
@@ -318,22 +316,6 @@
    </property>
    <property name="text">
     <string>270</string>
-   </property>
-  </action>
-  <action name="actionRawBalls">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Balls</string>
-   </property>
-  </action>
-  <action name="actionRawRobots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Robots</string>
    </property>
   </action>
   <action name="actionCoords">
