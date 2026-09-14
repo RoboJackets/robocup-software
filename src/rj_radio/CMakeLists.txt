@@ -25,7 +25,6 @@ find_package(rj_param_utils REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_constants REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
@@ -41,7 +40,6 @@ set(RJ_RADIO_DEPS
   rj_strategy
   rj_geometry
   rj_planning
-  rj_constants
 )
 
 add_library(${PROJECT_NAME} SHARED

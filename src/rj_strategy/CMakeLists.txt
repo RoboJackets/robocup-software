@@ -16,7 +16,6 @@ find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
@@ -31,7 +30,6 @@ set(RJ_STRATEGY_DEPS
   spdlog
   std_msgs
   rj_msgs
-  rj_constants
   rj_convert
   rj_common
   rj_drawing_msgs

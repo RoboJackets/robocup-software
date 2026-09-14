@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
-#include <rj_constants/constants.hpp>
 
 namespace rj_geometry {
 

@@ -5,8 +5,9 @@
 
 #include <QtWidgets>
 
+#include <rj_common/game_constants.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
-#include <rj_constants/constants.hpp>
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/util.hpp>
 
 /**

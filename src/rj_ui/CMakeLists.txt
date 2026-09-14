@@ -27,7 +27,6 @@ find_package(rj_protos REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_strategy REQUIRED)
@@ -112,7 +111,6 @@ set(RJ_UI_DEPS
   rj_geometry
   rj_utils
   rj_planning
-  rj_constants
   rj_convert
   rj_msgs
   rj_strategy

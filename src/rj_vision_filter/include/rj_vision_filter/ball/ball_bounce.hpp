@@ -1,9 +1,12 @@
 #pragma once
 
+#include <vector>
+
+#include <rj_geometry/ball.hpp>
+#include <rj_geometry/bot.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 class BallBounce {

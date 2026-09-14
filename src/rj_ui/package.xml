@@ -23,7 +23,6 @@
   <depend>rj_geometry</depend>
   <depend>rj_utils</depend>
   <depend>rj_planning</depend>
-  <depend>rj_constants</depend>
   <depend>rj_convert</depend>
   <depend>rj_msgs</depend>
   <depend>rj_strategy</depend>
