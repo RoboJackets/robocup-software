@@ -55,10 +55,10 @@ Describe what the package must do before and after the work, including behavior 
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency 
-| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
-| **Backward compatibility** | _Confirm topic names, message types, parameters, files, and launch behavior that must remain compatible._ |
-| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
+| **Failure behavior** |The package is just a set of templates for message queues so I don't think a lack of input could make it fail. 
+| **Recovery behavior** |  |
+| **Backward compatibility** | As of right now, the package has to be compatible with RawProtobuf msgs and the RawProtobufTopic because that is the only message type that we still use the queue for   |
+| **Configuration** |
 
 ## 4. Stability and Efficiency
 
@@ -68,7 +68,7 @@ Establish measurable baselines, identify failure risks, and compare the complete
 
 | Field | Details |
 | --- | --- |
-| **Concerns** | _Identify leaks, unnecessary heap allocations, repeated allocations, large buffers, invalid indexing, uninitialized state, or repetitive work._ |
+| **Concerns** | I think the way that raw_vision_packet_sub uses a message queue to store raw protobuf messages is unnecessary but I was told that when we rewrite UI this will be deletedoanywas.   |
 
 ### Build-Time Comparison
 
@@ -82,10 +82,10 @@ Establish measurable baselines, identify failure risks, and compare the complete
 
 | Field | Details |
 | --- | --- |
-| **Existing coverage** | _Describe current unit, integration, smoke, simulation, and regression tests._ |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Existing coverage** |  |
+| **Unit testing** |  |
+| **Coverage gaps** |  |
+| **Observed outliers** |  |
 
 ## 5. Change Plan and Sign-Off (As per creation of this documentation)
 
@@ -94,8 +94,8 @@ Summarize the agreed scope, codebase impact, implementation sequence, and final 
 | Field | Details |
 | --- | --- |
 | **Why is it changing?** | We have templates that we don't use and places where we use message queues when I don't think we need to. This clutters up the codebase, so I think changing rj_topic_utils to get rid of unnecessary templates is a good idea.   |
-| **Codebase impact** | I don't  |
-| **Success criteria** | _List objective conditions that demonstrate the work is complete and effective._ |
+| **Codebase impact** | This change impacts rj_ui (since we are replacing the queue of world state msgs with a direct subscription to a world state node).  |
+| **Success criteria** | Simulation behaves the same as it did before changes (including relatively the same amount of time to transition between states and similar path planning behavior.|
 
 The final review checklist will be on ClickUp.
 
