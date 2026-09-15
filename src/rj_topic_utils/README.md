@@ -21,9 +21,9 @@ Define the package's purpose and fixed architectural classification before work 
 | Field | Details |
 | --- | --- |
 | **Plain-language purpose** | The package defines templates for a message queue and an asynchronous message queue.|
-| **Codebase role** | This is a low level utility package that is only used by two packages (rj_vision filter and rj_ui).|
+| **Codebase role** | This is a utility package that is used by two packages (rj_vision filter and rj_ui).|
 | **Current responsibilities** |This package is used to create a queue of TeamColor messages in rj_vision_filter and a queue of WorldState messages and RawProtobuf messages in rj_ui. These are the only two packages that rely on it as far as I can tell (rj_control imports the async messge queue header file but never actually uses it anywhere) |
-| **Out of scope** | This package shouldnt handle any logic for specific messages (meaning it should be able to work with any message type). This package should also not attempt to manage the lifecycle of any of the nodes that depend on it.  |
+| **Out of scope** | This package should be able to work with any message type.  |
 
 ## 2. Dependency Rules
 
@@ -49,13 +49,13 @@ Describe what the package must do before and after the work, including behavior 
 
 | Field | Details |
 | --- | --- |
-| **Required behavior** | _Describe what the package must do when the work is complete._ |
+| **Required behavior** | This package should still provide templates for message queues. but only for queueseof size >1 (queues of size 1 have been replaced with direct subscriptions so I deleted those templates since they are no longer in use) . |
 
 ### Operational Expectations
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
+| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency 
 | **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
 | **Backward compatibility** | _Confirm topic names, message types, parameters, files, and launch behavior that must remain compatible._ |
 | **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
@@ -74,7 +74,7 @@ Establish measurable baselines, identify failure risks, and compare the complete
 
 | Measurement | Time Measurement | Method / Notes |
 | --- | --- | --- |
-| Clean selected-package build |  | `colcon build --packages-select <package>` |
+| Clean selected-package build |4.76 seconds| `colcon build --packages-select <package>` |
 | Incremental build |  | Enter the method. |
 | Other |  | Enter details. |
 
@@ -93,8 +93,8 @@ Summarize the agreed scope, codebase impact, implementation sequence, and final 
 
 | Field | Details |
 | --- | --- |
-| **Why is it changing?** | _State the problem, evidence, and desired outcome._ |
-| **Codebase impact** | _Describe affected packages, nodes, launch files, interfaces, developers, and runtime behavior._ |
+| **Why is it changing?** | We have templates that we don't use and places where we use message queues when I don't think we need to. This clutters up the codebase, so I think changing rj_topic_utils to get rid of unnecessary templates is a good idea.   |
+| **Codebase impact** | I don't  |
 | **Success criteria** | _List objective conditions that demonstrate the work is complete and effective._ |
 
 The final review checklist will be on ClickUp.

@@ -87,6 +87,108 @@ private:
 };
 
 // ============================================================================
+/**
+ * @brief Partially specialized template of MessageQueue for
+ * MessagePolicy::kQueue, when queue size is 1.
+ * @tparam T The message type to use.
+ */
+template <typename T>
+class MessageQueue<T, MessagePolicy::kQueue, 1> {
+public:
+    using SharedPtr =
+        std::shared_ptr<MessageQueue<T, MessagePolicy::kQueue, 1>>;
+    /**
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber.
+     * @param topic Name of the topic.
+     */
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
+
+    /**
+     * @brief Returns a unique_ptr to item in the queue, emptying the queue. If
+     * the queue is empty, returns nullptr.
+     * @return unique_ptr to the item in the queue, returning nullptr if the
+     * queue is empty.
+     */
+    std::unique_ptr<T> get();
+
+    /**
+     * @brief Returns a unique_ptr to item in the queue, emptying the queue. If
+     * the queue is empty, returns nullptr. Threadsafe version of the above
+     * that locks a mutex.
+     * @return unique_ptr to the item in the queue, returning nullptr if the
+     * queue is empty.
+     */
+    std::unique_ptr<T> get_threaded();
+
+private:
+    rclcpp::Node* node_;
+    typename rclcpp::Subscription<T>::SharedPtr sub_;
+    std::unique_ptr<T> latest_;
+    std::mutex latest_mutex_;
+};
+
+// ============================================================================
+/**
+ * @brief Partially specialized template of MessageQueue for
+ * MessagePolicy::kQueue.
+ * @tparam T The message type to use.
+ */
+template <typename T>
+class MessageQueue<T, MessagePolicy::kLatest> {
+public:
+    using SharedPtr = std::shared_ptr<MessageQueue>;
+
+    /**
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber in.
+     * @param topic What topic to subscribe to.
+     * @param subscription_options The subscription options to pass to the
+     * subscriber.
+     */
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
+
+    /**
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber in.
+     * @param topic What topic to subscribe to.
+     * @param default_value The default value to use.
+     * @param subscription_options The subscription options to pass to the
+     * subscriber.
+     */
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const T& default_value,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
+
+    /**
+     * @brief Returns the latest message in the queue if we have received one
+     * so far, otherwise nullptr if no default is set.
+     * @param ptr
+     * @return The latest message if we have received one so far, otherwise
+     * returns nullptr if no default is set.
+     */
+    std::shared_ptr<T> get();
+
+    /**
+     * @brief Returns the latest message in the queue if we have received one
+     * so far, otherwise nullptr if no default is set. Multithread safe version
+     * of the above.
+     * @param ptr
+     * @return The latest message if we have received one so far, otherwise
+     * returns nullptr if no default is set.
+     */
+    std::shared_ptr<T> get_threaded();
+
+private:
+    rclcpp::Node* node_;
+    typename rclcpp::Subscription<T>::SharedPtr sub_;
+    std::shared_ptr<T> latest_;
+    std::mutex latest_mutex_;
+};
+
+// ============================================================================
 template <typename T>
 MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::MessageQueue(
     rclcpp::Node* node, const std::string& topic, size_t qos_queue_size,
