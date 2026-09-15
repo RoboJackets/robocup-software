@@ -7,10 +7,9 @@
   <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
   <license>TODO: License declaration</license>
 
-  <depend>rclcpp</depend>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <test_depend>builtin_interfaces</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
 
   <export>

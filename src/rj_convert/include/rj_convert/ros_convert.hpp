@@ -2,9 +2,10 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdint>
+#include <iterator>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 namespace rj_convert {
@@ -101,17 +102,17 @@ struct RosConverter<std::vector<CppItem>, std::vector<RosItem>> {
     }
 };
 
-template <typename CppItem, size_t size>
+template <typename CppItem, std::size_t size>
 struct AssociatedRosType<std::array<CppItem, size>> {
     using T = std::array<typename AssociatedRosType<CppItem>::T, size>;
 };
 
-template <typename RosItem, size_t size>
+template <typename RosItem, std::size_t size>
 struct AssociatedCppType<std::array<RosItem, size>> {
     using T = std::array<typename AssociatedCppType<RosItem>::T, size>;
 };
 
-template <typename CppItem, typename RosItem, size_t size>
+template <typename CppItem, typename RosItem, std::size_t size>
 struct RosConverter<std::array<CppItem, size>, std::array<RosItem, size>> {
     static std::array<RosItem, size> to_ros(
         const std::array<CppItem, size>& value) {
