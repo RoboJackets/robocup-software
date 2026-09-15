@@ -34,5 +34,6 @@ private:
     using RawProtobufMsgQueue = rj_topic_utils::AsyncMessageQueue<
         RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue>;
     RawProtobufMsgQueue::UniquePtr queue_;
+
 };
 }  // namespace ros2_temp

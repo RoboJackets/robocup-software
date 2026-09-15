@@ -1,11 +1,14 @@
 #pragma once
 
+
 #include <atomic>
 #include <mutex>
 #include <thread>
 #include <vector>
 
+
 #include <rclcpp/rclcpp.hpp>
+
 
 #include <rj_config_client/config_client.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
@@ -15,11 +18,14 @@
 #include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
+
 #include "rj_vision_filter/camera/camera_frame.hpp"
 #include "rj_vision_filter/camera/world.hpp"
 
+
 namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
+
 
 /**
  * Filters the vision measurements into a smoother velocity/position estimate for both the ball and
@@ -31,10 +37,12 @@ public:
     using RobotStateMsg = rj_msgs::msg::RobotState;
     using BallStateMsg = rj_msgs::msg::BallState;
 
+
     /**
      * Initialize the vision filter and all callbacks.
      */
     VisionFilter(const rclcpp::NodeOptions& options);
+
 
 private:
     /**
@@ -45,12 +53,14 @@ private:
      */
     WorldStateMsg build_world_state_msg(bool us_blue) const;
 
+
     /**
      * @brief Creates a BallStateMsg from the ball Kalman filter.
      * @return The BallStateMsg corresponding to the current VisionFilter
      * state.
      */
     BallStateMsg build_ball_state_msg() const;
+
 
     /**
      * @brief Creates a vector of RobotStateMsgs from the robot Kalman filters.
@@ -60,10 +70,12 @@ private:
      */
     std::vector<RobotStateMsg> build_robot_state_msgs(bool blue_team) const;
 
+
     /**
      * @brief Publishes the current state of the balls and robots.
      */
     void publish_state();
+
 
     // TODO(1562): (It's horrible, but it's only temporary until VisionFilter
     // gets refactored).
@@ -76,6 +88,7 @@ private:
         return defend_plus_x ? -M_PI_2 : M_PI_2;
     }
 
+
     /**
      * @brief Returns the transform from the world to the team.
      * @return The transform from the world to the team frame.
@@ -87,32 +100,33 @@ private:
         return world_to_team;
     }
 
+
     /**
      * @brief State of the world, ie. robots and ball.
      */
     World world_;
 
-    using TeamColorMsgQueue =
-        rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
-
     config_client::ConfigClient config_client_;
 
-    /**
-     * @brief Message Queue for TeamColor that takes the latest message.
-     */
-    TeamColorMsgQueue team_color_queue_;
+
+    rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
+    std::atomic<bool> us_blue_{true};
+
 
     /**
      * @brief Timer driving regular publication.
      */
     rclcpp::TimerBase::SharedPtr publish_timer_;
 
+
     rclcpp::Subscription<DetectionFrameMsg>::SharedPtr detection_frame_sub_;
+
 
     /**
      * @brief Publisher for WorldStateMsg.
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
+
 
     ::params::LocalROS2ParamProvider param_provider_;
 };
