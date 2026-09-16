@@ -158,11 +158,6 @@ private:
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
-    // replace this w a sub and callback
-    // rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
-    // WorldStateMsg::UniquePtr world_state_;
-    // void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-
     AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
 
     rclcpp::Node::SharedPtr world_state_node_;
