@@ -1,9 +1,10 @@
 #pragma once
 
+#include <boost/circular_buffer.hpp>
+
+#include <rj_common/utils.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <boost/circular_buffer.hpp>
-#include <rj_common/utils.hpp>
 #include <rj_vision_filter/filter/kalman_filter3_d.hpp>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
@@ -26,10 +27,8 @@ public:
      * robot)
      * @param params_ Vision filter parameters
      */
-    KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
-                CameraRobot init_measurement,
-                const WorldRobot& previous_world_robot,
-                const VisionFilterParams& params_);
+    KalmanRobot(unsigned int camera_id, RJ::Time creation_time, CameraRobot init_measurement,
+                const WorldRobot& previous_world_robot, const VisionFilterParams& params_);
 
     /**
      * Predicts one time step forward
@@ -47,7 +46,7 @@ public:
      * @param params_ Vision filter parameters
      */
     void predict_and_update(RJ::Time current_time, CameraRobot update_robot,
-                           const VisionFilterParams& params_);
+                            const VisionFilterParams& params_);
 
     /**
      * @param params_ Vision filter parameters

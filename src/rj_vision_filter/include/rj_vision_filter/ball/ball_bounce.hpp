@@ -1,10 +1,11 @@
 #pragma once
 
+#include <vector>
+
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 class BallBounce {
@@ -29,10 +30,10 @@ public:
      * @return Whether the ball bounces or not
      */
     static bool calc_ball_bounce(const KalmanBall& ball,
-                               const std::vector<WorldRobot>& yellow_robots,
-                               const std::vector<WorldRobot>& blue_robots,
-                               rj_geometry::Point& out_new_vel,
-                               const VisionFilterParams& params_);
+                                 const std::vector<WorldRobot>& yellow_robots,
+                                 const std::vector<WorldRobot>& blue_robots,
+                                 rj_geometry::Point& out_new_vel,
+                                 const VisionFilterParams& params_);
 
 private:
     /**
@@ -45,7 +46,7 @@ private:
      * @param params_ Vision filter parameters
      */
     static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
-                             const VisionFilterParams& params_);
+                              const VisionFilterParams& params_);
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell

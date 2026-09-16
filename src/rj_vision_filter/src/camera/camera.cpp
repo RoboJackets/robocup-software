@@ -66,8 +66,7 @@ void Camera::update_without_frame(RJ::Time calc_time, const VisionFilterParams& 
 }
 
 void Camera::update_balls(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
-                          const WorldBall& previous_world_ball,
-                          const VisionFilterParams& params_) {
+                          const WorldBall& previous_world_ball, const VisionFilterParams& params_) {
     // Make sure there are actually balls in the measurement
     // and only predict if that's the case
     if (ball_list.empty()) {
@@ -305,8 +304,8 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     for (const CameraRobot& camera_robot : single_robot_list) {
         bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!was_used && single_kalman_robot_list.size() <
-                             (unsigned long)params_.camera.max_num_kalman_robots) {
+        if (!was_used &&
+            single_kalman_robot_list.size() < (unsigned long)params_.camera.max_num_kalman_robots) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
                                                   previous_world_robot, params_);
         }
@@ -337,8 +336,7 @@ void Camera::update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>&
 
 void Camera::remove_invalid_balls(const VisionFilterParams& params_) {
     // Remove all balls that are unhealthy
-    kalman_ball_list_.remove_if(
-        [&params_](KalmanBall& b) { return b.is_unhealthy(params_); });
+    kalman_ball_list_.remove_if([&params_](KalmanBall& b) { return b.is_unhealthy(params_); });
 }
 
 void Camera::remove_invalid_robots(const VisionFilterParams& params_) {

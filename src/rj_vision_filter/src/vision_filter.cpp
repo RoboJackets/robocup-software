@@ -56,14 +56,10 @@ VisionFilterParams load_vision_filter_params(rclcpp::Node* node) {
 
     node->get_parameter_or("filter.health.init", params.filter_health.init,
                            params.filter_health.init);
-    node->get_parameter_or("filter.health.inc", params.filter_health.inc,
-                           params.filter_health.inc);
-    node->get_parameter_or("filter.health.dec", params.filter_health.dec,
-                           params.filter_health.dec);
-    node->get_parameter_or("filter.health.max", params.filter_health.max,
-                           params.filter_health.max);
-    node->get_parameter_or("filter.health.min", params.filter_health.min,
-                           params.filter_health.min);
+    node->get_parameter_or("filter.health.inc", params.filter_health.inc, params.filter_health.inc);
+    node->get_parameter_or("filter.health.dec", params.filter_health.dec, params.filter_health.dec);
+    node->get_parameter_or("filter.health.max", params.filter_health.max, params.filter_health.max);
+    node->get_parameter_or("filter.health.min", params.filter_health.min, params.filter_health.min);
 
     node->get_parameter_or("kick.detector.slow_kick_hist_length",
                            params.kick_detector.slow_kick_hist_length,
@@ -116,8 +112,7 @@ VisionFilterParams load_vision_filter_params(rclcpp::Node* node) {
 
     node->get_parameter_or("world_ball.ball_merger_power", params.world_ball.ball_merger_power,
                            params.world_ball.ball_merger_power);
-    node->get_parameter_or("world_robot.robot_merger_power",
-                           params.world_robot.robot_merger_power,
+    node->get_parameter_or("world_robot.robot_merger_power", params.world_robot.robot_merger_power,
                            params.world_robot.robot_merger_power);
 
     return params;
@@ -165,7 +160,8 @@ std::unordered_map<std::string, ParamSetter> build_param_setters(VisionFilterPar
         {"kalman_robot.max_time_outside_vision",
          [&params](const auto& p) { params.kalman_robot.max_time_outside_vision = p.as_double(); }},
 
-        {"filter.health.init", [&params](const auto& p) { params.filter_health.init = p.as_int(); }},
+        {"filter.health.init",
+         [&params](const auto& p) { params.filter_health.init = p.as_int(); }},
         {"filter.health.inc", [&params](const auto& p) { params.filter_health.inc = p.as_int(); }},
         {"filter.health.dec", [&params](const auto& p) { params.filter_health.dec = p.as_int(); }},
         {"filter.health.max", [&params](const auto& p) { params.filter_health.max = p.as_int(); }},

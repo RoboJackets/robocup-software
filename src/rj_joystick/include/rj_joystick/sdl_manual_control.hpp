@@ -58,7 +58,8 @@ private:
 
 class GamepadController : public SDLController {
 public:
-    GamepadController(SDL_GameController* controller, const ManualControlParams& params) : my_controller_{controller}, params_{params} {}
+    GamepadController(SDL_GameController* controller, const ManualControlParams& params)
+        : my_controller_{controller}, params_{params} {}
     ~GamepadController() override = default;
 
     GamepadController(const GamepadController&) = delete;
@@ -104,7 +105,7 @@ private:
  */
 class SDLControllerProvider : public ManualControllerProvider {
 public:
-    SDLControllerProvider(bool do_keyboard, const ManualControlParams& params, 
+    SDLControllerProvider(bool do_keyboard, const ManualControlParams& params,
                           std::function<void(ManualController*)> on_connect,
                           std::function<void(ManualController*)> on_disconnect);
     ~SDLControllerProvider() override;
