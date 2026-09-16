@@ -131,7 +131,9 @@ SDLControllerProvider::~SDLControllerProvider() { SDL_Quit(); }
 SDLControllerProvider::SDLControllerProvider(bool do_keyboard, const ManualControlParams& params,
                                              std::function<void(ManualController*)> on_connect,
                                              std::function<void(ManualController*)> on_disconnect)
-    : params_{params}, on_connect_{std::move(on_connect)}, on_disconnect_{std::move(on_disconnect)} {
+    : params_{params},
+      on_connect_{std::move(on_connect)},
+      on_disconnect_{std::move(on_disconnect)} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS | SDL_INIT_VIDEO) != 0) {
         FATAL_THROW("SDL could not initialize game controller system! SDL Error: {}",

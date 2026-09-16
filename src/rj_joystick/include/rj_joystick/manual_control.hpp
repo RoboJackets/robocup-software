@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include <rj_geometry/point.hpp>
 #include <rcl_interfaces/msg/set_parameters_result.hpp>
+#include <rj_geometry/point.hpp>
 
 namespace joystick {
 

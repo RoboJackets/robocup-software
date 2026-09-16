@@ -1,11 +1,10 @@
 #include "rj_joystick/manual_control_node.hpp"
+
 #include <rcl_interfaces/msg/parameter_descriptor.hpp>
 
 namespace joystick {
 
-ManualControlNode::ManualControlNode()
-    : rclcpp::Node("manual_control") {
-    
+ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
     declare_params();
     param_callback_handle_ = add_on_set_parameters_callback(
         [this](const auto& params) { return on_param_change(params); });
@@ -15,7 +14,8 @@ ManualControlNode::ManualControlNode()
     };
     auto on_disconnect = [this](ManualController* controller) { remove_controller(controller); };
 
-    providers_.push_back(std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
+    providers_.push_back(
+        std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
 
     using rj_msgs::srv::ListJoysticks;
     list_joysticks_ = create_service<ListJoysticks>(
@@ -92,21 +92,29 @@ void ManualControlNode::declare_params() {
     get_parameter("max_damped_translation_speed", params_.max_damped_translation_speed);
     get_parameter("kick_power_increment", params_.kick_power_increment);
     get_parameter("dribble_power_increment", params_.dribble_power_increment);
-    
 }
 
 rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
     const std::vector<rclcpp::Parameter>& parameters) {
     for (const auto& p : parameters) {
-        if (p.get_name() == "use_field_oriented_drive") params_.use_field_oriented_drive = p.as_bool();
-        else if (p.get_name() == "damped_translation") params_.damped_translation = p.as_bool();
-        else if (p.get_name() == "damped_rotation") params_.damped_rotation = p.as_bool();
-        else if (p.get_name() == "max_rotation_speed") params_.max_rotation_speed = p.as_double();
-        else if (p.get_name() == "max_damped_rotation_speed") params_.max_damped_rotation_speed = p.as_double();
-        else if (p.get_name() == "max_translation_speed") params_.max_translation_speed = p.as_double();
-        else if (p.get_name() == "max_damped_translation_speed") params_.max_damped_translation_speed = p.as_double();
-        else if (p.get_name() == "kick_power_increment") params_.kick_power_increment = p.as_double();
-        else if (p.get_name() == "dribble_power_increment") params_.dribble_power_increment = p.as_double();
+        if (p.get_name() == "use_field_oriented_drive")
+            params_.use_field_oriented_drive = p.as_bool();
+        else if (p.get_name() == "damped_translation")
+            params_.damped_translation = p.as_bool();
+        else if (p.get_name() == "damped_rotation")
+            params_.damped_rotation = p.as_bool();
+        else if (p.get_name() == "max_rotation_speed")
+            params_.max_rotation_speed = p.as_double();
+        else if (p.get_name() == "max_damped_rotation_speed")
+            params_.max_damped_rotation_speed = p.as_double();
+        else if (p.get_name() == "max_translation_speed")
+            params_.max_translation_speed = p.as_double();
+        else if (p.get_name() == "max_damped_translation_speed")
+            params_.max_damped_translation_speed = p.as_double();
+        else if (p.get_name() == "kick_power_increment")
+            params_.kick_power_increment = p.as_double();
+        else if (p.get_name() == "dribble_power_increment")
+            params_.dribble_power_increment = p.as_double();
         // kick_on_break_beam deliberately excluded — nothing caches it.
     }
     rcl_interfaces::msg::SetParametersResult result;
