@@ -26,7 +26,6 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 
 
-    // Create a subscripter for TeamColorMsg
     const auto team_color_callback = [this](TeamColorMsg::UniquePtr msg) {us_blue_.store(msg->is_blue); };
     team_color_sub_ = create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1),

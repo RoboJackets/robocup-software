@@ -49,7 +49,7 @@ Describe what the package must do before and after the work, including behavior 
 
 | Field | Details |
 | --- | --- |
-| **Required behavior** | This package should still provide templates for message queues. but only for queueseof size >1 (queues of size 1 have been replaced with direct subscriptions so I deleted those templates since they are no longer in use) . |
+| **Required behavior** | This package should still provide templates for message queues, but only for queues of size >1 (queues of size 1 have been replaced with direct subscriptions so I deleted those templates since they are no longer in use) . |
 
 ### Operational Expectations
 
