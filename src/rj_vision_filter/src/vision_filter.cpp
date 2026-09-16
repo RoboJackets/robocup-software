@@ -1,4 +1,3 @@
-
 #include "rj_vision_filter/vision_filter.hpp"
 
 #include <rj_common/time.hpp>
@@ -17,18 +16,23 @@ DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       config_client_{this},
-      team_color_queue_{this, referee::topics::kTeamColorTopic},
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that calls predict on all of the Kalman filters.
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 
+    // Create a subscripter for TeamColorMsg
+    const auto team_color_callback = [this](TeamColorMsg::UniquePtr msg) {
+        us_blue_.store(msg->is_blue);
+    };
+    team_color_sub_ = create_subscription<TeamColorMsg>(referee::topics::kTeamColorTopic,
+                                                        rclcpp::QoS(1), team_color_callback);
+
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        auto team_color = team_color_queue_.get();
-        if (!config_client_.connected() || team_color == nullptr) {
+        if (!config_client_.connected()) {
             return;
         }
 
@@ -40,7 +44,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(kQueueSize), callback);
 
-    // Create publishers.
+    // Create world state publisher
     world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStateTopic, 10);
 }
 
@@ -87,14 +91,8 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 }
 
 void VisionFilter::publish_state() {
-    std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.get();
-    if (team_color == nullptr) {
-        EZ_WARN_THROTTLE(1000, "Returning because team_color is nullptr");
-        return;
-    }
-
-    WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>();
-    *msg = build_world_state_msg(team_color->is_blue);
+    WorldStateMsg::UniquePtr msg =
+        std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_.load()));
     world_state_pub_->publish(std::move(msg));
 }
 

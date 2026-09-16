@@ -10,6 +10,8 @@
 
 #include <QMutexLocker>
 #include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/context.hpp>
@@ -152,10 +154,21 @@ private:
 
     // ROS2 temporary modules
     using WorldStateMsg = rj_msgs::msg::WorldState;
+
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
+    // replace this w a sub and callback
+    // rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    // WorldStateMsg::UniquePtr world_state_;
+    // void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
+
     AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
+
+    rclcpp::Node::SharedPtr world_state_node_;
+    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    RJ::Time last_vision_time_;
+    // void world_state_callback(rj_msgs::msg::WorldState::SharedPtr& msg);
 
     std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;

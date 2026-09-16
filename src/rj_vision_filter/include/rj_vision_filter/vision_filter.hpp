@@ -92,15 +92,10 @@ private:
      */
     World world_;
 
-    using TeamColorMsgQueue =
-        rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
-
     config_client::ConfigClient config_client_;
 
-    /**
-     * @brief Message Queue for TeamColor that takes the latest message.
-     */
-    TeamColorMsgQueue team_color_queue_;
+    rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
+    std::atomic<bool> us_blue_{true};
 
     /**
      * @brief Timer driving regular publication.

@@ -26,14 +26,19 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
     raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
+    world_state_node_ = std::make_shared<rclcpp::Node>("_world_state_reciever");
+    ros_executor_->add_node(world_state_node_, true);
+    world_state_sub_ = world_state_node_->create_subscription<WorldStateMsg>(
+        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+        [this](WorldStateMsg::UniquePtr msg) {
+            rj_convert::convert_from_ros(*msg, &context_.world_state);
+            last_vision_time_ = rj_convert::convert_from_ros(msg->last_update_time);
+        });
 
     debug_draw_sub_ =
         std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());
     autonomy_interface_ =
         std::make_unique<ros2_temp::AutonomyInterface>(&context_, ros_executor_.get());
-
-    world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
-        "world_state_queue", vision_filter::topics::kWorldStateTopic);
 
     if (!read_log_file.empty()) {
         logger_->read(read_log_file);
@@ -93,13 +98,7 @@ void Processor::run() {
             SPDLOG_INFO("Updating field geometry based off of vision packet.");
             set_field_dimensions(context_.field_dimensions);
         }
-
-        const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
-        if (world_state_msg != nullptr) {
-            context_.world_state = rj_convert::convert_from_ros(*world_state_msg);
-            cur_status.last_vision_time =
-                rj_convert::convert_from_ros(world_state_msg->last_update_time);
-        }
+        cur_status.last_vision_time = last_vision_time_;
 
         autonomy_interface_->run();
 
