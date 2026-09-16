@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -10,25 +11,27 @@ TEST(WorldRobot, invalid) {
 }
 
 TEST(WorldRobot, no_robot) {
+    VisionFilterParams params;
     std::list<KalmanRobot> kbl;
 
-    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl));
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, params));
 }
 
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int r_id = 1;
     CameraRobot b = CameraRobot(t, pose, r_id);
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();
@@ -57,6 +60,7 @@ TEST(WorldRobot, one_robot) {
 
 TEST(WorldRobot, two_robot) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose1(rj_geometry::Point(1, 1), 1);
     rj_geometry::Pose pose2(rj_geometry::Point(2, 2), 2);
 
@@ -70,14 +74,14 @@ TEST(WorldRobot, two_robot) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb1 = KalmanRobot(c_id, t, b1, w);
-    KalmanRobot kb2 = KalmanRobot(c_id, t, b2, w);
+    KalmanRobot kb1 = KalmanRobot(c_id, t, b1, w, params);
+    KalmanRobot kb2 = KalmanRobot(c_id, t, b2, w, params);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();

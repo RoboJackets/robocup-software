@@ -5,6 +5,7 @@
 #include <boost/circular_buffer.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/filter/kalman_filter3_d.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
 
 namespace vision_filter {
@@ -23,31 +24,37 @@ public:
      * @param init_measurement Initial robot measurement
      * @param previous_world_robot World robot from last frame (or invalid world
      * robot)
+     * @param params_ Vision filter parameters
      */
     KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
                 CameraRobot init_measurement,
-                const WorldRobot& previous_world_robot);
+                const WorldRobot& previous_world_robot,
+                const VisionFilterParams& params_);
 
     /**
      * Predicts one time step forward
      *
      * @param current_time Current time of the prediction step
+     * @param params_ Vision filter parameters
      */
-    void predict(RJ::Time current_time);
+    void predict(RJ::Time current_time, const VisionFilterParams& params_);
 
     /**
      * Predicts one time step forward then triangulates toward the measurement
      *
      * @param current_time Current time of the prediction/update step
      * @param update_robot Robot measurement that we are using as feedback
+     * @param params_ Vision filter parameters
      */
-    void predict_and_update(RJ::Time current_time, CameraRobot update_robot);
+    void predict_and_update(RJ::Time current_time, CameraRobot update_robot,
+                           const VisionFilterParams& params_);
 
     /**
+     * @param params_ Vision filter parameters
      * Returns true when the filter hasn't been updated in a while and should be
      * deleted
      */
-    bool is_unhealthy() const;
+    bool is_unhealthy(const VisionFilterParams& params_) const;
 
     /**
      * @return The camera id this belongs to

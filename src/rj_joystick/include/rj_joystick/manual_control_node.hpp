@@ -16,7 +16,6 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/srv/list_joysticks.hpp>
 #include <rj_msgs/srv/set_manual.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_joystick/manual_control.hpp"
@@ -44,6 +43,12 @@ private:
 
     void set_manual(const std::string& uuid, std::optional<int> robot_id);
     void remove_controller(ManualController* controller);
+    void declare_params();
+    rcl_interfaces::msg::SetParametersResult on_param_change(
+        const std::vector<rclcpp::Parameter>& parameters);
+
+    ManualControlParams params_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
     std::vector<std::unique_ptr<ManualControllerProvider>> providers_;
     std::map<ManualController*, std::optional<int>> controllers_;
@@ -56,8 +61,6 @@ private:
         manipulator_setpoint_pubs_;
 
     rclcpp::TimerBase::SharedPtr timer_;
-
-    ::params::LocalROS2ParamProvider param_provider_;
 };
 
 }  // namespace joystick

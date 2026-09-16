@@ -2,7 +2,7 @@
 
 namespace joystick {
 
-KeyboardController::KeyboardController() {
+KeyboardController::KeyboardController(const ManualControlParams& params) : params_{params} {
     SDL_RenderClear(renderer_);
     SDL_RenderPresent(renderer_);
 
@@ -41,11 +41,11 @@ ControllerCommand KeyboardController::get_command() const {
     }
 
     if (key_down(keystate, SDL_SCANCODE_LSHIFT)) {
-        command.rotation *= PARAM_max_damped_rotation_speed;
-        command.translation *= PARAM_max_damped_translation_speed;
+        command.rotation *= params_.max_damped_rotation_speed;
+        command.translation *= params_.max_damped_translation_speed;
     } else {
-        command.rotation *= PARAM_max_rotation_speed;
-        command.translation *= PARAM_max_translation_speed;
+        command.rotation *= params_.max_rotation_speed;
+        command.translation *= params_.max_translation_speed;
     }
 
     if (key_down(keystate, SDL_SCANCODE_J)) {
@@ -71,16 +71,16 @@ void KeyboardController::process_sdl(SDL_Event* event) {
 
     if (event->type == SDL_EventType::SDL_KEYDOWN) {
         if (event->key.keysym.sym == SDLK_RIGHT) {
-            kick_power_ += PARAM_kick_power_increment;
+            kick_power_ += params_.kick_power_increment;
         } else if (event->key.keysym.sym == SDLK_LEFT) {
-            kick_power_ -= PARAM_kick_power_increment;
+            kick_power_ -= params_.kick_power_increment;
         }
         kick_power_ = std::clamp(kick_power_, 0.0, 1.0);
 
         if (event->key.keysym.sym == SDLK_UP) {
-            dribble_power_ += PARAM_dribble_power_increment;
+            dribble_power_ += params_.dribble_power_increment;
         } else if (event->key.keysym.sym == SDLK_DOWN) {
-            dribble_power_ -= PARAM_dribble_power_increment;
+            dribble_power_ -= params_.dribble_power_increment;
         }
         dribble_power_ = std::clamp(dribble_power_, 0.0, 1.0);
     }
@@ -111,16 +111,16 @@ void GamepadController::process_sdl(SDL_Event* event) {
     if (event->type == SDL_EventType::SDL_CONTROLLERBUTTONDOWN &&
         event->cbutton.which == get_id()) {
         if (event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
-            kick_power_ += PARAM_kick_power_increment;
+            kick_power_ += params_.kick_power_increment;
         } else if (event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_LEFT) {
-            kick_power_ -= PARAM_kick_power_increment;
+            kick_power_ -= params_.kick_power_increment;
         }
         kick_power_ = std::clamp(kick_power_, 0.0, 1.0);
 
         if (event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_UP) {
-            dribble_power_ += PARAM_dribble_power_increment;
+            dribble_power_ += params_.dribble_power_increment;
         } else if (event->cbutton.button == SDL_CONTROLLER_BUTTON_DPAD_DOWN) {
-            dribble_power_ -= PARAM_dribble_power_increment;
+            dribble_power_ -= params_.dribble_power_increment;
         }
         dribble_power_ = std::clamp(dribble_power_, 0.0, 1.0);
     }
@@ -128,10 +128,10 @@ void GamepadController::process_sdl(SDL_Event* event) {
 
 SDLControllerProvider::~SDLControllerProvider() { SDL_Quit(); }
 
-SDLControllerProvider::SDLControllerProvider(bool do_keyboard,
+SDLControllerProvider::SDLControllerProvider(bool do_keyboard, const ManualControlParams& params,
                                              std::function<void(ManualController*)> on_connect,
                                              std::function<void(ManualController*)> on_disconnect)
-    : on_connect_{std::move(on_connect)}, on_disconnect_{std::move(on_disconnect)} {
+    : params_{params}, on_connect_{std::move(on_connect)}, on_disconnect_{std::move(on_disconnect)} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS | SDL_INIT_VIDEO) != 0) {
         FATAL_THROW("SDL could not initialize game controller system! SDL Error: {}",
@@ -147,7 +147,7 @@ SDLControllerProvider::SDLControllerProvider(bool do_keyboard,
     }
 
     if (do_keyboard) {
-        auto keyboard_controller = std::make_unique<KeyboardController>();
+        auto keyboard_controller = std::make_unique<KeyboardController>(params_);
         on_connect_(keyboard_controller.get());
         controllers_.emplace_back(std::move(keyboard_controller));
     }
@@ -158,7 +158,7 @@ void SDLControllerProvider::update() {
     while (SDL_PollEvent(&event) != 0) {
         if (event.type == SDL_EventType::SDL_CONTROLLERDEVICEADDED) {
             SDL_GameController* controller = SDL_GameControllerFromInstanceID(event.cdevice.which);
-            controllers_.push_back(std::make_unique<GamepadController>(controller));
+            controllers_.push_back(std::make_unique<GamepadController>(controller, params_));
             on_connect_(controllers_.back().get());
         } else if (event.type == SDL_EventType::SDL_CONTROLLERDEVICEREMOVED) {
             auto it = std::find_if(controllers_.begin(), controllers_.end(),

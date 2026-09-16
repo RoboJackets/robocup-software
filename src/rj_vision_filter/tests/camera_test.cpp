@@ -2,6 +2,7 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 TEST(Camera, invalid_camera) {
@@ -26,8 +27,9 @@ TEST(Camera, valid_camera) {
 }
 
 TEST(Camera, update_no_frame_empty) {
+    VisionFilterParams params;
     Camera c = Camera(1);
-    c.update_without_frame(RJ::now());
+    c.update_without_frame(RJ::now(), params);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -44,6 +46,7 @@ TEST(Camera, update_no_frame_empty) {
 TEST(Camera, update_with_frame_empty) {
     Camera c = Camera(1);
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
 
     std::vector<CameraBall> b;
     std::vector<std::list<CameraRobot>> yr(kNumShells);
@@ -52,7 +55,7 @@ TEST(Camera, update_with_frame_empty) {
     std::vector<WorldRobot> wry(kNumShells, WorldRobot());
     std::vector<WorldRobot> wrb(kNumShells, WorldRobot());
 
-    c.update_with_frame(t, b, yr, br, wb, wry, wrb);
+    c.update_with_frame(t, b, yr, br, wb, wry, wrb, params);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -69,6 +72,7 @@ TEST(Camera, update_with_frame_empty) {
 TEST(Camera, update_with_single_frame) {
     Camera c = Camera(1);
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
 
     std::vector<CameraBall> b;
     std::vector<std::list<CameraRobot>> yr(kNumShells);
@@ -85,7 +89,7 @@ TEST(Camera, update_with_single_frame) {
 
     br.at(0).emplace_back(RJ::now(), rj_geometry::Pose(rj_geometry::Point(1.5, 1.5), 0.5), 0);
 
-    c.update_with_frame(t, b, yr, br, wb, wry, wrb);
+    c.update_with_frame(t, b, yr, br, wb, wry, wrb, params);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();

@@ -3,22 +3,21 @@
 #include <string>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/param.hpp>
+#include <rcl_interfaces/msg/set_parameters_result.hpp>
 
 namespace joystick {
 
-constexpr auto kJoystickModule = "joystick";
-
-DECLARE_BOOL(kJoystickModule, use_field_oriented_drive)
-DECLARE_BOOL(kJoystickModule, kick_on_break_beam)
-DECLARE_BOOL(kJoystickModule, damped_translation)
-DECLARE_BOOL(kJoystickModule, damped_rotation)
-DECLARE_FLOAT64(kJoystickModule, max_rotation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_damped_rotation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_translation_speed)
-DECLARE_FLOAT64(kJoystickModule, max_damped_translation_speed)
-DECLARE_FLOAT64(kJoystickModule, kick_power_increment)
-DECLARE_FLOAT64(kJoystickModule, dribble_power_increment)
+struct ManualControlParams {
+    bool use_field_oriented_drive = false;
+    bool damped_translation = false;
+    bool damped_rotation = false;
+    double max_rotation_speed = 4.0;
+    double max_damped_rotation_speed = 1.0;
+    double max_translation_speed = 2.0;
+    double max_damped_translation_speed = 0.5;
+    double kick_power_increment = 0.1;
+    double dribble_power_increment = 0.1;
+};
 
 struct ControllerCommand {
     rj_geometry::Point translation;

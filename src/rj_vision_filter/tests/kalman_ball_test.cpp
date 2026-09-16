@@ -2,16 +2,18 @@
 
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 TEST(KalmanBall, invalid_world_ball) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
 
     rj_geometry::Point rv = kb.get_vel();
     rj_geometry::Point rp = kb.get_pos();
@@ -20,26 +22,27 @@ TEST(KalmanBall, invalid_world_ball) {
     EXPECT_EQ(rp.y(), p.y());
     EXPECT_EQ(rv.x(), 0);
     EXPECT_EQ(rv.y(), 0);
-    EXPECT_FALSE(kb.is_unhealthy());
+    EXPECT_FALSE(kb.is_unhealthy(params));
     EXPECT_EQ(kb.get_camera_id(), c_id);
     EXPECT_GT(kb.get_health(), 0);
 }
 
 TEST(KalmanBall, valid_world_ball) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, params);
 
-    KalmanBall kb2 = KalmanBall(c_id, t, b, wb);
+    KalmanBall kb2 = KalmanBall(c_id, t, b, wb, params);
 
     rj_geometry::Point rv = kb2.get_vel();
     rj_geometry::Point rp = kb2.get_pos();
@@ -52,15 +55,16 @@ TEST(KalmanBall, valid_world_ball) {
 
 TEST(KalmanBall, predict) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
 
-    kb.predict(RJ::now());
+    kb.predict(RJ::now(), params);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -75,15 +79,16 @@ TEST(KalmanBall, predict) {
 
 TEST(KalmanBall, predict_and_update) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
 
-    kb.predict_and_update(RJ::now(), b);
+    kb.predict_and_update(RJ::now(), b, params);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -98,30 +103,32 @@ TEST(KalmanBall, predict_and_update) {
 
 TEST(KalmanBall, is_unhealthy) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
 
-    kb.predict(RJ::now() + RJ::Seconds(10));
+    kb.predict(RJ::now() + RJ::Seconds(10), params);
 
-    EXPECT_TRUE(kb.is_unhealthy());
+    EXPECT_TRUE(kb.is_unhealthy(params));
 }
 
 TEST(KalmanBall, max_measurement_size) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
 
     for (int i = 0; i < 100; i++) {
-        kb.predict_and_update(RJ::now(), b);
+        kb.predict_and_update(RJ::now(), b, params);
     }
 
     boost::circular_buffer<CameraBall> list = kb.get_prev_measurements();
@@ -131,12 +138,13 @@ TEST(KalmanBall, max_measurement_size) {
 
 TEST(KalmanBall, getters) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
 
     rj_geometry::Point rpc = kb.get_pos_cov();
     rj_geometry::Point rvc = kb.get_vel_cov();
