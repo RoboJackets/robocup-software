@@ -5,6 +5,7 @@
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -27,6 +28,7 @@ public:
      * @param yellow_robots Best estimation of the yellow robots
      * @param blue_robots Best estimation of the blue robots
      * @param kick_event Returned kick event if we find one
+     * @param params_ Vision filter parameters
      *
      * @return Whether there was a kick
      *
@@ -36,13 +38,14 @@ public:
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
                    const std::vector<WorldRobot>& yellow_robots,
                    const std::vector<WorldRobot>& blue_robots,
-                   KickEvent& kick_event);
+                   KickEvent& kick_event, const VisionFilterParams& params_);
 
 private:
     /**
+     * @param params_ Vision filter parameters
      * @return Whether there is a large enough acceleration to be a kick
      */
-    bool detect_kick();
+    bool detect_kick(const VisionFilterParams& params_);
 
     /**
      * @return Closest robot to the ball at it's kick time

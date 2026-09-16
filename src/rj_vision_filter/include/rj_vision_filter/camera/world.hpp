@@ -7,6 +7,7 @@
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -16,7 +17,10 @@ namespace vision_filter {
  */
 class World {
 public:
-    World();
+    /**
+     * @param params_ Vision filter parameters
+     */
+    explicit World(const VisionFilterParams& params_);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -24,30 +28,34 @@ public:
      * @param calc_time Current iteration time
      * @param new_frames List of new frames from ssl vision
      * @param update_all Whether to update the cameras without vision measurements
+     * @param params_ Vision filter parameters
      *
      * @note Call this OR update_without_camera_frame ONCE an iteration
      */
     void update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
-                                  bool update_all);
+                                  bool update_all, const VisionFilterParams& params_);
 
     /**
      * Updates all the child cameras given a set of new camera frames
      *
      * @param calc_time Current iteration time
      * @param frame new frame for a single camera, from vision
+     * @param params_ Vision filter parameters
      *
      * @note Call this once per camera per iteration
      */
-    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame);
+    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
+                             const VisionFilterParams& params_);
 
     /**
      * Updates all the child cameras when there are no new camera frames
      *
      * @param calc_time Current iteration time
+     * @param params_ Vision filter parameters
      *
      * @note Call this OR update_with_camera_frame ONCE an iteration
      */
-    void update_without_camera_frame(RJ::Time calc_time);
+    void update_without_camera_frame(RJ::Time calc_time, const VisionFilterParams& params_);
 
     /**
      * @return Best estimate of the ball
@@ -78,23 +86,27 @@ public:
 private:
     /**
      * Does the ball bounce calculations for each of the child cameras
+     *
+     * @param params_ Vision filter parameters
      */
-    void calc_ball_bounce();
+    void calc_ball_bounce(const VisionFilterParams& params_);
 
     /**
      * Fills the world objects with a mix of the best kalman filters from
      * each camera
      *
      * @param calc_time Current iteration time
+     * @param params_ Vision filter parameters
      */
-    void update_world_objects(RJ::Time calc_time);
+    void update_world_objects(RJ::Time calc_time, const VisionFilterParams& params_);
 
     /**
      * Adds the latest estimate to the kick detectors and checks for kick
      *
      * @param calc_time Current iteration time
+     * @param params_ Vision filter parameters
      */
-    void detect_kicks(RJ::Time calc_time);
+    void detect_kicks(RJ::Time calc_time, const VisionFilterParams& params_);
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to

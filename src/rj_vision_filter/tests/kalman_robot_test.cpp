@@ -2,13 +2,14 @@
 
 #include <gtest/gtest.h>
 
-#include <rj_param_utils/vision/vision_params.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
 TEST(KalmanRobot, invalid_world_robot) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -16,7 +17,7 @@ TEST(KalmanRobot, invalid_world_robot) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -29,13 +30,14 @@ TEST(KalmanRobot, invalid_world_robot) {
     EXPECT_EQ(rv.x(), 0);
     EXPECT_EQ(rv.y(), 0);
     EXPECT_EQ(om, 0);
-    EXPECT_FALSE(kb.is_unhealthy());
+    EXPECT_FALSE(kb.is_unhealthy(params));
     EXPECT_EQ(kb.get_camera_id(), c_id);
     EXPECT_GT(kb.get_health(), 0);
 }
 
 TEST(KalmanRobot, valid_world_robot) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -46,15 +48,15 @@ TEST(KalmanRobot, valid_world_robot) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b1, w);
-    kb.predict_and_update(t, b2);
+    KalmanRobot kb = KalmanRobot(c_id, t, b1, w, params);
+    kb.predict_and_update(t, b2, params);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, robot_id, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, robot_id, kbl, params);
 
-    KalmanRobot kb2 = KalmanRobot(c_id, t, b1, wb);
+    KalmanRobot kb2 = KalmanRobot(c_id, t, b1, wb, params);
 
     rj_geometry::Point rp = kb2.get_pos();
     rj_geometry::Point rv = kb2.get_vel();
@@ -74,6 +76,7 @@ TEST(KalmanRobot, valid_world_robot) {
 
 TEST(KalmanRobot, predict) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -84,15 +87,15 @@ TEST(KalmanRobot, predict) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b1, w);
-    kb.predict_and_update(t, b2);
+    KalmanRobot kb = KalmanRobot(c_id, t, b1, w, params);
+    kb.predict_and_update(t, b2, params);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
     double th = kb.get_theta();
     double om = kb.get_omega();
 
-    kb.predict(t);
+    kb.predict(t, params);
 
     rj_geometry::Point rp2 = kb.get_pos();
     rj_geometry::Point rv2 = kb.get_vel();
@@ -102,13 +105,14 @@ TEST(KalmanRobot, predict) {
     EXPECT_NEAR(rp2.x(), rp.x() + rv.y() * 0.01, 0.01);
     EXPECT_NEAR(rp2.y(), rp.y() + rv.y() * 0.01, 0.01);
     EXPECT_NEAR(th2, th + om * 0.01, 0.01);
-    EXPECT_FALSE(kb.is_unhealthy());
+    EXPECT_FALSE(kb.is_unhealthy(params));
     EXPECT_EQ(kb.get_camera_id(), c_id);
     EXPECT_GT(kb.get_health(), 0);
 }
 
 TEST(KalmanRobot, predict_and_update) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -119,8 +123,8 @@ TEST(KalmanRobot, predict_and_update) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b1, w);
-    kb.predict_and_update(t, b2);
+    KalmanRobot kb = KalmanRobot(c_id, t, b1, w, params);
+    kb.predict_and_update(t, b2, params);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -136,13 +140,14 @@ TEST(KalmanRobot, predict_and_update) {
     EXPECT_LT(rv.x(), pose.position().x() / .01);
     EXPECT_LT(rv.y(), pose.position().y() / .01);
     EXPECT_LT(om, th / 0.01);
-    EXPECT_FALSE(kb.is_unhealthy());
+    EXPECT_FALSE(kb.is_unhealthy(params));
     EXPECT_EQ(kb.get_camera_id(), c_id);
     EXPECT_GT(kb.get_health(), 0);
 }
 
 TEST(KalmanRobot, is_unhealthy) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -150,15 +155,16 @@ TEST(KalmanRobot, is_unhealthy) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
-    kb.predict(RJ::now() + RJ::Seconds(10));
+    kb.predict(RJ::now() + RJ::Seconds(10), params);
 
-    EXPECT_TRUE(kb.is_unhealthy());
+    EXPECT_TRUE(kb.is_unhealthy(params));
 }
 
 TEST(KalmanRobot, max_measurement_size) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -166,10 +172,10 @@ TEST(KalmanRobot, max_measurement_size) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     for (int i = 0; i < 100; i++) {
-        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b);
+        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b, params);
     }
 
     boost::circular_buffer<CameraRobot> list = kb.get_prev_measurements();
@@ -179,6 +185,7 @@ TEST(KalmanRobot, max_measurement_size) {
 
 TEST(KalmanRobot, getters) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int robot_id = 1;
 
@@ -186,7 +193,7 @@ TEST(KalmanRobot, getters) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     rj_geometry::Point rpc = kb.get_pos_cov();
     double rtc = kb.get_theta_cov();
@@ -224,6 +231,7 @@ TEST(KalmanRobot, getters) {
 
 TEST(KalmanRobot, wrap_theta_up) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 0);
     int robot_id = 1;
 
@@ -231,21 +239,21 @@ TEST(KalmanRobot, wrap_theta_up) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() += 1 * PARAM_vision_loop_dt;
-        ut += 1 * PARAM_vision_loop_dt;
+        pose.heading() += 1 * params.vision_loop_dt;
+        ut += 1 * params.vision_loop_dt;
 
         if (pose.heading() > M_PI) {
             pose.heading() -= 2 * M_PI;
         }
 
-        pose.position() += rj_geometry::Point(1, 1) * PARAM_vision_loop_dt;
+        pose.position() += rj_geometry::Point(1, 1) * params.vision_loop_dt;
 
         b = CameraRobot(t, pose, robot_id);
-        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b);
+        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b, params);
     }
 
     double rt = kb.get_theta();
@@ -263,6 +271,7 @@ TEST(KalmanRobot, wrap_theta_up) {
 
 TEST(KalmanRobot, wrap_theta_down) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 0);
 
     int robot_id = 1;
@@ -271,21 +280,21 @@ TEST(KalmanRobot, wrap_theta_down) {
     int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w, params);
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() -= 1.0 * PARAM_vision_loop_dt;
-        ut -= 1.0 * PARAM_vision_loop_dt;
+        pose.heading() -= 1.0 * params.vision_loop_dt;
+        ut -= 1.0 * params.vision_loop_dt;
 
         if (pose.heading() < -M_PI) {
             pose.heading() += 2 * M_PI;
         }
 
-        pose.position() -= rj_geometry::Point(1, 1) * PARAM_vision_loop_dt;
+        pose.position() -= rj_geometry::Point(1, 1) * params.vision_loop_dt;
 
         b = CameraRobot(t, pose, robot_id);
-        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b);
+        kb.predict_and_update(RJ::now() + RJ::Seconds(10), b, params);
     }
 
     double rt = kb.get_theta();

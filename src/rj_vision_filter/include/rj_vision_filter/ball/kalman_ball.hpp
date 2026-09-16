@@ -4,6 +4,7 @@
 #include <boost/circular_buffer.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/filter/kalman_filter_2d.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 class WorldBall;
@@ -22,18 +23,21 @@ public:
      * filter at
      * @param previous_world_ball Previous prediction of ball location to
      * initialize the velocity smartly
+     * @param params_ Vision filter parameters
      */
     KalmanBall(unsigned int camera_id, RJ::Time creation_time,
-               CameraBall init_measurement, const WorldBall& previous_world_ball);
+               CameraBall init_measurement, const WorldBall& previous_world_ball,
+               const VisionFilterParams& params_);
 
     /**
      * Predicts one time step forward
      *
      * @param current_time Time at the current frame
+     * @param params_ Vision filter parameters
      *
      * @note Call either this OR predict_and_update once a frame
      */
-    void predict(RJ::Time current_time);
+    void predict(RJ::Time current_time, const VisionFilterParams& params_);
 
     /**
      * Predicts one time step forward then triangulates towards the measurement
@@ -41,16 +45,19 @@ public:
      * @param current_time Current time of the prediction/update step
      * @param update_ball Ball measurement that we are using as feedback to the
      * filters
+     * @param params_ Vision filter parameters
      *
      * @note Call either this OR predict once a frame
      */
-    void predict_and_update(RJ::Time current_time, CameraBall update_ball);
+    void predict_and_update(RJ::Time current_time, CameraBall update_ball,
+                           const VisionFilterParams& params_);
 
     /**
+     * @param params_ Vision filter parameters
      * @return Returns true when the filter hasn't been updated in a while etc
      * and should be deleted
      */
-    bool is_unhealthy() const;
+    bool is_unhealthy(const VisionFilterParams& params_) const;
 
     /**
      * @return The camera id this belongs to

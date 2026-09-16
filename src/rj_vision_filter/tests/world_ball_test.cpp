@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <rj_vision_filter/params.hpp>
+
 namespace vision_filter {
 TEST(WorldBall, invalid) {
     WorldBall wb;
@@ -10,24 +12,26 @@ TEST(WorldBall, invalid) {
 }
 
 TEST(WorldBall, no_ball) {
+    VisionFilterParams params;
     std::list<KalmanBall> kbl;
 
-    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl));
+    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl, params));
 }
 
 TEST(WorldBall, one_ball) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(c_id, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w, params);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();
@@ -50,6 +54,7 @@ TEST(WorldBall, one_ball) {
 
 TEST(WorldBall, two_ball) {
     RJ::Time t = RJ::now();
+    VisionFilterParams params;
     rj_geometry::Point p1 = rj_geometry::Point(1, 1);
     rj_geometry::Point p2 = rj_geometry::Point(2, 2);
     CameraBall b1 = CameraBall(t, p1);
@@ -57,14 +62,14 @@ TEST(WorldBall, two_ball) {
     int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb1 = KalmanBall(c_id, t, b1, w);
-    KalmanBall kb2 = KalmanBall(c_id, t, b2, w);
+    KalmanBall kb1 = KalmanBall(c_id, t, b1, w, params);
+    KalmanBall kb2 = KalmanBall(c_id, t, b2, w, params);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldBall wb = WorldBall(t, kbl);
+    WorldBall wb = WorldBall(t, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();

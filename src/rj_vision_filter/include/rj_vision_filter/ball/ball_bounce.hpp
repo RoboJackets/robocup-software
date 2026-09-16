@@ -2,6 +2,7 @@
 
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 #include <vector>
 
@@ -9,10 +10,8 @@ namespace vision_filter {
 class BallBounce {
 public:
     /**
-     * These functions are wrapped into a class instead of a namespace so that
-     * the config system can be used. It requires a class with the
-     * REGISTER_CONFIGUABLE define. Additionally, this allows for the extra
-     * helper functions to be hidden.
+     * These functions are wrapped into a class instead of a namespace so
+     * that the private helper functions can be hidden.
      */
     BallBounce() = delete;
     ~BallBounce() = delete;
@@ -25,13 +24,15 @@ public:
      * @param yellow_robots Best estimation of the yellow robots states
      * @param blue_robots Best estimation of the yellow robots states
      * @param out_new_vel Output of the resulting velocity vector after bounce
+     * @param params_ Vision filter parameters
      *
      * @return Whether the ball bounces or not
      */
     static bool calc_ball_bounce(const KalmanBall& ball,
                                const std::vector<WorldRobot>& yellow_robots,
                                const std::vector<WorldRobot>& blue_robots,
-                               rj_geometry::Point& out_new_vel);
+                               rj_geometry::Point& out_new_vel,
+                               const VisionFilterParams& params_);
 
 private:
     /**
@@ -41,8 +42,10 @@ private:
      *
      * @param ball The ball we want to check for intersection with
      * @param robot The robot we what to check for intersection with
+     * @param params_ Vision filter parameters
      */
-    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot);
+    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
+                             const VisionFilterParams& params_);
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell

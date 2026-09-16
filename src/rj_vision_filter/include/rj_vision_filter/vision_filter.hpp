@@ -1,8 +1,10 @@
 #pragma once
 
 #include <atomic>
+#include <functional>
 #include <mutex>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -11,12 +13,12 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
 #include "rj_vision_filter/camera/world.hpp"
+#include "rj_vision_filter/params.hpp"
 
 namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
@@ -88,6 +90,13 @@ private:
     }
 
     /**
+     * @brief Vision filter parameters, read from ROS2 parameters at
+     * startup. Declared before world_ so it's populated before world_'s
+     * constructor runs.
+     */
+    VisionFilterParams params_;
+
+    /**
      * @brief State of the world, ie. robots and ball.
      */
     World world_;
@@ -114,6 +123,13 @@ private:
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
 
-    ::params::LocalROS2ParamProvider param_provider_;
+    /**
+     * @brief Maps each ROS2 parameter name to a setter that writes the new
+     * value straight into params_, so params_ stays live-updated whenever
+     * `ros2 param set` is used. Built once in the constructor.
+     */
+    std::unordered_map<std::string, std::function<void(const rclcpp::Parameter&)>> param_setters_;
+
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 };
 }  // namespace vision_filter
