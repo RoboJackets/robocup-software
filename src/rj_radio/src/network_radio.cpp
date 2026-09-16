@@ -8,7 +8,6 @@ namespace radio {
 NetworkRadio::NetworkRadio()
     : control_message_socket_(io_service_),
       robot_status_socket_(io_service_),
-      alive_robots_socket_(io_service_),
       send_buffers_(kNumShells) {
     control_message_socket_.open(udp::v4());
     control_message_socket_.bind(udp::endpoint(udp::v4(), kControlMessageSocketPort));
@@ -16,12 +15,12 @@ NetworkRadio::NetworkRadio()
     robot_status_socket_.open(udp::v4());
     robot_status_socket_.bind(udp::endpoint(udp::v4(), kRobotStatusMessageSocketPort));
 
-    alive_robots_socket_.open(udp::v4());
-    alive_robots_socket_.bind(udp::endpoint(udp::v4(), kAliveRobotsMessageSocketPort));
-
     start_robot_status_receive();
-    start_alive_robots_receive();
-    std::fill(dead_ticks_.begin(), dead_ticks_.end(), 0);
+
+    // Republish alive robots derived from RobotStatus reception (the same signal
+    // the UI's robot list is built from). Replaces the old, buggy 8002 bitmask.
+    alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(100),
+                                            [this]() { publish_alive_from_status(); });
 }
 
 void NetworkRadio::start_robot_status_receive() {
@@ -29,14 +28,6 @@ void NetworkRadio::start_robot_status_receive() {
         boost::asio::buffer(robot_status_buffer_), robot_status_endpoint_,
         [this](const boost::system::error_code& error, size_t num_bytes) {
             receive_robot_status(error, num_bytes);
-        });
-}
-
-void NetworkRadio::start_alive_robots_receive() {
-    alive_robots_socket_.async_receive_from(
-        boost::asio::buffer(alive_robots_buffer_), alive_robots_endpoint_,
-        [this](const boost::system::error_code& error, size_t num_bytes) {
-            receive_alive_robots(error, num_bytes);
         });
 }
 
@@ -100,35 +91,17 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
     start_robot_status_receive();
 }
 
-void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, size_t num_bytes) {
-    if (static_cast<bool>(error)) {
-        SPDLOG_ERROR("Error Receiving Alive Robots: {}", error.message());
-        start_alive_robots_receive();
-        return;
+void NetworkRadio::publish_alive_from_status() {
+    const RJ::Time now = RJ::now();
+    std::array<bool, kNumShells> alive_robots{};
+    for (size_t robot_id = 0; robot_id < kNumShells; robot_id++) {
+        alive_robots.at(robot_id) =
+            last_status_received_.at(robot_id) + RJ::Seconds(PARAM_timeout) > now;
     }
 
-    if (num_bytes != 2) {
-        SPDLOG_ERROR("Invalid Packet Length: expected {}, got {}", 2, num_bytes);
-        start_alive_robots_receive();
-        return;
-    }
-
-    uint16_t alive = (alive_robots_buffer_[0] << 8) | (alive_robots_buffer_[0]);
-    for (uint8_t robot_id = 0; robot_id < kNumShells; robot_id++) {
-        if ((alive & (1 << robot_id)) != 0) {
-            dead_ticks_[robot_id] = 0;
-        } else {
-            dead_ticks_[robot_id]++;
-        }
-
-        alive_robots_[robot_id] = dead_ticks_[robot_id] <= kDeadTickTimeout;
-    }
     rj_msgs::msg::AliveRobots alive_message{};
-    alive_message.alive_robots = alive_robots_;
+    alive_message.alive_robots = alive_robots;
     publish_alive_robots(alive_message);
-
-    // Restart Receiving
-    start_alive_robots_receive();
 }
 
 }  // namespace radio
