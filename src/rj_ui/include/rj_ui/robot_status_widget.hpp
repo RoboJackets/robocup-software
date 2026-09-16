@@ -7,8 +7,8 @@
 #include <QtWidgets>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/status.hpp>
 #include <rj_common/radio/robot_status.hpp>
+#include <rj_common/status.hpp>
 #include <rj_common/world_state.hpp>
 
 #include "rj_ui/battery_profile.hpp"

@@ -65,7 +65,7 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
 
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
-    _updateCount(0),
+      _updateCount(0),
       _lastUpdateTime(RJ::now()),
       _processor(processor),
       context_(processor->context()),
@@ -273,8 +273,8 @@ void MainWindow::updateViews() {
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
         _history.clear();
-        _history.push_back(std::make_shared<rj_ui::LiveFrame>(
-            rj_ui::LiveFrame::from_context(*context_)));
+        _history.push_back(
+            std::make_shared<rj_ui::LiveFrame>(rj_ui::LiveFrame::from_context(*context_)));
     }
     _ui.fieldView->history(&_history);
     _ui.fieldView->live = true;

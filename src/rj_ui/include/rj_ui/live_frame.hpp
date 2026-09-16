@@ -25,7 +25,9 @@ struct LiveRobot {
     const rj_geometry::Point& pos() const { return position; }
     float angle() const { return static_cast<float>(heading); }
     bool has_ball_sense_status() const { return true; }
-    BallSenseStatus ball_sense_status() const { return has_ball ? BallSenseStatus::HasBall : BallSenseStatus::NoBall; }
+    BallSenseStatus ball_sense_status() const {
+        return has_ball ? BallSenseStatus::HasBall : BallSenseStatus::NoBall;
+    }
     bool has_kicker_works() const { return false; }
     bool kicker_works() const { return kicker_ok; }
     const std::vector<MotorStatus>& motor_status() const { return motors; }
@@ -87,8 +89,8 @@ struct LiveFrame {
             frame.opp_.push_back(std::move(robot));
         }
         if (context.world_state.ball.visible) {
-            frame.ball_state = LiveBall{context.world_state.ball.position,
-                                        context.world_state.ball.velocity};
+            frame.ball_state =
+                LiveBall{context.world_state.ball.position, context.world_state.ball.velocity};
         }
 
         const auto& drawings = context.debug_drawer.published_frame();
