@@ -33,8 +33,7 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
         [this](WorldStateMsg::UniquePtr msg) {
             rj_convert::convert_from_ros(*msg, &context_.world_state);
             last_vision_time_ = rj_convert::convert_from_ros(msg->last_update_time);
-        }
-    );
+        });
 
     debug_draw_sub_ =
         std::make_unique<ros2_temp::DebugDrawInterface>(&context_, ros_executor_.get());

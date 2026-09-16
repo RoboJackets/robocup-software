@@ -8,11 +8,10 @@
 #include <optional>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
-
 #include <QMutexLocker>
 #include <rclcpp/executors/single_threaded_executor.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/context.hpp>
@@ -155,10 +154,10 @@ private:
 
     // ROS2 temporary modules
     using WorldStateMsg = rj_msgs::msg::WorldState;
-    
+
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
-    
+
     // replace this w a sub and callback
     // rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     // WorldStateMsg::UniquePtr world_state_;
