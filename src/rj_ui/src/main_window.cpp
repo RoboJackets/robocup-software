@@ -278,6 +278,7 @@ void MainWindow::updateViews() {
     }
     _ui.fieldView->history(&_history);
     _ui.fieldView->live = true;
+    updateDebugLayers(*_history.back());
     _ui.fieldView->update();
 
     ++_updateCount;
@@ -1089,6 +1090,19 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
         _ui.fieldView->layerVisible(layer, item->checkState() == Qt::Checked);
     }
     _ui.fieldView->update();
+}
+
+void MainWindow::updateDebugLayers(const rj_ui::LiveFrame& frame) {
+    if (frame.debug_layers_size() > _ui.debugLayers->count()) {
+        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size(); ++i) {
+            const QString name = QString::fromStdString(frame.debug_layers(i));
+            bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                                        [&](const QString& string) { return string == name; });
+            addLayer(i, name, enabled);
+        }
+
+        _ui.debugLayers->sortItems();
+    }
 }
 
 // NOLINTNEXTLINE(readability-make-member-function-const): this modifies state

@@ -106,7 +106,11 @@ void Processor::run() {
         // Processor Initialization Completed
         initialized_ = true;
 
-        debug_draw_sub_->run();
+        {
+            std::lock_guard<std::mutex> lock(loop_mutex_);
+            debug_draw_sub_->run();
+            context_.debug_drawer.commit_frame();
+        }
 
         ////////////////
         // Timing

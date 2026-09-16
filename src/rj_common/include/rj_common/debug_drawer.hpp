@@ -6,6 +6,7 @@
 
 #include <QColor>
 #include <QMap>
+#include <QStringList>
 
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/composite_shape.hpp>
@@ -14,6 +15,8 @@
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_utils/log_utils.hpp>
+
+#include "rj_common/debug_drawings.hpp"
 
 struct Context;
 
@@ -27,48 +30,64 @@ public:
     int find_debug_layer(QString layer);
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const rj_geometry::Point*, int,
-                     const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_polygon(const rj_geometry::Point* pts, int n, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const std::vector<rj_geometry::Point>&,
-                     const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_polygon(const std::vector<rj_geometry::Point>& pts, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const rj_geometry::Polygon&,
-                     const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_polygon(const rj_geometry::Polygon& pts, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_circle(rj_geometry::Point, float,
-                    const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_circle(rj_geometry::Point center, float radius, const QColor& qc = Qt::black,
+                     const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_arc(const rj_geometry::Arc&, const QColor& = Qt::black,
-                 const QString& = QString()) {}
+    void draw_arc(const rj_geometry::Arc& arc, const QColor& qw = Qt::black,
+                  const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_shape(const std::shared_ptr<rj_geometry::Shape>&,
-                   const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, const QColor& qw = Qt::black,
+                    const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_shape_set(const rj_geometry::ShapeSet&,
-                      const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_shape_set(const rj_geometry::ShapeSet& shapes, const QColor& qw = Qt::black,
+                        const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_line(const rj_geometry::Segment&, const QColor& = Qt::black,
-                  const QString& = QString()) {}
+    void draw_line(const rj_geometry::Segment& line, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_line(rj_geometry::Point, rj_geometry::Point,
-                  const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_line(rj_geometry::Point p0, rj_geometry::Point p1, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_text(const QString&, rj_geometry::Point,
-                  const QColor& = Qt::black, const QString& = QString()) {}
+    void draw_text(const QString& text, rj_geometry::Point pos, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_segment(const rj_geometry::Segment&, const QColor& = Qt::black,
-                     const QString& = QString()) {}
+    void draw_segment(const rj_geometry::Segment& line, const QColor& qw = Qt::black,
+                      const QString& layer = QString());
+
+    /**
+     * Helper pass-through method to create a new debug path.
+     */
+    DebugRobotPath& add_debug_path() { return current_.robot_paths.emplace_back(); }
+
+    /**
+     * Snapshot this cycle's drawings for the UI and start a fresh cycle.
+     * Layer names are kept so the debug-layer list stays stable.
+     */
+    void commit_frame() {
+        published_ = std::move(current_);
+        current_.clear();
+    }
+
+    const DebugDrawFrame& published_frame() const { return published_; }
 
 private:
     /// Number of debug layers
@@ -82,4 +101,6 @@ private:
 
     Context* context_;
 
+    DebugDrawFrame current_;
+    DebugDrawFrame published_;
 };

@@ -7,48 +7,18 @@
 #include <vector>
 
 #include <rj_common/context.hpp>
+#include <rj_common/debug_drawings.hpp>
 
 namespace rj_ui {
 
+using ::DebugArc;
+using ::DebugCircle;
+using ::DebugPath;
+using ::DebugRobotPath;
+using ::DebugText;
+
 enum BallSenseStatus { NoBall, HasBall, Dazzled, Failed };
 enum MotorStatus { Good, Fault };
-
-struct DebugPath {
-    int layer() const { return -1; }
-    int color() const { return 0; }
-    int points_size() const { return 0; }
-    rj_geometry::Point points(int) const { return {}; }
-};
-struct DebugRobotPath {
-    struct DebugRobotPathPoint {
-        rj_geometry::Point pos() const { return {}; }
-        rj_geometry::Point vel() const { return {}; }
-    };
-    int layer() const { return -1; }
-    int points_size() const { return 0; }
-    DebugRobotPathPoint points(int) const { return {}; }
-};
-struct DebugCircle {
-    int layer() const { return -1; }
-    int color() const { return 0; }
-    rj_geometry::Point center() const { return {}; }
-    float radius() const { return 0; }
-};
-struct DebugArc {
-    int layer() const { return -1; }
-    int color() const { return 0; }
-    rj_geometry::Point center() const { return {}; }
-    float radius() const { return 0; }
-    float start() const { return 0; }
-    float end() const { return 0; }
-};
-struct DebugText {
-    int layer() const { return -1; }
-    int color() const { return 0; }
-    rj_geometry::Point pos() const { return {}; }
-    std::string text() const { return {}; }
-    bool center() const { return true; }
-};
 
 struct LiveRobot {
     int shell() const { return shell_id; }
@@ -120,6 +90,19 @@ struct LiveFrame {
             frame.ball_state = LiveBall{context.world_state.ball.position,
                                         context.world_state.ball.velocity};
         }
+
+        const auto& drawings = context.debug_drawer.published_frame();
+        frame.debug_paths_ = drawings.paths;
+        frame.debug_robot_paths_ = drawings.robot_paths;
+        frame.debug_circles_ = drawings.circles;
+        frame.debug_arcs_ = drawings.arcs;
+        frame.debug_polygons_ = drawings.polygons;
+        frame.debug_texts_ = drawings.texts;
+        const auto& layers = context.debug_drawer.debug_layers();
+        frame.debug_layers_.reserve(layers.size());
+        for (const auto& layer : layers) {
+            frame.debug_layers_.push_back(layer.toStdString());
+        }
         return frame;
     }
 
@@ -138,6 +121,8 @@ struct LiveFrame {
     const std::vector<DebugArc>& debug_arcs() const { return debug_arcs_; }
     const std::vector<DebugPath>& debug_polygons() const { return debug_polygons_; }
     const std::vector<DebugText>& debug_texts() const { return debug_texts_; }
+    int debug_layers_size() const { return static_cast<int>(debug_layers_.size()); }
+    const std::string& debug_layers(int i) const { return debug_layers_.at(i); }
 
     const std::vector<LiveRobot>& self_robots() const { return self_; }
     const std::vector<LiveRobot>& opp_robots() const { return opp_; }
@@ -164,6 +149,7 @@ struct LiveFrame {
     std::vector<DebugArc> debug_arcs_;
     std::vector<DebugPath> debug_polygons_;
     std::vector<DebugText> debug_texts_;
+    std::vector<std::string> debug_layers_;
 };
 
 }  // namespace rj_ui

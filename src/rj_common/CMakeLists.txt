@@ -37,6 +37,7 @@ set(RJ_COMMON_DEPS
 )
 
 add_library(${PROJECT_NAME} SHARED
+  src/debug_drawer.cpp
   src/field_dimensions.cpp
   src/multicast.cpp
   src/qt_utils.cpp

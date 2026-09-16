@@ -190,6 +190,7 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
+    void updateDebugLayers(const rj_ui::LiveFrame& frame);
     static std::string formatLabelBold(Side side, const std::string& label);
 
     enum class StatusType { Status_OK, Status_Warning, Status_Fail };
