@@ -14,6 +14,23 @@ PlannerNode::PlannerNode()
     // for _1, _2 etc. below
     using namespace std::placeholders;
 
+    // Replanner params
+    this->replanner_off_path_threshold =
+        this->get_parameter_or("replanner.off_path_threshold", 0.1);
+    this->replanner_partial_replan_lead_time =
+        this->get_parameter_or("replanner.partial_replan_lead_time", 0.1);
+    this->replanner_pos_change_threshold =
+        this->get_parameter_or("replanner.pos_change_threshold", 0.025);
+    this->replanner_vel_change_threshold =
+        this->get_parameter_or("replanner.vel_change_threshold", 0.025);
+
+    this->constraints_params_ = build_constraints_params();
+    this->rrt_params_ = build_rrt_params();
+    this->line_test_params_ = build_line_test_params();
+    this->pivot_radius_multiplier_param_ = get_parameter_or("pivot.radius_multiplier", 1.0);
+    this->timeout_param_ = get_parameter_or("timeout", 0.1);
+    this->use_sim_time_param_ = get_parameter_or("use_sim_time", false);
+
     // set up ActionServer + callbacks
     this->action_server_ = rclcpp_action::create_server<RobotMove>(
         this->get_node_base_interface(), this->get_node_clock_interface(),
@@ -117,6 +134,46 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         loop_rate.sleep();
     }
     robot_task.is_executing = false;
+}
+
+ConstraintsParams PlannerNode::build_constraints_params() {
+    ConstraintsParams p;
+    p.max_rotational_accel =
+        this->get_parameter_or("constraints.max_rotational_accel", 3.0);
+    p.max_rotational_speed =
+        this->get_parameter_or("constraints.max_rotational_speed", 3.0);
+    p.max_translational_accel =
+        this->get_parameter_or("constraints.max_translational_accel", 2.0);
+    p.max_translational_speed =
+        this->get_parameter_or("constraints.max_translational_speed", 2.0);
+    return p;
+}
+
+RrtParams PlannerNode::build_rrt_params() {
+    RrtParams p;
+    p.enable_debug_drawing =
+        this->get_parameter_or("rrt.enable_debug_drawing", false);
+    p.goal_bias =
+        this->get_parameter_or("rrt.goal_bias", 0.3);
+    p.step_size =
+        this->get_parameter_or("rrt.step_size", 0.15);
+    p.waypoint_bias =
+        this->get_parameter_or("rrt.waypoint_bias", 0.5);
+    p.max_iterations =
+        this->get_parameter_or("rrt.max_iterations", 250);
+    p.min_iterations =
+        this->get_parameter_or("rrt.min_iterations", 0);
+    return p;
+}
+
+LineTestParams PlannerNode::build_line_test_params() {
+    LineTestParams p;
+    p.start_x = this->get_parameter_or("line_test.start_x", 7.0);
+    p.start_y = this->get_parameter_or("line_test.start_y", -1.0);
+    p.end_x = this->get_parameter_or("line_test.end_x", 7.0);
+    p.end_y = this->get_parameter_or("line_test.end_y", 1.0);
+    p.robot_id = this->get_parameter_or("line_test.robot_id", 1);
+    return p;
 }
 
 }  // namespace planning

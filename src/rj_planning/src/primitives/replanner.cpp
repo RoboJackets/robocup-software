@@ -19,7 +19,7 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     }
 
     RJ::Time partial_path_end =
-        params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+        params.start.stamp + RJ::Seconds(params.partial_replan_lead_time);
     if (partial_path_end <= previous.begin_time()) {
         return full_replan(params);
     }
@@ -131,7 +131,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     bool should_partial_replan =
         trajectory_hits_obstacles(previous_trajectory, params.obstacles, start_time, &hit_time);
     if (should_partial_replan) {
-        if (hit_time - start_time < partial_replan_lead_time() * 2) {
+        if (hit_time - start_time < params.partial_replan_lead_time * 2) {
             return full_replan(params);
         }
         return partial_replan(params, previous_trajectory);
@@ -147,7 +147,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         }
     }
     if (now - previous_created_time > kCheckBetterDeltaTime &&
-        time_remaining > partial_replan_lead_time() * 2) {
+        time_remaining > params.partial_replan_lead_time * 2) {
         return check_better(params, previous_trajectory);
     }
 
@@ -168,12 +168,12 @@ bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actua
     return path_error > replanner::PARAM_off_path_threshold;
 }
 
-bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
+bool Replanner::goal_changed(const PlanParams& params, const LinearMotionInstant& prev_goal,
                              const LinearMotionInstant& goal) {
     double goal_pos_diff = (prev_goal.position - goal.position).mag();
     double goal_vel_diff = (prev_goal.velocity - goal.velocity).mag();
-    return goal_pos_diff > goal_pos_change_threshold() ||
-           goal_vel_diff > goal_vel_change_threshold();
+    return goal_pos_diff > params.goal_pos_change_threshold ||
+           goal_vel_diff > params.goal_vel_change_threshold;
 }
 
 }  // namespace planning

@@ -14,6 +14,20 @@
 
 namespace planning {
 
+struct CollectParams {
+    double approach_accel_scale;
+    double approach_dist_target;
+    double ball_speed_approach_direction_cutoff;
+    double control_accel_scale;
+    double dist_cutoff_to_approach;
+    double dist_cutoff_to_control;
+    double stop_dist_scale;
+    double target_point_lowpass_gain;
+    double touch_delta_speed;
+    double vel_cutoff_to_control;
+    double velocity_control_scale;
+};
+
 /**
  * @brief PathPlanner that tries to move onto and gain control of the ball,
  * wherever the ball is. Ball MUST be slow-moving before Collect can be called.
@@ -35,8 +49,7 @@ public:
         FINE_APPROACH,
     };
 
-    CollectPathPlanner()
-        : PathPlanner("collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {}
+    CollectPathPlanner(rclcpp::Node* node);
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
@@ -65,6 +78,8 @@ private:
                              const ObstacleSet& obstacles);
 
     Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
+
+    CollectParams build_collect_params();
 
     Trajectory previous_;
 
@@ -100,6 +115,9 @@ private:
 
     // Threshold for chasing after the ball instead of intercepting (deg)
     static constexpr double kChaseAngleThreshold{45};
+
+    CollectParams collect_params_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> collect_params_callback_;
 };
 
 }  // namespace planning

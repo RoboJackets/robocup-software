@@ -3,6 +3,18 @@
 using namespace rj_geometry;
 namespace planning {
 
+EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner(rclcpp::Node* node): PathPlanner("halt"), node_(node) {
+    this->escape_params_ = build_escape_params();
+    this->escape_params_callback_ = node_->add_on_set_parameters_callback(
+                [](std::vector<rclcpp::Parameter>& params) {
+                    rcl_interfaces::msg::SetParametersResult result;
+                    result.successful = true;
+                    //TODO: Ask what the constraints are here
+                    return result;
+                }
+            );
+}
+
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
@@ -91,6 +103,15 @@ bool EscapeObstaclesPathPlanner::is_done() const {
     // switches to a more suitable planner when needed.
     // (see planner_node.cpp)
     return false;
+}
+
+EscapeParams EscapeObstaclesPathPlanner::build_escape_params() {
+    EscapeParams p;
+    p.goal_change_threshold =
+        node_->get_parameter_or("escape.goal_change_threshold", 0.9);
+    p.step_size =
+        node_->get_parameter_or("escape.step_size", 0.1);
+    return p;
 }
 
 }  // namespace planning

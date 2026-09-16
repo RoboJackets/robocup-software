@@ -4,6 +4,19 @@ using namespace rj_geometry;
 
 namespace planning {
 
+CollectPathPlanner::CollectPathPlanner(rclcpp::Node* node) :
+ PathPlanner("collect"), average_ball_vel_(0, 0), approach_direction_(0, 0), node_(node) {
+    this->collect_params_(build_collect_params());
+    this->collect_params_callback_ = node_->add_on_set_parameters_callback(
+                [](std::vector<rclcpp::Parameter>& params) {
+                    rcl_interfaces::msg::SetParametersResult result;
+                    result.successful = true;
+                    //TODO: Ask what the constraints are here
+                    return result;
+                }
+            );
+}
+
 Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     const auto state = plan_request.play_state.state();
     if (state == PlayState::Stop || state == PlayState::Halt) {
@@ -39,7 +52,7 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     RJ::Seconds partial_path_time = 0ms;
 
     // How much of the previous path to steal
-    const RJ::Seconds partial_replan_lead_time(Replanner::partial_replan_lead_time());
+    const RJ::Seconds partial_replan_lead_time(node_->replanner_partial_replan_lead_time);
 
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
@@ -679,5 +692,32 @@ void CollectPathPlanner::reset() {
 }
 
 bool CollectPathPlanner::is_done() const { return is_ball_sense_; }
+
+CollectParams CollectPathPlanner::build_collect_params() {
+    CollectParams p;
+    p.approach_accel_scale =
+        node_->get_parameter_or("collect.approach_accel_scale", 0.7);
+    p.approach_dist_target =
+        node_->get_parameter_or("collect.approach_dist_target", 0.1);
+    p.ball_speed_approach_direction_cutoff =
+        node_->get_parameter_or("collect.ball_speed_approach_direction_cutoff", 0.1);
+    p.control_accel_scale =
+        node_->get_parameter_or("collect.control_accel_scale", 0.5);
+    p.dist_cutoff_to_approach =
+        node_->get_parameter_or("collect.dist_cutoff_to_approach", 1.0);
+    p.dist_cutoff_to_control =
+        node_->get_parameter_or("collect.dist_cutoff_to_control", 0.0285);
+    p.stop_dist_scale =
+        node_->get_parameter_or("collect.stop_dist_scale", 0.5);
+    p.target_point_lowpass_gain =
+        node_->get_parameter_or("collect.target_point_lowpass_gain", 0.8);
+    p.touch_delta_speed =
+        node_->get_parameter_or("collect.touch_delta_speed", 0.05);
+    p.vel_cutoff_to_control =
+        node_->get_parameter_or("collect.vel_cutoff_to_control", 0.3);
+    p.velocity_control_scale =
+        node_->get_parameter_or("collect.velocity_control_scale", 0.5);
+    return p;
+}
 
 }  // namespace planning

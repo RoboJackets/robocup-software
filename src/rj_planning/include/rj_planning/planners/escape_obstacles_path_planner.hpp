@@ -20,6 +20,12 @@ class Configuration;
 class ConfigDouble;
 
 namespace planning {
+
+struct EscapeParams {
+    double goal_change_threshold;
+    double step_size;
+};
+
 /**
  * @brief This planner finds a path to quickly get out of an obstacle. If the
  * start point isn't in an obstacle, returns a path containing only the start
@@ -33,7 +39,7 @@ public:
     // TODO(Kevin): think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
     // actually this is not HALT, control node does HALT for us
     // or maybe use PathTargetPlanner with no real velocity?
-    EscapeObstaclesPathPlanner() : PathPlanner("halt"){};
+    EscapeObstaclesPathPlanner(rclcpp::Node* node);
     ~EscapeObstaclesPathPlanner() override = default;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
@@ -60,8 +66,14 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
+
+    EscapeParams build_escape_params();
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
+
+    rclcpp::Node node_;
+    EscapeParams escape_params_;
+        std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> escape_params_callback_;
 };
 
 }  // namespace planning

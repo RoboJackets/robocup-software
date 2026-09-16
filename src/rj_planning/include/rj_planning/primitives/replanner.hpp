@@ -41,6 +41,10 @@ public:
         const AngleFunction& angle_function;
         unsigned int robot_id;
         std::optional<RJ::Seconds> hold_time = std::nullopt;
+        double off_path_threshold;
+        double partial_replan_lead_time;
+        double pos_change_threshold;
+        double vel_change_threshold;
     };
 
     /**
@@ -54,27 +58,6 @@ public:
      * @return A planned trajectory.
      */
     static Trajectory create_plan(PlanParams params, Trajectory previous);
-
-    /**
-     * @brief The threshold by which the goal needs to change before we require
-     * a replan.
-     */
-    static double goal_pos_change_threshold() { return replanner::PARAM_pos_change_threshold; }
-
-    /**
-     * @brief The threshold by which the goal velocity needs to change before we require
-     * a replan.
-     */
-    static double goal_vel_change_threshold() { return replanner::PARAM_vel_change_threshold; }
-
-    /**
-     * @brief The duration of the previous path to reuse (from the beginning) in
-     * a partial replan. This will be used if possible, although in some cases a
-     * full replan will be required.
-     */
-    static RJ::Seconds partial_replan_lead_time() {
-        return RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
-    }
 
 private:
     // Attempt a partial replan, and use it only if it is faster.
@@ -94,7 +77,7 @@ private:
                               RJ::Time now);
 
     // Whether the goal has changed past the `goal_pos_change_threshold()`.
-    static bool goal_changed(const LinearMotionInstant& prev_goal,
+    static bool goal_changed(const PlanParams& params, const LinearMotionInstant& prev_goal,
                             const LinearMotionInstant& goal);
 
     // Get the partial path starting at `now`, plus the partial replan lead time

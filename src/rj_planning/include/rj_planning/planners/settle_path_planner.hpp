@@ -10,6 +10,7 @@
 #include <rj_constants/constants.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planner_node.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
 #include "rj_planning/primitives/replanner.hpp"
@@ -20,6 +21,20 @@ class Configuration;
 class ConfigDouble;
 
 namespace planning {
+
+struct SettleParams {
+    double ball_speed_percent_for_dampen;
+    double ball_vel_gain;
+    double intercept_buffer_time;
+    double max_ball_angle_for_reset;
+    double max_ball_vel_for_path_reset;
+    double max_bounce_angle;
+    double search_end_dist;
+    double search_inc_dist;
+    double search_start_dist;
+    double shortcut_dist;
+    double target_point_gain;
+};
 
 /**
  * @brief PathPlanner which tries to get a fast-moving ball into its mouth to slow
@@ -39,10 +54,7 @@ public:
         Dampen
     };
 
-    SettlePathPlanner()
-        : PathPlanner("settle"),
-          avg_instantaneous_intercept_target_(0, 0),
-          average_ball_vel_(0, 0) {}
+    SettlePathPlanner(rclcpp::Node* node);
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
@@ -86,6 +98,9 @@ private:
 
     Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
 
+    // Obtains all params for settle path planner
+    SettleParams build_settle_params();
+
     std::optional<rj_geometry::Point> target_bounce_direction_;
 
     SettlePathPlannerStates current_state_ = SettlePathPlannerStates::Intercept;
@@ -102,5 +117,10 @@ private:
     bool path_created_for_dampen_ = false;
 
     Trajectory previous_;
+
+    SettleParams settle_params_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> settle_params_callback_;
+
+    rclcpp::Node* node_;
 };
 }  // namespace planning
