@@ -77,7 +77,7 @@ inline bool ball_on_field(const WorldState* world_state, const FieldDimensions& 
 inline bool ball_in_our_defense_area(const WorldState* world_state,
                                      const FieldDimensions& field_dimensions) {
     const rj_geometry::Point& ball_point = world_state->ball.position;
-return field_dimensions.our_defense_area().contains_point(ball_point);
+    return field_dimensions.our_defense_area().contains_point(ball_point);
 }
 
 /**

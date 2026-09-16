@@ -32,7 +32,8 @@ Defense::State Defense::update_state() {
     // doing and go steal it. Reachable from any state except the ball-handling
     // states themselves (STEALING/SHOOTING), so we don't interrupt a steal or
     // shot already in progress.
-    if (current_state_ != STEALING && current_state_ != SHOOTING && can_steal_ball() && current_play_state_.is_playing()) {
+    if (current_state_ != STEALING && current_state_ != SHOOTING && can_steal_ball() &&
+        current_play_state_.is_playing()) {
         // Give up any wall/marking slot we were holding before chasing the ball.
         client_handles_->waller->leave_group();
         client_handles_->marking->leave_group();
@@ -114,8 +115,8 @@ Defense::State Defense::update_state() {
             // Once we have possession of the ball, shoot it. SHOOTING is only
             // reachable from here.
             // if (check_is_done() || distance_to_ball < kOwnBallRadius) {
-                next_state = SHOOTING;
-                break;
+            next_state = SHOOTING;
+            break;
             // }
             // If another robot became closer or the ball is no longer legally
             // accessible, give up the steal and return to normal defense.
@@ -235,8 +236,7 @@ std::optional<RobotIntent> Defense::state_to_task(RobotIntent intent) {
         // Line kick towards the best shot on goal.
         planning::LinearMotionInstant target{
             calculate_best_shot(last_world_state_, field_dimensions_)};
-        auto shoot_cmd =
-            planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
+        auto shoot_cmd = planning::MotionCommand{"line_kick", target, planning::FaceTarget{}, true};
         intent.motion_command = shoot_cmd;
         intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
         intent.kick_speed = max_kick_speed();
@@ -297,7 +297,7 @@ bool Defense::can_steal_ball() const {
             return false;
         }
     }
-    
+
     return true;
 }
 

@@ -43,10 +43,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     return trajectory;
 }
 rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_state) {
-
-
     rj_geometry::Point ball_pos = world_state->ball.position;
-    ball_pos.y() = std::max(ball_pos.y(), 0.25); 
+    ball_pos.y() = std::max(ball_pos.y(), 0.25);
 
     // TODO(Kevin): make this depend on team +/-x
 
@@ -56,7 +54,6 @@ rj_geometry::Point GoalieIdlePathPlanner::get_idle_pt(const WorldState* world_st
     idle_pt *= goalie_dist;
 
     return idle_pt;
-
 }
 
 void GoalieIdlePathPlanner::reset() {}

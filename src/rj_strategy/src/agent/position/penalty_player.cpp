@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/penalty_player.hpp"
+
 #include "rj_strategy/agent/position_utils.hpp"
 
 namespace strategy {

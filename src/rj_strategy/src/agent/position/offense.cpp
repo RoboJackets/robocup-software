@@ -124,7 +124,7 @@ Offense::State Offense::next_state() {
         case STEALING: {
             // Go to possession if successful
             // if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
-                return POSSESSION_START;
+            return POSSESSION_START;
             // }
 
             // If another robot becomes closer, leave state
@@ -170,8 +170,9 @@ Offense::State Offense::next_state() {
             // robot would stand still in SHOOTING forever.
             if (!ball_in_play_area(last_world_state_, field_dimensions_) || check_is_done() ||
                 !has_open_shot() || !can_steal_ball() || timed_out()) {
-                SPDLOG_INFO("{}, {}, {}, {}", !ball_in_play_area(last_world_state_, field_dimensions_), 
-                !has_open_shot(), !can_steal_ball(), timed_out());
+                SPDLOG_INFO("{}, {}, {}, {}",
+                            !ball_in_play_area(last_world_state_, field_dimensions_),
+                            !has_open_shot(), !can_steal_ball(), timed_out());
                 return DEFAULT;
             }
             // if (distance_to_ball() > kOwnBallRadius) {
@@ -255,8 +256,7 @@ std::optional<RobotIntent> Offense::state_to_task(RobotIntent intent) {
             rj_geometry::Point ball_position = last_world_state_->ball.position;
             rj_geometry::Point their_goal = field_dimensions_.their_goal_loc();
             rj_geometry::Point goal_to_ball = (ball_position - their_goal).normalized();
-            rj_geometry::Point steal_point =
-                ball_position + goal_to_ball * kStealApproachDistance;
+            rj_geometry::Point steal_point = ball_position + goal_to_ball * kStealApproachDistance;
 
             auto collect_cmd = planning::MotionCommand{
                 "path_target", planning::LinearMotionInstant{steal_point}, planning::FaceBall{}};
