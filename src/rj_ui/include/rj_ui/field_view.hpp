@@ -17,15 +17,12 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
+#include <rj_common/live_frame.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_utils/log_utils.hpp>
-
-#include "rj_ui/live_frame.hpp"
-
-class Logger;
 
 /** class that performs drawing of log data onto the field */
 class FieldView : public QWidget {
@@ -49,7 +46,7 @@ public:
         }
     }
 
-    void history(const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* value) {
+    void history(const std::vector<std::shared_ptr<rj_common::LiveFrame> >* value) {
         _history = value;
     }
 
@@ -79,7 +76,7 @@ protected:
 
     void drawText(QPainter& p, QPointF pos, const QString& text,
                   bool center = true) const;
-    static void drawField(QPainter& p, const rj_ui::LiveFrame* frame);
+    static void drawField(QPainter& p, const rj_common::LiveFrame* frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
@@ -98,9 +95,9 @@ protected:
 
 protected:
     // Returns a pointer to the most recent frame, or null if none is available.
-    std::shared_ptr<rj_ui::LiveFrame> currentFrame();
+    std::shared_ptr<rj_common::LiveFrame> currentFrame();
 
-    // Coordinate transformations
+    // Coordirj_common::LiveFramenate transformations
     rj_geometry::TransformMatrix _screenToWorld;
     rj_geometry::TransformMatrix _worldToTeam;
     rj_geometry::TransformMatrix _teamToWorld;
@@ -114,7 +111,7 @@ protected:
     // How many degrees to rotate text so it shows up the right way on screen
     int _textRotation{};
 
-    const std::vector<std::shared_ptr<rj_ui::LiveFrame> >* _history{};
+    const std::vector<std::shared_ptr<rj_common::LiveFrame> >* _history{};
 
     QVector<bool> _layerVisible;
 };

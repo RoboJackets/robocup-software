@@ -13,6 +13,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/context.hpp>
+#include <rj_common/live_frame.hpp>
 #include <rj_common/debug_drawer.hpp>
 #include <rj_common/node.hpp>
 #include <rj_constants/constants.hpp>

@@ -110,6 +110,7 @@ void Processor::run() {
             std::lock_guard<std::mutex> lock(loop_mutex_);
             debug_draw_sub_->run();
             context_.debug_drawer.commit_frame();
+            context_.frames.emplace_back(create_log_frame(context_));
         }
 
         ////////////////

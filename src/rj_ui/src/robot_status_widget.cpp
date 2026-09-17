@@ -97,13 +97,13 @@ void RobotStatusWidget::setShowstopper(bool showstopper) {
     }
 }
 
-void RobotStatusWidget::load(const RobotStatus& status, const RobotState& robot, bool blueTeam) {
+void RobotStatusWidget::load(const RobotStatus& status, const std::optional<rj_common::LiveFrame::Robot>& maybe_robot, bool blueTeam) {
     setShellID(status.shell_id);
     setBlueTeam(blueTeam);
     setRobotModel(status.version == RobotStatus::HardwareVersion::kSimulated ? "Simulation" :
                   status.version == RobotStatus::HardwareVersion::kFleet2018 ? "RJ2018" : "Unknown Bot");
     setHasRadio(status.timestamp != RJ::Time{});
-    setHasVision(robot.visible);
+    setHasVision(maybe_robot.has_value());
 
     QStringList errors;
     bool motorFault = false;
@@ -126,6 +126,6 @@ void RobotStatusWidget::load(const RobotStatus& status, const RobotState& robot,
                                     status.battery_voltage));
     setBatteryLevel(battery);
     setErrorText(errors.join(", "));
-    setShowstopper(!robot.visible || motorFault || kickerFault || battery < 0.25f ||
+    setShowstopper(!maybe_robot.has_value() || motorFault || kickerFault || battery < 0.25f ||
                    !status.fpga_healthy);
 }

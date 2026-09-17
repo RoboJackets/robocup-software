@@ -86,6 +86,7 @@ struct DebugDrawFrame {
     std::vector<DebugArc> arcs;
     std::vector<DebugText> texts;
     std::vector<DebugRobotPath> robot_paths;
+    std::vector<std::string> debug_layers;
 
     void clear() {
         paths.clear();
@@ -94,5 +95,6 @@ struct DebugDrawFrame {
         arcs.clear();
         texts.clear();
         robot_paths.clear();
+        debug_layers.clear();
     }
 };
