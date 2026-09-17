@@ -69,8 +69,8 @@ struct LiveFrame {
     const std::vector<DebugArc>& debug_arcs() const { return debug_draw_frame.arcs; }
     const std::vector<DebugPath>& debug_polygons() const { return debug_draw_frame.polygons; }
     const std::vector<DebugText>& debug_texts() const { return debug_draw_frame.texts; }
-    int debug_layers_size() const { return static_cast<int>(debug_draw_frame.debug_layers.size()); }
-    const std::string& debug_layers(int i) const { return debug_draw_frame.debug_layers.at(i); }
+    int debug_layers_size() const { return static_cast<int>(debug_draw_frame.debug_layers_.size()); }
+    const std::string& debug_layers(int i) const { return debug_draw_frame.debug_layers_.at(i); }
 
     const std::vector<LiveRobot>& self() const { return self_; }
     const std::vector<LiveRobot>& opp() const { return opp_; }

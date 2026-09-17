@@ -84,7 +84,10 @@ public:
      */
     void commit_frame() {
         published_ = std::move(current_);
-        current_.clear();
+        current_.clear();   
+        for (const QString& string : debug_layers_) {
+            current_.debug_layers_.push_back(string.toStdString());
+        }
     }
 
     const DebugDrawFrame& published_frame() const { return published_; }
