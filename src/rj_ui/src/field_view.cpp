@@ -430,8 +430,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
         QPointF center = qpointf(r.pos());
 
         bool faulty = false;
-        if (r.has_ball_sense_status() &&
-            (r.ball_sense_status() == rj_common::Dazzled || r.ball_sense_status() == rj_common::Failed)) {
+        if (r.has_ball_sense_status() && (r.ball_sense_status() == rj_common::Dazzled ||
+                                          r.ball_sense_status() == rj_common::Failed)) {
             faulty = true;
         }
         if (r.has_kicker_works() && !r.kicker_works()) {

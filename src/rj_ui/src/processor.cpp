@@ -30,7 +30,6 @@ Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStateTopic);
-
 }
 
 Processor::~Processor() { stop(); }
