@@ -22,7 +22,6 @@
 #include <QTimer>
 #include <QtGui/QStandardItemModel>
 #include <boost/algorithm/string.hpp>
-#include <google/protobuf/descriptor.h>
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
@@ -47,7 +46,6 @@
 #include "ui_MainWindow.h"
 
 class TestResultTab;
-class StripChart;
 
 namespace {
 // Style sheets used for live/non-live controls
@@ -74,29 +72,6 @@ public:
     /// Selects all debug layers
     void allDebugOn();
 
-    bool live();
-
-    void setLive() {
-        if (!live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
-            _playbackRate = std::nullopt;
-        }
-    }
-
-    void setPlayBackRate(double playbackRate) {
-        if (live()) {
-            _ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
-        }
-        _playbackRate = playbackRate;
-    }
-
-    int frameNumber() const { return roundf(_doubleFrameNumber); }
-
-    void frameNumber(int value) { _doubleFrameNumber = value; }
-
-    // Call this to update the status bar when the log file has changed
-    void logFileChanged();
-
     QTimer updateTimer;
 
     void setUseRefChecked(bool use_ref);
@@ -106,8 +81,6 @@ private Q_SLOTS:
     void updateViews();
 
     void on_fieldView_robotSelected(int shell);
-    void on_actionRawBalls_toggled(bool state);
-    void on_actionRawRobots_toggled(bool state);
     void on_actionCoords_toggled(bool state);
     void on_actionDotPatterns_toggled(bool state);
     void on_actionTeam_Names_toggled(bool state);
@@ -152,24 +125,12 @@ private Q_SLOTS:
 
     /// Debug menu commands
     void on_actionRestartUpdateTimer_triggered();
-    void on_actionStart_Logging_triggered();
 
     /// Gameplay menu
     void on_actionSeed_triggered();
 
     // Joystick settings
     void on_joystickKickOnBreakBeam_stateChanged();
-
-    /// Log controls
-    void on_logHistoryLocation_sliderMoved(int value);
-    void on_logHistoryLocation_sliderReleased();
-    void on_logHistoryLocation_sliderPressed();
-    void on_logPlaybackRewind_clicked();
-    void on_logPlaybackPrevFrame_clicked();
-    void on_logPlaybackPause_clicked();
-    void on_logPlaybackNextFrame_clicked();
-    void on_logPlaybackPlay_clicked();
-    void on_logPlaybackLive_clicked();
 
     /// Debug layers
     void on_debugLayers_itemChanged(QListWidgetItem* item);
@@ -229,6 +190,7 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
+    void updateDebugLayers(const rj_common::LiveFrame& frame);
     static std::string formatLabelBold(Side side, const std::string& label);
 
     enum class StatusType { Status_OK, Status_Warning, Status_Fail };
@@ -236,7 +198,6 @@ private:
     void status(const QString& text, StatusType status);
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
-    void updateDebugLayers(const Packet::LogFrame& frame);
 
     Ui_MainWindow _ui{};
     const QStandardItemModel* goalieModel{};
@@ -245,16 +206,6 @@ private:
     bool _has_external_ref;
 
     int current_goalie_num_{0};
-
-    // Log history, copied from Logger.
-    // This is used by other controls to get log data without having to copy it
-    // again from the Logger.
-    std::vector<std::shared_ptr<Packet::LogFrame>> _history{};
-
-    // Longer log history, copied from Logger.
-    // This is used specificially via StripChart and ProtobufTree
-    // To export a larger amount of data.
-    std::vector<std::shared_ptr<Packet::LogFrame>> _longHistory{};
 
     // Arrays containing dropdown and reset button UI objects
     std::array<QComboBox*, kNumShells> robot_pos_selectors{};
@@ -275,28 +226,15 @@ private:
      */
     void onResetButtonClicked(int robot);
 
-    // Tree items that are not in LogFrame
-    QTreeWidgetItem* _frameNumberItem{};
-    QTreeWidgetItem* _elapsedTimeItem{};
-
-    /// playback rate of the viewer - a value of 1 means realtime
-    std::optional<double> _playbackRate;
-
     // This is used to update some status items less frequently than the full
     // field view
     int _updateCount;
 
-    // Tracking fractional frames is the easiest way to allow arbitrary playback
-    // rates. To keep rounding consistent, only access this with frameNumber().
-    double _doubleFrameNumber;
-
     RJ::Time _lastUpdateTime;
 
     QLabel* _currentPlay{};
-    QLabel* _logFile{};
     QLabel* _viewFPS{};
     QLabel* _procFPS{};
-    QLabel* _logMemory{};
 
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};
@@ -304,15 +242,14 @@ private:
     // maps robot shell IDs to items in the list
     std::map<int, std::unique_ptr<QListWidgetItem>> _robotStatusItemMap{};
 
-    /// the play, pause, ffwd, etc buttons
-    std::vector<QPushButton*> _logPlaybackButtons{};
-
     std::vector<QComboBox*> _robotConfigQComboBoxes{};
 
     std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
 
     std::mutex* context__mutex;
     Context* context_;
+
+    std::vector<std::shared_ptr<rj_common::LiveFrame>> _history{};
 
     // ROS Compatibility stuff
     void send_quick_command(const PlayState& state);

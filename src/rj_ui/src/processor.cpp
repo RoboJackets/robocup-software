@@ -7,8 +7,7 @@ using namespace google::protobuf;
 // TODO: Remove this and just use the one in Context.
 FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
-Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
-    : read_log_file_(read_log_file), loop_mutex_() {
+Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
     // Set the logger to ros2.
     rj_utils::set_spdlog_default_ros2("processor");
 
@@ -20,11 +19,8 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    logger_ = std::make_unique<Logger>(&context_);
-
     // ROS2 temp nodes
     config_client_ = std::make_unique<ros2_temp::SoccerConfigClient>(&context_);
-    raw_vision_packet_sub_ = std::make_unique<ros2_temp::RawVisionPacketSub>(&context_);
     referee_sub_ = std::make_unique<ros2_temp::RefereeSub>(&context_, ros_executor_.get());
 
     debug_draw_sub_ =
@@ -34,14 +30,6 @@ Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
 
     world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStateTopic);
-
-    if (!read_log_file.empty()) {
-        logger_->read(read_log_file);
-    }
-
-    logger_->start();
-
-    nodes_.push_back(logger_.get());
 }
 
 Processor::~Processor() { stop(); }
@@ -69,8 +57,7 @@ void Processor::run() {
         // Don't run processor while we're paused or reading logs after the
         // first cycle (we need to run one because MainWindow waits on a single
         // cycle of processor to initialize).
-        while (initialized_ && running_ &&
-               (context_.game_settings.paused || context_.logs.state == Logs::State::kReading)) {
+        while (initialized_ && running_ && context_.game_settings.paused) {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
 
@@ -85,9 +72,6 @@ void Processor::run() {
 
         // Updates context_->field_dimensions
         config_client_->run();
-
-        // Updates context_->raw_vision_packets
-        raw_vision_packet_sub_->run();
 
         if (context_.field_dimensions != *current_dimensions) {
             SPDLOG_INFO("Updating field geometry based off of vision packet.");
@@ -121,13 +105,11 @@ void Processor::run() {
         // Processor Initialization Completed
         initialized_ = true;
 
-        debug_draw_sub_->run();
-
         {
-            loop_mutex()->lock();
-            // Log this entire frame
-            logger_->run();
-            loop_mutex()->unlock();
+            std::lock_guard<std::mutex> lock(loop_mutex_);
+            debug_draw_sub_->run();
+            context_.debug_drawer.commit_frame();
+            context_.frames.emplace_back(create_log_frame(context_));
         }
 
         ////////////////

@@ -21,13 +21,11 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
 
 using namespace std;
 
 using namespace boost;
-using namespace Packet;
 
 static QPen redPen(Qt::red, 0);
 static QPen bluePen(Qt::blue, 0);
@@ -44,8 +42,6 @@ static QColor ballColor(0xff, 0x90, 0);
 static QPen ballPen(ballColor, 0);
 
 FieldView::FieldView(QWidget* parent) : QWidget(parent) {
-    showRawRobots = false;
-    showRawBalls = false;
     showCoords = false;
     showDotPatterns = false;
     showTeamNames = false;
@@ -84,11 +80,11 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->setText(s);
 }
 
-std::shared_ptr<LogFrame> FieldView::currentFrame() {
+std::shared_ptr<rj_common::LiveFrame> FieldView::currentFrame() {
     if (_history != nullptr && !_history->empty()) {
         return _history->back();
     }
-    return std::shared_ptr<LogFrame>();
+    return std::shared_ptr<rj_common::LiveFrame>();
 }
 
 void FieldView::rotate(int value) {
@@ -130,7 +126,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Get the latest LogFrame
-    const std::shared_ptr<LogFrame> frame = currentFrame();
+    const std::shared_ptr<rj_common::LiveFrame> frame = currentFrame();
 
     if (!frame) {
         // No data available yet
@@ -187,51 +183,16 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const rj_common::LiveFrame* frame = _history->back().get();
 
     // Draw the field
     drawField(p, frame);
 
-    // Raw vision
-    if (showRawBalls || showRawRobots) {
-        tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
-        p.setPen(tempPen);
-        for (const SSL_WrapperPacket& wrapper : frame->raw_vision()) {
-            if (!wrapper.has_detection()) {
-                // Useless
-                continue;
-            }
-
-            const SSL_DetectionFrame& detect = wrapper.detection();
-
-            if (showRawRobots) {
-                for (const SSL_DetectionRobot& r : detect.robots_blue()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, true, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-
-                for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, false, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-            }
-
-            if (showRawBalls) {
-                for (const SSL_DetectionBall& b : detect.balls()) {
-                    p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), kBallRadius, kBallRadius);
-                }
-            }
-        }
-    }
 }
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const rj_common::LiveFrame* frame = _history->back().get();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -274,7 +235,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int ballTrailLength = 60;
     for (unsigned int i = _history->size() - std::min<int>(_history->size(), ballTrailLength);
          i < _history->size(); ++i) {
-        const LogFrame* oldFrame = _history->at(i).get();
+        const rj_common::LiveFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
 
@@ -412,9 +373,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int pastLocationCount = 40;  // number of past locations to show
     int start = std::max(0, static_cast<int>(_history->size()) - pastLocationCount);
     for (size_t i = start; i < _history->size(); i++) {
-        const LogFrame* oldFrame = _history->at(i).get();
+        const rj_common::LiveFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr) {
-            for (const LogFrame::Robot& r : oldFrame->self()) {
+            for (const rj_common::LiveFrame::Robot& r : oldFrame->self()) {
                 pair<int, int> key(1, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
@@ -426,7 +387,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const LogFrame::Robot& r : oldFrame->opp()) {
+            for (const rj_common::LiveFrame::Robot& r : oldFrame->opp()) {
                 pair<int, int> key(2, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
@@ -458,26 +419,26 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
-    for (const LogFrame::Robot& r : frame->opp()) {
+    for (const rj_common::LiveFrame::Robot& r : frame->opp()) {
         drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(),
-                  r.ball_sense_status() == HasBall);
+                  r.ball_sense_status() == rj_common::HasBall);
     }
 
     // Our robots
     int manualID = frame->manual_id();
-    for (const LogFrame::Robot& r : frame->self()) {
+    for (const rj_common::LiveFrame::Robot& r : frame->self()) {
         QPointF center = qpointf(r.pos());
 
         bool faulty = false;
-        if (r.has_ball_sense_status() &&
-            (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed)) {
+        if (r.has_ball_sense_status() && (r.ball_sense_status() == rj_common::Dazzled ||
+                                          r.ball_sense_status() == rj_common::Failed)) {
             faulty = true;
         }
         if (r.has_kicker_works() && !r.kicker_works()) {
             // 			faulty = true;
         }
         for (int i = 0; i < r.motor_status().size(); ++i) {
-            if (r.motor_status(i) != Good) {
+            if (r.motor_status(i) != rj_common::Good) {
                 faulty = true;
             }
         }
@@ -486,7 +447,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
         }
 
         drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(),
-                  r.ball_sense_status() == HasBall, faulty);
+                  r.ball_sense_status() == rj_common::HasBall, faulty);
 
         // Highlight the manually controlled robot
         if (manualID == r.shell()) {
@@ -556,7 +517,7 @@ void FieldView::drawCoords(QPainter& p) {
     drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const LogFrame* frame) {
+void FieldView::drawField(QPainter& p, const rj_common::LiveFrame* frame) {
     p.save();
 
     // reset to center
