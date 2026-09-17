@@ -13,9 +13,7 @@ static inline QColor qcolor(uint32_t value) {
     return QColor(r, g, b, a);
 }
 
-static inline QPointF qpointf(const rj_geometry::Point& pt) {
-    return pt.to_q_point_f();
-}
+static inline QPointF qpointf(const rj_geometry::Point& pt) { return pt.to_q_point_f(); }
 
 static inline uint32_t color(const QColor& color) {
     return (color.red() << 16) | (color.green() << 8) | (color.blue()) | (color.alpha() << 24);

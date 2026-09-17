@@ -7,12 +7,11 @@
 #include <vector>
 
 #include "rj_common/control/motion_setpoint.hpp"
+#include "rj_common/debug_drawings.hpp"
 #include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"
 #include "rj_common/time.hpp"
 #include "rj_common/world_state.hpp"
-#include "rj_common/debug_drawings.hpp"
-#include "rj_common/radio/robot_status.hpp"
 
 namespace rj_common {
 
@@ -24,7 +23,9 @@ struct LiveRobot {
     const rj_geometry::Point& pos() const { return position; }
     float angle() const { return static_cast<float>(heading); }
     bool has_ball_sense_status() const { return true; }
-    BallSenseStatus ball_sense_status() const { return has_ball ? BallSenseStatus::HasBall : BallSenseStatus::NoBall; }
+    BallSenseStatus ball_sense_status() const {
+        return has_ball ? BallSenseStatus::HasBall : BallSenseStatus::NoBall;
+    }
     bool has_kicker_works() const { return false; }
     bool kicker_works() const { return kicker_ok; }
     const std::vector<MotorStatus>& motor_status() const { return motors; }
@@ -42,7 +43,6 @@ struct LiveRobot {
     std::vector<MotorStatus> motors;
     std::vector<DebugText> texts;
 };
-
 
 struct LiveBall {
     const rj_geometry::Point& pos() const { return position; }
@@ -64,12 +64,16 @@ struct LiveFrame {
     bool has_ball() const { return ball_state.has_value(); }
     const LiveBall& ball() const { return *ball_state; }
     const std::vector<DebugPath>& debug_paths() const { return debug_draw_frame.paths; }
-    const std::vector<DebugRobotPath>& debug_robot_paths() const { return debug_draw_frame.robot_paths; }
+    const std::vector<DebugRobotPath>& debug_robot_paths() const {
+        return debug_draw_frame.robot_paths;
+    }
     const std::vector<DebugCircle>& debug_circles() const { return debug_draw_frame.circles; }
     const std::vector<DebugArc>& debug_arcs() const { return debug_draw_frame.arcs; }
     const std::vector<DebugPath>& debug_polygons() const { return debug_draw_frame.polygons; }
     const std::vector<DebugText>& debug_texts() const { return debug_draw_frame.texts; }
-    int debug_layers_size() const { return static_cast<int>(debug_draw_frame.debug_layers_.size()); }
+    int debug_layers_size() const {
+        return static_cast<int>(debug_draw_frame.debug_layers_.size());
+    }
     const std::string& debug_layers(int i) const { return debug_draw_frame.debug_layers_.at(i); }
 
     const std::vector<LiveRobot>& self() const { return self_; }
@@ -92,18 +96,19 @@ struct LiveFrame {
     std::string yellow_name;
     DebugDrawFrame debug_draw_frame;
 
-    static void fill_robot(LiveRobot* out, int shell_id, RobotState const& state, RobotStatus const* status) {
+    static void fill_robot(LiveRobot* out, int shell_id, RobotState const& state,
+                           RobotStatus const* status) {
         out->shell_id = shell_id;
-    
+
         out->position = state.pose.position();
         out->heading = state.pose.heading();
-    
+
         if (status != nullptr) {
             out->has_ball = status->has_ball;
             out->motors.resize(5);
             for (int i = 0; i < 5; i++) {
-                out->motors.at(i) = (status->motors_healthy[i] ? MotorStatus::Good
-                                                        : MotorStatus::Fault);
+                out->motors.at(i) =
+                    (status->motors_healthy[i] ? MotorStatus::Good : MotorStatus::Fault);
             }
             out->kicker_ok = status->kicker != RobotStatus::KickerState::kFailed;
             out->battery = static_cast<float>(status->battery_voltage);
