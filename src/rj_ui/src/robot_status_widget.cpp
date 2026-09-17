@@ -49,17 +49,23 @@ void RobotStatusWidget::setBoardID(const QString& boardID) {
 }
 
 QString RobotStatusWidget::robotModel() const { return _ui.robotModel->text(); }
-void RobotStatusWidget::setRobotModel(const QString& robotModel) { _ui.robotModel->setText(robotModel); }
-void RobotStatusWidget::setWheelFault(int wheelIndex, bool faulty) { _ui.robotWidget->setWheelFault(wheelIndex, faulty); }
-void RobotStatusWidget::setBallSenseFault(bool faulty) { _ui.robotWidget->setBallSenseFault(faulty); }
+void RobotStatusWidget::setRobotModel(const QString& robotModel) {
+    _ui.robotModel->setText(robotModel);
+}
+void RobotStatusWidget::setWheelFault(int wheelIndex, bool faulty) {
+    _ui.robotWidget->setWheelFault(wheelIndex, faulty);
+}
+void RobotStatusWidget::setBallSenseFault(bool faulty) {
+    _ui.robotWidget->setBallSenseFault(faulty);
+}
 void RobotStatusWidget::setHasBall(bool hasBall) { _ui.robotWidget->setHasBall(hasBall); }
 bool RobotStatusWidget::hasRadio() const { return _hasRadio; }
 
 void RobotStatusWidget::setHasRadio(bool hasRadio) {
     if (hasRadio != _hasRadio) {
         _hasRadio = hasRadio;
-        _ui.radioIndicator->setPixmap(QPixmap(QString(
-            hasRadio ? ":icons/radio-connected.svg" : ":icons/radio-disconnected.svg")));
+        _ui.radioIndicator->setPixmap(QPixmap(
+            QString(hasRadio ? ":icons/radio-connected.svg" : ":icons/radio-disconnected.svg")));
     }
 }
 
@@ -68,8 +74,8 @@ bool RobotStatusWidget::hasVision() const { return _hasVision; }
 void RobotStatusWidget::setHasVision(bool hasVision) {
     if (hasVision != _hasVision) {
         _hasVision = hasVision;
-        _ui.visionIndicator->setPixmap(QPixmap(QString(
-            hasVision ? ":icons/vision-available.svg" : ":icons/vision-unavailable.svg")));
+        _ui.visionIndicator->setPixmap(QPixmap(
+            QString(hasVision ? ":icons/vision-available.svg" : ":icons/vision-unavailable.svg")));
     }
 }
 
@@ -97,11 +103,14 @@ void RobotStatusWidget::setShowstopper(bool showstopper) {
     }
 }
 
-void RobotStatusWidget::load(const RobotStatus& status, const std::optional<rj_common::LiveFrame::Robot>& maybe_robot, bool blueTeam) {
+void RobotStatusWidget::load(const RobotStatus& status,
+                             const std::optional<rj_common::LiveFrame::Robot>& maybe_robot,
+                             bool blueTeam) {
     setShellID(status.shell_id);
     setBlueTeam(blueTeam);
-    setRobotModel(status.version == RobotStatus::HardwareVersion::kSimulated ? "Simulation" :
-                  status.version == RobotStatus::HardwareVersion::kFleet2018 ? "RJ2018" : "Unknown Bot");
+    setRobotModel(status.version == RobotStatus::HardwareVersion::kSimulated   ? "Simulation"
+                  : status.version == RobotStatus::HardwareVersion::kFleet2018 ? "RJ2018"
+                                                                               : "Unknown Bot");
     setHasRadio(status.timestamp != RJ::Time{});
     setHasVision(maybe_robot.has_value());
 
@@ -110,8 +119,10 @@ void RobotStatusWidget::load(const RobotStatus& status, const std::optional<rj_c
     for (size_t i = 0; i < status.motors_healthy.size(); ++i) {
         const bool faulty = !status.motors_healthy[i];
         motorFault = motorFault || faulty;
-        if (i < 4) setWheelFault(static_cast<int>(i), faulty);
-        else setBallSenseFault(faulty);
+        if (i < 4)
+            setWheelFault(static_cast<int>(i), faulty);
+        else
+            setBallSenseFault(faulty);
         if (faulty) errors << QString("Motor Fault %1").arg(static_cast<int>(i));
     }
 
@@ -120,10 +131,10 @@ void RobotStatusWidget::load(const RobotStatus& status, const std::optional<rj_c
     if (kickerFault) errors << "Kicker Fault";
     setHasBall(status.has_ball);
 
-    const float battery = status.version == RobotStatus::HardwareVersion::kSimulated
-                              ? 1.0f
-                              : static_cast<float>(kRJ2015BatteryProfile.get_charge_level(
-                                    status.battery_voltage));
+    const float battery =
+        status.version == RobotStatus::HardwareVersion::kSimulated
+            ? 1.0f
+            : static_cast<float>(kRJ2015BatteryProfile.get_charge_level(status.battery_voltage));
     setBatteryLevel(battery);
     setErrorText(errors.join(", "));
     setShowstopper(!maybe_robot.has_value() || motorFault || kickerFault || battery < 0.25f ||

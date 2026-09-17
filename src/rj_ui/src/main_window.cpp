@@ -64,7 +64,7 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
 
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
-    _updateCount(0),
+      _updateCount(0),
       _lastUpdateTime(RJ::now()),
       _processor(processor),
       context_(processor->context()),
@@ -75,7 +75,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
-    
+
     _ui.logTree->setVisible(false);
     _ui.logHistoryLocation->setVisible(false);
     _ui.logPlaybackRewind->setVisible(false);
@@ -334,7 +334,8 @@ void MainWindow::updateViews() {
 
     // // Set the history vector by taking the last kHistorySize elements of the
     // // "long" history, or fewer if _longHistory is shorter.
-    _history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()), context_->frames.end());
+    _history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()),
+                    context_->frames.end());
 
     // Update field view
     _ui.fieldView->update();
@@ -395,7 +396,7 @@ void MainWindow::updateViews() {
         for (size_t shell = 0; shell < kNumShells; shell++) {
             // Search for the corresponding references.
             auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const RobotStatus>> {
-                for (auto & i : live_frame->radio_rx_) {
+                for (auto& i : live_frame->radio_rx_) {
                     if (i.shell_id == shell) {
                         return i;
                     }
