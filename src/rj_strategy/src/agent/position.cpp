@@ -21,7 +21,7 @@ std::optional<RobotIntent> Position::get_task(WorldState& world_state,
 
     // if world_state invalid, return empty MotionCommand (equivalent to HALT)
     if (!assert_world_state_valid()) {
-        intent.motion_command = planning::MotionCommand{};
+        //intent.motion_command = planning::MotionCommand{};
         return intent;
     }
     // delegate to derived class to complete behavior

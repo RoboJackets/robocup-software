@@ -25,6 +25,8 @@
 #include "rj_strategy/agent/position/idle.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 #include "rj_strategy/agent/position/offense.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
+
 #include "rj_strategy/agent/position/overriding_positions.hpp"
 #include "rj_strategy/agent/position/penalty_non_kicker.hpp"
 #include "rj_strategy/agent/position/penalty_player.hpp"
@@ -147,8 +149,10 @@ private:
         if (dynamic_cast<Pos*>(current_position_.get()) == nullptr) {
             // This line requires Pos to implement the constructor Pos(const
             // Position&)
-            current_position_->die();
-            current_position_ = std::make_unique<Pos>(*current_position_);
+            
+                current_position_->die();
+                current_position_ = std::make_unique<Pos>(*current_position_);
+            
             SPDLOG_INFO("Robot {}: change {}", robot_id_, current_position_->get_name());
         }
     }
