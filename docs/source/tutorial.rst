@@ -98,7 +98,7 @@ and one goalie move into position. Click anywhere on the field to place the
 ball in that location. You should see all five robots move between the ball
 and the goal.
 
-Open the file ``src/rj_strategy/src/agent/position/waller.cpp``. 
+Open the file ``src/rj_strategy/src/coordinator/waller_client.cpp``. 
 Find the line of code that calculates the ``wall_spacing`` and double its value.
 
 Re-build the project (using the method specified in the installation guide) 
