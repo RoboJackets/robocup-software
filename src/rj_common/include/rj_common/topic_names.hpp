@@ -2,15 +2,6 @@
 
 #include <string>
 
-/**
- * \file This file contains all the topic name strings to avoid typos.
- * 2026 GRAND REFACTOR QUESTIONS
- * 1. Does it make sense to define all node names in one place? yeah probably
- * 2. Does it make sense to define all node names in one file? maybe not, bound to accumulate merge
- * conflicts, and every time a node name is changed, it triggers a full rebuild of every node
- * 3. I need a refresher on namespaces. Is there a way to see all namespaces that we use? Is this a
- * standard pattern?
- */
 
 namespace config_server::topics {
 constexpr auto kGameSettingsTopic{"config/game_settings"};
