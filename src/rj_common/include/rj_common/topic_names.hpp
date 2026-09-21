@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 namespace config_server::topics {
 constexpr const char* kGameSettingsTopic{"/config/game_settings"};
 constexpr const char* kFieldDimensionsTopic{"/config/field_dimensions"};

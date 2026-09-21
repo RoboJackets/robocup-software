@@ -2,9 +2,9 @@
 
 #include <list>
 
+#include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
-#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 
 namespace vision_filter {
