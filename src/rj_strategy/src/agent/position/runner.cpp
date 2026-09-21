@@ -114,7 +114,7 @@ namespace strategy {
         State new_state = next_state();
         std::optional<RobotIntent> newIntent = state_to_task(intent);
         current_state_ = new_state;
-        SPDLOG_INFO("Runner state: {}", state_to_name(current_state_));
+        //SPDLOG_INFO("Runner state: {}", state_to_name(current_state_));
         
         return newIntent;
     }

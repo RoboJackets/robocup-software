@@ -14,6 +14,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
+#find_package(std_msg REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Flann REQUIRED)
@@ -37,6 +38,12 @@ add_executable(sim_radio_node
   src/radio.cpp
 )
 
+add_executable(soccer_mom
+
+  src/soccer_mom.cpp
+
+)
+
 target_link_libraries(network_radio_node
   PUBLIC
   spdlog
@@ -50,6 +57,12 @@ target_link_libraries(sim_radio_node
   Boost::boost
   ${FLANN_LIBRARIES}
 )
+target_link_libraries(soccer_mom
+  PUBLIC
+  spdlog
+  Boost::boost
+  ${FLANN_LIBRARIES}
+)
 
 target_include_directories(network_radio_node
   PUBLIC
@@ -58,6 +71,12 @@ target_include_directories(network_radio_node
 )
 
 target_include_directories(sim_radio_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_include_directories(soccer_mom
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -98,6 +117,23 @@ ament_target_dependencies(sim_radio_node
   rj_planning
   rj_constants
 )
+ament_target_dependencies(soccer_mom
+  PUBLIC
+  spdlog
+  rclcpp
+  rclcpp_components
+  Boost
+  Flann
+  rj_common
+  rj_msgs
+  rj_protos
+  rj_utils
+  rj_param_utils
+  rj_strategy
+  rj_geometry
+  rj_planning
+  rj_constants
+)
 
 install(
   DIRECTORY include/
@@ -105,7 +141,7 @@ install(
 )
 
 install(
-  TARGETS network_radio_node sim_radio_node
+  TARGETS network_radio_node sim_radio_node soccer_mom
   DESTINATION lib/${PROJECT_NAME}
 )
 
