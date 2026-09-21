@@ -8,9 +8,6 @@
 #include <optional>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_action/rclcpp_action.hpp>
-
 #include <QMutexLocker>
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <spdlog/spdlog.h>
