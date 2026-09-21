@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <rj_geometry/SSL_ball_constants.hpp>
-#include <rj_geometry/SSL_robot_constants.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>

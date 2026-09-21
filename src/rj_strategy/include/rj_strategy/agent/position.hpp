@@ -19,8 +19,8 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_geometry/SSL_ball_constants.hpp>
-#include <rj_geometry/SSL_robot_constants.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_msgs/action/robot_move.hpp>

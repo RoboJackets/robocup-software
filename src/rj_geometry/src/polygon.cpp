@@ -1,4 +1,4 @@
-#include <rj_geometry/SSL_robot_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/polygon.hpp>
 
 namespace rj_geometry {

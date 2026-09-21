@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_convert/ros_convert.hpp>
-#include <rj_geometry/SSL_robot_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/motion_command.hpp>
