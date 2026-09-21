@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 
 namespace rj_geometry {
 

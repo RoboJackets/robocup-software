@@ -1,6 +1,6 @@
-#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/segment.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 
 namespace rj_geometry {
 
