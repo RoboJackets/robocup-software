@@ -20,7 +20,6 @@ find_package(fmt REQUIRED)
 find_package(Flann REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
@@ -34,7 +33,6 @@ set(RJ_PLANNING_DEPS
   fmt
   rj_geometry
   rj_common
-  rj_constants
   rj_convert
   rj_msgs
   rj_param_utils

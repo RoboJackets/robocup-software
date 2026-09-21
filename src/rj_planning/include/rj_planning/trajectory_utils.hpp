@@ -3,7 +3,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/planning/trajectory.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_planning/obstacle_set.hpp>
 
 namespace planning {

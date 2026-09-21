@@ -1,9 +1,11 @@
 #pragma once
+#include <utility>
+#include <vector>
+
+#include <rj_common/game_constants.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
-#include <utility>
-#include <vector>
 
 namespace vision_filter {
 using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;

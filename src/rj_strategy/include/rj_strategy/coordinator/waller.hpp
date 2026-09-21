@@ -5,10 +5,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_common/game_constants.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_constants/constants.hpp>
-#include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_msgs/msg/waller.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_msgs/srv/waller.hpp>
