@@ -2,8 +2,8 @@
 
 #include <boost/circular_buffer.hpp>
 
-#include <rj_geometry/ball.hpp>
-#include <rj_geometry/bot.hpp>
+#include <rj_geometry/SSL_ball_constants.hpp>
+#include <rj_geometry/SSL_robot_constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/filter/kalman_filter_2d.hpp>

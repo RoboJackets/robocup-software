@@ -22,7 +22,7 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_geometry/ball.hpp>
+#include <rj_geometry/SSL_ball_constants.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_param_utils/param.hpp>
 #include <rj_protos/LogFrame.pb.h>
