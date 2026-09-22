@@ -1,4 +1,5 @@
 #include "rj_vision_filter/vision_filter.hpp"
+#include <cstddef>
 
 
 #include <rj_common/time.hpp>

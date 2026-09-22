@@ -155,11 +155,6 @@ private:
 
     // ROS2 temporary modules
     using WorldStateMsg = rj_msgs::msg::WorldState;
-    
-    using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
-        WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
-
-    AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
 
     rclcpp::Node::SharedPtr world_state_node_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;

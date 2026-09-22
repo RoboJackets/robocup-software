@@ -110,7 +110,7 @@ private:
 
 
     rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
-    std::atomic<bool> us_blue_{true};
+    std::atomic<bool> us_blue_;
 
 
     /**
