@@ -16,6 +16,7 @@
 #include <rj_param_utils/global_params.hpp>
 #include <unistd.h>
 
+#include "rj_ui/game_settings_cache.hpp"
 #include "rj_ui/main_window.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
 
@@ -38,6 +39,7 @@ void usage(const char* prog) {
     std::cerr << "\t-nolog:       don't write log files\n";
     std::cerr << "\t-noref:       don't use external referee commands\n";
     std::cerr << "\t-defend:      specify half of field to defend (plus or minus)\n";
+    std::cerr << "\t-auto_restart: restore team/goalie/side from the last session's cache\n";
     std::exit(0);
 }
 
@@ -70,6 +72,7 @@ int main(int argc, char* argv[]) {
     string playbook_file;
     bool noref = false;
     bool defend_plus = false;
+    bool auto_restart = false;
     string read_log_file;
 
     for (int i = 1; i < argc; ++i) {
@@ -129,6 +132,18 @@ int main(int argc, char* argv[]) {
             read_log_file = argv[++i];
         } else if (strcmp(var, "-noref") == 0) {
             noref = true;
+        } else if (strcmp(var, "-auto_restart") == 0) {
+            if (i + 1 >= argc) {
+                printf("No value specified after -auto_restart\n");
+                usage(argv[0]);
+            }
+            i++;
+            if (strcmp(argv[i], "True") == 0) {
+                auto_restart = true;
+            } else if (strcmp(argv[i], "False") != 0) {
+                printf("Invalid option for auto_restart\n");
+                usage(argv[0]);
+            }
         } else if (strcmp(var, "-defend") == 0) {
             if (i + 1 >= argc) {
                 printf("Field half not specified after -defend\n");
@@ -180,7 +195,11 @@ int main(int argc, char* argv[]) {
     // If we're reading a log file, we should start off paused.
     context->game_settings.paused = !read_log_file.empty();
 
-    auto win = std::make_unique<MainWindow>(processor.get(), !noref);
+    if (auto_restart) {
+        game_settings_cache::load(&context->game_settings);
+    }
+
+    auto win = std::make_unique<MainWindow>(processor.get(), !noref, auto_restart);
     win->initialize();
 
     win->setUseRefChecked(!noref);

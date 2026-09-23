@@ -48,6 +48,7 @@ set(SRC_FILES
   src/battery_profile.cpp
   src/battery_widget.cpp
   src/field_view.cpp
+  src/game_settings_cache.cpp
   src/log_viewer.cpp
   src/main_window.cpp
   src/processor.cpp

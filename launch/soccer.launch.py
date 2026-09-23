@@ -53,6 +53,8 @@ def generate_launch_description():
     use_internal_ref = LaunchConfiguration("use_internal_ref")
     ref_flag = LaunchConfiguration("ref_flag")
 
+    auto_restart = LaunchConfiguration("auto_restart")
+
     param_config = LaunchConfiguration("param_config")
     param_config_filepath = LaunchConfiguration("param_config_filepath")
 
@@ -101,6 +103,7 @@ def generate_launch_description():
                 ],
             ),
             DeclareLaunchArgument("run_line_test", default_value="False"),
+            DeclareLaunchArgument("auto_restart", default_value="False"),
             stdout_linebuf_envvar,
             # Node spawns all of the ROS nodes, defined in main() of various
             # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
@@ -148,7 +151,10 @@ def generate_launch_description():
                 package="rj_ui",
                 executable="rj_ui_node",
                 output="screen",
-                arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
+                arguments=[
+                    team_flag, sim_flag, ref_flag, "-defend", direction_flag,
+                    "-auto_restart", auto_restart,
+                ],
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),

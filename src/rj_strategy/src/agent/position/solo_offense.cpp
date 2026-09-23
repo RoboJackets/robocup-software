@@ -50,31 +50,21 @@ SoloOffense::State SoloOffense::next_state() {
             return kick_strategy_;
         }
         case TO_BALL: {
-            // If a collect is successful, go to a rotate kick.
+            // Once we've reached the ball, line kick it.
             if (check_is_done()) {
-                return ROTATE;
+                return KICK;
             } else {
                 return TO_BALL;
             }
-            // TODO: the else statement needs logic for a failed collect
             // the high-level conditionals catch normal game cases, but suppose a HALT interrupts a
             // TO_BALL state, would it resume in TO_BALL?
-        }
-        case ROTATE: {
-            // TODO: this state needs logic to go back to IDLE early if we drop the ball while
-            // rotating. If a kick is successful, restart the logic tree.
-            if (check_is_done()) {
-                return IDLE;
-            } else {
-                return ROTATE;
-            }
         }
         case KICK: {
             // If a kick is successful, restart the logic tree.
             if (check_is_done()) {
                 return IDLE;
             } else {
-                return ROTATE;
+                return KICK;
             }
         }
         default: {
@@ -103,19 +93,11 @@ std::optional<RobotIntent> SoloOffense::state_to_task(RobotIntent intent) {
             return intent;
         }
         case TO_BALL: {
-            // Gather up the ball into the dribbler.
-            auto collect_cmd = planning::MotionCommand{"collect"};
-            intent.motion_command = collect_cmd;
-            return intent;
-        }
-        case ROTATE: {
-            // Rotate toward the goal, then shoot.
-            auto pivot_cmd =
-                planning::MotionCommand{"rotate", kick_target_, planning::FaceTarget{}, false};
-            intent.motion_command = pivot_cmd;
-            intent.dribbler_mode = RobotIntent::DribblerMode::ON;
-            intent.trigger_mode = RobotIntent::TriggerMode::AT_END;
-            intent.kick_speed = max_kick_speed();
+            // Drive up to the ball (no dribbler available, so just approach it).
+            auto approach_ball_cmd = planning::MotionCommand{
+                "path_target", planning::LinearMotionInstant{last_world_state_->ball.position},
+                planning::FaceBall{}};
+            intent.motion_command = approach_ball_cmd;
             return intent;
         }
         case KICK: {
