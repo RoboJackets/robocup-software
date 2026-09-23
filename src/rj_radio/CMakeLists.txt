@@ -16,7 +16,6 @@ find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
-find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
@@ -31,7 +30,6 @@ set(RJ_RADIO_DEPS
   rclcpp
   rclcpp_components
   Boost
-  Flann
   rj_common
   rj_msgs
   rj_protos
@@ -57,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
   PUBLIC
   spdlog
   Boost::boost
-  ${FLANN_LIBRARIES}
 )
 
 ament_target_dependencies(${PROJECT_NAME}

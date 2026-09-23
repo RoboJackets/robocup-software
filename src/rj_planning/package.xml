@@ -12,14 +12,12 @@
   <depend>rclcpp_components</depend>
   <depend>spdlog</depend>
   <depend>fmt</depend>
-  <depend>RRT</depend>
 
   <depend>rj_geometry</depend>
   <depend>rj_common</depend>
   <depend>rj_convert</depend>
   <depend>rj_msgs</depend>
   <depend>rj_param_utils</depend>
-  <depend>rj_rrt</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
