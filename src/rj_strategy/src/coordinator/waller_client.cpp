@@ -132,7 +132,7 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(
     waller_geometry.robot_pos = world_state->get_robot(true, robot_id_).pose.position();
     waller_geometry.goal_pos = field_dimensions.our_goal_loc();
     waller_geometry.ball_pos = world_state->ball.position;
-    waller_geometry.wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
+    waller_geometry.wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius ;
 
     return waller_geometry;
 }
@@ -149,7 +149,7 @@ rj_geometry::Point WallerClient::get_target_position(WallerGeometry& waller_geom
     auto angle = (mid_point - waller_geometry.goal_pos).angle();
 
     // Wallers are distributed evenly across the wall arc based on their position in the wall list
-    auto delta_angle = (waller_geometry.wall_spacing * (waller_pos - num_wallers_ / 2. - 0.5)) /
+    auto delta_angle = (waller_geometry.wall_spacing * 2 * (waller_pos - num_wallers_ / 2. - 0.5)) /
                        waller_geometry.min_wall_radius;
     auto target_angle = angle - delta_angle;
 
