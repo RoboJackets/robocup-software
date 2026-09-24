@@ -198,7 +198,7 @@ public:
     }
 
 private:
-    friend struct rj_convert::RosConverter<PlayState, rj_msgs::msg::PlayState>;
+    friend struct rclcpp::TypeAdapter<PlayState, rj_msgs::msg::PlayState>;
 
     PlayState(State state, Restart restart, bool our_restart,
               rj_geometry::Point ball_placement_point)
@@ -227,76 +227,98 @@ public:
     std::optional<rj_geometry::Point> ball_placement_point;
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<MatchState::Period, uint8_t> {
-    static uint8_t to_ros(const MatchState::Period& from) { return static_cast<uint8_t>(from); }
+struct TypeAdapter<MatchState::Period, uint8_t> {
+    using is_specialized = std::true_type;
+    using custom_type = MatchState::Period;
+    using ros_message_type = uint8_t;
 
-    static MatchState::Period from_ros(const uint8_t from) {
-        return static_cast<MatchState::Period>(from);
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination = static_cast<uint8_t>(source);
+    }
+
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = static_cast<MatchState::Period>(source);
     }
 };
 
 template <>
-struct RosConverter<MatchState, rj_msgs::msg::MatchState> {
-    static rj_msgs::msg::MatchState to_ros(const MatchState& from) {
-        rj_msgs::msg::MatchState to;
-        convert_to_ros(from.period, &to.period);
-        convert_to_ros(from.stage_time_left, &to.stage_time_left);
-        return to;
+struct TypeAdapter<MatchState, rj_msgs::msg::MatchState> {
+    using is_specialized = std::true_type;
+    using custom_type = MatchState;
+    using ros_message_type = rj_msgs::msg::MatchState;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.period, &destination.period);
+        rj_convert::convert_to_ros(source.stage_time_left, &destination.stage_time_left);
     }
 
-    static MatchState from_ros(const rj_msgs::msg::MatchState from) {
-        MatchState to;
-        convert_from_ros(from.period, &to.period);
-        convert_from_ros(from.stage_time_left, &to.stage_time_left);
-        return to;
-    }
-};
-
-ASSOCIATE_CPP_ROS(MatchState, MatchState::Msg);
-
-template <>
-struct RosConverter<PlayState::State, uint8_t> {
-    static uint8_t to_ros(const PlayState::State& from) { return static_cast<uint8_t>(from); }
-
-    static PlayState::State from_ros(const uint8_t from) {
-        return static_cast<PlayState::State>(from);
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rj_convert::convert_from_ros(source.period, &destination.period);
+        rj_convert::convert_from_ros(source.stage_time_left, &destination.stage_time_left);
     }
 };
 
-template <>
-struct RosConverter<PlayState::Restart, uint8_t> {
-    static uint8_t to_ros(const PlayState::Restart& from) { return static_cast<uint8_t>(from); }
 
-    static PlayState::Restart from_ros(const uint8_t from) {
-        return static_cast<PlayState::Restart>(from);
+template <>
+struct TypeAdapter<PlayState::State, uint8_t> {
+    using is_specialized = std::true_type;
+    using custom_type = PlayState::State;
+    using ros_message_type = uint8_t;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination = static_cast<uint8_t>(source);
+    }
+
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = static_cast<PlayState::State>(source);
     }
 };
 
 template <>
-struct RosConverter<PlayState, rj_msgs::msg::PlayState> {
-    static rj_msgs::msg::PlayState to_ros(const PlayState& from) {
-        rj_msgs::msg::PlayState to;
-        convert_to_ros(from.state(), &to.state);
-        convert_to_ros(from.restart(), &to.restart);
-        convert_to_ros(from.is_our_restart(), &to.our_restart);
-        if (from.ball_placement_point().has_value()) {
-            convert_to_ros(from.ball_placement_point().value(), &to.placement_point);
+struct TypeAdapter<PlayState::Restart, uint8_t> {
+    using is_specialized = std::true_type;
+    using custom_type = PlayState::Restart;
+    using ros_message_type = uint8_t;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination = static_cast<uint8_t>(source);
+    }
+
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = static_cast<PlayState::Restart>(source);
+    }
+};
+
+template <>
+struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
+    using is_specialized = std::true_type;
+    using custom_type = PlayState;
+    using ros_message_type = rj_msgs::msg::PlayState;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.state(), &destination.state);
+        rj_convert::convert_to_ros(source.restart(), &destination.restart);
+        rj_convert::convert_to_ros(source.is_our_restart(), &destination.our_restart);
+        if (source.ball_placement_point().has_value()) {
+            rj_convert::convert_to_ros(source.ball_placement_point().value(),
+                                       &destination.placement_point);
         }
-        return to;
     }
 
-    static PlayState from_ros(const rj_msgs::msg::PlayState& from) {
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         PlayState::State state = PlayState::State::Halt;
-        convert_from_ros(from.state, &state);
+        rj_convert::convert_from_ros(source.state, &state);
         PlayState::Restart restart = PlayState::Restart::None;
-        convert_from_ros(from.restart, &restart);
-        return PlayState(state, restart, from.our_restart, convert_from_ros(from.placement_point));
+        rj_convert::convert_from_ros(source.restart, &restart);
+        destination = PlayState(
+            state, restart, source.our_restart,
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
+                source.placement_point));
     }
 };
 
-ASSOCIATE_CPP_ROS(PlayState, PlayState::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

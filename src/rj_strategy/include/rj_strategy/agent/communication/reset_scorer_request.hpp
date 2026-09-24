@@ -20,25 +20,22 @@ void generate_uid(ResetScorerRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
-    static rj_msgs::msg::ResetScorerRequest to_ros(
-        const strategy::communication::ResetScorerRequest& from) {
-        rj_msgs::msg::ResetScorerRequest result;
-        result.request_uid = from.request_uid;
-        return result;
+struct TypeAdapter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::ResetScorerRequest;
+    using ros_message_type = rj_msgs::msg::ResetScorerRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
     }
 
-    static strategy::communication::ResetScorerRequest from_ros(
-        const rj_msgs::msg::ResetScorerRequest& from) {
-        return strategy::communication::ResetScorerRequest{
-            from.request_uid,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::ResetScorerRequest{source.request_uid};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

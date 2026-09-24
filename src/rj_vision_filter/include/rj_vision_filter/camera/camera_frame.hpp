@@ -39,7 +39,8 @@ public:
     CameraFrame(const DetectionFrameMsg& msg,
                 const rj_geometry::TransformMatrix& world_to_team,
                 double team_angle)
-        : t_capture{rj_convert::convert_from_ros(msg.t_capture)},
+        : t_capture{rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
+              msg.t_capture)},
           camera_id{static_cast<int>(msg.camera_id)},
           camera_balls{},
           camera_robots_yellow{},

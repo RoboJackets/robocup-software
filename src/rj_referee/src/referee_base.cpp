@@ -24,7 +24,8 @@ RefereeBase::RefereeBase(const std::string& name)
 
     world_state_sub_ = create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, 1, [this](WorldState::Msg::SharedPtr msg) {
-            auto ball_state = rj_convert::convert_from_ros(msg->ball);
+            auto ball_state =
+                rj_convert::convert_from_ros<BallState::Msg, BallState>(msg->ball);
             if (spin_kick_detector(ball_state.position)) {
                 send();
             }
@@ -81,14 +82,17 @@ void RefereeBase::send() {
 
     const auto resolved_play_state = resolve_play_state(
         yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x,
-        rj_convert::convert_from_ros(config_client_.field_dimensions()));
-    play_state_pub_->publish(rj_convert::convert_to_ros(resolved_play_state));
-    match_state_pub_->publish(rj_convert::convert_to_ros(match_state_));
+        rj_convert::convert_from_ros<FieldDimensions::Msg, FieldDimensions>(
+            config_client_.field_dimensions()));
+    play_state_pub_->publish(
+        rj_convert::convert_to_ros<PlayState, PlayState::Msg>(resolved_play_state));
+    match_state_pub_->publish(
+        rj_convert::convert_to_ros<MatchState, MatchState::Msg>(match_state_));
 
     auto our_info = blue_team_ ? blue_info_ : yellow_info_;
     auto their_info = blue_team_ ? yellow_info_ : blue_info_;
-    our_team_info_pub_->publish(rj_convert::convert_to_ros(our_info));
-    their_team_info_pub_->publish(rj_convert::convert_to_ros(their_info));
+    our_team_info_pub_->publish(rj_convert::convert_to_ros<TeamInfo, TeamInfoMsg>(our_info));
+    their_team_info_pub_->publish(rj_convert::convert_to_ros<TeamInfo, TeamInfoMsg>(their_info));
 
     TeamColorMsg team_color;
     team_color.is_blue = blue_team_;

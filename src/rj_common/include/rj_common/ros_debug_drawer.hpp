@@ -28,14 +28,18 @@ public:
     void draw_shapes(const rj_geometry::ShapeSet& shapes,
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         frame_.shapes.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>()
-                                    .shapes(rj_convert::convert_to_ros(shapes))
+                                    .shapes(rj_convert::convert_to_ros<
+                                            rj_geometry::ShapeSet,
+                                            rj_geometry_msgs::msg::ShapeSet>(shapes))
                                     .color(color_from_qt(color)));
     }
 
     void draw_circle(const rj_geometry::Circle& circle,
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.circles.push_back(rj_convert::convert_to_ros(circle));
+        shapes.circles.push_back(
+            rj_convert::convert_to_ros<rj_geometry::Circle, rj_geometry_msgs::msg::Circle>(
+                circle));
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -44,7 +48,8 @@ public:
     void draw_rect(const rj_geometry::Rect& rect,
                    const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.rectangles.push_back(rj_convert::convert_to_ros(rect));
+        shapes.rectangles.push_back(
+            rj_convert::convert_to_ros<rj_geometry::Rect, rj_geometry_msgs::msg::Rect>(rect));
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -53,7 +58,9 @@ public:
     void draw_polygon(const rj_geometry::Polygon& polygon,
                       const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.polygons.push_back(rj_convert::convert_to_ros(polygon));
+        shapes.polygons.push_back(
+            rj_convert::convert_to_ros<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon>(
+                polygon));
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -67,13 +74,16 @@ public:
     void draw_segment(const rj_geometry::Segment& segment,
                       const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.segments.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawSegment>()
-                                      .segment(rj_convert::convert_to_ros(segment))
+                                      .segment(rj_convert::convert_to_ros<
+                                               rj_geometry::Segment,
+                                               rj_geometry_msgs::msg::Segment>(segment))
                                       .color(color_from_qt(color)));
     }
 
     void draw_pose(const rj_geometry::Pose& pose, const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.poses.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawPose>()
-                                   .pose(rj_convert::convert_to_ros(pose))
+                                   .pose(rj_convert::convert_to_ros<
+                                        rj_geometry::Pose, rj_geometry_msgs::msg::Pose>(pose))
                                    .color(color_from_qt(color)));
     }
 
@@ -81,14 +91,18 @@ public:
                    const QColor& color = QColor::fromRgb(0, 0, 0)) {
         frame_.debug_text.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawText>()
                                         .text(text)
-                                        .position(rj_convert::convert_to_ros(position))
+                                        .position(rj_convert::convert_to_ros<
+                                                  rj_geometry::Point,
+                                                  rj_geometry_msgs::msg::Point>(position))
                                         .color(color_from_qt(color)));
     }
 
     void draw_path(const std::vector<rj_geometry::Point>& points) {
         frame_.paths.emplace_back();
         for (const auto& point : points) {
-            frame_.paths.back().points.push_back(rj_convert::convert_to_ros(point));
+            frame_.paths.back().points.push_back(
+                rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
+                    point));
         }
     }
 

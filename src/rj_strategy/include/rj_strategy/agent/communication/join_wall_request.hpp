@@ -21,27 +21,24 @@ void generate_uid(JoinWallRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
-    static rj_msgs::msg::JoinWallRequest to_ros(
-        const strategy::communication::JoinWallRequest& from) {
-        rj_msgs::msg::JoinWallRequest result;
-        result.request_uid = from.request_uid;
-        result.robot_id = from.robot_id;
-        return result;
+struct TypeAdapter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::JoinWallRequest;
+    using ros_message_type = rj_msgs::msg::JoinWallRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
+        destination.robot_id = source.robot_id;
     }
 
-    static strategy::communication::JoinWallRequest from_ros(
-        const rj_msgs::msg::JoinWallRequest& from) {
-        return strategy::communication::JoinWallRequest{
-            from.request_uid,
-            from.robot_id,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::JoinWallRequest{
+            source.request_uid, source.robot_id};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

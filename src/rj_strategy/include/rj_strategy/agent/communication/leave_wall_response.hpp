@@ -21,27 +21,24 @@ void generate_uid(LeaveWallResponse& response);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse> {
-    static rj_msgs::msg::LeaveWallResponse to_ros(
-        const strategy::communication::LeaveWallResponse& from) {
-        rj_msgs::msg::LeaveWallResponse result;
-        result.response_uid = from.response_uid;
-        result.robot_id = from.robot_id;
-        return result;
+struct TypeAdapter<strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::LeaveWallResponse;
+    using ros_message_type = rj_msgs::msg::LeaveWallResponse;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.response_uid = source.response_uid;
+        destination.robot_id = source.robot_id;
     }
 
-    static strategy::communication::LeaveWallResponse from_ros(
-        const rj_msgs::msg::LeaveWallResponse& from) {
-        return strategy::communication::LeaveWallResponse{
-            from.response_uid,
-            from.robot_id,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::LeaveWallResponse{
+            source.response_uid, source.robot_id};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallResponse, rj_msgs::msg::LeaveWallResponse);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

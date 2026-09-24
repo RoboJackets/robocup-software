@@ -72,7 +72,8 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
       _processor(processor),
       context_(processor->context()),
       _has_external_ref(has_external_ref),
-      _game_settings(rj_convert::convert_to_ros(context_->game_settings)) {
+      _game_settings(
+          rj_convert::convert_to_ros<GameSettings, GameSettings::Msg>(context_->game_settings)) {
     context__mutex = processor->loop_mutex();
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -1133,7 +1134,7 @@ void MainWindow::setUseRefChecked(bool /* use_ref */) {
 
 void MainWindow::send_quick_command(const PlayState& state) {
     auto request = std::make_shared<rj_msgs::srv::QuickCommands::Request>();
-    request->command = rj_convert::convert_to_ros(state);
+    request->command = rj_convert::convert_to_ros<PlayState, PlayState::Msg>(state);
     _quick_commands_srv->async_send_request(request);
     queued_command_ = std::nullopt;
 }

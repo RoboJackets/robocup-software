@@ -20,25 +20,22 @@ void generate_uid(PositionRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::PositionRequest, rj_msgs::msg::PositionRequest> {
-    static rj_msgs::msg::PositionRequest to_ros(
-        const strategy::communication::PositionRequest& from) {
-        rj_msgs::msg::PositionRequest result;
-        result.request_uid = from.request_uid;
-        return result;
+struct TypeAdapter<strategy::communication::PositionRequest, rj_msgs::msg::PositionRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::PositionRequest;
+    using ros_message_type = rj_msgs::msg::PositionRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
     }
 
-    static strategy::communication::PositionRequest from_ros(
-        const rj_msgs::msg::PositionRequest& from) {
-        return strategy::communication::PositionRequest{
-            from.request_uid,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::PositionRequest{source.request_uid};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PositionRequest, rj_msgs::msg::PositionRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

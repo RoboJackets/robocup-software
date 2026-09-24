@@ -96,9 +96,11 @@ void Processor::run() {
 
         const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
         if (world_state_msg != nullptr) {
-            context_.world_state = rj_convert::convert_from_ros(*world_state_msg);
+            context_.world_state =
+                rj_convert::convert_from_ros<WorldStateMsg, WorldState>(*world_state_msg);
             cur_status.last_vision_time =
-                rj_convert::convert_from_ros(world_state_msg->last_update_time);
+                rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
+                    world_state_msg->last_update_time);
         }
 
         autonomy_interface_->run();

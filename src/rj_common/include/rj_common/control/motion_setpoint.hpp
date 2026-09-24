@@ -25,22 +25,26 @@ struct MotionSetpoint {
     }
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<MotionSetpoint, MotionSetpoint::Msg> {
-    static MotionSetpoint::Msg to_ros(const MotionSetpoint& from) {
-        return rj_msgs::build<MotionSetpoint::Msg>()
-            .velocity_x_mps(from.xvelocity)
-            .velocity_y_mps(from.yvelocity)
-            .velocity_z_radps(from.avelocity);
+struct TypeAdapter<MotionSetpoint, MotionSetpoint::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = MotionSetpoint;
+    using ros_message_type = MotionSetpoint::Msg;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination = rj_msgs::build<MotionSetpoint::Msg>()
+                          .velocity_x_mps(source.xvelocity)
+                          .velocity_y_mps(source.yvelocity)
+                          .velocity_z_radps(source.avelocity);
     }
 
-    static MotionSetpoint from_ros(const MotionSetpoint::Msg& from) {
-        return MotionSetpoint{from.velocity_x_mps, from.velocity_y_mps, from.velocity_z_radps};
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = MotionSetpoint{source.velocity_x_mps, source.velocity_y_mps,
+                                     source.velocity_z_radps};
     }
 };
 
-ASSOCIATE_CPP_ROS(MotionSetpoint, MotionSetpoint::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

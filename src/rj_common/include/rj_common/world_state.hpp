@@ -183,75 +183,73 @@ struct WorldState {
     BallState ball;
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<RobotState, RobotState::Msg> {
-    static RobotState::Msg to_ros(const RobotState& value) {
-        RobotState::Msg result;
-        convert_to_ros(value.timestamp, &result.stamp);
-        convert_to_ros(value.pose, &result.pose);
-        convert_to_ros(value.velocity, &result.velocity);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+struct TypeAdapter<RobotState, RobotState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = RobotState;
+    using ros_message_type = RobotState::Msg;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
+        rj_convert::convert_to_ros(source.pose, &destination.pose);
+        rj_convert::convert_to_ros(source.velocity, &destination.velocity);
+        rj_convert::convert_to_ros(source.visible, &destination.visible);
     }
 
-    static RobotState from_ros(const RobotState::Msg& value) {
-        RobotState result;
-        result.timestamp = convert_from_ros(value.stamp);
-        convert_from_ros(value.pose, &result.pose);
-        convert_from_ros(value.velocity, &result.velocity);
-        convert_from_ros(value.visible, &result.visible);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination.timestamp = rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
+            source.stamp);
+        rj_convert::convert_from_ros(source.pose, &destination.pose);
+        rj_convert::convert_from_ros(source.velocity, &destination.velocity);
+        rj_convert::convert_from_ros(source.visible, &destination.visible);
     }
 };
 
-ASSOCIATE_CPP_ROS(RobotState, RobotState::Msg);
 
 template <>
-struct RosConverter<BallState, BallState::Msg> {
-    static BallState::Msg to_ros(const BallState& value) {
-        BallState::Msg result;
-        convert_to_ros(value.timestamp, &result.stamp);
-        convert_to_ros(value.velocity, &result.velocity);
-        convert_to_ros(value.position, &result.position);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+struct TypeAdapter<BallState, BallState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = BallState;
+    using ros_message_type = BallState::Msg;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
+        rj_convert::convert_to_ros(source.velocity, &destination.velocity);
+        rj_convert::convert_to_ros(source.position, &destination.position);
+        rj_convert::convert_to_ros(source.visible, &destination.visible);
     }
 
-    static BallState from_ros(const BallState::Msg& value) {
-        BallState result;
-        convert_from_ros(value.stamp, &result.timestamp);
-        convert_from_ros(value.velocity, &result.velocity);
-        convert_from_ros(value.position, &result.position);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rj_convert::convert_from_ros(source.stamp, &destination.timestamp);
+        rj_convert::convert_from_ros(source.velocity, &destination.velocity);
+        rj_convert::convert_from_ros(source.position, &destination.position);
+        rj_convert::convert_from_ros(source.visible, &destination.visible);
     }
 };
 
-ASSOCIATE_CPP_ROS(BallState, BallState::Msg);
 
 template <>
-struct RosConverter<WorldState, WorldState::Msg> {
-    static WorldState::Msg to_ros(const WorldState& value) {
-        WorldState::Msg result;
-        convert_to_ros(value.ball, &result.ball);
-        convert_to_ros(value.our_robots, &result.our_robots);
-        convert_to_ros(value.their_robots, &result.their_robots);
-        convert_to_ros(value.last_updated_time, &result.last_update_time);
-        return result;
+struct TypeAdapter<WorldState, WorldState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = WorldState;
+    using ros_message_type = WorldState::Msg;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.ball, &destination.ball);
+        rj_convert::convert_to_ros(source.our_robots, &destination.our_robots);
+        rj_convert::convert_to_ros(source.their_robots, &destination.their_robots);
+        rj_convert::convert_to_ros(source.last_updated_time, &destination.last_update_time);
     }
 
-    static WorldState from_ros(const WorldState::Msg& value) {
-        WorldState result;
-        convert_from_ros(value.ball, &result.ball);
-        convert_from_ros(value.our_robots, &result.our_robots);
-        convert_from_ros(value.their_robots, &result.their_robots);
-        convert_from_ros(value.last_update_time, &result.last_updated_time);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rj_convert::convert_from_ros(source.ball, &destination.ball);
+        rj_convert::convert_from_ros(source.our_robots, &destination.our_robots);
+        rj_convert::convert_from_ros(source.their_robots, &destination.their_robots);
+        rj_convert::convert_from_ros(source.last_update_time, &destination.last_updated_time);
     }
 };
 
-ASSOCIATE_CPP_ROS(WorldState, WorldState::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

@@ -115,39 +115,62 @@ struct RobotInstant {
 
 }  // namespace planning
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant> {
-    static rj_msgs::msg::LinearMotionInstant to_ros(const planning::LinearMotionInstant& from) {
-        return rj_msgs::build<rj_msgs::msg::LinearMotionInstant>()
-            .position(convert_to_ros(from.position))
-            .velocity(convert_to_ros(from.velocity));
+struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant> {
+    using is_specialized = std::true_type;
+    using custom_type = planning::LinearMotionInstant;
+    using ros_message_type = rj_msgs::msg::LinearMotionInstant;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.position =
+            rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
+                source.position);
+        destination.velocity =
+            rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
+                source.velocity);
     }
 
-    static planning::LinearMotionInstant from_ros(const rj_msgs::msg::LinearMotionInstant& from) {
-        return planning::LinearMotionInstant{convert_from_ros(from.position),
-                                             convert_from_ros(from.velocity)};
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination.position =
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
+                source.position);
+        destination.velocity =
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
+                source.velocity);
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::LinearMotionInstant, planning::LinearMotionInstant::Msg);
 
 template <>
-struct RosConverter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
-    static rj_msgs::msg::RobotInstant to_ros(const planning::RobotInstant& from) {
-        return rj_msgs::build<rj_msgs::msg::RobotInstant>()
-            .stamp(convert_to_ros(from.stamp))
-            .pose(convert_to_ros(from.pose))
-            .velocity(convert_to_ros(from.velocity));
+struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
+    using is_specialized = std::true_type;
+    using custom_type = planning::RobotInstant;
+    using ros_message_type = rj_msgs::msg::RobotInstant;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.stamp =
+            rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(source.stamp);
+        destination.pose =
+            rj_convert::convert_to_ros<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>(
+                source.pose);
+        destination.velocity =
+            rj_convert::convert_to_ros<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>(
+                source.velocity);
     }
 
-    static planning::RobotInstant from_ros(const rj_msgs::msg::RobotInstant& from) {
-        return planning::RobotInstant{convert_from_ros(from.pose), convert_from_ros(from.velocity),
-                                      convert_from_ros(from.stamp)};
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination.pose =
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Pose, rj_geometry::Pose>(
+                source.pose);
+        destination.velocity =
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Twist, rj_geometry::Twist>(
+                source.velocity);
+        destination.stamp =
+            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp);
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::RobotInstant, planning::RobotInstant::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

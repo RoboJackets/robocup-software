@@ -37,38 +37,46 @@ struct RobotIntent {
 bool operator==(const RobotIntent& r1, const RobotIntent& r2);
 bool operator!=(const RobotIntent& r1, const RobotIntent& r2);
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<RobotIntent, rj_msgs::msg::RobotIntent> {
-    static rj_msgs::msg::RobotIntent to_ros(const RobotIntent& from) {
-        return rj_msgs::build<rj_msgs::msg::RobotIntent>()
-            .robot_id(static_cast<uint8_t>(from.robot_id))
-            .motion_command(convert_to_ros(from.motion_command))
-            .local_obstacles(convert_to_ros(from.local_obstacles))
-            .shoot_mode(static_cast<uint8_t>(from.shoot_mode))
-            .trigger_mode(static_cast<uint8_t>(from.trigger_mode))
-            .dribbler_mode(static_cast<uint8_t>(from.dribbler_mode))
-            .kick_speed(convert_to_ros(from.kick_speed))
-            .is_active(convert_to_ros(from.is_active))
-            .priority(convert_to_ros(from.priority));
+struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
+    using is_specialized = std::true_type;
+    using custom_type = RobotIntent;
+    using ros_message_type = rj_msgs::msg::RobotIntent;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.robot_id = static_cast<uint8_t>(source.robot_id);
+        destination.motion_command =
+            rj_convert::convert_to_ros<planning::MotionCommand, rj_msgs::msg::MotionCommand>(
+                source.motion_command);
+        destination.local_obstacles =
+            rj_convert::convert_to_ros<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>(
+                source.local_obstacles);
+        destination.shoot_mode = static_cast<uint8_t>(source.shoot_mode);
+        destination.trigger_mode = static_cast<uint8_t>(source.trigger_mode);
+        destination.dribbler_mode = static_cast<uint8_t>(source.dribbler_mode);
+        destination.kick_speed = source.kick_speed;
+        destination.is_active = source.is_active;
+        destination.priority = source.priority;
     }
 
-    static RobotIntent from_ros(const rj_msgs::msg::RobotIntent& from) {
-        RobotIntent result;
-        result.robot_id = static_cast<uint8_t>(from.robot_id);
-        result.motion_command = convert_from_ros(from.motion_command);
-        result.local_obstacles = convert_from_ros(from.local_obstacles);
-        result.shoot_mode = static_cast<RobotIntent::ShootMode>(from.shoot_mode);
-        result.trigger_mode = static_cast<RobotIntent::TriggerMode>(from.trigger_mode);
-        result.dribbler_mode = static_cast<RobotIntent::DribblerMode>(from.dribbler_mode);
-        result.kick_speed = convert_from_ros(from.kick_speed);
-        result.is_active = convert_from_ros(from.is_active);
-        result.priority = convert_from_ros(from.priority);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination.robot_id = static_cast<uint8_t>(source.robot_id);
+        destination.motion_command =
+            rj_convert::convert_from_ros<rj_msgs::msg::MotionCommand, planning::MotionCommand>(
+                source.motion_command);
+        destination.local_obstacles =
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::ShapeSet,
+                                         rj_geometry::ShapeSet>(source.local_obstacles);
+        destination.shoot_mode = static_cast<RobotIntent::ShootMode>(source.shoot_mode);
+        destination.trigger_mode = static_cast<RobotIntent::TriggerMode>(source.trigger_mode);
+        destination.dribbler_mode = static_cast<RobotIntent::DribblerMode>(source.dribbler_mode);
+        destination.kick_speed = source.kick_speed;
+        destination.is_active = source.is_active;
+        destination.priority = source.priority;
     }
 };
 
-ASSOCIATE_CPP_ROS(RobotIntent, rj_msgs::msg::RobotIntent);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

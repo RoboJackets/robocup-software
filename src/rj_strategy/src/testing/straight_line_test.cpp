@@ -67,20 +67,23 @@ StraightLineTest::StraightLineTest(int r_id)
 }
 
 void StraightLineTest::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
+    WorldState world_state =
+        rj_convert::convert_from_ros<rj_msgs::msg::WorldState, WorldState>(*msg);
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
 }
 
 void StraightLineTest::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
-    PlayState play_state = rj_convert::convert_from_ros(*msg);
+    PlayState play_state =
+        rj_convert::convert_from_ros<rj_msgs::msg::PlayState, PlayState>(*msg);
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
 }
 
 void StraightLineTest::field_dimensions_callback(
     const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
-    FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
+    FieldDimensions field_dimensions =
+        rj_convert::convert_from_ros<rj_msgs::msg::FieldDimensions, FieldDimensions>(*msg);
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
 
@@ -159,7 +162,8 @@ void StraightLineTest::get_task() {
     }
 
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
-        rj_convert::convert_to_ros(current_position_->get_current_state())));
+        rj_convert::convert_to_ros<std::string, std::string>(
+            current_position_->get_current_state())));
 }
 
 void StraightLineTest::send_new_goal() {
@@ -171,7 +175,8 @@ void StraightLineTest::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
+    goal_msg.robot_intent =
+        rj_convert::convert_to_ros<RobotIntent, rj_msgs::msg::RobotIntent>(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
@@ -195,7 +200,10 @@ void StraightLineTest::goal_response_callback(GoalHandleRobotMove::SharedPtr goa
 
 void StraightLineTest::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
+    double time_left =
+        rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
+            feedback->time_left)
+            .count();
     current_position_->set_time_left(time_left);
 }
 

@@ -21,29 +21,25 @@ void generate_uid(BallInTransitRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::BallInTransitRequest,
+struct TypeAdapter<strategy::communication::BallInTransitRequest,
                     rj_msgs::msg::BallInTransitRequest> {
-    static rj_msgs::msg::BallInTransitRequest to_ros(
-        const strategy::communication::BallInTransitRequest& from) {
-        rj_msgs::msg::BallInTransitRequest result;
-        result.request_uid = from.request_uid;
-        result.from_robot_id = from.from_robot_id;
-        return result;
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::BallInTransitRequest;
+    using ros_message_type = rj_msgs::msg::BallInTransitRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
+        destination.from_robot_id = source.from_robot_id;
     }
 
-    static strategy::communication::BallInTransitRequest from_ros(
-        const rj_msgs::msg::BallInTransitRequest& from) {
-        return strategy::communication::BallInTransitRequest{
-            from.request_uid,
-            from.from_robot_id,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::BallInTransitRequest{
+            source.request_uid, source.from_robot_id};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::BallInTransitRequest,
-                  rj_msgs::msg::BallInTransitRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

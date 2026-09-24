@@ -22,28 +22,25 @@ void generate_uid(ScorerRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest> {
-    static rj_msgs::msg::ScorerRequest to_ros(const strategy::communication::ScorerRequest& from) {
-        rj_msgs::msg::ScorerRequest result;
-        result.request_uid = from.request_uid;
-        result.robot_id = from.robot_id;
-        result.ball_distance = from.ball_distance;
-        return result;
+struct TypeAdapter<strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::ScorerRequest;
+    using ros_message_type = rj_msgs::msg::ScorerRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
+        destination.robot_id = source.robot_id;
+        destination.ball_distance = source.ball_distance;
     }
 
-    static strategy::communication::ScorerRequest from_ros(
-        const rj_msgs::msg::ScorerRequest& from) {
-        return strategy::communication::ScorerRequest{
-            from.request_uid,
-            from.robot_id,
-            from.ball_distance,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::ScorerRequest{
+            source.request_uid, source.robot_id, source.ball_distance};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

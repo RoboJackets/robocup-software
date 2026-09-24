@@ -42,33 +42,32 @@ struct GameSettings {
     JoystickConfig joystick_config;
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<GameSettings, GameSettings::Msg> {
-    static GameSettings::Msg to_ros(const GameSettings& from) {
-        GameSettings::Msg to;
-        convert_to_ros(from.simulation, &to.simulation);
-        convert_to_ros(from.request_blue_team, &to.request_blue_team);
-        convert_to_ros(from.request_goalie_id, &to.request_goalie_id);
-        convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
-        convert_to_ros(from.use_our_half, &to.use_our_half);
-        convert_to_ros(from.use_their_half, &to.use_their_half);
-        return to;
+struct TypeAdapter<GameSettings, GameSettings::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = GameSettings;
+    using ros_message_type = GameSettings::Msg;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.simulation, &destination.simulation);
+        rj_convert::convert_to_ros(source.request_blue_team, &destination.request_blue_team);
+        rj_convert::convert_to_ros(source.request_goalie_id, &destination.request_goalie_id);
+        rj_convert::convert_to_ros(source.defend_plus_x, &destination.defend_plus_x);
+        rj_convert::convert_to_ros(source.use_our_half, &destination.use_our_half);
+        rj_convert::convert_to_ros(source.use_their_half, &destination.use_their_half);
     }
 
-    static GameSettings from_ros(const GameSettings::Msg& from) {
-        GameSettings to;
-        convert_to_ros(from.simulation, &to.simulation);
-        convert_to_ros(from.request_blue_team, &to.request_blue_team);
-        convert_to_ros(from.request_goalie_id, &to.request_goalie_id);
-        convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
-        convert_to_ros(from.use_our_half, &to.use_our_half);
-        convert_to_ros(from.use_their_half, &to.use_their_half);
-        return to;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rj_convert::convert_from_ros(source.simulation, &destination.simulation);
+        rj_convert::convert_from_ros(source.request_blue_team, &destination.request_blue_team);
+        rj_convert::convert_from_ros(source.request_goalie_id, &destination.request_goalie_id);
+        rj_convert::convert_from_ros(source.defend_plus_x, &destination.defend_plus_x);
+        rj_convert::convert_from_ros(source.use_our_half, &destination.use_our_half);
+        rj_convert::convert_from_ros(source.use_their_half, &destination.use_their_half);
     }
 };
 
-ASSOCIATE_CPP_ROS(GameSettings, GameSettings::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

@@ -20,23 +20,22 @@ void generate_uid(Acknowledge& response);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge> {
-    static rj_msgs::msg::Acknowledge to_ros(const strategy::communication::Acknowledge& from) {
-        rj_msgs::msg::Acknowledge result;
-        result.response_uid = from.response_uid;
-        return result;
+struct TypeAdapter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::Acknowledge;
+    using ros_message_type = rj_msgs::msg::Acknowledge;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.response_uid = source.response_uid;
     }
 
-    static strategy::communication::Acknowledge from_ros(const rj_msgs::msg::Acknowledge& from) {
-        return strategy::communication::Acknowledge{
-            from.response_uid,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::Acknowledge{source.response_uid};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

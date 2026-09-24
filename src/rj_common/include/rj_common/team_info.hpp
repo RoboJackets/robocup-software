@@ -63,38 +63,37 @@ public:
     }
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<TeamInfo, rj_msgs::msg::TeamInfo> {
-    static rj_msgs::msg::TeamInfo to_ros(const TeamInfo& from) {
-        rj_msgs::msg::TeamInfo to;
-        convert_to_ros(from.name, &to.name);
-        convert_to_ros(from.score, &to.score);
-        convert_to_ros(from.red_cards, &to.num_red_cards);
-        convert_to_ros(from.yellow_cards, &to.num_yellow_cards);
-        convert_to_ros(from.yellow_card_times, &to.yellow_card_remaining_times);
-        convert_to_ros(from.timeouts_left, &to.timeouts_left);
-        convert_to_ros(from.timeout_time, &to.remaining_timeout_time);
-        convert_to_ros(from.goalie, &to.goalie_id);
-        return to;
+struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
+    using is_specialized = std::true_type;
+    using custom_type = TeamInfo;
+    using ros_message_type = rj_msgs::msg::TeamInfo;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        rj_convert::convert_to_ros(source.name, &destination.name);
+        rj_convert::convert_to_ros(source.score, &destination.score);
+        rj_convert::convert_to_ros(source.red_cards, &destination.num_red_cards);
+        rj_convert::convert_to_ros(source.yellow_cards, &destination.num_yellow_cards);
+        rj_convert::convert_to_ros(source.yellow_card_times, &destination.yellow_card_remaining_times);
+        rj_convert::convert_to_ros(source.timeouts_left, &destination.timeouts_left);
+        rj_convert::convert_to_ros(source.timeout_time, &destination.remaining_timeout_time);
+        rj_convert::convert_to_ros(source.goalie, &destination.goalie_id);
     }
 
-    static TeamInfo from_ros(const rj_msgs::msg::TeamInfo& from) {
-        TeamInfo to;
-        convert_from_ros(from.name, &to.name);
-        convert_from_ros(from.score, &to.score);
-        convert_from_ros(from.num_red_cards, &to.red_cards);
-        convert_from_ros(from.num_yellow_cards, &to.yellow_cards);
-        convert_from_ros(from.yellow_card_remaining_times,
-                         &to.yellow_card_times);
-        convert_from_ros(from.timeouts_left, &to.timeouts_left);
-        convert_from_ros(from.remaining_timeout_time, &to.timeout_time);
-        convert_from_ros(from.goalie_id, &to.goalie);
-        return to;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rj_convert::convert_from_ros(source.name, &destination.name);
+        rj_convert::convert_from_ros(source.score, &destination.score);
+        rj_convert::convert_from_ros(source.num_red_cards, &destination.red_cards);
+        rj_convert::convert_from_ros(source.num_yellow_cards, &destination.yellow_cards);
+        rj_convert::convert_from_ros(source.yellow_card_remaining_times,
+                                     &destination.yellow_card_times);
+        rj_convert::convert_from_ros(source.timeouts_left, &destination.timeouts_left);
+        rj_convert::convert_from_ros(source.remaining_timeout_time, &destination.timeout_time);
+        rj_convert::convert_from_ros(source.goalie_id, &destination.goalie);
     }
 };
 
-ASSOCIATE_CPP_ROS(TeamInfo, TeamInfo::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

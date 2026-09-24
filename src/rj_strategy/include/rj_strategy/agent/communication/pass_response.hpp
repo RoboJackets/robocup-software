@@ -21,25 +21,24 @@ void generate_uid(PassResponse& response);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::PassResponse, rj_msgs::msg::PassResponse> {
-    static rj_msgs::msg::PassResponse to_ros(const strategy::communication::PassResponse& from) {
-        rj_msgs::msg::PassResponse result;
-        result.response_uid = from.response_uid;
-        result.direct_open = from.direct_open;
-        return result;
+struct TypeAdapter<strategy::communication::PassResponse, rj_msgs::msg::PassResponse> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::PassResponse;
+    using ros_message_type = rj_msgs::msg::PassResponse;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.response_uid = source.response_uid;
+        destination.direct_open = source.direct_open;
     }
 
-    static strategy::communication::PassResponse from_ros(const rj_msgs::msg::PassResponse& from) {
-        return strategy::communication::PassResponse{
-            from.response_uid,
-            from.direct_open,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::PassResponse{
+            source.response_uid, source.direct_open};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PassResponse, rj_msgs::msg::PassResponse);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

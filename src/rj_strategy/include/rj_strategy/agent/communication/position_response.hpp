@@ -21,27 +21,24 @@ void generate_uid(PositionResponse& response);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::PositionResponse, rj_msgs::msg::PositionResponse> {
-    static rj_msgs::msg::PositionResponse to_ros(
-        const strategy::communication::PositionResponse& from) {
-        rj_msgs::msg::PositionResponse result;
-        result.response_uid = from.response_uid;
-        result.position = from.position;
-        return result;
+struct TypeAdapter<strategy::communication::PositionResponse, rj_msgs::msg::PositionResponse> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::PositionResponse;
+    using ros_message_type = rj_msgs::msg::PositionResponse;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.response_uid = source.response_uid;
+        destination.position = source.position;
     }
 
-    static strategy::communication::PositionResponse from_ros(
-        const rj_msgs::msg::PositionResponse& from) {
-        return strategy::communication::PositionResponse{
-            from.response_uid,
-            from.position,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::PositionResponse{
+            source.response_uid, source.position};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PositionResponse, rj_msgs::msg::PositionResponse);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

@@ -11,7 +11,9 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
                    request,  // NOLINT(performance-unnecessary-value-param)
                [[maybe_unused]] QuickCommands::Response::SharedPtr
                    response) {  // NOLINT(performance-unnecessary-value-param)
-            set_play_state(rj_convert::convert_from_ros(request->command));
+            set_play_state(
+                rj_convert::convert_from_ros<rj_msgs::msg::PlayState, PlayState>(
+                    request->command));
         });
 
     // NOLINTNEXTLINE(performance-unnecessary-value-param)

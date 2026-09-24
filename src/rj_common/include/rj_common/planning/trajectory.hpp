@@ -460,27 +460,37 @@ bool operator==(const Trajectory& a, const Trajectory& b);
 
 }  // namespace planning
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<planning::Trajectory, rj_msgs::msg::Trajectory> {
-    static rj_msgs::msg::Trajectory to_ros(const planning::Trajectory& from) {
-        if (!from.angles_valid()) {
+struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
+    using is_specialized = std::true_type;
+    using custom_type = planning::Trajectory;
+    using ros_message_type = rj_msgs::msg::Trajectory;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        if (!source.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
-        return rj_msgs::build<rj_msgs::msg::Trajectory>()
-            .stamp(convert_to_ros(from.time_created().value()))
-            .instants(convert_to_ros(from.instants()));
+        destination.stamp =
+            rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(
+                source.time_created().value());
+        destination.instants =
+            rj_convert::convert_to_ros<std::vector<planning::RobotInstant>,
+                                       std::vector<rj_msgs::msg::RobotInstant>>(
+                source.instants());
     }
 
-    static planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
-        auto trajectory = planning::Trajectory{convert_from_ros(from.instants)};
-        trajectory.stamp(convert_from_ros(from.stamp));
-        trajectory.mark_angles_valid();
-        return trajectory;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = planning::Trajectory{rj_convert::convert_from_ros<
+            std::vector<rj_msgs::msg::RobotInstant>, std::vector<planning::RobotInstant>>(
+            source.instants)};
+        destination.stamp(
+            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
+                source.stamp));
+        destination.mark_angles_valid();
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::Trajectory, planning::Trajectory::Msg);
 
-}  // namespace rj_convert
+}  // namespace rclcpp

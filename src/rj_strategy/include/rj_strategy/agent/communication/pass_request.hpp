@@ -22,27 +22,25 @@ void generate_uid(PassRequest& request);
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest> {
-    static rj_msgs::msg::PassRequest to_ros(const strategy::communication::PassRequest& from) {
-        rj_msgs::msg::PassRequest result;
-        result.request_uid = from.request_uid;
-        result.direct = from.direct;
-        result.from_robot_id = from.from_robot_id;
-        return result;
+struct TypeAdapter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::PassRequest;
+    using ros_message_type = rj_msgs::msg::PassRequest;
+
+    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+        destination.request_uid = source.request_uid;
+        destination.direct = source.direct;
+        destination.from_robot_id = source.from_robot_id;
     }
 
-    static strategy::communication::PassRequest from_ros(const rj_msgs::msg::PassRequest& from) {
-        return strategy::communication::PassRequest{
-            from.request_uid,
-            from.direct,
-            from.from_robot_id,
-        };
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = strategy::communication::PassRequest{
+            source.request_uid, source.direct, source.from_robot_id};
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PassRequest, rj_msgs::msg::PassRequest);
 
-}  // namespace rj_convert
+}  // namespace rclcpp
