@@ -1,8 +1,14 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <stdexcept>
+#include <vector>
 
 #include <rj_convert/ros_convert.hpp>
+#include <rj_geometry/circle.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
@@ -172,9 +178,9 @@ struct TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = rj_geometry::Polygon(rj_convert::convert_from_ros<
-                                    std::vector<rj_geometry_msgs::msg::Point>,
-                                    std::vector<rj_geometry::Point>>(source.points));
+        destination.vertices = rj_convert::convert_from_ros<
+            std::vector<rj_geometry_msgs::msg::Point>,
+            std::vector<rj_geometry::Point>>(source.points);
     }
 };
 
