@@ -81,14 +81,18 @@ TEST(RosConversions, Trajectory) {
 
     Trajectory trajectory({start_instant, mid_instant, end_instant});
     // NOLINTNEXTLINE
-    EXPECT_THROW(test_lossless_convert_cpp_value(trajectory), std::invalid_argument);
+    EXPECT_THROW((test_lossless_convert_cpp_value<Trajectory, rj_msgs::msg::Trajectory>(
+                     trajectory)),
+                 std::invalid_argument);
 
     trajectory.mark_angles_valid();
     // NOLINTNEXTLINE
-    EXPECT_THROW(test_lossless_convert_cpp_value(trajectory), std::bad_optional_access);
+    EXPECT_THROW((test_lossless_convert_cpp_value<Trajectory, rj_msgs::msg::Trajectory>(
+                     trajectory)),
+                 std::bad_optional_access);
 
     trajectory.stamp(start);
-    test_lossless_convert_cpp_value(trajectory);
+    test_lossless_convert_cpp_value<Trajectory, rj_msgs::msg::Trajectory>(trajectory);
 }
 
 }  // namespace testing
