@@ -11,16 +11,21 @@ TEST(ROSConvert, time_lossless_convert) {
 
 TEST(ROSConvert, duration_lossless_convert) {
     // We don't expect perfect equality for seconds, because float comparisons.
-    const auto converted_duration =
-        rj_convert::convert_to_ros<RJ::Seconds, rclcpp::Duration>(RJ::Seconds(1.0));
-    EXPECT_NEAR(
-        rj_convert::convert_from_ros<rclcpp::Duration, RJ::Seconds>(converted_duration).count(),
-        1.0, 1e-6);
+    rclcpp::Duration converted_duration(std::chrono::nanoseconds(0));
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros(
+        RJ::Seconds(1.0), converted_duration);
+
+    RJ::Seconds converted_seconds;
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_custom(
+        converted_duration, converted_seconds);
+    EXPECT_NEAR(converted_seconds.count(), 1.0, 1e-6);
 
     const auto source_duration = rclcpp::Duration(std::chrono::nanoseconds(12345));
-    EXPECT_NEAR(
-        rj_convert::convert_to_ros<RJ::Seconds, rclcpp::Duration>(
-            rj_convert::convert_from_ros<rclcpp::Duration, RJ::Seconds>(source_duration))
-            .nanoseconds(),
-        12345, 1);
+    RJ::Seconds source_seconds;
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_custom(
+        source_duration, source_seconds);
+    rclcpp::Duration round_trip_duration(std::chrono::nanoseconds(0));
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros(
+        source_seconds, round_trip_duration);
+    EXPECT_NEAR(round_trip_duration.nanoseconds(), 12345, 1);
 }
