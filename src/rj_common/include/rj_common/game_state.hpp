@@ -17,6 +17,8 @@ struct PlayState {
 public:
     using Msg = rj_msgs::msg::PlayState;
 
+    PlayState() : PlayState(State::Halt, Restart::None, false, {}) {}
+
     enum State {
         Halt,           // Robots must not move
         Stop,           // Robots must stay 500mm away from ball + max speed of robots < 1.5 m/s
