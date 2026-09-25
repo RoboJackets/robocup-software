@@ -309,7 +309,8 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             displacement / 1000.0f,
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
-        config_.update_field_dimensions(rj_convert::convert_to_ros<FieldDimensions>(new_field_dim));
+        config_.update_field_dimensions(
+            rj_convert::convert_to_ros<FieldDimensions, FieldDimensions::Msg>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
         const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
 
