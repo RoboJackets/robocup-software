@@ -34,15 +34,15 @@ void DebugDrawInterface::run() {
         }
         for (const auto& pose : debug_draw->poses) {
             // TODO(#1584): Handle poses
+            (void)pose;
         }
         for (const auto& path : debug_draw->paths) {
-            auto* debug_path = context_->debug_drawer.add_debug_path();
+            DebugRobotPath& debug_path = context_->debug_drawer.add_debug_path();
+            debug_path.layer =
+                context_->debug_drawer.find_debug_layer(QString::fromStdString(layer));
             for (const auto& point : path.points) {
-                auto* new_point = debug_path->add_points();
-                new_point->mutable_pos()->set_x(point.x);
-                new_point->mutable_pos()->set_y(point.y);
-
-                // TODO(#1584): Use color in trajectory
+                DebugRobotPath::DebugRobotPathPoint& new_point = debug_path.points.emplace_back();
+                new_point.pos = rj_geometry::Point(point.x, point.y);
             }
         }
         for (const auto& text : debug_draw->debug_text) {

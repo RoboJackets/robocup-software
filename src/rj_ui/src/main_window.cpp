@@ -49,11 +49,9 @@
 using namespace std;
 using namespace boost;
 using namespace google::protobuf;
-using namespace Packet;
 using namespace Eigen;
 
-constexpr int kHistorySize = 60 * 2;
-constexpr int kLongHistorySize = 60 * 60 * 30;
+constexpr size_t kHistorySize = 60 * 2;
 
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles", "Planning0", "Planning1",
@@ -67,7 +65,6 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
 MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
-      _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
       _processor(processor),
       context_(processor->context()),
@@ -77,19 +74,16 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
-    _ui.fieldView->history(&_history);
 
-    _ui.logTree->history(&_longHistory);
-    _ui.logTree->mainWindow = this;
-    _ui.logTree->updateTimer = &updateTimer;
-
-    // Initialize live/non-live control styles
-
-    _logFile = new QLabel(this);
-    _logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logFile->setToolTip("Log File");
-    statusBar()->addPermanentWidget(_logFile);
-
+    _ui.logTree->setVisible(false);
+    _ui.logHistoryLocation->setVisible(false);
+    _ui.logPlaybackRewind->setVisible(false);
+    _ui.logPlaybackPrevFrame->setVisible(false);
+    _ui.logPlaybackPause->setVisible(false);
+    _ui.logPlaybackNextFrame->setVisible(false);
+    _ui.logPlaybackPlay->setVisible(false);
+    _ui.logPlaybackLive->setVisible(false);
+    _ui.actionStart_Logging->setVisible(false);
     _viewFPS = new QLabel(this);
     _viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     _viewFPS->setToolTip("Display Framerate");
@@ -101,21 +95,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _procFPS->setToolTip("Processing Framerate");
     calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
     statusBar()->addPermanentWidget(_procFPS);
-
-    _logMemory = new QLabel(this);
-    _logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    _logMemory->setToolTip("Log Memory Usage");
-    _logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
-    statusBar()->addPermanentWidget(_logMemory);
-
-    _frameNumberItem = new QTreeWidgetItem(_ui.logTree);
-    _frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
-    _frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
-
-    _elapsedTimeItem = new QTreeWidgetItem(_ui.logTree);
-    _elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
-    _elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -156,14 +135,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
-
-    // put all log playback buttons into a vector for easy access later
-    _logPlaybackButtons.push_back(_ui.logPlaybackRewind);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPause);
-    _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
-    _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
-    _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
     // Get the item model from the goalieID boxes so we can disable them
     // properly
@@ -226,8 +197,6 @@ void MainWindow::initialize() {
 
     populate_override_position_dropdowns();
 
-    logFileChanged();
-
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
 
@@ -252,26 +221,6 @@ void MainWindow::initialize() {
         _ui.actionDefendMinusX->setChecked(true);
     }
 
-    // If we're reading logs, we should already have some data. Update frames
-    // for all of it.
-    for (const auto& frame : context_->logs.frames) {
-        updateDebugLayers(*frame);
-    }
-
-    if (context_->logs.state == Logs::State::kReading) {
-        _playbackRate = 0;
-    }
-}
-
-void MainWindow::logFileChanged() {
-    if (context_->logs.state == Logs::State::kWriting) {
-        QString filename_q = QString::fromStdString(context_->logs.filename.value());
-        _logFile->setText(filename_q);
-        _ui.actionStart_Logging->setText(QString("Already Logging to: ") + filename_q);
-        _ui.actionStart_Logging->setEnabled(false);
-    } else {
-        _logFile->setText("Not Recording");
-    }
 }
 
 void MainWindow::addLayer(int i, const QString& name, bool checked) {
@@ -365,132 +314,39 @@ void MainWindow::updateViews() {
 
         _viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
         _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
-
-        _logMemory->setText(
-            QString("Log: %1 kiB").arg(QString::number((context_->logs.size_bytes + 512) / 1024)));
     }
 
     auto value = _ui.logHistoryLocation->value();
 
-    std::shared_ptr<LogFrame> live_frame;
-    RJ::Time start_time;
-    int minFrame = 0;
-    int maxFrame = 0;
+    std::shared_ptr<rj_common::UIFrame> ui_frame;
 
     // Grab frames
+    std::vector<std::shared_ptr<rj_common::UIFrame>> history;
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
-        if (context_->logs.frames.empty()) {
+        if (context_->frames.empty()) {
             // No log frames, nothing else to update.
             return;
         }
 
-        start_time = context_->logs.start_time;
-
-        size_t num_dropped = context_->logs.dropped_frames;
-
-        if (live()) {
-            _doubleFrameNumber = static_cast<double>(context_->logs.frames.size() + num_dropped);
-        } else {
-            _doubleFrameNumber += *_playbackRate;
-        }
-
-        minFrame = num_dropped;
-        maxFrame = static_cast<int>(num_dropped + context_->logs.frames.size()) - 1;
-
-        if (_doubleFrameNumber < minFrame) {
-            _doubleFrameNumber = minFrame;
-        } else if (_doubleFrameNumber >= maxFrame) {
-            _doubleFrameNumber = maxFrame;
-            setLive();
-        }
-
-        _ui.logHistoryLocation->setMinimum(minFrame);
-        _ui.logHistoryLocation->setMaximum(maxFrame);
-
-        live_frame = context_->logs.frames.back();
-
-        // Cast to ints so that subtraction doesn't overflow.
-        int start = std::max(frameNumber() - kLongHistorySize, minFrame);
-
-        // Read the latest frames
-        _longHistory.assign(context_->logs.frames.begin() + start - num_dropped,
-                            context_->logs.frames.begin() + frameNumber() - num_dropped + 1);
+        ui_frame = context_->frames.back();
+        // Set the history vector by taking the last kHistorySize elements of the
+        // full context history, or fewer if context is shorter.
+        history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()),
+                       context_->frames.end());
     }
-
-    // Set the history vector by taking the last kHistorySize elements of the
-    // "long" history, or fewer if _longHistory is shorter.
-    _history.assign(
-        _longHistory.end() - std::min(kHistorySize, static_cast<int>(_longHistory.size())),
-        _longHistory.end());
+    _ui.fieldView->setHistory(std::move(history));
 
     // Update field view
     _ui.fieldView->update();
 
-    /**************************************************************************/
-    /***************** Update the history/playback interface ******************/
-    /**************************************************************************/
-    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
-    _ui.logHistoryLocation->setValue(static_cast<int>(_doubleFrameNumber));
-
-    // enable playback buttons based on playback rate
-    for (QPushButton* playbackBtn : _logPlaybackButtons) {
-        playbackBtn->setEnabled(true);
-    }
-    _ui.logPlaybackLive->setEnabled(!live());
-
-    if (live() || abs<float>(*_playbackRate) > 0.01) {
-        _ui.logPlaybackPause->setAutoFillBackground(false);
-    } else {
-        _ui.logPlaybackPause->setAutoFillBackground(true);
-    }
-
-    //  enable previous frame button based on position in the log
-    _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
-    _ui.logPlaybackNextFrame->setEnabled(!live());
-
     // Update status indicator
     updateStatus();
 
-    update_cache(_game_settings.paused, !live(), &_game_settings_valid);
-
     // Check if any debug layers have been added
     // (layers should never be removed)
-    if (live_frame) {
-        updateDebugLayers(*live_frame);
-    }
-
-    // Get the frame at the log playback time
-    const std::shared_ptr<LogFrame> currentFrame = _history.back();
-
-    // Update the playback labels
-    if (currentFrame) {
-        auto gametime = RJ::Time(chrono::microseconds(currentFrame->timestamp())) - start_time;
-        auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
-        gametime -= minutes;
-        auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
-        gametime -= seconds;
-        auto deciseconds = chrono::duration_cast<chrono::duration<long, ratio<1, 100>>>(gametime);
-
-        _ui.logTime->setText(QString::fromStdString(to_string(minutes.count()) + ":" +
-                                                    to_string(seconds.count()) + "." +
-                                                    to_string(deciseconds.count())));
-
-        _ui.frameNumLabel->setText(
-            QString("%1/%2").arg(QString::number(frameNumber())).arg(QString::number(maxFrame)));
-    }
-
-    /**************************************************************************/
-    /***************** Update log tree and behavior tree **********************/
-    /**************************************************************************/
-    if (currentFrame != nullptr) {
-        _ui.logTree->message(*currentFrame);
-
-        // update the behavior tree view
-        QString behaviorStr = QString::fromStdString(currentFrame->behavior_tree());
-        if (_ui.behaviorTree->toPlainText() != behaviorStr) {
-            _ui.behaviorTree->setPlainText(behaviorStr);
-        }
+    if (ui_frame) {
+        updateDebugLayers(*ui_frame);
     }
 
     /**************************************************************************/
@@ -535,23 +391,23 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     /********************** Update robot status list **************************/
     /**************************************************************************/
-    if (currentFrame != nullptr) {
+    if (ui_frame != nullptr) {
         // update robot status list
         for (size_t shell = 0; shell < kNumShells; shell++) {
             // Search for the corresponding references.
-            auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const Packet::RadioRx>> {
-                for (int i = 0; i < currentFrame->radio_rx_size(); i++) {
-                    if (currentFrame->radio_rx(i).robot_id() == shell) {
-                        return currentFrame->radio_rx(i);
+            auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const RobotStatus>> {
+                for (auto& i : ui_frame->radio_rx) {
+                    if (i.shell_id == shell) {
+                        return i;
                     }
                 }
                 return std::nullopt;
             }();
             auto maybe_robot =
-                [&]() -> std::optional<std::reference_wrapper<const Packet::LogFrame_Robot>> {
-                for (int i = 0; i < currentFrame->self_size(); i++) {
-                    if (currentFrame->self(i).shell() == shell) {
-                        return currentFrame->self(i);
+                [&]() -> std::optional<std::reference_wrapper<const rj_common::UIRobot>> {
+                for (int i = 0; i < ui_frame->self.size(); i++) {
+                    if (ui_frame->self.at(i).shell_id == shell) {
+                        return ui_frame->self.at(i);
                     }
                 }
                 return std::nullopt;
@@ -605,7 +461,7 @@ void MainWindow::updateViews() {
             }
 
             if (statusWidget != nullptr) {
-                statusWidget->loadFromLogFrame(rx, maybe_robot, currentFrame->blue_team());
+                statusWidget->load(rx, maybe_robot, ui_frame->blue);
             }
         }
     }
@@ -749,12 +605,6 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (!sim && context_->logs.state != Logs::State::kWriting) {
-        // We should record logs during competition
-        status("NOT RECORDING", StatusType::Status_Warning);
-        return;
-    }
-
     status("COMPETITION", StatusType::Status_OK);
 }
 
@@ -797,16 +647,6 @@ void MainWindow::on_fieldView_robotSelected(int shell) {
         _game_settings.joystick_config.manualID = shell;
 #endif
     }
-}
-
-void MainWindow::on_actionRawBalls_toggled(bool state) {
-    _ui.fieldView->showRawBalls = state;
-    _ui.fieldView->update();
-}
-
-void MainWindow::on_actionRawRobots_toggled(bool state) {
-    _ui.fieldView->showRawRobots = state;
-    _ui.fieldView->update();
 }
 
 void MainWindow::on_actionCoords_toggled(bool state) {
@@ -941,26 +781,6 @@ void MainWindow::on_actionRestartUpdateTimer_triggered() {
     updateTimer.start(30);
 }
 
-void MainWindow::on_actionStart_Logging_triggered() {
-    if (context_->logs.state != Logs::State::kWriting) {
-        if (!QDir("logs").exists()) {
-            QDir().mkdir("logs");
-        }
-
-        QString logFile =
-            QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-
-        if (!_processor->open_log(logFile)) {
-            printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
-        } else {
-            _ui.actionStart_Logging->setText(QString("Now Logging to:") + logFile);
-            _ui.actionStart_Logging->setEnabled(false);
-        }
-    }
-}
-
-// Gameplay commands
-
 void MainWindow::on_actionSeed_triggered() {
     QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
     if (!text.isNull()) {
@@ -970,7 +790,6 @@ void MainWindow::on_actionSeed_triggered() {
     }
 }
 
-// Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
 #if MANUAL
     std::lock_guard<std::mutex> lock(*context__mutex);
@@ -978,57 +797,6 @@ void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
         _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
 #endif
 }
-
-// choose between kick on break beam and immeditate
-
-// Log controls
-void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
-    // Sync frameNumber with logHistory slider
-    _doubleFrameNumber = value;
-
-    // pause playback
-    setPlayBackRate(0);
-}
-
-void MainWindow::on_logHistoryLocation_sliderPressed() {
-    on_logHistoryLocation_sliderMoved(_ui.logHistoryLocation->value());
-}
-
-void MainWindow::on_logHistoryLocation_sliderReleased() { on_logHistoryLocation_sliderPressed(); }
-
-void MainWindow::on_logPlaybackRewind_clicked() {
-    if (live()) {
-        setPlayBackRate(-1);
-    } else {
-        *_playbackRate += -0.5;
-    }
-}
-
-void MainWindow::on_logPlaybackPrevFrame_clicked() {
-    setPlayBackRate(0);
-    _doubleFrameNumber -= 1;
-}
-
-void MainWindow::on_logPlaybackPause_clicked() {
-    if (live() || std::abs(*_playbackRate) > 0.1) {
-        setPlayBackRate(0);
-    } else {
-        setPlayBackRate(1);
-    }
-}
-
-void MainWindow::on_logPlaybackNextFrame_clicked() {
-    setPlayBackRate(0);
-    _doubleFrameNumber += 1;
-}
-
-void MainWindow::on_logPlaybackPlay_clicked() {
-    if (!live()) {
-        *_playbackRate += 0.5;
-    }
-}
-
-void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
 
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
@@ -1126,6 +894,20 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
     _ui.fieldView->update();
 }
 
+void MainWindow::updateDebugLayers(const rj_common::UIFrame& frame) {
+    if (frame.debug_draw_frame.debug_layers.size() > _ui.debugLayers->count()) {
+        for (int i = _ui.debugLayers->count(); i < frame.debug_draw_frame.debug_layers.size();
+             ++i) {
+            const QString name = QString::fromStdString(frame.debug_draw_frame.debug_layers.at(i));
+            bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                                        [&](const QString& string) { return string == name; });
+            addLayer(i, name, enabled);
+        }
+
+        _ui.debugLayers->sortItems();
+    }
+}
+
 // NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
 void MainWindow::setUseRefChecked(bool /* use_ref */) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
@@ -1180,23 +962,6 @@ void MainWindow::on_fastPenaltyYellow_clicked() {
     PlayState setup_penalty_state = PlayState::setup_penalty(!context_->blue_team);
     send_quick_command(setup_penalty_state);
     queued_command_ = setup_penalty_state.advanced_from_normal_start();
-}
-
-bool MainWindow::live() { return !_playbackRate; }
-void MainWindow::updateDebugLayers(const LogFrame& frame) {
-    // Check if any debug layers have been added
-    // (layers should never be removed)
-    if (frame.debug_layers_size() > _ui.debugLayers->count()) {
-        // Add the missing layers and turn them on
-        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size(); ++i) {
-            const QString name = QString::fromStdString(frame.debug_layers(i));
-            bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                                        [&](const QString& string) { return string == name; });
-            addLayer(i, name, enabled);
-        }
-
-        _ui.debugLayers->sortItems();
-    }
 }
 
 /**

@@ -16,17 +16,16 @@
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
+#include <rj_common/ui_frame.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
 
 using namespace std;
 
 using namespace boost;
-using namespace Packet;
 
 static QPen redPen(Qt::red, 0);
 static QPen bluePen(Qt::blue, 0);
@@ -43,13 +42,10 @@ static QColor ballColor(0xff, 0x90, 0);
 static QPen ballPen(ballColor, 0);
 
 FieldView::FieldView(QWidget* parent) : QWidget(parent) {
-    showRawRobots = false;
-    showRawBalls = false;
     showCoords = false;
     showDotPatterns = false;
     showTeamNames = false;
     _rotate = 1;
-    _history = nullptr;
 
     // Green background
     QPalette p = palette();
@@ -83,11 +79,11 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->setText(s);
 }
 
-std::shared_ptr<LogFrame> FieldView::currentFrame() {
-    if (_history != nullptr && !_history->empty()) {
-        return _history->back();
+std::shared_ptr<rj_common::UIFrame> FieldView::currentFrame() {
+    if (!_history.empty()) {
+        return _history.back();
     }
-    return std::shared_ptr<LogFrame>();
+    return std::shared_ptr<rj_common::UIFrame>{};
 }
 
 void FieldView::rotate(int value) {
@@ -129,7 +125,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Get the latest LogFrame
-    const std::shared_ptr<LogFrame> frame = currentFrame();
+    const std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
 
     if (!frame) {
         // No data available yet
@@ -151,14 +147,14 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     _worldToTeam = rj_geometry::TransformMatrix();
     _worldToTeam *= rj_geometry::TransformMatrix::translate(
         0, FieldDimensions::current_dimensions.length() / 2.0f);
-    if (frame->defend_plus_x()) {
+    if (frame->defend_plus_x) {
         _worldToTeam *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
         _worldToTeam *= rj_geometry::TransformMatrix::rotate(M_PI / 2.0);
     }
 
     _teamToWorld = rj_geometry::TransformMatrix();
-    if (frame->defend_plus_x()) {
+    if (frame->defend_plus_x) {
         _teamToWorld *= rj_geometry::TransformMatrix::rotate(M_PI / 2.0);
     } else {
         _teamToWorld *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
@@ -171,7 +167,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
     // Everything after this point is drawn in team space.
     // Transform that into world space depending on defending goal.
-    if (frame->defend_plus_x()) {
+    if (frame->defend_plus_x) {
         p.rotate(90);
     } else {
         p.rotate(-90);
@@ -179,58 +175,23 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     p.translate(0, -FieldDimensions::current_dimensions.length() / 2.0f);
 
     // Text has to be rotated so it is always upright on screen
-    _textRotation = -_rotate * 90 + (frame->defend_plus_x() ? -90 : 90);
+    _textRotation = -_rotate * 90 + (frame->defend_plus_x ? -90 : 90);
 
     drawTeamSpace(p);
 }
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
 
     // Draw the field
     drawField(p, frame);
 
-    // Raw vision
-    if (showRawBalls || showRawRobots) {
-        tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
-        p.setPen(tempPen);
-        for (const SSL_WrapperPacket& wrapper : frame->raw_vision()) {
-            if (!wrapper.has_detection()) {
-                // Useless
-                continue;
-            }
-
-            const SSL_DetectionFrame& detect = wrapper.detection();
-
-            if (showRawRobots) {
-                for (const SSL_DetectionRobot& r : detect.robots_blue()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, true, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-
-                for (const SSL_DetectionRobot& r : detect.robots_yellow()) {
-                    QPointF pos(r.x() / 1000, r.y() / 1000);
-                    drawRobot(p, false, r.robot_id(), pos, r.orientation());
-                    // p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000),
-                    // kRobotRadius, kRobotRadius);
-                }
-            }
-
-            if (showRawBalls) {
-                for (const SSL_DetectionBall& b : detect.balls()) {
-                    p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), kBallRadius, kBallRadius);
-                }
-            }
-        }
-    }
 }
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->back().get();
+    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -239,22 +200,22 @@ void FieldView::drawTeamSpace(QPainter& p) {
         fontstyle.setPointSize(20);
         p.setFont(fontstyle);
         p.setPen(bluePen);
-        drawText(p, QPointF(0, 4.75), QString(frame->team_name_blue().c_str()),
+        drawText(p, QPointF(0, 4.75), QString(frame->blue_name.c_str()),
                  true);  // Blue
         p.setPen(yellowPen);
-        drawText(p, QPointF(0, 1.75), QString(frame->team_name_yellow().c_str()),
+        drawText(p, QPointF(0, 1.75), QString(frame->yellow_name.c_str()),
                  true);  // Yellow
         p.setFont(savedFont);
     }
 
     // Block off half the field
-    if (!frame->use_our_half()) {
+    if (!frame->use_our_half) {
         const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
         const float FY1 = -FieldDimensions::current_dimensions.border();
         const float FY2 = FieldDimensions::current_dimensions.length() / 2;
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
-    if (!frame->use_opponent_half()) {
+    if (!frame->use_their_half) {
         const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
         const float FY1 = FieldDimensions::current_dimensions.length() / 2;
         const float FY2 = FieldDimensions::current_dimensions.length() +
@@ -271,11 +232,11 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPainterPath ballTrail;
     bool move = false;
     int ballTrailLength = 60;
-    for (unsigned int i = _history->size() - std::min<int>(_history->size(), ballTrailLength);
-         i < _history->size(); ++i) {
-        const LogFrame* oldFrame = _history->at(i).get();
-        if (oldFrame != nullptr && oldFrame->has_ball()) {
-            QPointF pos = qpointf(oldFrame->ball().pos());
+    for (unsigned int i = _history.size() - std::min<int>(_history.size(), ballTrailLength);
+         i < _history.size(); ++i) {
+        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
+        if (oldFrame != nullptr && oldFrame->ball_state.has_value()) {
+            QPointF pos = qpointf(oldFrame->ball_state->position);
 
             if (!move) {
                 ballTrail.moveTo(pos);
@@ -291,27 +252,27 @@ void FieldView::drawTeamSpace(QPainter& p) {
     p.drawPath(ballTrail);
 
     // Debug lines
-    for (const DebugPath& path : frame->debug_paths()) {
-        if (path.layer() < 0 || layerVisible(path.layer())) {
-            tempPen.setColor(qcolor(path.color()));
+    for (const DebugPath& path : frame->debug_draw_frame.paths) {
+        if (path.layer < 0 || layerVisible(path.layer)) {
+            tempPen.setColor(qcolor(path.color));
             p.setPen(tempPen);
             std::vector<QPointF> pts;
-            for (int i = 0; i < path.points_size(); ++i) {
-                pts.push_back(qpointf(path.points(i)));
+            for (int i = 0; i < path.points.size(); ++i) {
+                pts.push_back(qpointf(path.points.at(i)));
             }
             p.drawPolyline(pts.data(), pts.size());
         }
     }
 
-    for (const DebugRobotPath& path : frame->debug_robot_paths()) {
-        if (path.layer() < 0 || layerVisible(path.layer())) {
-            for (int i = 0; i < path.points_size() - 1; ++i) {
-                const DebugRobotPath::DebugRobotPathPoint& from = path.points(i);
-                const DebugRobotPath::DebugRobotPathPoint& to = path.points(i + 1);
+    for (const DebugRobotPath& path : frame->debug_draw_frame.robot_paths) {
+        if (!path.points.empty() && (path.layer < 0 || layerVisible(path.layer))) {
+            for (int i = 0; i < path.points.size() - 1; ++i) {
+                const DebugRobotPath::DebugRobotPathPoint& from = path.points.at(i);
+                const DebugRobotPath::DebugRobotPathPoint& to = path.points.at(i + 1);
 
-                rj_geometry::Point avgVel = (rj_geometry::Point(path.points(i).vel()) +
-                                            rj_geometry::Point(path.points(i + 1).vel())) /
-                                           2;
+                rj_geometry::Point avgVel = (rj_geometry::Point(path.points.at(i).vel) +
+                                             rj_geometry::Point(path.points.at(i + 1).vel)) /
+                                            2;
                 auto pcntMaxSpd =
                     static_cast<float>(avgVel.mag() / planning::MotionConstraints{}.max_speed);
                 QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
@@ -321,38 +282,38 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pen.setWidthF(0.03);
                 p.setPen(pen);
 
-                const rj_geometry::Point fromPos = rj_geometry::Point(from.pos());
-                const rj_geometry::Point toPos = rj_geometry::Point(to.pos());
+                const rj_geometry::Point fromPos = rj_geometry::Point(from.pos);
+                const rj_geometry::Point toPos = rj_geometry::Point(to.pos);
                 p.drawLine(fromPos.to_q_point_f(), toPos.to_q_point_f());
             }
         }
     }
 
     // Debug circles
-    for (const DebugCircle& c : frame->debug_circles()) {
-        if (c.layer() < 0 || layerVisible(c.layer())) {
-            QColor fill_color(c.color());
+    for (const DebugCircle& c : frame->debug_draw_frame.circles) {
+        if (c.layer < 0 || layerVisible(c.layer)) {
+            QColor fill_color(c.color);
             fill_color.setAlpha(0);
             p.setBrush(fill_color);
 
-            QColor color(c.color());
+            QColor color(c.color);
             color.setAlpha(255);
             tempPen.setColor(color);
             p.setPen(tempPen);
-            p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
+            p.drawEllipse(qpointf(c.center), c.radius, c.radius);
         }
     }
 
     // Debug arcs
-    for (const DebugArc& a : frame->debug_arcs()) {
-        if (a.layer() < 0 || layerVisible(a.layer())) {
-            tempPen.setColor(a.color());
+    for (const DebugArc& a : frame->debug_draw_frame.arcs) {
+        if (a.layer < 0 || layerVisible(a.layer)) {
+            tempPen.setColor(a.color);
             p.setPen(tempPen);
 
-            const auto& c = a.center();
-            auto t1 = a.start();
-            auto t2 = a.end();
-            auto R = a.radius();
+            const auto& c = a.center;
+            auto t1 = a.start;
+            auto t2 = a.end;
+            auto R = a.radius;
 
             QRectF rect;
             rect.setX(-R + c.x());
@@ -369,14 +330,14 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Debug polygons
     p.setPen(Qt::NoPen);
-    for (const DebugPath& polygon : frame->debug_polygons()) {
-        if (polygon.layer() < 0 || layerVisible(polygon.layer())) {
-            if (polygon.points_size() < 3) {
-                fprintf(stderr, "Ignoring DebugPolygon with %d points\n", polygon.points_size());
+    for (const DebugPath& polygon : frame->debug_draw_frame.polygons) {
+        if (polygon.layer < 0 || layerVisible(polygon.layer)) {
+            if (polygon.points.size() < 3) {
+                fprintf(stderr, "Ignoring DebugPolygon with %zu points\n", polygon.points.size());
                 continue;
             }
 
-            QColor color = qcolor(polygon.color());
+            QColor color = qcolor(polygon.color);
             p.setBrush(color);
 
             color.setAlpha(255);
@@ -384,8 +345,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
             p.setPen(tempPen);
 
             std::vector<QPointF> pts;
-            for (int i = 0; i < polygon.points_size(); ++i) {
-                pts.push_back(qpointf(polygon.points(i)));
+            for (int i = 0; i < polygon.points.size(); ++i) {
+                pts.push_back(qpointf(polygon.points.at(i)));
             }
             p.drawConvexPolygon(pts.data(), pts.size());
         }
@@ -393,11 +354,11 @@ void FieldView::drawTeamSpace(QPainter& p) {
     p.setBrush(Qt::NoBrush);
 
     // Debug text
-    for (const DebugText& text : frame->debug_texts()) {
-        if (text.layer() < 0 || layerVisible(text.layer())) {
-            tempPen.setColor(text.color());
+    for (const DebugText& text : frame->debug_draw_frame.texts) {
+        if (text.layer < 0 || layerVisible(text.layer)) {
+            tempPen.setColor(text.color);
             p.setPen(tempPen);
-            drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
+            drawText(p, qpointf(text.pos), QString::fromStdString(text.text), text.center);
         }
     }
 
@@ -409,14 +370,14 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     /// populate @cometTrails with the past locations of each robot
     int pastLocationCount = 40;  // number of past locations to show
-    int start = std::max(0, static_cast<int>(_history->size()) - pastLocationCount);
-    for (size_t i = start; i < _history->size(); i++) {
-        const LogFrame* oldFrame = _history->at(i).get();
+    int start = std::max(0, static_cast<int>(_history.size()) - pastLocationCount);
+    for (size_t i = start; i < _history.size(); i++) {
+        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
         if (oldFrame != nullptr) {
-            for (const LogFrame::Robot& r : oldFrame->self()) {
-                pair<int, int> key(1, r.shell());
+            for (const rj_common::UIRobot& r : oldFrame->self) {
+                pair<int, int> key(1, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
-                    QPointF pt = qpointf(r.pos());
+                    QPointF pt = qpointf(r.position);
                     if (i == start) {
                         cometTrails[key].moveTo(pt);
                     } else {
@@ -425,10 +386,10 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const LogFrame::Robot& r : oldFrame->opp()) {
-                pair<int, int> key(2, r.shell());
+            for (const rj_common::UIRobot& r : oldFrame->opp) {
+                pair<int, int> key(2, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
-                    QPointF pt = qpointf(r.pos());
+                    QPointF pt = qpointf(r.position);
                     if (i == start) {
                         cometTrails[key].moveTo(pt);
                     } else {
@@ -444,7 +405,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     for (auto& kv : cometTrails) {
         // note: kv.first.first is 1 for our team and 2 for their team
         bool ourTeam = kv.first.first == 1;
-        bool blue = frame->blue_team();
+        bool blue = frame->blue;
         const QColor color = (ourTeam ^ blue) != 0 ? Qt::yellow : Qt::blue;
         QPen pen(color, cometTrailPenSize);
         pen.setCapStyle(Qt::RoundCap);
@@ -457,38 +418,30 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
-    for (const LogFrame::Robot& r : frame->opp()) {
-        drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(),
-                  r.ball_sense_status() == HasBall);
+    for (const rj_common::UIRobot& r : frame->opp) {
+        drawRobot(p, !frame->blue, r.shell_id, qpointf(r.position), r.heading, r.has_ball);
     }
 
     // Our robots
-    int manualID = frame->manual_id();
-    for (const LogFrame::Robot& r : frame->self()) {
-        QPointF center = qpointf(r.pos());
+    int manualID = frame->manual_id;
+    for (const rj_common::UIRobot& r : frame->self) {
+        QPointF center = qpointf(r.position);
 
         bool faulty = false;
-        if (r.has_ball_sense_status() &&
-            (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed)) {
-            faulty = true;
-        }
-        if (r.has_kicker_works() && !r.kicker_works()) {
-            // 			faulty = true;
-        }
-        for (int i = 0; i < r.motor_status().size(); ++i) {
-            if (r.motor_status(i) != Good) {
+
+        for (int i = 0; i < r.motors.size(); ++i) {
+            if (r.motors.at(i) != rj_common::kGood) {
                 faulty = true;
             }
         }
-        if (r.has_battery_voltage() && r.battery_voltage() <= 14.3f) {
+        if (r.battery <= 14.3f) {
             faulty = true;
         }
 
-        drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(),
-                  r.ball_sense_status() == HasBall, faulty);
+        drawRobot(p, frame->blue, r.shell_id, center, r.heading, r.has_ball, faulty);
 
         // Highlight the manually controlled robot
-        if (manualID == r.shell()) {
+        if (manualID == r.shell_id) {
             p.setPen(greenPen);
             const float r = kRobotRadius + .05;
             p.drawEllipse(center, r, r);
@@ -496,20 +449,20 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
         // Robot text
         QPointF textPos = center - rtX * 0.2 - rtY * (kRobotRadius + 0.1);
-        for (const DebugText& text : r.text()) {
-            if (text.layer() < 0 || layerVisible(text.layer())) {
-                tempPen.setColor(text.color());
+        for (const DebugText& text : r.texts) {
+            if (text.layer < 0 || layerVisible(text.layer)) {
+                tempPen.setColor(text.color);
                 p.setPen(tempPen);
-                drawText(p, textPos, QString::fromStdString(text.text()), false);
+                drawText(p, textPos, QString::fromStdString(text.text), false);
                 textPos -= rtY * 0.1;
             }
         }
     }
 
     // Current ball position and velocity
-    if (frame->has_ball()) {
-        QPointF pos = qpointf(frame->ball().pos());
-        QPointF vel = qpointf(frame->ball().vel());
+    if (frame->ball_state.has_value()) {
+        QPointF pos = qpointf(frame->ball_state->position);
+        QPointF vel = qpointf(frame->ball_state->velocity);
 
         p.setPen(ballPen);
         p.setBrush(ballColor);
@@ -555,7 +508,7 @@ void FieldView::drawCoords(QPainter& p) {
     drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const LogFrame* frame) {
+void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame) {
     p.save();
 
     // reset to center
@@ -621,7 +574,7 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     float y[2] = {FieldDimensions::current_dimensions.goal_width() / 2.0f,
                   -FieldDimensions::current_dimensions.goal_width() / 2.0f};
 
-    bool flip = frame->blue_team() ^ frame->defend_plus_x();
+    bool flip = frame->blue ^ frame->defend_plus_x;
 
     QColor goalColor = flip ? Qt::yellow : Qt::blue;
     p.setPen(QPen(goalColor,

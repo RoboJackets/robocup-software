@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <set>
 
 #include <rj_protos/referee.pb.h>
@@ -14,52 +15,8 @@
 #include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"
 #include "rj_common/team_info.hpp"
+#include "rj_common/ui_frame.hpp"
 #include "rj_common/world_state.hpp"
-
-// Keep the past thirty minutes of logs by default.
-constexpr size_t kMaxLogFrames = 60 * 60 * 30;
-
-struct Logs {
-    /**
-     * \brief A list of all log frames. This will contain at most
-     * `kMaxLogFrames` frames.
-     *
-     * This should not be accessed from the Processor thread, other
-     * than to add frames. The container may be accessed by the MainWindow
-     * thread while the Context mutex is locked, and frames may be retained
-     * and used even while the mutex is not locked (provided a shared_ptr
-     * is kept).
-     */
-    std::deque<std::shared_ptr<Packet::LogFrame>> frames;
-
-    enum class State { kNoFile, kWriting, kReading };
-
-    /**
-     * \brief The name of the log file, if it exists.
-     */
-    std::optional<std::string> filename;
-
-    /**
-     * \brief Whether we are recording (or viewing) logs.
-     */
-    State state = State::kNoFile;
-
-    /**
-     * \brief The start time of the entire system.
-     */
-    RJ::Time start_time;
-
-    /**
-     * \brief The log file size in bytes.
-     */
-    size_t size_bytes = 0;
-
-    /**
-     * The count of frames that existed before the given history
-     * but were dropped.
-     */
-    size_t dropped_frames = 0;
-};
 
 struct Context {
     Context() : debug_drawer(this) {}
@@ -98,7 +55,6 @@ struct Context {
     DebugDrawer debug_drawer;
 
     std::vector<Referee> referee_packets;
-    std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
 
@@ -106,6 +62,81 @@ struct Context {
 
     GameSettings game_settings;
 
-    Logs logs;
     std::string behavior_tree;
+
+    std::vector<std::shared_ptr<rj_common::UIFrame>> frames;
+
+    RJ::Time start_time;
 };
+
+inline rj_common::UIRobot create_ui_robot(int shell_id, const RobotState& state,
+                                          const std::optional<RobotStatus>& status) {
+    rj_common::UIRobot out;
+    out.shell_id = shell_id;
+
+    out.position = state.pose.position();
+    out.heading = state.pose.heading();
+
+    if (status != std::nullopt) {
+        out.has_ball = status->has_ball;
+        out.motors.resize(5);
+        for (int i = 0; i < 5; i++) {
+            out.motors.at(i) = (status->motors_healthy[i] ? rj_common::MotorStatus::kGood
+                                                          : rj_common::MotorStatus::kFault);
+        }
+        out.kicker_ok = status->kicker != RobotStatus::KickerState::kFailed;
+        out.battery = static_cast<float>(status->battery_voltage);
+    }
+    return out;
+}
+
+inline std::shared_ptr<rj_common::UIFrame> create_ui_frame(const Context& context) {
+    auto frame = std::make_shared<rj_common::UIFrame>();
+
+    frame->debug_draw_frame = context.debug_drawer.published_frame();
+
+    frame->blue = context.blue_team;
+
+    for (size_t shell = 0; shell < kNumShells; shell++) {
+        const auto& state = context.world_state.our_robots.at(shell);
+        const auto& status = context.robot_status.at(shell);
+
+        if (RJ::now() - status.timestamp < RJ::Seconds(0.5)) {
+            frame->radio_rx.push_back(status);
+        }
+
+        if (!state.visible) {
+            continue;
+        }
+
+        frame->self.push_back(create_ui_robot(shell, state, status));
+    }
+
+    for (size_t shell = 0; shell < kNumShells; shell++) {
+        const auto& state = context.world_state.their_robots.at(shell);
+        if (!state.visible) {
+            continue;
+        }
+
+        frame->opp.push_back(create_ui_robot(shell, state, std::nullopt));
+    }
+
+    if (context.world_state.ball.visible) {
+        frame->ball_state = {context.world_state.ball.position, context.world_state.ball.velocity};
+    }
+
+    frame->manual_id = context.game_settings.joystick_config.manual_id;
+    frame->defend_plus_x = context.game_settings.defend_plus_x;
+    frame->use_our_half = context.game_settings.use_our_half;
+    frame->use_their_half = context.game_settings.use_their_half;
+
+    if (context.blue_team) {
+        frame->yellow_name = context.their_info.name;
+        frame->blue_name = context.our_info.name;
+    } else {
+        frame->yellow_name = context.our_info.name;
+        frame->blue_name = context.their_info.name;
+    }
+
+    return frame;
+}

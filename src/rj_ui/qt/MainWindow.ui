@@ -1815,7 +1815,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="ProtobufTree" name="logTree">
+            <widget class="QTreeWidget" name="logTree">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -3186,8 +3186,6 @@
     <addaction name="action180"/>
     <addaction name="action270"/>
     <addaction name="separator"/>
-    <addaction name="actionRawBalls"/>
-    <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
     <addaction name="actionTeam_Names"/>
@@ -3286,22 +3284,6 @@
    </property>
    <property name="text">
     <string>270 degrees</string>
-   </property>
-  </action>
-  <action name="actionRawBalls">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Balls</string>
-   </property>
-  </action>
-  <action name="actionRawRobots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Raw &amp;Robots</string>
    </property>
   </action>
   <action name="actionDefendMinusX">
@@ -3612,11 +3594,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ProtobufTree</class>
-   <extends>QTreeWidget</extends>
-   <header>rj_ui/protobuf_tree.hpp</header>
-  </customwidget>
-  <customwidget>
    <class>SimFieldView</class>
    <extends>QWidget</extends>
    <header location="global">rj_ui/sim_field_view.hpp</header>
@@ -3625,7 +3602,6 @@
  </customwidgets>
  <resources>
   <include location="main_icons.qrc"/>
-  <include location="log_icons.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -39,7 +39,6 @@ set(RJ_COMMON_DEPS
 add_library(${PROJECT_NAME} SHARED
   src/debug_drawer.cpp
   src/field_dimensions.cpp
-  src/logger.cpp
   src/multicast.cpp
   src/qt_utils.cpp
   src/referee_enums.cpp
@@ -100,7 +99,6 @@ if(BUILD_TESTING)
   set(RJ_COMMON_TESTS
     ball_test
     game_state_test
-    logger_test
     rj_common_convert_test
     world_state_test 
   )
