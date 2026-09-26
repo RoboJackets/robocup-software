@@ -190,7 +190,7 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
-    void updateDebugLayers(const rj_common::LiveFrame& frame);
+    void updateDebugLayers(const rj_common::UIFrame& frame);
     static std::string formatLabelBold(Side side, const std::string& label);
 
     enum class StatusType { Status_OK, Status_Warning, Status_Fail };
@@ -248,9 +248,7 @@ private:
 
     std::mutex* context__mutex;
     Context* context_;
-
-    std::vector<std::shared_ptr<rj_common::LiveFrame>> _history{};
-
+    
     // ROS Compatibility stuff
     void send_quick_command(const PlayState& state);
 

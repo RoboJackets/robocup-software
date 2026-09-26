@@ -14,8 +14,8 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/debug_drawer.hpp>
-#include <rj_common/live_frame.hpp>
 #include <rj_common/node.hpp>
+#include <rj_common/ui_frame.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>

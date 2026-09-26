@@ -7,9 +7,9 @@
 #include <QtWidgets>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/live_frame.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/status.hpp>
+#include <rj_common/ui_frame.hpp>
 #include <rj_common/world_state.hpp>
 
 #include "rj_ui/battery_profile.hpp"
@@ -25,7 +25,7 @@ public:
     RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
 
     void load(const RobotStatus& status,
-              const std::optional<rj_common::LiveFrame::Robot>& maybe_robot, bool blueTeam);
+              const std::optional<rj_common::UIRobot>& maybe_robot, bool blueTeam);
 
     [[nodiscard]] int shellID() const;
     void setShellID(int shellID);

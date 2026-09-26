@@ -86,7 +86,7 @@ public:
         published_ = std::move(current_);
         current_.clear();
         for (const QString& string : debug_layers_) {
-            current_.debug_layers_.push_back(string.toStdString());
+            current_.debug_layers.push_back(string.toStdString());
         }
     }
 

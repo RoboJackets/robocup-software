@@ -38,11 +38,11 @@ void DebugDrawInterface::run() {
         }
         for (const auto& path : debug_draw->paths) {
             DebugRobotPath& debug_path = context_->debug_drawer.add_debug_path();
-            debug_path.set_layer(
-                context_->debug_drawer.find_debug_layer(QString::fromStdString(layer)));
+            debug_path.layer =
+                context_->debug_drawer.find_debug_layer(QString::fromStdString(layer));
             for (const auto& point : path.points) {
-                DebugRobotPath::DebugRobotPathPoint& new_point = debug_path.add_points();
-                new_point.mutable_pos() = rj_geometry::Point(point.x, point.y);
+                DebugRobotPath::DebugRobotPathPoint& new_point = debug_path.points.emplace_back();
+                new_point.pos = rj_geometry::Point(point.x, point.y);
             }
         }
         for (const auto& text : debug_draw->debug_text) {

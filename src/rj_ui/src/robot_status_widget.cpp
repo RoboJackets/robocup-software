@@ -104,7 +104,7 @@ void RobotStatusWidget::setShowstopper(bool showstopper) {
 }
 
 void RobotStatusWidget::load(const RobotStatus& status,
-                             const std::optional<rj_common::LiveFrame::Robot>& maybe_robot,
+                             const std::optional<rj_common::UIRobot>& maybe_robot,
                              bool blueTeam) {
     setShellID(status.shell_id);
     setBlueTeam(blueTeam);

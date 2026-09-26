@@ -74,7 +74,6 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
-    _ui.fieldView->history(&_history);
 
     _ui.logTree->setVisible(false);
     _ui.logHistoryLocation->setVisible(false);
@@ -319,9 +318,10 @@ void MainWindow::updateViews() {
 
     auto value = _ui.logHistoryLocation->value();
 
-    std::shared_ptr<rj_common::LiveFrame> live_frame;
+    std::shared_ptr<rj_common::UIFrame> ui_frame;
 
     // Grab frames
+    std::vector<std::shared_ptr<rj_common::UIFrame>> history;
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
         if (context_->frames.empty()) {
@@ -329,13 +329,13 @@ void MainWindow::updateViews() {
             return;
         }
 
-        live_frame = context_->frames.back();
+        ui_frame = context_->frames.back();
+        // Set the history vector by taking the last kHistorySize elements of the
+        // full context history, or fewer if context is shorter.
+        history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()),
+                        context_->frames.end());
     }
-
-    // // Set the history vector by taking the last kHistorySize elements of the
-    // // "long" history, or fewer if _longHistory is shorter.
-    _history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()),
-                    context_->frames.end());
+    _ui.fieldView->setHistory(std::move(history));
 
     // Update field view
     _ui.fieldView->update();
@@ -345,8 +345,8 @@ void MainWindow::updateViews() {
 
     // Check if any debug layers have been added
     // (layers should never be removed)
-    if (live_frame) {
-        updateDebugLayers(*live_frame);
+    if (ui_frame) {
+        updateDebugLayers(*ui_frame);
     }
 
     /**************************************************************************/
@@ -391,12 +391,12 @@ void MainWindow::updateViews() {
     /**************************************************************************/
     /********************** Update robot status list **************************/
     /**************************************************************************/
-    if (live_frame != nullptr) {
+    if (ui_frame != nullptr) {
         // update robot status list
         for (size_t shell = 0; shell < kNumShells; shell++) {
             // Search for the corresponding references.
             auto maybe_rx = [&]() -> std::optional<std::reference_wrapper<const RobotStatus>> {
-                for (auto& i : live_frame->radio_rx_) {
+                for (auto& i : ui_frame->radio_rx) {
                     if (i.shell_id == shell) {
                         return i;
                     }
@@ -404,10 +404,10 @@ void MainWindow::updateViews() {
                 return std::nullopt;
             }();
             auto maybe_robot =
-                [&]() -> std::optional<std::reference_wrapper<const rj_common::LiveFrame::Robot>> {
-                for (int i = 0; i < live_frame->self_size(); i++) {
-                    if (live_frame->self(i).shell() == shell) {
-                        return live_frame->self(i);
+                [&]() -> std::optional<std::reference_wrapper<const rj_common::UIRobot>> {
+                for (int i = 0; i < ui_frame->self.size(); i++) {
+                    if (ui_frame->self.at(i).shell_id == shell) {
+                        return ui_frame->self.at(i);
                     }
                 }
                 return std::nullopt;
@@ -461,7 +461,7 @@ void MainWindow::updateViews() {
             }
 
             if (statusWidget != nullptr) {
-                statusWidget->load(rx, maybe_robot, live_frame->blue_team());
+                statusWidget->load(rx, maybe_robot, ui_frame->blue);
             }
         }
     }
@@ -894,10 +894,10 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
     _ui.fieldView->update();
 }
 
-void MainWindow::updateDebugLayers(const rj_common::LiveFrame& frame) {
-    if (frame.debug_layers_size() > _ui.debugLayers->count()) {
-        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size(); ++i) {
-            const QString name = QString::fromStdString(frame.debug_layers(i));
+void MainWindow::updateDebugLayers(const rj_common::UIFrame& frame) {
+    if (frame.debug_draw_frame.debug_layers.size() > _ui.debugLayers->count()) {
+        for (int i = _ui.debugLayers->count(); i < frame.debug_draw_frame.debug_layers.size(); ++i) {
+            const QString name = QString::fromStdString(frame.debug_draw_frame.debug_layers.at(i));
             bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
                                         [&](const QString& string) { return string == name; });
             addLayer(i, name, enabled);

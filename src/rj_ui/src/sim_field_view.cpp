@@ -44,20 +44,20 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
     rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
-    std::shared_ptr<rj_common::LiveFrame> frame = currentFrame();
+    std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
     if (me->button() == Qt::LeftButton && frame) {
         drag_robot_ = -1;
-        for (const rj_common::LiveFrame::Robot& r : frame->self()) {
-            if (pos.near_point(r.pos(), kRobotRadius)) {
-                drag_robot_ = r.shell();
-                drag_robot_blue_ = frame->blue_team();
+        for (const rj_common::UIRobot& r : frame->self) {
+            if (pos.near_point(r.position, kRobotRadius)) {
+                drag_robot_ = r.shell_id;
+                drag_robot_blue_ = frame->blue;
                 break;
             }
         }
-        for (const rj_common::LiveFrame::Robot& r : frame->opp()) {
-            if (pos.near_point(r.pos(), kRobotRadius)) {
-                drag_robot_ = r.shell();
-                drag_robot_blue_ = !frame->blue_team();
+        for (const rj_common::UIRobot& r : frame->opp) {
+            if (pos.near_point(r.position, kRobotRadius)) {
+                drag_robot_ = r.shell_id;
+                drag_robot_blue_ = !frame->blue;
                 break;
             }
         }
@@ -68,21 +68,21 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
         drag_mode_ = DRAG_PLACE;
     } else if (me->button() == Qt::RightButton && frame) {
-        if (frame->has_ball() && pos.near_point(frame->ball().pos(), 10 * kBallRadius)) {
+        if (frame->ball_state.has_value() && pos.near_point(frame->ball_state->position, 10 * kBallRadius)) {
             // Drag to shoot the ball
             drag_mode_ = DRAG_SHOOT;
             drag_point_ = pos;
         } else {
             // Look for a robot selection
             int new_id = -1;
-            for (int i = 0; i < frame->self_size(); ++i) {
-                if (pos.dist_to(frame->self(i).pos()) < kRobotRadius) {
-                    new_id = frame->self(i).shell();
+            for (int i = 0; i < frame->self.size(); ++i) {
+                if (pos.dist_to(frame->self.at(i).position) < kRobotRadius) {
+                    new_id = frame->self.at(i).shell_id;
                     break;
                 }
             }
 
-            if (new_id != frame->manual_id()) {
+            if (new_id != frame->manual_id) {
                 robotSelected(new_id);
             }
         }
@@ -154,10 +154,10 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     FieldView::drawTeamSpace(p);
 
     // Simulator drag-to-shoot
-    std::shared_ptr<rj_common::LiveFrame> frame = currentFrame();
-    if (drag_mode_ == DRAG_SHOOT && frame) {
+    std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
+    if (drag_mode_ == DRAG_SHOOT && frame && frame->ball_state.has_value()) {
         p.setPen(QPen(Qt::white, 0.025f));
-        rj_geometry::Point ball = frame->ball().pos();
+        rj_geometry::Point ball = frame->ball_state->position;
         p.drawLine(ball.to_q_point_f(), drag_point_.to_q_point_f());
 
         if (ball != drag_point_) {

@@ -185,12 +185,12 @@ void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<rj_geometry::Point> alt_text_position) const {
     if (instants_.size() > 1) {
         DebugRobotPath& dbg_path = drawer->add_debug_path();
-        dbg_path.set_layer(drawer->find_debug_layer("Motion"));
+        dbg_path.layer = drawer->find_debug_layer("Motion");
 
         for (const RobotInstant& instant : instants_) {
-            DebugRobotPath::DebugRobotPathPoint& pt = dbg_path.add_points();
-            pt.mutable_pos() = instant.pose.position();
-            pt.mutable_vel() = instant.velocity.linear();
+            DebugRobotPath::DebugRobotPathPoint& pt = dbg_path.points.emplace_back();
+            pt.pos = instant.pose.position();
+            pt.vel = instant.velocity.linear();
         }
     }
 
