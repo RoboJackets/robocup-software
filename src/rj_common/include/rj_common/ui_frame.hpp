@@ -15,16 +15,8 @@
 
 namespace rj_common {
 
-enum BallSenseStatus { 
-    kNoBall = 0,
-    kHasBall,
-    kDazzled,
-    kFailed
-};
-enum MotorStatus { 
-    kGood = 0,
-    kFault
-};
+enum BallSenseStatus { kNoBall = 0, kHasBall, kDazzled, kFailed };
+enum MotorStatus { kGood = 0, kFault };
 
 struct UIRobot {
     int shell_id = -1;

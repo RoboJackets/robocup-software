@@ -70,7 +70,7 @@ struct Context {
 };
 
 inline rj_common::UIRobot create_ui_robot(int shell_id, const RobotState& state,
-                    const std::optional<RobotStatus>& status) {
+                                          const std::optional<RobotStatus>& status) {
     rj_common::UIRobot out;
     out.shell_id = shell_id;
 
@@ -81,9 +81,8 @@ inline rj_common::UIRobot create_ui_robot(int shell_id, const RobotState& state,
         out.has_ball = status->has_ball;
         out.motors.resize(5);
         for (int i = 0; i < 5; i++) {
-            out.motors.at(i) =
-                (status->motors_healthy[i] ?
-                    rj_common::MotorStatus::kGood : rj_common::MotorStatus::kFault);
+            out.motors.at(i) = (status->motors_healthy[i] ? rj_common::MotorStatus::kGood
+                                                          : rj_common::MotorStatus::kFault);
         }
         out.kicker_ok = status->kicker != RobotStatus::KickerState::kFailed;
         out.battery = static_cast<float>(status->battery_voltage);
@@ -93,7 +92,7 @@ inline rj_common::UIRobot create_ui_robot(int shell_id, const RobotState& state,
 
 inline std::shared_ptr<rj_common::UIFrame> create_ui_frame(const Context& context) {
     auto frame = std::make_shared<rj_common::UIFrame>();
-    
+
     frame->debug_draw_frame = context.debug_drawer.published_frame();
 
     frame->blue = context.blue_team;

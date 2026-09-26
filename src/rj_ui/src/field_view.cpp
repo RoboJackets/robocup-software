@@ -271,8 +271,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 const DebugRobotPath::DebugRobotPathPoint& to = path.points.at(i + 1);
 
                 rj_geometry::Point avgVel = (rj_geometry::Point(path.points.at(i).vel) +
-                                            rj_geometry::Point(path.points.at(i + 1).vel)) /
-                                           2;
+                                             rj_geometry::Point(path.points.at(i + 1).vel)) /
+                                            2;
                 auto pcntMaxSpd =
                     static_cast<float>(avgVel.mag() / planning::MotionConstraints{}.max_speed);
                 QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
@@ -419,8 +419,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Opponent robots
     for (const rj_common::UIRobot& r : frame->opp) {
-        drawRobot(p, !frame->blue, r.shell_id, qpointf(r.position), r.heading,
-                  r.has_ball);
+        drawRobot(p, !frame->blue, r.shell_id, qpointf(r.position), r.heading, r.has_ball);
     }
 
     // Our robots
@@ -439,8 +438,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
             faulty = true;
         }
 
-        drawRobot(p, frame->blue, r.shell_id, center, r.heading,
-                  r.has_ball, faulty);
+        drawRobot(p, frame->blue, r.shell_id, center, r.heading, r.has_ball, faulty);
 
         // Highlight the manually controlled robot
         if (manualID == r.shell_id) {
