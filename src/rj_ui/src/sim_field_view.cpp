@@ -67,7 +67,8 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
         drag_mode_ = DRAG_PLACE;
     } else if (me->button() == Qt::RightButton && frame) {
-        if (frame->ball_state.has_value() && pos.near_point(frame->ball_state->position, 10 * kBallRadius)) {
+        if (frame->ball_state.has_value() &&
+            pos.near_point(frame->ball_state->position, 10 * kBallRadius)) {
             // Drag to shoot the ball
             drag_mode_ = DRAG_SHOOT;
             drag_point_ = pos;

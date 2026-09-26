@@ -24,8 +24,8 @@ class RobotStatusWidget : public QWidget {
 public:
     RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
 
-    void load(const RobotStatus& status,
-              const std::optional<rj_common::UIRobot>& maybe_robot, bool blueTeam);
+    void load(const RobotStatus& status, const std::optional<rj_common::UIRobot>& maybe_robot,
+              bool blueTeam);
 
     [[nodiscard]] int shellID() const;
     void setShellID(int shellID);

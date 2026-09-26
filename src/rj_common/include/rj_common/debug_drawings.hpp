@@ -16,7 +16,7 @@ struct DebugRobotPath {
         rj_geometry::Point pos;
         rj_geometry::Point vel;
     };
-    
+
     int layer = -1;
     std::vector<DebugRobotPathPoint> points;
 };

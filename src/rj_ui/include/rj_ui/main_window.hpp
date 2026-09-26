@@ -248,7 +248,7 @@ private:
 
     std::mutex* context__mutex;
     Context* context_;
-    
+
     // ROS Compatibility stuff
     void send_quick_command(const PlayState& state);
 

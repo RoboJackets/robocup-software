@@ -333,7 +333,7 @@ void MainWindow::updateViews() {
         // Set the history vector by taking the last kHistorySize elements of the
         // full context history, or fewer if context is shorter.
         history.assign(context_->frames.end() - std::min(kHistorySize, context_->frames.size()),
-                        context_->frames.end());
+                       context_->frames.end());
     }
     _ui.fieldView->setHistory(std::move(history));
 
@@ -896,7 +896,8 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
 
 void MainWindow::updateDebugLayers(const rj_common::UIFrame& frame) {
     if (frame.debug_draw_frame.debug_layers.size() > _ui.debugLayers->count()) {
-        for (int i = _ui.debugLayers->count(); i < frame.debug_draw_frame.debug_layers.size(); ++i) {
+        for (int i = _ui.debugLayers->count(); i < frame.debug_draw_frame.debug_layers.size();
+             ++i) {
             const QString name = QString::fromStdString(frame.debug_draw_frame.debug_layers.at(i));
             bool enabled = !std::any_of(defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
                                         [&](const QString& string) { return string == name; });
