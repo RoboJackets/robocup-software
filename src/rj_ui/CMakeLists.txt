@@ -20,14 +20,12 @@ find_package(Boost REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(fmt REQUIRED)
-find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_strategy REQUIRED)
@@ -92,14 +90,12 @@ set(RJ_UI_DEPS
   spdlog
   std_msgs
   fmt
-  Flann
   rj_common
   rj_param_utils
   rj_protos
   rj_geometry
   rj_utils
   rj_planning
-  rj_constants
   rj_convert
   rj_msgs
   rj_strategy
@@ -148,7 +144,6 @@ target_link_libraries(${PROJECT_NAME}
   protobuf::libprotobuf
   spdlog
   fmt
-  ${FLANN_LIBRARIES}
 )
 
 ament_target_dependencies(${PROJECT_NAME}_node

@@ -29,18 +29,6 @@ DEFINE_NS_FLOAT64(
     "Position error threshold (m), a partial replan will be forced if we are not within this "
     "amount of the planned trajectory.");
 
-DEFINE_NS_BOOL(kPlanningParamModule, rrt, enable_debug_drawing, false,
-               "Whether to enable RRT debug drawing");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, step_size, 0.15, "Step size for RRT (m)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, goal_bias, 0.3,
-                  "Chance that the RRT will extend directly towards the goal (unitless)");
-DEFINE_NS_FLOAT64(kPlanningParamModule, rrt, waypoint_bias, 0.5,
-                  "Chance that the RRT will extend directly towards a waypoint (unitless)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, min_iterations, 50,
-                "Minimum number of RRT iterations to run (unused without RRT* enabled)");
-DEFINE_NS_INT64(kPlanningParamModule, rrt, max_iterations, 500,
-                "Maximum number of RRT iterations to run before giving up");
-
 DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, min_scale, 0.5,
                   "Minimum length for intermediate point (m)");
 DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, max_scale, 1.5,
@@ -54,9 +42,6 @@ DEFINE_NS_INT64(kPlanningParamModule, intermediate, num_intermediates, 5,
 DEFINE_NS_FLOAT64(kPlanningParamModule, intermediate, step_size, 0.1,
                   "Step size for testing intermediates (m)");
 
-DEFINE_NS_FLOAT64(
-    kPlanningParamModule, escape, step_size, 0.1,
-    "Step size for the RRT used to find an unblocked point in find_non_blocked_goal()");
 DEFINE_NS_FLOAT64(
     kPlanningParamModule, escape, goal_change_threshold, 0.9,
     "A newly-found unblocked goal must be this much closer to the start position than the "

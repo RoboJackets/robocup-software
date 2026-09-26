@@ -18,7 +18,6 @@
 #include <rj_common/planning/motion_constraints.hpp>
 #include <rj_common/ui_frame.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>

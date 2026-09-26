@@ -7,7 +7,7 @@
 #include <rj_common/node.hpp>
 #include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/robot_intent.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <std_msgs/msg/string.hpp>
 

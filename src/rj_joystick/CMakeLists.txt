@@ -16,7 +16,6 @@ find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
 
@@ -30,7 +29,6 @@ set(RJ_JOYSTICK_DEPS
   spdlog
   rj_utils
   rj_common
-  rj_constants
   rj_msgs
   rj_param_utils
   rclcpp_components

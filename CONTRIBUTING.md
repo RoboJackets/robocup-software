@@ -19,7 +19,6 @@ The first step to contributing is to find an issue. We reccoment searching our i
 - [RoboJackets/robocup-software](https://github.com/RoboJackets/robocup-software)
 - [RoboJackets/robocup-firmware](https://github.com/RoboJackets/robocup-firmware)
 - [RoboJackets/robocup-common](https://github.com/RoboJackets/robocup-common)
-- [RoboJackets/rrt](https://github.com/RoboJackets/rrt)
 - [RoboJackets/robocup-pcb](https://github.com/RoboJackets/robocup-pcb)
 - [RoboJackets/grSim](https://github.com/RoboJackets/grSim) (forked from [grSim](https://github.com/mani-monaj/grSim))
 
