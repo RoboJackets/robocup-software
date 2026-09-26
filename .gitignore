@@ -56,3 +56,7 @@ compile_commands.json
 build/
 install/
 log/
+
+#ssh
+key
+key.pub
