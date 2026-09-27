@@ -1,12 +1,15 @@
 #include "rj_strategy/agent/position/runner.hpp"
 
 namespace strategy {
-    Runner::Runner(int r_id) : Offense{r_id} {
-        position_name_ = "Runner";
+    Runner::Runner(int r_id) : Position{r_id,"Runner"} {
     }
-    Runner::Runner(const Position& other) : Offense{other}{
+    Runner::Runner(const Position& other) : Position{other}{
+                position_name_ = "Runner";
 
     }
+    std::string Runner::get_current_state(){
+                return "Runner" + state_to_name(current_state_);
+            }
     std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent){
         
         switch (current_state_){
@@ -82,29 +85,21 @@ namespace strategy {
                 return DRIVING_TO_TOP_LEFT;
                 else 
                 return CENTER;
-            case TOP_LEFT:
-                return DRIVING_TO_TOP_RIGHT;
-            case BOTTOM_LEFT:
-                return DRIVING_TO_TOP_LEFT;
-            case BOTTOM_RIGHT:
-                return DRIVING_TO_BOTTOM_LEFT;
-            case TOP_RIGHT:
-                return DRIVING_TO_BOTTOM_RIGHT;
             case DRIVING_TO_BOTTOM_LEFT:
                 if (check_is_done()){
-                    return BOTTOM_LEFT;
+                    return DRIVING_TO_TOP_LEFT;
                 }
             case DRIVING_TO_BOTTOM_RIGHT:
                 if (check_is_done()){
-                    return BOTTOM_RIGHT;
+                    return DRIVING_TO_BOTTOM_LEFT;
                 }
             case DRIVING_TO_TOP_LEFT:
                 if (check_is_done()){
-                    return TOP_LEFT;
+                    return DRIVING_TO_TOP_RIGHT;
                 }
             case DRIVING_TO_TOP_RIGHT:
                 if (check_is_done()){
-                    return TOP_RIGHT;
+                    return DRIVING_TO_BOTTOM_RIGHT;
                 }
                 return current_state_;             
         }
