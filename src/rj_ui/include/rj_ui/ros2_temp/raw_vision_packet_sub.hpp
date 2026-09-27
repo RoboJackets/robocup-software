@@ -4,10 +4,10 @@
 
 #include <rj_common/context.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_msgs/msg/detail/raw_protobuf__struct.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
-
-#include "rj_ui/ros2_temp/raw_vision_packet_sub.hpp"
+#include <rclcpp/executors/single_threaded_executor.hpp>
 
 namespace ros2_temp {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
@@ -30,6 +30,11 @@ public:
 
 private:
     Context* context_;
+
+    std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;
+    using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
+    rclcpp::Node::SharedPtr raw_protobuf_node_;
+    rclcpp::Subscription<rj_msgs::msg::RawProtobuf>::SharedPtr raw_protobuf_sub_;
 
     using RawProtobufMsgQueue = rj_topic_utils::AsyncMessageQueue<
         RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue>;

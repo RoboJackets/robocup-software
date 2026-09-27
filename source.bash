@@ -13,11 +13,3 @@ if [[ $SHELL == *"zsh"* ]]; then
         source install/setup.zsh
     fi
 fi
-
-if [[ $SHELL == *"fish"* ]]; then
-    echo "fish detected, sourcing fish"
-    source /opt/ros/humble/setup.fish
-    if [[ -f install/setup.fish ]]; then
-        source install/setup.fish
-    fi
-fi

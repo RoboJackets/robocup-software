@@ -27,7 +27,6 @@
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_referee/external_referee.hpp>
-#include <rj_topic_utils/async_message_queue.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_ui/ros2_temp/autonomy_interface.hpp"
