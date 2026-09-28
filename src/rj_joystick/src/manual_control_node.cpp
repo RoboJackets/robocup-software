@@ -1,12 +1,30 @@
 #include "rj_joystick/manual_control_node.hpp"
-#include <rcl_interfaces/msg/parameter_descriptor.hpp>
 
 namespace joystick {
 
 ManualControlNode::ManualControlNode()
-    : rclcpp::Node("manual_control") {
-    
-    declare_params();
+    : rclcpp::Node("manual_control", rclcpp::NodeOptions{}
+                                         .allow_undeclared_parameters(true)
+                                         .automatically_declare_parameters_from_overrides(true)) {
+    get_parameter_or("use_field_oriented_drive", params_.use_field_oriented_drive,
+                     params_.use_field_oriented_drive);
+    get_parameter_or("kick_on_break_beam", params_.kick_on_break_beam, params_.kick_on_break_beam);
+    get_parameter_or("damped_translation", params_.damped_translation, params_.damped_translation);
+    get_parameter_or("damped_rotation", params_.damped_rotation, params_.damped_rotation);
+    get_parameter_or("max_rotation_speed", params_.max_rotation_speed, params_.max_rotation_speed);
+    get_parameter_or("max_damped_rotation_speed", params_.max_damped_rotation_speed,
+                     params_.max_damped_rotation_speed);
+    get_parameter_or("max_translation_speed", params_.max_translation_speed,
+                     params_.max_translation_speed);
+    get_parameter_or("max_damped_translation_speed", params_.max_damped_translation_speed,
+                     params_.max_damped_translation_speed);
+    get_parameter_or("kick_power_increment", params_.kick_power_increment,
+                     params_.kick_power_increment);
+    get_parameter_or("dribble_power_increment", params_.dribble_power_increment,
+                     params_.dribble_power_increment);
+    get_parameter_or("min_kick_speed", params_.min_kick_speed, params_.min_kick_speed);
+    get_parameter_or("max_kick_speed", params_.max_kick_speed, params_.max_kick_speed);
+
     param_callback_handle_ = add_on_set_parameters_callback(
         [this](const auto& params) { return on_param_change(params); });
 
@@ -58,45 +76,32 @@ ManualControlNode::ManualControlNode()
     });
 }
 
-void ManualControlNode::declare_params() {
-    auto declare = [this](const std::string& name, auto default_value, const std::string& desc) {
-        rcl_interfaces::msg::ParameterDescriptor d;
-        d.description = desc;
-        declare_parameter(name, default_value, d);
-    };
-
-    declare("use_field_oriented_drive", params_.use_field_oriented_drive,
-            "Whether to use field oriented drive");
-    declare("kick_on_break_beam", false, "Wait for break beam when kick button is held");
-    declare("damped_translation", params_.damped_translation, "Move slowly");
-    declare("damped_rotation", params_.damped_rotation, "Turn slowly");
-    declare("max_rotation_speed", params_.max_rotation_speed, "Maximum rotation speed, rad/s");
-    declare("max_damped_rotation_speed", params_.max_damped_rotation_speed,
-            "Maximum damped rotation speed, rad/s");
-    declare("max_translation_speed", params_.max_translation_speed,
-            "Maximum translation speed, m/s");
-    declare("max_damped_translation_speed", params_.max_damped_translation_speed,
-            "Maximum damped translation speed, m/s");
-    declare("kick_power_increment", params_.kick_power_increment, "Kick power increment, 0-1");
-    declare("dribble_power_increment", params_.dribble_power_increment,
-            "Dribble power increment, 0-1");
-    declare("min_kick_speed", 0.0, "Minimum kick speed, m/s");
-    declare("max_kick_speed", 15.0, "Maximum kick speed, m/s");
-
-    get_parameter("use_field_oriented_drive", params_.use_field_oriented_drive);
-    get_parameter("damped_translation", params_.damped_translation);
-    get_parameter("damped_rotation", params_.damped_rotation);
-    get_parameter("max_rotation_speed", params_.max_rotation_speed);
-    get_parameter("max_damped_rotation_speed", params_.max_damped_rotation_speed);
-    get_parameter("max_translation_speed", params_.max_translation_speed);
-    get_parameter("max_damped_translation_speed", params_.max_damped_translation_speed);
-    get_parameter("kick_power_increment", params_.kick_power_increment);
-    get_parameter("dribble_power_increment", params_.dribble_power_increment);
-    
-}
-
 rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
     const std::vector<rclcpp::Parameter>& parameters) {
+    rcl_interfaces::msg::SetParametersResult result;
+    result.successful = true;
+
+    // Validate the whole batch before applying anything, so a rejected batch
+    // never partially updates params_.
+    for (const auto& p : parameters) {
+        const std::string& name = p.get_name();
+        if (name == "max_rotation_speed" || name == "max_damped_rotation_speed" ||
+            name == "max_translation_speed" || name == "max_damped_translation_speed" ||
+            name == "min_kick_speed" || name == "max_kick_speed") {
+            if (p.as_double() < 0.0) {
+                result.successful = false;
+                result.reason = name + " must not be negative";
+                return result;
+            }
+        } else if (name == "kick_power_increment" || name == "dribble_power_increment") {
+            if (p.as_double() < 0.0 || p.as_double() > 1.0) {
+                result.successful = false;
+                result.reason = name + " must be between 0 and 1";
+                return result;
+            }
+        }
+    }
+
     for (const auto& p : parameters) {
         if (p.get_name() == "use_field_oriented_drive") params_.use_field_oriented_drive = p.as_bool();
         else if (p.get_name() == "damped_translation") params_.damped_translation = p.as_bool();
@@ -107,10 +112,11 @@ rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
         else if (p.get_name() == "max_damped_translation_speed") params_.max_damped_translation_speed = p.as_double();
         else if (p.get_name() == "kick_power_increment") params_.kick_power_increment = p.as_double();
         else if (p.get_name() == "dribble_power_increment") params_.dribble_power_increment = p.as_double();
-        // kick_on_break_beam deliberately excluded — nothing caches it.
+        else if (p.get_name() == "kick_on_break_beam") params_.kick_on_break_beam = p.as_bool();
+        else if (p.get_name() == "min_kick_speed") params_.min_kick_speed = p.as_double();
+        else if (p.get_name() == "max_kick_speed") params_.max_kick_speed = p.as_double();
     }
-    rcl_interfaces::msg::SetParametersResult result;
-    result.successful = true;
+
     return result;
 }
 
@@ -153,9 +159,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
                                                     .velocity_x_mps(command.translation.x())
                                                     .velocity_y_mps(command.translation.y())
                                                     .velocity_z_radps(command.rotation));
-    bool kick_on_break_beam = false;
-    get_parameter("kick_on_break_beam", kick_on_break_beam);
-    uint8_t trigger_mode = kick_on_break_beam
+    uint8_t trigger_mode = params_.kick_on_break_beam
                                ? rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
                                : rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
     uint8_t shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
@@ -167,12 +171,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
         trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
     }
 
-    double min_kick_speed = 0.0;
-    double max_kick_speed = 15.0;
-    get_parameter("min_kick_speed", min_kick_speed);
-    get_parameter("max_kick_speed", max_kick_speed);
-
-    double kick_speed = lerp(min_kick_speed, max_kick_speed, command.kick_power);
+    double kick_speed = lerp(params_.min_kick_speed, params_.max_kick_speed, command.kick_power);
     manipulator_setpoint_pubs_.at(robot_id)->publish(
         rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
             .shoot_mode(shoot_mode)

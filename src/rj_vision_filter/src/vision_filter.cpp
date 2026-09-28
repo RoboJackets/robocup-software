@@ -1,6 +1,9 @@
 
 #include "rj_vision_filter/vision_filter.hpp"
 
+#include <optional>
+#include <unordered_set>
+
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_constants/constants.hpp>
@@ -219,6 +222,91 @@ std::unordered_map<std::string, ParamSetter> build_param_setters(VisionFilterPar
          [&params](const auto& p) { params.world_robot.robot_merger_power = p.as_double(); }},
     };
 }
+
+/**
+ * @brief Parameters that must never be negative (covariances, noise scales,
+ * timeouts, distances, counts, etc.) — everything except booleans and the
+ * [0, 1]-bounded bounce dampen coefficients.
+ */
+const std::unordered_set<std::string>& non_negative_params() {
+    static const std::unordered_set<std::string> names{
+        "vision_loop_dt",
+        "max_num_cameras",
+        // TODO: publish_hz is unused (dead since before the rj_param_utils removal). Safe to remove.
+        "publish_hz",
+        "ball.init_covariance",
+        "ball.process_noise",
+        "ball.observation_noise",
+        "robot.init_covariance",
+        "robot.process_noise",
+        "robot.observation_noise",
+        "robot.orientation_scale",
+        "camera.mhkf_radius_cutoff",
+        "camera.max_num_kalman_balls",
+        "camera.max_num_kalman_robots",
+        "kalman_ball.max_time_outside_vision",
+        "kalman_robot.max_time_outside_vision",
+        "filter.health.init",
+        "filter.health.inc",
+        "filter.health.dec",
+        "filter.health.max",
+        "filter.health.min",
+        "kick.detector.slow_kick_hist_length",
+        "kick.detector.fast_kick_hist_length",
+        "kick.detector.fast_kick_timeout",
+        "kick.detector.slow_kick_timeout",
+        "kick.detector.same_kick_timeout",
+        "kick.detector.fast_acceleration_trigger",
+        // TODO: slow_robot_dist_filter_cutoff is unused (dead since before the rj_param_utils
+        // removal). Safe to remove.
+        "kick.detector.slow_robot_dist_filter_cutoff",
+        "kick.detector.slow_one_robot_within_dist",
+        "kick.detector.slow_any_robot_past_dist",
+        "kick.detector.slow_min_ball_speed",
+        "kick.detector.slow_max_kick_angle",
+        "world_ball.ball_merger_power",
+        "world_robot.robot_merger_power",
+    };
+    return names;
+}
+
+/**
+ * @brief Dampen coefficients: "1 means 100% of the velocity/angle is kept
+ * after collision, 0 means 0%", so anything outside [0, 1] is meaningless.
+ */
+const std::unordered_set<std::string>& unit_range_params() {
+    static const std::unordered_set<std::string> names{
+        "vision_filter.bounce.robot_body_lin_dampen",
+        "vision_filter.bounce.robot_mouth_lin_dampen",
+        "vision_filter.bounce.robot_body_angle_dampen",
+        "vision_filter.bounce.robot_mouth_angle_dampen",
+    };
+    return names;
+}
+
+/**
+ * @brief Validates a single incoming parameter change against its known
+ * range, if any. Returns an error reason on failure, or an empty optional
+ * if the value is acceptable (or has no range to check, e.g. booleans).
+ */
+std::optional<std::string> validate_param(const rclcpp::Parameter& param) {
+    const std::string& name = param.get_name();
+
+    if (non_negative_params().count(name) != 0) {
+        const double value = param.get_type() == rclcpp::PARAMETER_INTEGER
+                                 ? static_cast<double>(param.as_int())
+                                 : param.as_double();
+        if (value < 0.0) {
+            return name + " must not be negative";
+        }
+    } else if (unit_range_params().count(name) != 0) {
+        if (param.as_double() < 0.0 || param.as_double() > 1.0) {
+            return name + " must be between 0 and 1";
+        }
+    }
+
+    return std::nullopt;
+}
 }  // namespace
 
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
@@ -232,6 +320,19 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     // `ros2 param set`).
     param_callback_handle_ = add_on_set_parameters_callback(
         [this](const std::vector<rclcpp::Parameter>& changed_params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            // Validate the whole batch before applying anything, so a
+            // rejected batch never partially updates params_.
+            for (const rclcpp::Parameter& param : changed_params) {
+                if (auto reason = validate_param(param)) {
+                    result.successful = false;
+                    result.reason = *reason;
+                    return result;
+                }
+            }
+
             for (const rclcpp::Parameter& param : changed_params) {
                 auto it = param_setters_.find(param.get_name());
                 if (it != param_setters_.end()) {
@@ -239,8 +340,6 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
                 }
             }
 
-            rcl_interfaces::msg::SetParametersResult result;
-            result.successful = true;
             return result;
         });
 

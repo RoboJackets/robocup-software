@@ -87,7 +87,7 @@ WorldRobot FastKickDetector::get_closest_robot() {
     // Assumes kick is in the center
     // Valid assumption as long as history length is small
 
-    int mid_idx = (int)floor(state_history_.size() / 2);
+    int mid_idx = static_cast<int>(floor(state_history_.size() / 2));
     rj_geometry::Point mid_ball_pos = state_history_.at(mid_idx).ball.get_pos();
 
     WorldRobot min_robot;

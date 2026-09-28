@@ -17,6 +17,9 @@ struct ManualControlParams {
     double max_damped_translation_speed = 0.5;
     double kick_power_increment = 0.1;
     double dribble_power_increment = 0.1;
+    bool kick_on_break_beam = false;
+    double min_kick_speed = 0.0;
+    double max_kick_speed = 15.0;
 };
 
 struct ControllerCommand {
