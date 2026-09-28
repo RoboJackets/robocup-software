@@ -1,3 +1,9 @@
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = https://github.com/robojackets/style-configs
+[submodule "src/rj_protos/protos/ssl-game-controller"]
+	path = src/rj_protos/protos/ssl-game-controller
+	url = https://github.com/RoboCup-SSL/ssl-game-controller.git
+[submodule "src/rj_protos/ssl-game-controller"]
+	path = src/rj_protos/ssl-game-controller
+	url = https://github.com/RoboCup-SSL/ssl-game-controller.git
