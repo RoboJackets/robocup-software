@@ -33,7 +33,8 @@ ManualControlNode::ManualControlNode()
     };
     auto on_disconnect = [this](ManualController* controller) { remove_controller(controller); };
 
-    providers_.push_back(std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
+    providers_.push_back(
+        std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
 
     using rj_msgs::srv::ListJoysticks;
     list_joysticks_ = create_service<ListJoysticks>(
@@ -103,18 +104,30 @@ rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
     }
 
     for (const auto& p : parameters) {
-        if (p.get_name() == "use_field_oriented_drive") params_.use_field_oriented_drive = p.as_bool();
-        else if (p.get_name() == "damped_translation") params_.damped_translation = p.as_bool();
-        else if (p.get_name() == "damped_rotation") params_.damped_rotation = p.as_bool();
-        else if (p.get_name() == "max_rotation_speed") params_.max_rotation_speed = p.as_double();
-        else if (p.get_name() == "max_damped_rotation_speed") params_.max_damped_rotation_speed = p.as_double();
-        else if (p.get_name() == "max_translation_speed") params_.max_translation_speed = p.as_double();
-        else if (p.get_name() == "max_damped_translation_speed") params_.max_damped_translation_speed = p.as_double();
-        else if (p.get_name() == "kick_power_increment") params_.kick_power_increment = p.as_double();
-        else if (p.get_name() == "dribble_power_increment") params_.dribble_power_increment = p.as_double();
-        else if (p.get_name() == "kick_on_break_beam") params_.kick_on_break_beam = p.as_bool();
-        else if (p.get_name() == "min_kick_speed") params_.min_kick_speed = p.as_double();
-        else if (p.get_name() == "max_kick_speed") params_.max_kick_speed = p.as_double();
+        if (p.get_name() == "use_field_oriented_drive")
+            params_.use_field_oriented_drive = p.as_bool();
+        else if (p.get_name() == "damped_translation")
+            params_.damped_translation = p.as_bool();
+        else if (p.get_name() == "damped_rotation")
+            params_.damped_rotation = p.as_bool();
+        else if (p.get_name() == "max_rotation_speed")
+            params_.max_rotation_speed = p.as_double();
+        else if (p.get_name() == "max_damped_rotation_speed")
+            params_.max_damped_rotation_speed = p.as_double();
+        else if (p.get_name() == "max_translation_speed")
+            params_.max_translation_speed = p.as_double();
+        else if (p.get_name() == "max_damped_translation_speed")
+            params_.max_damped_translation_speed = p.as_double();
+        else if (p.get_name() == "kick_power_increment")
+            params_.kick_power_increment = p.as_double();
+        else if (p.get_name() == "dribble_power_increment")
+            params_.dribble_power_increment = p.as_double();
+        else if (p.get_name() == "kick_on_break_beam")
+            params_.kick_on_break_beam = p.as_bool();
+        else if (p.get_name() == "min_kick_speed")
+            params_.min_kick_speed = p.as_double();
+        else if (p.get_name() == "max_kick_speed")
+            params_.max_kick_speed = p.as_double();
     }
 
     return result;

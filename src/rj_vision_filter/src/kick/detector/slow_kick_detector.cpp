@@ -8,8 +8,8 @@ namespace vision_filter {
 
 bool SlowKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
-                                  const std::vector<WorldRobot>& blue_robots,
-                                  KickEvent* kick_event, const VisionFilterParams& params_) {
+                                  const std::vector<WorldRobot>& blue_robots, KickEvent* kick_event,
+                                  const VisionFilterParams& params_) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
     if (state_history_.size() > static_cast<size_t>(params_.kick_detector.slow_kick_hist_length)) {
@@ -122,12 +122,12 @@ bool SlowKickDetector::distance_validator(const std::vector<WorldRobot>& robot,
         dist.at(i) = (robot.at(i).get_pos() - ball.at(i).get_pos()).mag();
     }
 
-    int num_close = std::count_if(
-        dist.begin(), dist.end(),
-        [&params_](double i) { return i < params_.kick_detector.slow_one_robot_within_dist; });
-    int num_far = std::count_if(
-        dist.begin(), dist.end(),
-        [&params_](double i) { return i > params_.kick_detector.slow_any_robot_past_dist; });
+    int num_close = std::count_if(dist.begin(), dist.end(), [&params_](double i) {
+        return i < params_.kick_detector.slow_one_robot_within_dist;
+    });
+    int num_far = std::count_if(dist.begin(), dist.end(), [&params_](double i) {
+        return i > params_.kick_detector.slow_any_robot_past_dist;
+    });
 
     return num_close == 1 && num_far > 0;
 }
@@ -140,7 +140,8 @@ bool SlowKickDetector::velocity_validator(const std::vector<WorldRobot>& /*robot
     std::vector<double> vel(ball.size() - 1, 0);
 
     for (size_t i = 0; i < ball.size() - 1; i++) {
-        vel.at(i) = (ball.at(i + 1).get_pos() - ball.at(i).get_pos()).mag() / params_.vision_loop_dt;
+        vel.at(i) =
+            (ball.at(i + 1).get_pos() - ball.at(i).get_pos()).mag() / params_.vision_loop_dt;
     }
 
     bool all_above = std::all_of(vel.begin(), vel.end(), [&params_](double i) {

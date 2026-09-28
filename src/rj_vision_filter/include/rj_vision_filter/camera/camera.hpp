@@ -1,6 +1,8 @@
 #pragma once
 
 #include <list>
+#include <vector>
+
 #include <rj_vision_filter/ball/ball_bounce.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
@@ -10,7 +12,6 @@
 #include <rj_vision_filter/robot/camera_robot.hpp>
 #include <rj_vision_filter/robot/kalman_robot.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
-#include <vector>
 
 namespace vision_filter {
 /**
@@ -43,8 +44,8 @@ public:
      * @param params_ Vision filter parameters
      */
     void process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
-                           const std::vector<WorldRobot>& blue_robots,
-                           const VisionFilterParams& params_);
+                             const std::vector<WorldRobot>& blue_robots,
+                             const VisionFilterParams& params_);
 
     /**
      * Updates all the filters with the latest camera frame data for this camera
@@ -63,14 +64,13 @@ public:
      *
      * Note: Call either this OR update_without_frame once an iteration
      */
-    void update_with_frame(
-        RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
-        const std::vector<std::list<CameraRobot>>& yellow_robot_list,
-        const std::vector<std::list<CameraRobot>>& blue_robot_list,
-        const WorldBall& previous_world_ball,
-        const std::vector<WorldRobot>& previous_yellow_world_robots,
-        const std::vector<WorldRobot>& previous_blue_world_robots,
-        const VisionFilterParams& params_);
+    void update_with_frame(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                           const std::vector<std::list<CameraRobot>>& yellow_robot_list,
+                           const std::vector<std::list<CameraRobot>>& blue_robot_list,
+                           const WorldBall& previous_world_ball,
+                           const std::vector<WorldRobot>& previous_yellow_world_robots,
+                           const std::vector<WorldRobot>& previous_blue_world_robots,
+                           const VisionFilterParams& params_);
 
     /**
      * Updates all the filters without any new data from this specific camera
@@ -119,7 +119,7 @@ private:
      * @param params_ Vision filter parameters
      */
     void update_balls(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
-                     const WorldBall& previous_world_ball, const VisionFilterParams& params_);
+                      const WorldBall& previous_world_ball, const VisionFilterParams& params_);
 
     /**
      * Updates ball filters using MHKF style updater
@@ -130,10 +130,8 @@ private:
      * velocity of new filters
      * @param params_ Vision filter parameters
      */
-    void update_balls_mhkf(RJ::Time calc_time,
-                         const std::vector<CameraBall>& ball_list,
-                         const WorldBall& previous_world_ball,
-                         const VisionFilterParams& params_);
+    void update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                           const WorldBall& previous_world_ball, const VisionFilterParams& params_);
 
     /**
      * Updates ball filters using AKF style updater
@@ -144,10 +142,8 @@ private:
      * velocity of new filters
      * @param params_ Vision filter parameters
      */
-    void update_balls_akf(RJ::Time calc_time,
-                        const std::vector<CameraBall>& ball_list,
-                        const WorldBall& previous_world_ball,
-                        const VisionFilterParams& params_);
+    void update_balls_akf(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                          const WorldBall& previous_world_ball, const VisionFilterParams& params_);
 
     /**
      * Figures out which update style to use and calls that
@@ -161,13 +157,12 @@ private:
      * init velocity of new filters
      * @param params_ Vision filter parameters
      */
-    void update_robots(
-        RJ::Time calc_time,
-        const std::vector<std::list<CameraRobot>>& yellow_robot_list,
-        const std::vector<std::list<CameraRobot>>& blue_robot_list,
-        const std::vector<WorldRobot>& previous_yellow_world_robots,
-        const std::vector<WorldRobot>& previous_blue_world_robots,
-        const VisionFilterParams& params_);
+    void update_robots(RJ::Time calc_time,
+                       const std::vector<std::list<CameraRobot>>& yellow_robot_list,
+                       const std::vector<std::list<CameraRobot>>& blue_robot_list,
+                       const std::vector<WorldRobot>& previous_yellow_world_robots,
+                       const std::vector<WorldRobot>& previous_blue_world_robots,
+                       const VisionFilterParams& params_);
 
     /**
      * Updates robot filters using MHKF style updater
@@ -179,11 +174,10 @@ private:
      * @param single_kalmanRobotList List of one robot ID's kalman filters
      * @param params_ Vision filter parameters
      */
-    void update_robots_mhkf(RJ::Time calc_time,
-                          const std::list<CameraRobot>& single_robot_list,
-                          const WorldRobot& previous_world_robot,
-                          std::list<KalmanRobot>& single_kalman_robot_list,
-                          const VisionFilterParams& params_);
+    void update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>& single_robot_list,
+                            const WorldRobot& previous_world_robot,
+                            std::list<KalmanRobot>& single_kalman_robot_list,
+                            const VisionFilterParams& params_);
 
     /**
      * Updates robot filters using AKF style updater
@@ -195,11 +189,10 @@ private:
      * @param single_kalmanRobotList List of one robot ID's kalman filters
      * @param params_ Vision filter parameters
      */
-    void update_robots_akf(RJ::Time calc_time,
-                         const std::list<CameraRobot>& single_robot_list,
-                         const WorldRobot& previous_world_robot,
-                         std::list<KalmanRobot>& single_kalman_robot_list,
-                         const VisionFilterParams& params_);
+    void update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>& single_robot_list,
+                           const WorldRobot& previous_world_robot,
+                           std::list<KalmanRobot>& single_kalman_robot_list,
+                           const VisionFilterParams& params_);
 
     /**
      * Removes any invalid kalman balls that may be too old etc
@@ -217,9 +210,9 @@ private:
      * @param robot_list_list Either kalmanRobotYellowList or kalmanRobotBlueList
      * @param params_ Vision filter parameters
      */
-    static void predict_all_robots(
-        RJ::Time calc_time, std::vector<std::list<KalmanRobot>>& robot_list_list,
-        const VisionFilterParams& params_);
+    static void predict_all_robots(RJ::Time calc_time,
+                                   std::vector<std::list<KalmanRobot>>& robot_list_list,
+                                   const VisionFilterParams& params_);
 
     bool is_valid_;
 

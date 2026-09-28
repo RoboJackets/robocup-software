@@ -10,8 +10,8 @@ namespace vision_filter {
 
 bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
-                                  const std::vector<WorldRobot>& blue_robots,
-                                  KickEvent& kick_event, const VisionFilterParams& params_) {
+                                  const std::vector<WorldRobot>& blue_robots, KickEvent& kick_event,
+                                  const VisionFilterParams& params_) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
     if (state_history_.size() > static_cast<size_t>(params_.kick_detector.fast_kick_hist_length)) {

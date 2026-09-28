@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>
+
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
@@ -36,9 +37,9 @@ public:
      * It is not touched otherwise
      */
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellow_robots,
-                   const std::vector<WorldRobot>& blue_robots,
-                   KickEvent& kick_event, const VisionFilterParams& params_);
+                    const std::vector<WorldRobot>& yellow_robots,
+                    const std::vector<WorldRobot>& blue_robots, KickEvent& kick_event,
+                    const VisionFilterParams& params_);
 
 private:
     /**

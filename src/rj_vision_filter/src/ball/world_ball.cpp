@@ -50,11 +50,11 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
         double vel_uncertantity = vel_std_dev.mag();
 
         // Weight better estimates higher
-        double filter_pos_weight = std::pow(pos_uncertantity * filter_uncertantity,
-                                            -params_.world_ball.ball_merger_power);
+        double filter_pos_weight =
+            std::pow(pos_uncertantity * filter_uncertantity, -params_.world_ball.ball_merger_power);
 
-        double filter_vel_weight = std::pow(vel_uncertantity * filter_uncertantity,
-                                            -params_.world_ball.ball_merger_power);
+        double filter_vel_weight =
+            std::pow(vel_uncertantity * filter_uncertantity, -params_.world_ball.ball_merger_power);
 
         pos_avg += filter_pos_weight * ball.get_pos();
         vel_avg += filter_vel_weight * ball.get_vel();

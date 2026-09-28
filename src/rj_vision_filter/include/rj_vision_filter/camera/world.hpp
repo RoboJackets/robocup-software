@@ -45,7 +45,7 @@ public:
      * @note Call this once per camera per iteration
      */
     void update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
-                             const VisionFilterParams& params_);
+                              const VisionFilterParams& params_);
 
     /**
      * Updates all the child cameras when there are no new camera frames

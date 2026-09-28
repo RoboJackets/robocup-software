@@ -151,8 +151,8 @@ void World::update_world_objects(RJ::Time calc_time, const VisionFilterParams& p
 
     for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
-            robots_blue_.at(i) = WorldRobot(calc_time, WorldRobot::Team::BLUE, i,
-                                            kalman_robots_blue.at(i), params_);
+            robots_blue_.at(i) =
+                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i), params_);
         }
     }
 }
