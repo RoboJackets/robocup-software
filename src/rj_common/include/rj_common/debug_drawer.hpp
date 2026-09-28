@@ -18,11 +18,9 @@
 
 #include "rj_common/debug_drawings.hpp"
 
-struct Context;
-
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : num_debug_layers_(0), context_(context) {}
+    DebugDrawer() : num_debug_layers_(0) {}
 
     const QStringList& debug_layers() const { return debug_layers_; }
 
@@ -101,8 +99,6 @@ private:
 
     /// Debug layers in order by ID
     QStringList debug_layers_;
-
-    Context* context_;
 
     DebugDrawFrame current_;
     DebugDrawFrame published_;

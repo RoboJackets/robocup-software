@@ -19,6 +19,25 @@ enum BallSenseStatus { kNoBall = 0, kHasBall, kDazzled, kFailed };
 enum MotorStatus { kGood = 0, kFault };
 
 struct UIRobot {
+    UIRobot(int shell_id, const RobotState& state,
+            const std::optional<RobotStatus>& status) {
+        this->shell_id = shell_id;
+
+        position = state.pose.position();
+        heading = state.pose.heading();
+
+        if (status != std::nullopt) {
+            has_ball = status->has_ball;
+            motors.resize(5);
+            for (int i = 0; i < 5; i++) {
+                motors.at(i) = (status->motors_healthy[i] ? rj_common::MotorStatus::kGood
+                                                        : rj_common::MotorStatus::kFault);
+            }
+            kicker_ok = status->kicker != RobotStatus::KickerState::kFailed;
+            battery = static_cast<float>(status->battery_voltage);
+        }
+    }
+
     int shell_id = -1;
     rj_geometry::Point position;
     double heading = 0;
