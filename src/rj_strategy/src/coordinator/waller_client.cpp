@@ -126,7 +126,7 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(
     float box_h{field_dimensions.penalty_short_dist()};
     float line_w{field_dimensions.line_width()};
 
-    waller_geometry.min_wall_radius = 
+    waller_geometry.min_wall_radius =
         (kRobotRadius * 4.0f) + line_w +
         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)));
 
