@@ -1,6 +1,5 @@
 #pragma once
 
-#include <rj_constants/constants.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>

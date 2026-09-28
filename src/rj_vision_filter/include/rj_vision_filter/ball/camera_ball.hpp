@@ -1,10 +1,13 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/transform_matrix.hpp>
-#include <rj_common/time.hpp>
-#include <rj_msgs/msg/detection_ball.hpp>
 #include <vector>
+
+#include <rj_common/time.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
+#include <rj_geometry/transform_matrix.hpp>
+#include <rj_msgs/msg/detection_ball.hpp>
 
 namespace vision_filter {
 using DetectionBallMsg = rj_msgs::msg::DetectionBall;

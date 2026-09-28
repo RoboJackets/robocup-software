@@ -14,9 +14,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(Flann REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_topic_utils REQUIRED)
@@ -27,9 +25,7 @@ find_package(rj_convert REQUIRED)
 
 set(RJ_CONTROL_DEPS
   std_msgs
-  Flann
   rj_utils
-  rj_constants
   rj_msgs
   rj_param_utils
   rj_topic_utils
@@ -67,7 +63,6 @@ target_link_libraries(motion_control_node
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-  ${FLANN_LIBRARIES}
 )
 
 ament_target_dependencies(motion_control_node

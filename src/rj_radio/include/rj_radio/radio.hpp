@@ -9,7 +9,7 @@
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/strategy/positions.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>

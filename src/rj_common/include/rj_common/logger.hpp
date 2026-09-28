@@ -14,6 +14,7 @@
 
 #include "rj_common/context.hpp"
 #include "rj_common/control/motion_setpoint.hpp"
+#include "rj_common/game_constants.hpp"
 #include "rj_common/node.hpp"
 #include "rj_common/radio/packet_convert.hpp"
 #include "rj_common/radio/robot_status.hpp"
