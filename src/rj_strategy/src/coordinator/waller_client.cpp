@@ -125,15 +125,15 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(
     float box_w{field_dimensions.penalty_long_dist()};
     float box_h{field_dimensions.penalty_short_dist()};
     float line_w{field_dimensions.line_width()};
-    //double minimum wall radius
-    waller_geometry.min_wall_radius = 2 *
+
+    waller_geometry.min_wall_radius = 
         (kRobotRadius * 4.0f) + line_w +
         hypot(static_cast<double>(box_w) / 2, static_cast<double>((box_h)));
 
     waller_geometry.robot_pos = world_state->get_robot(true, robot_id_).pose.position();
     waller_geometry.goal_pos = field_dimensions.our_goal_loc();
     waller_geometry.ball_pos = world_state->ball.position;
-    waller_geometry.wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
+    waller_geometry.wall_spacing = 2 * kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
 
     return waller_geometry;
 }
