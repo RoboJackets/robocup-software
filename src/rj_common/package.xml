@@ -14,7 +14,6 @@
   <depend>rj_msgs</depend>
   <depend>eigen3_cmake_module</depend>
   <depend>eigen</depend>
-  <depend>rj_constants</depend>
   <depend>rj_convert</depend>
   <depend>rj_protos</depend>
   <depend>rj_geometry</depend>

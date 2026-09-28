@@ -16,7 +16,6 @@ find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
-find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
@@ -25,14 +24,12 @@ find_package(rj_param_utils REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_constants REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
   rclcpp
   rclcpp_components
   Boost
-  Flann
   rj_common
   rj_msgs
   rj_protos
@@ -41,7 +38,6 @@ set(RJ_RADIO_DEPS
   rj_strategy
   rj_geometry
   rj_planning
-  rj_constants
 )
 
 add_library(${PROJECT_NAME} SHARED
@@ -59,7 +55,6 @@ target_link_libraries(${PROJECT_NAME}
   PUBLIC
   spdlog
   Boost::boost
-  ${FLANN_LIBRARIES}
 )
 
 ament_target_dependencies(${PROJECT_NAME}

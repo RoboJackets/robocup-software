@@ -12,7 +12,6 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/time.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/override_position.hpp>

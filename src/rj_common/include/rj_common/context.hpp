@@ -2,11 +2,11 @@
 
 #include <set>
 
-#include <rj_constants/constants.hpp>
 #include <rj_protos/referee.pb.h>
 
 #include "rj_common/control/motion_setpoint.hpp"
 #include "rj_common/debug_drawer.hpp"
+#include "rj_common/game_constants.hpp"
 #include "rj_common/game_settings.hpp"
 #include "rj_common/game_state.hpp"
 #include "rj_common/planning/robot_constraints.hpp"

@@ -1,4 +1,3 @@
-#include <rj_constants/constants.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/camera/world.hpp>
 

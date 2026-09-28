@@ -177,8 +177,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
 
     RobotConstraints constraints;
     MotionCommand motion_command;
-    // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
-    // generation)
+    // Attempting to create trajectories with max speeds <= 0 crashes the planner
     if (max_robot_speed == 0.0f) {
         // If override speed is set to 0,
         // force HALT by replacing the MotionCommand with an empty one.
