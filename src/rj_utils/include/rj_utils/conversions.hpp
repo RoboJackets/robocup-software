@@ -1,7 +1,6 @@
 #pragma once
 
-#include <rj_protos/ssl_vision_wrapper.pb.h>
-#include <rj_protos/ssl_vision_wrapper.pb.h>
+#include <rj_protos/vision/ssl_vision_wrapper.pb.h>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>

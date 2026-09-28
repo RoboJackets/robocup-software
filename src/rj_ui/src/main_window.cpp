@@ -34,8 +34,6 @@
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
-#include <rj_protos/grSim_Packet.pb.h>
-#include <rj_protos/grSim_Replacement.pb.h>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
 #include <std_msgs/msg/string.hpp>
 

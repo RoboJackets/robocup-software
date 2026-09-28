@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_protos/referee.pb.h>
+#include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
 #include <string>
 
