@@ -1,5 +1,9 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
 
+// tutorial
+#include "rj_strategy/agent/position/runner.hpp"
+
+
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
@@ -13,7 +17,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     strategy_debug_drawer_ = std::make_shared<rj_drawing::RosDebugDrawer>(
         debug_draw_pub, fmt::format("strategy_{}", r_id));
 
-    if (robot_id_ == 0) {
+    if (robot_id_ == 1) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1 || robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
@@ -29,6 +33,16 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
+
+    // protect robot 1
+    // If this is Robot 1, ensure it's a Runner and directly execute its task
+    // 1. MUST BE BEFORE GOALIE CHECK:
+    if (robot_id_ == 1) {
+        if (!current_position_ || current_position_->get_state_name().find("STAR") == std::string::npos) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
+        }
+        return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+    }
 
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
@@ -256,6 +270,13 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    // tutorial
+    if (robot_id_ == 1) {
+            if (!current_position_ || current_position_->get_state_name().find("STAR") == std::string::npos) {
+                current_position_ = std::make_unique<Runner>(robot_id_);
+            }
+            return;
+        }
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
