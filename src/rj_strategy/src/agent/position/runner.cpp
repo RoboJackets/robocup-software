@@ -4,9 +4,7 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::string Runner::get_current_state() {
     return std::string{"Runner: "} + std::string(state_to_name(current_state_));

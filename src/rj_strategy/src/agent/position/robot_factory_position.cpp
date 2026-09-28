@@ -3,7 +3,6 @@
 // tutorial
 #include "rj_strategy/agent/position/runner.hpp"
 
-
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
@@ -38,10 +37,12 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // If this is Robot 1, ensure it's a Runner and directly execute its task
     // 1. MUST BE BEFORE GOALIE CHECK:
     if (robot_id_ == 1) {
-        if (!current_position_ || current_position_->get_state_name().find("STAR") == std::string::npos) {
+        if (!current_position_ ||
+            current_position_->get_state_name().find("STAR") == std::string::npos) {
             current_position_ = std::make_unique<Runner>(robot_id_);
         }
-        return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
     }
 
     if (robot_id_ == goalie_id_) {
@@ -272,11 +273,12 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 void RobotFactoryPosition::set_default_position() {
     // tutorial
     if (robot_id_ == 1) {
-            if (!current_position_ || current_position_->get_state_name().find("STAR") == std::string::npos) {
-                current_position_ = std::make_unique<Runner>(robot_id_);
-            }
-            return;
+        if (!current_position_ ||
+            current_position_->get_state_name().find("STAR") == std::string::npos) {
+            current_position_ = std::make_unique<Runner>(robot_id_);
         }
+        return;
+    }
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
