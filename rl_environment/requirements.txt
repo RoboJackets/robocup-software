@@ -1,2 +1,4 @@
 mujoco==3.14.0
-mjlab>=1.0.0
+# Absent an nvidia GPU, I probably won't be doing anything fancy RL-wise.
+# I'll probably end up even doing my own PPO...
+torch

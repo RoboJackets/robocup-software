@@ -1,0 +1,42 @@
+<mujoco model="ssl_robot_v0">
+  <compiler angle="radian"/>
+  <option timestep="0.002" integrator="implicitfast"/>
+
+  <!-- condim=6 on everything so spin/rolling friction is modeled (needed for backspin) -->
+  <default>
+    <geom condim="6" friction="1 0.005 0.0001"/>
+  </default>
+
+  <worldbody>
+    <light pos="0 0 2" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="3 2 0.1" rgba="0.2 0.5 0.3 1"/>
+
+    <body name="robot" pos="0 0 0.09">
+      <joint name="x" type="slide" axis="1 0 0"/>
+      <joint name="y" type="slide" axis="0 1 0"/>
+      <joint name="yaw" type="hinge" axis="0 0 1"/>
+      <!-- cylinder size = radius, HALF-height -->
+      <geom name="chassis" type="cylinder" size="0.09 0.09" mass="2.4" rgba="0.9 0.9 0.9 1"/>
+      <!-- Dribbler bar at the front, axis along robot y, protruding ~1.5 cm past the chassis -->
+      <body name="dribbler" pos="0.095 0 -0.06">
+        <joint name="dribbler_spin" type="hinge" axis="0 1 0" armature="1e-4"/>
+        <geom name="dribbler_bar" type="cylinder" fromto="0 -0.03 0 0 0.03 0" size="0.01"
+              mass="0.05" rgba="0.1 0.1 0.1 1"/>
+      </body>
+    </body>
+
+    <!-- Golf ball: 42.7 mm diameter, 46 g -->
+    <body name="ball" pos="0.5 0 0.02135">
+      <freejoint name="ball_free"/>
+      <geom name="ball" type="sphere" size="0.02135" mass="0.046" rgba="1 0.5 0 1"/>
+    </body>
+  </worldbody>
+
+  <!-- Velocity actuators: ctrl is a target velocity (m/s, rad/s). x/y are WORLD-frame. -->
+  <actuator>
+    <velocity name="vx" joint="x" kv="100" ctrlrange="-3 3"/>
+    <velocity name="vy" joint="y" kv="100" ctrlrange="-3 3"/>
+    <velocity name="wz" joint="yaw" kv="2" ctrlrange="-10 10"/>
+    <velocity name="dribbler" joint="dribbler_spin" kv="0.002" ctrlrange="-1500 1500"/>
+  </actuator>
+</mujoco>
