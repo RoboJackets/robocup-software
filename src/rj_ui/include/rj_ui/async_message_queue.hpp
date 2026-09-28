@@ -5,7 +5,7 @@
 
 #include "message_queue.hpp"
 
-namespace rj_topic_utils {
+namespace rj_ui {
 
 /**
  * @brief Declared but not defined template class, so that Policy must be one
@@ -70,4 +70,4 @@ AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::get_all() {
     return vec;
 }
 
-}  // namespace rj_topic_utils
+}  // namespace rj_ui

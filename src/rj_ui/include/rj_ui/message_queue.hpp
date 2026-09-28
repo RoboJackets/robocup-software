@@ -3,7 +3,7 @@
 #include <queue>
 #include <rclcpp/rclcpp.hpp>
 
-namespace rj_topic_utils {
+namespace rj_ui {
 // ============================================================================
 /**
  * @brief What kind of policy to use for the queue.
@@ -242,4 +242,4 @@ bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::get(
     queue_.pop_front();
 }
 
-}  // namespace rj_topic_utils
+}  // namespace rj_ui

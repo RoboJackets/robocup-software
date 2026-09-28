@@ -5,7 +5,7 @@
 #include <rj_common/context.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_topic_utils/async_message_queue.hpp>
+#include <rj_ui/async_message_queue.hpp>
 
 namespace ros2_temp {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
@@ -29,8 +29,8 @@ public:
 private:
     Context* context_;
 
-    using RawProtobufMsgQueue = rj_topic_utils::AsyncMessageQueue<
-        RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue>;
+    using RawProtobufMsgQueue = rj_ui::AsyncMessageQueue<
+        RawProtobufMsg, rj_ui::MessagePolicy::kQueue>;
     RawProtobufMsgQueue::UniquePtr queue_;
 };
 }  // namespace ros2_temp

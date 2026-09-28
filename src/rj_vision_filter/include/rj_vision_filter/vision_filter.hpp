@@ -12,7 +12,6 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"

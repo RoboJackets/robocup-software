@@ -22,7 +22,6 @@ find_package(rj_utils REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_config_client REQUIRED)
-find_package(rj_topic_utils REQUIRED)
 
 set(RJ_VISION_FILTER_DEPS
   rj_geometry
@@ -37,7 +36,6 @@ set(RJ_VISION_FILTER_DEPS
   spdlog
   rclcpp_components
   rj_config_client
-  rj_topic_utils
 )
 
 add_executable(${PROJECT_NAME}_node
