@@ -5,7 +5,6 @@
 
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/trajectory.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>

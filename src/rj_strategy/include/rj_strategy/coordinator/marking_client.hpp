@@ -8,7 +8,6 @@
 #include <rj_msgs/msg/marking.hpp>
 #include <rj_msgs/srv/marking.hpp>
 
-#include "rj_constants/constants.hpp"
 
 namespace strategy {
 
