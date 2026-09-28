@@ -66,6 +66,10 @@ set(RJ_STRATEGY_SRC
   src/coordinator/kicker_picker_client.cpp
   src/coordinator/marking_client.cpp
   src/coordinator/waller_client.cpp
+
+  # tutorial
+  src/agent/position/runner.cpp
+
 )
 
 # rj_strategy library
