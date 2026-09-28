@@ -22,7 +22,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
         t0 = time.time()
 
         # If the ball is pushed away instead of pulled in, flip the sign of the dribbler value.
-        drive = 0.1 if data.joint("x").qpos[0] < 0.40 else 0.0
+        drive = 0.2 if data.joint("x").qpos[0] < 0.40 else 0.0
         set_body_command(drive, 0.0, 0.0, 600.0)
 
         mujoco.mj_step(model, data)

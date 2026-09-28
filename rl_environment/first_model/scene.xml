@@ -9,7 +9,7 @@
 
   <worldbody>
     <light pos="0 0 2" dir="0 0 -1"/>
-    <geom name="floor" type="plane" size="3 2 0.1" rgba="0.2 0.5 0.3 1"/>
+    <geom name="floor" friction="0.5 0.005 0.0001" type="plane" size="3 2 0.1" rgba="0.2 0.5 0.3 1"/>
 
     <body name="robot" pos="0 0 0.09">
       <joint name="x" type="slide" axis="1 0 0"/>
@@ -28,7 +28,7 @@
     <!-- Golf ball: 42.7 mm diameter, 46 g -->
     <body name="ball" pos="0.5 0 0.02135">
       <freejoint name="ball_free"/>
-      <geom name="ball" type="sphere" size="0.02135" mass="0.046" rgba="1 0.5 0 1"/>
+      <geom name="ball" friction="0.5 0.005 0.0001" type="sphere" size="0.02135" mass="0.046" rgba="1 0.5 0 1"/>
     </body>
   </worldbody>
 
