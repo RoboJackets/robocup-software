@@ -22,12 +22,14 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
-
-    const auto team_color_callback = [this](TeamColorMsg::UniquePtr msg) {
-        us_blue_.store(msg->is_blue);
-    };
-    team_color_sub_ = create_subscription<TeamColorMsg>(referee::topics::kTeamColorTopic,
-                                                        rclcpp::QoS(1), team_color_callback);
+    
+    team_color_sub_ = create_subscription<TeamColorMsg>(
+        referee::topics::kTeamColorTopic,
+        rclcpp::QoS(1),
+        [this](TeamColorMsg::UniquePtr msg) {
+            us_blue_.store(msg->is_blue);
+        }
+    );
 
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
