@@ -15,9 +15,12 @@
 #include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"
 #include "rj_common/team_info.hpp"
+#include "rj_common/time.hpp"
 #include "rj_common/ui_frame.hpp"
 #include "rj_common/world_state.hpp"
 
+constexpr size_t kMaxLogFrames = 60 * 60 * 30;
+constexpr RJ::Seconds kDropRobotThreshold = RJ::Seconds(0.5);
 class Context {
 public:
     Context() {}
@@ -42,7 +45,8 @@ public:
             const auto& state = world_state.our_robots.at(shell);
             const auto& status = robot_status.at(shell);
 
-            if (RJ::now() - status.timestamp < RJ::Seconds(0.5)) {
+            // Only add the robot to the frame if it recently sent a radio packet
+            if (RJ::now() - status.timestamp < kDropRobotThreshold) {
                 frame->radio_rx.push_back(status);
             }
 
@@ -79,7 +83,11 @@ public:
             frame->blue_name = their_info.name;
         }
 
+        // Only store last 30 minutes of frames
         frames.push_back(frame);
+        if (frames.size() > kMaxLogFrames) {
+            frames.erase(frames.begin());
+        }
     }
 
     // Gameplay -> Planning, Radio

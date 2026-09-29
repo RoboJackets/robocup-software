@@ -316,8 +316,6 @@ void MainWindow::updateViews() {
         _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
     }
 
-    auto value = _ui.logHistoryLocation->value();
-
     std::shared_ptr<rj_common::UIFrame> ui_frame;
 
     // Grab frames
