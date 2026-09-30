@@ -40,7 +40,7 @@ TEST(KalmanBall, valid_world_ball) {
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl, *params);
+    WorldBall wb = WorldBall(t, kbl, params);
 
     KalmanBall kb2 = KalmanBall(c_id, t, b, wb, params);
 

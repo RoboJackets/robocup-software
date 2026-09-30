@@ -8,7 +8,7 @@ namespace vision_filter {
 WorldBall::WorldBall() : is_valid_(false) {}
 
 WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls,
-                     const VisionFilterParams& params)
+                     const std::shared_ptr<const VisionFilterParams>& params)
     : is_valid_(true), time_(calc_time) {
     rj_geometry::Point pos_avg = rj_geometry::Point(0, 0);
     rj_geometry::Point vel_avg = rj_geometry::Point(0, 0);
@@ -17,7 +17,7 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (params.world_ball.ball_merger_power < 1 || params.world_ball.ball_merger_power > 2) {
+    if (params->world_ball.ball_merger_power < 1 || params->world_ball.ball_merger_power > 2) {
         SPDLOG_WARN("ball_merger_power should be between 1 and 2");
     }
 
@@ -51,10 +51,10 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
         // Weight better estimates higher
         double filter_pos_weight =
-            std::pow(pos_uncertantity * filter_uncertantity, -params.world_ball.ball_merger_power);
+            std::pow(pos_uncertantity * filter_uncertantity, -params->world_ball.ball_merger_power);
 
         double filter_vel_weight =
-            std::pow(vel_uncertantity * filter_uncertantity, -params.world_ball.ball_merger_power);
+            std::pow(vel_uncertantity * filter_uncertantity, -params->world_ball.ball_merger_power);
 
         pos_avg += filter_pos_weight * ball.get_pos();
         vel_avg += filter_vel_weight * ball.get_vel();

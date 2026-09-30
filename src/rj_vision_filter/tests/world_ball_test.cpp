@@ -15,7 +15,7 @@ TEST(WorldBall, no_ball) {
     auto params = std::make_shared<VisionFilterParams>();
     std::list<KalmanBall> kbl;
 
-    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl, *params));
+    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl, params));
 }
 
 TEST(WorldBall, one_ball) {
@@ -31,7 +31,7 @@ TEST(WorldBall, one_ball) {
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl, *params);
+    WorldBall wb = WorldBall(t, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();
@@ -69,7 +69,7 @@ TEST(WorldBall, two_ball) {
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldBall wb = WorldBall(t, kbl, *params);
+    WorldBall wb = WorldBall(t, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     rj_geometry::Point rv = wb.get_vel();

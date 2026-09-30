@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/filter/kalman_filter.hpp>
 #include <rj_vision_filter/params.hpp>
@@ -20,7 +22,7 @@ public:
      * @param params Vision filter parameters
      */
     KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
-                   const VisionFilterParams& params);
+                   const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * Predicts with update

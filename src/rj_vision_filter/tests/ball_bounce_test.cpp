@@ -63,7 +63,7 @@ TEST(BallBounce, no_intersection) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -94,7 +94,7 @@ TEST(BallBounce, wrong_direction) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -125,7 +125,7 @@ TEST(BallBounce, too_far) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -156,7 +156,7 @@ TEST(BallBounce, flat_intersect_side) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -190,7 +190,7 @@ TEST(BallBounce, flat_intersect_mouth) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -224,7 +224,7 @@ TEST(BallBounce, angle_intersect_side) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -259,7 +259,7 @@ TEST(BallBounce, angle_intersect_mouth) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);

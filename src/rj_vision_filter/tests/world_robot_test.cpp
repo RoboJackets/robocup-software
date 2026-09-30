@@ -14,7 +14,7 @@ TEST(WorldRobot, no_robot) {
     auto params = std::make_shared<VisionFilterParams>();
     std::list<KalmanRobot> kbl;
 
-    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, *params));
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, params));
 }
 
 TEST(WorldRobot, one_robot) {
@@ -31,7 +31,7 @@ TEST(WorldRobot, one_robot) {
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, *params);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();
@@ -81,7 +81,7 @@ TEST(WorldRobot, two_robot) {
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, *params);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <memory>
 
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
@@ -32,7 +33,8 @@ public:
      * @param params Vision filter parameters
      */
     WorldRobot(RJ::Time calc_time, Team team, int robot_id,
-               const std::list<KalmanRobot>& kalman_robots, const VisionFilterParams& params);
+               const std::list<KalmanRobot>& kalman_robots,
+               const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * @return If the robot actually represents a real robot

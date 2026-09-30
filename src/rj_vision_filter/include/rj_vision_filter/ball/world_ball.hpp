@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <memory>
 
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
@@ -30,7 +31,7 @@ public:
      * @param params Vision filter parameters
      */
     WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls,
-              const VisionFilterParams& params);
+              const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * @return If the ball actually represents a real ball

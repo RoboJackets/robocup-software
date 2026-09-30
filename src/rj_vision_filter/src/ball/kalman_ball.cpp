@@ -22,7 +22,7 @@ KalmanBall::KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBal
         init_vel = previous_world_ball.get_vel();
     }
 
-    filter_ = KalmanFilter2D(init_pos, init_vel, *params_);
+    filter_ = KalmanFilter2D(init_pos, init_vel, params_);
 
     previous_measurements_.push_back(init_measurement);
 }

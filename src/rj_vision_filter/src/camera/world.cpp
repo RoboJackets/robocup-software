@@ -141,20 +141,20 @@ void World::update_world_objects(RJ::Time calc_time) {
 
     // Only replace the invalid result if we have measurements on any camera
     if (!kalman_balls.empty()) {
-        ball_ = WorldBall(calc_time, kalman_balls, *params_);
+        ball_ = WorldBall(calc_time, kalman_balls, params_);
     }
 
     for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
             robots_yellow_.at(i) = WorldRobot(calc_time, WorldRobot::Team::YELLOW, i,
-                                              kalman_robots_yellow.at(i), *params_);
+                                              kalman_robots_yellow.at(i), params_);
         }
     }
 
     for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
-            robots_blue_.at(i) = WorldRobot(calc_time, WorldRobot::Team::BLUE, i,
-                                            kalman_robots_blue.at(i), *params_);
+            robots_blue_.at(i) =
+                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i), params_);
         }
     }
 }

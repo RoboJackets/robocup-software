@@ -27,7 +27,7 @@ KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
         init_twist.angular() = previous_world_robot.get_omega();
     }
 
-    filter_ = KalmanFilter3D(init_pose, init_twist, *params_);
+    filter_ = KalmanFilter3D(init_pose, init_twist, params_);
 
     previous_measurements_.push_back(init_measurement);
     previous_theta_ = init_twist.angular();
