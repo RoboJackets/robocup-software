@@ -21,7 +21,7 @@ jobs:
         run: make update-submodules
 
       - name: Run util/ubuntu-setup as sudo
-        run: "./util/ubuntu-setup -y"
+        run: "./util/ubuntu-setup -y --no-submodules"
 
       - name: Build
         run: source /opt/ros/humble/setup.bash && colcon build --parallel-workers 4
