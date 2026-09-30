@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rj_protos/ssl_vision_wrapper.pb.h>
-
 #include <rclcpp/time.hpp>
+
+#include <rj_protos/vision/ssl_vision_wrapper.pb.h>
 
 namespace vision_receiver {
 /**

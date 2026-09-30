@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rj_protos/referee.pb.h>
-
 #include <string>
+
+#include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
 namespace referee_module_enums {
 

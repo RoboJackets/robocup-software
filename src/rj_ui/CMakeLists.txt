@@ -22,7 +22,6 @@ find_package(std_msgs REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_param_utils REQUIRED)
-find_package(rj_protos REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_planning REQUIRED)
@@ -92,7 +91,6 @@ set(RJ_UI_DEPS
   fmt
   rj_common
   rj_param_utils
-  rj_protos
   rj_geometry
   rj_utils
   rj_planning

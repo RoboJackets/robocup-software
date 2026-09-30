@@ -166,3 +166,8 @@ apt-get install $ARGS $PACKAGES
 # install python3 requirements
 python3 -m pip install pip==22.1
 pip3 install -r $BASE/util/requirements3.txt
+
+# update submodules
+if ! $NO_SUBMODULES; then
+    make update-submodules
+fi
