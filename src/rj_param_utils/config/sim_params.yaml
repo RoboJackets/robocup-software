@@ -102,6 +102,13 @@
     escape:
       goal_change_threshold: 0.9
       step_size: 0.1
+    intermediate:
+      max_angle: 140.0
+      max_scale: 1.5
+      min_angle: 20.0
+      min_scale: 0.5
+      num_intermediates: 5
+      step_size: 0.1
     pivot:
       radius_multiplier: 1.0
     replanner:

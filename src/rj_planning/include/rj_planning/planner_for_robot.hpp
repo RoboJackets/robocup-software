@@ -136,6 +136,8 @@ private:
 
     rclcpp::Node* node_;
 
+    double timeout_;
+
     // unique_ptrs here because we don't want to transfer ownership of
     // thePathPlanner objects anywhere else
     // (must be some type of ptr for polymorphism)
@@ -144,18 +146,21 @@ private:
     // because when robots start inside of an obstacle, all other planners will fail
     // TODO(Kevin): make EscapeObstaclesPathPlanner default start of all planner FSM so this doesn't
     // happen
-    std::unique_ptr<PathPlanner> default_path_planner_{
-        std::make_unique<EscapeObstaclesPathPlanner>()};
+    std::unique_ptr<PathPlanner> default_path_planner_;
 
     // raw ptr here because current_path_planner_ should not take ownership
     // from any of the unique_ptrs to PathPlanners
-    PathPlanner* current_path_planner_{default_path_planner_.get()};
+    PathPlanner* current_path_planner_{nullptr};
 
     int robot_id_;
     std::shared_ptr<TrajectoryCollection> robot_trajectories_;
     const GlobalState& global_state_;
 
     bool had_break_beam_ = false;
+
+    RobotConstraints robot_constraints_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> constraints_callback_;
+    RobotConstraints build_robot_constraints();
 
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;

@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include <gtest/gtest.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_state.hpp>
@@ -26,11 +27,32 @@ using namespace planning;
 using namespace rj_geometry;
 using namespace planning::TestingUtils;
 
+namespace {
+struct PlannerTestNodeHolder {
+    std::shared_ptr<rclcpp::Node> node;
+
+    PlannerTestNodeHolder() {
+        rclcpp::init(0, nullptr);
+        node = std::make_shared<rclcpp::Node>("planner_test");
+    }
+
+    ~PlannerTestNodeHolder() {
+        node.reset();
+        rclcpp::shutdown();
+    }
+};
+
+std::shared_ptr<rclcpp::Node> planner_test_node() {
+    static PlannerTestNodeHolder holder;
+    return holder.node;
+}
+}  // namespace
+
 TEST(Planning, path_target_random) {
     std::mt19937 gen(1337);
 
     WorldState world_state;
-    PathTargetPathPlanner planner;
+    PathTargetPathPlanner planner(planner_test_node().get());
     FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
 
     int failure_count = 0;
@@ -106,7 +128,7 @@ TEST(Planning, collect_basic) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -131,7 +153,7 @@ TEST(Planning, collect_obstructed) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -159,7 +181,7 @@ TEST(Planning, collect_pointless_obs) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -184,7 +206,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -209,7 +231,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -234,7 +256,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         field_dimensions,
                         2,
                         nullptr};
-    CollectPathPlanner planner;
+    CollectPathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -272,7 +294,7 @@ TEST(Planning, collect_random) {
                             field_dimensions,
                             2,
                             nullptr};
-        CollectPathPlanner planner;
+        CollectPathPlanner planner(planner_test_node().get());
         Trajectory path = planner.plan(std::move(request));
 
         if (path.empty()) {
@@ -306,7 +328,7 @@ TEST(Planning, settle_basic) {
                         field_dimensions,
                         2,
                         nullptr};
-    SettlePathPlanner planner;
+    SettlePathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
 }
@@ -333,7 +355,7 @@ TEST(Planning, settle_pointless_obs) {
                         field_dimensions,
                         2,
                         nullptr};
-    SettlePathPlanner planner;
+    SettlePathPlanner planner(planner_test_node().get());
     Trajectory path = planner.plan(std::move(request));
     ASSERT_TRUE(!path.empty());
     EXPECT_TRUE(check_trajectory_continuous(path, RobotConstraints{}));
@@ -372,7 +394,7 @@ TEST(Planning, settle_random) {
                             field_dimensions,
                             2,
                             nullptr};
-        SettlePathPlanner planner;
+        SettlePathPlanner planner(planner_test_node().get());
         Trajectory path = planner.plan(std::move(request));
 
         if (path.empty()) {

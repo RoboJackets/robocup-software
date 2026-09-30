@@ -4,7 +4,7 @@
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/robot_constraints.hpp>
+#include <rj_planning/primitives/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
@@ -15,6 +15,7 @@
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
+#include "rj_planning/primitives/rrt_params.hpp"
 #include "rj_planning/primitives/rrt_util.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
 #include "rj_planning/trajectory_utils.hpp"
@@ -45,6 +46,8 @@ public:
         double partial_replan_lead_time;
         double pos_change_threshold;
         double vel_change_threshold;
+        RrtParams rrt_params{};
+        IntermediateParams intermediate_params{};
     };
 
     /**
@@ -73,7 +76,7 @@ private:
     static Trajectory full_replan(const PlanParams& params);
 
     // Whether the trajectory has deviated from the path and requires a replan.
-    static bool veered_off_path(const Trajectory& trajectory, RobotInstant actual,
+    static bool veered_off_path(const PlanParams& params, const Trajectory& trajectory, RobotInstant actual,
                               RJ::Time now);
 
     // Whether the goal has changed past the `goal_pos_change_threshold()`.
@@ -82,9 +85,9 @@ private:
 
     // Get the partial path starting at `now`, plus the partial replan lead time
     // duration.
-    static Trajectory partial_path(const Trajectory& prev_trajectory,
+    static Trajectory partial_path(const PlanParams& params, const Trajectory& prev_trajectory,
                                   RJ::Time now) {
-        RJ::Time end_time = now + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+        RJ::Time end_time = now + RJ::Seconds(params.partial_replan_lead_time);
         return prev_trajectory.sub_trajectory(prev_trajectory.begin_time(),
                                             end_time);
     }

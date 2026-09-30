@@ -3,6 +3,33 @@
 namespace planning {
 using namespace rj_geometry;
 
+LinePivotPathPlanner::LinePivotPathPlanner(rclcpp::Node* node) : PathPlanner(node, "line_pivot") {
+    // Follow the standard ROS2 parameter pattern for runtime-tunable values.
+    radius_multiplier_ = node_->get_parameter_or("pivot.radius_multiplier", 1.0);
+
+    radius_multiplier_callback_ = node_->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "pivot.radius_multiplier" && param.as_double() < 0.0) {
+                    result.successful = false;
+                    result.reason = fmt::format("{} must not be negative", param.get_name());
+                    return result;
+                }
+            }
+
+            for (const auto& param : params) {
+                if (param.get_name() == "pivot.radius_multiplier") {
+                    radius_multiplier_ = param.as_double();
+                }
+            }
+
+            return result;
+        });
+}
+
 Trajectory LinePivotPathPlanner::plan(const PlanRequest& request) {
     current_state_ = next_state(request);
     Trajectory path;
@@ -75,7 +102,7 @@ Trajectory LinePivotPathPlanner::pivot(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    double radius = pivot::PARAM_radius_multiplier * command.pivot_radius;
+    double radius = radius_multiplier_ * command.pivot_radius;
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 

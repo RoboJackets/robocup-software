@@ -3,6 +3,7 @@
 #include <functional>
 #include <optional>
 #include <vector>
+#include <cmath>
 
 #include <rj_geometry/point.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
@@ -40,7 +41,7 @@ public:
     // actually this is not HALT, control node does HALT for us
     // or maybe use PathTargetPlanner with no real velocity?
     EscapeObstaclesPathPlanner(rclcpp::Node* node);
-    ~EscapeObstaclesPathPlanner() override = default;
+    ~EscapeObstaclesPathPlanner() override;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
     EscapeObstaclesPathPlanner& operator=(
@@ -55,12 +56,12 @@ public:
     /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
-    static rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
+    rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
                                                     std::optional<rj_geometry::Point> prev_pt,
                                                     const ObstacleSet& obstacles,
                                                     int max_itr = 300);
 
-    static double step_size() { return escape::PARAM_step_size; }
+    double step_size() const { return escape_params_.step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
     [[nodiscard]] bool is_done() const override;
@@ -70,8 +71,7 @@ private:
     EscapeParams build_escape_params();
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
-
-    rclcpp::Node node_;
+    
     EscapeParams escape_params_;
         std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> escape_params_callback_;
 };

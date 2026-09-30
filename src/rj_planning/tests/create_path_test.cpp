@@ -15,13 +15,14 @@ namespace planning {
 
 TEST(CreatePath, smoke_test_efficiency) {
     MotionConstraints mot;
+    RrtParams rrt_params;
 
     ObstacleSet obs;
 
     {
         RJ::Time t0 = RJ::now();
         CreatePath::rrt(LinearMotionInstant{Point(0, 0)}, LinearMotionInstant{Point(1, 1)}, mot,
-                        RJ::now(), obs);
+                        RJ::now(), obs, rrt_params);
         std::cout << "time for CreatePath::rrt direct: %.6f\n"
                   << RJ::Seconds(RJ::now() - t0).count() << std::endl;
     }
@@ -31,17 +32,18 @@ TEST(CreatePath, smoke_test_efficiency) {
         auto circle = std::make_shared<Circle>(Point{.5, .5}, 0.2);
         obs.add(std::make_shared<Obstacle>(circle, circle));
         CreatePath::rrt(LinearMotionInstant{Point()}, LinearMotionInstant{Point(1, 1)}, mot,
-                        RJ::now(), obs);
+                        RJ::now(), obs, rrt_params);
         std::cout << "time for CreatePath::rrt obstructed: %.6f\n"
                   << RJ::Seconds(RJ::now() - t0).count() << std::endl;
     }
 }
 
 TEST(CreatePath, infinitesimal_rrt) {
+    RrtParams rrt_params;
     RJ::Time time = RJ::now();
     RobotInstant start{Pose{{}, .1}, Twist{}, time};
     Trajectory a = CreatePath::rrt(start.linear_motion(), start.linear_motion(),
-                                   MotionConstraints{}, start.stamp, {});
+                                   MotionConstraints{}, start.stamp, {}, rrt_params);
     ASSERT_FALSE(a.empty());
     ASSERT_TRUE(a.num_instants() == 1);
     ASSERT_NEAR(a.duration().count(), 0.0, 1e-6);
@@ -54,6 +56,7 @@ TEST(CreatePath, success_rate) {
     constexpr int kIterations = 1000;
     constexpr int kNumTries = 300;
     RobotConstraints constraints;
+    RrtParams rrt_params;
 
     for (int i = 0; i < kIterations; i++) {
         ObstacleSet obstacles;
@@ -79,7 +82,7 @@ TEST(CreatePath, success_rate) {
 
         Trajectory path{{}};
         for (int j = 0; j < kNumTries && path.empty(); j++) {
-            path = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
+            path = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles, rrt_params);
             if (path.empty()) {
                 fails++;
             }
@@ -99,6 +102,8 @@ TEST(CreatePath, intermediate_creation_time) {
     constexpr int kIterations = 10000;
     RobotConstraints constraints;
     const FieldDimensions* field_dimensions = &FieldDimensions::current_dimensions;
+    IntermediateParams intermediate_params;
+    RrtParams rrt_params;
 
     double average_time;
     std::cout << "Saving to intermediate_creation.out and intermediate_traversal.out\n";
@@ -140,14 +145,15 @@ TEST(CreatePath, intermediate_creation_time) {
 
         auto start_time = RJ::now();
         Trajectory traj = CreatePath::intermediate(start, goal, constraints.mot, RJ::now(),
-                                                   obstacles, field_dimensions, 0);
+                                                   obstacles, field_dimensions, 0,
+                                                   intermediate_params, rrt_params);
         double nanos = (RJ::now() - start_time).count();
         file << "CreatePath::intermediate() Time: " << nanos / 1e6 << " ms\n";
         tfile << "CreatePath::intermediate() Time: "
               << (traj.end_time() - traj.begin_time()).count() / 1e9 << " s\n";
 
         start_time = RJ::now();
-        traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
+        traj = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles, rrt_params);
         nanos = (RJ::now() - start_time).count();
         rfile << "CreatePath::rrt() Time: " << nanos / 1e6 << " ms\n";
         rtfile << "CreatePath::rrt() Time: " << (traj.end_time() - traj.begin_time()).count() / 1e9

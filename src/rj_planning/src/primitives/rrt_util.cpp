@@ -27,21 +27,22 @@ void draw_bi_rrt(const RRT::BiRRT<Point>& bi_rrt, DebugDrawer* debug_drawer, uns
 }
 
 vector<Point> run_rrt_helper(Point start, Point goal, const ObstacleSet& obstacles,
-                             const vector<Point>& waypoints, bool straight_line) {
+                             const RrtParams& rrt_params, const vector<Point>& waypoints,
+                             bool straight_line) {
     auto state_space =
         std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
     RRT::BiRRT<Point> bi_rrt(state_space, Point::hash, 2);
     bi_rrt.setStartState(start);
     bi_rrt.setGoalState(goal);
 
-    bi_rrt.setStepSize(rrt::PARAM_step_size);
-    bi_rrt.setMinIterations(rrt::PARAM_min_iterations);
-    bi_rrt.setMaxIterations(rrt::PARAM_max_iterations);
-    bi_rrt.setGoalBias(rrt::PARAM_goal_bias);
+    bi_rrt.setStepSize(rrt_params.step_size);
+    bi_rrt.setMinIterations(rrt_params.min_iterations);
+    bi_rrt.setMaxIterations(rrt_params.max_iterations);
+    bi_rrt.setGoalBias(rrt_params.goal_bias);
 
     if (!waypoints.empty()) {
         bi_rrt.setWaypoints(waypoints);
-        bi_rrt.setWaypointBias(rrt::PARAM_waypoint_bias);
+        bi_rrt.setWaypointBias(rrt_params.waypoint_bias);
     }
 
     bool success = bi_rrt.run();
@@ -54,8 +55,8 @@ vector<Point> run_rrt_helper(Point start, Point goal, const ObstacleSet& obstacl
 }
 
 vector<Point> generate_rrt(Point start, Point goal, const ObstacleSet& obstacles,
-                           const vector<Point>& waypoints) {
-    return run_rrt_helper(start, goal, obstacles, waypoints, false);
+                           const RrtParams& rrt_params, const vector<Point>& waypoints) {
+    return run_rrt_helper(start, goal, obstacles, rrt_params, waypoints, false);
 }
 
 }  // namespace planning

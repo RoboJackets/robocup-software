@@ -8,8 +8,6 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
-
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
@@ -33,8 +31,8 @@ namespace planning {
  */
 class LinePivotPathPlanner : public PathPlanner {
 public:
-    LinePivotPathPlanner() : PathPlanner("line_pivot") {}
-    ~LinePivotPathPlanner() override = default;
+    LinePivotPathPlanner(rclcpp::Node *node);
+    ~LinePivotPathPlanner() = default;
 
     LinePivotPathPlanner(LinePivotPathPlanner&&) noexcept = default;
     LinePivotPathPlanner& operator=(LinePivotPathPlanner&&) noexcept = default;
@@ -55,7 +53,7 @@ private:
     // cache the most recent angle change so we know when we're done
     std::optional<double> cached_angle_change_;
 
-    PathTargetPathPlanner path_target_{};
+    PathTargetPathPlanner path_target_{node_};
 
     Trajectory line(const PlanRequest& request);
     Trajectory pivot(const PlanRequest& request);
@@ -68,5 +66,8 @@ private:
     State next_state(const PlanRequest& request);
 
     State current_state_ = LINE;
+
+    double radius_multiplier_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> radius_multiplier_callback_;
 };
 }  // namespace planning

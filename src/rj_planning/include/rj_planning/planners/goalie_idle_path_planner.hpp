@@ -25,7 +25,7 @@ namespace planning {
  */
 class GoalieIdlePathPlanner : public PathPlanner {
 public:
-    GoalieIdlePathPlanner() : PathPlanner("goalie_idle") {}
+    GoalieIdlePathPlanner(rclcpp::Node *node) : PathPlanner(node, "goalie_idle") {}
 
     /*
      * From PathPlanner superclass (see path_planner.hpp).

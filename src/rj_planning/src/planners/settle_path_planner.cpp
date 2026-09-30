@@ -1,17 +1,15 @@
 #include "rj_planning/planners/settle_path_planner.hpp"
-
 using namespace rj_geometry;
 
 namespace planning {
 
 SettlePathPlanner::SettlePathPlanner(rclcpp::Node* node) : 
-          PathPlanner("settle"),
-          node_{node},
+          PathPlanner(node, "settle"),
           avg_instantaneous_intercept_target_(0, 0),
-          average_ball_vel_(0, 0), {
+          average_ball_vel_(0, 0) {
             this->settle_params_ = build_settle_params();
             this->settle_params_callback_ = node_->add_on_set_parameters_callback(
-                [](std::vector<rclcpp::Parameter>& params) {
+                [](const std::vector<rclcpp::Parameter>& params) {
                     rcl_interfaces::msg::SetParametersResult result;
                     result.successful = true;
                     // TODO: Ask what constraints to use here
@@ -19,6 +17,12 @@ SettlePathPlanner::SettlePathPlanner(rclcpp::Node* node) :
                 }
             );
           }
+
+SettlePathPlanner::~SettlePathPlanner() {
+    if (node_ != nullptr && settle_params_callback_) {
+        node_->remove_on_set_parameters_callback(settle_params_callback_.get());
+    }
+}
 
 // Do not use anymore, use collect
 Trajectory SettlePathPlanner::plan(const PlanRequest& plan_request) {
@@ -221,7 +225,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         // test location
         Trajectory path = CreatePath::intermediate(
             start_instant.linear_motion(), target_robot_intersection, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            intermediate_params_, rrt_params_);
 
         // Calculate the
         RJ::Seconds buffer_duration = ball_time - path.duration();
@@ -332,7 +337,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            intermediate_params_, rrt_params_);
 
         if (!shortcut.empty()) {
             plan_angles(&shortcut, start_instant, AngleFns::face_point(face_pos),
@@ -365,7 +371,14 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(face_pos),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                replanner_off_path_threshold,
+                                replanner_partial_replan_lead_time,
+                                replanner_pos_change_threshold,
+                                replanner_vel_change_threshold,
+                                   rrt_params_,
+                                   intermediate_params_};
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();
@@ -468,12 +481,14 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     if (previous_.empty()) {
         dampen_end = CreatePath::intermediate(
             start_instant.linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id);
+            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            intermediate_params_, rrt_params_);
     } else {
         dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
                                               final_stopping_motion, plan_request.constraints.mot,
                                               previous_.last().stamp, obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id);
+                                              plan_request.field_dimensions, plan_request.shell_id,
+                                              intermediate_params_, rrt_params_);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -503,7 +518,13 @@ Trajectory SettlePathPlanner::invalid(const PlanRequest& plan_request,
                                  plan_request.field_dimensions,
                                  plan_request.constraints,
                                  AngleFns::face_point(plan_request.world_state->ball.position),
-                                 plan_request.shell_id};
+                                 plan_request.shell_id,
+                                 std::nullopt,
+                                 replanner_off_path_threshold,
+                                 replanner_partial_replan_lead_time,
+                                 replanner_pos_change_threshold,
+                                 replanner_vel_change_threshold,
+                                 rrt_params_};
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in settle");
     return path;

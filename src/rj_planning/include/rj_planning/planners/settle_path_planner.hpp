@@ -10,7 +10,6 @@
 #include <rj_constants/constants.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
-#include "rj_planning/planner_node.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
 #include "rj_planning/primitives/replanner.hpp"
@@ -55,6 +54,7 @@ public:
     };
 
     SettlePathPlanner(rclcpp::Node* node);
+    ~SettlePathPlanner() override;
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
@@ -121,6 +121,5 @@ private:
     SettleParams settle_params_;
     std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> settle_params_callback_;
 
-    rclcpp::Node* node_;
 };
 }  // namespace planning

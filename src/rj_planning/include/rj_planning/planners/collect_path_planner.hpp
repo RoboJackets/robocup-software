@@ -7,6 +7,7 @@
 #include <rj_geometry/point.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/planners/settle_path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
 #include "rj_planning/primitives/replanner.hpp"
@@ -50,13 +51,13 @@ public:
     };
 
     CollectPathPlanner(rclcpp::Node* node);
+    ~CollectPathPlanner() override;
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override;
     [[nodiscard]] bool is_done() const override;
 
-private:
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
     void check_solution_validity(BallState ball, RobotInstant start);
@@ -80,6 +81,8 @@ private:
     Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
 
     CollectParams build_collect_params();
+    // NOTE: This is coupling with settle_path_planner; will need to be addressed in rj_planning investigation
+    SettleParams build_settle_params();
 
     Trajectory previous_;
 
@@ -117,6 +120,7 @@ private:
     static constexpr double kChaseAngleThreshold{45};
 
     CollectParams collect_params_;
+    SettleParams settle_params_;
     std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> collect_params_callback_;
 };
 

@@ -27,29 +27,6 @@
 
 namespace planning {
 
-struct ConstraintsParams {
-    double max_rotational_accel;
-    double max_rotational_speed;
-    double max_translational_accel;
-    double max_translational_speed;
-};
-
-struct RrtParams {
-    bool enable_debug_drawing;
-    double goal_bias;
-    double step_size;
-    double waypoint_bias;
-    int max_iterations;
-    int min_iterations;
-};
-
-struct LineTestParams {
-    double start_x;
-    double start_y;
-    double end_x;
-    double end_y;
-    int robot_id;
-};
 
 /**
  * ROS node that spawns many PlannerForRobots and helps coordinate them.
@@ -61,25 +38,11 @@ public:
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
-    double replanner_off_path_threshold;
-    double replanner_partial_replan_lead_time;
-    double replanner_pos_change_threshold;
-    double replanner_vel_change_threshold;
-
 private:
     // All parameters put in the ROS2 node
     // TODO: extract to individual path planners and add callbacks
-    ConstraintsParams constraints_params_;
-    double pivot_radius_multiplier_param_;
-    RrtParams rrt_params_;
-    LineTestParams line_test_params_;
     double timeout_param_;
     bool use_sim_time_param_;
-
-    // builders for params - Perform get_parameter_or on each param
-    ConstraintsParams build_constraints_params();
-    RrtParams build_rrt_params();
-    LineTestParams build_line_test_params();
 
     std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     std::shared_ptr<TrajectoryCollection> robot_trajectories_ = nullptr;

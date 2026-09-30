@@ -3,10 +3,20 @@
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include "rclcpp/node.hpp"
 
 #include "rj_planning/plan_request.hpp"
+#include "rj_planning/primitives/intermediate_params.hpp"
+#include "rj_planning/primitives/rrt_params.hpp"
 
 namespace planning {
+
+struct ConstraintsParams {
+    double max_rotational_accel;
+    double max_rotational_speed;
+    double max_translational_accel;
+    double max_translational_speed;
+};
 
 /**
  * Virtual base class for all PathPlanners. An implementation of PathPlanner must take
@@ -19,8 +29,8 @@ namespace planning {
  */
 class PathPlanner {
 public:
-    explicit PathPlanner(std::string name) : name_(std::move(name)) {}
-    virtual ~PathPlanner() = default;
+    PathPlanner(rclcpp::Node *node, std::string name);
+    virtual ~PathPlanner();
 
     PathPlanner(PathPlanner&&) noexcept = default;
     PathPlanner& operator=(PathPlanner&&) noexcept = default;
@@ -58,8 +68,27 @@ public:
      */
     [[nodiscard]] std::string name() const { return name_; }
 
+protected:
+    rclcpp::Node *node_;
+
+    double replanner_off_path_threshold;
+    double replanner_partial_replan_lead_time;
+    double replanner_pos_change_threshold;
+    double replanner_vel_change_threshold;
+
+    RrtParams rrt_params_;
+    IntermediateParams intermediate_params_;
+
 private:
     std::string name_;
+
+    RrtParams build_rrt_params();
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> rrt_params_callback_;
+
+    IntermediateParams build_intermediate_params();
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> intermediate_params_callback_;
+
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> replanner_params_callback_;
 };
 
 }  // namespace planning

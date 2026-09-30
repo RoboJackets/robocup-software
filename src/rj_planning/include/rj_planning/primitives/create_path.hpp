@@ -4,12 +4,14 @@
 #include <random>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/planning/motion_constraints.hpp>
+#include <rj_planning/primitives/motion_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_planning/obstacle_set.hpp>
 
 #include "rj_planning/primitives/path_smoothing.hpp"
+#include "rj_planning/primitives/intermediate_params.hpp"
+#include "rj_planning/primitives/rrt_params.hpp"
 #include "rj_planning/primitives/rrt_util.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
 #include "rj_planning/trajectory_utils.hpp"
@@ -22,6 +24,7 @@ namespace planning::CreatePath {
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ObstacleSet& obstacles,
+               const RrtParams& rrt_params,
                const std::vector<rj_geometry::Point>& bias_waypoints = {});
 
 /**
@@ -35,9 +38,11 @@ Trajectory simple(
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
-                        unsigned int robot_id);
+                        unsigned int robot_id, const IntermediateParams& intermediate_params,
+                        const RrtParams& rrt_params);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,
-                                                  unsigned int robot_id);
+                                                  unsigned int robot_id,
+                                                  const IntermediateParams& intermediate_params);
 }  // namespace planning::CreatePath

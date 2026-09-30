@@ -8,8 +8,6 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
-
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
@@ -27,7 +25,7 @@ namespace planning {
  */
 class RotatePathPlanner : public PathPlanner {
 public:
-    RotatePathPlanner() : PathPlanner("rotate") {}
+    RotatePathPlanner(rclcpp::Node *node) : PathPlanner(node, "rotate") {}
     ~RotatePathPlanner() override = default;
 
     RotatePathPlanner(RotatePathPlanner&&) noexcept = default;
@@ -52,7 +50,7 @@ private:
 
     std::optional<Trajectory> cached_path_;
 
-    PathTargetPathPlanner path_target_{};
+    PathTargetPathPlanner path_target_{node_};
 
     Trajectory pivot(const PlanRequest& request);
     Trajectory end(const PlanRequest& request);
