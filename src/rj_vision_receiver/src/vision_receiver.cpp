@@ -12,8 +12,6 @@
 #include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
-
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
@@ -23,8 +21,7 @@ VisionReceiver::VisionReceiver()
                                   .allow_undeclared_parameters(true)},
       config_{this},
       port_{-1},
-      socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule) {
+      socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* below, vision_interface should be IP where vision receiver pubs to (in
