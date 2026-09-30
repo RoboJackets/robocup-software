@@ -25,7 +25,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 
     team_color_sub_ = create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1),
-        [this](TeamColorMsg::UniquePtr msg) { us_blue_ = msg->is_blue; });
+        [this](TeamColorMsg::UniquePtr msg) { is_blue_ = msg->is_blue; });
 
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
