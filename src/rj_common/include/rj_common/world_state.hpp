@@ -253,3 +253,7 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
 
 
 }  // namespace rclcpp
+
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(RobotState, RobotState::Msg);
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(BallState, BallState::Msg);
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(WorldState, WorldState::Msg);

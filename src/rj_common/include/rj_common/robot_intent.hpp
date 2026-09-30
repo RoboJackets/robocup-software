@@ -80,3 +80,5 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
 
 }  // namespace rclcpp
+
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(RobotIntent, rj_msgs::msg::RobotIntent);

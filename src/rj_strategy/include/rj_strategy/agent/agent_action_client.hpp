@@ -57,22 +57,22 @@ public:
 
 private:
     // ROS pub/subs
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
     rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
-    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void world_state_callback(const WorldState::SharedPtr& msg);
+    void play_state_callback(const PlayState::SharedPtr& msg);
+    void field_dimensions_callback(const FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
-    void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void game_settings_callback(const GameSettings::SharedPtr& msg);
     void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 

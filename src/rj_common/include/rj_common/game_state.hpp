@@ -324,3 +324,6 @@ struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
 
 
 }  // namespace rclcpp
+
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(MatchState, rj_msgs::msg::MatchState);
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(PlayState, rj_msgs::msg::PlayState);

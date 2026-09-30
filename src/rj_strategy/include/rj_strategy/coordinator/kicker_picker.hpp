@@ -37,7 +37,7 @@ private:
 
     std::array<bool, kNumShells> wants_to_kick_by_id_{};  // Zero-initialized
     WorldState last_world_state_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<WorldState>::SharedPtr world_state_sub_;
     uint8_t last_published_kicker_ = kInvalidRobotId;  // Track last published kicker
 };
 

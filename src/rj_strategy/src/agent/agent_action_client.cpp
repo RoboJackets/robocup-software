@@ -19,25 +19,25 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+        [this](const PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_->create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
+        [this](FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_->create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<GameSettings>(
         "config/game_settings", 1,
-        [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+        [this](GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
@@ -76,35 +76,31 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
-void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+void AgentActionClient::world_state_callback(const WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    WorldState world_state =
-        rj_convert::convert_from_ros<rj_msgs::msg::WorldState, WorldState>(*msg);
-    last_world_state_ = std::move(world_state);
+    last_world_state_ = *msg;
 }
 
-void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void AgentActionClient::play_state_callback(const PlayState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    PlayState play_state =
-        rj_convert::convert_from_ros<rj_msgs::msg::PlayState, PlayState>(*msg);
+    const PlayState& play_state = *msg;
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
 }
 
 void AgentActionClient::field_dimensions_callback(
-    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    const FieldDimensions::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    FieldDimensions field_dimensions =
-        rj_convert::convert_from_ros<rj_msgs::msg::FieldDimensions, FieldDimensions>(*msg);
+    const FieldDimensions& field_dimensions = *msg;
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
 }
@@ -131,7 +127,7 @@ void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::S
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+void AgentActionClient::game_settings_callback(const GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
 }
 

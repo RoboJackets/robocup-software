@@ -88,11 +88,11 @@ private:
 
     planning::Trajectory trajectory_;
 
-    rclcpp::Subscription<planning::Trajectory::Msg>::SharedPtr trajectory_sub_;
-    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
-    rclcpp::Publisher<MotionSetpoint::Msg>::SharedPtr motion_setpoint_pub_;
-    rclcpp::Publisher<RobotState::Msg>::SharedPtr target_state_pub_;
+    rclcpp::Subscription<planning::Trajectory>::SharedPtr trajectory_sub_;
+    rclcpp::Subscription<WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Publisher<MotionSetpoint>::SharedPtr motion_setpoint_pub_;
+    rclcpp::Publisher<RobotState>::SharedPtr target_state_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;

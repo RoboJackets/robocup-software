@@ -494,3 +494,5 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
 
 
 }  // namespace rclcpp
+
+RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(planning::Trajectory, rj_msgs::msg::Trajectory);
