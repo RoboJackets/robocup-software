@@ -7,7 +7,7 @@ namespace vision_filter {
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
 KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
-                               const VisionFilterParams& params_)
+                               const VisionFilterParams& params)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
@@ -17,8 +17,8 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
-    double p = params_.robot.init_covariance;
-    double s = params_.robot.orientation_scale;
+    double p = params.robot.init_covariance;
+    double s = params.robot.orientation_scale;
     // clang-format off
     P_k1_k1_ << p,   0,   0,   0,   0,   0,
                 0,   p,   0,   0,   0,   0,
@@ -32,7 +32,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
 
     // State transition matrix (A)
     // Pos, velocity, theta integrator. Assume constant velocity
-    double dt = params_.vision_loop_dt;
+    double dt = params.vision_loop_dt;
     // clang-format off
     F_k_ << 1, dt,  0,  0,  0,  0,
             0,  1,  0,  0,  0,  0,
@@ -72,7 +72,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // sigma^2) Note: T is the sample period Taken from Tiger's AutoRef. Most
     // likely found through integration of error through the state matrices See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
-    p = params_.robot.process_noise;
+    p = params.robot.process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -88,7 +88,7 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = params_.robot.observation_noise;
+    double o = params.robot.observation_noise;
     // clang-format off
     R_k_ << o,   0,   0,
             0,   o,   0,

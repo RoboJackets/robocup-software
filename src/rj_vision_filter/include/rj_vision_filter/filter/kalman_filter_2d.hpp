@@ -17,10 +17,10 @@ public:
      *
      * @param init_pos initial position
      * @param init_vel initial velocity
-     * @param params_ Vision filter parameters
+     * @param params Vision filter parameters
      */
     KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
-                   const VisionFilterParams& params_);
+                   const VisionFilterParams& params);
 
     /**
      * Predicts with update

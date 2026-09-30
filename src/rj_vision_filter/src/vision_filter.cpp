@@ -359,7 +359,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         const double current_team_angle = team_angle();
         const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
         auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);
-        world_.update_single_camera(RJ::now(), frame, params_);
+        world_.update_single_camera(RJ::now(), frame);
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(kQueueSize), callback);

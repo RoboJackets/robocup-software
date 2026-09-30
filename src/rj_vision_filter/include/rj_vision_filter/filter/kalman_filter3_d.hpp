@@ -18,10 +18,10 @@ public:
      *
      * @param init_pose initial pose
      * @param init_twist initial twist
-     * @param params_ Vision filter parameters
+     * @param params Vision filter parameters
      */
     KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
-                   const VisionFilterParams& params_);
+                   const VisionFilterParams& params);
 
     /**
      * Predicts with update

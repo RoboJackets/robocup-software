@@ -3,20 +3,22 @@
 
 namespace vision_filter {
 
-World::World(const VisionFilterParams& params_)
-    : last_update_time_{RJ::Time{RJ::Time::duration(0)}},
-      cameras_(params_.max_num_cameras),
+World::World(const VisionFilterParams& params)
+    : params_(params),
+      last_update_time_{RJ::Time{RJ::Time::duration(0)}},
+      cameras_(params_.max_num_cameras, Camera(params_)),
       robots_yellow_(kNumShells, WorldRobot()),
-      robots_blue_(kNumShells, WorldRobot()) {}
+      robots_blue_(kNumShells, WorldRobot()),
+      fast_kick_(params_),
+      slow_kick_(params_) {}
 
-void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
-                                 const VisionFilterParams& params_) {
-    update_with_camera_frame(calc_time, {frame}, false, params_);
+void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
+    update_with_camera_frame(calc_time, {frame}, false);
 }
 
 void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
-                                     bool update_all, const VisionFilterParams& params_) {
-    calc_ball_bounce(params_);
+                                     bool update_all) {
+    calc_ball_bounce();
 
     std::vector<bool> camera_updated(params_.max_num_cameras, false);
 
@@ -25,7 +27,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
     for (const CameraFrame& frame : new_frames) {
         // Make sure camera from frame is created, if not, make it
         if (!cameras_.at(frame.camera_id).get_is_valid()) {
-            cameras_.at(frame.camera_id) = Camera(frame.camera_id);
+            cameras_.at(frame.camera_id) = Camera(frame.camera_id, params_);
         }
 
         // Take the non-sorted list from the frame and make a list for the
@@ -43,7 +45,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
 
         cameras_.at(frame.camera_id)
             .update_with_frame(calc_time, frame.camera_balls, yellow_team, blue_team, ball_,
-                               robots_yellow_, robots_blue_, params_);
+                               robots_yellow_, robots_blue_);
 
         camera_updated.at(frame.camera_id) = true;
 
@@ -54,37 +56,37 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
     if (update_all) {
         for (size_t i = 0; i < cameras_.size(); i++) {
             if (!camera_updated.at(i) && cameras_.at(i).get_is_valid()) {
-                cameras_.at(i).update_without_frame(calc_time, params_);
+                cameras_.at(i).update_without_frame(calc_time);
             }
         }
     }
 
-    update_world_objects(calc_time, params_);
-    detect_kicks(calc_time, params_);
+    update_world_objects(calc_time);
+    detect_kicks(calc_time);
 }
 
-void World::update_without_camera_frame(RJ::Time calc_time, const VisionFilterParams& params_) {
-    calc_ball_bounce(params_);
+void World::update_without_camera_frame(RJ::Time calc_time) {
+    calc_ball_bounce();
 
     for (Camera& camera : cameras_) {
         if (camera.get_is_valid()) {
-            camera.update_without_frame(calc_time, params_);
+            camera.update_without_frame(calc_time);
         }
     }
 
-    update_world_objects(calc_time, params_);
-    detect_kicks(calc_time, params_);
+    update_world_objects(calc_time);
+    detect_kicks(calc_time);
 }
 
-void World::calc_ball_bounce(const VisionFilterParams& params_) {
+void World::calc_ball_bounce() {
     for (Camera& camera : cameras_) {
         if (camera.get_is_valid()) {
-            camera.process_ball_bounce(robots_yellow_, robots_blue_, params_);
+            camera.process_ball_bounce(robots_yellow_, robots_blue_);
         }
     }
 }
 
-void World::update_world_objects(RJ::Time calc_time, const VisionFilterParams& params_) {
+void World::update_world_objects(RJ::Time calc_time) {
     // Fill robots_yellow_/blue with what robots we want and remove the rest
     // ball_ = WorldBall();
 
@@ -157,14 +159,14 @@ void World::update_world_objects(RJ::Time calc_time, const VisionFilterParams& p
     }
 }
 
-void World::detect_kicks(RJ::Time calc_time, const VisionFilterParams& params_) {
+void World::detect_kicks(RJ::Time calc_time) {
     KickEvent fast_event;
     KickEvent slow_event;
 
     bool is_fast_kick =
-        fast_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, fast_event, params_);
+        fast_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, fast_event);
     bool is_slow_kick =
-        slow_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, &slow_event, params_);
+        slow_kick_.add_record(calc_time, ball_, robots_yellow_, robots_blue_, &slow_event);
 
     // If there isn't a kick recorded already
     if (!best_kick_estimate_.get_is_valid()) {

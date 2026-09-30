@@ -21,6 +21,11 @@ namespace vision_filter {
 class FastKickDetector {
 public:
     /**
+     * @param params Vision filter parameters. Must outlive this object.
+     */
+    explicit FastKickDetector(const VisionFilterParams& params);
+
+    /**
      * Adds a record to our history list
      *
      * @param calc_time Time of calculation for this vision loop
@@ -28,7 +33,6 @@ public:
      * @param yellow_robots Best estimation of the yellow robots
      * @param blue_robots Best estimation of the blue robots
      * @param kick_event Returned kick event if we find one
-     * @param params_ Vision filter parameters
      *
      * @return Whether there was a kick
      *
@@ -38,19 +42,20 @@ public:
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
                    const std::vector<WorldRobot>& yellow_robots,
                    const std::vector<WorldRobot>& blue_robots,
-                   KickEvent& kick_event, const VisionFilterParams& params_);
+                   KickEvent& kick_event);
 
 private:
     /**
-     * @param params_ Vision filter parameters
      * @return Whether there is a large enough acceleration to be a kick
      */
-    bool detect_kick(const VisionFilterParams& params_);
+    bool detect_kick();
 
     /**
      * @return Closest robot to the ball at it's kick time
      */
     WorldRobot get_closest_robot();
+
+    const VisionFilterParams& params_;
 
     std::deque<VisionState> state_history_;
 };

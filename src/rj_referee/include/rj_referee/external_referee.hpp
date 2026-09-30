@@ -24,7 +24,6 @@
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_param_utils/param.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_protos/referee.pb.h>
 #include <rj_utils/logging_macros.hpp>

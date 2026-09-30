@@ -6,13 +6,15 @@
 
 namespace vision_filter {
 TEST(Camera, invalid_camera) {
-    Camera c = Camera();
+    VisionFilterParams params;
+    Camera c = Camera(params);
 
     EXPECT_FALSE(c.get_is_valid());
 }
 
 TEST(Camera, valid_camera) {
-    Camera c = Camera(1);
+    VisionFilterParams params;
+    Camera c = Camera(1, params);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -28,8 +30,8 @@ TEST(Camera, valid_camera) {
 
 TEST(Camera, update_no_frame_empty) {
     VisionFilterParams params;
-    Camera c = Camera(1);
-    c.update_without_frame(RJ::now(), params);
+    Camera c = Camera(1, params);
+    c.update_without_frame(RJ::now());
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -44,9 +46,9 @@ TEST(Camera, update_no_frame_empty) {
 }
 
 TEST(Camera, update_with_frame_empty) {
-    Camera c = Camera(1);
-    RJ::Time t = RJ::now();
     VisionFilterParams params;
+    Camera c = Camera(1, params);
+    RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;
     std::vector<std::list<CameraRobot>> yr(kNumShells);
@@ -55,7 +57,7 @@ TEST(Camera, update_with_frame_empty) {
     std::vector<WorldRobot> wry(kNumShells, WorldRobot());
     std::vector<WorldRobot> wrb(kNumShells, WorldRobot());
 
-    c.update_with_frame(t, b, yr, br, wb, wry, wrb, params);
+    c.update_with_frame(t, b, yr, br, wb, wry, wrb);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -70,9 +72,9 @@ TEST(Camera, update_with_frame_empty) {
 }
 
 TEST(Camera, update_with_single_frame) {
-    Camera c = Camera(1);
-    RJ::Time t = RJ::now();
     VisionFilterParams params;
+    Camera c = Camera(1, params);
+    RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;
     std::vector<std::list<CameraRobot>> yr(kNumShells);
@@ -89,7 +91,7 @@ TEST(Camera, update_with_single_frame) {
 
     br.at(0).emplace_back(RJ::now(), rj_geometry::Pose(rj_geometry::Point(1.5, 1.5), 0.5), 0);
 
-    c.update_with_frame(t, b, yr, br, wb, wry, wrb, params);
+    c.update_with_frame(t, b, yr, br, wb, wry, wrb);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();

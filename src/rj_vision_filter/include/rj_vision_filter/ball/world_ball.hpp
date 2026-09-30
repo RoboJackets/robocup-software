@@ -26,10 +26,10 @@ public:
      *
      * @param calc_time Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
-     * @param params_ Vision filter parameters
+     * @param params Vision filter parameters
      */
     WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls,
-             const VisionFilterParams& params_);
+             const VisionFilterParams& params);
 
     /**
      * @return If the ball actually represents a real ball

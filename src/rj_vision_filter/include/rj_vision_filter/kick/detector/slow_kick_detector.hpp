@@ -19,6 +19,11 @@ namespace vision_filter {
 class SlowKickDetector {
 public:
     /**
+     * @param params Vision filter parameters. Must outlive this object.
+     */
+    explicit SlowKickDetector(const VisionFilterParams& params);
+
+    /**
      * Adds a record to our history list
      *
      * @param calc_time Time of calculation for this vision loop
@@ -26,7 +31,6 @@ public:
      * @param yellow_robots Best estimation of the yellow robots
      * @param blue_robots Best estimation of the blue robots
      * @param kick_event Returned kick event if we find one
-     * @param params_ Vision filter parameters
      *
      * @return Whether there was a kick
      *
@@ -36,57 +40,50 @@ public:
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
                    const std::vector<WorldRobot>& yellow_robots,
                    const std::vector<WorldRobot>& blue_robots,
-                   KickEvent* kick_event, const VisionFilterParams& params_);
+                   KickEvent* kick_event);
 
 private:
     /**
      * Tries to find out if/which robot kicked
      *
      * @param kick_event Returned kick event if one is detected
-     * @param params_ Vision filter parameters
      *
      * @return whether a kick event was detected
      */
-    bool detect_kick(KickEvent* kick_event, const VisionFilterParams& params_);
+    bool detect_kick(KickEvent* kick_event);
 
     /**
      * Checks to see if all the different tests to detect kicks are true
      *
      * @param robot List of robots as a function of time to check against
      * @param ball List of balls as a function of time to check against
-     * @param params_ Vision filter parameters
      *
      * @note robots and balls should be time synced
      */
-    static bool check_all_validators(const std::vector<WorldRobot>& robot,
-                                   const std::vector<WorldBall>& ball,
-                                   const VisionFilterParams& params_);
+    bool check_all_validators(const std::vector<WorldRobot>& robot,
+                                   const std::vector<WorldBall>& ball) const;
 
     /**
      * If ball and robots were close and are now far away
      *
      * @param robot List of robots as a function of time to check against
      * @param ball List of balls as a function of time to check against
-     * @param params_ Vision filter parameters
      *
      * @note robots and balls should be time synced
      */
-    static bool distance_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball,
-                                  const VisionFilterParams& params_);
+    bool distance_validator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball speed is above a minimum amount
      *
      * @param robot List of robots as a function of time to check against
      * @param ball List of balls as a function of time to check against
-     * @param params_ Vision filter parameters
      *
      * @note robots and balls should be time synced
      */
-    static bool velocity_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball,
-                                  const VisionFilterParams& params_);
+    bool velocity_validator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -105,13 +102,13 @@ private:
      *
      * @param robot List of robots as a function of time to check against
      * @param ball List of balls as a function of time to check against
-     * @param params_ Vision filter parameters
      *
      * @note robots and balls should be time synced
      */
-    static bool in_front_validator(const std::vector<WorldRobot>& robot,
-                                 const std::vector<WorldBall>& ball,
-                                 const VisionFilterParams& params_);
+    bool in_front_validator(const std::vector<WorldRobot>& robot,
+                                 const std::vector<WorldBall>& ball) const;
+
+    const VisionFilterParams& params_;
 
     std::deque<VisionState> state_history_;
 };

@@ -22,7 +22,7 @@ TEST(KalmanBall, invalid_world_ball) {
     EXPECT_EQ(rp.y(), p.y());
     EXPECT_EQ(rv.x(), 0);
     EXPECT_EQ(rv.y(), 0);
-    EXPECT_FALSE(kb.is_unhealthy(params));
+    EXPECT_FALSE(kb.is_unhealthy());
     EXPECT_EQ(kb.get_camera_id(), c_id);
     EXPECT_GT(kb.get_health(), 0);
 }
@@ -64,7 +64,7 @@ TEST(KalmanBall, predict) {
     KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
 
-    kb.predict(RJ::now(), params);
+    kb.predict(RJ::now());
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -88,7 +88,7 @@ TEST(KalmanBall, predict_and_update) {
     KalmanBall kb = KalmanBall(c_id, t, b, w, params);
     kb.set_vel(p);
 
-    kb.predict_and_update(RJ::now(), b, params);
+    kb.predict_and_update(RJ::now(), b);
 
     rj_geometry::Point rp = kb.get_pos();
     rj_geometry::Point rv = kb.get_vel();
@@ -111,9 +111,9 @@ TEST(KalmanBall, is_unhealthy) {
 
     KalmanBall kb = KalmanBall(c_id, t, b, w, params);
 
-    kb.predict(RJ::now() + RJ::Seconds(10), params);
+    kb.predict(RJ::now() + RJ::Seconds(10));
 
-    EXPECT_TRUE(kb.is_unhealthy(params));
+    EXPECT_TRUE(kb.is_unhealthy());
 }
 
 TEST(KalmanBall, max_measurement_size) {
@@ -128,7 +128,7 @@ TEST(KalmanBall, max_measurement_size) {
     kb.set_vel(p);
 
     for (int i = 0; i < 100; i++) {
-        kb.predict_and_update(RJ::now(), b, params);
+        kb.predict_and_update(RJ::now(), b);
     }
 
     boost::circular_buffer<CameraBall> list = kb.get_prev_measurements();

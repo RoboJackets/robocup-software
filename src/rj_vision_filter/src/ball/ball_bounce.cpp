@@ -18,21 +18,22 @@ namespace vision_filter {
  */
 int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10); }
 
+BallBounce::BallBounce(const VisionFilterParams& params) : params_(params) {}
+
 bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
                                   const std::vector<WorldRobot>& blue_robots,
-                                  rj_geometry::Point& out_new_vel,
-                                  const VisionFilterParams& params_) {
+                                  rj_geometry::Point& out_new_vel) const {
     // Figures out if there is an intersection and what the resulting velocity
     // should be
-    auto find_end_vel = [&ball, &out_new_vel, &params_](const std::vector<WorldRobot>& robots) {
+    auto find_end_vel = [this, &ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
         for (const WorldRobot& robot : robots) {
             if (!robot.get_is_valid()) {
                 continue;
             }
 
             // Make sure ball is intersecting next frame
-            if (!ball_in_robot(ball, robot, params_)) {
+            if (!ball_in_robot(ball, robot)) {
                 continue;
             }
 
@@ -51,17 +52,19 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
 
             // intersect_pts.size() == 2
 
-            //                        _____
-            //                       /     \
-            //                      | Robot |
-            //                       \_____/
-            //                          B
-            //                         /|\
-            //                        / | \
-            //                       /  |  \
-            //                      /   |   \
-            //                     /    D    \
-            //                    A           C
+            /*
+                                      _____
+                                     /     \
+                                    | Robot |
+                                     \_____/
+                                        B
+                                       /|\
+                                      / | \
+                                     /  |  \
+                                    /   |   \
+                                   /    D    \
+                                  A           C
+            */
             // Ball moves from A->B
             // Bounces off the robot
             // Moves from B->C
@@ -119,15 +122,17 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 did_hit_mouth = true;
             }
 
-            //                          R
-            //                        _____
-            //                          B
-            //                         /|\
-            //                        / | \
-            //                       /  |  \
-            //                      /   |   \
-            //                     /    |    \
-            //                    A-----D-----C
+            /*
+                                        R
+                                      _____
+                                        B
+                                       /|\
+                                      / | \
+                                     /  |  \
+                                    /   |   \
+                                   /    |    \
+                                  A-----D-----C
+            */
 
             // B->A
             rj_geometry::Point intersect_pt_ball_vector = ball_pos_safe_pt - closest_intersect_pt;
@@ -155,14 +160,8 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             rj_geometry::Point intersect_pt_reflection_unit_vector =
                 intersect_pt_reflection_vector.normalized();
 
-            // Scale magnitude of velocity by a percentage
-            double dampen_lin_coeff = params_.bounce.robot_body_lin_dampen;
-            double dampen_angle_coeff = params_.bounce.robot_body_angle_dampen;
-
-            if (did_hit_mouth) {
-                dampen_lin_coeff = params_.bounce.robot_mouth_lin_dampen;
-                dampen_angle_coeff = params_.bounce.robot_mouth_angle_dampen;
-            }
+            double dampen_angle_coeff = did_hit_mouth ? params_.bounce.robot_mouth_angle_dampen
+                                                      : params_.bounce.robot_body_angle_dampen;
 
             //                   C------D
             //                    \     |
@@ -182,15 +181,15 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             // We dont want any extra rotation when angle CBD is 0 degrees or 90
             // degrees Just to simplify implementation, I'm going to do a
             // triangle
-            //
-            // df*45  -              /  \
-            //                    /        \
-            //                 /              \
-            //  0     -     /                    \
-            //
-            //             |          |           |
-            //            0 deg    45 deg       90 deg
-            //
+            /*
+               df*45  -              /  \
+                                  /        \
+                               /              \
+                0     -     /                    \
+
+                           |          |           |
+                          0 deg    45 deg       90 deg
+            */
             // df is angle dampen factor
             // y axis represents max angle dampen in terms of degrees
             // x axis is the angle CBD
@@ -222,8 +221,7 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
     return bounce_found;
 }
 
-bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot,
-                               const VisionFilterParams& params_) {
+bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) const {
     rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * params_.vision_loop_dt;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;

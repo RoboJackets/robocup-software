@@ -6,11 +6,12 @@
 namespace vision_filter {
 
 KalmanBall::KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBall init_measurement,
-                       const WorldBall& previous_world_ball, const VisionFilterParams& params_)
-    : last_update_time_(creation_time),
+                       const WorldBall& previous_world_ball, const VisionFilterParams& params)
+    : params_(&params),
+      last_update_time_(creation_time),
       last_predict_time_(creation_time),
-      previous_measurements_(params_.kick_detector.slow_kick_hist_length),
-      health_(params_.filter_health.init),
+      previous_measurements_(params.kick_detector.slow_kick_hist_length),
+      health_(params.filter_health.init),
       camera_id_(camera_id) {
     rj_geometry::Point init_pos = init_measurement.get_pos();
     rj_geometry::Point init_vel = rj_geometry::Point(0, 0);
@@ -20,27 +21,26 @@ KalmanBall::KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBal
         init_vel = previous_world_ball.get_vel();
     }
 
-    filter_ = KalmanFilter2D(init_pos, init_vel, params_);
+    filter_ = KalmanFilter2D(init_pos, init_vel, params);
 
     previous_measurements_.push_back(init_measurement);
 }
 
-void KalmanBall::predict(RJ::Time current_time, const VisionFilterParams& params_) {
+void KalmanBall::predict(RJ::Time current_time) {
     last_predict_time_ = current_time;
 
     // Decrement but make sure you don't go too low
-    health_ = std::max(health_ - params_.filter_health.dec, params_.filter_health.min);
+    health_ = std::max(health_ - params_->filter_health.dec, params_->filter_health.min);
 
     filter_.predict();
 }
 
-void KalmanBall::predict_and_update(RJ::Time current_time, CameraBall update_ball,
-                                    const VisionFilterParams& params_) {
+void KalmanBall::predict_and_update(RJ::Time current_time, CameraBall update_ball) {
     last_predict_time_ = current_time;
     last_update_time_ = current_time;
 
     // Increment but make sure you don't go too high
-    health_ = std::min(health_ + params_.filter_health.inc, params_.filter_health.max);
+    health_ = std::min(health_ + params_->filter_health.inc, params_->filter_health.max);
 
     // Keep last X camera observations in list for kick detection and filtering
     previous_measurements_.push_back(update_ball);
@@ -48,9 +48,9 @@ void KalmanBall::predict_and_update(RJ::Time current_time, CameraBall update_bal
     filter_.predict_with_update(update_ball.get_pos());
 }
 
-bool KalmanBall::is_unhealthy(const VisionFilterParams& params_) const {
+bool KalmanBall::is_unhealthy() const {
     bool updated_recently = RJ::Seconds(last_predict_time_ - last_update_time_) <
-                            RJ::Seconds(params_.kalman_ball.max_time_outside_vision);
+                            RJ::Seconds(params_->kalman_ball.max_time_outside_vision);
 
     return !updated_recently;
 }

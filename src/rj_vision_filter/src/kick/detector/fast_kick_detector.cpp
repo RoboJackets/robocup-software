@@ -8,10 +8,12 @@
 
 namespace vision_filter {
 
+FastKickDetector::FastKickDetector(const VisionFilterParams& params) : params_(params) {}
+
 bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
                                   const std::vector<WorldRobot>& blue_robots,
-                                  KickEvent& kick_event, const VisionFilterParams& params_) {
+                                  KickEvent& kick_event) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
     if (state_history_.size() > static_cast<size_t>(params_.kick_detector.fast_kick_hist_length)) {
@@ -33,7 +35,7 @@ bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
     }
 
     // If we didn't kick, just return
-    if (!detect_kick(params_)) {
+    if (!detect_kick()) {
         return false;
     }
 
@@ -50,7 +52,7 @@ bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
     return true;
 }
 
-bool FastKickDetector::detect_kick(const VisionFilterParams& params_) {
+bool FastKickDetector::detect_kick() {
     // Note: This may be weird at camera frame intersections
     // It may be a good idea to look at the kalman balls
     // and checking kalman balls for velocity jumps

@@ -24,37 +24,33 @@ public:
      * @param init_measurement Initial robot measurement
      * @param previous_world_robot World robot from last frame (or invalid world
      * robot)
-     * @param params_ Vision filter parameters
+     * @param params Vision filter parameters. Must outlive this object.
      */
     KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
                 CameraRobot init_measurement,
                 const WorldRobot& previous_world_robot,
-                const VisionFilterParams& params_);
+                const VisionFilterParams& params);
 
     /**
      * Predicts one time step forward
      *
      * @param current_time Current time of the prediction step
-     * @param params_ Vision filter parameters
      */
-    void predict(RJ::Time current_time, const VisionFilterParams& params_);
+    void predict(RJ::Time current_time);
 
     /**
      * Predicts one time step forward then triangulates toward the measurement
      *
      * @param current_time Current time of the prediction/update step
      * @param update_robot Robot measurement that we are using as feedback
-     * @param params_ Vision filter parameters
      */
-    void predict_and_update(RJ::Time current_time, CameraRobot update_robot,
-                           const VisionFilterParams& params_);
+    void predict_and_update(RJ::Time current_time, CameraRobot update_robot);
 
     /**
-     * @param params_ Vision filter parameters
      * Returns true when the filter hasn't been updated in a while and should be
      * deleted
      */
-    bool is_unhealthy(const VisionFilterParams& params_) const;
+    bool is_unhealthy() const;
 
     /**
      * @return The camera id this belongs to
@@ -119,6 +115,9 @@ public:
     const boost::circular_buffer<CameraRobot>& get_prev_measurements() const;
 
 private:
+    // Pointer rather than reference so KalmanRobot stays copy-assignable.
+    const VisionFilterParams* params_;
+
     RJ::Time last_update_time_;
     RJ::Time last_predict_time_;
 

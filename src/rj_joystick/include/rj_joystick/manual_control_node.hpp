@@ -43,6 +43,7 @@ private:
 
     void set_manual(const std::string& uuid, std::optional<int> robot_id);
     void remove_controller(ManualController* controller);
+    void declare_params();
     rcl_interfaces::msg::SetParametersResult on_param_change(
         const std::vector<rclcpp::Parameter>& parameters);
 

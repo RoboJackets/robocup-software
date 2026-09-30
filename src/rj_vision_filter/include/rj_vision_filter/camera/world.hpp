@@ -18,9 +18,9 @@ namespace vision_filter {
 class World {
 public:
     /**
-     * @param params_ Vision filter parameters
+     * @param params Vision filter parameters. Must outlive this object.
      */
-    explicit World(const VisionFilterParams& params_);
+    explicit World(const VisionFilterParams& params);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -28,34 +28,30 @@ public:
      * @param calc_time Current iteration time
      * @param new_frames List of new frames from ssl vision
      * @param update_all Whether to update the cameras without vision measurements
-     * @param params_ Vision filter parameters
      *
      * @note Call this OR update_without_camera_frame ONCE an iteration
      */
     void update_with_camera_frame(RJ::Time calc_time, const std::vector<CameraFrame>& new_frames,
-                                  bool update_all, const VisionFilterParams& params_);
+                                  bool update_all);
 
     /**
      * Updates all the child cameras given a set of new camera frames
      *
      * @param calc_time Current iteration time
      * @param frame new frame for a single camera, from vision
-     * @param params_ Vision filter parameters
      *
      * @note Call this once per camera per iteration
      */
-    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame,
-                             const VisionFilterParams& params_);
+    void update_single_camera(RJ::Time calc_time, const CameraFrame& frame);
 
     /**
      * Updates all the child cameras when there are no new camera frames
      *
      * @param calc_time Current iteration time
-     * @param params_ Vision filter parameters
      *
      * @note Call this OR update_with_camera_frame ONCE an iteration
      */
-    void update_without_camera_frame(RJ::Time calc_time, const VisionFilterParams& params_);
+    void update_without_camera_frame(RJ::Time calc_time);
 
     /**
      * @return Best estimate of the ball
@@ -86,27 +82,25 @@ public:
 private:
     /**
      * Does the ball bounce calculations for each of the child cameras
-     *
-     * @param params_ Vision filter parameters
      */
-    void calc_ball_bounce(const VisionFilterParams& params_);
+    void calc_ball_bounce();
 
     /**
      * Fills the world objects with a mix of the best kalman filters from
      * each camera
      *
      * @param calc_time Current iteration time
-     * @param params_ Vision filter parameters
      */
-    void update_world_objects(RJ::Time calc_time, const VisionFilterParams& params_);
+    void update_world_objects(RJ::Time calc_time);
 
     /**
      * Adds the latest estimate to the kick detectors and checks for kick
      *
      * @param calc_time Current iteration time
-     * @param params_ Vision filter parameters
      */
-    void detect_kicks(RJ::Time calc_time, const VisionFilterParams& params_);
+    void detect_kicks(RJ::Time calc_time);
+
+    const VisionFilterParams& params_;
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to

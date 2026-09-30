@@ -20,7 +20,7 @@ TEST(BallBounce, no_input) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -40,7 +40,7 @@ TEST(BallBounce, invalid_robot) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -71,7 +71,7 @@ TEST(BallBounce, no_intersection) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -102,7 +102,7 @@ TEST(BallBounce, wrong_direction) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -133,7 +133,7 @@ TEST(BallBounce, too_far) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_FALSE(is_bounce);
 }
@@ -164,7 +164,7 @@ TEST(BallBounce, flat_intersect_side) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -198,7 +198,7 @@ TEST(BallBounce, flat_intersect_mouth) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -232,7 +232,7 @@ TEST(BallBounce, angle_intersect_side) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     EXPECT_TRUE(is_bounce);
     EXPECT_GT(out_vel.x(), 0);
@@ -267,7 +267,7 @@ TEST(BallBounce, angle_intersect_mouth) {
 
     rj_geometry::Point out_vel;
 
-    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel, params);
+    bool is_bounce = BallBounce(params).calc_ball_bounce(kb, yellow, blue, out_vel);
 
     // Straight left with a 45 degree wall causes ball to go straight up
     EXPECT_TRUE(is_bounce);
