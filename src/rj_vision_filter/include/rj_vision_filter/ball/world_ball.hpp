@@ -1,8 +1,11 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
 #include <list>
+#include <memory>
+
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 class KalmanBall;
@@ -25,8 +28,10 @@ public:
      *
      * @param calc_time Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
+     * @param params Vision filter parameters
      */
-    WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls);
+    WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls,
+              const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * @return If the ball actually represents a real ball

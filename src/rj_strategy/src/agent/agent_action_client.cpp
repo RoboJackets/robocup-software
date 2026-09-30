@@ -386,7 +386,6 @@ int main(int argc, char** argv) {
          ++i) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
         agents.emplace_back(i);
         auto& agent = agents.back();
-        start_global_param_provider(agent.node().get(), kGlobalParamServerNode);
         executor.add_node(agent.node());
     }
     executor.spin();

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/filter/kalman_filter.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 class KalmanFilter2D : public KalmanFilter {
@@ -16,8 +19,10 @@ public:
      *
      * @param init_pos initial position
      * @param init_vel initial velocity
+     * @param params Vision filter parameters
      */
-    KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel);
+    KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
+                   const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * Predicts with update

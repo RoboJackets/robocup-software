@@ -1,0 +1,106 @@
+#pragma once
+
+#include <cstdint>
+
+namespace vision_filter {
+
+struct BallVisionFilterParams {
+    double init_covariance = 100.0;
+    double process_noise = 0.1;
+    double observation_noise = 2.0;
+};
+
+struct RobotVisionFilterParams {
+    double init_covariance = 100.0;
+    double process_noise = 0.5;
+    double observation_noise = 2.0;
+    double orientation_scale = 1.0;
+};
+
+struct CameraVisionFilterParams {
+    double mhkf_radius_cutoff = 0.5;
+    bool use_mhkf = true;
+    int64_t max_num_kalman_balls = 10;
+    int64_t max_num_kalman_robots = 10;
+};
+
+struct KalmanFilterBallParams {
+    double max_time_outside_vision = 0.2;
+};
+
+struct KalmanFilterRobotParams {
+    double max_time_outside_vision = 0.5;
+};
+
+// Each Kalman filter keeps a health score: it rises when the filter gets a camera
+// measurement and decays when it only predicts. Healthier filters are weighted more
+// when merging filters from multiple cameras.
+struct FilterHealthParams {
+    // Health a new filter starts with. Must be between min and max.
+    int64_t init = 2;
+    // How much health increases on each predict step that has a measurement.
+    int64_t inc = 2;
+    // How much health decreases on each predict step without a measurement.
+    int64_t dec = 1;
+    // Upper bound on health.
+    int64_t max = 20;
+    // Lower bound on health. Must be greater than 0: WorldBall/WorldRobot divide by health.
+    int64_t min = 1;
+};
+
+struct KickDetectorParams {
+    int64_t slow_kick_hist_length = 5;
+    int64_t fast_kick_hist_length = 3;
+    double fast_kick_timeout = 1.0;
+    double slow_kick_timeout = 0.5;
+    double same_kick_timeout = 0.5;
+    double fast_acceleration_trigger = 750.0;
+    // TODO: Unused (dead since before the rj_param_utils removal). Safe to remove.
+    double slow_robot_dist_filter_cutoff = 3.0;
+    double slow_one_robot_within_dist = 0.15;
+    double slow_any_robot_past_dist = 0.16;
+    double slow_min_ball_speed = 0.6;
+    double slow_max_kick_angle = 0.34;
+};
+
+struct BounceParams {
+    // TODO: The two lin_dampen params are unused — ball_bounce.cpp never scaled the bounced
+    // velocity by them (pre-existing bug). Either wire them up or remove them.
+    double robot_body_lin_dampen = 0.9;
+    double robot_mouth_lin_dampen = 0.3;
+    double robot_body_angle_dampen = 0.0;
+    double robot_mouth_angle_dampen = 0.0;
+};
+
+struct WorldBallParams {
+    double ball_merger_power = 1.5;
+};
+
+struct WorldRobotParams {
+    double robot_merger_power = 1.5;
+};
+
+/**
+ * @brief All tunable parameters for the vision filter, read from ROS2
+ * parameters once at startup (and kept live-updated) by VisionFilter, and
+ * passed by const reference down to the plain (non-Node) classes that use
+ * them.
+ */
+struct VisionFilterParams {
+    double vision_loop_dt = 1.0 / 60.0;
+    int64_t max_num_cameras = 12;
+    double publish_hz = 60.0;
+
+    BallVisionFilterParams ball;
+    RobotVisionFilterParams robot;
+    CameraVisionFilterParams camera;
+    KalmanFilterBallParams kalman_ball;
+    KalmanFilterRobotParams kalman_robot;
+    FilterHealthParams filter_health;
+    KickDetectorParams kick_detector;
+    BounceParams bounce;
+    WorldBallParams world_ball;
+    WorldRobotParams world_robot;
+};
+
+}  // namespace vision_filter

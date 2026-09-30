@@ -1,23 +1,15 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
 
 namespace vision_filter {
 
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, camera, mhkf_radius_cutoff, 0.5,
-                  "The cutoff radius for when to associate measurements to Kalman objects.")
-DEFINE_NS_BOOL(kVisionFilterParamModule, camera, use_mhkf, true, "Whether to use MHKF or AKF.")
-DEFINE_NS_INT64(kVisionFilterParamModule, camera, max_num_kalman_balls, 10,
-                "Max number of Kalman balls for this specific camera.")
-DEFINE_NS_INT64(kVisionFilterParamModule, camera, max_num_kalman_robots, 10,
-                "Max number of Kalman robots for each robot id for this specific camera.")
-using namespace camera;
+Camera::Camera(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)), is_valid_(false) {}
 
-Camera::Camera() : is_valid_(false) {}
-
-Camera::Camera(int camera_id)
-    : is_valid_(true),
+Camera::Camera(int camera_id, std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)),
+      is_valid_(true),
       camera_id_(camera_id),
       kalman_robot_yellow_list_(kNumShells),
       kalman_robot_blue_list_(kNumShells) {}
@@ -26,9 +18,10 @@ bool Camera::get_is_valid() const { return is_valid_; }
 
 void Camera::process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
                                  const std::vector<WorldRobot>& blue_robots) {
+    BallBounce ball_bounce(params_);
     for (KalmanBall& b : kalman_ball_list_) {
         rj_geometry::Point new_vel;
-        bool is_collision = BallBounce::calc_ball_bounce(b, yellow_robots, blue_robots, new_vel);
+        bool is_collision = ball_bounce.calc_ball_bounce(b, yellow_robots, blue_robots, new_vel);
 
         if (is_collision) {
             b.set_vel(new_vel);
@@ -85,7 +78,7 @@ void Camera::update_balls(RJ::Time calc_time, const std::vector<CameraBall>& bal
     }
 
     // We have some balls, so choose which updater to use
-    if (PARAM_use_mhkf) {
+    if (params_->camera.use_mhkf) {
         update_balls_mhkf(calc_time, ball_list, previous_world_ball);
     } else {
         update_balls_akf(calc_time, ball_list, previous_world_ball);
@@ -100,7 +93,8 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
     // frame or two
     if (kalman_ball_list_.empty()) {
         CameraBall avg_ball = CameraBall::combine_balls(ball_list);
-        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball);
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
+                                       params_);
 
         return;
     }
@@ -126,7 +120,7 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
             // Increase the distance of our cutoff by the velocity
             // This is so the ball doesn't move outside the kalman filter
             // position radius when the ball instantly stops (like in sim)
-            if (dist < PARAM_mhkf_radius_cutoff + kalman_ball.get_vel().mag()) {
+            if (dist < params_->camera.mhkf_radius_cutoff + kalman_ball.get_vel().mag()) {
                 measurement_balls.push_back(camera_ball);
                 used_camera_ball.at(camera_ball_idx) = true;
             }
@@ -163,8 +157,10 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
         const CameraBall& camera_ball = ball_list.at(i);
         bool was_used = used_camera_ball.at(i);
 
-        if (!was_used && kalman_ball_list_.size() < PARAM_max_num_kalman_balls) {
-            kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball);
+        if (!was_used &&
+            kalman_ball_list_.size() < static_cast<size_t>(params_->camera.max_num_kalman_balls)) {
+            kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball,
+                                           params_);
         }
     }
 }
@@ -177,7 +173,8 @@ void Camera::update_balls_akf(RJ::Time calc_time, const std::vector<CameraBall>&
     // If we have no existing filters, create a new one from average of
     // everything
     if (kalman_ball_list_.empty()) {
-        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball);
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
+                                       params_);
 
         return;
     }
@@ -203,7 +200,7 @@ void Camera::update_robots(RJ::Time calc_time,
 
             // If we do, do the fancy updates
         } else {
-            if (PARAM_use_mhkf) {
+            if (params_->camera.use_mhkf) {
                 update_robots_mhkf(calc_time, single_yellow_robot_list,
                                    previous_yellow_world_robots.at(i),
                                    kalman_robot_yellow_list_.at(i));
@@ -222,7 +219,7 @@ void Camera::update_robots(RJ::Time calc_time,
 
             // If we do, do the fancy updates
         } else {
-            if (PARAM_use_mhkf) {
+            if (params_->camera.use_mhkf) {
                 update_robots_mhkf(calc_time, single_blue_robot_list,
                                    previous_blue_world_robots.at(i), kalman_robot_blue_list_.at(i));
             } else {
@@ -243,7 +240,7 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     if (single_kalman_robot_list.empty()) {
         CameraRobot avg_robot = CameraRobot::combine_robots(single_robot_list);
         single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
-                                              previous_world_robot);
+                                              previous_world_robot, params_);
 
         return;
     }
@@ -271,7 +268,7 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
             // Increase the distance of our cutoff by the velocity
             // This is so the robot doesn't move outside the kalman filter
             // position radius when the robot instantly stops (like in sim)
-            if (dist < PARAM_mhkf_radius_cutoff + kalman_robot.get_vel().mag()) {
+            if (dist < params_->camera.mhkf_radius_cutoff + kalman_robot.get_vel().mag()) {
                 measurement_robot.push_back(camera_robot);
                 used_camera_robot.at(camera_robot_idx) = true;
             }
@@ -302,10 +299,10 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     for (const CameraRobot& camera_robot : single_robot_list) {
         bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!was_used &&
-            single_kalman_robot_list.size() < (unsigned long)PARAM_max_num_kalman_robots) {
+        if (!was_used && single_kalman_robot_list.size() <
+                             static_cast<size_t>(params_->camera.max_num_kalman_robots)) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
-                                                  previous_world_robot);
+                                                  previous_world_robot, params_);
         }
 
         camera_robot_idx++;
@@ -322,7 +319,7 @@ void Camera::update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>&
     // everything
     if (single_kalman_robot_list.empty()) {
         single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
-                                              previous_world_robot);
+                                              previous_world_robot, params_);
 
         return;
     }

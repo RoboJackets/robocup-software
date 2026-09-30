@@ -1,8 +1,11 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_vision_filter/filter/kalman_filter.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 class KalmanFilter3D : public KalmanFilter {
@@ -17,8 +20,10 @@ public:
      *
      * @param init_pose initial pose
      * @param init_twist initial twist
+     * @param params Vision filter parameters
      */
-    KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist);
+    KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
+                   const std::shared_ptr<const VisionFilterParams>& params);
 
     /**
      * Predicts with update

@@ -2,16 +2,19 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 TEST(Camera, invalid_camera) {
-    Camera c = Camera();
+    auto params = std::make_shared<VisionFilterParams>();
+    Camera c = Camera(params);
 
     EXPECT_FALSE(c.get_is_valid());
 }
 
 TEST(Camera, valid_camera) {
-    Camera c = Camera(1);
+    auto params = std::make_shared<VisionFilterParams>();
+    Camera c = Camera(1, params);
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
     std::vector<std::list<KalmanRobot>> kry = c.get_kalman_robots_yellow();
@@ -26,7 +29,8 @@ TEST(Camera, valid_camera) {
 }
 
 TEST(Camera, update_no_frame_empty) {
-    Camera c = Camera(1);
+    auto params = std::make_shared<VisionFilterParams>();
+    Camera c = Camera(1, params);
     c.update_without_frame(RJ::now());
 
     std::list<KalmanBall> kb = c.get_kalman_balls();
@@ -42,7 +46,8 @@ TEST(Camera, update_no_frame_empty) {
 }
 
 TEST(Camera, update_with_frame_empty) {
-    Camera c = Camera(1);
+    auto params = std::make_shared<VisionFilterParams>();
+    Camera c = Camera(1, params);
     RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;
@@ -67,7 +72,8 @@ TEST(Camera, update_with_frame_empty) {
 }
 
 TEST(Camera, update_with_single_frame) {
-    Camera c = Camera(1);
+    auto params = std::make_shared<VisionFilterParams>();
+    Camera c = Camera(1, params);
     RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;

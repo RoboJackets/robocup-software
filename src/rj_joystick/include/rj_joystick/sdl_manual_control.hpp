@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <SDL2/SDL.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <fmt/format.h>
@@ -28,7 +30,7 @@ public:
 
 class KeyboardController : public SDLController {
 public:
-    KeyboardController();
+    explicit KeyboardController(std::shared_ptr<const ManualControlParams> params);
     ~KeyboardController() override;
 
     KeyboardController(const KeyboardController&) = delete;
@@ -47,6 +49,7 @@ public:
     [[nodiscard]] SDL_JoystickID get_id() const override { return -1; }
 
 private:
+    std::shared_ptr<const ManualControlParams> params_;
     SDL_Window* window_ = nullptr;
     SDL_Renderer* renderer_ = nullptr;
 
@@ -57,7 +60,9 @@ private:
 
 class GamepadController : public SDLController {
 public:
-    GamepadController(SDL_GameController* controller) : my_controller_{controller} {}
+    GamepadController(SDL_GameController* controller,
+                      std::shared_ptr<const ManualControlParams> params)
+        : my_controller_{controller}, params_{std::move(params)} {}
     ~GamepadController() override = default;
 
     GamepadController(const GamepadController&) = delete;
@@ -92,6 +97,7 @@ private:
     }
 
     SDL_GameController* my_controller_;
+    std::shared_ptr<const ManualControlParams> params_;
 
     double kick_power_ = 0.5;
     double dribble_power_ = 0.0;
@@ -102,7 +108,8 @@ private:
  */
 class SDLControllerProvider : public ManualControllerProvider {
 public:
-    SDLControllerProvider(bool do_keyboard, std::function<void(ManualController*)> on_connect,
+    SDLControllerProvider(bool do_keyboard, std::shared_ptr<const ManualControlParams> params,
+                          std::function<void(ManualController*)> on_connect,
                           std::function<void(ManualController*)> on_disconnect);
     ~SDLControllerProvider() override;
 
@@ -115,6 +122,7 @@ public:
 
 private:
     std::vector<std::unique_ptr<SDLController>> controllers_;
+    std::shared_ptr<const ManualControlParams> params_;
     std::function<void(ManualController*)> on_connect_;
     std::function<void(ManualController*)> on_disconnect_;
 };

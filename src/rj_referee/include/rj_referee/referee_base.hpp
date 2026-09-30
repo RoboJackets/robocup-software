@@ -15,15 +15,12 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 namespace referee {
 
 using GoalieMsg = rj_msgs::msg::Goalie;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
-
-constexpr auto kRefereeParamModule = "referee";
 
 /**
  * @brief Base class for both types of referee. Handles sending ROS messages to
@@ -167,8 +164,6 @@ private:
      * @details Should be nullopt whenever we lose the ball on vision.
      */
     std::optional<rj_geometry::Point> last_ball_position_;
-
-    params::LocalROS2ParamProvider param_provider_;
 
     config_client::ConfigClient config_client_;
 

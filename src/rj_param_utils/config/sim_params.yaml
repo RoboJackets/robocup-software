@@ -80,6 +80,12 @@
     team_name: RoboJackets
     use_sim_time: false
 
+/manual_control:
+  ros__parameters:
+    use_sim_time: false
+    min_kick_speed: 1.0
+    max_kick_speed: 7.0
+
 /planner:
   ros__parameters:
     collect:

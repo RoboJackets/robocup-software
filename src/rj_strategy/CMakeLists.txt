@@ -21,7 +21,6 @@ find_package(rj_convert REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
 
 set(RJ_STRATEGY_DEPS
@@ -36,7 +35,6 @@ set(RJ_STRATEGY_DEPS
   rj_common
   rj_drawing_msgs
   rj_geometry
-  rj_param_utils
   rj_utils
 )
 
