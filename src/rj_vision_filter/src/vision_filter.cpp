@@ -1,4 +1,5 @@
 #include "rj_vision_filter/vision_filter.hpp"
+
 #include <cstddef>
 
 #include <rj_common/time.hpp>
@@ -21,14 +22,10 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
-    
+
     team_color_sub_ = create_subscription<TeamColorMsg>(
-        referee::topics::kTeamColorTopic,
-        rclcpp::QoS(1),
-        [this](TeamColorMsg::UniquePtr msg) {
-            us_blue_ = msg->is_blue;
-        }
-    );
+        referee::topics::kTeamColorTopic, rclcpp::QoS(1),
+        [this](TeamColorMsg::UniquePtr msg) { us_blue_ = msg->is_blue; });
 
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
@@ -92,8 +89,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 }
 
 void VisionFilter::publish_state() {
-    WorldStateMsg::UniquePtr msg =
-        std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_));
+    WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_));
     world_state_pub_->publish(std::move(msg));
 }
 
