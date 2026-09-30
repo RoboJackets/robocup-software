@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>
+
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>

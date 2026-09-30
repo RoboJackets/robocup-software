@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
 #include <deque>
+
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>
@@ -61,7 +62,7 @@ private:
      * @note robots and balls should be time synced
      */
     bool check_all_validators(const std::vector<WorldRobot>& robot,
-                                   const std::vector<WorldBall>& ball) const;
+                              const std::vector<WorldBall>& ball) const;
 
     /**
      * If ball and robots were close and are now far away
@@ -72,7 +73,7 @@ private:
      * @note robots and balls should be time synced
      */
     bool distance_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball) const;
+                            const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -83,7 +84,7 @@ private:
      * @note robots and balls should be time synced
      */
     bool velocity_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball) const;
+                            const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -106,7 +107,7 @@ private:
      * @note robots and balls should be time synced
      */
     bool in_front_validator(const std::vector<WorldRobot>& robot,
-                                 const std::vector<WorldBall>& ball) const;
+                            const std::vector<WorldBall>& ball) const;
 
     const VisionFilterParams& params_;
 
