@@ -28,4 +28,10 @@ elif [[ -n "$ZSH_VERSION" ]]; then
     if [[ -f install/setup.zsh ]]; then
         source install/setup.zsh
     fi
+else
+    echo "ERROR: unsupported shell. This script needs bash or zsh." >&2
+    return 1
 fi
+
+echo "ROS Setup Complete!"
+
