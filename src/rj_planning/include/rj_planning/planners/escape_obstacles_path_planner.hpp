@@ -6,7 +6,6 @@
 #include <cmath>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_rrt/Tree.hpp>
 
 #include "rj_planning/plan_request.hpp"

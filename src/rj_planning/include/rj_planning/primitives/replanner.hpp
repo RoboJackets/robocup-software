@@ -8,8 +8,6 @@
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 
 #include "rj_planning/obstacle_set.hpp"
 #include "rj_planning/planners/path_planner.hpp"
