@@ -45,7 +45,7 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
     using custom_type = RobotIntent;
     using ros_message_type = rj_msgs::msg::RobotIntent;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
         destination.motion_command =
             rj_convert::convert_to_ros<planning::MotionCommand, rj_msgs::msg::MotionCommand>(

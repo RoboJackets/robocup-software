@@ -32,7 +32,7 @@ struct TypeAdapter<strategy::communication::SeekerRequest, rj_msgs::msg::SeekerR
     using custom_type = strategy::communication::SeekerRequest;
     using ros_message_type = rj_msgs::msg::SeekerRequest;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;
         destination.robot_id = source.robot_id;
         destination.seeking_point_x = source.seeking_point_x;

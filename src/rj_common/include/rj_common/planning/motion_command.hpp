@@ -85,7 +85,7 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
     using custom_type = planning::MotionCommand;
     using ros_message_type = rj_msgs::msg::MotionCommand;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = ros_message_type{};
         // take the name from the struct and put it in the ROS msg version
         destination.name = source.name;

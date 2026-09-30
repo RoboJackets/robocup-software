@@ -123,7 +123,7 @@ struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInst
     using custom_type = planning::LinearMotionInstant;
     using ros_message_type = rj_msgs::msg::LinearMotionInstant;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.position =
             rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
                 source.position);
@@ -149,7 +149,7 @@ struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
     using custom_type = planning::RobotInstant;
     using ros_message_type = rj_msgs::msg::RobotInstant;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.stamp =
             rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(source.stamp);
         destination.pose =

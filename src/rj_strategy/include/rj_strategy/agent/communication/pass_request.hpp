@@ -30,7 +30,7 @@ struct TypeAdapter<strategy::communication::PassRequest, rj_msgs::msg::PassReque
     using custom_type = strategy::communication::PassRequest;
     using ros_message_type = rj_msgs::msg::PassRequest;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;
         destination.direct = source.direct;
         destination.from_robot_id = source.from_robot_id;

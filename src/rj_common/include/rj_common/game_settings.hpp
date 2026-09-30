@@ -50,7 +50,7 @@ struct TypeAdapter<GameSettings, GameSettings::Msg> {
     using custom_type = GameSettings;
     using ros_message_type = GameSettings::Msg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.simulation, &destination.simulation);
         rj_convert::convert_to_ros(source.request_blue_team, &destination.request_blue_team);
         rj_convert::convert_to_ros(source.request_goalie_id, &destination.request_goalie_id);

@@ -26,7 +26,7 @@ struct TypeAdapter<
     using custom_type = std::vector<CustomItem>;
     using ros_message_type = std::vector<RosItem>;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.clear();
         destination.reserve(source.size());
         for (const auto& item : source) {
@@ -34,7 +34,7 @@ struct TypeAdapter<
             if constexpr (std::is_same_v<CustomItem, RosItem>) {
                 converted = item;
             } else {
-                TypeAdapter<CustomItem, RosItem>::convert_to_ros(item, converted);
+                TypeAdapter<CustomItem, RosItem>::convert_to_ros_message(item, converted);
             }
             destination.emplace_back(std::move(converted));
         }
@@ -65,7 +65,7 @@ RosType convert_to_ros(const CustomType& source) {
     if constexpr (std::is_same_v<CustomType, RosType>) {
         destination = source;
     } else {
-        rclcpp::TypeAdapter<CustomType, RosType>::convert_to_ros(source, destination);
+        rclcpp::TypeAdapter<CustomType, RosType>::convert_to_ros_message(source, destination);
     }
     return destination;
 }
@@ -86,7 +86,7 @@ void convert_to_ros(const CustomType& source, RosType* destination) {
     if constexpr (std::is_same_v<CustomType, RosType>) {
         *destination = source;
     } else {
-        rclcpp::TypeAdapter<CustomType, RosType>::convert_to_ros(source, *destination);
+        rclcpp::TypeAdapter<CustomType, RosType>::convert_to_ros_message(source, *destination);
     }
 }
 

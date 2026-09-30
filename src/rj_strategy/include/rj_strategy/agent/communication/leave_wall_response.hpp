@@ -29,7 +29,7 @@ struct TypeAdapter<strategy::communication::LeaveWallResponse, rj_msgs::msg::Lea
     using custom_type = strategy::communication::LeaveWallResponse;
     using ros_message_type = rj_msgs::msg::LeaveWallResponse;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;
         destination.robot_id = source.robot_id;
     }

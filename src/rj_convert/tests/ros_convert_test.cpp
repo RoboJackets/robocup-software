@@ -20,7 +20,7 @@ struct TypeAdapter<MockTime, MockTime::Msg> {
     using custom_type = MockTime;
     using ros_message_type = MockTime::Msg;
 
-    static void convert_to_ros(const custom_type& from, ros_message_type& to) {
+    static void convert_to_ros_message(const custom_type& from, ros_message_type& to) {
         to = from.time;
     }
 
@@ -36,18 +36,22 @@ TEST(ROSConvert, primitives_have_lossless_convert) {
     test_lossless_convert_cpp_value<int, int>(5);
 }
 
-TEST(ROSConvert, type_adapter_matches_rep_2007_contract) {
+TEST(ROSConvert, type_adapter_supports_humble_publishing_contract) {
     using Adapter = rclcpp::adapt_type<MockTime>::as<MockTime::Msg>;
     static_assert(Adapter::is_specialized::value);
 
     MockTime custom{rclcpp::Time(42)};
     MockTime::Msg ros;
-    Adapter::convert_to_ros(custom, ros);
+    Adapter::convert_to_ros_message(custom, ros);
     EXPECT_EQ(ros, custom.time);
 
-    MockTime::Msg ros_for_rclcpp;
-    Adapter::convert_to_ros(custom, ros_for_rclcpp);
-    EXPECT_EQ(ros_for_rclcpp, custom.time);
+    const auto ros_from_helper =
+        rj_convert::convert_to_ros<MockTime, MockTime::Msg>(custom);
+    EXPECT_EQ(ros_from_helper, custom.time);
+
+    MockTime::Msg ros_from_pointer_helper;
+    rj_convert::convert_to_ros(custom, &ros_from_pointer_helper);
+    EXPECT_EQ(ros_from_pointer_helper, custom.time);
 
     MockTime round_trip;
     Adapter::convert_to_custom(ros, round_trip);

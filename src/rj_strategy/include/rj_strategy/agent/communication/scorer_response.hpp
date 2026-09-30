@@ -30,7 +30,7 @@ struct TypeAdapter<strategy::communication::ScorerResponse, rj_msgs::msg::Scorer
     using custom_type = strategy::communication::ScorerResponse;
     using ros_message_type = rj_msgs::msg::ScorerResponse;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;
         destination.robot_id = source.robot_id;
         destination.ball_distance = source.ball_distance;

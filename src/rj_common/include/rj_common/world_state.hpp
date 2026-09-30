@@ -191,7 +191,7 @@ struct TypeAdapter<RobotState, RobotState::Msg> {
     using custom_type = RobotState;
     using ros_message_type = RobotState::Msg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
         rj_convert::convert_to_ros(source.pose, &destination.pose);
         rj_convert::convert_to_ros(source.velocity, &destination.velocity);
@@ -214,7 +214,7 @@ struct TypeAdapter<BallState, BallState::Msg> {
     using custom_type = BallState;
     using ros_message_type = BallState::Msg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
         rj_convert::convert_to_ros(source.velocity, &destination.velocity);
         rj_convert::convert_to_ros(source.position, &destination.position);
@@ -236,7 +236,7 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
     using custom_type = WorldState;
     using ros_message_type = WorldState::Msg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.ball, &destination.ball);
         rj_convert::convert_to_ros(source.our_robots, &destination.our_robots);
         rj_convert::convert_to_ros(source.their_robots, &destination.their_robots);

@@ -237,7 +237,7 @@ struct TypeAdapter<MatchState::Period, uint8_t> {
     using custom_type = MatchState::Period;
     using ros_message_type = uint8_t;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = static_cast<uint8_t>(source);
     }
 
@@ -252,7 +252,7 @@ struct TypeAdapter<MatchState, rj_msgs::msg::MatchState> {
     using custom_type = MatchState;
     using ros_message_type = rj_msgs::msg::MatchState;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.period, &destination.period);
         rj_convert::convert_to_ros(source.stage_time_left, &destination.stage_time_left);
     }
@@ -270,7 +270,7 @@ struct TypeAdapter<PlayState::State, uint8_t> {
     using custom_type = PlayState::State;
     using ros_message_type = uint8_t;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = static_cast<uint8_t>(source);
     }
 
@@ -285,7 +285,7 @@ struct TypeAdapter<PlayState::Restart, uint8_t> {
     using custom_type = PlayState::Restart;
     using ros_message_type = uint8_t;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = static_cast<uint8_t>(source);
     }
 
@@ -300,7 +300,7 @@ struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
     using custom_type = PlayState;
     using ros_message_type = rj_msgs::msg::PlayState;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.state(), &destination.state);
         rj_convert::convert_to_ros(source.restart(), &destination.restart);
         rj_convert::convert_to_ros(source.is_our_restart(), &destination.our_restart);

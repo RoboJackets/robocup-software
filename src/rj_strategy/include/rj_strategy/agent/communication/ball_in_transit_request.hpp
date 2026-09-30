@@ -30,7 +30,7 @@ struct TypeAdapter<strategy::communication::BallInTransitRequest,
     using custom_type = strategy::communication::BallInTransitRequest;
     using ros_message_type = rj_msgs::msg::BallInTransitRequest;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;
         destination.from_robot_id = source.from_robot_id;
     }

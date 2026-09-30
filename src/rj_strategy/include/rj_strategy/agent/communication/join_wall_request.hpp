@@ -29,7 +29,7 @@ struct TypeAdapter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinW
     using custom_type = strategy::communication::JoinWallRequest;
     using ros_message_type = rj_msgs::msg::JoinWallRequest;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;
         destination.robot_id = source.robot_id;
     }

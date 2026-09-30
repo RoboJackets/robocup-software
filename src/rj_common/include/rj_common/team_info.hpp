@@ -71,7 +71,7 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
     using custom_type = TeamInfo;
     using ros_message_type = rj_msgs::msg::TeamInfo;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.name, &destination.name);
         rj_convert::convert_to_ros(source.score, &destination.score);
         rj_convert::convert_to_ros(source.red_cards, &destination.num_red_cards);

@@ -41,7 +41,7 @@ struct TypeAdapter<SSL_DetectionRobot, DetectionRobotMsg> {
 	using custom_type = SSL_DetectionRobot;
 	using ros_message_type = DetectionRobotMsg;
 
-	static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+	static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
 	    destination.confidence = source.confidence();
 	    destination.robot_id = source.robot_id();
 	    destination.x = source.x();
@@ -70,7 +70,7 @@ struct TypeAdapter<SSL_DetectionBall, DetectionBallMsg> {
     using custom_type = SSL_DetectionBall;
     using ros_message_type = DetectionBallMsg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.confidence = source.confidence();
         destination.area = source.area();
         destination.x = source.x();

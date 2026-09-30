@@ -133,7 +133,7 @@ struct TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentReq
     using custom_type = strategy::communication::AgentRequest;
     using ros_message_type = rj_msgs::msg::AgentRequest;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = rj_msgs::msg::AgentRequest{};
         if (const auto* join_wall_request =
                 std::get_if<strategy::communication::JoinWallRequest>(&source)) {
@@ -257,7 +257,7 @@ struct TypeAdapter<strategy::communication::AgentResponse, rj_msgs::msg::AgentRe
     using custom_type = strategy::communication::AgentResponse;
     using ros_message_type = rj_msgs::msg::AgentResponse;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = ros_message_type{};
         destination.associated_request =
             rj_convert::convert_to_ros<strategy::communication::AgentRequest,

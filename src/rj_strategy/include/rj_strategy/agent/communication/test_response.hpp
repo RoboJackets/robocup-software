@@ -29,7 +29,7 @@ struct TypeAdapter<strategy::communication::TestResponse, rj_msgs::msg::TestResp
     using custom_type = strategy::communication::TestResponse;
     using ros_message_type = rj_msgs::msg::TestResponse;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;
         destination.message = source.message;
     }

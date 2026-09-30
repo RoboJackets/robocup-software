@@ -79,7 +79,7 @@ struct TypeAdapter<RJ::Time, rclcpp::Time> {
     using custom_type = RJ::Time;
     using ros_message_type = rclcpp::Time;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         const int64_t nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(
                 source.time_since_epoch())
@@ -99,7 +99,7 @@ struct TypeAdapter<RJ::Time, builtin_interfaces::msg::Time> {
     using custom_type = RJ::Time;
     using ros_message_type = builtin_interfaces::msg::Time;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         const auto time = rj_convert::convert_to_ros<RJ::Time, rclcpp::Time>(source);
         destination.sec = static_cast<int32_t>(time.seconds());
         destination.nanosec = static_cast<uint32_t>(time.nanoseconds() % 1000000000);
@@ -118,7 +118,7 @@ struct TypeAdapter<RJ::Seconds, rclcpp::Duration> {
     using custom_type = RJ::Seconds;
     using ros_message_type = rclcpp::Duration;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = rclcpp::Duration(
             std::chrono::duration_cast<std::chrono::nanoseconds>(source));
     }
@@ -136,7 +136,7 @@ struct TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     using custom_type = RJ::Seconds;
     using ros_message_type = builtin_interfaces::msg::Duration;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         const auto duration = rclcpp::Duration(
             std::chrono::duration_cast<std::chrono::nanoseconds>(source));
         destination.sec = static_cast<int32_t>(duration.seconds());

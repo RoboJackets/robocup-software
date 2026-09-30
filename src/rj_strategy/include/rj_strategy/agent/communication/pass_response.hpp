@@ -29,7 +29,7 @@ struct TypeAdapter<strategy::communication::PassResponse, rj_msgs::msg::PassResp
     using custom_type = strategy::communication::PassResponse;
     using ros_message_type = rj_msgs::msg::PassResponse;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;
         destination.direct_open = source.direct_open;
     }

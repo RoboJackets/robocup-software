@@ -468,7 +468,7 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
     using custom_type = planning::Trajectory;
     using ros_message_type = rj_msgs::msg::Trajectory;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         if (!source.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }

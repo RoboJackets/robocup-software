@@ -368,7 +368,7 @@ struct TypeAdapter<FieldDimensions, FieldDimensions::Msg> {
     using custom_type = FieldDimensions;
     using ros_message_type = FieldDimensions::Msg;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.length(), &destination.length);
         rj_convert::convert_to_ros(source.width(), &destination.width);
         rj_convert::convert_to_ros(source.border(), &destination.border);

@@ -12,7 +12,7 @@ TEST(ROSConvert, time_lossless_convert) {
 TEST(ROSConvert, duration_lossless_convert) {
     // We don't expect perfect equality for seconds, because float comparisons.
     rclcpp::Duration converted_duration(std::chrono::nanoseconds(0));
-    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros(
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros_message(
         RJ::Seconds(1.0), converted_duration);
 
     RJ::Seconds converted_seconds;
@@ -25,7 +25,7 @@ TEST(ROSConvert, duration_lossless_convert) {
     rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_custom(
         source_duration, source_seconds);
     rclcpp::Duration round_trip_duration(std::chrono::nanoseconds(0));
-    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros(
+    rclcpp::TypeAdapter<RJ::Seconds, rclcpp::Duration>::convert_to_ros_message(
         source_seconds, round_trip_duration);
     EXPECT_NEAR(round_trip_duration.nanoseconds(), 12345, 1);
 }

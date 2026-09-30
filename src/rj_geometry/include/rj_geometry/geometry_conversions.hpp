@@ -33,7 +33,7 @@ struct TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point> {
     using custom_type = rj_geometry::Point;
     using ros_message_type = rj_geometry_msgs::msg::Point;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.x(), &destination.x);
         rj_convert::convert_to_ros(source.y(), &destination.y);
     }
@@ -51,7 +51,7 @@ struct TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose> {
     using custom_type = rj_geometry::Pose;
     using ros_message_type = rj_geometry_msgs::msg::Pose;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.position(), &destination.position);
         rj_convert::convert_to_ros(source.heading(), &destination.heading);
     }
@@ -69,7 +69,7 @@ struct TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist> {
     using custom_type = rj_geometry::Twist;
     using ros_message_type = rj_geometry_msgs::msg::Twist;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_convert::convert_to_ros(source.linear(), &destination.linear);
         rj_convert::convert_to_ros(source.angular(), &destination.angular);
     }
@@ -87,7 +87,7 @@ struct TypeAdapter<rj_geometry::Line, rj_geometry_msgs::msg::Line> {
     using custom_type = rj_geometry::Line;
     using ros_message_type = rj_geometry_msgs::msg::Line;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
             rj_convert::convert_to_ros(source.pt[i], &destination.pt[i]);
         }
@@ -107,7 +107,7 @@ struct TypeAdapter<rj_geometry::Segment, rj_geometry_msgs::msg::Segment> {
     using custom_type = rj_geometry::Segment;
     using ros_message_type = rj_geometry_msgs::msg::Segment;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
             rj_convert::convert_to_ros(source.pt[i], &destination.pt[i]);
         }
@@ -127,7 +127,7 @@ struct TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
     using custom_type = rj_geometry::Rect;
     using ros_message_type = rj_geometry_msgs::msg::Rect;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
             rj_convert::convert_to_ros(source.pt[i], &destination.pt[i]);
         }
@@ -147,7 +147,7 @@ struct TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
     using custom_type = rj_geometry::Circle;
     using ros_message_type = rj_geometry_msgs::msg::Circle;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>()
                           .center(rj_convert::convert_to_ros<rj_geometry::Point,
                                                              rj_geometry_msgs::msg::Point>(
@@ -170,7 +170,7 @@ struct TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
     using custom_type = rj_geometry::Polygon;
     using ros_message_type = rj_geometry_msgs::msg::Polygon;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = rj_geometry_msgs::build<rj_geometry_msgs::msg::Polygon>().points(
             rj_convert::convert_to_ros<std::vector<rj_geometry::Point>,
                                        std::vector<rj_geometry_msgs::msg::Point>>(
@@ -191,7 +191,7 @@ struct TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
     using custom_type = rj_geometry::ShapeSet;
     using ros_message_type = rj_geometry_msgs::msg::ShapeSet;
 
-    static void convert_to_ros(const custom_type& source, ros_message_type& destination) {
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = ros_message_type{};
         // This is definitely a bit sketchy. We have to explicitly check each shape's type.
         for (const auto& shape : source.shapes()) {
