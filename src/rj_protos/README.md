@@ -4,10 +4,10 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
-| **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Package name** | `rj_protos` |
+| **Assigned owner(s)** | Sanat Dhanyamraju |
+| **Reviewer(s)** | Cameron Lyon, Nate Wert |
+| **Date started revision** | 9/1/2026 |
 
 ## 1. Package Identity and Tier
 
@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | Contains protobuf files for  SSL-owned interfaces such as game controller and vision processor. |
+| **Current responsibilities** | Owns the protocol for recieving data from SSL-owned interfaces. |
+| **Out of scope** | Does not contain any logic behind how these messages are parsed or how the data is used. |
 
 ## 2. Dependency Rules
 
@@ -27,17 +27,17 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** | None |
+| **Depended on by** | `rj_common`, `rj_radio`, `rj_referee`, `rj_utils`, `rj_vision_receiver` |
 
 
 ## 3. Operational Expectations
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
-| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
-| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
+| **Failure behavior** | If the SSL protos migrate to a different repo, this will no longer stay up-to-date with SSL. |
+| **Recovery behavior** | Modify the package to submodule the new repo. |
+| **Configuration** | CMakeLists.txt contains the list of protos we build, this needs to be updated when we want to use a new proto from SSL. |
 
 ## 4. Testing
 
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Unit testing** | No testing exists as this package contains no code. |
+| **Coverage gaps** | N/A |
+| **Observed outliers** | N/A |

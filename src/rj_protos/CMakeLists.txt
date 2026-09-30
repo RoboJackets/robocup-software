@@ -33,11 +33,9 @@ set(SIM_PROTOS
   ssl_simulation_synchronous.proto
 )
 
-# ssl-simulation-protocol vendors its own flat copies of ssl_gc_common and
-# ssl_vision_{detection,geometry}. Protobuf identifies files by import path, so
-# compiling both copies would define RobotId etc. twice. Stage the sim protos
-# with those imports pointed at the ssl-game-controller files instead; the
-# submodule itself is left untouched.
+# There are duplicate protos in ssl-game-controller and ssl-simulation-protocol.
+# In order to avoid duplicates, we rename the imports in ssl-simulation-protocol
+# to point to the ssl-game-controller ones instead.
 set(SIM_IMPORT_REWRITES
   "ssl_gc_common.proto" "state/ssl_gc_common.proto"
   "ssl_vision_detection.proto" "vision/ssl_vision_detection.proto"
@@ -99,8 +97,6 @@ target_link_libraries(${PROJECT_NAME}
   protobuf::libprotobuf
 )
 
-# Consumers include <rj_protos/...>; generated code includes e.g.
-# "state/ssl_gc_common.pb.h", so the rj_protos dir itself is also needed.
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     $<BUILD_INTERFACE:${GEN_ROOT}>
