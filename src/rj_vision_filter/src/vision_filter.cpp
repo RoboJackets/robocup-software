@@ -89,7 +89,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 }
 
 void VisionFilter::publish_state() {
-    WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_));
+    WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>(build_world_state_msg(is_blue_));
     world_state_pub_->publish(std::move(msg));
 }
 
