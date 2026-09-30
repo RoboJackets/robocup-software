@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <rj_geometry_msgs/msg/circle.hpp>
 
 #include "line.hpp"
@@ -8,34 +9,38 @@
 
 namespace rj_geometry {
 
+/**
+ * A circle :^)
+ * Parametrized by a center point and a radius.
+ */
 class Circle : public Shape {
 public:
     using Msg = rj_geometry_msgs::msg::Circle;
 
-    Circle() {
-        r_ = 0;
-        rsq_ = 0;
-    }
-
+    /**
+     * Initialize a circle with a given center and radius.
+     *
+     * @param center: the center point of the underlying circle
+     * @param radius: the radius of the underlying circle in the range [0, infty)
+     *
+     * @note if radius < 0, an assertion will be thrown
+     */
     Circle(Point c, float r) {
         center = c;
         r_ = r;
         rsq_ = r_ * r_;
     }
 
-    ~Circle() = default;
-    Circle(const Circle& other) = default;
-    Circle(Circle&& other) = default;
-    Circle& operator=(const Circle& other) = default;
-    Circle& operator=(Circle&& other) = default;
 
+    /** DEPRECATED 
+     * This should be a copy constructor, no?
+     */
     Shape* clone() const override;
 
-    // Both radius and radius-squared are stored, since some operations are more
-    // efficient with one or the other.
-    // As long as one is specified, the other is calculated lazily.
-
-    // Radius squared
+    
+    /** DEPRECATED
+     * Why are we amortizing a multiplication bro
+     */
     float radius_sq() const {
         return rsq_;
     }
@@ -81,6 +86,7 @@ public:
     Point nearest_point(Point p) const;
 
     Point center;
+    
 
     std::string to_string() override {
         std::stringstream str;
