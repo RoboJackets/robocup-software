@@ -11,15 +11,15 @@ TEST(WorldRobot, invalid) {
 }
 
 TEST(WorldRobot, no_robot) {
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     std::list<KalmanRobot> kbl;
 
-    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, params));
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl, *params));
 }
 
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Pose pose(rj_geometry::Point(1, 1), 1);
     int r_id = 1;
     CameraRobot b = CameraRobot(t, pose, r_id);
@@ -31,7 +31,7 @@ TEST(WorldRobot, one_robot) {
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, *params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();
@@ -60,7 +60,7 @@ TEST(WorldRobot, one_robot) {
 
 TEST(WorldRobot, two_robot) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Pose pose1(rj_geometry::Point(1, 1), 1);
     rj_geometry::Pose pose2(rj_geometry::Point(2, 2), 2);
 
@@ -81,7 +81,7 @@ TEST(WorldRobot, two_robot) {
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, params);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl, *params);
 
     rj_geometry::Point rp = wb.get_pos();
     double rt = wb.get_theta();

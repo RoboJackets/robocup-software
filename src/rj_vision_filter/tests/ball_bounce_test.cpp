@@ -9,7 +9,7 @@
 namespace vision_filter {
 TEST(BallBounce, no_input) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p);
     WorldBall wb;
@@ -27,7 +27,7 @@ TEST(BallBounce, no_input) {
 
 TEST(BallBounce, invalid_robot) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -47,7 +47,7 @@ TEST(BallBounce, invalid_robot) {
 
 TEST(BallBounce, no_intersection) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -63,7 +63,7 @@ TEST(BallBounce, no_intersection) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -78,7 +78,7 @@ TEST(BallBounce, no_intersection) {
 
 TEST(BallBounce, wrong_direction) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -94,7 +94,7 @@ TEST(BallBounce, wrong_direction) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -109,7 +109,7 @@ TEST(BallBounce, wrong_direction) {
 
 TEST(BallBounce, too_far) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -125,7 +125,7 @@ TEST(BallBounce, too_far) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -140,7 +140,7 @@ TEST(BallBounce, too_far) {
 
 TEST(BallBounce, flat_intersect_side) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -156,7 +156,7 @@ TEST(BallBounce, flat_intersect_side) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -174,7 +174,7 @@ TEST(BallBounce, flat_intersect_side) {
 
 TEST(BallBounce, flat_intersect_mouth) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -190,7 +190,7 @@ TEST(BallBounce, flat_intersect_mouth) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -208,7 +208,7 @@ TEST(BallBounce, flat_intersect_mouth) {
 
 TEST(BallBounce, angle_intersect_side) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -224,7 +224,7 @@ TEST(BallBounce, angle_intersect_side) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);
@@ -243,7 +243,7 @@ TEST(BallBounce, angle_intersect_side) {
 
 TEST(BallBounce, angle_intersect_mouth) {
     RJ::Time tc = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p1 = rj_geometry::Point(0, 0);
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
@@ -259,7 +259,7 @@ TEST(BallBounce, angle_intersect_mouth) {
     std::list<KalmanRobot> krl;
     krl.push_back(kr);
 
-    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, params);
+    WorldRobot wr2 = WorldRobot(tc, WorldRobot::Team::BLUE, 1, krl, *params);
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(wr2);

@@ -4,10 +4,11 @@
 
 namespace vision_filter {
 
-Camera::Camera(const VisionFilterParams& params) : params_(&params), is_valid_(false) {}
+Camera::Camera(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)), is_valid_(false) {}
 
-Camera::Camera(int camera_id, const VisionFilterParams& params)
-    : params_(&params),
+Camera::Camera(int camera_id, std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)),
       is_valid_(true),
       camera_id_(camera_id),
       kalman_robot_yellow_list_(kNumShells),
@@ -17,7 +18,7 @@ bool Camera::get_is_valid() const { return is_valid_; }
 
 void Camera::process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
                                  const std::vector<WorldRobot>& blue_robots) {
-    BallBounce ball_bounce(*params_);
+    BallBounce ball_bounce(params_);
     for (KalmanBall& b : kalman_ball_list_) {
         rj_geometry::Point new_vel;
         bool is_collision = ball_bounce.calc_ball_bounce(b, yellow_robots, blue_robots, new_vel);
@@ -93,7 +94,7 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
     if (kalman_ball_list_.empty()) {
         CameraBall avg_ball = CameraBall::combine_balls(ball_list);
         kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
-                                       *params_);
+                                       params_);
 
         return;
     }
@@ -159,7 +160,7 @@ void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>
         if (!was_used &&
             kalman_ball_list_.size() < static_cast<size_t>(params_->camera.max_num_kalman_balls)) {
             kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball,
-                                           *params_);
+                                           params_);
         }
     }
 }
@@ -173,7 +174,7 @@ void Camera::update_balls_akf(RJ::Time calc_time, const std::vector<CameraBall>&
     // everything
     if (kalman_ball_list_.empty()) {
         kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball,
-                                       *params_);
+                                       params_);
 
         return;
     }
@@ -239,7 +240,7 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
     if (single_kalman_robot_list.empty()) {
         CameraRobot avg_robot = CameraRobot::combine_robots(single_robot_list);
         single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
-                                              previous_world_robot, *params_);
+                                              previous_world_robot, params_);
 
         return;
     }
@@ -301,7 +302,7 @@ void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>
         if (!was_used && single_kalman_robot_list.size() <
                              static_cast<size_t>(params_->camera.max_num_kalman_robots)) {
             single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
-                                                  previous_world_robot, *params_);
+                                                  previous_world_robot, params_);
         }
 
         camera_robot_idx++;
@@ -318,7 +319,7 @@ void Camera::update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>&
     // everything
     if (single_kalman_robot_list.empty()) {
         single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot,
-                                              previous_world_robot, *params_);
+                                              previous_world_robot, params_);
 
         return;
     }

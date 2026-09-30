@@ -3,10 +3,10 @@
 
 namespace vision_filter {
 
-World::World(const VisionFilterParams& params)
-    : params_(params),
+World::World(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)),
       last_update_time_{RJ::Time{RJ::Time::duration(0)}},
-      cameras_(params_.max_num_cameras, Camera(params_)),
+      cameras_(params_->max_num_cameras, Camera(params_)),
       robots_yellow_(kNumShells, WorldRobot()),
       robots_blue_(kNumShells, WorldRobot()),
       fast_kick_(params_),
@@ -20,7 +20,7 @@ void World::update_with_camera_frame(RJ::Time calc_time, const std::vector<Camer
                                      bool update_all) {
     calc_ball_bounce();
 
-    std::vector<bool> camera_updated(params_.max_num_cameras, false);
+    std::vector<bool> camera_updated(params_->max_num_cameras, false);
 
     // TODO: Take only the newest frame if 2 come in for the same camera
 
@@ -141,20 +141,20 @@ void World::update_world_objects(RJ::Time calc_time) {
 
     // Only replace the invalid result if we have measurements on any camera
     if (!kalman_balls.empty()) {
-        ball_ = WorldBall(calc_time, kalman_balls, params_);
+        ball_ = WorldBall(calc_time, kalman_balls, *params_);
     }
 
     for (size_t i = 0; i < robots_yellow_.size(); i++) {
         if (!kalman_robots_yellow.at(i).empty()) {
             robots_yellow_.at(i) = WorldRobot(calc_time, WorldRobot::Team::YELLOW, i,
-                                              kalman_robots_yellow.at(i), params_);
+                                              kalman_robots_yellow.at(i), *params_);
         }
     }
 
     for (size_t i = 0; i < robots_blue_.size(); i++) {
         if (!kalman_robots_blue.at(i).empty()) {
-            robots_blue_.at(i) =
-                WorldRobot(calc_time, WorldRobot::Team::BLUE, i, kalman_robots_blue.at(i), params_);
+            robots_blue_.at(i) = WorldRobot(calc_time, WorldRobot::Team::BLUE, i,
+                                            kalman_robots_blue.at(i), *params_);
         }
     }
 }
@@ -181,9 +181,9 @@ void World::detect_kicks(RJ::Time calc_time) {
         // There is a kick recorded already
     } else {
         const RJ::Seconds time_since_best_event(best_kick_estimate_.get_kick_time() - calc_time);
-        const RJ::Seconds same_kick_timeout(params_.kick_detector.same_kick_timeout);
-        const RJ::Seconds slow_kick_timeout(params_.kick_detector.slow_kick_timeout);
-        const RJ::Seconds fast_kick_timeout(params_.kick_detector.fast_kick_timeout);
+        const RJ::Seconds same_kick_timeout(params_->kick_detector.same_kick_timeout);
+        const RJ::Seconds slow_kick_timeout(params_->kick_detector.slow_kick_timeout);
+        const RJ::Seconds fast_kick_timeout(params_->kick_detector.fast_kick_timeout);
 
         // Try using the slow kick if:
         //      - It refers to the current best kick event (and probably is a

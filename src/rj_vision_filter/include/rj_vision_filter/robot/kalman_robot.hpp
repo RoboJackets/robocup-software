@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <boost/circular_buffer.hpp>
 
 #include <rj_common/utils.hpp>
@@ -25,10 +27,11 @@ public:
      * @param init_measurement Initial robot measurement
      * @param previous_world_robot World robot from last frame (or invalid world
      * robot)
-     * @param params Vision filter parameters. Must outlive this object.
+     * @param params Vision filter parameters, shared with the owning node.
      */
     KalmanRobot(unsigned int camera_id, RJ::Time creation_time, CameraRobot init_measurement,
-                const WorldRobot& previous_world_robot, const VisionFilterParams& params);
+                const WorldRobot& previous_world_robot,
+                std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Predicts one time step forward
@@ -114,8 +117,7 @@ public:
     const boost::circular_buffer<CameraRobot>& get_prev_measurements() const;
 
 private:
-    // Pointer rather than reference so KalmanRobot stays copy-assignable.
-    const VisionFilterParams* params_;
+    std::shared_ptr<const VisionFilterParams> params_;
 
     RJ::Time last_update_time_;
     RJ::Time last_predict_time_;

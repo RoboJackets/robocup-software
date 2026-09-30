@@ -308,11 +308,11 @@ std::optional<std::string> validate_param(const rclcpp::Parameter& param) {
 
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
-      params_{load_vision_filter_params(this)},
+      params_{std::make_shared<VisionFilterParams>(load_vision_filter_params(this))},
       world_{params_},
       config_client_{this},
       team_color_queue_{this, referee::topics::kTeamColorTopic},
-      param_setters_{build_param_setters(params_)} {
+      param_setters_{build_param_setters(*params_)} {
     // Keep params_ live-updated whenever a parameter is changed (e.g. via
     // `ros2 param set`).
     param_callback_handle_ = add_on_set_parameters_callback(
@@ -341,7 +341,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         });
 
     // Create a timer that calls predict on all of the Kalman filters.
-    const std::chrono::duration<double> predict_timer_period(params_.vision_loop_dt);
+    const std::chrono::duration<double> predict_timer_period(params_->vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
 

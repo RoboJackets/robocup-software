@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <rj_geometry/point.hpp>
@@ -11,9 +12,9 @@ namespace vision_filter {
 class BallBounce {
 public:
     /**
-     * @param params Vision filter parameters. Must outlive this object.
+     * @param params Vision filter parameters, shared with the owning node.
      */
-    explicit BallBounce(const VisionFilterParams& params);
+    explicit BallBounce(std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Calculates whether the given kalman ball will bounce against another
@@ -52,9 +53,9 @@ private:
      * 1 means tangental intersection
      * 2 means chord based intersection
      */
-    static std::vector<rj_geometry::Point> possible_ball_intersection_pts(
-        const KalmanBall& ball, const WorldRobot& robot);
+    static std::vector<rj_geometry::Point> possible_ball_intersection_pts(const KalmanBall& ball,
+                                                                          const WorldRobot& robot);
 
-    const VisionFilterParams& params_;
+    std::shared_ptr<const VisionFilterParams> params_;
 };
 }  // namespace vision_filter

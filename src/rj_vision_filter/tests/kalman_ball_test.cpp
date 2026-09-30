@@ -7,7 +7,7 @@
 namespace vision_filter {
 TEST(KalmanBall, invalid_world_ball) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -29,7 +29,7 @@ TEST(KalmanBall, invalid_world_ball) {
 
 TEST(KalmanBall, valid_world_ball) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -40,7 +40,7 @@ TEST(KalmanBall, valid_world_ball) {
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(t, kbl, params);
+    WorldBall wb = WorldBall(t, kbl, *params);
 
     KalmanBall kb2 = KalmanBall(c_id, t, b, wb, params);
 
@@ -55,7 +55,7 @@ TEST(KalmanBall, valid_world_ball) {
 
 TEST(KalmanBall, predict) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -79,7 +79,7 @@ TEST(KalmanBall, predict) {
 
 TEST(KalmanBall, predict_and_update) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -103,7 +103,7 @@ TEST(KalmanBall, predict_and_update) {
 
 TEST(KalmanBall, is_unhealthy) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -118,7 +118,7 @@ TEST(KalmanBall, is_unhealthy) {
 
 TEST(KalmanBall, max_measurement_size) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
@@ -138,7 +138,7 @@ TEST(KalmanBall, max_measurement_size) {
 
 TEST(KalmanBall, getters) {
     RJ::Time t = RJ::now();
-    VisionFilterParams params;
+    auto params = std::make_shared<VisionFilterParams>();
     rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;

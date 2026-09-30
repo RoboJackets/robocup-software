@@ -8,7 +8,8 @@
 
 namespace vision_filter {
 
-FastKickDetector::FastKickDetector(const VisionFilterParams& params) : params_(params) {}
+FastKickDetector::FastKickDetector(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)) {}
 
 bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
@@ -16,12 +17,12 @@ bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
                                   KickEvent& kick_event) {
     // Keep it a certain length
     state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
-    if (state_history_.size() > static_cast<size_t>(params_.kick_detector.fast_kick_hist_length)) {
+    if (state_history_.size() > static_cast<size_t>(params_->kick_detector.fast_kick_hist_length)) {
         state_history_.pop_front();
     }
 
     // If we don't have enough, just return
-    if (state_history_.size() < static_cast<size_t>(params_.kick_detector.fast_kick_hist_length)) {
+    if (state_history_.size() < static_cast<size_t>(params_->kick_detector.fast_kick_hist_length)) {
         return false;
     }
 
@@ -68,8 +69,8 @@ bool FastKickDetector::detect_kick() {
         state_history_.at(end_idx).ball.get_pos() - state_history_.at(end_idx - 1).ball.get_pos();
 
     // Velocity at the start and end measurements
-    rj_geometry::Point v_start = dp_start / params_.vision_loop_dt;
-    rj_geometry::Point v_end = dp_end / params_.vision_loop_dt;
+    rj_geometry::Point v_start = dp_start / params_->vision_loop_dt;
+    rj_geometry::Point v_end = dp_end / params_->vision_loop_dt;
 
     // Change in velocity between start and end measurements
     rj_geometry::Point dv = v_end - v_start;
@@ -77,10 +78,10 @@ bool FastKickDetector::detect_kick() {
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to
     // have to retune it
-    rj_geometry::Point accel = dv / (params_.vision_loop_dt * state_history_.size());
+    rj_geometry::Point accel = dv / (params_->vision_loop_dt * state_history_.size());
 
     // Check for large accelerations and only going from slow->fast transitions
-    return accel.mag() > params_.kick_detector.fast_acceleration_trigger &&
+    return accel.mag() > params_->kick_detector.fast_acceleration_trigger &&
            v_start.mag() < v_end.mag();
 }
 

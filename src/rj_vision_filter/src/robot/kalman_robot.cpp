@@ -10,13 +10,13 @@ namespace vision_filter {
 
 KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
                          CameraRobot init_measurement, const WorldRobot& previous_world_robot,
-                         const VisionFilterParams& params)
-    : params_(&params),
+                         std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)),
       last_update_time_(creation_time),
       last_predict_time_(creation_time),
-      previous_measurements_(params.kick_detector.slow_kick_hist_length),
+      previous_measurements_(params_->kick_detector.slow_kick_hist_length),
       unwrap_theta_ctr_(0),
-      health_(params.filter_health.init),
+      health_(params_->filter_health.init),
       robot_id_(init_measurement.get_robot_id()),
       camera_id_(camera_id) {
     rj_geometry::Pose init_pose = init_measurement.get_pose();
@@ -27,7 +27,7 @@ KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
         init_twist.angular() = previous_world_robot.get_omega();
     }
 
-    filter_ = KalmanFilter3D(init_pose, init_twist, params);
+    filter_ = KalmanFilter3D(init_pose, init_twist, *params_);
 
     previous_measurements_.push_back(init_measurement);
     previous_theta_ = init_twist.angular();

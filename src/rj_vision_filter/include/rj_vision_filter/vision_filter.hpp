@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <functional>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <unordered_map>
@@ -94,7 +95,7 @@ private:
      * startup. Declared before world_ so it's populated before world_'s
      * constructor runs.
      */
-    VisionFilterParams params_;
+    std::shared_ptr<VisionFilterParams> params_;
 
     /**
      * @brief State of the world, ie. robots and ball.

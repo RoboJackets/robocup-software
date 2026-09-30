@@ -6,12 +6,13 @@
 namespace vision_filter {
 
 KalmanBall::KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBall init_measurement,
-                       const WorldBall& previous_world_ball, const VisionFilterParams& params)
-    : params_(&params),
+                       const WorldBall& previous_world_ball,
+                       std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)),
       last_update_time_(creation_time),
       last_predict_time_(creation_time),
-      previous_measurements_(params.kick_detector.slow_kick_hist_length),
-      health_(params.filter_health.init),
+      previous_measurements_(params_->kick_detector.slow_kick_hist_length),
+      health_(params_->filter_health.init),
       camera_id_(camera_id) {
     rj_geometry::Point init_pos = init_measurement.get_pos();
     rj_geometry::Point init_vel = rj_geometry::Point(0, 0);
@@ -21,7 +22,7 @@ KalmanBall::KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBal
         init_vel = previous_world_ball.get_vel();
     }
 
-    filter_ = KalmanFilter2D(init_pos, init_vel, params);
+    filter_ = KalmanFilter2D(init_pos, init_vel, *params_);
 
     previous_measurements_.push_back(init_measurement);
 }

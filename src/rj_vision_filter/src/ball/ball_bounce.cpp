@@ -18,7 +18,8 @@ namespace vision_filter {
  */
 int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10); }
 
-BallBounce::BallBounce(const VisionFilterParams& params) : params_(params) {}
+BallBounce::BallBounce(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)) {}
 
 bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
@@ -103,9 +104,10 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             rj_geometry::Point mouth_half_unit_vec =
                 rj_geometry::Point(0, 1).rotate(robot.get_theta());
             rj_geometry::Point mouth_center_pos =
-                rj_geometry::Point(kRobotMouthRadius, 0).rotate(robot.get_theta()) + robot.get_pos();
-            rj_geometry::Line mouth_line = rj_geometry::Line(mouth_center_pos + mouth_half_unit_vec,
-                                                           mouth_center_pos - mouth_half_unit_vec);
+                rj_geometry::Point(kRobotMouthRadius, 0).rotate(robot.get_theta()) +
+                robot.get_pos();
+            rj_geometry::Line mouth_line = rj_geometry::Line(
+                mouth_center_pos + mouth_half_unit_vec, mouth_center_pos - mouth_half_unit_vec);
 
             rj_geometry::Point mouth_intersect;
             bool intersects = intersect_line.intersects(mouth_line, &mouth_intersect);
@@ -160,8 +162,8 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             rj_geometry::Point intersect_pt_reflection_unit_vector =
                 intersect_pt_reflection_vector.normalized();
 
-            double dampen_angle_coeff = did_hit_mouth ? params_.bounce.robot_mouth_angle_dampen
-                                                      : params_.bounce.robot_body_angle_dampen;
+            double dampen_angle_coeff = did_hit_mouth ? params_->bounce.robot_mouth_angle_dampen
+                                                      : params_->bounce.robot_body_angle_dampen;
 
             //                   C------D
             //                    \     |
@@ -222,13 +224,13 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
 }
 
 bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) const {
-    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * params_.vision_loop_dt;
+    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * params_->vision_loop_dt;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;
 }
 
-std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(const KalmanBall& ball,
-                                                                          const WorldRobot& robot) {
+std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(
+    const KalmanBall& ball, const WorldRobot& robot) {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
     std::vector<rj_geometry::Point> out;

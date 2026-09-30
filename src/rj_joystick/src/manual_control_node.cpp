@@ -65,37 +65,37 @@ void ManualControlNode::declare_params() {
         declare_parameter(name, default_value, d);
     };
 
-    declare("use_field_oriented_drive", params_.use_field_oriented_drive,
+    declare("use_field_oriented_drive", params_->use_field_oriented_drive,
             "Whether to use field oriented drive");
-    declare("kick_on_break_beam", params_.kick_on_break_beam,
+    declare("kick_on_break_beam", params_->kick_on_break_beam,
             "Wait for break beam when kick button is held");
-    declare("damped_translation", params_.damped_translation, "Move slowly");
-    declare("damped_rotation", params_.damped_rotation, "Turn slowly");
-    declare("max_rotation_speed", params_.max_rotation_speed, "Maximum rotation speed, rad/s");
-    declare("max_damped_rotation_speed", params_.max_damped_rotation_speed,
+    declare("damped_translation", params_->damped_translation, "Move slowly");
+    declare("damped_rotation", params_->damped_rotation, "Turn slowly");
+    declare("max_rotation_speed", params_->max_rotation_speed, "Maximum rotation speed, rad/s");
+    declare("max_damped_rotation_speed", params_->max_damped_rotation_speed,
             "Maximum damped rotation speed, rad/s");
-    declare("max_translation_speed", params_.max_translation_speed,
+    declare("max_translation_speed", params_->max_translation_speed,
             "Maximum translation speed, m/s");
-    declare("max_damped_translation_speed", params_.max_damped_translation_speed,
+    declare("max_damped_translation_speed", params_->max_damped_translation_speed,
             "Maximum damped translation speed, m/s");
-    declare("kick_power_increment", params_.kick_power_increment, "Kick power increment, 0-1");
-    declare("dribble_power_increment", params_.dribble_power_increment,
+    declare("kick_power_increment", params_->kick_power_increment, "Kick power increment, 0-1");
+    declare("dribble_power_increment", params_->dribble_power_increment,
             "Dribble power increment, 0-1");
-    declare("min_kick_speed", params_.min_kick_speed, "Minimum kick speed, m/s");
-    declare("max_kick_speed", params_.max_kick_speed, "Maximum kick speed, m/s");
+    declare("min_kick_speed", params_->min_kick_speed, "Minimum kick speed, m/s");
+    declare("max_kick_speed", params_->max_kick_speed, "Maximum kick speed, m/s");
 
-    get_parameter("use_field_oriented_drive", params_.use_field_oriented_drive);
-    get_parameter("damped_translation", params_.damped_translation);
-    get_parameter("damped_rotation", params_.damped_rotation);
-    get_parameter("max_rotation_speed", params_.max_rotation_speed);
-    get_parameter("max_damped_rotation_speed", params_.max_damped_rotation_speed);
-    get_parameter("max_translation_speed", params_.max_translation_speed);
-    get_parameter("max_damped_translation_speed", params_.max_damped_translation_speed);
-    get_parameter("kick_power_increment", params_.kick_power_increment);
-    get_parameter("dribble_power_increment", params_.dribble_power_increment);
-    get_parameter("kick_on_break_beam", params_.kick_on_break_beam);
-    get_parameter("min_kick_speed", params_.min_kick_speed);
-    get_parameter("max_kick_speed", params_.max_kick_speed);
+    get_parameter("use_field_oriented_drive", params_->use_field_oriented_drive);
+    get_parameter("damped_translation", params_->damped_translation);
+    get_parameter("damped_rotation", params_->damped_rotation);
+    get_parameter("max_rotation_speed", params_->max_rotation_speed);
+    get_parameter("max_damped_rotation_speed", params_->max_damped_rotation_speed);
+    get_parameter("max_translation_speed", params_->max_translation_speed);
+    get_parameter("max_damped_translation_speed", params_->max_damped_translation_speed);
+    get_parameter("kick_power_increment", params_->kick_power_increment);
+    get_parameter("dribble_power_increment", params_->dribble_power_increment);
+    get_parameter("kick_on_break_beam", params_->kick_on_break_beam);
+    get_parameter("min_kick_speed", params_->min_kick_speed);
+    get_parameter("max_kick_speed", params_->max_kick_speed);
 }
 
 rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
@@ -104,7 +104,7 @@ rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
     result.successful = true;
 
     // Validate the whole batch before applying anything, so a rejected batch
-    // never partially updates params_.
+    // never partially updates params_->
     for (const auto& p : parameters) {
         const std::string& name = p.get_name();
         if (name == "max_rotation_speed" || name == "max_damped_rotation_speed" ||
@@ -126,29 +126,29 @@ rcl_interfaces::msg::SetParametersResult ManualControlNode::on_param_change(
 
     for (const auto& p : parameters) {
         if (p.get_name() == "use_field_oriented_drive")
-            params_.use_field_oriented_drive = p.as_bool();
+            params_->use_field_oriented_drive = p.as_bool();
         else if (p.get_name() == "damped_translation")
-            params_.damped_translation = p.as_bool();
+            params_->damped_translation = p.as_bool();
         else if (p.get_name() == "damped_rotation")
-            params_.damped_rotation = p.as_bool();
+            params_->damped_rotation = p.as_bool();
         else if (p.get_name() == "max_rotation_speed")
-            params_.max_rotation_speed = p.as_double();
+            params_->max_rotation_speed = p.as_double();
         else if (p.get_name() == "max_damped_rotation_speed")
-            params_.max_damped_rotation_speed = p.as_double();
+            params_->max_damped_rotation_speed = p.as_double();
         else if (p.get_name() == "max_translation_speed")
-            params_.max_translation_speed = p.as_double();
+            params_->max_translation_speed = p.as_double();
         else if (p.get_name() == "max_damped_translation_speed")
-            params_.max_damped_translation_speed = p.as_double();
+            params_->max_damped_translation_speed = p.as_double();
         else if (p.get_name() == "kick_power_increment")
-            params_.kick_power_increment = p.as_double();
+            params_->kick_power_increment = p.as_double();
         else if (p.get_name() == "dribble_power_increment")
-            params_.dribble_power_increment = p.as_double();
+            params_->dribble_power_increment = p.as_double();
         else if (p.get_name() == "kick_on_break_beam")
-            params_.kick_on_break_beam = p.as_bool();
+            params_->kick_on_break_beam = p.as_bool();
         else if (p.get_name() == "min_kick_speed")
-            params_.min_kick_speed = p.as_double();
+            params_->min_kick_speed = p.as_double();
         else if (p.get_name() == "max_kick_speed")
-            params_.max_kick_speed = p.as_double();
+            params_->max_kick_speed = p.as_double();
     }
 
     return result;
@@ -193,7 +193,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
                                                     .velocity_x_mps(command.translation.x())
                                                     .velocity_y_mps(command.translation.y())
                                                     .velocity_z_radps(command.rotation));
-    uint8_t trigger_mode = params_.kick_on_break_beam
+    uint8_t trigger_mode = params_->kick_on_break_beam
                                ? rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
                                : rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
     uint8_t shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
@@ -205,7 +205,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
         trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
     }
 
-    double kick_speed = lerp(params_.min_kick_speed, params_.max_kick_speed, command.kick_power);
+    double kick_speed = lerp(params_->min_kick_speed, params_->max_kick_speed, command.kick_power);
     manipulator_setpoint_pubs_.at(robot_id)->publish(
         rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
             .shoot_mode(shoot_mode)

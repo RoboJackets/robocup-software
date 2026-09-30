@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <unordered_map>
 
 #include <SDL2/SDL.h>
@@ -47,7 +48,7 @@ private:
     rcl_interfaces::msg::SetParametersResult on_param_change(
         const std::vector<rclcpp::Parameter>& parameters);
 
-    ManualControlParams params_;
+    std::shared_ptr<ManualControlParams> params_ = std::make_shared<ManualControlParams>();
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
     std::vector<std::unique_ptr<ManualControllerProvider>> providers_;

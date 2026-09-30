@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>
+#include <memory>
 
 #include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -20,9 +21,9 @@ namespace vision_filter {
 class SlowKickDetector {
 public:
     /**
-     * @param params Vision filter parameters. Must outlive this object.
+     * @param params Vision filter parameters, shared with the owning node.
      */
-    explicit SlowKickDetector(const VisionFilterParams& params);
+    explicit SlowKickDetector(std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Adds a record to our history list
@@ -39,9 +40,8 @@ public:
      * It will change, but will have invalid data in it
      */
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellow_robots,
-                   const std::vector<WorldRobot>& blue_robots,
-                   KickEvent* kick_event);
+                    const std::vector<WorldRobot>& yellow_robots,
+                    const std::vector<WorldRobot>& blue_robots, KickEvent* kick_event);
 
 private:
     /**
@@ -94,9 +94,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distance_increasing_validator(
-        const std::vector<WorldRobot>& robot,
-        const std::vector<WorldBall>& ball);
+    static bool distance_increasing_validator(const std::vector<WorldRobot>& robot,
+                                              const std::vector<WorldBall>& ball);
 
     /**
      * Checks that the ball is being shot from the robot mouth
@@ -109,7 +108,7 @@ private:
     bool in_front_validator(const std::vector<WorldRobot>& robot,
                             const std::vector<WorldBall>& ball) const;
 
-    const VisionFilterParams& params_;
+    std::shared_ptr<const VisionFilterParams> params_;
 
     std::deque<VisionState> state_history_;
 };

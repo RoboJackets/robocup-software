@@ -1,4 +1,5 @@
 #include <list>
+#include <memory>
 #include <vector>
 
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -18,9 +19,9 @@ namespace vision_filter {
 class World {
 public:
     /**
-     * @param params Vision filter parameters. Must outlive this object.
+     * @param params Vision filter parameters, shared with the owning node.
      */
-    explicit World(const VisionFilterParams& params);
+    explicit World(std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -100,7 +101,7 @@ private:
      */
     void detect_kicks(RJ::Time calc_time);
 
-    const VisionFilterParams& params_;
+    std::shared_ptr<const VisionFilterParams> params_;
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to
