@@ -48,16 +48,3 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | **Unit testing** | _Describe what unit tests were used on this package and how._ |
 | **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
 | **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
-
-## 5. Change Plan and Sign-Off (As per creation of this documentation)
-
-Summarize the agreed scope, codebase impact, implementation sequence, and final decision.
-
-| Field | Details |
-| --- | --- |
-| **Why is it changing?** | _State the problem, evidence, and desired outcome._ |
-| **Codebase impact** | _Describe affected packages, nodes, launch files, interfaces, developers, and runtime behavior._ |
-| **Success criteria** | _List objective conditions that demonstrate the work is complete and effective._ |
-
-The final review checklist will be on ClickUp.
-
