@@ -1,11 +1,11 @@
 #pragma once
 
-#include <rj_protos/state/ssl_gc_referee_message.pb.h>
+#include <string>
+#include <vector>
 
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/team_info.hpp>
-#include <string>
-#include <vector>
+#include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
 // Information about a single team.
 class TeamInfo {
