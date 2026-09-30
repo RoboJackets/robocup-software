@@ -26,7 +26,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         referee::topics::kTeamColorTopic,
         rclcpp::QoS(1),
         [this](TeamColorMsg::UniquePtr msg) {
-            us_blue_.store(msg->is_blue);
+            us_blue_ = msg->is_blue;
         }
     );
 
@@ -93,7 +93,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 
 void VisionFilter::publish_state() {
     WorldStateMsg::UniquePtr msg =
-        std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_.load()));
+        std::make_unique<WorldStateMsg>(build_world_state_msg(us_blue_));
     world_state_pub_->publish(std::move(msg));
 }
 
