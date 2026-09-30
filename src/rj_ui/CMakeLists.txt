@@ -171,6 +171,11 @@ install(
   RUNTIME DESTINATION bin
 )
 
+install(
+  DIRECTORY themes
+  DESTINATION share/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
 
