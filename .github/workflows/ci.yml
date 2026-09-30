@@ -17,6 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Update Submodules
+        run: make update-submodules
+
       - name: Run util/ubuntu-setup as sudo
         run: "./util/ubuntu-setup -y"
 

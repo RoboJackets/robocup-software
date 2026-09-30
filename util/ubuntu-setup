@@ -168,4 +168,6 @@ python3 -m pip install pip==22.1
 pip3 install -r $BASE/util/requirements3.txt
 
 # update submodules
-make update-submodules
+if ! $NO_SUBMODULES; then
+    make update-submodules
+fi
