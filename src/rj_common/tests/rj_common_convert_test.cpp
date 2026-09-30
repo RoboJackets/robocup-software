@@ -29,3 +29,14 @@ TEST(ROSConvert, duration_lossless_convert) {
         source_seconds, round_trip_duration);
     EXPECT_NEAR(round_trip_duration.nanoseconds(), 12345, 1);
 }
+
+TEST(ROSConvert, builtin_duration_lossless_convert) {
+    builtin_interfaces::msg::Duration ros_duration;
+    ros_duration.sec = 12;
+    ros_duration.nanosec = 345678901;
+
+    test_lossless_convert_ros_value<builtin_interfaces::msg::Duration, RJ::Seconds>(
+        ros_duration);
+    test_lossless_convert_cpp_value<RJ::Seconds, builtin_interfaces::msg::Duration>(
+        RJ::Seconds(12.345678901));
+}

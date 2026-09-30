@@ -145,9 +145,9 @@ struct TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination =
-            rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
-                source);
+        const auto duration =
+            std::chrono::seconds(source.sec) + std::chrono::nanoseconds(source.nanosec);
+        destination = std::chrono::duration_cast<RJ::Seconds>(duration);
     }
 };
 
