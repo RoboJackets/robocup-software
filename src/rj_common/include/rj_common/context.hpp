@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <set>
 
 #include <rj_protos/referee.pb.h>
@@ -14,55 +15,15 @@
 #include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"
 #include "rj_common/team_info.hpp"
+#include "rj_common/time.hpp"
+#include "rj_common/ui_frame.hpp"
 #include "rj_common/world_state.hpp"
 
-// Keep the past thirty minutes of logs by default.
 constexpr size_t kMaxLogFrames = 60 * 60 * 30;
-
-struct Logs {
-    /**
-     * \brief A list of all log frames. This will contain at most
-     * `kMaxLogFrames` frames.
-     *
-     * This should not be accessed from the Processor thread, other
-     * than to add frames. The container may be accessed by the MainWindow
-     * thread while the Context mutex is locked, and frames may be retained
-     * and used even while the mutex is not locked (provided a shared_ptr
-     * is kept).
-     */
-    std::deque<std::shared_ptr<Packet::LogFrame>> frames;
-
-    enum class State { kNoFile, kWriting, kReading };
-
-    /**
-     * \brief The name of the log file, if it exists.
-     */
-    std::optional<std::string> filename;
-
-    /**
-     * \brief Whether we are recording (or viewing) logs.
-     */
-    State state = State::kNoFile;
-
-    /**
-     * \brief The start time of the entire system.
-     */
-    RJ::Time start_time;
-
-    /**
-     * \brief The log file size in bytes.
-     */
-    size_t size_bytes = 0;
-
-    /**
-     * The count of frames that existed before the given history
-     * but were dropped.
-     */
-    size_t dropped_frames = 0;
-};
-
-struct Context {
-    Context() : debug_drawer(this) {}
+constexpr RJ::Seconds kDropRobotThreshold = RJ::Seconds(0.5);
+class Context {
+public:
+    Context() {}
 
     // Delete copy, copy-assign, move, and move-assign because
     // many places are expected to hold Context* pointers.
@@ -70,6 +31,64 @@ struct Context {
     Context& operator=(const Context&) = delete;
     Context(Context&&) = delete;
     Context& operator=(Context&&) = delete;
+
+    // Creates a UIFrame based on the current state of Context
+    // and adds it to the frames vector.
+    void create_ui_frame() {
+        auto frame = std::make_shared<rj_common::UIFrame>();
+
+        frame->debug_draw_frame = debug_drawer.published_frame();
+
+        frame->blue = blue_team;
+
+        for (size_t shell = 0; shell < kNumShells; shell++) {
+            const auto& state = world_state.our_robots.at(shell);
+            const auto& status = robot_status.at(shell);
+
+            // Only add the robot to the frame if it recently sent a radio packet
+            if (RJ::now() - status.timestamp < kDropRobotThreshold) {
+                frame->radio_rx.push_back(status);
+            }
+
+            if (!state.visible) {
+                continue;
+            }
+
+            frame->self.push_back(rj_common::UIRobot(shell, state, status));
+        }
+
+        for (size_t shell = 0; shell < kNumShells; shell++) {
+            const auto& state = world_state.their_robots.at(shell);
+            if (!state.visible) {
+                continue;
+            }
+
+            frame->opp.push_back(rj_common::UIRobot(shell, state, std::nullopt));
+        }
+
+        if (world_state.ball.visible) {
+            frame->ball_state = {world_state.ball.position, world_state.ball.velocity};
+        }
+
+        frame->manual_id = game_settings.joystick_config.manual_id;
+        frame->defend_plus_x = game_settings.defend_plus_x;
+        frame->use_our_half = game_settings.use_our_half;
+        frame->use_their_half = game_settings.use_their_half;
+
+        if (blue_team) {
+            frame->yellow_name = their_info.name;
+            frame->blue_name = our_info.name;
+        } else {
+            frame->yellow_name = our_info.name;
+            frame->blue_name = their_info.name;
+        }
+
+        // Only store last 30 minutes of frames
+        frames.push_back(frame);
+        if (frames.size() > kMaxLogFrames) {
+            frames.erase(frames.begin());
+        }
+    }
 
     // Gameplay -> Planning, Radio
     std::array<RobotIntent, kNumShells> robot_intents;
@@ -98,7 +117,6 @@ struct Context {
     DebugDrawer debug_drawer;
 
     std::vector<Referee> referee_packets;
-    std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
 
@@ -106,6 +124,9 @@ struct Context {
 
     GameSettings game_settings;
 
-    Logs logs;
     std::string behavior_tree;
+
+    std::vector<std::shared_ptr<rj_common::UIFrame>> frames;
+
+    RJ::Time start_time;
 };

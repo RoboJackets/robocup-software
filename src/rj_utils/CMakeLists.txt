@@ -14,6 +14,7 @@ find_package(rclcpp REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_protos REQUIRED)
+find_package(rj_geometry REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
@@ -27,6 +28,7 @@ ament_target_dependencies(${PROJECT_NAME}
   rj_msgs
   rj_convert
   rj_protos
+  rj_geometry
 )
 
 target_link_libraries(${PROJECT_NAME}
