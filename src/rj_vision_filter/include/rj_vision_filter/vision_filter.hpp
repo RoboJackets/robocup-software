@@ -94,7 +94,7 @@ private:
     config_client::ConfigClient config_client_;
 
     rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
-    bool us_blue_;
+    bool is_blue_;
 
     /**
      * @brief Timer driving regular publication.
