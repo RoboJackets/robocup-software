@@ -17,16 +17,14 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_constants.hpp>
 #include <rj_common/planning/motion_constraints.hpp>
+#include <rj_common/ui_frame.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_utils/log_utils.hpp>
-
-class Logger;
 
 /** class that performs drawing of log data onto the field */
 class FieldView : public QWidget {
@@ -50,8 +48,8 @@ public:
         }
     }
 
-    void history(const std::vector<std::shared_ptr<Packet::LogFrame> >* value) {
-        _history = value;
+    void setHistory(std::vector<std::shared_ptr<rj_common::UIFrame>>&& value) {
+        _history = std::move(value);
     }
 
     void rotate(int value);
@@ -64,8 +62,6 @@ public:
     // If false, it will draw a red border.
     bool live{};
 
-    bool showRawRobots;
-    bool showRawBalls;
     bool showCoords;
     bool showDotPatterns;
     bool showTeamNames;
@@ -82,7 +78,7 @@ protected:
 
     void drawText(QPainter& p, QPointF pos, const QString& text,
                   bool center = true) const;
-    static void drawField(QPainter& p, const Packet::LogFrame* frame);
+    static void drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
@@ -101,7 +97,7 @@ protected:
 
 protected:
     // Returns a pointer to the most recent frame, or null if none is available.
-    std::shared_ptr<Packet::LogFrame> currentFrame();
+    std::shared_ptr<rj_common::UIFrame> currentFrame();
 
     // Coordinate transformations
     rj_geometry::TransformMatrix _screenToWorld;
@@ -117,7 +113,7 @@ protected:
     // How many degrees to rotate text so it shows up the right way on screen
     int _textRotation{};
 
-    const std::vector<std::shared_ptr<Packet::LogFrame> >* _history{};
+    std::vector<std::shared_ptr<rj_common::UIFrame>> _history;
 
     QVector<bool> _layerVisible;
 };

@@ -16,21 +16,19 @@
 
 #include <rj_common/context.hpp>
 #include <rj_common/debug_drawer.hpp>
-#include <rj_common/logger.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
+#include <rj_common/ui_frame.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_protos/LogFrame.pb.h>
 #include <rj_referee/external_referee.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_ui/ros2_temp/autonomy_interface.hpp"
 #include "rj_ui/ros2_temp/debug_draw_interface.hpp"
-#include "rj_ui/ros2_temp/raw_vision_packet_sub.hpp"
 #include "rj_ui/ros2_temp/referee_sub.hpp"
 #include "rj_ui/ros2_temp/soccer_config_client.hpp"
 
@@ -67,7 +65,7 @@ public:
         RJ::Time last_radio_rx_time;
     };
 
-    Processor(bool sim, bool blue_team, const std::string& read_log_file = "");
+    Processor(bool sim, bool blue_team);
     virtual ~Processor();
 
     void stop();
@@ -82,13 +80,6 @@ public:
     }
 
     float framerate() { return framerate_; }
-
-    bool open_log(const QString& filename) {
-        logger_->write(filename.toStdString());
-        return true;
-    }
-
-    void close_log() { logger_->close(); }
 
     std::lock_guard<std::mutex> lock_loop_mutex() {
         return std::lock_guard(loop_mutex_);
@@ -121,10 +112,6 @@ private:
     /** Used to start and stop the thread **/
     volatile bool running_;
 
-    // A logfile to read from.
-    // When empty, don't read logs at all.
-    std::string read_log_file_;
-
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
@@ -146,8 +133,6 @@ private:
 
     // modules
     std::shared_ptr<Gameplay::GameplayModule> gameplay_module_;
-    std::unique_ptr<Logger> logger_;
-
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;
 
     // ROS2 temporary modules
@@ -158,7 +143,6 @@ private:
     RJ::Time last_vision_time_;
 
     std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;
-    std::unique_ptr<ros2_temp::RawVisionPacketSub> raw_vision_packet_sub_;
     std::unique_ptr<ros2_temp::RefereeSub> referee_sub_;
     std::unique_ptr<ros2_temp::DebugDrawInterface> debug_draw_sub_;
     std::unique_ptr<ros2_temp::AutonomyInterface> autonomy_interface_;
