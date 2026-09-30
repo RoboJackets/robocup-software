@@ -29,8 +29,8 @@ public:
 private:
     Context* context_;
 
-    using RawProtobufMsgQueue = rj_ui::AsyncMessageQueue<
-        RawProtobufMsg, rj_ui::MessagePolicy::kQueue>;
+    using RawProtobufMsgQueue =
+        rj_ui::AsyncMessageQueue<RawProtobufMsg, rj_ui::MessagePolicy::kQueue>;
     RawProtobufMsgQueue::UniquePtr queue_;
 };
 }  // namespace ros2_temp

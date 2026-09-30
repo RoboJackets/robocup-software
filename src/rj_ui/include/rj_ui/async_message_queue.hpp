@@ -1,7 +1,8 @@
 #pragma once
-#include <rclcpp/rclcpp.hpp>
 #include <thread>
 #include <vector>
+
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_queue.hpp"
 
@@ -15,8 +16,7 @@ namespace rj_ui {
  * @tparam queue_size The queue size to use. For now, this can either be
  * kUnboundedQueueSize or 1.
  */
-template <typename T, MessagePolicy Policy,
-          int queue_size = kUnboundedQueueSize>
+template <typename T, MessagePolicy Policy, int queue_size = kUnboundedQueueSize>
 class AsyncMessageQueue;
 
 // ============================================================================
@@ -30,11 +30,9 @@ class AsyncMessageQueue;
 template <typename T, int queue_size>
 class AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size> {
 public:
-    using UniquePtr = std::unique_ptr<
-        AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>>;
+    using UniquePtr = std::unique_ptr<AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>>;
 
-    AsyncMessageQueue(const std::string& node_name,
-                      const std::string& topic_name);
+    AsyncMessageQueue(const std::string& node_name, const std::string& topic_name);
 
     /**
      * @brief Returns a vector of unique_ptr to the received ROS2 messages,
@@ -55,16 +53,14 @@ private:
 template <typename T, int queue_size>
 AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::AsyncMessageQueue(
     const std::string& node_name, const std::string& topic_name)
-    : node_{rclcpp::Node::make_shared(node_name)},
-      queue_{node_.get(), topic_name} {
+    : node_{rclcpp::Node::make_shared(node_name)}, queue_{node_.get(), topic_name} {
     executor_.add_node(node_);
     worker_ = std::thread([this]() { executor_.spin(); });
 }
 
 // ============================================================================
 template <typename T, int queue_size>
-std::vector<std::unique_ptr<T>>
-AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::get_all() {
+std::vector<std::unique_ptr<T>> AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::get_all() {
     std::vector<std::unique_ptr<T>> vec;
     queue_.get_all_threaded(vec);
     return vec;
