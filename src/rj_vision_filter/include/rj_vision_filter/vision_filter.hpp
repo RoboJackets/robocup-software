@@ -12,7 +12,6 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_topic_utils/message_queue.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
@@ -92,15 +91,10 @@ private:
      */
     World world_;
 
-    using TeamColorMsgQueue =
-        rj_topic_utils::MessageQueue<TeamColorMsg, rj_topic_utils::MessagePolicy::kLatest>;
-
     config_client::ConfigClient config_client_;
 
-    /**
-     * @brief Message Queue for TeamColor that takes the latest message.
-     */
-    TeamColorMsgQueue team_color_queue_;
+    rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
+    bool is_blue_;
 
     /**
      * @brief Timer driving regular publication.
