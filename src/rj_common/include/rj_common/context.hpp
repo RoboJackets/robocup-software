@@ -3,7 +3,7 @@
 #include <memory>
 #include <set>
 
-#include <rj_protos/referee.pb.h>
+#include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
 #include "rj_common/control/motion_setpoint.hpp"
 #include "rj_common/debug_drawer.hpp"
