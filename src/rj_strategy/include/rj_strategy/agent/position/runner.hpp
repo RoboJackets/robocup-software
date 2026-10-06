@@ -8,10 +8,10 @@ namespace strategy {
  * The Runner position handles runner behavior: running in a specified shape
  */
 class Runner : public Position {
-public: 
+public:
     Runner(int r_id);
     ~Runner() override = default;
-    Runner(Position&& other);   
+    Runner(Position&& other);
 
     std::string get_current_state() override;
 
@@ -30,7 +30,7 @@ public:
         return "UNKNOWN";
     }
 
-private: 
+private:
     /**
      * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
      */
@@ -38,10 +38,10 @@ private:
 
     // possible states of the Runner
     enum State {
-        RUNNING_SIDE1,        // running on side 1 of the polygon
-        RUNNING_SIDE2,        // running on side 2 of the polygon
-        RUNNING_SIDE3,        // running on side 3 of the polygon
-        RUNNING_SIDE4,        // running on side 4 of the polygon
+        RUNNING_SIDE1,  // running on side 1 of the polygon
+        RUNNING_SIDE2,  // running on side 2 of the polygon
+        RUNNING_SIDE3,  // running on side 3 of the polygon
+        RUNNING_SIDE4,  // running on side 4 of the polygon
     };
 
     /**
@@ -57,4 +57,4 @@ private:
     State current_state_ = RUNNING_SIDE1;
 };
 
-} // namespace strategy
+}  // namespace strategy
