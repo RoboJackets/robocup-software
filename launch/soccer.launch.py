@@ -258,6 +258,12 @@ def generate_launch_description():
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_radio",
+                executable="soccer_mom_node",
+                output="screen",
+                on_exit=Shutdown(),
             )
         ]
     )
