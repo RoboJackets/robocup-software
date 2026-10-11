@@ -81,7 +81,8 @@ public:
     Trajectory invalid(const PlanRequest& plan_request, const ObstacleSet& obstacles);
 
     CollectParams build_collect_params();
-    // NOTE: This is coupling with settle_path_planner; will need to be addressed in rj_planning investigation
+    // NOTE: This is coupling with settle_path_planner; will need to be addressed in rj_planning
+    // investigation
     SettleParams build_settle_params();
 
     Trajectory previous_;

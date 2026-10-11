@@ -3,10 +3,11 @@
 using namespace rj_geometry;
 namespace planning {
 
-EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner(rclcpp::Node* node): PathPlanner(node, "halt") {
+EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner(rclcpp::Node* node)
+    : PathPlanner(node, "halt") {
     this->escape_params_ = build_escape_params();
-    this->escape_params_callback_ = node_->add_on_set_parameters_callback(
-        [this](const std::vector<rclcpp::Parameter>& params) {
+    this->escape_params_callback_ =
+        node_->add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
             rcl_interfaces::msg::SetParametersResult result;
             result.successful = true;
             EscapeParams updated_params = escape_params_;
@@ -21,9 +22,10 @@ EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner(rclcpp::Node* node): Path
                 if (!std::isfinite(value) || value < 0.0 ||
                     (name == "escape.step_size" && value == 0.0)) {
                     result.successful = false;
-                    result.reason = name == "escape.step_size"
-                                        ? "escape.step_size must be finite and positive"
-                                        : "escape.goal_change_threshold must be finite and nonnegative";
+                    result.reason =
+                        name == "escape.step_size"
+                            ? "escape.step_size must be finite and positive"
+                            : "escape.goal_change_threshold must be finite and nonnegative";
                     return result;
                 }
 
@@ -76,10 +78,10 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
         std::make_shared<rj_geometry::Circle>(plan_request.world_state->ball.position, kBallRadius);
     path_obstacles.add(std::make_shared<Obstacle>(ball_shape, ball_shape));
 
-    auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
-                                           start_instant.stamp, path_obstacles,
-                                           plan_request.field_dimensions, plan_request.shell_id,
-                                         intermediate_params_, rrt_params_);
+    auto result =
+        CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
+                                 start_instant.stamp, path_obstacles, plan_request.field_dimensions,
+                                 plan_request.shell_id, intermediate_params_, rrt_params_);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 
@@ -138,10 +140,8 @@ bool EscapeObstaclesPathPlanner::is_done() const {
 
 EscapeParams EscapeObstaclesPathPlanner::build_escape_params() {
     EscapeParams p;
-    p.goal_change_threshold =
-        node_->get_parameter_or("escape.goal_change_threshold", 0.9);
-    p.step_size =
-        node_->get_parameter_or("escape.step_size", 0.1);
+    p.goal_change_threshold = node_->get_parameter_or("escape.goal_change_threshold", 0.9);
+    p.step_size = node_->get_parameter_or("escape.step_size", 0.1);
     return p;
 }
 

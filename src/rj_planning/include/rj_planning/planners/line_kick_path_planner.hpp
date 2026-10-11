@@ -35,7 +35,8 @@ namespace planning {
  */
 class LineKickPathPlanner : public PathPlanner {
 public:
-    LineKickPathPlanner(rclcpp::Node* node) : PathPlanner(node, "line_kick"), collect_planner_(node){}
+    LineKickPathPlanner(rclcpp::Node* node)
+        : PathPlanner(node, "line_kick"), collect_planner_(node) {}
     Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {

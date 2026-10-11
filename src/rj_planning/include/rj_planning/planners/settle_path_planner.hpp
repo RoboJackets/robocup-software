@@ -120,6 +120,5 @@ private:
 
     SettleParams settle_params_;
     std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> settle_params_callback_;
-
 };
 }  // namespace planning

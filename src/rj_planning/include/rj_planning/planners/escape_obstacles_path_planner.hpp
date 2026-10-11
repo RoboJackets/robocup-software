@@ -1,9 +1,9 @@
 #pragma once
 
+#include <cmath>
 #include <functional>
 #include <optional>
 #include <vector>
-#include <cmath>
 
 #include <rj_geometry/point.hpp>
 #include <rj_rrt/Tree.hpp>
@@ -56,9 +56,8 @@ public:
     /// by a configurable threshold.
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
     rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
-                                                    std::optional<rj_geometry::Point> prev_pt,
-                                                    const ObstacleSet& obstacles,
-                                                    int max_itr = 300);
+                                             std::optional<rj_geometry::Point> prev_pt,
+                                             const ObstacleSet& obstacles, int max_itr = 300);
 
     double step_size() const { return escape_params_.step_size; }
 
@@ -66,13 +65,12 @@ public:
     [[nodiscard]] bool is_done() const override;
 
 private:
-
     EscapeParams build_escape_params();
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
-    
+
     EscapeParams escape_params_;
-        std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> escape_params_callback_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> escape_params_callback_;
 };
 
 }  // namespace planning

@@ -121,7 +121,7 @@ private:
     // Whether or not the current team color is blue
     bool blue_team_;
     // timeout for radio found from ROS2 parameter timeout
-    double param_timeout_ {0};
+    double param_timeout_{0};
 };
 
 }  // namespace radio

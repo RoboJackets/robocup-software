@@ -30,7 +30,7 @@ namespace planning {
  */
 class PivotPathPlanner : public PathPlanner {
 public:
-    PivotPathPlanner(rclcpp::Node *node);
+    PivotPathPlanner(rclcpp::Node* node);
     ~PivotPathPlanner() = default;
 
     PivotPathPlanner(PivotPathPlanner&&) noexcept = default;

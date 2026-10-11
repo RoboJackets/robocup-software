@@ -82,8 +82,8 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
 
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
-           for (double t = intermediate_params.step_size; t < final_inter.dist_to(start.position);
-               t += intermediate_params.step_size) {
+        for (double t = intermediate_params.step_size; t < final_inter.dist_to(start.position);
+             t += intermediate_params.step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             auto offset = intermediate - field_dimensions->center_point();
@@ -138,7 +138,6 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         // Generate random tuples of distances and angles
         inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
     }
-
 
     // Sort the list of tuples by the magnitude of angle
     // This ensures that we take paths with
