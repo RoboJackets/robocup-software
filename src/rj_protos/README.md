@@ -16,7 +16,7 @@ Define the package's purpose and fixed architectural classification before work 
 | Field | Details |
 | --- | --- |
 | **Plain-language purpose** | Contains protobuf files for  SSL-owned interfaces such as game controller and vision processor. |
-| **Current responsibilities** | Owns the protocol for recieving data from SSL-owned interfaces. |
+| **Current responsibilities** | Owns the protocol for receiving data from SSL-owned interfaces. |
 | **Out of scope** | Does not contain any logic behind how these messages are parsed or how the data is used. |
 
 ## 2. Dependency Rules

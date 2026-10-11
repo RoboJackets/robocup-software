@@ -42,6 +42,12 @@ set(SIM_IMPORT_REWRITES
   "ssl_vision_geometry.proto" "vision/ssl_vision_geometry.proto"
 )
 
+if(NOT EXISTS ${SIM_PROTO_ROOT} OR NOT EXISTS ${GC_PROTO_ROOT})
+  message(FATAL_ERROR
+  "Proto submodule is missing. "
+  "From the repo root, run: make update-submodules")
+endif()
+
 foreach(proto ${SIM_PROTOS})
   file(READ ${SIM_PROTO_SRC}/${proto} content)
   set(rewrites ${SIM_IMPORT_REWRITES})
