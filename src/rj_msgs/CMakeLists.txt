@@ -29,7 +29,6 @@ rosidl_generate_interfaces(
   msg/DetectionFrame.msg
   msg/DetectionRobot.msg
   msg/FieldDimensions.msg
-  msg/FieldOrientation.msg
   msg/GameSettings.msg
   msg/Goalie.msg
   msg/ManipulatorSetpoint.msg
