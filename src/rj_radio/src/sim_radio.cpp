@@ -42,7 +42,7 @@ static SimulatorCommand convert_placement_to_proto(
         // TODO(Kevin): make this only happen in sim (set a param)
         // this line sets robots with an ID above 6 to "not present", meaning
         // they will be removed on their next sim command
-        // see "rj_protos/proto/ssl_simulation_control.proto"
+        // see "rj_protos/ssl-simulation-protocol/proto/ssl_simulation_control.proto"
         //
         // to see this in effect, click and drag the robots expected to be not
         // present and they should disappear

@@ -10,9 +10,6 @@
 #include <rj_msgs/msg/ball_placement.hpp>
 #include <rj_msgs/msg/robot_placement.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
-#include <rj_protos/grSim_Commands.pb.h>
-#include <rj_protos/grSim_Packet.pb.h>
-#include <rj_protos/grSim_Replacement.pb.h>
 
 #include "rj_ui/field_view.hpp"
 
