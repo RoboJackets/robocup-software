@@ -69,7 +69,7 @@ def convert_individual_hpp(msg, path, msg_type):
         + ";\n\tusing ros_message_type = rj_msgs::msg::"
         + msgName
         + ";\n"
-        "\tstatic void convert_to_ros(const custom_type& source, ros_message_type& destination) {\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
     )
     with open(path + "/" + msg) as f:
         for line in f:
@@ -334,7 +334,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         "\tusing is_specialized = std::true_type;\n"
         "\tusing custom_type = strategy::communication::AgentRequest;\n"
         "\tusing ros_message_type = rj_msgs::msg::AgentRequest;\n"
-        "\tstatic void convert_to_ros(const custom_type& source, ros_message_type& destination) {\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
         "\t\tdestination = ros_message_type{};\n"
     )
     hpp += "\t\t"
@@ -398,7 +398,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         "\tusing is_specialized = std::true_type;\n"
         "\tusing custom_type = strategy::communication::AgentResponse;\n"
         "\tusing ros_message_type = rj_msgs::msg::AgentResponse;\n"
-        "\tstatic void convert_to_ros(const custom_type& source, ros_message_type& destination) {\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
         "\t\tdestination = ros_message_type{};\n"
     )
     hpp += (

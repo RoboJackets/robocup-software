@@ -28,7 +28,7 @@ Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldStateMsg::UniquePtr msg) {
             rj_convert::convert_from_ros(*msg, &context_.world_state);
-            last_vision_time_ = rj_convert::convert_from_ros(msg->last_update_time, &last_vision_time_);
+            rj_convert::convert_from_ros(msg->last_update_time, &last_vision_time_);
         });
 
     debug_draw_sub_ =

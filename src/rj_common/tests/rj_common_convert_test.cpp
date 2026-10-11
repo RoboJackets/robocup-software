@@ -9,6 +9,21 @@ TEST(ROSConvert, time_lossless_convert) {
     test_lossless_convert_cpp_value<RJ::Time, builtin_interfaces::msg::Time>(RJ::now());
 }
 
+TEST(ROSConvert, time_near_integer_second_keeps_nanoseconds) {
+    // seconds() rounds this epoch-scale value up to the next whole second.
+    constexpr int32_t kSeconds = 1700000000;
+    constexpr uint32_t kNanoseconds = 999999999;
+    const RJ::Time source{std::chrono::seconds(kSeconds) +
+                          std::chrono::nanoseconds(kNanoseconds)};
+
+    builtin_interfaces::msg::Time message;
+    rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+        source, message);
+    EXPECT_EQ(message.sec, kSeconds);
+    EXPECT_EQ(message.nanosec, kNanoseconds);
+    test_lossless_convert_cpp_value<RJ::Time, builtin_interfaces::msg::Time>(source);
+}
+
 TEST(ROSConvert, duration_lossless_convert) {
     // We don't expect perfect equality for seconds, because float comparisons.
     rclcpp::Duration converted_duration(std::chrono::nanoseconds(0));
@@ -39,4 +54,20 @@ TEST(ROSConvert, builtin_duration_lossless_convert) {
         ros_duration);
     test_lossless_convert_cpp_value<RJ::Seconds, builtin_interfaces::msg::Duration>(
         RJ::Seconds(12.345678901));
+}
+
+TEST(ROSConvert, builtin_duration_negative_keeps_nanoseconds) {
+    // A negative remainder must stay in nanosec, with the sign carried by sec.
+    const RJ::Seconds source{std::chrono::nanoseconds(-1500000001)};
+
+    builtin_interfaces::msg::Duration message;
+    rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_ros_message(
+        source, message);
+
+    const auto expected = static_cast<builtin_interfaces::msg::Duration>(rclcpp::Duration(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(source)));
+    EXPECT_EQ(message, expected);
+    EXPECT_EQ(message.sec, -2);
+    EXPECT_EQ(message.nanosec, 499999999u);
+    test_lossless_convert_cpp_value<RJ::Seconds, builtin_interfaces::msg::Duration>(source);
 }
