@@ -9,10 +9,12 @@ PlannerNode::PlannerNode()
     : rclcpp::Node("planner", rclcpp::NodeOptions{}
                                   .automatically_declare_parameters_from_overrides(true)
                                   .allow_undeclared_parameters(true)),
-      global_state_(this),
-      param_provider_{this, kPlanningParamModule} {
+      global_state_(this) {
     // for _1, _2 etc. below
     using namespace std::placeholders;
+
+    this->timeout_param_ = get_parameter_or("timeout", 0.1);
+    this->use_sim_time_param_ = get_parameter_or("use_sim_time", false);
 
     // set up ActionServer + callbacks
     this->action_server_ = rclcpp_action::create_server<RobotMove>(

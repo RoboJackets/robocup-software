@@ -19,15 +19,16 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
     }
 
     RJ::Time partial_path_end =
-        params.start.stamp + RJ::Seconds(replanner::PARAM_partial_replan_lead_time);
+        params.start.stamp + RJ::Seconds(params.partial_replan_lead_time);
     if (partial_path_end <= previous.begin_time()) {
         return full_replan(params);
     }
 
-    Trajectory pre_trajectory = partial_path(previous, params.start.stamp);
+    Trajectory pre_trajectory = partial_path(params, previous, params.start.stamp);
     Trajectory post_trajectory = CreatePath::intermediate(
         pre_trajectory.last().linear_motion(), params.goal, params.constraints.mot,
-        pre_trajectory.end_time(), params.obstacles, params.field_dimensions, params.robot_id);
+        pre_trajectory.end_time(), params.obstacles, params.field_dimensions, params.robot_id,
+        params.intermediate_params, params.rrt_params);
 
     // If we couldn't profile such that velocity at the end of the partial replan period is valid,
     // do a full replan.
@@ -51,7 +52,8 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
 Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
     Trajectory path = CreatePath::intermediate(
         params.start.linear_motion(), params.goal, params.constraints.mot, params.start.stamp,
-        params.obstacles, params.field_dimensions, params.robot_id);
+        params.obstacles, params.field_dimensions, params.robot_id, params.intermediate_params,
+        params.rrt_params);
 
     // if the initial path is empty, the goal must be blocked
     // try to shift the goal_point until it is no longer blocked
@@ -71,7 +73,8 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
         path = CreatePath::intermediate(params.start.linear_motion(), almost_goal,
                                         params.constraints.mot, params.start.stamp,
-                                        params.obstacles, params.field_dimensions, params.robot_id);
+                                        params.obstacles, params.field_dimensions, params.robot_id,
+                                        params.intermediate_params, params.rrt_params);
     }
 
     if (!path.empty()) {
@@ -113,7 +116,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     }
     RJ::Time now = params.start.stamp;
 
-    if (previous.empty() || goal_changed(previous.last().linear_motion(), params.goal)) {
+    if (previous.empty() || goal_changed(params, previous.last().linear_motion(), params.goal)) {
         return full_replan(params);
     }
 
@@ -131,7 +134,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     bool should_partial_replan =
         trajectory_hits_obstacles(previous_trajectory, params.obstacles, start_time, &hit_time);
     if (should_partial_replan) {
-        if (hit_time - start_time < partial_replan_lead_time() * 2) {
+        if (hit_time - start_time < RJ::Seconds(params.partial_replan_lead_time * 2)) {
             return full_replan(params);
         }
         return partial_replan(params, previous_trajectory);
@@ -147,7 +150,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
         }
     }
     if (now - previous_created_time > kCheckBetterDeltaTime &&
-        time_remaining > partial_replan_lead_time() * 2) {
+        time_remaining > RJ::Seconds(params.partial_replan_lead_time * 2)) {
         return check_better(params, previous_trajectory);
     }
 
@@ -155,7 +158,7 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     return previous_trajectory;
 }
 
-bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
+bool Replanner::veered_off_path(const PlanParams& params, const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
 
     // If we don't have an instant, assume we're past the end of the path.
@@ -165,15 +168,15 @@ bool Replanner::veered_off_path(const Trajectory& trajectory, RobotInstant actua
     RobotInstant instant = maybe_instant.value();
 
     double path_error = (instant.position() - actual.position()).mag();
-    return path_error > replanner::PARAM_off_path_threshold;
+    return path_error > params.off_path_threshold;
 }
 
-bool Replanner::goal_changed(const LinearMotionInstant& prev_goal,
+bool Replanner::goal_changed(const PlanParams& params, const LinearMotionInstant& prev_goal,
                              const LinearMotionInstant& goal) {
     double goal_pos_diff = (prev_goal.position - goal.position).mag();
     double goal_vel_diff = (prev_goal.velocity - goal.velocity).mag();
-    return goal_pos_diff > goal_pos_change_threshold() ||
-           goal_vel_diff > goal_vel_change_threshold();
+    return goal_pos_diff > params.pos_change_threshold ||
+           goal_vel_diff > params.vel_change_threshold;
 }
 
 }  // namespace planning

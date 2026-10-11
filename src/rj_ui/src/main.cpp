@@ -13,7 +13,6 @@
 
 #include <fcntl.h>
 #include <rj_common/qt_utils.hpp>
-#include <rj_param_utils/global_params.hpp>
 #include <unistd.h>
 
 #include "rj_ui/main_window.hpp"
@@ -166,8 +165,6 @@ int main(int argc, char* argv[]) {
 
     // ROS2 init
     rclcpp::init(argc, argv);
-
-    start_global_param_provider("soccer", kGlobalParamServerNode);
 
     auto processor = std::make_unique<Processor>(sim, blue_team, read_log_file);
 

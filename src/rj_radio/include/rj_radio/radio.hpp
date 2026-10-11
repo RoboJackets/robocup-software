@@ -15,13 +15,8 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/team_color.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 namespace radio {
-
-constexpr auto kRadioParamModule = "radio";
-DECLARE_FLOAT64(kRadioParamModule, timeout);
 
 /**
  * @brief Sends and receives information to/from our robots.
@@ -125,9 +120,8 @@ private:
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
     // Whether or not the current team color is blue
     bool blue_team_;
-
-    // Ros param provider for initializing the radio node
-    ::params::LocalROS2ParamProvider param_provider_;
+    // timeout for radio found from ROS2 parameter timeout
+    double param_timeout_ {0};
 };
 
 }  // namespace radio

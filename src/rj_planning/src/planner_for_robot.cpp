@@ -8,22 +8,64 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
+      default_path_planner_{std::make_unique<EscapeObstaclesPathPlanner>(node)},
       global_state_{global_state},
       debug_draw_{
           node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
           fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
-    path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
-    path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();
-    path_planners_[PathTargetPathPlanner().name()] = std::make_unique<PathTargetPathPlanner>();
-    path_planners_[SettlePathPlanner().name()] = std::make_unique<SettlePathPlanner>();
-    path_planners_[CollectPathPlanner().name()] = std::make_unique<CollectPathPlanner>();
-    path_planners_[LineKickPathPlanner().name()] = std::make_unique<LineKickPathPlanner>();
-    path_planners_[PivotPathPlanner().name()] = std::make_unique<PivotPathPlanner>();
-    path_planners_[LinePivotPathPlanner().name()] = std::make_unique<LinePivotPathPlanner>();
-    path_planners_[RotatePathPlanner().name()] = std::make_unique<RotatePathPlanner>();
-    path_planners_[EscapeObstaclesPathPlanner().name()] =
-        std::make_unique<EscapeObstaclesPathPlanner>();
+    path_planners_[GoalieIdlePathPlanner(node_).name()] =
+        std::make_unique<GoalieIdlePathPlanner>(node_);
+    path_planners_[InterceptPathPlanner(node_).name()] =
+        std::make_unique<InterceptPathPlanner>(node_);
+    path_planners_[PathTargetPathPlanner(node_).name()] =
+        std::make_unique<PathTargetPathPlanner>(node_);
+    path_planners_[SettlePathPlanner(node_).name()] = std::make_unique<SettlePathPlanner>(node_);
+    path_planners_[CollectPathPlanner(node_).name()] = std::make_unique<CollectPathPlanner>(node_);
+    path_planners_[LineKickPathPlanner(node_).name()] =
+        std::make_unique<LineKickPathPlanner>(node_);
+    path_planners_[PivotPathPlanner(node_).name()] = std::make_unique<PivotPathPlanner>(node_);
+    path_planners_[LinePivotPathPlanner(node_).name()] =
+        std::make_unique<LinePivotPathPlanner>(node_);
+    path_planners_[RotatePathPlanner(node_).name()] = std::make_unique<RotatePathPlanner>(node_);
+    path_planners_[EscapeObstaclesPathPlanner(node_).name()] =
+        std::make_unique<EscapeObstaclesPathPlanner>(node_);
+
+    this->robot_constraints_ = build_robot_constraints();
+    this->timeout_ = node_->get_parameter_or("timeout", 0.1);
+
+    this->constraints_callback_ =
+        node_->add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "constraints.max_rotational_accel" ||
+                    param.get_name() == "constraints.max_rotational_speed" ||
+                    param.get_name() == "constraints.max_translational_accel" ||
+                    param.get_name() == "constraints.max_translational_speed") {
+                    if (param.as_double() <= 0.0) {
+                        result.successful = false;
+                        result.reason = fmt::format("{} must be positive", param.get_name());
+                        return result;
+                    }
+                }
+            }
+
+            for (const auto& param : params) {
+                if (param.get_name() == "constraints.max_rotational_accel") {
+                    robot_constraints_.rot.max_accel = param.as_double();
+                } else if (param.get_name() == "constraints.max_rotational_speed") {
+                    robot_constraints_.rot.max_speed = param.as_double();
+                } else if (param.get_name() == "constraints.max_translational_accel") {
+                    robot_constraints_.mot.max_acceleration = param.as_double();
+                } else if (param.get_name() == "constraints.max_translational_speed") {
+                    robot_constraints_.mot.max_speed = param.as_double();
+                }
+            }
+
+            return result;
+        });
 
     // publish paths to control
     trajectory_topic_ = node_->create_publisher<Trajectory::Msg>(
@@ -91,7 +133,6 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
                                       .trigger_mode(trajectory.trigger_mode)
                                       .kick_speed(intent.kick_speed)
                                       .dribbler_speed(trajectory.dribbler_speed));
-
     }
 }
 
@@ -105,9 +146,7 @@ void PlannerForRobot::plan_hypothetical_robot_path(
     /* response->estimate = rj_convert::convert_to_ros(trajectory_duration); */
 }
 
-std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
-    return std::nullopt;
-}
+std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const { return std::nullopt; }
 
 PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     // pass global_state_ directly
@@ -175,7 +214,6 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         field_obstacles.add(def_area_obstacles);
     }
 
-    RobotConstraints constraints;
     MotionCommand motion_command;
     // Attempting to create trajectories with max speeds <= 0 crashes the planner (during RRT
     // generation)
@@ -187,17 +225,17 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         // If override speed set to negative, assume infinity.
         // Negative numbers cause crashes, but 10 m/s is an effectively infinite limit.
         motion_command = intent.motion_command;
-        constraints.mot.max_speed = 2.0f;
+        robot_constraints_.mot.max_speed = 2.0f;
     } else {
         motion_command = intent.motion_command;
-        constraints.mot.max_speed = max_robot_speed;
+        robot_constraints_.mot.max_speed = max_robot_speed;
     }
 
     float kick_speed = min(intent.kick_speed, max_kick_speed);
 
     return PlanRequest{start,
                        motion_command,
-                       constraints,
+                       robot_constraints_,
                        std::move(field_obstacles),
                        robot_trajectories_,
                        static_cast<unsigned int>(robot_id_),
@@ -281,7 +319,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(timeout_);
 }
 
 bool PlannerForRobot::is_done() const {
@@ -295,6 +333,15 @@ bool PlannerForRobot::is_done() const {
         return true;
     }
     return false;
+}
+
+RobotConstraints PlannerForRobot::build_robot_constraints() {
+    RobotConstraints r;
+    r.rot.max_accel = node_->get_parameter_or("constraints.max_rotational_accel", 3.0);
+    r.rot.max_speed = node_->get_parameter_or("constraints.max_rotational_speed", 3.0);
+    r.mot.max_acceleration = node_->get_parameter_or("constraints.max_translational_accel", 2.0);
+    r.mot.max_speed = node_->get_parameter_or("constraints.max_translational_speed", 2.0);
+    return r;
 }
 
 }  // namespace planning

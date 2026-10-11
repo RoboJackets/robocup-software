@@ -34,7 +34,7 @@ namespace planning {
 // block in other path planners
 class PathTargetPathPlanner : public PathPlanner {
 public:
-    PathTargetPathPlanner() : PathPlanner("path_target") {}
+    PathTargetPathPlanner(rclcpp::Node *node) : PathPlanner(node, "path_target") {}
     ~PathTargetPathPlanner() override = default;
 
     PathTargetPathPlanner(PathTargetPathPlanner&&) noexcept = default;

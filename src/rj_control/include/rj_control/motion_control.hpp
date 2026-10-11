@@ -15,7 +15,6 @@
 #include <rj_constants/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/param.hpp>
 #include <rj_utils/logging.hpp>
 #include <std_msgs/msg/float64.hpp>
 

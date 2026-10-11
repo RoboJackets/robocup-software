@@ -21,7 +21,8 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
 
 Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const ObstacleSet& obstacles, const std::vector<Point>& bias_waypoints) {
+               const ObstacleSet& obstacles, const RrtParams& rrt_params,
+               const std::vector<Point>& bias_waypoints) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -39,7 +40,7 @@ Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal
     }
 
     std::vector<Point> points =
-        generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
+        generate_rrt(start.position, goal.position, obstacles, rrt_params, bias_waypoints);
 
     BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
 
@@ -54,7 +55,8 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
                         const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
-                        unsigned int robot_id) {
+                        unsigned int robot_id, const IntermediateParams& intermediate_params,
+                        const RrtParams& rrt_params) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
         return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
@@ -72,15 +74,16 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // Generate list of intermediate points
-    std::vector<rj_geometry::Point> intermediates = get_intermediates(start, goal, robot_id);
+    std::vector<rj_geometry::Point> intermediates =
+        get_intermediates(start, goal, robot_id, intermediate_params);
 
-    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
+    for (int i = 0; i < intermediate_params.num_intermediates; i++) {
         rj_geometry::Point final_inter = intermediates[i];
 
         // Step through the path from the robot to the final intermediate point
         // and test each point on that path as an intermediate point
-        for (double t = intermediate::PARAM_step_size; t < final_inter.dist_to(start.position);
-             t += intermediate::PARAM_step_size) {
+           for (double t = intermediate_params.step_size; t < final_inter.dist_to(start.position);
+               t += intermediate_params.step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
             auto offset = intermediate - field_dimensions->center_point();
@@ -104,20 +107,21 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
     }
 
     // If all else fails, use rrt to ensure obstacle avoidance
-    return CreatePath::rrt(start, goal, motion_constraints, start_time, obstacles);
+    return CreatePath::rrt(start, goal, motion_constraints, start_time, obstacles, rrt_params);
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,
                                                   const LinearMotionInstant& goal,
-                                                  unsigned int robot_id) {
+                                                  unsigned int robot_id,
+                                                  const IntermediateParams& intermediate_params) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Create a random distribution for the distance between the start
     // and the intermediate points
-    std::uniform_real_distribution<> scale_dist(intermediate::PARAM_min_scale,
-                                                intermediate::PARAM_max_scale);
+    std::uniform_real_distribution<> scale_dist(intermediate_params.min_scale,
+                                                intermediate_params.max_scale);
 
-    double angle_range = intermediate::PARAM_max_angle - intermediate::PARAM_min_angle;
+    double angle_range = intermediate_params.max_angle - intermediate_params.min_angle;
     // Create a random distribution for the angle between the start
     // and the intermediate points
     std::uniform_real_distribution<> angle_dist(-angle_range, angle_range);
@@ -125,9 +129,9 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
     std::vector<rj_geometry::Point> intermediates;
     std::vector<std::tuple<double, double, double>> inter_tuples;
 
-    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
+    for (int i = 0; i < intermediate_params.num_intermediates; i++) {
         double angle = angle_dist(gen);
-        angle += std::copysign(intermediate::PARAM_min_angle, angle);
+        angle += std::copysign(intermediate_params.min_angle, angle);
         angle = degrees_to_radians(angle);
         double scale = scale_dist(gen);
 
@@ -145,7 +149,7 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         inter_tuples.emplace(inter_tuples.begin(), cached_intermediate_tuple_[robot_id]);
     }
 
-    for (int i = 0; i < intermediate::PARAM_num_intermediates; i++) {
+    for (int i = 0; i < intermediate_params.num_intermediates; i++) {
         double angle = std::get<0>(inter_tuples[i]) * std::get<1>(inter_tuples[i]);
         double scale = std::get<2>(inter_tuples[i]);
 

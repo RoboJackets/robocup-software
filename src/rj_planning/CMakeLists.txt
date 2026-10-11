@@ -23,7 +23,6 @@ find_package(rj_common REQUIRED)
 find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_param_utils REQUIRED)
 find_package(rj_rrt REQUIRED)
 
 set(RJ_PLANNING_DEPS
@@ -37,7 +36,6 @@ set(RJ_PLANNING_DEPS
   rj_constants
   rj_convert
   rj_msgs
-  rj_param_utils
   rj_rrt
   Flann
 )
@@ -63,6 +61,7 @@ set(RJ_PLANNING_SRC
   src/planners/intercept_path_planner.cpp
   src/planners/line_kick_path_planner.cpp
   src/planners/line_pivot_path_planner.cpp
+  src/planners/path_planner.cpp
   src/planners/path_target_path_planner.cpp
   src/planners/pivot_path_planner.cpp
   src/planners/rotate_path_planner.cpp

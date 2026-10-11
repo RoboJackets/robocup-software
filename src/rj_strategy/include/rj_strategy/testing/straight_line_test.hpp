@@ -16,7 +16,6 @@
 #include <rj_msgs/msg/line_test.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/global_params.hpp>
 #include <rj_utils/logging.hpp>
 #include <std_msgs/msg/bool.hpp>
 
@@ -28,12 +27,6 @@
 // Make sure to source bash and ros in other window
 // Example command:
 // `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 2, y: 2}, {x: -2, y: 8}], r_id: 2}"`
-
-DECLARE_FLOAT64("straight_line_test", start_x);
-DECLARE_FLOAT64("straight_line_test", start_y);
-DECLARE_FLOAT64("straight_line_test", end_x);
-DECLARE_FLOAT64("straight_line_test", end_y);
-DECLARE_FLOAT64("straight_line_test", robot_id);
 
 namespace strategy {
 
@@ -123,6 +116,13 @@ private:
     float height_min_{0};
     float height_max_{9};
     bool field_dimensions_set_{false};
+
+    // ROS2 Parameters
+    double start_x_;
+    double start_y_;
+    double end_x_;
+    double end_y_;
+    int target_robot_id_param_;
 };  // class StraightLineTest
 
 }  // namespace strategy

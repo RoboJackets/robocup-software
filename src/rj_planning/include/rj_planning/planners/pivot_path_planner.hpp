@@ -8,8 +8,6 @@
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
-
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/path_smoothing.hpp"
@@ -32,8 +30,8 @@ namespace planning {
  */
 class PivotPathPlanner : public PathPlanner {
 public:
-    PivotPathPlanner() : PathPlanner("pivot") {}
-    ~PivotPathPlanner() override = default;
+    PivotPathPlanner(rclcpp::Node *node);
+    ~PivotPathPlanner() = default;
 
     PivotPathPlanner(PivotPathPlanner&&) noexcept = default;
     PivotPathPlanner& operator=(PivotPathPlanner&&) noexcept = default;
@@ -62,5 +60,8 @@ private:
 
     // TODO(Kevin): ros param this
     static constexpr double kIsDoneAngleChangeThresh{1.0};
+
+    double radius_multiplier_;
+    std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> radius_multiplier_callback_;
 };
 }  // namespace planning

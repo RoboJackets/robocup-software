@@ -30,7 +30,10 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, obstacles, request.field_dimensions,
                               request.constraints, angle_function, request.shell_id,
-                              RJ::Seconds(3.0)},
+                                                            RJ::Seconds(3.0), replanner_off_path_threshold,
+                                                            replanner_partial_replan_lead_time, replanner_pos_change_threshold,
+                                                            replanner_vel_change_threshold, rrt_params_,
+                                                            intermediate_params_},
         std::move(previous_));
 
     previous_ = trajectory;

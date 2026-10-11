@@ -23,7 +23,7 @@ namespace planning {
 
 class InterceptPathPlanner : public PathPlanner {
 public:
-    InterceptPathPlanner() : PathPlanner("intercept"){};
+    InterceptPathPlanner(rclcpp::Node *node) : PathPlanner(node, "intercept"){};
 
     Trajectory plan(const PlanRequest& request) override;
 

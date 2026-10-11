@@ -9,7 +9,6 @@
 #include "rj_common/debug_drawer.hpp"
 #include "rj_common/game_settings.hpp"
 #include "rj_common/game_state.hpp"
-#include "rj_common/planning/robot_constraints.hpp"
 #include "rj_common/planning/trajectory.hpp"
 #include "rj_common/radio/robot_status.hpp"
 #include "rj_common/robot_intent.hpp"

@@ -3,6 +3,48 @@
 using namespace rj_geometry;
 namespace planning {
 
+EscapeObstaclesPathPlanner::EscapeObstaclesPathPlanner(rclcpp::Node* node): PathPlanner(node, "halt") {
+    this->escape_params_ = build_escape_params();
+    this->escape_params_callback_ = node_->add_on_set_parameters_callback(
+        [this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            EscapeParams updated_params = escape_params_;
+
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if (name != "escape.goal_change_threshold" && name != "escape.step_size") {
+                    continue;
+                }
+
+                const double value = param.as_double();
+                if (!std::isfinite(value) || value < 0.0 ||
+                    (name == "escape.step_size" && value == 0.0)) {
+                    result.successful = false;
+                    result.reason = name == "escape.step_size"
+                                        ? "escape.step_size must be finite and positive"
+                                        : "escape.goal_change_threshold must be finite and nonnegative";
+                    return result;
+                }
+
+                if (name == "escape.goal_change_threshold") {
+                    updated_params.goal_change_threshold = value;
+                } else {
+                    updated_params.step_size = value;
+                }
+            }
+
+            escape_params_ = updated_params;
+            return result;
+        });
+}
+
+EscapeObstaclesPathPlanner::~EscapeObstaclesPathPlanner() {
+    if (node_ != nullptr && escape_params_callback_) {
+        node_->remove_on_set_parameters_callback(escape_params_callback_.get());
+    }
+}
+
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
@@ -36,7 +78,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 
     auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
                                            start_instant.stamp, path_obstacles,
-                                           plan_request.field_dimensions, plan_request.shell_id);
+                                           plan_request.field_dimensions, plan_request.shell_id,
+                                         intermediate_params_, rrt_params_);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 
@@ -55,7 +98,7 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
         rrt.setStartState(goal);
         // note: we don't set goal state because we're not looking for a
         // particular point, just something that isn't blocked
-        rrt.setStepSize(step_size());
+        rrt.setStepSize(escape_params_.step_size);
 
         // The starting point is in an obstacle, extend the tree until we find
         // an unobstructed point
@@ -77,7 +120,7 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
         // at least a certain threshold
         float old_dist = (*prev_goal - goal).mag();
         float new_dist = (new_goal - goal).mag();
-        if (new_dist + escape::PARAM_goal_change_threshold < old_dist) {
+        if (new_dist + escape_params_.goal_change_threshold < old_dist) {
             return new_goal;
         } else {
             return *prev_goal;
@@ -91,6 +134,15 @@ bool EscapeObstaclesPathPlanner::is_done() const {
     // switches to a more suitable planner when needed.
     // (see planner_node.cpp)
     return false;
+}
+
+EscapeParams EscapeObstaclesPathPlanner::build_escape_params() {
+    EscapeParams p;
+    p.goal_change_threshold =
+        node_->get_parameter_or("escape.goal_change_threshold", 0.9);
+    p.step_size =
+        node_->get_parameter_or("escape.step_size", 0.1);
+    return p;
 }
 
 }  // namespace planning

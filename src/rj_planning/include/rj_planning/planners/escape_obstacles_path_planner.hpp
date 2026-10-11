@@ -3,9 +3,9 @@
 #include <functional>
 #include <optional>
 #include <vector>
+#include <cmath>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_rrt/Tree.hpp>
 
 #include "rj_planning/plan_request.hpp"
@@ -20,6 +20,12 @@ class Configuration;
 class ConfigDouble;
 
 namespace planning {
+
+struct EscapeParams {
+    double goal_change_threshold;
+    double step_size;
+};
+
 /**
  * @brief This planner finds a path to quickly get out of an obstacle. If the
  * start point isn't in an obstacle, returns a path containing only the start
@@ -33,8 +39,8 @@ public:
     // TODO(Kevin): think of better way to convey halted behavior than "EscapeObstaclesPathPlanner"
     // actually this is not HALT, control node does HALT for us
     // or maybe use PathTargetPlanner with no real velocity?
-    EscapeObstaclesPathPlanner() : PathPlanner("halt"){};
-    ~EscapeObstaclesPathPlanner() override = default;
+    EscapeObstaclesPathPlanner(rclcpp::Node* node);
+    ~EscapeObstaclesPathPlanner() override;
 
     EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
     EscapeObstaclesPathPlanner& operator=(
@@ -49,19 +55,24 @@ public:
     /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
-    static rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
+    rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
                                                     std::optional<rj_geometry::Point> prev_pt,
                                                     const ObstacleSet& obstacles,
                                                     int max_itr = 300);
 
-    static double step_size() { return escape::PARAM_step_size; }
+    double step_size() const { return escape_params_.step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
     [[nodiscard]] bool is_done() const override;
 
 private:
+
+    EscapeParams build_escape_params();
     /* PathTargetPathPlanner planner_; */
     std::optional<rj_geometry::Point> previous_target_;
+    
+    EscapeParams escape_params_;
+        std::shared_ptr<rclcpp::Node::OnSetParametersCallbackHandle> escape_params_callback_;
 };
 
 }  // namespace planning
