@@ -10,7 +10,6 @@
 #include <rj_config_client/config_client.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_protos/ssl_vision_wrapper.pb.h>
 #include <rj_utils/concurrent_queue.hpp>
 #include <rj_vision_receiver/stamped_wrapper_packet.hpp>
@@ -125,7 +124,6 @@ private:
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
-    params::LocalROS2ParamProvider param_provider_;
     int param_port_;
     std::string param_vision_interface_;
 };

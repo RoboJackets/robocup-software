@@ -5,30 +5,8 @@
 
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/line.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_lin_dampen, 0.9,
-                  "Linear velocity dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_lin_dampen, 0.3,
-                  "Linear velocity dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_body_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the circular shell. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce, robot_mouth_angle_dampen, 0.0,
-                  "Reflect angle dampen for bouncing off the front mouth. "
-                  "1 means 100% of the velocity is kept after collision. 0 "
-                  "means 0% of the velocity is kept after collision.")
-using vision_filter::bounce::PARAM_robot_body_angle_dampen;
-using vision_filter::bounce::PARAM_robot_body_lin_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_angle_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
 
 /**
  * Note 0 case returns -1 instead of 0
@@ -40,13 +18,16 @@ using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
  */
 int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10); }
 
+BallBounce::BallBounce(std::shared_ptr<const VisionFilterParams> params)
+    : params_(std::move(params)) {}
+
 bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                                   const std::vector<WorldRobot>& yellow_robots,
                                   const std::vector<WorldRobot>& blue_robots,
-                                  rj_geometry::Point& out_new_vel) {
+                                  rj_geometry::Point& out_new_vel) const {
     // Figures out if there is an intersection and what the resulting velocity
     // should be
-    auto find_end_vel = [&ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
+    auto find_end_vel = [this, &ball, &out_new_vel](const std::vector<WorldRobot>& robots) {
         for (const WorldRobot& robot : robots) {
             if (!robot.get_is_valid()) {
                 continue;
@@ -72,17 +53,19 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
 
             // intersect_pts.size() == 2
 
-            //                        _____
-            //                       /     \
-            //                      | Robot |
-            //                       \_____/
-            //                          B
-            //                         /|\
-            //                        / | \
-            //                       /  |  \
-            //                      /   |   \
-            //                     /    D    \
-            //                    A           C
+            /*
+                                      _____
+                                     /     \
+                                    | Robot |
+                                     \_____/
+                                        B
+                                       /|\
+                                      / | \
+                                     /  |  \
+                                    /   |   \
+                                   /    D    \
+                                  A           C
+            */
             // Ball moves from A->B
             // Bounces off the robot
             // Moves from B->C
@@ -121,9 +104,10 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             rj_geometry::Point mouth_half_unit_vec =
                 rj_geometry::Point(0, 1).rotate(robot.get_theta());
             rj_geometry::Point mouth_center_pos =
-                rj_geometry::Point(kRobotMouthRadius, 0).rotate(robot.get_theta()) + robot.get_pos();
-            rj_geometry::Line mouth_line = rj_geometry::Line(mouth_center_pos + mouth_half_unit_vec,
-                                                           mouth_center_pos - mouth_half_unit_vec);
+                rj_geometry::Point(kRobotMouthRadius, 0).rotate(robot.get_theta()) +
+                robot.get_pos();
+            rj_geometry::Line mouth_line = rj_geometry::Line(
+                mouth_center_pos + mouth_half_unit_vec, mouth_center_pos - mouth_half_unit_vec);
 
             rj_geometry::Point mouth_intersect;
             bool intersects = intersect_line.intersects(mouth_line, &mouth_intersect);
@@ -140,15 +124,17 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
                 did_hit_mouth = true;
             }
 
-            //                          R
-            //                        _____
-            //                          B
-            //                         /|\
-            //                        / | \
-            //                       /  |  \
-            //                      /   |   \
-            //                     /    |    \
-            //                    A-----D-----C
+            /*
+                                        R
+                                      _____
+                                        B
+                                       /|\
+                                      / | \
+                                     /  |  \
+                                    /   |   \
+                                   /    |    \
+                                  A-----D-----C
+            */
 
             // B->A
             rj_geometry::Point intersect_pt_ball_vector = ball_pos_safe_pt - closest_intersect_pt;
@@ -176,14 +162,8 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             rj_geometry::Point intersect_pt_reflection_unit_vector =
                 intersect_pt_reflection_vector.normalized();
 
-            // Scale magnitude of velocity by a percentage
-            double dampen_lin_coeff = PARAM_robot_body_lin_dampen;
-            double dampen_angle_coeff = PARAM_robot_body_angle_dampen;
-
-            if (did_hit_mouth) {
-                dampen_lin_coeff = PARAM_robot_mouth_lin_dampen;
-                dampen_angle_coeff = PARAM_robot_mouth_angle_dampen;
-            }
+            double dampen_angle_coeff = did_hit_mouth ? params_->bounce.robot_mouth_angle_dampen
+                                                      : params_->bounce.robot_body_angle_dampen;
 
             //                   C------D
             //                    \     |
@@ -203,15 +183,15 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             // We dont want any extra rotation when angle CBD is 0 degrees or 90
             // degrees Just to simplify implementation, I'm going to do a
             // triangle
-            //
-            // df*45  -              /  \
-            //                    /        \
-            //                 /              \
-            //  0     -     /                    \
-            //
-            //             |          |           |
-            //            0 deg    45 deg       90 deg
-            //
+            /*
+               df*45  -              /  \
+                                  /        \
+                               /              \
+                0     -     /                    \
+
+                           |          |           |
+                          0 deg    45 deg       90 deg
+            */
             // df is angle dampen factor
             // y axis represents max angle dampen in terms of degrees
             // x axis is the angle CBD
@@ -243,14 +223,14 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
     return bounce_found;
 }
 
-bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) {
-    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * PARAM_vision_loop_dt;
+bool BallBounce::ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) const {
+    rj_geometry::Point next_pos = ball.get_pos() + ball.get_vel() * params_->vision_loop_dt;
 
     return (robot.get_pos() - next_pos).mag() < kRobotRadius + kBallRadius;
 }
 
-std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(const KalmanBall& ball,
-                                                                          const WorldRobot& robot) {
+std::vector<rj_geometry::Point> BallBounce::possible_ball_intersection_pts(
+    const KalmanBall& ball, const WorldRobot& robot) {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
     std::vector<rj_geometry::Point> out;
