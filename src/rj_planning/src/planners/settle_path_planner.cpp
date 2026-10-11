@@ -3,20 +3,19 @@ using namespace rj_geometry;
 
 namespace planning {
 
-SettlePathPlanner::SettlePathPlanner(rclcpp::Node* node) : 
-          PathPlanner(node, "settle"),
-          avg_instantaneous_intercept_target_(0, 0),
-          average_ball_vel_(0, 0) {
-            this->settle_params_ = build_settle_params();
-            this->settle_params_callback_ = node_->add_on_set_parameters_callback(
-                [](const std::vector<rclcpp::Parameter>& params) {
-                    rcl_interfaces::msg::SetParametersResult result;
-                    result.successful = true;
-                    // TODO: Ask what constraints to use here
-                    return result;
-                }
-            );
-          }
+SettlePathPlanner::SettlePathPlanner(rclcpp::Node* node)
+    : PathPlanner(node, "settle"),
+      avg_instantaneous_intercept_target_(0, 0),
+      average_ball_vel_(0, 0) {
+    this->settle_params_ = build_settle_params();
+    this->settle_params_callback_ =
+        node_->add_on_set_parameters_callback([](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            // TODO: Ask what constraints to use here
+            return result;
+        });
+}
 
 SettlePathPlanner::~SettlePathPlanner() {
     if (node_ != nullptr && settle_params_callback_) {
@@ -332,8 +331,8 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
             settle_params_.shortcut_dist) {
-        LinearMotionInstant target{closest_pt,
-                                   settle_params_.ball_speed_percent_for_dampen * average_ball_vel_};
+        LinearMotionInstant target{
+            closest_pt, settle_params_.ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -373,12 +372,12 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
                                  AngleFns::face_point(face_pos),
                                  plan_request.shell_id,
                                  std::nullopt,
-                                replanner_off_path_threshold,
-                                replanner_partial_replan_lead_time,
-                                replanner_pos_change_threshold,
-                                replanner_vel_change_threshold,
-                                   rrt_params_,
-                                   intermediate_params_};
+                                 replanner_off_path_threshold,
+                                 replanner_partial_replan_lead_time,
+                                 replanner_pos_change_threshold,
+                                 replanner_vel_change_threshold,
+                                 rrt_params_,
+                                 intermediate_params_};
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();
@@ -484,11 +483,10 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
             start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
             intermediate_params_, rrt_params_);
     } else {
-        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
-                                              final_stopping_motion, plan_request.constraints.mot,
-                                              previous_.last().stamp, obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id,
-                                              intermediate_params_, rrt_params_);
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            intermediate_params_, rrt_params_);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -597,26 +595,17 @@ SettleParams SettlePathPlanner::build_settle_params() {
     SettleParams p;
     p.ball_speed_percent_for_dampen =
         node_->get_parameter_or("settle.ball_speed_percent_for_dampen", 0.1);
-    p.ball_vel_gain =
-        node_->get_parameter_or("settle.ball_vel_gain", 0.9);
-    p.intercept_buffer_time =
-        node_->get_parameter_or("settle.intercept_buffer_time", 0.3);
-    p.max_ball_angle_for_reset =
-        node_->get_parameter_or("settle.max_ball_angle_for_reset", 20.0);
+    p.ball_vel_gain = node_->get_parameter_or("settle.ball_vel_gain", 0.9);
+    p.intercept_buffer_time = node_->get_parameter_or("settle.intercept_buffer_time", 0.3);
+    p.max_ball_angle_for_reset = node_->get_parameter_or("settle.max_ball_angle_for_reset", 20.0);
     p.max_ball_vel_for_path_reset =
         node_->get_parameter_or("settle.max_ball_vel_for_path_reset", 2.0);
-    p.max_bounce_angle =
-        node_->get_parameter_or("settle.max_bounce_angle", 45.0);
-    p.search_end_dist =
-        node_->get_parameter_or("settle.search_end_dist", 6.0);
-    p.search_inc_dist =
-        node_->get_parameter_or("settle.search_inc_dist", 0.2);
-    p.search_start_dist =
-        node_->get_parameter_or("settle.search_start_dist", 0.0);
-    p.shortcut_dist =
-        node_->get_parameter_or("settle.shortcut_dist", 0.09);
-    p.target_point_gain =
-        node_->get_parameter_or("settle.target_point_gain", 0.5);
+    p.max_bounce_angle = node_->get_parameter_or("settle.max_bounce_angle", 45.0);
+    p.search_end_dist = node_->get_parameter_or("settle.search_end_dist", 6.0);
+    p.search_inc_dist = node_->get_parameter_or("settle.search_inc_dist", 0.2);
+    p.search_start_dist = node_->get_parameter_or("settle.search_start_dist", 0.0);
+    p.shortcut_dist = node_->get_parameter_or("settle.shortcut_dist", 0.09);
+    p.target_point_gain = node_->get_parameter_or("settle.target_point_gain", 0.5);
     return p;
 }
 

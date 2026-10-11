@@ -3,8 +3,8 @@
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/trajectory.hpp>
-#include "rclcpp/node.hpp"
 
+#include "rclcpp/node.hpp"
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/primitives/intermediate_params.hpp"
 #include "rj_planning/primitives/rrt_params.hpp"
@@ -29,7 +29,7 @@ struct ConstraintsParams {
  */
 class PathPlanner {
 public:
-    PathPlanner(rclcpp::Node *node, std::string name);
+    PathPlanner(rclcpp::Node* node, std::string name);
     virtual ~PathPlanner();
 
     PathPlanner(PathPlanner&&) noexcept = default;
@@ -69,7 +69,7 @@ public:
     [[nodiscard]] std::string name() const { return name_; }
 
 protected:
-    rclcpp::Node *node_;
+    rclcpp::Node* node_;
 
     double replanner_off_path_threshold;
     double replanner_partial_replan_lead_time;

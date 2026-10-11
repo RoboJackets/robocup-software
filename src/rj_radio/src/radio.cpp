@@ -6,7 +6,6 @@ Radio::Radio()
     : Node{"radio", rclcpp::NodeOptions{}
                         .automatically_declare_parameters_from_overrides(true)
                         .allow_undeclared_parameters(true)} {
-
     param_timeout_ = this->get_parameter("timeout").as_double();
 
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(

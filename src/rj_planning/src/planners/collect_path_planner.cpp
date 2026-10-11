@@ -4,18 +4,17 @@ using namespace rj_geometry;
 
 namespace planning {
 
-CollectPathPlanner::CollectPathPlanner(rclcpp::Node* node) :
- PathPlanner(node, "collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {
+CollectPathPlanner::CollectPathPlanner(rclcpp::Node* node)
+    : PathPlanner(node, "collect"), average_ball_vel_(0, 0), approach_direction_(0, 0) {
     this->collect_params_ = build_collect_params();
     this->settle_params_ = build_settle_params();
-    this->collect_params_callback_ = node_->add_on_set_parameters_callback(
-                [](const std::vector<rclcpp::Parameter>& params) {
-                    rcl_interfaces::msg::SetParametersResult result;
-                    result.successful = true;
-                    //TODO: Ask what the constraints are here
-                    return result;
-                }
-            );
+    this->collect_params_callback_ =
+        node_->add_on_set_parameters_callback([](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            // TODO: Ask what the constraints are here
+            return result;
+        });
 }
 
 CollectPathPlanner::~CollectPathPlanner() {
@@ -55,7 +54,8 @@ Trajectory CollectPathPlanner::plan(const PlanRequest& plan_request) {
     RJ::Seconds partial_path_time = 0ms;
 
     // How much of the previous path to steal
-    const RJ::Seconds partial_replan_lead_time(node_->get_parameter_or("replanner.partial_replan_lead_time", 0.1));
+    const RJ::Seconds partial_replan_lead_time(
+        node_->get_parameter_or("replanner.partial_replan_lead_time", 0.1));
 
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
@@ -300,8 +300,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-        for (double dist = settle_params_.search_start_dist; dist < settle_params_.search_end_dist;
-            dist += settle_params_.search_inc_dist) {
+    for (double dist = settle_params_.search_start_dist; dist < settle_params_.search_end_dist;
+         dist += settle_params_.search_inc_dist) {
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
 
@@ -436,8 +436,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
             settle_params_.shortcut_dist) {
-        LinearMotionInstant target{closest_pt,
-                                   settle_params_.ball_speed_percent_for_dampen * average_ball_vel_};
+        LinearMotionInstant target{
+            closest_pt, settle_params_.ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -597,11 +597,10 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
             start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
             intermediate_params_, rrt_params_);
     } else {
-        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
-                                              final_stopping_motion, plan_request.constraints.mot,
-                                              previous_.last().stamp, obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id,
-                                            intermediate_params_, rrt_params_);
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            intermediate_params_, rrt_params_);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -730,28 +729,18 @@ bool CollectPathPlanner::is_done() const { return is_ball_sense_; }
 
 CollectParams CollectPathPlanner::build_collect_params() {
     CollectParams p;
-    p.approach_accel_scale =
-        node_->get_parameter_or("collect.approach_accel_scale", 0.7);
-    p.approach_dist_target =
-        node_->get_parameter_or("collect.approach_dist_target", 0.1);
+    p.approach_accel_scale = node_->get_parameter_or("collect.approach_accel_scale", 0.7);
+    p.approach_dist_target = node_->get_parameter_or("collect.approach_dist_target", 0.1);
     p.ball_speed_approach_direction_cutoff =
         node_->get_parameter_or("collect.ball_speed_approach_direction_cutoff", 0.1);
-    p.control_accel_scale =
-        node_->get_parameter_or("collect.control_accel_scale", 0.5);
-    p.dist_cutoff_to_approach =
-        node_->get_parameter_or("collect.dist_cutoff_to_approach", 1.0);
-    p.dist_cutoff_to_control =
-        node_->get_parameter_or("collect.dist_cutoff_to_control", 0.0285);
-    p.stop_dist_scale =
-        node_->get_parameter_or("collect.stop_dist_scale", 0.5);
-    p.target_point_lowpass_gain =
-        node_->get_parameter_or("collect.target_point_lowpass_gain", 0.8);
-    p.touch_delta_speed =
-        node_->get_parameter_or("collect.touch_delta_speed", 0.05);
-    p.vel_cutoff_to_control =
-        node_->get_parameter_or("collect.vel_cutoff_to_control", 0.3);
-    p.velocity_control_scale =
-        node_->get_parameter_or("collect.velocity_control_scale", 0.5);
+    p.control_accel_scale = node_->get_parameter_or("collect.control_accel_scale", 0.5);
+    p.dist_cutoff_to_approach = node_->get_parameter_or("collect.dist_cutoff_to_approach", 1.0);
+    p.dist_cutoff_to_control = node_->get_parameter_or("collect.dist_cutoff_to_control", 0.0285);
+    p.stop_dist_scale = node_->get_parameter_or("collect.stop_dist_scale", 0.5);
+    p.target_point_lowpass_gain = node_->get_parameter_or("collect.target_point_lowpass_gain", 0.8);
+    p.touch_delta_speed = node_->get_parameter_or("collect.touch_delta_speed", 0.05);
+    p.vel_cutoff_to_control = node_->get_parameter_or("collect.vel_cutoff_to_control", 0.3);
+    p.velocity_control_scale = node_->get_parameter_or("collect.velocity_control_scale", 0.5);
     return p;
 }
 

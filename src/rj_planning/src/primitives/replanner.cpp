@@ -18,8 +18,7 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
         bias_waypoints.push_back(cursor.value().position());
     }
 
-    RJ::Time partial_path_end =
-        params.start.stamp + RJ::Seconds(params.partial_replan_lead_time);
+    RJ::Time partial_path_end = params.start.stamp + RJ::Seconds(params.partial_replan_lead_time);
     if (partial_path_end <= previous.begin_time()) {
         return full_replan(params);
     }
@@ -50,10 +49,10 @@ Trajectory Replanner::partial_replan(const PlanParams& params, const Trajectory&
 }
 
 Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
-    Trajectory path = CreatePath::intermediate(
-        params.start.linear_motion(), params.goal, params.constraints.mot, params.start.stamp,
-        params.obstacles, params.field_dimensions, params.robot_id, params.intermediate_params,
-        params.rrt_params);
+    Trajectory path =
+        CreatePath::intermediate(params.start.linear_motion(), params.goal, params.constraints.mot,
+                                 params.start.stamp, params.obstacles, params.field_dimensions,
+                                 params.robot_id, params.intermediate_params, params.rrt_params);
 
     // if the initial path is empty, the goal must be blocked
     // try to shift the goal_point until it is no longer blocked
@@ -158,7 +157,8 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     return previous_trajectory;
 }
 
-bool Replanner::veered_off_path(const PlanParams& params, const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
+bool Replanner::veered_off_path(const PlanParams& params, const Trajectory& trajectory,
+                                RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
 
     // If we don't have an instant, assume we're past the end of the path.

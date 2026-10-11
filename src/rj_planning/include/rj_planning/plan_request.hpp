@@ -7,13 +7,13 @@
 #include <rj_common/context.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
-#include <rj_planning/primitives/motion_constraints.hpp>
-#include <rj_planning/primitives/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_planning/obstacle_set.hpp>
+#include <rj_planning/primitives/motion_constraints.hpp>
+#include <rj_planning/primitives/robot_constraints.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/trajectory_collection.hpp"

@@ -25,7 +25,6 @@
 
 namespace planning {
 
-
 /**
  * ROS node that spawns many PlannerForRobots and helps coordinate them.
  */

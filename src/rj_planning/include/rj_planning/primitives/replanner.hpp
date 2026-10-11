@@ -4,10 +4,10 @@
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/instant.hpp>
-#include <rj_planning/primitives/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_planning/primitives/robot_constraints.hpp>
 
 #include "rj_planning/obstacle_set.hpp"
 #include "rj_planning/planners/path_planner.hpp"
@@ -74,17 +74,17 @@ private:
     static Trajectory full_replan(const PlanParams& params);
 
     // Whether the trajectory has deviated from the path and requires a replan.
-    static bool veered_off_path(const PlanParams& params, const Trajectory& trajectory, RobotInstant actual,
-                              RJ::Time now);
+    static bool veered_off_path(const PlanParams& params, const Trajectory& trajectory,
+                                RobotInstant actual, RJ::Time now);
 
     // Whether the goal has changed past the `goal_pos_change_threshold()`.
     static bool goal_changed(const PlanParams& params, const LinearMotionInstant& prev_goal,
-                            const LinearMotionInstant& goal);
+                             const LinearMotionInstant& goal);
 
     // Get the partial path starting at `now`, plus the partial replan lead time
     // duration.
     static Trajectory partial_path(const PlanParams& params, const Trajectory& prev_trajectory,
-                                  RJ::Time now) {
+                                   RJ::Time now) {
         RJ::Time end_time = now + RJ::Seconds(params.partial_replan_lead_time);
         return prev_trajectory.sub_trajectory(prev_trajectory.begin_time(),
                                             end_time);

@@ -25,7 +25,7 @@ namespace planning {
  */
 class RotatePathPlanner : public PathPlanner {
 public:
-    RotatePathPlanner(rclcpp::Node *node) : PathPlanner(node, "rotate") {}
+    RotatePathPlanner(rclcpp::Node* node) : PathPlanner(node, "rotate") {}
     ~RotatePathPlanner() override = default;
 
     RotatePathPlanner(RotatePathPlanner&&) noexcept = default;

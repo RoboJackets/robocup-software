@@ -7,8 +7,8 @@ LinePivotPathPlanner::LinePivotPathPlanner(rclcpp::Node* node) : PathPlanner(nod
     // Follow the standard ROS2 parameter pattern for runtime-tunable values.
     radius_multiplier_ = node_->get_parameter_or("pivot.radius_multiplier", 1.0);
 
-    radius_multiplier_callback_ = node_->add_on_set_parameters_callback(
-        [this](const std::vector<rclcpp::Parameter>& params) {
+    radius_multiplier_callback_ =
+        node_->add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
             rcl_interfaces::msg::SetParametersResult result;
             result.successful = true;
 

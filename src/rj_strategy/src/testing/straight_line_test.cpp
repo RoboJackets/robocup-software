@@ -15,7 +15,6 @@ StraightLineTest::StraightLineTest(int r_id)
       current_position_{std::make_unique<Line>(
           r_id)},  // uniq ptr for curr_pos (line, which is child of position)
       robot_id_{r_id} {
-
     this->declare_parameter("start_x", 7.0);
     this->declare_parameter("start_y", -1.0);
     this->declare_parameter("end_x", 7.0);
@@ -66,8 +65,7 @@ StraightLineTest::StraightLineTest(int r_id)
                                         std::bind(&StraightLineTest::get_task, this));
 
     // sets defaults from yaml config
-    start_ =
-        rj_geometry::Point(static_cast<double>(start_x_), static_cast<double>(start_y_));
+    start_ = rj_geometry::Point(static_cast<double>(start_x_), static_cast<double>(start_y_));
     end_ = rj_geometry::Point(static_cast<double>(end_x_), static_cast<double>(end_y_));
     target_robot_id_ = static_cast<uint8_t>(target_robot_id_param_);
 
