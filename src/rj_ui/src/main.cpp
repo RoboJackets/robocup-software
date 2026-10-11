@@ -32,10 +32,8 @@ void usage(const char* prog) {
     std::cerr << "\t-s <seed>:    set random seed (hexadecimal)\n";
     std::cerr << "\t-pbk <file>:  playbook file name as contained in "
                  "'soccer/gameplay/playbooks/'\n";
-    std::cerr << "\t-vlog <file>: view <file> instead of launching normally\n";
     std::cerr << "\t-ng:          no goalie\n";
     std::cerr << "\t-sim:         use simulator\n";
-    std::cerr << "\t-nolog:       don't write log files\n";
     std::cerr << "\t-noref:       don't use external referee commands\n";
     std::cerr << "\t-defend:      specify half of field to defend (plus or minus)\n";
     std::exit(0);
@@ -65,12 +63,10 @@ int main(int argc, char* argv[]) {
     QString cfg_file;
     vector<const char*> play_dirs;
     bool sim = false;
-    bool log = true;
     QString radio_freq;
     string playbook_file;
     bool noref = false;
     bool defend_plus = false;
-    string read_log_file;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -87,8 +83,6 @@ int main(int argc, char* argv[]) {
             blue_team = true;
         } else if (strcmp(var, "-sim") == 0) {
             sim = true;
-        } else if (strcmp(var, "-nolog") == 0) {
-            log = false;
         } else if (strcmp(var, "-freq") == 0) {
             if (i + 1 >= argc) {
                 printf("No radio frequency specified after -freq\n");
@@ -120,13 +114,6 @@ int main(int argc, char* argv[]) {
             }
 
             playbook_file = argv[++i];
-        } else if (strcmp(var, "-vlog") == 0) {
-            if (i + 1 >= argc) {
-                printf("no log file specified after -vlog\n");
-                usage(argv[0]);
-            }
-
-            read_log_file = argv[++i];
         } else if (strcmp(var, "-noref") == 0) {
             noref = true;
         } else if (strcmp(var, "-defend") == 0) {
@@ -169,7 +156,7 @@ int main(int argc, char* argv[]) {
 
     start_global_param_provider("soccer", kGlobalParamServerNode);
 
-    auto processor = std::make_unique<Processor>(sim, blue_team, read_log_file);
+    auto processor = std::make_unique<Processor>(sim, blue_team);
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;
@@ -177,27 +164,10 @@ int main(int argc, char* argv[]) {
     context->game_settings.defend_plus_x = defend_plus;
     context->game_settings.request_goalie_id = 0;
 
-    // If we're reading a log file, we should start off paused.
-    context->game_settings.paused = !read_log_file.empty();
-
     auto win = std::make_unique<MainWindow>(processor.get(), !noref);
     win->initialize();
 
     win->setUseRefChecked(!noref);
-
-    if (!application_run_directory().exists("./logs")) {
-        cerr << "No ./run/logs/ directory - not writing log file" << endl;
-    } else if (!log) {
-        cerr << "Not writing log file" << endl;
-    } else if (read_log_file.empty()) {
-        QString log_file = application_run_directory().filePath("./logs/") +
-                           QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-        if (!processor->open_log(log_file)) {
-            printf("Failed to open %s: %m\n", (const char*)log_file.toLatin1());
-        }
-    }
-
-    win->logFileChanged();
 
     std::thread processor_thread(&Processor::run, processor.get());
 

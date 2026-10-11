@@ -19,14 +19,13 @@
 #include <rj_common/network.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/team_info.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_constants/constants.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_param_utils/param.hpp>
-#include <rj_protos/LogFrame.pb.h>
-#include <rj_protos/referee.pb.h>
+#include <rj_protos/state/ssl_gc_referee_message.pb.h>
 #include <rj_utils/logging_macros.hpp>
 #include <unistd.h>
 

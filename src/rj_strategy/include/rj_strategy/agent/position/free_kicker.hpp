@@ -5,7 +5,6 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 
 #include "rj_strategy/agent/position.hpp"

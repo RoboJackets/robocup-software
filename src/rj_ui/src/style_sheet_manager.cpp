@@ -1,13 +1,18 @@
-
 #include "rj_ui/style_sheet_manager.hpp"
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 // To add a new style sheet, declare the static variable
 std::map<QString, QString> filePaths = {
     // Add new entries here:
-    {"DARK", "../qt/themes/QTDark.stylesheet"},
-    {"DARCULIZED", "../qt/themes/darculized.stylesheet"},
-    {"1337H4X0R", "../qt/themes/1337h4x0r.stylesheet"},
-    {"NYAN", "../qt/themes/nyan.stylesheet"}};
+    {"DARK", QString::fromStdString(ament_index_cpp::get_package_share_directory("rj_ui") +
+                                    "/themes/QTDark.stylesheet")},
+    {"DARCULIZED", QString::fromStdString(ament_index_cpp::get_package_share_directory("rj_ui") +
+                                          "/themes/darculized.stylesheet")},
+    {"1337H4X0R", QString::fromStdString(ament_index_cpp::get_package_share_directory("rj_ui") +
+                                         "/themes/1337h4x0r.stylesheet")},
+    {"NYAN", QString::fromStdString(ament_index_cpp::get_package_share_directory("rj_ui") +
+                                    "/themes/nyan.stylesheet")}};
 
 void StyleSheetManager::changeStyleSheet(QMainWindow* window, const QString& name) {
     if (filePaths.count(name) != 0u) {

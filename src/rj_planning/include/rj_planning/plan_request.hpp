@@ -13,6 +13,8 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_geometry/ssl_ball_constants.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_planning/obstacle_set.hpp>
 
 #include "rj_planning/global_state.hpp"

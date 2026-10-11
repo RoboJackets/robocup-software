@@ -19,36 +19,6 @@ Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& g
     return path;
 }
 
-Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
-               const MotionConstraints& motion_constraints, RJ::Time start_time,
-               const ObstacleSet& obstacles, const std::vector<Point>& bias_waypoints) {
-    // if already on goal, no need to move
-    if (start.position.dist_to(goal.position) < 1e-6) {
-        return Trajectory{{RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
-    }
-
-    // maybe we don't need an RRT
-    Trajectory straight_trajectory =
-        CreatePath::simple(start, goal, motion_constraints, start_time);
-
-    // If we are very close to the goal (i.e. there physically can't be a robot
-    // in our way) or the straight trajectory is feasible, we can use it.
-    if (start.position.dist_to(goal.position) < kRobotRadius ||
-        !trajectory_hits_obstacles(straight_trajectory, obstacles, start_time, nullptr)) {
-        return straight_trajectory;
-    }
-
-    std::vector<Point> points =
-        generate_rrt(start.position, goal.position, obstacles, bias_waypoints);
-
-    BezierPath post_bezier(points, start.velocity, goal.velocity, motion_constraints);
-
-    Trajectory path = profile_velocity(post_bezier, start.velocity.mag(), goal.velocity.mag(),
-                                       motion_constraints, start_time);
-
-    return path;
-}
-
 static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_intermediate_tuple_{};
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
@@ -103,8 +73,7 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
         }
     }
 
-    // If all else fails, use rrt to ensure obstacle avoidance
-    return CreatePath::rrt(start, goal, motion_constraints, start_time, obstacles);
+    return CreatePath::simple(start, goal, motion_constraints, start_time, {});
 }
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,

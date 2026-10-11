@@ -109,13 +109,6 @@
       partial_replan_lead_time: 0.1
       pos_change_threshold: 0.025
       vel_change_threshold: 0.025
-    rrt:
-      enable_debug_drawing: false
-      goal_bias: 0.3
-      max_iterations: 250
-      min_iterations: 0
-      step_size: 0.15
-      waypoint_bias: 0.5
     settle:
       ball_speed_percent_for_dampen: 0.1
       ball_vel_gain: 0.9

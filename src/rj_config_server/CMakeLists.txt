@@ -14,7 +14,6 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_utils REQUIRED)
 
@@ -38,7 +37,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rclcpp
   rj_msgs
   fmt
-  rj_constants
   rj_common
   rj_utils
 )
