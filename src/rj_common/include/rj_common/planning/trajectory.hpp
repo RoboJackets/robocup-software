@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <stdexcept>
 
 #include <spdlog/spdlog.h>
@@ -36,6 +37,8 @@ using RobotInstantSequence = std::vector<RobotInstant>;
 class Trajectory {
 public:
     using Msg = rj_msgs::msg::Trajectory;
+    using SharedPtr = std::shared_ptr<Trajectory>;
+    using ConstSharedPtr = std::shared_ptr<const Trajectory>;
 
     Trajectory() = default;
     ~Trajectory() = default;

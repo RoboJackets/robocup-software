@@ -7,7 +7,7 @@ KickerPicker::KickerPicker()
     // Subscribe to world state
     world_state_sub_ = this->create_subscription<WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::SharedPtr world_state) {  // NOLINT
+        [this](WorldState::ConstSharedPtr world_state) {  // NOLINT
             last_world_state_ = *world_state;
             publish_selected_kicker();
         });

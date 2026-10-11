@@ -2,6 +2,7 @@
 
 #include <cfloat>
 #include <cmath>
+#include <memory>
 
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/arc.hpp>
@@ -23,6 +24,8 @@ using namespace std;
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct FieldDimensions {
     using Msg = rj_msgs::msg::FieldDimensions;
+    using SharedPtr = std::shared_ptr<FieldDimensions>;
+    using ConstSharedPtr = std::shared_ptr<const FieldDimensions>;
 
     [[nodiscard]] float length() const { return length_; }
     [[nodiscard]] float width() const { return width_; }

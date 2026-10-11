@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <ostream>
 
 #include <rj_convert/ros_convert.hpp>
@@ -10,6 +11,8 @@
  */
 struct MotionSetpoint {
     using Msg = rj_msgs::msg::MotionSetpoint;
+    using SharedPtr = std::shared_ptr<MotionSetpoint>;
+    using ConstSharedPtr = std::shared_ptr<const MotionSetpoint>;
 
     double xvelocity = 0.;
     double yvelocity = 0.;

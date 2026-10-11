@@ -73,12 +73,12 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory>(
         planning::topics::trajectory_topic(shell_id), rclcpp::QoS(1),
-        [this](planning::Trajectory::SharedPtr trajectory) {  // NOLINT
+        [this](planning::Trajectory::ConstSharedPtr trajectory) {  // NOLINT
             trajectory_ = *trajectory;
         });
     world_state_sub_ = node->create_subscription<WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::SharedPtr world_state) {  // NOLINT
+        [this](WorldState::ConstSharedPtr world_state) {  // NOLINT
             const RobotState& state = world_state->our_robots.at(shell_id_);
 
             // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to
@@ -91,7 +91,7 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
         });
     play_state_sub_ = node->create_subscription<PlayState>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1).transient_local(),
-        [this](PlayState::SharedPtr play_state) {  // NOLINT
+        [this](PlayState::ConstSharedPtr play_state) {  // NOLINT
             play_state_ = play_state->state();
         });
 

@@ -23,7 +23,8 @@ RefereeBase::RefereeBase(const std::string& name)
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
     world_state_sub_ = create_subscription<WorldState>(
-        vision_filter::topics::kWorldStateTopic, 1, [this](WorldState::SharedPtr msg) {
+        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+        [this](WorldState::ConstSharedPtr msg) {
             const BallState& ball_state = msg->ball;
             if (spin_kick_detector(ball_state.position)) {
                 send();

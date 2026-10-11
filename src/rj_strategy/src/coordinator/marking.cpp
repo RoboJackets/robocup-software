@@ -10,7 +10,7 @@ Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node"),
         std::numeric_limits<double>::infinity());  // everyone starts with an infinite danger score
     world_state_sub_ = this->create_subscription<WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::SharedPtr world_state) {  // NOLINT
+        [this](WorldState::ConstSharedPtr world_state) {  // NOLINT
             last_world_state_ = *world_state;
             publish_marking_list();
         });

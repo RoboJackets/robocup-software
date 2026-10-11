@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include <rj_common/referee_enums.hpp>
@@ -13,6 +14,8 @@
  */
 struct GameSettings {
     using Msg = rj_msgs::msg::GameSettings;
+    using SharedPtr = std::shared_ptr<GameSettings>;
+    using ConstSharedPtr = std::shared_ptr<const GameSettings>;
 
     GameSettings() = default;
 

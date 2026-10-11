@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
@@ -15,6 +17,8 @@
 struct PlayState {
 public:
     using Msg = rj_msgs::msg::PlayState;
+    using SharedPtr = std::shared_ptr<PlayState>;
+    using ConstSharedPtr = std::shared_ptr<const PlayState>;
 
     PlayState() : PlayState(State::Halt, Restart::None, false, {}) {}
 
@@ -217,6 +221,8 @@ private:
 struct MatchState {
 public:
     using Msg = rj_msgs::msg::MatchState;
+    using SharedPtr = std::shared_ptr<MatchState>;
+    using ConstSharedPtr = std::shared_ptr<const MatchState>;
 
     enum Period { FirstHalf, Halftime, SecondHalf, Overtime1, Overtime2, PenaltyShootout };
 

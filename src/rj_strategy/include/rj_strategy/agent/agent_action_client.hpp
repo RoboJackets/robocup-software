@@ -68,11 +68,11 @@ private:
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(const WorldState::SharedPtr& msg);
-    void play_state_callback(const PlayState::SharedPtr& msg);
-    void field_dimensions_callback(const FieldDimensions::SharedPtr& msg);
+    void world_state_callback(WorldState::ConstSharedPtr msg);
+    void play_state_callback(PlayState::ConstSharedPtr msg);
+    void field_dimensions_callback(FieldDimensions::ConstSharedPtr msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
-    void game_settings_callback(const GameSettings::SharedPtr& msg);
+    void game_settings_callback(GameSettings::ConstSharedPtr msg);
     void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 

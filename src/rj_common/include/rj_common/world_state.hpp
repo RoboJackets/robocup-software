@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
@@ -21,6 +23,8 @@
  */
 struct RobotState {
     using Msg = rj_msgs::msg::RobotState;
+    using SharedPtr = std::shared_ptr<RobotState>;
+    using ConstSharedPtr = std::shared_ptr<const RobotState>;
 
     rj_geometry::Pose pose;
     rj_geometry::Twist velocity;
@@ -45,6 +49,8 @@ struct RobotState {
  */
 struct BallState {
     using Msg = rj_msgs::msg::BallState;
+    using SharedPtr = std::shared_ptr<BallState>;
+    using ConstSharedPtr = std::shared_ptr<const BallState>;
 
     rj_geometry::Point position;
     rj_geometry::Point velocity;
@@ -141,6 +147,8 @@ struct BallState {
 
 struct WorldState {
     using Msg = rj_msgs::msg::WorldState;
+    using SharedPtr = std::shared_ptr<WorldState>;
+    using ConstSharedPtr = std::shared_ptr<const WorldState>;
 
     WorldState() {
         their_robots.resize(kNumShells);

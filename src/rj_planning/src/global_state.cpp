@@ -5,7 +5,7 @@ namespace planning {
 GlobalState::GlobalState(rclcpp::Node* node) {
     play_state_sub_ = node->create_subscription<PlayState>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1),
-        [this](PlayState::SharedPtr state) {  // NOLINT
+        [this](PlayState::ConstSharedPtr state) {  // NOLINT
             {
                 auto lock = std::lock_guard(last_play_state_mutex_);
                 last_play_state_ = *state;
@@ -15,7 +15,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
         });
     game_settings_sub_ = node->create_subscription<GameSettings>(
         config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
-        [this](GameSettings::SharedPtr settings) {  // NOLINT
+        [this](GameSettings::ConstSharedPtr settings) {  // NOLINT
             auto lock = std::lock_guard(last_game_settings_mutex_);
             last_game_settings_ = *settings;
         });
@@ -27,13 +27,13 @@ GlobalState::GlobalState(rclcpp::Node* node) {
         });
     world_state_sub_ = node->create_subscription<WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::SharedPtr world_state) {  // NOLINT
+        [this](WorldState::ConstSharedPtr world_state) {  // NOLINT
             auto lock = std::lock_guard(last_world_state_mutex_);
             last_world_state_ = *world_state;
         });
     field_dimensions_sub_ = node->create_subscription<FieldDimensions>(
         ::config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
-        [this](const FieldDimensions::SharedPtr msg) {  // NOLINT
+        [this](FieldDimensions::ConstSharedPtr msg) {  // NOLINT
             {
                 auto lock = std::lock_guard(last_field_dimensions_mutex_);
                 last_field_dimensions_ = *msg;

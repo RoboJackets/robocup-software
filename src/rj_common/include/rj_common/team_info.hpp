@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -11,6 +12,8 @@
 class TeamInfo {
 public:
     using Msg = rj_msgs::msg::TeamInfo;
+    using SharedPtr = std::shared_ptr<TeamInfo>;
+    using ConstSharedPtr = std::shared_ptr<const TeamInfo>;
 
     // The team's name (empty string if operator has not typed anything).
     std::string name;

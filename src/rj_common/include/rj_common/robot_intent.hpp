@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>
@@ -11,6 +13,8 @@ struct RobotIntent {
     int8_t robot_id = 0;
 
     using Msg = rj_msgs::msg::RobotIntent;
+    using SharedPtr = std::shared_ptr<RobotIntent>;
+    using ConstSharedPtr = std::shared_ptr<const RobotIntent>;
     enum ShootMode { KICK, CHIP };
     enum TriggerMode { STAND_DOWN = 0, IMMEDIATE, ON_BREAK_BEAM, AT_END };
     enum DribblerMode { OFF = 0, ON, DEFAULT };
