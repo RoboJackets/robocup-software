@@ -11,6 +11,7 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
@@ -19,7 +20,6 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
