@@ -2,8 +2,7 @@
 
 namespace referee {
 
-RefereeBase::RefereeBase(const std::string& name)
-    : Node{name}, config_client_{this} {
+RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{this} {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);

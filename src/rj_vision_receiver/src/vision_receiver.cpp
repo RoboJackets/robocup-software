@@ -17,10 +17,7 @@ namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"},
-      config_{this},
-      port_{-1},
-      socket_{io_context_} {
+    : Node{"vision_receiver"}, config_{this}, port_{-1}, socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* below, vision_interface should be IP where vision receiver pubs to (in
@@ -39,7 +36,8 @@ VisionReceiver::VisionReceiver()
 
     // port number for vision receiver
     param_port_ = rj_utils::declare_required_param<int>(
-        *this, "port", "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
+        *this, "port",
+        "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
     // The hardware interface to use.
     this->get_parameter("interface", param_vision_interface_);
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
