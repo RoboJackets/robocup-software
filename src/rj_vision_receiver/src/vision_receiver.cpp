@@ -10,21 +10,17 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging_macros.hpp>
+#include <rj_utils/ros_params.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
-
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver", rclcpp::NodeOptions{}
-                                  .automatically_declare_parameters_from_overrides(true)
-                                  .allow_undeclared_parameters(true)},
+    : Node{"vision_receiver"},
       config_{this},
       port_{-1},
-      socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule) {
+      socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* below, vision_interface should be IP where vision receiver pubs to (in
@@ -42,7 +38,8 @@ VisionReceiver::VisionReceiver()
     // dynamic reconfigure these values, which would be nice
 
     // port number for vision receiver
-    this->get_parameter("port", param_port_);
+    param_port_ = rj_utils::declare_required_param<int>(
+        *this, "port", "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
     // The hardware interface to use.
     this->get_parameter("interface", param_vision_interface_);
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
