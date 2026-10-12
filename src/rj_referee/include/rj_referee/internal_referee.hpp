@@ -17,6 +17,7 @@ namespace referee {
  *
  * Exposes quick commands and restarts on @ref
  * referee::topics::kQuickCommandsSrv and @ref
+ * referee::topics::kQuickRestartsSrv.
  */
 class InternalReferee : public RefereeBase {
 public:
