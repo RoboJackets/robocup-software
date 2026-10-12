@@ -19,15 +19,11 @@ VisionReceiver::VisionReceiver()
     : Node{"vision_receiver"}, config_{this}, port_{-1}, socket_{io_context_} {
     recv_buffer_.resize(65536);
 
-    /* below, vision_interface should be IP where vision receiver pubs to (in
-     * scrim-2022 this was same IP as ext ref)
-     *
-     * run ifconfig to see list of interfaces on this computer
-     *
-     * port=10006 for real vision (per SSL rulebook)
+    /* port=10006 for real vision (per SSL rulebook)
      * port=10020 for ER-force sim
      *
-     * see PR #1887 for last time this file was used w/ external interface
+     * The receiver always joins kSharedVisionSourceAddress; see PR #1887 for
+     * the last time this used a configurable network interface.
      */
 
     // TODO(Kevin): since these are set on init, this does not allow us to
@@ -42,8 +38,9 @@ VisionReceiver::VisionReceiver()
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
     SPDLOG_INFO("VisionReceiver vision_interface: {}", param_vision_interface_);
 
-    // set vision interface and port
-    set_port(param_vision_interface_, param_port_);
+    SPDLOG_INFO("VisionReceiver port: {}", param_port_);
+
+    set_port(param_port_);
 
     raw_packet_pub_ = create_publisher<SSL_WrapperPacket>(topics::kRawProtobufTopic, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
@@ -77,7 +74,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
-void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int port) {
+void VisionReceiver::set_port(int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
     if (socket_.is_open()) {
