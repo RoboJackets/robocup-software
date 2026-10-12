@@ -149,7 +149,7 @@ rj_geometry::Point WallerClient::get_target_position(WallerGeometry& waller_geom
     auto angle = (mid_point - waller_geometry.goal_pos).angle();
 
     // Wallers are distributed evenly across the wall arc based on their position in the wall list
-    auto delta_angle = (waller_geometry.wall_spacing * (waller_pos - num_wallers_ / 2. - 0.5)) /
+    auto delta_angle = (waller_geometry.wall_spacing * 2 * (waller_pos - num_wallers_ / 2. - 0.5)) /
                        waller_geometry.min_wall_radius;
     auto target_angle = angle - delta_angle;
 
