@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -33,6 +34,7 @@ namespace planning {
 class PlannerNode : public rclcpp::Node {
 public:
     PlannerNode();
+    void initialize_planners();
 
     using RobotMove = rj_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;

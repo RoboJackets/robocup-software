@@ -7,7 +7,6 @@
 #include <rj_drawing_msgs/msg/debug_draw.hpp>
 #include <rj_drawing_msgs/msg/draw_color.hpp>
 #include <rj_drawing_msgs/msg/draw_path.hpp>
-#include <rj_drawing_msgs/msg/draw_pose.hpp>
 #include <rj_drawing_msgs/msg/draw_segment.hpp>
 #include <rj_drawing_msgs/msg/draw_shapes.hpp>
 #include <rj_drawing_msgs/msg/draw_text.hpp>
@@ -15,13 +14,16 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/stadium_shape.hpp>
 
+#include "rj_common/topic_names.hpp"
+
 namespace rj_drawing {
 
 class RosDebugDrawer {
 public:
-    RosDebugDrawer(rclcpp::Publisher<rj_drawing_msgs::msg::DebugDraw>::SharedPtr pub,
-                   std::string layer)
-        : pub_(std::move(pub)), layer_(std::move(layer)) {
+    RosDebugDrawer(rclcpp::Node::SharedPtr node, std::string layer)
+        : pub_(node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic,
+                                                                       10)),
+          layer_(std::move(layer)) {
         frame_.layer = layer_;
     }
 
@@ -71,11 +73,6 @@ public:
                                       .color(color_from_qt(color)));
     }
 
-    void draw_pose(const rj_geometry::Pose& pose, const QColor& color = QColor::fromRgb(0, 0, 0)) {
-        frame_.poses.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawPose>()
-                                   .pose(rj_convert::convert_to_ros(pose))
-                                   .color(color_from_qt(color)));
-    }
 
     void draw_text(const std::string& text, const rj_geometry::Point& position,
                    const QColor& color = QColor::fromRgb(0, 0, 0)) {

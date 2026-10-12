@@ -21,6 +21,7 @@ namespace control {
 class MotionControlNode : public rclcpp::Node {
 public:
     explicit MotionControlNode();
+    void initialize_controllers();
 
 private:
     ::params::LocalROS2ParamProvider param_provider_;

@@ -42,7 +42,7 @@ namespace planning {
  */
 class PlannerForRobot {
 public:
-    PlannerForRobot(int robot_id, rclcpp::Node* node,
+    PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
                     const GlobalState& global_state);
 
@@ -134,7 +134,7 @@ private:
      */
     [[nodiscard]] bool robot_alive() const;
 
-    rclcpp::Node* node_;
+    rclcpp::Node::SharedPtr node_;
 
     // unique_ptrs here because we don't want to transfer ownership of
     // thePathPlanner objects anywhere else

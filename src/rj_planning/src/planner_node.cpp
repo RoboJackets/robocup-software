@@ -1,5 +1,7 @@
 #include "rj_planning/planner_node.hpp"
 
+#include <memory>
+
 namespace planning {
 
 using RobotMove = rj_msgs::action::RobotMove;
@@ -24,10 +26,13 @@ PlannerNode::PlannerNode()
 
     // set up PlannerForRobot objects
     robot_trajectories_ = std::make_shared<TrajectoryCollection>();
+}
+
+void PlannerNode::initialize_planners() {
     robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
-        auto planner =
-            std::make_unique<PlannerForRobot>(i, this, robot_trajectories_, global_state_);
+        auto planner = std::make_unique<PlannerForRobot>(i, shared_from_this(), robot_trajectories_,
+                                                         global_state_);
         robot_planners_.emplace_back(std::move(planner));
     }
 }
