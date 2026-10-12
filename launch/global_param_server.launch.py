@@ -11,7 +11,7 @@ def generate_launch_description():
     # TODO: make this align with soccer.launch.py (we never launch
     # global_param_server on its own)
     config = os.path.join(
-        get_package_share_directory("rj_robocup"), "config", "sim.yaml"
+        get_package_share_directory("rj_robocup"), "config", "sim_params.yaml"
     )
     return LaunchDescription(
         [
