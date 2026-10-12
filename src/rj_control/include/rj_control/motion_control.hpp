@@ -76,6 +76,28 @@ struct PidGains {
 };
 
 /**
+ * @brief Limits shared by every robot's controller (top level of /control).
+ */
+struct MotionControlLimits {
+    double max_velocity;          // m/s
+    double max_angular_velocity;  // rad/s
+    int translation_windup;
+    int rotation_windup;
+};
+
+/**
+ * @brief PID gains for one robot (robot_N.* under /control).
+ */
+struct PidGains {
+    double translation_kp;
+    double translation_ki;
+    double translation_kd;
+    double rotation_kp;
+    double rotation_ki;
+    double rotation_kd;
+};
+
+/**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
  *     robot given the desired path to follow.
