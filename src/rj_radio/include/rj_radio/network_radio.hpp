@@ -20,6 +20,7 @@
 #include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_param_utils/global_params.hpp>
+#include <rj_utils/logging.hpp>
 
 #include "rj_radio/radio.hpp"
 
