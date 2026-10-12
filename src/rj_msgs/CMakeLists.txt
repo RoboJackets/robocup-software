@@ -93,7 +93,6 @@ rosidl_generate_interfaces(
   srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
-  srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
