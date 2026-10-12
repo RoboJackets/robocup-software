@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 
 from launch import LaunchContext, LaunchDescription
@@ -93,7 +92,7 @@ def generate_launch_description():
                 default_value=[
                     TextSubstitution(
                         text=os.path.join(
-                            get_package_share_directory("rj_param_utils"), "config", ""
+                            os.path.dirname(os.path.abspath(__file__)), "..", "config", ""
                         )
                     ),
                     param_config,
@@ -127,19 +126,6 @@ def generate_launch_description():
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
                 parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                package="rj_param_utils",
-                executable="global_param_server_node",
-                output="screen",
-                parameters=[
-                    os.path.join(
-                        get_package_share_directory("rj_param_utils"),
-                        "config",
-                        "sim_params.yaml"
-                    )
-                ],
                 on_exit=Shutdown(),
             ),
             Node(
