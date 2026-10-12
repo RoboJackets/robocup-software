@@ -4,10 +4,10 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
-| **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Package name** |rj_msgs|
+| **Assigned owner(s)** |Pooja Dayaratna, Shourik Banerjee|
+| **Reviewer(s)** | N/A|
+| **Date started revision** |10/11/2026|
 
 ## 1. Package Identity and Tier
 
@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | Holds message, action, and service files |
+| **Current responsibilities** | Resposible for all published/accessed data between nodes |
+| **Out of scope** | Should not attempt to actually publish/read messages |
 
 ## 2. Dependency Rules
 
@@ -27,8 +27,8 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** |rj_geometry_msgs, std_msgs |
+| **Depended on by** |Every other package in the codebase |
 
 
 ## 3. Operational Expectations
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
+| **Unit testing** | colcon build |
 | **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
 | **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
