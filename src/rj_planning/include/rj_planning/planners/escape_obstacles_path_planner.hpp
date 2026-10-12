@@ -5,8 +5,6 @@
 #include <vector>
 
 #include <rj_geometry/point.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
-
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
@@ -46,8 +44,6 @@ public:
                                                     std::optional<rj_geometry::Point> prev_pt,
                                                     const ObstacleSet& obstacles,
                                                     int max_itr = 300);
-
-    static double step_size() { return escape::PARAM_step_size; }
 
     void reset() override { previous_target_ = std::nullopt; }
     [[nodiscard]] bool is_done() const override;

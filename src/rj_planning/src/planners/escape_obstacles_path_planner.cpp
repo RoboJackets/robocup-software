@@ -36,7 +36,8 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
 
     auto result = CreatePath::intermediate(start_instant.linear_motion(), goal, motion_constraints,
                                            start_instant.stamp, path_obstacles,
-                                           plan_request.field_dimensions, plan_request.shell_id);
+                                           plan_request.field_dimensions, plan_request.shell_id,
+                                           plan_request.params->intermediate);
     plan_angles(&result, start_instant, AngleFns::tangent, plan_request.constraints.rot);
     result.set_debug_text("[ESCAPE " + std::to_string(plan_request.shell_id) + "]");
 

@@ -42,9 +42,14 @@ namespace planning {
  */
 class PlannerForRobot {
 public:
+    /**
+     * @param params Planning params read by PlannerNode at startup. Each
+     * PlanRequest carries them.
+     */
     PlannerForRobot(int robot_id, rclcpp::Node* node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
-                    const GlobalState& global_state);
+                    const GlobalState& global_state,
+                    std::shared_ptr<const PlanningParams> params);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
@@ -135,6 +140,7 @@ private:
     [[nodiscard]] bool robot_alive() const;
 
     rclcpp::Node* node_;
+    std::shared_ptr<const PlanningParams> params_;
 
     // unique_ptrs here because we don't want to transfer ownership of
     // thePathPlanner objects anywhere else

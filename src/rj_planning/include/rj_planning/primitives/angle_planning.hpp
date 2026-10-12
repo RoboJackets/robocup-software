@@ -3,7 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/robot_constraints.hpp>
+#include <rj_planning/primitives/rotation_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>

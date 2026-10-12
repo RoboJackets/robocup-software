@@ -19,7 +19,6 @@ add_library(${PROJECT_NAME} SHARED
   src/ros2_global_param_provider.cpp
   src/ros2_local_param_provider.cpp
   src/ros2_param_provider.cpp
-  src/planning/planning_params.cpp
   src/vision/vision_params.cpp
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
