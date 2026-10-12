@@ -7,7 +7,6 @@
 #include <rj_msgs/msg/ball_state.hpp>
 #include <rj_msgs/msg/robot_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/global_params.hpp>
 
 #include "rj_common/game_constants.hpp"
 #include "rj_common/planning/instant.hpp"
@@ -69,9 +68,11 @@ struct BallState {
      * @brief Predict the ball's state at a particular instance in time.
      *
      * @param Time the time at which to evaluate the ball's position.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The ball's state.
      */
-    [[nodiscard]] BallState predict_at(RJ::Time time) const;
+    [[nodiscard]] BallState predict_at(RJ::Time time, double ball_decay) const;
 
     /**
      * @brief Similar to @ref predict_at "predict_at(RJ::Time)", but for a
@@ -79,9 +80,11 @@ struct BallState {
      *
      * @param seconds The offset from this ball's sample time at which to
      * predict its motion.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The ball's motion at the specified duration after this sample.
      */
-    [[nodiscard]] BallState predict_in(RJ::Seconds seconds) const;
+    [[nodiscard]] BallState predict_in(RJ::Seconds seconds, double ball_decay) const;
 
     /**
      * @brief Estimate the instant in time at which the ball will reach the
@@ -91,52 +94,62 @@ struct BallState {
      * return the ball's endpoint and time.
      *
      * @param near_to The query point
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @param out The nearest point to `near_to` along the path.
      * @return The instant in time at which the ball is nearest to `near_to`.
      */
-    [[nodiscard]] RJ::Time query_time_near(
-        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Time query_time_near(rj_geometry::Point near_to, double ball_decay,
+                                           rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Similar to @ref predict_at "query_time_near(RJ::Time)", but for a
      * duration in the future
      */
-    [[nodiscard]] RJ::Seconds query_seconds_near(
-        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Seconds query_seconds_near(rj_geometry::Point near_to, double ball_decay,
+                                                 rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop time of the ball.
      *
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @param out will be filled with the stopping position, if it is not
      * nullptr.
      * @return The duration until the ball stops.
      */
-    [[nodiscard]] RJ::Seconds query_stop_time(
-        rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Seconds query_stop_time(double ball_decay,
+                                              rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop position of the ball.
      *
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The point at which the ball will stop.
      */
-    [[nodiscard]] rj_geometry::Point query_stop_position() const;
+    [[nodiscard]] rj_geometry::Point query_stop_position(double ball_decay) const;
 
     /**
      * @brief Query the time before the ball goes a certain distance. Return
      * nullopt if it will stop before traveling the specified distance.
      *
      * @param distance The distance along the ball path at which to query.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The time at which the ball will hit the specified distance, or
      * nullopt.
      */
-    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(
-        double distance) const;
+    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(double distance,
+                                                                   double ball_decay) const;
 
     /**
      * @brief Create a trajectory for the ball.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
-    [[nodiscard]] planning::Trajectory make_trajectory() const;
+    [[nodiscard]] planning::Trajectory make_trajectory(double ball_decay) const;
 };
 
 struct WorldState {
