@@ -5,9 +5,10 @@ static uint8_t kicker_speed_to_strength(double kick_speed) {
 }
 
 static uint8_t chipper_speed_to_strength(double kick_speed, const RobotHardwareParams& hardware) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - hardware.min_chip_speed) /
-                                                  (hardware.max_chip_speed - hardware.min_chip_speed)) *
-                                kMaxKick);
+    return static_cast<uint8_t>(
+        std::min(1.0, (kick_speed - hardware.min_chip_speed) /
+                          (hardware.max_chip_speed - hardware.min_chip_speed)) *
+        kMaxKick);
 }
 
 namespace ConvertRx {
@@ -138,9 +139,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     }
 }
 
-
-void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RobotCommand* sim, const RobotHardwareParams& hardware) {
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
+            const RobotHardwareParams& hardware) {
     if (sim == nullptr) {
         return;
     }
@@ -196,8 +196,8 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
 }
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                  RobotCommand* sim, const RobotHardwareParams& hardware) {
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim,
+                const RobotHardwareParams& hardware) {
     if (sim == nullptr) {
         return;
     }
@@ -226,7 +226,8 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     command->set_left(-static_cast<float>(motion.velocity_x_mps));
     command->set_angular(static_cast<float>(motion.velocity_z_radps));
 
-    sim->set_dribbler_speed(static_cast<float>(hardware.max_dribbler_speed * manipulator.dribbler_speed));
+    sim->set_dribbler_speed(
+        static_cast<float>(hardware.max_dribbler_speed * manipulator.dribbler_speed));
 }
 
 }  // namespace ConvertTx

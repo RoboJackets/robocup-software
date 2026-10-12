@@ -54,7 +54,8 @@ RJ::Time BallState::query_time_near(rj_geometry::Point near_to, double ball_deca
 
     double distance_to_nearest = (position - nearest).mag();
 
-    std::optional<RJ::Seconds> maybe_seconds = query_seconds_to_dist(distance_to_nearest, ball_decay);
+    std::optional<RJ::Seconds> maybe_seconds =
+        query_seconds_to_dist(distance_to_nearest, ball_decay);
 
     RJ::Seconds seconds;
     if (maybe_seconds.has_value()) {
