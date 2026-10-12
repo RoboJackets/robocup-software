@@ -190,6 +190,7 @@ def generate_launch_description():
                 package="rj_joystick",
                 executable="manual_control_node",
                 output="screen",
+                parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             # spawn internal_ref/external_ref based on internal_ref
