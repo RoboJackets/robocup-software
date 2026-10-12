@@ -1,5 +1,7 @@
 #include "rj_radio/sim_radio.hpp"
 
+#include <rj_utils/ros_params.hpp>
+
 using namespace std;
 using namespace boost::asio;
 
@@ -71,10 +73,8 @@ SimRadio::SimRadio(bool blue_team)
      * NOTE: on field comp, make sure this IP is "172.16.1.1" (router IP)
      * on sim, make sure this IP is "127.0.0.1" (localhost)
      */
-    // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
-    // file probably an issue with the hacky way I got param files to dynamically load
-    std::string localhost = "127.0.0.1";
-    this->get_parameter_or("interface", param_radio_interface_, localhost);
+    param_radio_interface_ = rj_utils::declare_required_param<std::string>(
+        *this, "interface", "IP address of the simulator to send robot commands to");
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
@@ -231,6 +231,5 @@ int main(int argc, char** argv) {
     rj_utils::set_spdlog_default_ros2("processor");
 
     auto radio = std::make_shared<radio::SimRadio>();
-    start_global_param_provider(radio.get(), kGlobalParamServerNode);
     rclcpp::spin(radio);
 }
