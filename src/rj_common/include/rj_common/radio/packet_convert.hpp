@@ -64,20 +64,18 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
 namespace ConvertTx {
 
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RadioMessage::ControlMessage* rtp, bool blue_team,
-            const RobotHardwareParams& hardware);
+            RadioMessage::ControlMessage* rtp, bool blue_team, const RobotHardwareParams& hardware);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
                 RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team,
                 const RobotHardwareParams& hardware);
 
-
-void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, RobotCommand* sim, const RobotHardwareParams& hardware);
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
+            const RobotHardwareParams& hardware);
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                RobotCommand* sim, const RobotHardwareParams& hardware);
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim,
+                const RobotHardwareParams& hardware);
 
 }  // namespace ConvertTx

@@ -48,8 +48,7 @@ public:
      */
     PlannerForRobot(int robot_id, rclcpp::Node* node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
-                    const GlobalState& global_state,
-                    std::shared_ptr<const PlanningParams> params);
+                    const GlobalState& global_state, std::shared_ptr<const PlanningParams> params);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;
