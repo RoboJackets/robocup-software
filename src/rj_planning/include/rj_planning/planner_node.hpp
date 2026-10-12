@@ -18,8 +18,6 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_msgs/action/robot_move.hpp>
-#include <rj_param_utils/planning/planning_params.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planner_for_robot.hpp"
@@ -40,10 +38,11 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
+    // Read once at startup and shared read-only with every robot's planner.
+    std::shared_ptr<const PlanningParams> params_;
     std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     std::shared_ptr<TrajectoryCollection> robot_trajectories_ = nullptr;
     GlobalState global_state_;
-    ::params::LocalROS2ParamProvider param_provider_;
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
