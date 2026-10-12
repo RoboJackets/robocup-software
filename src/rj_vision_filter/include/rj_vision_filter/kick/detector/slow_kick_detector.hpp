@@ -1,10 +1,13 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
 #include <deque>
+#include <memory>
+
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -17,6 +20,11 @@ namespace vision_filter {
  */
 class SlowKickDetector {
 public:
+    /**
+     * @param params Vision filter parameters, shared with the owning node.
+     */
+    explicit SlowKickDetector(std::shared_ptr<const VisionFilterParams> params);
+
     /**
      * Adds a record to our history list
      *
@@ -32,9 +40,8 @@ public:
      * It will change, but will have invalid data in it
      */
     bool add_record(RJ::Time calc_time, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellow_robots,
-                   const std::vector<WorldRobot>& blue_robots,
-                   KickEvent* kick_event);
+                    const std::vector<WorldRobot>& yellow_robots,
+                    const std::vector<WorldRobot>& blue_robots, KickEvent* kick_event);
 
 private:
     /**
@@ -54,8 +61,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool check_all_validators(const std::vector<WorldRobot>& robot,
-                                   const std::vector<WorldBall>& ball);
+    bool check_all_validators(const std::vector<WorldRobot>& robot,
+                              const std::vector<WorldBall>& ball) const;
 
     /**
      * If ball and robots were close and are now far away
@@ -65,8 +72,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distance_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+    bool distance_validator(const std::vector<WorldRobot>& robot,
+                            const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -76,8 +83,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool velocity_validator(const std::vector<WorldRobot>& robot,
-                                  const std::vector<WorldBall>& ball);
+    bool velocity_validator(const std::vector<WorldRobot>& robot,
+                            const std::vector<WorldBall>& ball) const;
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -87,9 +94,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distance_increasing_validator(
-        const std::vector<WorldRobot>& robot,
-        const std::vector<WorldBall>& ball);
+    static bool distance_increasing_validator(const std::vector<WorldRobot>& robot,
+                                              const std::vector<WorldBall>& ball);
 
     /**
      * Checks that the ball is being shot from the robot mouth
@@ -99,8 +105,10 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool in_front_validator(const std::vector<WorldRobot>& robot,
-                                 const std::vector<WorldBall>& ball);
+    bool in_front_validator(const std::vector<WorldRobot>& robot,
+                            const std::vector<WorldBall>& ball) const;
+
+    std::shared_ptr<const VisionFilterParams> params_;
 
     std::deque<VisionState> state_history_;
 };

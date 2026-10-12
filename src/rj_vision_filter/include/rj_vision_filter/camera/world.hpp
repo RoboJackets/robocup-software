@@ -1,4 +1,5 @@
 #include <list>
+#include <memory>
 #include <vector>
 
 #include <rj_vision_filter/ball/world_ball.hpp>
@@ -7,6 +8,7 @@
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
@@ -16,7 +18,10 @@ namespace vision_filter {
  */
 class World {
 public:
-    World();
+    /**
+     * @param params Vision filter parameters, shared with the owning node.
+     */
+    explicit World(std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Updates all the child cameras given a set of new camera frames
@@ -95,6 +100,8 @@ private:
      * @param calc_time Current iteration time
      */
     void detect_kicks(RJ::Time calc_time);
+
+    std::shared_ptr<const VisionFilterParams> params_;
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to
