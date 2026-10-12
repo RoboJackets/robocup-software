@@ -4,9 +4,18 @@
 
 namespace radio {
 
-Radio::Radio() : Node{"radio"} {
+Radio::Radio()
+    : Node{"radio"} {
     param_timeout_ = declare_required_param<double>(
         *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
+    hardware_params_.min_chip_speed = declare_required_param<double>(
+        *this, "robot.min_chip_speed", "Chip speed (m/s) that maps to the weakest chip");
+    hardware_params_.max_chip_speed = declare_required_param<double>(
+        *this, "robot.max_chip_speed", "Chip speed (m/s) that maps to the strongest chip");
+    hardware_params_.chip_angle =
+        declare_required_param<double>(*this, "robot.chip_angle", "Simulator chip angle (degrees)");
+    hardware_params_.max_dribbler_speed = declare_required_param<double>(
+        *this, "robot.max_dribbler_speed", "Simulator dribbler speed at full dribble (rpm)");
 
     timeout_callback_handle_ =
         add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {

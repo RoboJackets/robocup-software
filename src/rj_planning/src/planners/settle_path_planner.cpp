@@ -177,7 +177,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
         double dist =
             params_->settle.search_start_dist + iteration * params_->settle.search_inc_dist;
         // Time for ball to reach the target point
-        std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist);
+        std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist, params_->ball_decay_constant);
 
         if (!maybe_ball_time.has_value()) {
             break;
@@ -232,7 +232,7 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     if (ball_intercept_maybe.has_value()) {
         ball_vel_intercept = ball_intercept_maybe.value();
     } else {
-        ball_vel_intercept = ball.query_stop_position() + delta_pos;
+        ball_vel_intercept = ball.query_stop_position(params_->ball_decay_constant) + delta_pos;
     }
 
     // Make sure target_robot_intersection is inside the field

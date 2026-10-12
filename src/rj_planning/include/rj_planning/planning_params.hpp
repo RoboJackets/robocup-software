@@ -52,7 +52,8 @@ struct SettleParams {
  * PlannerNode shares these with each planner through PlanRequest::params.
  */
 struct PlanningParams {
-    double timeout;  // s
+    double timeout;              // s
+    double ball_decay_constant;  // m/s^2, ball deceleration from rolling friction
     ConstraintsParams constraints;
     ReplannerParams replanner;
     IntermediateParams intermediate;
