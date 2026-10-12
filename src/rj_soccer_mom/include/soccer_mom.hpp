@@ -3,6 +3,8 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <rj_msgs/msg/team_color.hpp>
+#include <memory>
 
 namespace tutorial {
     class SoccerMom: public rclcpp::Node { // inherits rcl
@@ -12,7 +14,7 @@ namespace tutorial {
 
         private:
             // subscriber === READ team color
-            rclcpp::Subscription<std_msgs::msg::String>::SharedPtr team_color_sub_;
+            rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
 
             // publisher === announce fruit
             rclcpp::Publisher<std_msgs::msg::String>::SharedPtr fruit_pub_;

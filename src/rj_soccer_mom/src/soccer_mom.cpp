@@ -7,24 +7,22 @@ namespace tutorial {
 
         // subscriber - listem to team color
         // creating subscriber & LAMBDA FUNCTION
-        team_color_sub_ = this->create_subscription<std_msgs::msg::String>(
-            "/team_color",
+        team_color_sub_ = this->create_subscription<rj_msgs::msg::TeamColor>(
+            "/referee/team_color",
             10,
             // THIS IS LAMBDA SYNTAX
-            [this](const std_msgs::msg::String::SharedPtr msg) {
+            [this](const rj_msgs::msg::TeamColor::SharedPtr msg) {
                 auto fruit_msg = std_msgs::msg::String();
 
                 // conditions if yello banana , if blu, boobetty
-                if (msg->data == "yellow") {
+                if (msg->is_blue) {
+                    fruit_msg.data = "blueberries";
+                } else {
                     fruit_msg.data = "banana";
-                } else if (msg->data == "blue") {
-                    fruit_msg.data = "blueberry";
                 }
 
-                if (!fruit_msg.data.empty()) {
-                    fruit_pub_->publish(fruit_msg);
-                    RCLCPP_INFO(this->get_logger(), "Published fruit: %s", fruit_msg.data.c_str());
-                }
+                fruit_pub_->publish(fruit_msg);
+                RCLCPP_INFO(this->get_logger(), "Published fruit: %s", fruit_msg.data.c_str());
             }
         );
     }
