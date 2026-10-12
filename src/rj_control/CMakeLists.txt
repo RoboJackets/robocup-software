@@ -16,7 +16,6 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_param_utils REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
@@ -26,7 +25,6 @@ set(RJ_CONTROL_DEPS
   std_msgs
   rj_utils
   rj_msgs
-  rj_param_utils
   rj_common
   rj_geometry
   rj_planning
