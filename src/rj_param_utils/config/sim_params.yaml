@@ -163,6 +163,7 @@
 
 /planner:
   ros__parameters:
+    ball_decay_constant: 0.18
     collect:
       approach_accel_scale: 0.7
       approach_dist_target: 0.1
@@ -205,6 +206,12 @@
 
 /radio:
   ros__parameters:
+    robot:
+      # Kicker/dribbler limits used to build robot and simulator commands.
+      chip_angle: 40.0
+      max_chip_speed: 4.0
+      max_dribbler_speed: 2000.0
+      min_chip_speed: 0.5
     timeout: 0.25
     use_sim_time: false
     interface: "127.0.0.1"

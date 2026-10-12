@@ -6,6 +6,7 @@
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
+#include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
