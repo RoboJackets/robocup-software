@@ -38,7 +38,7 @@ public:
 
     VisionReceiver();
 
-    void set_port(const std::string& interface, int port);
+    void set_port(int port);
 
 private:
     void start_receive();
@@ -125,6 +125,5 @@ private:
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
     int param_port_;
-    std::string param_vision_interface_;
 };
 }  // namespace vision_receiver
