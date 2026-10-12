@@ -17,7 +17,6 @@ find_package(spdlog REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_param_utils REQUIRED)
 
 # Find sdl2
 include(FindPkgConfig)
@@ -30,7 +29,6 @@ set(RJ_JOYSTICK_DEPS
   rj_utils
   rj_common
   rj_msgs
-  rj_param_utils
   rclcpp_components
 )
 
