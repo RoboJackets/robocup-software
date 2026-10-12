@@ -155,21 +155,19 @@
       approach_accel_scale: 0.7
       approach_dist_target: 0.15
       ball_speed_approach_direction_cutoff: 0.1
-      control_accel_scale: 0.5
-      dist_cutoff_to_approach: 1.0
       dist_cutoff_to_control: 0.0285
-      stop_dist_scale: 0.5
-      target_point_lowpass_gain: 0.8
       touch_delta_speed: 0.05
-      vel_cutoff_to_control: 0.3
-      velocity_control_scale: 0.5
     constraints:
       max_rotational_accel: 1.4
       max_rotational_speed: 1.4
       max_translational_accel: 1.0
       max_translational_speed: 1.0
-    escape:
-      goal_change_threshold: 0.9
+    intermediate:
+      max_angle: 140.0
+      max_scale: 1.5
+      min_angle: 20.0
+      min_scale: 0.5
+      num_intermediates: 5
       step_size: 0.1
     pivot:
       radius_multiplier: 1.0
