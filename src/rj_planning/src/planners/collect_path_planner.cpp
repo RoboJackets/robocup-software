@@ -230,7 +230,8 @@ Trajectory CollectPathPlanner::coarse_approach(const PlanRequest& plan_request, 
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id,
                                  std::nullopt,
-                                 params_->replanner, params_->intermediate};
+                                 params_->replanner,
+                                 params_->intermediate};
 
     Trajectory coarse_path = Replanner::create_plan(params, previous_);
 
@@ -276,10 +277,11 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);
 
-        for (double dist = params_->settle.search_start_dist; dist < params_->settle.search_end_dist;
-            dist += params_->settle.search_inc_dist) {
+    for (double dist = params_->settle.search_start_dist; dist < params_->settle.search_end_dist;
+         dist += params_->settle.search_inc_dist) {
         // Time for ball to reach the target point
-        std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist, params_->ball_decay_constant);
+        std::optional<RJ::Seconds> maybe_ball_time =
+            ball.query_seconds_to_dist(dist, params_->ball_decay_constant);
 
         if (!maybe_ball_time.has_value()) {
             break;
@@ -412,8 +414,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
         (closest_pt - ball.position).mag() -
                 (avg_instantaneous_intercept_target_ - ball.position).mag() <
             params_->settle.shortcut_dist) {
-        LinearMotionInstant target{closest_pt,
-                                   params_->settle.ball_speed_percent_for_dampen * average_ball_vel_};
+        LinearMotionInstant target{
+            closest_pt, params_->settle.ball_speed_percent_for_dampen * average_ball_vel_};
 
         Trajectory shortcut = CreatePath::intermediate(
             start_instant.linear_motion(), target, plan_request.constraints.mot,
@@ -460,7 +462,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
                                  AngleFns::face_point(face_pos),
                                  plan_request.shell_id,
                                  std::nullopt,
-                                 params_->replanner, params_->intermediate};
+                                 params_->replanner,
+                                 params_->intermediate};
     Trajectory new_target_path = Replanner::create_plan(params, previous_);
 
     RJ::Seconds time_of_arrival = new_target_path.duration();
@@ -563,16 +566,15 @@ Trajectory CollectPathPlanner::dampen(const PlanRequest& plan_request, RobotInst
     Trajectory dampen_end;
 
     if (previous_.empty()) {
-        dampen_end = CreatePath::intermediate(
-            start_instant.linear_motion(), final_stopping_motion, plan_request.constraints.mot,
-            start_instant.stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
-            params_->intermediate);
+        dampen_end = CreatePath::intermediate(start_instant.linear_motion(), final_stopping_motion,
+                                              plan_request.constraints.mot, start_instant.stamp,
+                                              obstacles, plan_request.field_dimensions,
+                                              plan_request.shell_id, params_->intermediate);
     } else {
-        dampen_end = CreatePath::intermediate(previous_.last().linear_motion(),
-                                              final_stopping_motion, plan_request.constraints.mot,
-                                              previous_.last().stamp, obstacles,
-                                              plan_request.field_dimensions, plan_request.shell_id,
-                                            params_->intermediate);
+        dampen_end = CreatePath::intermediate(
+            previous_.last().linear_motion(), final_stopping_motion, plan_request.constraints.mot,
+            previous_.last().stamp, obstacles, plan_request.field_dimensions, plan_request.shell_id,
+            params_->intermediate);
     }
 
     dampen_end.set_debug_text("Damping");
@@ -631,7 +633,8 @@ Trajectory CollectPathPlanner::fine_approach(const PlanRequest& plan_request,
                                  AngleFns::face_point(ball.position),
                                  plan_request.shell_id,
                                  std::nullopt,
-                                 params_->replanner, params_->intermediate};
+                                 params_->replanner,
+                                 params_->intermediate};
 
     Trajectory path_hit = Replanner::create_plan(params, previous_);
     path_hit.set_debug_text("fine");
@@ -671,7 +674,8 @@ Trajectory CollectPathPlanner::invalid(const PlanRequest& plan_request,
                                  AngleFns::face_point(plan_request.world_state->ball.position),
                                  plan_request.shell_id,
                                  std::nullopt,
-                                 params_->replanner, params_->intermediate};
+                                 params_->replanner,
+                                 params_->intermediate};
 
     Trajectory path = Replanner::create_plan(params, previous_);
     path.set_debug_text("Invalid state in collect");
