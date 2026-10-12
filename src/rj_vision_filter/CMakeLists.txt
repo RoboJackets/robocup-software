@@ -16,7 +16,6 @@ find_package(rj_msgs REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
-find_package(rj_param_utils REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp_components REQUIRED)
@@ -29,7 +28,6 @@ set(RJ_VISION_FILTER_DEPS
   Boost
   Eigen3
   eigen3_cmake_module
-  rj_param_utils
   rclcpp
   spdlog
   rclcpp_components
