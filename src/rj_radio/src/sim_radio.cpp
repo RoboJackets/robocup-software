@@ -119,7 +119,7 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
     }
     last_sent_diff_.at(robot_id) = RJ::now();
     RobotCommand* sim_robot = sim_packet.add_robot_commands();
-    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
+    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot, hardware_params_);
 
     std::string out;
     sim_packet.SerializeToString(&out);

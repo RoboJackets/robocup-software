@@ -56,7 +56,8 @@ struct SettleParams {
  * request.params.
  */
 struct PlanningParams {
-    double timeout;  // s
+    double timeout;              // s
+    double ball_decay_constant;  // m/s^2, ball deceleration from rolling friction
     ConstraintsParams constraints;
     ReplannerParams replanner;
     IntermediateParams intermediate;

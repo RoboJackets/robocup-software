@@ -20,7 +20,7 @@ Trajectory InterceptPathPlanner::plan(const PlanRequest& plan_request) {
     // Target point is projected into ball velocity line
     rj_geometry::Point target_pos_on_line;
     RJ::Seconds ball_to_point_time =
-        ball.query_seconds_near(command.target.position, &target_pos_on_line);
+        ball.query_seconds_near(command.target.position, plan_request.params->ball_decay_constant, &target_pos_on_line);
 
     // vector from robot to target
     rj_geometry::Point bot_to_target = (target_pos_on_line - start_instant.position());
