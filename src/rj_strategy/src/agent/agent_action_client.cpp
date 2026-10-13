@@ -19,25 +19,25 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](WorldState::ConstSharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+        [this](PlayState::ConstSharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_->create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
+        [this](FieldDimensions::ConstSharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_->create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<GameSettings>(
         "config/game_settings", 1,
-        [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+        [this](GameSettings::ConstSharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
@@ -76,32 +76,31 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
-void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+void AgentActionClient::world_state_callback(WorldState::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
-    last_world_state_ = std::move(world_state);
+    last_world_state_ = *msg;
 }
 
-void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void AgentActionClient::play_state_callback(PlayState::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    PlayState play_state = rj_convert::convert_from_ros(*msg);
+    const PlayState& play_state = *msg;
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
 }
 
 void AgentActionClient::field_dimensions_callback(
-    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    FieldDimensions::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
+    const FieldDimensions& field_dimensions = *msg;
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
 }
@@ -128,7 +127,7 @@ void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::S
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+void AgentActionClient::game_settings_callback(GameSettings::ConstSharedPtr msg) {
     is_simulated_ = msg->simulation;
 }
 
@@ -160,7 +159,8 @@ void AgentActionClient::get_task() {
         }
     }
     current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
-        rj_convert::convert_to_ros(current_position_->get_current_state())));
+        rj_convert::convert_to_ros<std::string, std::string>(
+            current_position_->get_current_state())));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -172,7 +172,8 @@ void AgentActionClient::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
+    goal_msg.robot_intent =
+        rj_convert::convert_to_ros<RobotIntent, rj_msgs::msg::RobotIntent>(last_task_);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
@@ -195,7 +196,10 @@ void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr go
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
+    double time_left =
+        rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
+            feedback->time_left)
+            .count();
     if (current_position_ == nullptr) {
         current_position_->set_time_left(time_left);
     }
@@ -247,7 +251,9 @@ void AgentActionClient::get_communication() {
         communication::AgentPosResponseWrapper buffered_response;
 
         auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-        request->agent_request = rj_convert::convert_to_ros(communication_request.request);
+        request->agent_request = rj_convert::convert_to_ros<
+            communication::AgentRequest, rj_msgs::msg::AgentRequest>(
+            communication_request.request);
 
         // send communication requests
         std::vector<u_int8_t> sent_robot_ids = {};
@@ -292,17 +298,22 @@ void AgentActionClient::receive_communication_callback(
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
-            rj_convert::convert_from_ros(request->agent_request);
+            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest,
+                                         communication::AgentRequest>(
+                request->agent_request);
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
         agent_response.response = acknowledge;
-        response->agent_response = rj_convert::convert_to_ros(agent_response);
+        response->agent_response = rj_convert::convert_to_ros<
+            communication::AgentResponse, rj_msgs::msg::AgentResponse>(agent_response);
     } else {
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
         communication::AgentRequest received_request =
-            rj_convert::convert_from_ros(request->agent_request);
+            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest,
+                                         communication::AgentRequest>(
+                request->agent_request);
         agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back
@@ -312,7 +323,8 @@ void AgentActionClient::receive_communication_callback(
         // Convert PosToAgentCommResponse into AgentResponse
         communication::AgentResponse agent_response{received_request,
                                                     pos_to_agent_response.response};
-        response->agent_response = rj_convert::convert_to_ros(agent_response);
+        response->agent_response = rj_convert::convert_to_ros<
+            communication::AgentResponse, rj_msgs::msg::AgentResponse>(agent_response);
     }
 }
 
@@ -321,7 +333,9 @@ void AgentActionClient::receive_response_callback(
     u_int8_t robot_id) {
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =
-        rj_convert::convert_from_ros(response.get()->agent_response);
+        rj_convert::convert_from_ros<rj_msgs::msg::AgentResponse,
+                                     communication::AgentResponse>(
+            response.get()->agent_response);
 
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (buffered_responses_[i].associated_request == agent_response.associated_request) {

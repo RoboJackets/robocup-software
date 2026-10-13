@@ -11,6 +11,7 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
@@ -19,7 +20,6 @@
 #include <rj_msgs/action/robot_move.hpp>
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
@@ -57,22 +57,22 @@ public:
 
 private:
     // ROS pub/subs
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
     rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
-    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void world_state_callback(WorldState::ConstSharedPtr msg);
+    void play_state_callback(PlayState::ConstSharedPtr msg);
+    void field_dimensions_callback(FieldDimensions::ConstSharedPtr msg);
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
-    void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void game_settings_callback(GameSettings::ConstSharedPtr msg);
     void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 

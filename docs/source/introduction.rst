@@ -71,6 +71,7 @@ You should see 3 different things happening:
 3. A graph that shows the relationship between the 2 commands that we just ran. (If you cannot
 see both the talker and the listener, hit the refresh button at the top left of the rqt app).
 
+.. image:: ./_static/intro-rqt-example.png
 
 2. What Just Happened?
 ----------------------
