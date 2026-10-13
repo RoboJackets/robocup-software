@@ -1,43 +1,37 @@
 # Package Documentation
 
-Reusable assessment, refactor, and verification template.
-
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
-| **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Package name** | Cameron Lyon |
+| **Assigned owner(s)** | Robojackets |
+| **Reviewer(s)** | Nate, Sanat, Shourik |
+| **Date started revision** | 10/16/2026 |
 
 ## 1. Package Identity and Tier
 
-Define the package's purpose and fixed architectural classification before work starts.
-
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | A Humble-Supported header-only helpers that turn C++ values into matching ros2 message and back, using Humbles rclpp::TypeAdapter |
+| **Current responsibilities** | convert_to_ros, convert_from_ros, TypeAdapters, test_lossless_convert_ros_value, test_lossless_convert_cpp_value |
+| **Out of scope** | Avoid using any third-party conversion message to transmit data. Mainly ros2 oriented conversions. |
 
 ## 2. Dependency Rules
-
-Map package relationships before adding, deleting, or moving code. Dependency direction should remain downward through the tier stack.
 
 ### Dependency Summary
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** | rclpp, ament_cmake, ament_cmake_gtest |
+| **Depended on by** | Direct package.xml dependents: common, geometry, utils, control, planning, strategy, ui |
 
 
 ## 3. Operational Expectations
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
-| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
-| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
+| **Failure behavior** | Fails at compile time, no failures once compiliation works properly. |
+| **Recovery behavior** | No retry, fallback, or operator action. Fix the specialization or the stack explodes. |
+| **Configuration** | None |
 
 ## 4. Testing
 
@@ -45,6 +39,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Unit testing** | ros_convert_test, rj_common_convert_test, game_state_test, world_state_test, geometry_conversions_test. |
+| **Coverage gaps** | None |
+| **Observed outliers** | None |
