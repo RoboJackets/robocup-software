@@ -17,7 +17,6 @@
 #include <rj_msgs/srv/list_joysticks.hpp>
 #include <rj_msgs/srv/set_manual.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_utils/logging.hpp>
 
 #include "rj_joystick/manual_control.hpp"
 #include "rj_joystick/sdl_manual_control.hpp"
@@ -64,7 +63,6 @@ private:
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     auto manual = std::make_shared<joystick::ManualControlNode>();
     rclcpp::spin(manual);

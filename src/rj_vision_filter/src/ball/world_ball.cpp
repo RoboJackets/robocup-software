@@ -1,7 +1,6 @@
 #include <cmath>
 
 #include <rj_param_utils/vision/vision_params.hpp>
-#include <rj_utils/logging.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 
 namespace vision_filter {
@@ -26,7 +25,8 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
     }
 
     if (kalman_balls.empty()) {
-        FATAL_THROW("Zero balls are given to the WorldBall constructor");
+        SPDLOG_CRITICAL("Zero balls are given to the WorldBall constructor");
+        throw std::runtime_error("Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalman_balls) {

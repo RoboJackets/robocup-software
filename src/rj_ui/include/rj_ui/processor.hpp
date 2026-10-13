@@ -25,7 +25,6 @@
 #include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_referee/external_referee.hpp>
-#include <rj_utils/logging.hpp>
 
 #include "rj_ui/ros2_temp/autonomy_interface.hpp"
 #include "rj_ui/ros2_temp/debug_draw_interface.hpp"

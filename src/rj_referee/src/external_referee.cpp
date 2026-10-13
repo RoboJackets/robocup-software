@@ -63,7 +63,7 @@ void ExternalReferee::receive_packet(const boost::system::error_code& error, siz
     RawProtobufMsg msg;
     msg.data.resize(ref_packet.ByteSizeLong());
     if (!ref_packet.SerializeToArray(msg.data.data(), msg.data.size())) {
-        EZ_ERROR("Failed to serialize referee packet.");
+        RCLCPP_ERROR(get_logger(), "Failed to serialize referee packet.");
     }
     raw_ref_pub_->publish(msg);
 

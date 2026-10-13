@@ -9,7 +9,6 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
-#include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
@@ -51,7 +50,7 @@ VisionReceiver::VisionReceiver()
     // set vision interface and port
     set_port(param_vision_interface_, param_port_);
 
-    raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufTopic, 10);
+    raw_packet_pub_ = create_publisher<SSL_WrapperPacket>(topics::kRawProtobufTopic, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
 
     // Spin off threads for the networking part and the publishing part.
@@ -109,7 +108,7 @@ void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int
     boost::system::error_code bind_error;
     socket_.bind(udp::endpoint(udp::v4(), port), bind_error);
     if (static_cast<bool>(bind_error)) {
-        EZ_ERROR_STREAM("Vision port bind failed with error: " << bind_error.message());
+        RCLCPP_ERROR_STREAM(get_logger(), "Vision port bind failed with error: " << bind_error.message());
         return;
     }
 
@@ -126,8 +125,7 @@ void VisionReceiver::process_one_packet() {
     }
 
     // Publish raw packet
-    RawProtobufMsg::UniquePtr raw_protobuf_msg = to_ros_msg(packet->wrapper);
-    raw_packet_pub_->publish(std::move(raw_protobuf_msg));
+    raw_packet_pub_->publish(packet->wrapper);
 
     // If packet has geometry data, attempt to read information and
     // update if changed.
@@ -226,7 +224,7 @@ void VisionReceiver::start_receive() {
 void VisionReceiver::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
     // Check for error
     if (static_cast<bool>(error)) {
-        EZ_ERROR_STREAM("Vision receive failed with error: " << error.message());
+        RCLCPP_ERROR_STREAM(get_logger(), "Vision receive failed with error: " << error.message());
         return;
     }
 
@@ -234,7 +232,7 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
     StampedSSLWrapperPacket::UniquePtr stamped_packet = std::make_unique<StampedSSLWrapperPacket>();
     stamped_packet->receive_time = get_clock()->now();
     if (!stamped_packet->wrapper.ParseFromArray(&recv_buffer_[0], num_bytes)) {
-        EZ_ERROR_STREAM("Got bad packet of " << num_bytes << " bytes from "
+        RCLCPP_ERROR_STREAM(get_logger(), "Got bad packet of " << num_bytes << " bytes from "
                                              << sender_endpoint_.address() << ":"
                                              << sender_endpoint_.port());
         return;
@@ -331,9 +329,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
 
         config_.update_field_dimensions(rj_convert::convert_to_ros(new_field_dim));
     } else {
-        EZ_ERROR_STREAM(
-            "Error: failed to decode SSL geometry packet. Not resizing "
-            "field.");
+        RCLCPP_ERROR(get_logger(), "Error: failed to decode SSL geometry packet. Not resizing field.");
     }
 }
 }  // namespace vision_receiver

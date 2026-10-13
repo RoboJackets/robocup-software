@@ -1,6 +1,5 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_config_client/config_client.hpp>
-#include <rj_utils/logging_macros.hpp>
 
 namespace config_client {
 ConfigClient::ConfigClient(rclcpp::Node* node)
@@ -35,15 +34,17 @@ bool ConfigClient::connected() const {
     static bool prev_connected = false;
 
     if (!have_msg) {
-        auto& clk = *node_->get_clock();
-        const auto throttle_ms = 1000;
-        RJ_INFO_STREAM_THROTTLE(node_->get_logger(), clk, throttle_ms,
-                                "[ConfigClient] Waiting on ConfigServer...");
+        RCLCPP_INFO_STREAM_THROTTLE(
+            node_->get_logger(),
+            *node_->get_clock(),
+            1000, // 1000ms
+            "[ConfigClient] Waiting on ConfigServer..."
+        );
     }
 
     if (!prev_connected && have_msg) {
         prev_connected = true;
-        RJ_INFO(node_->get_logger(), "[ConfigClient] Connected!");
+        RCLCPP_INFO(node_->get_logger(), "[ConfigClient] Connected!");
     }
 
     return have_msg;
