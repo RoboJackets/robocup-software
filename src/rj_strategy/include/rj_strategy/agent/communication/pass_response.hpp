@@ -35,10 +35,9 @@ struct TypeAdapter<strategy::communication::PassResponse, rj_msgs::msg::PassResp
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::PassResponse{
-            source.response_uid, source.direct_open};
+        destination =
+            strategy::communication::PassResponse{source.response_uid, source.direct_open};
     }
 };
-
 
 }  // namespace rclcpp

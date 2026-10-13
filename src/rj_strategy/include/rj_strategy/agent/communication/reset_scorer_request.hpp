@@ -37,5 +37,4 @@ struct TypeAdapter<strategy::communication::ResetScorerRequest, rj_msgs::msg::Re
     }
 };
 
-
 }  // namespace rclcpp

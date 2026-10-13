@@ -68,8 +68,8 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
 
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint>(
         topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
-    target_state_pub_ = node->create_publisher<RobotState>(
-        topics::desired_state_topic(shell_id_), rclcpp::QoS(1));
+    target_state_pub_ =
+        node->create_publisher<RobotState>(topics::desired_state_topic(shell_id_), rclcpp::QoS(1));
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory>(
         planning::topics::trajectory_topic(shell_id), rclcpp::QoS(1),

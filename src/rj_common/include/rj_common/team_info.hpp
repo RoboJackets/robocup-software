@@ -79,7 +79,8 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
         rj_convert::convert_to_ros(source.score, &destination.score);
         rj_convert::convert_to_ros(source.red_cards, &destination.num_red_cards);
         rj_convert::convert_to_ros(source.yellow_cards, &destination.num_yellow_cards);
-        rj_convert::convert_to_ros(source.yellow_card_times, &destination.yellow_card_remaining_times);
+        rj_convert::convert_to_ros(source.yellow_card_times,
+                                   &destination.yellow_card_remaining_times);
         rj_convert::convert_to_ros(source.timeouts_left, &destination.timeouts_left);
         rj_convert::convert_to_ros(source.timeout_time, &destination.remaining_timeout_time);
         rj_convert::convert_to_ros(source.goalie, &destination.goalie_id);
@@ -97,7 +98,6 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
         rj_convert::convert_from_ros(source.goalie_id, &destination.goalie);
     }
 };
-
 
 }  // namespace rclcpp
 

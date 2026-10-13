@@ -45,8 +45,7 @@ TEST(ROSConvert, type_adapter_supports_humble_publishing_contract) {
     Adapter::convert_to_ros_message(custom, ros);
     EXPECT_EQ(ros, custom.time);
 
-    const auto ros_from_helper =
-        rj_convert::convert_to_ros<MockTime, MockTime::Msg>(custom);
+    const auto ros_from_helper = rj_convert::convert_to_ros<MockTime, MockTime::Msg>(custom);
     EXPECT_EQ(ros_from_helper, custom.time);
 
     MockTime::Msg ros_from_pointer_helper;
@@ -66,20 +65,17 @@ TEST(ROSConvert, vector_primitive) {
 
 TEST(ROSConvert, vector_ros_type) {
     std::vector<MockTime::Msg> vec_ros{rclcpp::Time(1), rclcpp::Time(2), rclcpp::Time(3)};
-    test_lossless_convert_ros_value<std::vector<MockTime::Msg>, std::vector<MockTime>>(
-        vec_ros);
+    test_lossless_convert_ros_value<std::vector<MockTime::Msg>, std::vector<MockTime>>(vec_ros);
 }
 
 TEST(ROSConvert, vector_custom_type) {
     std::vector<MockTime> vec_custom{{rclcpp::Time(1)}, {rclcpp::Time(2)}};
-    test_lossless_convert_cpp_value<std::vector<MockTime>, std::vector<MockTime::Msg>>(
-        vec_custom);
+    test_lossless_convert_cpp_value<std::vector<MockTime>, std::vector<MockTime::Msg>>(vec_custom);
 }
 
 TEST(ROSConvert, vector_nested) {
     std::vector<std::vector<MockTime::Msg>> vec_ros{{rclcpp::Time(1), rclcpp::Time(2)},
                                                     {rclcpp::Time(3)}};
     test_lossless_convert_ros_value<std::vector<std::vector<MockTime::Msg>>,
-                                    std::vector<std::vector<MockTime>>>(
-        vec_ros);
+                                    std::vector<std::vector<MockTime>>>(vec_ros);
 }

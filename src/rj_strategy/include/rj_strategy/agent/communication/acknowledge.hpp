@@ -37,5 +37,4 @@ struct TypeAdapter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowled
     }
 };
 
-
 }  // namespace rclcpp

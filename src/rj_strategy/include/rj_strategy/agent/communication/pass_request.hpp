@@ -37,10 +37,9 @@ struct TypeAdapter<strategy::communication::PassRequest, rj_msgs::msg::PassReque
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::PassRequest{
-            source.request_uid, source.direct, source.from_robot_id};
+        destination = strategy::communication::PassRequest{source.request_uid, source.direct,
+                                                           source.from_robot_id};
     }
 };
-
 
 }  // namespace rclcpp

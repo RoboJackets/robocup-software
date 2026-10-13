@@ -35,10 +35,9 @@ struct TypeAdapter<strategy::communication::JoinWallResponse, rj_msgs::msg::Join
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::JoinWallResponse{
-            source.response_uid, source.robot_id};
+        destination =
+            strategy::communication::JoinWallResponse{source.response_uid, source.robot_id};
     }
 };
-
 
 }  // namespace rclcpp

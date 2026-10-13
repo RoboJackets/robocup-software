@@ -44,11 +44,10 @@ struct TypeAdapter<MotionSetpoint, MotionSetpoint::Msg> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = MotionSetpoint{source.velocity_x_mps, source.velocity_y_mps,
-                                     source.velocity_z_radps};
+        destination =
+            MotionSetpoint{source.velocity_x_mps, source.velocity_y_mps, source.velocity_z_radps};
     }
 };
-
 
 }  // namespace rclcpp
 

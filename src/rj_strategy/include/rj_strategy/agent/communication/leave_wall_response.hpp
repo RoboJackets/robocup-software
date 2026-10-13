@@ -35,10 +35,9 @@ struct TypeAdapter<strategy::communication::LeaveWallResponse, rj_msgs::msg::Lea
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::LeaveWallResponse{
-            source.response_uid, source.robot_id};
+        destination =
+            strategy::communication::LeaveWallResponse{source.response_uid, source.robot_id};
     }
 };
-
 
 }  // namespace rclcpp

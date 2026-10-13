@@ -74,8 +74,7 @@ void StraightLineTest::world_state_callback(const rj_msgs::msg::WorldState::Shar
 }
 
 void StraightLineTest::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
-    PlayState play_state =
-        rj_convert::convert_from_ros<rj_msgs::msg::PlayState, PlayState>(*msg);
+    PlayState play_state = rj_convert::convert_from_ros<rj_msgs::msg::PlayState, PlayState>(*msg);
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
 }
@@ -200,10 +199,9 @@ void StraightLineTest::goal_response_callback(GoalHandleRobotMove::SharedPtr goa
 
 void StraightLineTest::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    double time_left =
-        rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
-            feedback->time_left)
-            .count();
+    double time_left = rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
+                           feedback->time_left)
+                           .count();
     current_position_->set_time_left(time_left);
 }
 

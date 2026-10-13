@@ -475,26 +475,22 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         if (!source.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
-        destination.stamp =
-            rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(
-                source.time_created().value());
+        destination.stamp = rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(
+            source.time_created().value());
         destination.instants =
             rj_convert::convert_to_ros<std::vector<planning::RobotInstant>,
-                                       std::vector<rj_msgs::msg::RobotInstant>>(
-                source.instants());
+                                       std::vector<rj_msgs::msg::RobotInstant>>(source.instants());
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = planning::Trajectory{rj_convert::convert_from_ros<
-            std::vector<rj_msgs::msg::RobotInstant>, std::vector<planning::RobotInstant>>(
-            source.instants)};
+        destination = planning::Trajectory{
+            rj_convert::convert_from_ros<std::vector<rj_msgs::msg::RobotInstant>,
+                                         std::vector<planning::RobotInstant>>(source.instants)};
         destination.stamp(
-            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
-                source.stamp));
+            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp));
         destination.mark_angles_valid();
     }
 };
-
 
 }  // namespace rclcpp
 

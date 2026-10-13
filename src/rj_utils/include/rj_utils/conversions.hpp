@@ -34,33 +34,33 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
 
 namespace rclcpp {
 
-template<>
+template <>
 struct TypeAdapter<SSL_DetectionRobot, DetectionRobotMsg> {
     using is_specialized = std::true_type;
-	using custom_type = SSL_DetectionRobot;
-	using ros_message_type = DetectionRobotMsg;
+    using custom_type = SSL_DetectionRobot;
+    using ros_message_type = DetectionRobotMsg;
 
-	static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-	    destination.confidence = source.confidence();
-	    destination.robot_id = source.robot_id();
-	    destination.x = source.x();
-	    destination.y = source.y();
-	    destination.orientation = source.orientation();
-	    destination.pixel_x = source.pixel_x();
-	    destination.pixel_y = source.pixel_y();
-	    destination.height = source.height();
-	}
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        destination.confidence = source.confidence();
+        destination.robot_id = source.robot_id();
+        destination.x = source.x();
+        destination.y = source.y();
+        destination.orientation = source.orientation();
+        destination.pixel_x = source.pixel_x();
+        destination.pixel_y = source.pixel_y();
+        destination.height = source.height();
+    }
 
-	static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-	    destination.set_confidence(source.confidence);
-	    destination.set_robot_id(source.robot_id);
-	    destination.set_x(source.x);
-	    destination.set_y(source.y);
-	    destination.set_orientation(source.orientation);
-	    destination.set_pixel_x(source.pixel_x);
-	    destination.set_pixel_y(source.pixel_y);
-	    destination.set_height(source.height);
-	}
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination.set_confidence(source.confidence);
+        destination.set_robot_id(source.robot_id);
+        destination.set_x(source.x);
+        destination.set_y(source.y);
+        destination.set_orientation(source.orientation);
+        destination.set_pixel_x(source.pixel_x);
+        destination.set_pixel_y(source.pixel_y);
+        destination.set_height(source.height);
+    }
 };
 
 template <>

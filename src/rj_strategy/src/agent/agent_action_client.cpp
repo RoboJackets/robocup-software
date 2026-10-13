@@ -94,8 +94,7 @@ void AgentActionClient::play_state_callback(PlayState::ConstSharedPtr msg) {
     current_position_->update_play_state(play_state);
 }
 
-void AgentActionClient::field_dimensions_callback(
-    FieldDimensions::ConstSharedPtr msg) {
+void AgentActionClient::field_dimensions_callback(FieldDimensions::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -196,10 +195,9 @@ void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr go
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    double time_left =
-        rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
-            feedback->time_left)
-            .count();
+    double time_left = rj_convert::convert_from_ros<builtin_interfaces::msg::Duration, RJ::Seconds>(
+                           feedback->time_left)
+                           .count();
     if (current_position_ == nullptr) {
         current_position_->set_time_left(time_left);
     }
@@ -251,9 +249,9 @@ void AgentActionClient::get_communication() {
         communication::AgentPosResponseWrapper buffered_response;
 
         auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
-        request->agent_request = rj_convert::convert_to_ros<
-            communication::AgentRequest, rj_msgs::msg::AgentRequest>(
-            communication_request.request);
+        request->agent_request =
+            rj_convert::convert_to_ros<communication::AgentRequest, rj_msgs::msg::AgentRequest>(
+                communication_request.request);
 
         // send communication requests
         std::vector<u_int8_t> sent_robot_ids = {};
@@ -298,21 +296,20 @@ void AgentActionClient::receive_communication_callback(
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
-            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest,
-                                         communication::AgentRequest>(
+            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest, communication::AgentRequest>(
                 request->agent_request);
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
         agent_response.response = acknowledge;
-        response->agent_response = rj_convert::convert_to_ros<
-            communication::AgentResponse, rj_msgs::msg::AgentResponse>(agent_response);
+        response->agent_response =
+            rj_convert::convert_to_ros<communication::AgentResponse, rj_msgs::msg::AgentResponse>(
+                agent_response);
     } else {
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
         communication::AgentRequest received_request =
-            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest,
-                                         communication::AgentRequest>(
+            rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest, communication::AgentRequest>(
                 request->agent_request);
         agent_request.request = received_request;
 
@@ -323,8 +320,9 @@ void AgentActionClient::receive_communication_callback(
         // Convert PosToAgentCommResponse into AgentResponse
         communication::AgentResponse agent_response{received_request,
                                                     pos_to_agent_response.response};
-        response->agent_response = rj_convert::convert_to_ros<
-            communication::AgentResponse, rj_msgs::msg::AgentResponse>(agent_response);
+        response->agent_response =
+            rj_convert::convert_to_ros<communication::AgentResponse, rj_msgs::msg::AgentResponse>(
+                agent_response);
     }
 }
 
@@ -333,8 +331,7 @@ void AgentActionClient::receive_response_callback(
     u_int8_t robot_id) {
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =
-        rj_convert::convert_from_ros<rj_msgs::msg::AgentResponse,
-                                     communication::AgentResponse>(
+        rj_convert::convert_from_ros<rj_msgs::msg::AgentResponse, communication::AgentResponse>(
             response.get()->agent_response);
 
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {

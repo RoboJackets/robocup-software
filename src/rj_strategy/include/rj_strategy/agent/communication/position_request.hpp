@@ -37,5 +37,4 @@ struct TypeAdapter<strategy::communication::PositionRequest, rj_msgs::msg::Posit
     }
 };
 
-
 }  // namespace rclcpp
