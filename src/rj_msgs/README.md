@@ -46,5 +46,5 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | Field | Details |
 | --- | --- |
 | **Unit testing** | colcon build |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Coverage gaps** | N/A |
+| **Observed outliers** | N/A |
