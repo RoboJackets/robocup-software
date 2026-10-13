@@ -43,12 +43,7 @@ private:
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
 
     // possible states of the Runner
-    enum State {
-        TOP_LEFT,
-        TOP_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_RIGHT
-    };
+    enum State { TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT };
 
     /*
      * Provide an updated state for the Runner state machine based
@@ -86,7 +81,6 @@ private:
                 return "BOTTOM_LEFT";
             case BOTTOM_RIGHT:
                 return "BOTTOM_RIGHT";
-
         }
     }
 };
