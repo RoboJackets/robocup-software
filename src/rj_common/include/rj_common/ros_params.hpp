@@ -34,8 +34,8 @@ T declare_required_param(rclcpp::Node& node, const std::string& name,
 
     // Humble does not throw when a typed parameter has no value, so check here.
     if (value.get_type() == rclcpp::ParameterType::PARAMETER_NOT_SET) {
-        throw std::runtime_error("Missing required parameter '" + name + "' on node '" +
-                                 node_name + "'. Add it under '" + node_name +
+        throw std::runtime_error("Missing required parameter '" + name + "' on node '" + node_name +
+                                 "'. Add it under '" + node_name +
                                  "' in sim_params.yaml and real_params.yaml.");
     }
     return value.get<T>();
