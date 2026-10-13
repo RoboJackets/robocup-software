@@ -52,12 +52,6 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     _rotate = 1;
     _history = nullptr;
 
-    auto x = 1;
-
-    int y =
-
-        32;
-
     // Green background
     QPalette p = palette();
     p.setColor(QPalette::Window, QColor(0, 85.0, 0));
