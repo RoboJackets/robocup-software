@@ -169,4 +169,4 @@ pip3 install -r $BASE/util/requirements3.txt
 
 # Install commit hooks
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-git config core.hooksPath "${SCRIPT_DIR}/git-hooks"
+git rev-parse 2>/dev/null && git config core.hooksPath "${SCRIPT_DIR}/git-hooks" || echo "Not a git repo, skipping hook installation"
