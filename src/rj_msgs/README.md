@@ -4,10 +4,10 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
-| **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Package name** |rj_msgs  |
+| **Assigned owner(s)** | Pooja Dayaratna, Shourik Banerjee |
+| **Reviewer(s)** | Sanat, Nate |
+| **Date started revision** | 10/11/2026 |
 
 ## 1. Package Identity and Tier
 
@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | Defines message, action, and service types for the entire codebase (with the exception of messages that are specific to geometry and drawing) |
+| **Current responsibilities** | Responsible for all data transferred between nodes that is NOT specific to geometry or drawing |
+| **Out of scope** | This package should only define message, action, and service types; additionally, this package must not attempt to define message types for messages that are related to goemetry and drawing, since we have the rj_geometry_msgs and rj_drawing_msgs packages for that |
 
 ## 2. Dependency Rules
 
@@ -27,17 +27,17 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** | rj_geometry_msgs, std_msgs |
+| **Depended on by** |rj_benchmarking, rj_common, rj_config_client, rj_config_server, rj_control, rj_joystick, rj_param_utils, rj_radio, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_reciever|
 
 
 ## 3. Operational Expectations
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
-| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
-| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
+| **Failure behavior** | N/A |
+| **Recovery behavior** | N/A |
+| **Configuration** | None |
 
 ## 4. Testing
 
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Unit testing** | for each message type, I searched the codebase for references to that message and deleted it if there were none. Then I ran colcon build and ensured that the stack built without error. Then I launched the simulator and ensured that deleting these messages didn't cause any issues. |
+| **Coverage gaps** | N/A |
+| **Observed outliers** | N/A |
