@@ -46,7 +46,76 @@
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
-    max_acceleration: 1.5
+    robot_6:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_7:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_8:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_9:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_10:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_11:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_12:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_13:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_14:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_15:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
     max_angular_velocity: 1.0
     max_velocity: 2.0
     rotation_windup: 0
