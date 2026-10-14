@@ -4,8 +4,7 @@
 
 namespace control {
 
-MotionControlNode::MotionControlNode()
-    : rclcpp::Node("control") {
+MotionControlNode::MotionControlNode() : rclcpp::Node("control") {
     using rj_utils::declare_required_param;
     // Shared by every robot's controller, so declared once here.
     const MotionControlLimits limits{

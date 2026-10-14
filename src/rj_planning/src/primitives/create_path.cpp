@@ -106,7 +106,6 @@ std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& sta
         inter_tuples.emplace_back(abs(angle), signbit(angle) ? -1 : 1, scale);
     }
 
-
     // Sort the list of tuples by the magnitude of angle
     // This ensures that we take paths with
     // smaller offsets from the simple path
