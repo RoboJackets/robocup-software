@@ -16,7 +16,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/time.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_protos/LogFrame.pb.h>
 #include <string.h>

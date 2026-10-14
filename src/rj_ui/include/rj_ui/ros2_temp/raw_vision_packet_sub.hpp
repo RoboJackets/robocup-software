@@ -3,7 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/context.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_topic_utils/async_message_queue.hpp>
 

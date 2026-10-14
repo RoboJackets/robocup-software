@@ -5,7 +5,6 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/control/motion_setpoint.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>

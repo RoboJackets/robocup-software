@@ -16,8 +16,7 @@
 #include <rj_common/debug_drawer.hpp>
 #include <rj_common/logger.hpp>
 #include <rj_common/node.hpp>
-#include <rj_constants/constants.hpp>
-#include <rj_constants/topic_names.hpp>
+#include <rj_common/topic_names.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
