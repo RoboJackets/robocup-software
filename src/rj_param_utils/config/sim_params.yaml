@@ -250,9 +250,7 @@
         slow_max_kick_angle: 0.34
         slow_min_ball_speed: 0.6
         slow_one_robot_within_dist: 0.15
-        slow_robot_dist_filter_cutoff: 3.0
     max_num_cameras: 12
-    publish_hz: 120.0
     robot:
       init_covariance: 100.0
       observation_noise: 2.0
@@ -262,9 +260,7 @@
     vision_filter:
       bounce:
         robot_body_angle_dampen: 0.0
-        robot_body_lin_dampen: 0.9
         robot_mouth_angle_dampen: 0.0
-        robot_mouth_lin_dampen: 0.3
     vision_loop_dt: 0.016666666666666666
     world_ball:
       ball_merger_power: 1.5
