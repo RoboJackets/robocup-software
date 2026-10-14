@@ -424,7 +424,6 @@ bool Offense::has_open_shot() const {
            0.05;  // if there's >= 3 degrees (0.05 radians) of clearance, that's an open shot
 }
 
-
 double Offense::distance_from_their_robots(rj_geometry::Point tail, rj_geometry::Point head) const {
     rj_geometry::Point vec = head - tail;
     auto& their_robots = this->last_world_state_->their_robots;
@@ -505,6 +504,5 @@ void Offense::broadcast_seeker_request(rj_geometry::Point seeking_point, bool ad
     communication_request.broadcast = true;
     communication_requests_.push_back(communication_request);
 }
-
 
 }  // namespace strategy
