@@ -80,6 +80,24 @@ SimRadio::SimRadio(bool blue_team)
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
 
+    interface_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "interface") {
+                    param_radio_interface_ = param.as_string();
+                    address_ = ip::make_address(param_radio_interface_).to_v4();
+                    robot_control_endpoint_ = ip::udp::endpoint(
+                        address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
+                    sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
+                }
+            }
+
+            return result;
+        });
+
     // assume robots 0-6 are always alive in sim
     for (uint8_t robot_id = 0; robot_id < 6; robot_id++) {
         alive_robots_[robot_id] = true;
