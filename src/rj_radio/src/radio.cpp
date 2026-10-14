@@ -1,15 +1,35 @@
 #include "rj_radio/radio.hpp"
 
+#include <rj_utils/ros_params.hpp>
+
 namespace radio {
 
-DEFINE_FLOAT64(kRadioParamModule, timeout, 0.25,
-               "Timeout after which radio will assume a robot is disconnected. Seconds.");
+Radio::Radio() : Node{"radio"} {
+    param_timeout_ = rj_utils::declare_required_param<double>(
+        *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
 
-Radio::Radio()
-    : Node{"radio", rclcpp::NodeOptions{}
-                        .automatically_declare_parameters_from_overrides(true)
-                        .allow_undeclared_parameters(true)},
-      param_provider_(this, kRadioParamModule) {
+    timeout_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout" && !(param.as_double() >= 0.0)) {
+                    result.successful = false;
+                    result.reason = "timeout must be nonnegative";
+                    return result;
+                }
+            }
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout") {
+                    param_timeout_ = param.as_double();
+                }
+            }
+
+            return result;
+        });
+
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
@@ -58,7 +78,7 @@ void Radio::tick() {
     RJ::Time update_time = RJ::now();
 
     for (size_t i = 0; i < kNumShells; i++) {
-        if (last_updates_.at(i) + RJ::Seconds(PARAM_timeout) < update_time) {
+        if (last_updates_.at(i) + RJ::Seconds(param_timeout_) < update_time) {
             // Send Alive Robots an Empty Motion Command (i.e. `STOP`)
             using rj_msgs::msg::ManipulatorSetpoint;
             using rj_msgs::msg::MotionSetpoint;
