@@ -178,11 +178,10 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
 
     const std::shared_ptr<const PlanningParams>& params = params_;
-    RobotConstraints constraints{
-        MotionConstraints{params->constraints.max_translational_speed,
-                          params->constraints.max_translational_accel},
-        RotationConstraints{params->constraints.max_rotational_speed,
-                            params->constraints.max_rotational_accel}};
+    RobotConstraints constraints{MotionConstraints{params->constraints.max_translational_speed,
+                                                   params->constraints.max_translational_accel},
+                                 RotationConstraints{params->constraints.max_rotational_speed,
+                                                     params->constraints.max_rotational_accel}};
     // NOTE: the play-state cap below replaces constraints.max_translational_speed
     // rather than limiting it, as it always has. So max_translational_speed has
     // no effect today; real_params.yaml sets it to 1.0 while robots run at 1.4.
@@ -291,7 +290,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(params_->timeout);
+           RJ::now() <
+               global_state_.world_state()->last_updated_time + RJ::Seconds(params_->timeout);
 }
 
 bool PlannerForRobot::is_done() const {
