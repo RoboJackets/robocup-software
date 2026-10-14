@@ -28,6 +28,8 @@ class MotionControlTest;
 
 }  // namespace testing
 
+class MotionControlNode;
+
 /**
  * @brief Limits shared by every robot's controller (top level of /control).
  */
@@ -83,6 +85,8 @@ protected:
              MotionSetpoint* setpoint);
 
 private:
+    friend class MotionControlNode;
+
     /**
      * Force stop the motion by setting the setpoint to zero.
      * Also resets PID controllers.
@@ -100,6 +104,8 @@ private:
      * Update PID parameters.
      */
     void update_params();
+
+    void update_gains(const std::vector<rclcpp::Parameter>& params);
 
     void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 

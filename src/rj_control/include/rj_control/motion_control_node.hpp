@@ -22,7 +22,9 @@ public:
     void initialize_controllers();
 
 private:
+    MotionControlLimits limits_{};
     std::vector<std::unique_ptr<MotionControl>> controllers_{};
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 };
 
 }  // namespace control
