@@ -4,12 +4,12 @@
 #include <random>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_planning/primitives/motion_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_planning/obstacle_set.hpp>
+#include <rj_planning/primitives/motion_constraints.hpp>
 
-#include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/intermediate_params.hpp"
+#include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/velocity_profiling.hpp"
 #include "rj_planning/trajectory_utils.hpp"
 
