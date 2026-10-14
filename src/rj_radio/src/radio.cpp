@@ -4,10 +4,31 @@
 
 namespace radio {
 
-Radio::Radio()
-    : Node{"radio"} {
+Radio::Radio() : Node{"radio"} {
     param_timeout_ = rj_utils::declare_required_param<double>(
         *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
+
+    timeout_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout" && !(param.as_double() >= 0.0)) {
+                    result.successful = false;
+                    result.reason = "timeout must be nonnegative";
+                    return result;
+                }
+            }
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout") {
+                    param_timeout_ = param.as_double();
+                }
+            }
+
+            return result;
+        });
 
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
