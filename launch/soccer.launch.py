@@ -139,7 +139,7 @@ def generate_launch_description():
                     os.path.join(
                         get_package_share_directory("rj_param_utils"),
                         "config",
-                        "sim.yaml"
+                        "sim_params.yaml"
                     )
                 ],
                 on_exit=Shutdown(),
