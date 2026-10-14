@@ -6,6 +6,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/strategy/positions.hpp>
@@ -79,6 +80,9 @@ protected:
 
     bool blue_team() const;
 
+    // Kicker/dribbler limits for packet conversion (robot.* in the /radio params)
+    RobotHardwareParams hardware_params_{};
+
 private:
     /**
      * @brief Poll the receiver and send empty motion commands to robots that software has
@@ -124,6 +128,7 @@ private:
     double param_timeout_{0};
 
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr timeout_callback_handle_;
+
 };
 
 }  // namespace radio
