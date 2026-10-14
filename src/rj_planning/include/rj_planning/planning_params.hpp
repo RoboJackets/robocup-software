@@ -29,16 +29,16 @@ struct PivotParams {
 struct CollectParams {
     double ball_speed_approach_direction_cutoff;  // m/s
     double approach_accel_scale;
-    double approach_dist_target;     // m
-    double touch_delta_speed;        // m/s
-    double dist_cutoff_to_control;   // m
+    double approach_dist_target;    // m
+    double touch_delta_speed;       // m/s
+    double dist_cutoff_to_control;  // m
 };
 
 struct SettleParams {
     double ball_speed_percent_for_dampen;
-    double search_start_dist;            // m
-    double search_end_dist;              // m
-    double search_inc_dist;              // m
+    double search_start_dist;  // m
+    double search_end_dist;    // m
+    double search_inc_dist;    // m
     double intercept_buffer_time;
     double target_point_gain;
     double ball_vel_gain;
