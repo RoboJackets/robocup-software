@@ -2,16 +2,14 @@
 
 namespace planning {
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                                  std::shared_ptr<TrajectoryCollection> robot_trajectories,
                                  const GlobalState& global_state)
     : node_{node},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
       global_state_{global_state},
-      debug_draw_{
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
-          fmt::format("planning_{}", robot_id)} {
+      debug_draw_{node, fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
     path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
     path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();

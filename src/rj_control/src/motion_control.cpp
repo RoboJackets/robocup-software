@@ -6,13 +6,10 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-
-MotionControl::MotionControl(int shell_id, rclcpp::Node* node)
+MotionControl::MotionControl(int shell_id, rclcpp::Node::SharedPtr node)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
-      drawer_(
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
-          fmt::format("motion_control/{}", std::to_string(shell_id))) {
+      drawer_(node, fmt::format("motion_control/{}", std::to_string(shell_id))) {
     std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
 
     // populate params

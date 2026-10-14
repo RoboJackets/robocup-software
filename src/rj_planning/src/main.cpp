@@ -8,6 +8,7 @@ int main(int argc, char** argv) {
     rj_utils::set_spdlog_default_ros2("processor");
 
     auto planner = std::make_shared<planning::PlannerNode>();
+    planner->initialize_planners();
     start_global_param_provider(planner.get(), kGlobalParamServerNode);
     rclcpp::spin(planner);
 }

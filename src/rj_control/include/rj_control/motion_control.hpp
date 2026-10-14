@@ -36,7 +36,7 @@ class MotionControlTest;
  */
 class MotionControl {
 public:
-    MotionControl(int shell_id, rclcpp::Node* node);
+    MotionControl(int shell_id, rclcpp::Node::SharedPtr node);
 
 protected:
     friend class testing::MotionControlTest;
