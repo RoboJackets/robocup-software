@@ -8,7 +8,6 @@ using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionControlLimits& limits)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
@@ -63,6 +62,26 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionContr
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(
         "debug/motion_control/pose_error_heading", 10);
+}
+
+void MotionControl::update_gains(const std::vector<rclcpp::Parameter>& params) {
+    const std::string prefix = fmt::format("robot_{}.", shell_id_);
+    for (const auto& param : params) {
+        const auto& name = param.get_name();
+        if (name == prefix + "translation_kp") {
+            gains_.translation_kp = param.as_double();
+        } else if (name == prefix + "translation_ki") {
+            gains_.translation_ki = param.as_double();
+        } else if (name == prefix + "translation_kd") {
+            gains_.translation_kd = param.as_double();
+        } else if (name == prefix + "rotation_kp") {
+            gains_.rotation_kp = param.as_double();
+        } else if (name == prefix + "rotation_ki") {
+            gains_.rotation_ki = param.as_double();
+        } else if (name == prefix + "rotation_kd") {
+            gains_.rotation_kd = param.as_double();
+        }
+    }
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -181,8 +200,8 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
     target_vel.linear().clamp(limits_.max_velocity);
-    target_vel.angular() =
-        std::clamp(target_vel.angular(), -limits_.max_angular_velocity, limits_.max_angular_velocity);
+    target_vel.angular() = std::clamp(target_vel.angular(), -limits_.max_angular_velocity,
+                                      limits_.max_angular_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
