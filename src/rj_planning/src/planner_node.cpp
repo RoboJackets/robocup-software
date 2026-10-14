@@ -5,8 +5,7 @@ namespace planning {
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
-PlannerNode::PlannerNode()
-    : rclcpp::Node("planner"), global_state_(this) {
+PlannerNode::PlannerNode() : rclcpp::Node("planner"), global_state_(this) {
     params_ = std::make_shared<const PlanningParams>(load_planning_params(*this));
 
     // for _1, _2 etc. below
