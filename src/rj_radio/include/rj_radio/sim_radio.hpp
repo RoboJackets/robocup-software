@@ -69,6 +69,7 @@ private:
     bool blue_team_;
 
     rclcpp::Service<rj_msgs::srv::SimPlacement>::SharedPtr sim_placement_service_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr interface_callback_handle_;
 };
 
 }  // namespace radio
