@@ -76,27 +76,6 @@ struct rclcpp::TypeAdapter<SSL_DetectionBall, rj_msgs::msg::DetectionBall> {
 };
 
 template<>
-struct rclcpp::TypeAdapter<SSL_DetectionFrame, rj_msgs::msg::DetectionFrame> {
-    using is_specialized = std::true_type;
-    using custom_type = SSL_DetectionFrame;
-    using ros_message_type = rj_msgs::msg::DetectionFrame;
-
-    static void convert_to_ros_message(
-        const SSL_DetectionFrame& source,
-        rj_msgs::msg::DetectionFrame& target
-    ) {
-        target.frame_number = source.frame_number();
-    }
-
-    static void convert_to_custom(
-        const rj_msgs::msg::DetectionFrame& source,
-        SSL_DetectionFrame& target
-    ) {
-
-    }
-};
-
-template<>
 struct rclcpp::TypeAdapter<SSL_WrapperPacket, rj_msgs::msg::RawProtobuf> {
     using is_specialized = std::true_type;
     using custom_type = SSL_WrapperPacket;
@@ -120,5 +99,4 @@ struct rclcpp::TypeAdapter<SSL_WrapperPacket, rj_msgs::msg::RawProtobuf> {
 
 RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(SSL_DetectionRobot, rj_msgs::msg::DetectionRobot);
 RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(SSL_DetectionBall, rj_msgs::msg::DetectionBall);
-RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(SSL_DetectionFrame, rj_msgs::msg::DetectionFrame);
 RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(SSL_WrapperPacket, rj_msgs::msg::RawProtobuf);

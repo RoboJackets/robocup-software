@@ -1,5 +1,6 @@
+#include "rj_vision_receiver/vision_receiver.hpp"
+
 #include <cmath>
-#include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
 #include <spdlog/spdlog.h>
@@ -7,9 +8,8 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_convert/ros_convert.hpp>
-#include <rj_utils/conversions.hpp>
-#include <rj_vision_receiver/vision_receiver.hpp>
+
+#include "rj_vision_receiver/vision_conversions.hpp"
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
@@ -106,7 +106,8 @@ void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int
 
     // Bind the socket.
     boost::system::error_code bind_error;
-    socket_.bind(udp::endpoint(udp::v4(), port), bind_error);
+    socket_.bind(udp::endpoint(udp::v4(), port),
+                 bind_error);  // NOLINT(bugprone-unused-return-value)
     if (static_cast<bool>(bind_error)) {
         RCLCPP_ERROR_STREAM(get_logger(), "Vision port bind failed with error: " << bind_error.message());
         return;
@@ -163,7 +164,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < balls.size(); ++i) {
         const SSL_DetectionBall& ball = balls.Get(i);
         if (in_used_half(defend_plus_x, ball.x())) {
-            msg.balls.emplace_back(to_ros_msg(ball));
+            rclcpp::TypeAdapter<SSL_DetectionBall, rj_msgs::msg::DetectionBall>::
+                convert_to_ros_message(ball, msg.balls.emplace_back());
         }
     }
 
@@ -173,7 +175,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_blue.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_blue.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            msg.robots_blue.emplace_back(to_ros_msg(robot));
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+                convert_to_ros_message(robot, msg.robots_blue.emplace_back());
         }
     }
 
@@ -184,7 +187,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_yellow.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_yellow.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            msg.robots_yellow.emplace_back(to_ros_msg(robot));
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+                convert_to_ros_message(robot, msg.robots_yellow.emplace_back());
         }
     }
 

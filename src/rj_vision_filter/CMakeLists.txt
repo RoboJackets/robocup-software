@@ -18,7 +18,6 @@ find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rj_utils REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_config_client REQUIRED)
@@ -32,7 +31,6 @@ set(RJ_VISION_FILTER_DEPS
   eigen3_cmake_module
   rj_param_utils
   rclcpp
-  rj_utils
   spdlog
   rclcpp_components
   rj_config_client

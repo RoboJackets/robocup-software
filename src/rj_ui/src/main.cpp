@@ -60,7 +60,6 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
     bool blue_team = true;
-    QString cfg_file;
     vector<const char*> play_dirs;
     bool sim = false;
     QString radio_freq;
@@ -91,14 +90,6 @@ int main(int argc, char* argv[]) {
 
             i++;
             radio_freq = argv[i];
-        } else if (strcmp(var, "-c") == 0) {
-            if (i + 1 >= argc) {
-                printf("no config file specified after -c\n");
-                usage(argv[0]);
-            }
-
-            i++;
-            cfg_file = argv[i];
         } else if (strcmp(var, "-s") == 0) {
             if (i + 1 >= argc) {
                 printf("no seed specified after -s\n");
@@ -141,15 +132,6 @@ int main(int argc, char* argv[]) {
 
     printf("seed %016lx\n", seed);
     srand48(seed);
-
-    // Default config file name
-    if (cfg_file.isNull()) {
-        const auto* filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
-        const auto share_dir = ament_index_cpp::get_package_share_directory("rj_utils");
-        const std::string config_path = share_dir + "/config/" + filename;
-
-        cfg_file = QString::fromStdString(config_path);
-    }
 
     // ROS2 init
     rclcpp::init(argc, argv);

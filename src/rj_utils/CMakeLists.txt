@@ -18,7 +18,6 @@ find_package(rj_geometry REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
 add_library(${PROJECT_NAME} SHARED
-  src/conversions.cpp
 )
 
 ament_target_dependencies(${PROJECT_NAME}
