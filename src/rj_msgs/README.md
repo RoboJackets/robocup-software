@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | Holds .msg, .action, and .srv files |
-| **Current responsibilities** | Responsible for all data published/accessed in the codebase |
-| **Out of scope** | N/A |
+| **Plain-language purpose** | Defines message, action, and service types for the entire codebase (with the exception of messages that are specific to geometry and drawing) |
+| **Current responsibilities** | Responsible for all data transferred between nodes that is NOT specific to geometry or drawing |
+| **Out of scope** | This package should only define message, action, and service types; additionally, this package must not attempt to define message types for messages that are related to goemetry and drawing, since we have the rj_geometry_msgs and rj_drawing_msgs packages for that |
 
 ## 2. Dependency Rules
 
@@ -27,7 +27,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | rj_geometry_msgs |
+| **Depends on** | rj_geometry_msgs, std_msgs |
 | **Depended on by** |rj_benchmarking, rj_common, rj_config_client, rj_config_server, rj_control, rj_joystick, rj_param_utils, rj_radio, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_reciever|
 
 
@@ -37,7 +37,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | --- | --- |
 | **Failure behavior** | N/A |
 | **Recovery behavior** | N/A |
-| **Configuration** | N/A |
+| **Configuration** | ManipulatorSetpoint.msg and RobotIntent.msg contain some default values; no other messages, actions, or services do |
 
 ## 4. Testing
 
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | colcon build |
+| **Unit testing** | for each message type, I searched the codebase for references to that message and deleted it if there were none. Then I ran colcon build and ensured that the stack built without error. Then I launched the simulator and ensured that deleting these messages didn't cause any issues. |
 | **Coverage gaps** | N/A |
 | **Observed outliers** | N/A |
