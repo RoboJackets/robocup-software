@@ -37,7 +37,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | --- | --- |
 | **Failure behavior** | N/A |
 | **Recovery behavior** | N/A |
-| **Configuration** | ManipulatorSetpoint.msg and RobotIntent.msg contain some default values; no other messages, actions, or services do |
+| **Configuration** | None |
 
 ## 4. Testing
 
