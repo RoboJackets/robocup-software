@@ -17,13 +17,13 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_constants.hpp>
 #include <rj_common/ui_frame.hpp>
-#include <rj_planning/primitives/motion_constraints.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
+#include <rj_planning/primitives/motion_constraints.hpp>
 #include <rj_utils/log_utils.hpp>
 
 /** class that performs drawing of log data onto the field */
