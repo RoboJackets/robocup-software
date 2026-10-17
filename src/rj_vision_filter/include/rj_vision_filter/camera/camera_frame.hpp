@@ -38,8 +38,7 @@ public:
      * @brief Constructor from DetectionFrameMsg.
      * @param msg
      */
-    CameraFrame(const DetectionFrameMsg& msg,
-                const rj_geometry::TransformMatrix& world_to_team,
+    CameraFrame(const DetectionFrameMsg& msg, const rj_geometry::TransformMatrix& world_to_team,
                 double team_angle)
         : t_capture{rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
               msg.t_capture)},

@@ -142,7 +142,6 @@ struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInst
     }
 };
 
-
 template <>
 struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
     using is_specialized = std::true_type;
@@ -153,8 +152,7 @@ struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
         destination.stamp =
             rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(source.stamp);
         destination.pose =
-            rj_convert::convert_to_ros<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>(
-                source.pose);
+            rj_convert::convert_to_ros<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>(source.pose);
         destination.velocity =
             rj_convert::convert_to_ros<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>(
                 source.velocity);
@@ -171,6 +169,5 @@ struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
             rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp);
     }
 };
-
 
 }  // namespace rclcpp

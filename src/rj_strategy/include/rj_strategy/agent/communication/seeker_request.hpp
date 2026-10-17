@@ -41,11 +41,10 @@ struct TypeAdapter<strategy::communication::SeekerRequest, rj_msgs::msg::SeekerR
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::SeekerRequest{
-            source.request_uid, source.robot_id, source.seeking_point_x,
-            source.seeking_point_y, source.adding};
+        destination = strategy::communication::SeekerRequest{source.request_uid, source.robot_id,
+                                                             source.seeking_point_x,
+                                                             source.seeking_point_y, source.adding};
     }
 };
-
 
 }  // namespace rclcpp

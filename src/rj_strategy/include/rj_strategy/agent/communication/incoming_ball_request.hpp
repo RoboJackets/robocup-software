@@ -25,7 +25,7 @@ namespace rclcpp {
 
 template <>
 struct TypeAdapter<strategy::communication::IncomingBallRequest,
-                    rj_msgs::msg::IncomingBallRequest> {
+                   rj_msgs::msg::IncomingBallRequest> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::IncomingBallRequest;
     using ros_message_type = rj_msgs::msg::IncomingBallRequest;
@@ -36,10 +36,9 @@ struct TypeAdapter<strategy::communication::IncomingBallRequest,
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::IncomingBallRequest{
-            source.request_uid, source.from_robot_id};
+        destination =
+            strategy::communication::IncomingBallRequest{source.request_uid, source.from_robot_id};
     }
 };
-
 
 }  // namespace rclcpp

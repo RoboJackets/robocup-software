@@ -81,9 +81,7 @@ struct TypeAdapter<RJ::Time, rclcpp::Time> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         const int64_t nanos =
-            std::chrono::duration_cast<std::chrono::nanoseconds>(
-                source.time_since_epoch())
-                .count();
+            std::chrono::duration_cast<std::chrono::nanoseconds>(source.time_since_epoch()).count();
         destination = rclcpp::Time{nanos};
     }
 
@@ -105,9 +103,8 @@ struct TypeAdapter<RJ::Time, builtin_interfaces::msg::Time> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination =
-            rj_convert::convert_from_ros<rclcpp::Time, RJ::Time>(
-                rclcpp::Time{source.sec, source.nanosec});
+        destination = rj_convert::convert_from_ros<rclcpp::Time, RJ::Time>(
+            rclcpp::Time{source.sec, source.nanosec});
     }
 };
 //std::chrono::duration_cast<std::chrono::nanoseconds>(value).count()
@@ -118,8 +115,8 @@ struct TypeAdapter<RJ::Seconds, rclcpp::Duration> {
     using ros_message_type = rclcpp::Duration;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination = rclcpp::Duration(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(source));
+        destination =
+            rclcpp::Duration(std::chrono::duration_cast<std::chrono::nanoseconds>(source));
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
@@ -128,7 +125,6 @@ struct TypeAdapter<RJ::Seconds, rclcpp::Duration> {
     }
 };
 
-
 template <>
 struct TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     using is_specialized = std::true_type;
@@ -136,8 +132,8 @@ struct TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     using ros_message_type = builtin_interfaces::msg::Duration;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination = static_cast<builtin_interfaces::msg::Duration>(rclcpp::Duration(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(source)));
+        destination = static_cast<builtin_interfaces::msg::Duration>(
+            rclcpp::Duration(std::chrono::duration_cast<std::chrono::nanoseconds>(source)));
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
@@ -146,6 +142,5 @@ struct TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration> {
         destination = std::chrono::duration_cast<RJ::Seconds>(duration);
     }
 };
-
 
 }  // namespace rclcpp

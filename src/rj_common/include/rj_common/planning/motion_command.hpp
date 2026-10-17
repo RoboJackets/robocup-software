@@ -132,18 +132,17 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert the LinearMotionInstant msg to cpp
         if (!source.target.empty()) {
-            result.target = rj_convert::convert_from_ros<rj_msgs::msg::LinearMotionInstant,
-                                                        planning::LinearMotionInstant>(
-                source.target[0]);
+            result.target =
+                rj_convert::convert_from_ros<rj_msgs::msg::LinearMotionInstant,
+                                             planning::LinearMotionInstant>(source.target[0]);
         }
 
         // convert one of the angle overrides to PathTargetFaceOption
         if (!source.override_angle.empty()) {
             result.face_option = planning::FaceAngle{source.override_angle.front()};
         } else if (!source.override_face_point.empty()) {
-            result.face_option =
-                planning::FacePoint{rj_convert::convert_from_ros<
-                    rj_geometry_msgs::msg::Point, rj_geometry::Point>(
+            result.face_option = planning::FacePoint{
+                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
                     source.override_face_point.front())};
         } else if (!source.face_ball.empty()) {
             result.face_option = planning::FaceBall{};
@@ -159,8 +158,9 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert pivot_point
         if (!source.pivot_point.empty()) {
-            result.pivot_point = rj_convert::convert_from_ros<
-                rj_geometry_msgs::msg::Point, rj_geometry::Point>(source.pivot_point[0]);
+            result.pivot_point =
+                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
+                    source.pivot_point[0]);
         }
 
         if (!source.pivot_radius.empty()) {
@@ -170,6 +170,5 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         destination = result;
     }
 };
-
 
 }  // namespace rclcpp

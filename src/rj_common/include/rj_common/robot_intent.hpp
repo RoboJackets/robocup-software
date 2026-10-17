@@ -70,8 +70,8 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
             rj_convert::convert_from_ros<rj_msgs::msg::MotionCommand, planning::MotionCommand>(
                 source.motion_command);
         destination.local_obstacles =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::ShapeSet,
-                                         rj_geometry::ShapeSet>(source.local_obstacles);
+            rj_convert::convert_from_ros<rj_geometry_msgs::msg::ShapeSet, rj_geometry::ShapeSet>(
+                source.local_obstacles);
         destination.shoot_mode = static_cast<RobotIntent::ShootMode>(source.shoot_mode);
         destination.trigger_mode = static_cast<RobotIntent::TriggerMode>(source.trigger_mode);
         destination.dribbler_mode = static_cast<RobotIntent::DribblerMode>(source.dribbler_mode);
@@ -80,7 +80,6 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
         destination.priority = source.priority;
     }
 };
-
 
 }  // namespace rclcpp
 

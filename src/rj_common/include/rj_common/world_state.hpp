@@ -207,14 +207,13 @@ struct TypeAdapter<RobotState, RobotState::Msg> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination.timestamp = rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(
-            source.stamp);
+        destination.timestamp =
+            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp);
         rj_convert::convert_from_ros(source.pose, &destination.pose);
         rj_convert::convert_from_ros(source.velocity, &destination.velocity);
         rj_convert::convert_from_ros(source.visible, &destination.visible);
     }
 };
-
 
 template <>
 struct TypeAdapter<BallState, BallState::Msg> {
@@ -237,7 +236,6 @@ struct TypeAdapter<BallState, BallState::Msg> {
     }
 };
 
-
 template <>
 struct TypeAdapter<WorldState, WorldState::Msg> {
     using is_specialized = std::true_type;
@@ -258,7 +256,6 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
         rj_convert::convert_from_ros(source.last_update_time, &destination.last_updated_time);
     }
 };
-
 
 }  // namespace rclcpp
 

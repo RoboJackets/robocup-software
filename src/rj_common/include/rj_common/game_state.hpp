@@ -268,7 +268,6 @@ struct TypeAdapter<MatchState, rj_msgs::msg::MatchState> {
     }
 };
 
-
 template <>
 struct TypeAdapter<PlayState::State, uint8_t> {
     using is_specialized = std::true_type;
@@ -326,7 +325,6 @@ struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
                 source.placement_point));
     }
 };
-
 
 }  // namespace rclcpp
 

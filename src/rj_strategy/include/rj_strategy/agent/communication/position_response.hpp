@@ -35,10 +35,9 @@ struct TypeAdapter<strategy::communication::PositionResponse, rj_msgs::msg::Posi
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = strategy::communication::PositionResponse{
-            source.response_uid, source.position};
+        destination =
+            strategy::communication::PositionResponse{source.response_uid, source.position};
     }
 };
-
 
 }  // namespace rclcpp

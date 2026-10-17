@@ -389,14 +389,13 @@ struct TypeAdapter<FieldDimensions, FieldDimensions::Msg> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = FieldDimensions(
-            source.length, source.width, source.border, source.line_width, source.goal_width,
-            source.goal_depth, source.goal_height, source.penalty_short_dist,
-            source.penalty_long_dist, source.center_radius, source.center_diameter,
-            source.goal_flat, source.floor_length, source.floor_width);
+        destination = FieldDimensions(source.length, source.width, source.border, source.line_width,
+                                      source.goal_width, source.goal_depth, source.goal_height,
+                                      source.penalty_short_dist, source.penalty_long_dist,
+                                      source.center_radius, source.center_diameter,
+                                      source.goal_flat, source.floor_length, source.floor_width);
     }
 };
-
 
 }  // namespace rclcpp
 

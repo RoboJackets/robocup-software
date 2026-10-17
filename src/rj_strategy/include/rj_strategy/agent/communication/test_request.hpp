@@ -37,5 +37,4 @@ struct TypeAdapter<strategy::communication::TestRequest, rj_msgs::msg::TestReque
     }
 };
 
-
 }  // namespace rclcpp

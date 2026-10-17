@@ -1,11 +1,11 @@
 #pragma once
 
-#include <rclcpp/type_adapter.hpp>
-
 #include <cstddef>
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <rclcpp/type_adapter.hpp>
 
 namespace rclcpp {
 
@@ -19,9 +19,8 @@ struct vector_item_is_adaptable
 }  // namespace detail
 
 template <typename CustomItem, typename RosItem>
-struct TypeAdapter<
-    std::vector<CustomItem>, std::vector<RosItem>,
-    std::enable_if_t<detail::vector_item_is_adaptable<CustomItem, RosItem>::value>> {
+struct TypeAdapter<std::vector<CustomItem>, std::vector<RosItem>,
+                   std::enable_if_t<detail::vector_item_is_adaptable<CustomItem, RosItem>::value>> {
     using is_specialized = std::true_type;
     using custom_type = std::vector<CustomItem>;
     using ros_message_type = std::vector<RosItem>;

@@ -100,7 +100,7 @@ TEST(ROSMsgConversionNoop, RobotState) {
 }
 
 TEST(ROSMsgConversionNoop, BallState) {
-test_lossless_convert_cpp_value<BallState, BallState::Msg>(get_random_ball_state());
+    test_lossless_convert_cpp_value<BallState, BallState::Msg>(get_random_ball_state());
 }
 
 TEST(ROSMsgConversionNoop, WorldState) {

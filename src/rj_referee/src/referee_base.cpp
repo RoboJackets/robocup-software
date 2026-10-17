@@ -15,21 +15,19 @@ RefereeBase::RefereeBase(const std::string& name)
     our_team_info_pub_ = create_publisher<TeamInfo>(referee::topics::kOurInfoTopic, keep_latest);
     their_team_info_pub_ =
         create_publisher<TeamInfo>(referee::topics::kTheirInfoTopic, keep_latest);
-    play_state_pub_ =
-        create_publisher<PlayState>(referee::topics::kPlayStateTopic, keep_latest);
-    match_state_pub_ =
-        create_publisher<MatchState>(referee::topics::kMatchStateTopic, keep_latest);
+    play_state_pub_ = create_publisher<PlayState>(referee::topics::kPlayStateTopic, keep_latest);
+    match_state_pub_ = create_publisher<MatchState>(referee::topics::kMatchStateTopic, keep_latest);
 
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
-    world_state_sub_ = create_subscription<WorldState>(
-        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::ConstSharedPtr msg) {
-            const BallState& ball_state = msg->ball;
-            if (spin_kick_detector(ball_state.position)) {
-                send();
-            }
-        });
+    world_state_sub_ =
+        create_subscription<WorldState>(vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+                                        [this](WorldState::ConstSharedPtr msg) {
+                                            const BallState& ball_state = msg->ball;
+                                            if (spin_kick_detector(ball_state.position)) {
+                                                send();
+                                            }
+                                        });
 }
 
 void RefereeBase::set_period(MatchState::Period period) { match_state_.period = period; }
