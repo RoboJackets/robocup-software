@@ -55,6 +55,11 @@ namespace strategy {
         */
         std::optional<RobotIntent> state_to_task(RobotIntent intent);
 
+        /**
+        * @return the current state of the runner as a string
+        */
+        std::string get_current_state() override;
+
         State current_state_ = State::DEFAULT;
 
         /**
