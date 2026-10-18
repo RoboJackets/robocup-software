@@ -30,7 +30,7 @@ rosidl_generate_interfaces(
   msg/DetectionRobot.msg
   msg/FieldDimensions.msg
   msg/GameSettings.msg
-  msg/Goalie.msg
+  msg/GoalieID.msg
   msg/ManipulatorSetpoint.msg
   msg/MatchState.msg
   msg/MotionSetpoint.msg

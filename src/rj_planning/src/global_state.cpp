@@ -19,9 +19,9 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             auto lock = std::lock_guard(last_game_settings_mutex_);
             last_game_settings_ = rj_convert::convert_from_ros(*settings);
         });
-    goalie_sub_ = node->create_subscription<rj_msgs::msg::Goalie>(
+    goalie_sub_ = node->create_subscription<rj_msgs::msg::GoalieID>(
         referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::Goalie::SharedPtr goalie) {  // NOLINT
+        [this](rj_msgs::msg::GoalieID::SharedPtr goalie) {  // NOLINT
             auto lock = std::lock_guard(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
         });

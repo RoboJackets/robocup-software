@@ -37,7 +37,7 @@ public:
 private:
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
+    rclcpp::Subscription<rj_msgs::msg::GoalieID>::SharedPtr goalie_sub_;
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 

@@ -19,7 +19,7 @@
 
 namespace referee {
 
-using GoalieMsg = rj_msgs::msg::Goalie;
+using GoalieMsg = rj_msgs::msg::GoalieID;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 

@@ -62,7 +62,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
+    rclcpp::Subscription<rj_msgs::msg::GoalieID>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
     rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)

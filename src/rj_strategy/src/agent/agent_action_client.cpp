@@ -39,9 +39,9 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
         "config/game_settings", 1,
         [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
+    goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::GoalieID>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::Goalie::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
+        [this](rj_msgs::msg::GoalieID::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
 
     override_play_sub_ = node_->create_subscription<rj_msgs::msg::OverridePosition>(
         "override_position/robot_" + std::to_string(r_id), 1,

@@ -20,7 +20,7 @@ namespace ros2_temp {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
 using PlayStateMsg = rj_msgs::msg::PlayState;
 using MatchStateMsg = rj_msgs::msg::MatchState;
-using GoalieMsg = rj_msgs::msg::Goalie;
+using GoalieMsg = rj_msgs::msg::GoalieID;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 
