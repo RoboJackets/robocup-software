@@ -33,7 +33,6 @@ public:
      *  - returns whether the robot would collide with Shape at that position
      */
     [[nodiscard]] virtual bool near_point(const Point& p, float clearance) const = 0;
-    // previously called hit ^ (a note for myself when refactoring, if you see this later, delete)
 
     /**
      * Returns True if any part of the given segment lies within the shape (boundary-inclusive).
