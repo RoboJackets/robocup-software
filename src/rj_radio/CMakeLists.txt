@@ -26,6 +26,7 @@ find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
+find_package(std_msgs REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
@@ -89,5 +90,7 @@ install(
   TARGETS network_radio_node sim_radio_node
   DESTINATION lib/${PROJECT_NAME}
 )
+
+add_subdirectory(src/soccer_mom)
 
 ament_package()
