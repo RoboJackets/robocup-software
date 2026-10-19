@@ -55,7 +55,9 @@ Trajectory LineKickPathPlanner::initial(const PlanRequest& plan_request) {
     auto distance_from_ball = kBallRadius + kRobotRadius + kAvoidBallBy * 1;
 
     // In case the ball is (slowly) moving
-    auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn}, plan_request.params->ball_decay_constant).position;
+    auto ball_position = ball.predict_at(RJ::now() + RJ::Seconds{kPredictIn},
+                                         plan_request.params->ball_decay_constant)
+                             .position;
 
     // Along the vector from the goal to ball
     auto goal_to_ball = (plan_request.motion_command.target.position - ball_position);

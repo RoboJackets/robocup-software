@@ -130,7 +130,6 @@ private:
     double param_timeout_{0};
 
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr timeout_callback_handle_;
-
 };
 
 }  // namespace radio

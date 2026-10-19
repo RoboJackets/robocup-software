@@ -280,7 +280,8 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     for (double dist = params_->settle.search_start_dist; dist < params_->settle.search_end_dist;
          dist += params_->settle.search_inc_dist) {
         // Time for ball to reach the target point
-        std::optional<RJ::Seconds> maybe_ball_time = ball.query_seconds_to_dist(dist, params_->ball_decay_constant);
+        std::optional<RJ::Seconds> maybe_ball_time =
+            ball.query_seconds_to_dist(dist, params_->ball_decay_constant);
 
         if (!maybe_ball_time.has_value()) {
             break;
