@@ -37,7 +37,7 @@ VisionReceiver::VisionReceiver()
     param_port_ = declare_required_param<int>(
         *this, "port", "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
     // The hardware interface to use.
-    this->get_parameter("interface", param_vision_interface_);
+    this->get_parameter("vision_interface", param_vision_interface_);
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
     SPDLOG_INFO("VisionReceiver vision_interface: {}", param_vision_interface_);
 
