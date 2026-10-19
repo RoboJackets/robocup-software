@@ -4,9 +4,7 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     current_state_ = next_state();
@@ -76,14 +74,11 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     }
 
     auto motion_command = planning::MotionCommand{
-        "path_target", 
-        planning::LinearMotionInstant{target, rj_geometry::Point{0.0, 0.0}}, 
-        planning::FaceAngle{0},
-        true
-    };
+        "path_target", planning::LinearMotionInstant{target, rj_geometry::Point{0.0, 0.0}},
+        planning::FaceAngle{0}, true};
 
     intent.motion_command = motion_command;
     return intent;
 }
 
-}
+}  // namespace strategy

@@ -7,11 +7,11 @@
 
 namespace tutorial {
 
-
 class SoccerMom : public rclcpp::Node {
-public: 
-    SoccerMom();    
-private: 
+public:
+    SoccerMom();
+
+private:
     // Ros subscriber for the team's color.
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
 
@@ -24,5 +24,4 @@ private:
     void publish_team_fruit(bool is_blue);
 };
 
-
-} // namespace tutorial
+}  // namespace tutorial
