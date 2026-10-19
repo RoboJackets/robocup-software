@@ -178,9 +178,9 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
                 world_.resize_cameras();
             }
             if (update_timer_period) {
-                publish_timer_ = create_wall_timer(
-                    std::chrono::duration<double>(params_->vision_loop_dt),
-                    [this]() { publish_state(); });
+                publish_timer_ =
+                    create_wall_timer(std::chrono::duration<double>(params_->vision_loop_dt),
+                                      [this]() { publish_state(); });
             }
 
             return result;
