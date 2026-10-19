@@ -69,9 +69,11 @@ ament_target_dependencies(${PROJECT_NAME}
 
 add_executable(network_radio_node src/network_radio.cpp)
 add_executable(sim_radio_node src/sim_radio.cpp)
+add_executable(soccer_mom_node src/soccer_mom.cpp)
 
 target_link_libraries(network_radio_node PRIVATE ${PROJECT_NAME})
 target_link_libraries(sim_radio_node PRIVATE ${PROJECT_NAME})
+target_link_libraries(soccer_mom_node PRIVATE ${PROJECT_NAME})
 
 install(
   DIRECTORY include/
@@ -86,7 +88,7 @@ install(
 )
 
 install(
-  TARGETS network_radio_node sim_radio_node
+  TARGETS network_radio_node sim_radio_node soccer_mom_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
