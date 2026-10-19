@@ -5,7 +5,6 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
-#include <rj_constants/constants.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>

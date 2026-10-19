@@ -1,5 +1,5 @@
+#include <rj_common/topic_names.hpp>
 #include <rj_config_client/config_client.hpp>
-#include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging_macros.hpp>
 
 namespace config_client {

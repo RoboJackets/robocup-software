@@ -10,7 +10,6 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>rj_msgs</depend>
-  <depend>rj_constants</depend>
   <depend>rj_common</depend>
   <depend>rj_utils</depend>
   <depend>fmt</depend>

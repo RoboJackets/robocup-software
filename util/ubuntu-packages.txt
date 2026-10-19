@@ -78,7 +78,6 @@ libglu1-mesa-dev
 
 # everything else...
 build-essential
-libflann-dev
 libgtest-dev
 libusb-1.0-0-dev
 liblz4-dev

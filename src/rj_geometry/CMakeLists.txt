@@ -15,7 +15,6 @@ find_package(eigen3_cmake_module REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_protos REQUIRED)
-find_package(rj_constants REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -25,7 +24,6 @@ set(RJ_GEOMETRY_DEPS
   Eigen3
   fmt
   rj_protos
-  rj_constants
   rj_convert
   rj_geometry_msgs
 )

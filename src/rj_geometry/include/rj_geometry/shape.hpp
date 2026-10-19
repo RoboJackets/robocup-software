@@ -24,7 +24,7 @@ public:
     [[nodiscard]] virtual bool contains_point(Point) const = 0;
 
     // TODO(1517): Refactor hit so that it doesn't force implementations to
-    // have a dependency on RobotRadius in rj_constants
+    // have a dependency on RobotRadius in rj_geometry
     // Returns true if the given point is within one robot radius of the shape
     [[nodiscard]] virtual bool hit(Point) const = 0;
 

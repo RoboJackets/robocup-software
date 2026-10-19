@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include <rj_constants/constants.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_param_utils/param.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>

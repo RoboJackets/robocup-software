@@ -14,7 +14,6 @@
   <depend>std_msgs</depend>
 
   <depend>rj_protos</depend>
-  <depend>rj_constants</depend>
   <depend>rj_convert</depend>
   <depend>rj_geometry_msgs</depend>
 

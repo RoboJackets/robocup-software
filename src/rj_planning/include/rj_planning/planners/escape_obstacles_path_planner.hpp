@@ -6,15 +6,12 @@
 
 #include <rj_geometry/point.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
-#include <rj_rrt/Tree.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"
 #include "rj_planning/primitives/create_path.hpp"
-#include "rj_planning/primitives/robo_cup_state_space.hpp"
-#include "rj_planning/primitives/rrt_util.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -45,10 +42,6 @@ public:
 
     Trajectory plan(const PlanRequest& plan_request) override;
 
-    /// Uses an RRT to find a point near to @pt that isn't blocked by obstacles.
-    /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
-    /// by a configurable threshold.
-    /// @param rrt_logger Optional callback to log the rrt tree after it's built
     static rj_geometry::Point find_non_blocked_goal(rj_geometry::Point pt,
                                                     std::optional<rj_geometry::Point> prev_pt,
                                                     const ObstacleSet& obstacles,
