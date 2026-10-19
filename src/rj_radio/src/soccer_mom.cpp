@@ -25,7 +25,7 @@ void SoccerMom::timer_callback() {
 
 // subscribes to the team_color topic and updates the variable
 void SoccerMom::topic_callback(const rj_msgs::msg::TeamColor::SharedPtr msg) {
-    team_color_ = msg->is_blue ? "blue" : "yellow";
+    team_color_ = msg->is_blue ? "blueberries" : "bananas";
 }
 }  // namespace tutorial
 
