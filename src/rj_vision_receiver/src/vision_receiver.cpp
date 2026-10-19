@@ -109,7 +109,8 @@ void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int
     socket_.bind(udp::endpoint(udp::v4(), port),
                  bind_error);  // NOLINT(bugprone-unused-return-value)
     if (static_cast<bool>(bind_error)) {
-        RCLCPP_ERROR_STREAM(get_logger(), "Vision port bind failed with error: " << bind_error.message());
+        RCLCPP_ERROR_STREAM(get_logger(),
+                            "Vision port bind failed with error: " << bind_error.message());
         return;
     }
 
@@ -237,8 +238,8 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
     stamped_packet->receive_time = get_clock()->now();
     if (!stamped_packet->wrapper.ParseFromArray(&recv_buffer_[0], num_bytes)) {
         RCLCPP_ERROR_STREAM(get_logger(), "Got bad packet of " << num_bytes << " bytes from "
-                                             << sender_endpoint_.address() << ":"
-                                             << sender_endpoint_.port());
+                                                               << sender_endpoint_.address() << ":"
+                                                               << sender_endpoint_.port());
         return;
     }
 
@@ -333,7 +334,8 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
 
         config_.update_field_dimensions(rj_convert::convert_to_ros(new_field_dim));
     } else {
-        RCLCPP_ERROR(get_logger(), "Error: failed to decode SSL geometry packet. Not resizing field.");
+        RCLCPP_ERROR(get_logger(),
+                     "Error: failed to decode SSL geometry packet. Not resizing field.");
     }
 }
 }  // namespace vision_receiver

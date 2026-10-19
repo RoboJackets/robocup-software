@@ -34,12 +34,9 @@ bool ConfigClient::connected() const {
     static bool prev_connected = false;
 
     if (!have_msg) {
-        RCLCPP_INFO_STREAM_THROTTLE(
-            node_->get_logger(),
-            *node_->get_clock(),
-            1000, // 1000ms
-            "[ConfigClient] Waiting on ConfigServer..."
-        );
+        RCLCPP_INFO_STREAM_THROTTLE(node_->get_logger(), *node_->get_clock(),
+                                    1000,  // 1000ms
+                                    "[ConfigClient] Waiting on ConfigServer...");
     }
 
     if (!prev_connected && have_msg) {

@@ -92,15 +92,14 @@ public:
 private:
     /**
      * @brief Convert a QColor to a 32-bit color value.
-     * 
+     *
      * @param color The QColor object to convert.
-     * @return constexpr uint32_t 
+     * @return constexpr uint32_t
      */
     uint32_t color(const QColor& color) const {
         return (static_cast<uint32_t>(color.alpha()) << 24) |
                (static_cast<uint32_t>(color.red()) << 16) |
-               (static_cast<uint32_t>(color.green()) << 8) |
-               static_cast<uint32_t>(color.blue());
+               (static_cast<uint32_t>(color.green()) << 8) | static_cast<uint32_t>(color.blue());
     }
 
     /// Number of debug layers

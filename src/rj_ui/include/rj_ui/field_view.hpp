@@ -97,29 +97,22 @@ protected:
 protected:
     /**
      * @brief Converts a 32-bit color value to a QColor object.
-     * 
+     *
      * @param value The 32-bit color value to convert.
-     * @return constexpr QColor 
+     * @return constexpr QColor
      */
     constexpr QColor qcolor(uint32_t value) {
-        return QColor(
-            static_cast<uint8_t>(value >> 24),
-            static_cast<uint8_t>(value >> 16),
-            static_cast<uint8_t>(value >> 8),
-            static_cast<uint8_t>(value)
-        );
+        return QColor(static_cast<uint8_t>(value >> 24), static_cast<uint8_t>(value >> 16),
+                      static_cast<uint8_t>(value >> 8), static_cast<uint8_t>(value));
     }
 
     /**
      * @brief Converts a rj_geometry::Point to a QPointF.
-     * 
+     *
      * @param pt The rj_geometry::Point to convert.
-     * @return constexpr QPointF 
+     * @return constexpr QPointF
      */
-    QPointF qpointf(const rj_geometry::Point& pt) const {
-        return QPointF(pt.x(), pt.y());
-    }
-
+    QPointF qpointf(const rj_geometry::Point& pt) const { return QPointF(pt.x(), pt.y()); }
 
     // Returns a pointer to the most recent frame, or null if none is available.
     std::shared_ptr<rj_common::UIFrame> currentFrame();
