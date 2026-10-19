@@ -76,10 +76,9 @@ struct WorldRobotParams {
 
 /**
  * @brief All tunable parameters for the vision filter. VisionFilter reads
- * every field from its ROS2 parameters once at startup (all keys are
- * required) and shares them as a shared_ptr<const> with the
- * plain (non-Node) classes that use them. The defaults below are only used
- * by unit tests that construct the struct directly.
+ * every field from its ROS2 parameters at startup (all keys are required) and
+ * shares them with the plain (non-Node) classes that use them. The defaults
+ * below are only used by unit tests that construct the struct directly.
  */
 struct VisionFilterParams {
     double vision_loop_dt = 1.0 / 60.0;

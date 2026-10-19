@@ -8,8 +8,8 @@
 
 namespace vision_filter {
 namespace {
-/// Declares every vision filter param (all required, no defaults) and reads it once.
-std::shared_ptr<const VisionFilterParams> load_vision_filter_params(rclcpp::Node& node) {
+/// Declares every vision filter param (all required, no defaults) and reads it.
+std::shared_ptr<VisionFilterParams> load_vision_filter_params(rclcpp::Node& node) {
     VisionFilterParams p{};
     auto require = [&node](auto& field, const std::string& name, const std::string& desc) {
         field = rj_utils::declare_required_param<std::decay_t<decltype(field)>>(node, name, desc);
@@ -78,7 +78,7 @@ std::shared_ptr<const VisionFilterParams> load_vision_filter_params(rclcpp::Node
             "Exponent applied to filter health when merging balls across cameras");
     require(p.world_robot.robot_merger_power, "world_robot.robot_merger_power",
             "Exponent applied to filter health when merging robots across cameras");
-    return std::make_shared<const VisionFilterParams>(p);
+    return std::make_shared<VisionFilterParams>(p);
 }
 }  // namespace
 
@@ -92,6 +92,99 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     const std::chrono::duration<double> predict_timer_period(params_->vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
+    param_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& parameters) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            bool update_timer_period = false;
+            bool update_camera_count = false;
+
+            for (const auto& parameter : parameters) {
+                const auto& name = parameter.get_name();
+                if (name == "vision_loop_dt") {
+                    params_->vision_loop_dt = parameter.as_double();
+                    update_timer_period = true;
+                } else if (name == "max_num_cameras") {
+                    params_->max_num_cameras = parameter.as_int();
+                    update_camera_count = true;
+                } else if (name == "ball.init_covariance") {
+                    params_->ball.init_covariance = parameter.as_double();
+                } else if (name == "ball.process_noise") {
+                    params_->ball.process_noise = parameter.as_double();
+                } else if (name == "ball.observation_noise") {
+                    params_->ball.observation_noise = parameter.as_double();
+                } else if (name == "robot.init_covariance") {
+                    params_->robot.init_covariance = parameter.as_double();
+                } else if (name == "robot.process_noise") {
+                    params_->robot.process_noise = parameter.as_double();
+                } else if (name == "robot.observation_noise") {
+                    params_->robot.observation_noise = parameter.as_double();
+                } else if (name == "robot.orientation_scale") {
+                    params_->robot.orientation_scale = parameter.as_double();
+                } else if (name == "camera.mhkf_radius_cutoff") {
+                    params_->camera.mhkf_radius_cutoff = parameter.as_double();
+                } else if (name == "camera.use_mhkf") {
+                    params_->camera.use_mhkf = parameter.as_bool();
+                } else if (name == "camera.max_num_kalman_balls") {
+                    params_->camera.max_num_kalman_balls = parameter.as_int();
+                } else if (name == "camera.max_num_kalman_robots") {
+                    params_->camera.max_num_kalman_robots = parameter.as_int();
+                } else if (name == "kalman_ball.max_time_outside_vision") {
+                    params_->kalman_ball.max_time_outside_vision = parameter.as_double();
+                } else if (name == "kalman_robot.max_time_outside_vision") {
+                    params_->kalman_robot.max_time_outside_vision = parameter.as_double();
+                } else if (name == "filter.health.init") {
+                    params_->filter_health.init = parameter.as_int();
+                } else if (name == "filter.health.inc") {
+                    params_->filter_health.inc = parameter.as_int();
+                } else if (name == "filter.health.dec") {
+                    params_->filter_health.dec = parameter.as_int();
+                } else if (name == "filter.health.max") {
+                    params_->filter_health.max = parameter.as_int();
+                } else if (name == "filter.health.min") {
+                    params_->filter_health.min = parameter.as_int();
+                } else if (name == "kick.detector.slow_kick_hist_length") {
+                    params_->kick_detector.slow_kick_hist_length = parameter.as_int();
+                } else if (name == "kick.detector.fast_kick_hist_length") {
+                    params_->kick_detector.fast_kick_hist_length = parameter.as_int();
+                } else if (name == "kick.detector.fast_kick_timeout") {
+                    params_->kick_detector.fast_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.slow_kick_timeout") {
+                    params_->kick_detector.slow_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.same_kick_timeout") {
+                    params_->kick_detector.same_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.fast_acceleration_trigger") {
+                    params_->kick_detector.fast_acceleration_trigger = parameter.as_double();
+                } else if (name == "kick.detector.slow_one_robot_within_dist") {
+                    params_->kick_detector.slow_one_robot_within_dist = parameter.as_double();
+                } else if (name == "kick.detector.slow_any_robot_past_dist") {
+                    params_->kick_detector.slow_any_robot_past_dist = parameter.as_double();
+                } else if (name == "kick.detector.slow_min_ball_speed") {
+                    params_->kick_detector.slow_min_ball_speed = parameter.as_double();
+                } else if (name == "kick.detector.slow_max_kick_angle") {
+                    params_->kick_detector.slow_max_kick_angle = parameter.as_double();
+                } else if (name == "vision_filter.bounce.robot_body_angle_dampen") {
+                    params_->bounce.robot_body_angle_dampen = parameter.as_double();
+                } else if (name == "vision_filter.bounce.robot_mouth_angle_dampen") {
+                    params_->bounce.robot_mouth_angle_dampen = parameter.as_double();
+                } else if (name == "world_ball.ball_merger_power") {
+                    params_->world_ball.ball_merger_power = parameter.as_double();
+                } else if (name == "world_robot.robot_merger_power") {
+                    params_->world_robot.robot_merger_power = parameter.as_double();
+                }
+            }
+
+            if (update_camera_count) {
+                world_.resize_cameras();
+            }
+            if (update_timer_period) {
+                publish_timer_ = create_wall_timer(
+                    std::chrono::duration<double>(params_->vision_loop_dt),
+                    [this]() { publish_state(); });
+            }
+
+            return result;
+        });
 
     team_color_sub_ = create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1),

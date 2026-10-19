@@ -23,6 +23,8 @@ public:
      */
     explicit World(std::shared_ptr<const VisionFilterParams> params);
 
+    void resize_cameras();
+
     /**
      * Updates all the child cameras given a set of new camera frames
      *

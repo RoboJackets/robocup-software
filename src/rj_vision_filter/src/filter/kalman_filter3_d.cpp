@@ -8,7 +8,7 @@ KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
 KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
                                const std::shared_ptr<const VisionFilterParams>& params)
-    : KalmanFilter(6, 3) {
+    : KalmanFilter(6, 3), params_(params) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
         init_twist.linear().y(), init_pose.heading(), init_twist.angular();
@@ -30,18 +30,6 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     P_k_k1_ = P_k1_k1_;
     P_k_k_ = P_k1_k1_;
 
-    // State transition matrix (A)
-    // Pos, velocity, theta integrator. Assume constant velocity
-    double dt = params->vision_loop_dt;
-    // clang-format off
-    F_k_ << 1, dt,  0,  0,  0,  0,
-            0,  1,  0,  0,  0,  0,
-            0,  0,  1, dt,  0,  0,
-            0,  0,  0,  1,  0,  0,
-            0,  0,  0,  0,  1, dt,
-            0,  0,  0,  0,  0,  1;
-    // clang-format on
-
     // Control transition matrix (B)
     // No inputs. Possible to update for our robots since we know our accel/vel
     // command
@@ -60,6 +48,26 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
             0, 0, 0, 0, 1, 0;
     // clang-format on
 
+    update_matrices();
+}
+
+void KalmanFilter3D::update_matrices() {
+    const double dt = params_->vision_loop_dt;
+    const double p = params_->robot.process_noise;
+    const double s = params_->robot.orientation_scale;
+    const double o = params_->robot.observation_noise;
+
+    // State transition matrix (A)
+    // Pos, velocity, theta integrator. Assume constant velocity
+    // clang-format off
+    F_k_ << 1, dt,  0,  0,  0,  0,
+            0,  1,  0,  0,  0,  0,
+            0,  0,  1, dt,  0,  0,
+            0,  0,  0,  1,  0,  0,
+            0,  0,  0,  0,  1, dt,
+            0,  0,  0,  0,  0,  1;
+    // clang-format on
+
     // Covariance of process noise (how wrong A is)
     // Based on a guassian white noise w_k in x_dot = A*x + B*u + G*w
     // The noise can be propogated through the model resulting in a process
@@ -72,7 +80,6 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // sigma^2) Note: T is the sample period Taken from Tiger's AutoRef. Most
     // likely found through integration of error through the state matrices See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
-    p = params->robot.process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -88,7 +95,6 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = params->robot.observation_noise;
     // clang-format off
     R_k_ << o,   0,   0,
             0,   o,   0,
@@ -96,7 +102,13 @@ KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist i
     // clang-format on
 }
 
+void KalmanFilter3D::predict() {
+    update_matrices();
+    KalmanFilter::predict();
+}
+
 void KalmanFilter3D::predict_with_update(rj_geometry::Pose observation) {
+    update_matrices();
     z_k_ << observation.position().x(), observation.position().y(), observation.heading();
 
     KalmanFilter::predict_with_update();

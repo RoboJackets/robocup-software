@@ -50,6 +50,7 @@ void KalmanRobot::predict_and_update(RJ::Time current_time, CameraRobot update_r
     health_ = std::min(health_ + params_->filter_health.inc, params_->filter_health.max);
 
     // Keep last X camera observations in list for kick detection and filtering
+    previous_measurements_.set_capacity(params_->kick_detector.slow_kick_hist_length);
     previous_measurements_.push_back(update_robot);
 
     // Unwrap theta so we have a continuous heading

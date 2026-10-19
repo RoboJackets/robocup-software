@@ -11,6 +11,10 @@ World::World(std::shared_ptr<const VisionFilterParams> params)
       fast_kick_(params_),
       slow_kick_(params_) {}
 
+void World::resize_cameras() {
+    cameras_.resize(params_->max_num_cameras, Camera(params_));
+}
+
 void World::update_single_camera(RJ::Time calc_time, const CameraFrame& frame) {
     update_with_camera_frame(calc_time, {frame}, false);
 }
