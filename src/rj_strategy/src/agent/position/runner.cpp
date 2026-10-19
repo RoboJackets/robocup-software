@@ -47,10 +47,10 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     rj_geometry::Point vertex{-0.5, 1.0};
 
     switch (current_state_) {
-        case GO_TO_A: vertex = {-0.5, 1.0}; break;
-        case GO_TO_B: vertex = {0.5, 1.0}; break;
-        case GO_TO_C: vertex = {0.5, 2.0}; break;
-        case GO_TO_D: vertex = {-0.5, 2.0}; break;
+        case GO_TO_A: vertex = {-0.5, 2.5}; break;
+        case GO_TO_B: vertex = {0.5, 2.5}; break;
+        case GO_TO_C: vertex = {0.5, 6}; break;
+        case GO_TO_D: vertex = {-0.5, 6}; break;
     }
 
     planning::LinearMotionInstant target{vertex};
