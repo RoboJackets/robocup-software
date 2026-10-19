@@ -29,7 +29,9 @@ public:
      * @note if start or end is out of range, an assertion will be thrown
      */
     Arc(Point center, float radius, float start, float end) {
-        assert(radius >= 0);
+        assert(0 <= radius);
+        assert(-M_PI <= start && start <= M_PI);
+        assert(-M_PI <= end && end <= M_PI);
         assert(start <= end);
         center_ = center;
         radius_ = radius;
@@ -48,27 +50,25 @@ public:
         center_ = center;
     }
     void set_radius(float radius) {
-        assert(radius >= 0);
+        assert(0 <= radius);
         radius_ = radius;
     }
     void set_start(float start) {
+        assert(-M_PI <= start && start <= M_PI);
         assert(start <= end_angle_);
         start_angle_ = start;
     }
     void set_end(float end) {
+        assert(-M_PI <= end && end <= M_PI);
         assert(start_angle_ <= end);
         end_angle_ = end;
     }
-
 
     /** Geometry */
     std::vector<Point> intersects(const Line& line) const;
     std::vector<Point> intersects(const Segment& segment) const;
 
-    /** DEPRECATE */
-    float radius_sq() const { return radius_ * radius_; }
-
-private:
+protected:
     Point center_;
     float radius_;
     float start_angle_;
