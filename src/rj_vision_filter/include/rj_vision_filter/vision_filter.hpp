@@ -87,11 +87,11 @@ private:
     }
 
     /**
-     * @brief Vision filter parameters, read once at startup and shared
-     * read-only with world_ and everything it owns. Declared before world_ so
-     * they are ready when its constructor runs.
+     * @brief Vision filter parameters shared with world_ and everything it
+     * owns. Declared before world_ so they are ready when its constructor runs.
      */
-    std::shared_ptr<const VisionFilterParams> params_;
+    std::shared_ptr<VisionFilterParams> params_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
     /**
      * @brief State of the world, ie. robots and ball.

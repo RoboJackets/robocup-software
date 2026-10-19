@@ -24,6 +24,8 @@ public:
     KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel,
                    const std::shared_ptr<const VisionFilterParams>& params);
 
+    void predict();
+
     /**
      * Predicts with update
      * Overrides the standard PredictWithUpdate and sets the z_k automatically
@@ -58,5 +60,10 @@ public:
      * @param new_vel New velocity to use
      */
     void set_vel(rj_geometry::Point new_vel);
+
+private:
+    void update_matrices();
+
+    std::shared_ptr<const VisionFilterParams> params_;
 };
 }  // namespace vision_filter

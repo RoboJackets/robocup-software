@@ -25,6 +25,8 @@ public:
     KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist,
                    const std::shared_ptr<const VisionFilterParams>& params);
 
+    void predict();
+
     /**
      * Predicts with update
      * Overrides the standard PredictWithUpdate and sets the z_k automatically
@@ -72,5 +74,10 @@ public:
      * @return Current heading angle velocity covariance
      */
     double get_omega_cov() const;
+
+private:
+    void update_matrices();
+
+    std::shared_ptr<const VisionFilterParams> params_;
 };
 }  // namespace vision_filter
