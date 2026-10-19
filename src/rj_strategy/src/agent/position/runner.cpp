@@ -4,9 +4,7 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position(r_id, "Runner") {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     current_state_ = update_state();
@@ -64,22 +62,26 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case TOP_LEFT:
             auto motion_instance = planning::LinearMotionInstant{robot_position, top_right_};
-            auto motion_command = planning::MotionCommand{"path_target", motion_instance, planning::FaceAngle{0}, true};
+            auto motion_command = planning::MotionCommand{"path_target", motion_instance,
+                                                          planning::FaceAngle{0}, true};
             intent.motion_command = motion_command;
             break;
         case TOP_RIGHT:
             auto motion_instance = planning::LinearMotionInstant{robot_position, bottom_right_};
-            auto motion_command = planning::MotionCommand{"path_target", motion_instance, planning::FaceAngle{0}, true};
+            auto motion_command = planning::MotionCommand{"path_target", motion_instance,
+                                                          planning::FaceAngle{0}, true};
             intent.motion_command = motion_command;
             break;
         case BOTTOM_RIGHT:
             auto motion_instance = planning::LinearMotionInstant{robot_position, bottom_left_};
-            auto motion_command = planning::MotionCommand{"path_target", motion_instance, planning::FaceAngle{0}, true};
+            auto motion_command = planning::MotionCommand{"path_target", motion_instance,
+                                                          planning::FaceAngle{0}, true};
             intent.motion_command = motion_command;
             break;
         case BOTTOM_LEFT:
             auto motion_instance = planning::LinearMotionInstant{robot_position, top_left_};
-            auto motion_command = planning::MotionCommand{"path_target", motion_instance, planning::FaceAngle{0}, true};
+            auto motion_command = planning::MotionCommand{"path_target", motion_instance,
+                                                          planning::FaceAngle{0}, true};
             intent.motion_command = motion_command;
             break;
     }
