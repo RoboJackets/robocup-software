@@ -16,12 +16,6 @@ MotionControlNode::MotionControlNode() : rclcpp::Node("control") {
                                     "Rotation PID integral windup limit (0 = unlimited)"),
     };
 
-    controllers_.reserve(kNumShells);
-
-    for (int i = 0; i < kNumShells; i++) {
-        controllers_.push_back(std::make_unique<MotionControl>(i, this, limits_));
-    }
-
     param_callback_handle_ =
         add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
             rcl_interfaces::msg::SetParametersResult result;
@@ -63,6 +57,15 @@ MotionControlNode::MotionControlNode() : rclcpp::Node("control") {
 
             return result;
         });
+}
+
+void MotionControlNode::initialize_controllers() {
+    controllers_.reserve(kNumShells);
+
+    for (size_t i = 0; i < kNumShells; i++) {
+        controllers_.push_back(
+            std::make_unique<MotionControl>(static_cast<int>(i), this, limits_));
+    }
 }
 
 }  // namespace control
