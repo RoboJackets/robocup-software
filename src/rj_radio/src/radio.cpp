@@ -17,6 +17,38 @@ Radio::Radio()
     hardware_params_.max_dribbler_speed = declare_required_param<double>(
         *this, "robot.max_dribbler_speed", "Simulator dribbler speed at full dribble (rpm)");
 
+    hardware_params_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            RobotHardwareParams updated = hardware_params_;
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if (name == "robot.min_chip_speed") {
+                    updated.min_chip_speed = param.as_double();
+                } else if (name == "robot.max_chip_speed") {
+                    updated.max_chip_speed = param.as_double();
+                } else if (name == "robot.chip_angle") {
+                    updated.chip_angle = param.as_double();
+                } else if (name == "robot.max_dribbler_speed") {
+                    updated.max_dribbler_speed = param.as_double();
+                }
+            }
+
+            if (updated.min_chip_speed < 0 || updated.max_chip_speed <= updated.min_chip_speed ||
+                updated.max_dribbler_speed < 0) {
+                result.successful = false;
+                result.reason =
+                    "chip speeds must be nonnegative with max greater than min, and max "
+                    "dribbler speed must be nonnegative";
+                return result;
+            }
+
+            hardware_params_ = updated;
+            return result;
+        });
+
     timeout_callback_handle_ =
         add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
             rcl_interfaces::msg::SetParametersResult result;
