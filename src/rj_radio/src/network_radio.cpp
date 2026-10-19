@@ -51,8 +51,7 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<RadioMessage::ControlMessage*>(&forward_packet_buffer[0]);
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team(),
-                          hardware_params_);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team(), hardware_params_);
 
     control_message_socket_.async_send_to(
         boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,

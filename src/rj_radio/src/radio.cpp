@@ -4,8 +4,8 @@
 
 namespace radio {
 
-Radio::Radio()
-    : Node{"radio"} {
+
+Radio::Radio() : Node{"radio"} {
     param_timeout_ = declare_required_param<double>(
         *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
     hardware_params_.min_chip_speed = declare_required_param<double>(
