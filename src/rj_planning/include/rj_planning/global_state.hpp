@@ -12,7 +12,7 @@
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/goalie_id.hpp>
 
 namespace planning {
 

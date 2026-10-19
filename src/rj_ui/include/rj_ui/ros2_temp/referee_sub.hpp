@@ -7,7 +7,7 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/goalie_id.hpp>
 #include <rj_msgs/msg/match_state.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>

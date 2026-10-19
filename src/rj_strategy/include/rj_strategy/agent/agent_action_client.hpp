@@ -20,7 +20,7 @@
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/goalie_id.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_utils/logging.hpp>
