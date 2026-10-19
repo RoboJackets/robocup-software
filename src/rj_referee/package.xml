@@ -7,7 +7,7 @@
   <maintainer email="n8.wert.b@gmail.com">n8w3rt</maintainer>
   <license>TODO: License declaration</license>
 
-  <!-- <depend>rclcpp</depend> -->
+  <depend>rclcpp</depend>
   <depend>boost</depend>
   <depend>fmt</depend>
   <depend>spdlog</depend>
