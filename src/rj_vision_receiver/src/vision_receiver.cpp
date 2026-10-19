@@ -16,10 +16,7 @@ namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"},
-      config_{this},
-      port_{-1},
-      socket_{io_context_} {
+    : Node{"vision_receiver"}, config_{this}, port_{-1}, socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* below, vision_interface should be IP where vision receiver pubs to (in
