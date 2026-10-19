@@ -54,7 +54,6 @@ private:
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<rj_msgs::msg::LineTest>::SharedPtr line_direction_sub_;
 
     // subscription callbacks
     void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
@@ -62,7 +61,6 @@ private:
     void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
     void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
     void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
-    void line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 

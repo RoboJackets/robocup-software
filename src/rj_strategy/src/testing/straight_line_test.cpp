@@ -48,10 +48,6 @@ StraightLineTest::StraightLineTest(int r_id)
         "config/game_settings", 1,
         [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    line_direction_sub_ = create_subscription<rj_msgs::msg::LineTest>(
-        "line", 1,
-        [this](const rj_msgs::msg::LineTest::SharedPtr msg) { line_direction_callback(msg); });
-
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
                                         std::bind(&StraightLineTest::get_task, this));
@@ -103,29 +99,6 @@ void StraightLineTest::alive_robots_callback(const rj_msgs::msg::AliveRobots::Sh
 
 void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
-}
-
-// listens for user publish of new movement command
-void StraightLineTest::line_direction_callback(const rj_msgs::msg::LineTest::SharedPtr& msg) {
-    rj_geometry::Point start{msg->pt[0].x, msg->pt[0].y};
-    rj_geometry::Point end{msg->pt[1].x, msg->pt[1].y};
-    uint8_t r_id{msg->r_id};
-
-    if (start[0] <= width_min_ || end[0] <= width_min_ || start[0] >= width_max_ ||
-        end[0] >= width_max_ || start[1] <= height_min_ || end[1] <= height_min_ ||
-        start[1] >= height_max_ || end[1] >= height_max_) {
-        SPDLOG_INFO("Point Locations Off the FieldDimensions");
-        return;
-    }
-
-    if (start[0] != start_[0] || start[1] != start_[1] || end[0] != end_[0] || end[1] != end_[1] ||
-        r_id != target_robot_id_) {
-        start_ = start;
-        end_ = end;
-        target_robot_id_ = r_id;
-
-        current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
-    }
 }
 
 bool StraightLineTest::check_robot_alive(uint8_t robot_id) {
