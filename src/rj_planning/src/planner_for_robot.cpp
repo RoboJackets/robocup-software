@@ -2,7 +2,7 @@
 
 namespace planning {
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
                                  std::shared_ptr<TrajectoryCollection> robot_trajectories,
                                  const GlobalState& global_state,
                                  std::shared_ptr<const PlanningParams> params)
@@ -11,7 +11,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
       global_state_{global_state},
-      debug_draw_{node, fmt::format("planning_{}", robot_id)} {
+      debug_draw_{node->shared_from_this(), fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
     path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
     path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();
@@ -176,11 +176,10 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
     }
 
     const std::shared_ptr<const PlanningParams>& params = params_;
-    RobotConstraints constraints{
-        MotionConstraints{params->constraints.max_translational_speed,
-                          params->constraints.max_translational_accel},
-        RotationConstraints{params->constraints.max_rotational_speed,
-                            params->constraints.max_rotational_accel}};
+    RobotConstraints constraints{MotionConstraints{params->constraints.max_translational_speed,
+                                                   params->constraints.max_translational_accel},
+                                 RotationConstraints{params->constraints.max_rotational_speed,
+                                                     params->constraints.max_rotational_accel}};
     // NOTE: the play-state cap below replaces constraints.max_translational_speed
     // rather than limiting it, as it always has. So max_translational_speed has
     // no effect today; real_params.yaml sets it to 1.0 while robots run at 1.4.
@@ -289,7 +288,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(params_->timeout);
+           RJ::now() <
+               global_state_.world_state()->last_updated_time + RJ::Seconds(params_->timeout);
 }
 
 bool PlannerForRobot::is_done() const {

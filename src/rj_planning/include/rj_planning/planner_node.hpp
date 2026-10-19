@@ -38,8 +38,8 @@ public:
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:
-    // Read once at startup and shared read-only with every robot's planner.
-    std::shared_ptr<const PlanningParams> params_;
+    std::shared_ptr<PlanningParams> params_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
     std::vector<std::unique_ptr<PlannerForRobot>> robot_planners_;
     std::shared_ptr<TrajectoryCollection> robot_trajectories_ = nullptr;
     GlobalState global_state_;

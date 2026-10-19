@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include <rclcpp/node.hpp>
 
 #include "rj_planning/primitives/intermediate_params.hpp"
@@ -29,16 +31,16 @@ struct PivotParams {
 struct CollectParams {
     double ball_speed_approach_direction_cutoff;  // m/s
     double approach_accel_scale;
-    double approach_dist_target;     // m
-    double touch_delta_speed;        // m/s
-    double dist_cutoff_to_control;   // m
+    double approach_dist_target;    // m
+    double touch_delta_speed;       // m/s
+    double dist_cutoff_to_control;  // m
 };
 
 struct SettleParams {
     double ball_speed_percent_for_dampen;
-    double search_start_dist;            // m
-    double search_end_dist;              // m
-    double search_inc_dist;              // m
+    double search_start_dist;  // m
+    double search_end_dist;    // m
+    double search_inc_dist;    // m
     double intercept_buffer_time;
     double target_point_gain;
     double ball_vel_gain;
@@ -51,9 +53,7 @@ struct SettleParams {
 /**
  * @brief Every parameter the planner node reads from /planner.
  *
- * PlannerNode reads these once at startup (load_planning_params) and shares
- * them read-only; each PlanRequest carries a pointer to them so planners read
- * request.params.
+ * PlannerNode shares these with each planner through PlanRequest::params.
  */
 struct PlanningParams {
     double timeout;  // s
@@ -70,5 +70,7 @@ struct PlanningParams {
  * defaults) and returns their values.
  */
 PlanningParams load_planning_params(rclcpp::Node& node);
+void apply_planning_params(PlanningParams& planning_params,
+                           const std::vector<rclcpp::Parameter>& params);
 
 }  // namespace planning

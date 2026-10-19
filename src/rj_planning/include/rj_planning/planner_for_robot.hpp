@@ -43,13 +43,11 @@ namespace planning {
 class PlannerForRobot {
 public:
     /**
-     * @param params Planning params read by PlannerNode at startup. Each
-     * PlanRequest carries them.
+     * @param params Planning params shared with each PlanRequest.
      */
     PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                     shared_ptr<TrajectoryCollection> robot_trajectories,
-                    const GlobalState& global_state,
-                    std::shared_ptr<const PlanningParams> params);
+                    const GlobalState& global_state, std::shared_ptr<const PlanningParams> params);
 
     PlannerForRobot(PlannerForRobot&&) = delete;
     const PlannerForRobot& operator=(PlannerForRobot&&) = delete;

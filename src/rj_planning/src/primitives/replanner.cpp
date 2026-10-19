@@ -70,10 +70,9 @@ Trajectory Replanner::full_replan(const Replanner::PlanParams& params) {
 
         almost_goal.position += shift_dir * shift_size;
 
-        path = CreatePath::intermediate(params.start.linear_motion(), almost_goal,
-                                        params.constraints.mot, params.start.stamp,
-                                        params.obstacles, params.field_dimensions, params.robot_id,
-                                        params.intermediate);
+        path = CreatePath::intermediate(
+            params.start.linear_motion(), almost_goal, params.constraints.mot, params.start.stamp,
+            params.obstacles, params.field_dimensions, params.robot_id, params.intermediate);
     }
 
     if (!path.empty()) {
@@ -157,7 +156,8 @@ Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previ
     return previous_trajectory;
 }
 
-bool Replanner::veered_off_path(const PlanParams& params, const Trajectory& trajectory, RobotInstant actual, RJ::Time now) {
+bool Replanner::veered_off_path(const PlanParams& params, const Trajectory& trajectory,
+                                RobotInstant actual, RJ::Time now) {
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
 
     // If we don't have an instant, assume we're past the end of the path.

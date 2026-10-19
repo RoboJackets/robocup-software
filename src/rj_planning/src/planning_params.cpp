@@ -89,4 +89,75 @@ PlanningParams load_planning_params(rclcpp::Node& node) {
     return p;
 }
 
+void apply_planning_params(PlanningParams& p, const std::vector<rclcpp::Parameter>& params) {
+    for (const auto& param : params) {
+        const auto& name = param.get_name();
+        if (name == "timeout") {
+            p.timeout = param.as_double();
+        } else if (name == "constraints.max_translational_speed") {
+            p.constraints.max_translational_speed = param.as_double();
+        } else if (name == "constraints.max_translational_accel") {
+            p.constraints.max_translational_accel = param.as_double();
+        } else if (name == "constraints.max_rotational_speed") {
+            p.constraints.max_rotational_speed = param.as_double();
+        } else if (name == "constraints.max_rotational_accel") {
+            p.constraints.max_rotational_accel = param.as_double();
+        } else if (name == "replanner.pos_change_threshold") {
+            p.replanner.pos_change_threshold = param.as_double();
+        } else if (name == "replanner.vel_change_threshold") {
+            p.replanner.vel_change_threshold = param.as_double();
+        } else if (name == "replanner.partial_replan_lead_time") {
+            p.replanner.partial_replan_lead_time = param.as_double();
+        } else if (name == "replanner.off_path_threshold") {
+            p.replanner.off_path_threshold = param.as_double();
+        } else if (name == "intermediate.min_scale") {
+            p.intermediate.min_scale = param.as_double();
+        } else if (name == "intermediate.max_scale") {
+            p.intermediate.max_scale = param.as_double();
+        } else if (name == "intermediate.min_angle") {
+            p.intermediate.min_angle = param.as_double();
+        } else if (name == "intermediate.max_angle") {
+            p.intermediate.max_angle = param.as_double();
+        } else if (name == "intermediate.num_intermediates") {
+            p.intermediate.num_intermediates = param.as_int();
+        } else if (name == "intermediate.step_size") {
+            p.intermediate.step_size = param.as_double();
+        } else if (name == "pivot.radius_multiplier") {
+            p.pivot.radius_multiplier = param.as_double();
+        } else if (name == "collect.ball_speed_approach_direction_cutoff") {
+            p.collect.ball_speed_approach_direction_cutoff = param.as_double();
+        } else if (name == "collect.approach_accel_scale") {
+            p.collect.approach_accel_scale = param.as_double();
+        } else if (name == "collect.approach_dist_target") {
+            p.collect.approach_dist_target = param.as_double();
+        } else if (name == "collect.touch_delta_speed") {
+            p.collect.touch_delta_speed = param.as_double();
+        } else if (name == "collect.dist_cutoff_to_control") {
+            p.collect.dist_cutoff_to_control = param.as_double();
+        } else if (name == "settle.ball_speed_percent_for_dampen") {
+            p.settle.ball_speed_percent_for_dampen = param.as_double();
+        } else if (name == "settle.search_start_dist") {
+            p.settle.search_start_dist = param.as_double();
+        } else if (name == "settle.search_end_dist") {
+            p.settle.search_end_dist = param.as_double();
+        } else if (name == "settle.search_inc_dist") {
+            p.settle.search_inc_dist = param.as_double();
+        } else if (name == "settle.intercept_buffer_time") {
+            p.settle.intercept_buffer_time = param.as_double();
+        } else if (name == "settle.target_point_gain") {
+            p.settle.target_point_gain = param.as_double();
+        } else if (name == "settle.ball_vel_gain") {
+            p.settle.ball_vel_gain = param.as_double();
+        } else if (name == "settle.shortcut_dist") {
+            p.settle.shortcut_dist = param.as_double();
+        } else if (name == "settle.max_ball_angle_for_reset") {
+            p.settle.max_ball_angle_for_reset = param.as_double();
+        } else if (name == "settle.max_ball_vel_for_path_reset") {
+            p.settle.max_ball_vel_for_path_reset = param.as_double();
+        } else if (name == "settle.max_bounce_angle") {
+            p.settle.max_bounce_angle = param.as_double();
+        }
+    }
+}
+
 }  // namespace planning
