@@ -43,8 +43,8 @@ private:
 
     void set_manual(const std::string& uuid, std::optional<int> robot_id);
     void remove_controller(ManualController* controller);
-    // Read once at startup and shared read-only with the SDL controllers.
-    std::shared_ptr<const ManualControlParams> params_;
+    std::shared_ptr<ManualControlParams> params_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
     std::vector<std::unique_ptr<ManualControllerProvider>> providers_;
     std::map<ManualController*, std::optional<int>> controllers_;

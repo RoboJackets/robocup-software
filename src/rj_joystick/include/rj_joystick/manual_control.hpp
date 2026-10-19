@@ -6,8 +6,8 @@
 
 namespace joystick {
 
-// Read once at startup from the /manual_control section of the params YAML
-// (see ManualControlNode).
+// Read from the /manual_control section of the params YAML and shared with
+// the SDL controllers (see ManualControlNode).
 struct ManualControlParams {
     double max_rotation_speed;            // rad/s
     double max_damped_rotation_speed;     // rad/s

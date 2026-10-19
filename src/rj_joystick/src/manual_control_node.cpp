@@ -26,7 +26,53 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
                                                       "Kick speed at zero kick power, m/s");
     p.max_kick_speed = declare_required_param<double>(*this, "max_kick_speed",
                                                       "Kick speed at full kick power, m/s");
-    params_ = std::make_shared<const ManualControlParams>(p);
+    params_ = std::make_shared<ManualControlParams>(p);
+    param_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            ManualControlParams updated = *params_;
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if (name == "max_rotation_speed") {
+                    updated.max_rotation_speed = param.as_double();
+                } else if (name == "max_damped_rotation_speed") {
+                    updated.max_damped_rotation_speed = param.as_double();
+                } else if (name == "max_translation_speed") {
+                    updated.max_translation_speed = param.as_double();
+                } else if (name == "max_damped_translation_speed") {
+                    updated.max_damped_translation_speed = param.as_double();
+                } else if (name == "kick_power_increment") {
+                    updated.kick_power_increment = param.as_double();
+                } else if (name == "dribble_power_increment") {
+                    updated.dribble_power_increment = param.as_double();
+                } else if (name == "kick_on_break_beam") {
+                    updated.kick_on_break_beam = param.as_bool();
+                } else if (name == "min_kick_speed") {
+                    updated.min_kick_speed = param.as_double();
+                } else if (name == "max_kick_speed") {
+                    updated.max_kick_speed = param.as_double();
+                }
+            }
+
+            if (updated.max_rotation_speed < 0 || updated.max_damped_rotation_speed < 0 ||
+                updated.max_translation_speed < 0 || updated.max_damped_translation_speed < 0 ||
+                updated.min_kick_speed < 0 || updated.max_kick_speed < 0) {
+                result.successful = false;
+                result.reason = "manual control speeds must be nonnegative";
+                return result;
+            }
+            if (updated.kick_power_increment < 0 || updated.kick_power_increment > 1 ||
+                updated.dribble_power_increment < 0 || updated.dribble_power_increment > 1) {
+                result.successful = false;
+                result.reason = "power increments must be between 0 and 1";
+                return result;
+            }
+
+            *params_ = updated;
+            return result;
+        });
 
     auto on_connect = [this](ManualController* controller) {
         controllers_.insert({controller, std::nullopt});

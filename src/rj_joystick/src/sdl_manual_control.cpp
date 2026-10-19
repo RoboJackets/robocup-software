@@ -2,7 +2,7 @@
 
 namespace joystick {
 
-KeyboardController::KeyboardController(std::shared_ptr<const ManualControlParams> params)
+KeyboardController::KeyboardController(std::shared_ptr<ManualControlParams> params)
     : params_{std::move(params)} {
     SDL_RenderClear(renderer_);
     SDL_RenderPresent(renderer_);
@@ -130,7 +130,7 @@ void GamepadController::process_sdl(SDL_Event* event) {
 SDLControllerProvider::~SDLControllerProvider() { SDL_Quit(); }
 
 SDLControllerProvider::SDLControllerProvider(bool do_keyboard,
-                                             std::shared_ptr<const ManualControlParams> params,
+                                             std::shared_ptr<ManualControlParams> params,
                                              std::function<void(ManualController*)> on_connect,
                                              std::function<void(ManualController*)> on_disconnect)
     : params_{std::move(params)},
