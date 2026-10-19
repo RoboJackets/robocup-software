@@ -63,8 +63,7 @@ void MotionControlNode::initialize_controllers() {
     controllers_.reserve(kNumShells);
 
     for (size_t i = 0; i < kNumShells; i++) {
-        controllers_.push_back(
-            std::make_unique<MotionControl>(static_cast<int>(i), this, limits_));
+        controllers_.push_back(std::make_unique<MotionControl>(static_cast<int>(i), this, limits_));
     }
 }
 

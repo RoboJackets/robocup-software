@@ -11,8 +11,7 @@ using rj_geometry::Twist;
 MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionControlLimits& limits)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
-      drawer_(node->shared_from_this(),
-              fmt::format("motion_control/{}", std::to_string(shell_id))),
+      drawer_(node->shared_from_this(), fmt::format("motion_control/{}", std::to_string(shell_id))),
       limits_(limits) {
     const std::string prefix = fmt::format("robot_{}.", shell_id_);
     gains_ = PidGains{
