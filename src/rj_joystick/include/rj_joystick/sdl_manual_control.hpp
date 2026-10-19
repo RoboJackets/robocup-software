@@ -58,8 +58,7 @@ private:
 
 class GamepadController : public SDLController {
 public:
-    GamepadController(SDL_GameController* controller,
-                      std::shared_ptr<ManualControlParams> params)
+    GamepadController(SDL_GameController* controller, std::shared_ptr<ManualControlParams> params)
         : my_controller_{controller}, params_{std::move(params)} {}
     ~GamepadController() override = default;
 
