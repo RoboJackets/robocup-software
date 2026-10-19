@@ -23,7 +23,6 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
-#include <rj_utils/logging.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "rj_strategy/agent/position.hpp"

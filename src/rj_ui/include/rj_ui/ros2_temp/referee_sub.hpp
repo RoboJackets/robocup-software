@@ -13,7 +13,6 @@
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
-#include <rj_utils/logging_macros.hpp>
 
 namespace ros2_temp {
 

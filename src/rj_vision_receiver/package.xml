@@ -12,7 +12,6 @@
   <depend>rj_msgs</depend>
   <depend>rj_common</depend>
   <depend>rj_param_utils</depend>
-  <depend>rj_utils</depend>
   <depend>rj_protos</depend>
   <depend>rj_config_client</depend>
 

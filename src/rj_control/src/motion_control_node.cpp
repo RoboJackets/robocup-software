@@ -20,7 +20,6 @@ void MotionControlNode::initialize_controllers() {
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     auto control = std::make_shared<control::MotionControlNode>();
     control->initialize_controllers();

@@ -228,7 +228,6 @@ void SimRadio::send_sim_command(const SimulatorCommand& cmd) {
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     auto radio = std::make_shared<radio::SimRadio>();
     start_global_param_provider(radio.get(), kGlobalParamServerNode);

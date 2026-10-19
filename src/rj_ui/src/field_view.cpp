@@ -21,7 +21,6 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_utils/log_utils.hpp>
 
 using namespace std;
 
@@ -254,7 +253,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     // Debug lines
     for (const DebugPath& path : frame->debug_draw_frame.paths) {
         if (path.layer < 0 || layerVisible(path.layer)) {
-            tempPen.setColor(qcolor(path.color));
+            tempPen.setColor(FieldView::qcolor(path.color));
             p.setPen(tempPen);
             std::vector<QPointF> pts;
             for (int i = 0; i < path.points.size(); ++i) {
@@ -337,7 +336,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 continue;
             }
 
-            QColor color = qcolor(polygon.color);
+            QColor color = FieldView::qcolor(polygon.color);
             p.setBrush(color);
 
             color.setAlpha(255);

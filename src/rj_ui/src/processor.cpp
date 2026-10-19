@@ -9,8 +9,6 @@ FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
 Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
     // Set the logger to ros2.
-    rj_utils::set_spdlog_default_ros2("processor");
-
     running_ = true;
     framerate_ = 0;
     initialized_ = false;

@@ -23,7 +23,6 @@ find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_utils REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
@@ -91,7 +90,6 @@ set(RJ_UI_DEPS
   rj_common
   rj_param_utils
   rj_geometry
-  rj_utils
   rj_planning
   rj_convert
   rj_msgs

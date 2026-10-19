@@ -16,7 +16,6 @@
 #include <rj_protos/ssl_simulation_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
-#include <rj_utils/logging.hpp>
 
 #include "rj_radio/radio.hpp"
 

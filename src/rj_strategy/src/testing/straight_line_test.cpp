@@ -217,7 +217,6 @@ void StraightLineTest::result_callback(const GoalHandleRobotMove::WrappedResult&
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     rclcpp::executors::MultiThreadedExecutor executor;
 

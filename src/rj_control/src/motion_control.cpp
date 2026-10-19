@@ -223,7 +223,8 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
         target_vel = Twist::zero();
-        rj_utils::debug_throw("A bad value was calculated.");
+        SPDLOG_DEBUG("A NaN velocity was calculated so it was replaced with zero.");
+        throw std::runtime_error("A NaN velocity was calculated so it was replaced with zero.");
     }
 
     // Note: we used to set minimum effective speeds here. However, that should

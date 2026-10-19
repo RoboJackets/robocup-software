@@ -15,14 +15,12 @@ find_package(rclcpp_components REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_utils REQUIRED)
 
 set(RJ_CONFIG_CLIENT_DEPS
   rclcpp
   rj_msgs
   fmt
   rj_common
-  rj_utils
 )
 
 add_library(${PROJECT_NAME} SHARED
