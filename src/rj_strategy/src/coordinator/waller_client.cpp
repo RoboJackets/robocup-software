@@ -132,7 +132,8 @@ WallerClient::WallerGeometry WallerClient::calculate_wall_geometry(
     waller_geometry.robot_pos = world_state->get_robot(true, robot_id_).pose.position();
     waller_geometry.goal_pos = field_dimensions.our_goal_loc();
     waller_geometry.ball_pos = world_state->ball.position;
-    waller_geometry.wall_spacing = kRobotDiameterMultiplier * kRobotDiameter + kBallRadius;
+    // added some spacing
+    waller_geometry.wall_spacing = (kRobotDiameterMultiplier * kRobotDiameter + kBallRadius) * 2;
 
     return waller_geometry;
 }
