@@ -56,7 +56,7 @@ std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     double dist = (robot_pos - target_pos).mag();
 
     // 3. Advance to the next point if close enough or check_is_done() flags true
-    if (dist < 0.25 || check_is_done()) {
+    if (dist < 0.25) {
         next_state();
         // Update target_pos immediately to the new state
         switch (current_state_) {
