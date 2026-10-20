@@ -3,8 +3,7 @@
 namespace tutorial {
 
 SoccerMom::SoccerMom() : Node("soccer_mom") {
-    fruit_pub_ = create_publisher<std_msgs::msg::String>(
-        "/team_fruit", rclcpp::QoS(1));
+    fruit_pub_ = create_publisher<std_msgs::msg::String>("/team_fruit", rclcpp::QoS(1));
 
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
@@ -15,7 +14,7 @@ SoccerMom::SoccerMom() : Node("soccer_mom") {
         });
 }
 
-} // namespace tutorial
+}  // namespace tutorial
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
