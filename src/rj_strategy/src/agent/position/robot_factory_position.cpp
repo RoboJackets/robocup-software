@@ -273,10 +273,6 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 void RobotFactoryPosition::set_default_position() {
     // tutorial
     if (robot_id_ == 1) {
-        if (!current_position_ ||
-            current_position_->get_state_name().find("STAR") == std::string::npos) {
-            current_position_ = std::make_unique<Runner>(robot_id_);
-        }
         return;
     }
     // Get sorted positions of all friendly robots
