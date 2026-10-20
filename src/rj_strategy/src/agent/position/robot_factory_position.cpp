@@ -16,9 +16,12 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     strategy_debug_drawer_ = std::make_shared<rj_drawing::RosDebugDrawer>(
         debug_draw_pub, fmt::format("strategy_{}", r_id));
 
-    if (robot_id_ == 1) {
+    // lol this is goalie
+    if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_); // ohhhhhhhhhhhh
+    } else if (robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
