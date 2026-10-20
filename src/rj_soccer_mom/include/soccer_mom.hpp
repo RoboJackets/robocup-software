@@ -21,7 +21,5 @@ private:
     // publisher === announce fruit
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr fruit_pub_;
 
-    // callback method
-    void color_callback(const std_msgs::msg::String::SharedPtr msg);
 };
 }  // namespace tutorial
