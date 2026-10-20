@@ -16,7 +16,7 @@ namespace strategy {
     class CornerKicker : public Position {
         public:
             CornerKicker(int r_id);
-            ~PenaltyPlayer() = default;
+            ~CornerKicker() = default;
 
             // essential move constructor from Position
             CornerKicker(Position&& other); 
@@ -45,10 +45,10 @@ namespace strategy {
                 APPROACHING, // go behind ball
                 LINE_UP,     // align
                 KICKING      // kick
-            }
+            };
 
             // 2. constants
-            static constexpr double kOwnBallRedius{kRobotRadius + 0.1};
+            static constexpr double kOwnBallRadius{kRobotRadius + 0.1};
             // Settle distance behind the ball while lining up
             static constexpr double kApproachDist{0.20}; 
             // Tolerance to consider the robot lined up with target heading
@@ -68,14 +68,13 @@ namespace strategy {
                 /**
                 * @brief Calculates the distance of vector from other team's closest robot
                 */
-                // does this even exist?            
                 rj_geometry::Point calculate_best_pass_target() const;
                 
                 rj_geometry::Point target_;
                 
                 std::optional<RobotIntent> state_to_task(RobotIntent intent);
                 
-                State latest_state_ = APPROACHING
+                State latest_state_ = APPROACHING;
                 //============================== 
 
     };
