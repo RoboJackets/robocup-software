@@ -261,7 +261,7 @@ def generate_launch_description():
             ),
             Node(
                 package="rj_soccer_mom",
-                executable="soccer_mom"
+                executable="soccer_mom",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
