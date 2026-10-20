@@ -4,9 +4,7 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position(r_id, "Runner") {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     // Get next state
@@ -29,7 +27,7 @@ Runner::State Runner::next_state() {
     if (!check_is_done()) return current_state_;
 
     // handle transitions between current state
-    switch(current_state_) {
+    switch (current_state_) {
         case GO_TO_A:
             return GO_TO_B;
         case GO_TO_B:
@@ -38,7 +36,7 @@ Runner::State Runner::next_state() {
             return GO_TO_D;
         case GO_TO_D:
             return GO_TO_A;
-    } 
+    }
 
     return current_state_;
 }
@@ -47,10 +45,18 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     rj_geometry::Point vertex{-0.5, 1.0};
 
     switch (current_state_) {
-        case GO_TO_A: vertex = {-0.5, 2.5}; break;
-        case GO_TO_B: vertex = {0.5, 2.5}; break;
-        case GO_TO_C: vertex = {0.5, 6}; break;
-        case GO_TO_D: vertex = {-0.5, 6}; break;
+        case GO_TO_A:
+            vertex = {-0.5, 2.5};
+            break;
+        case GO_TO_B:
+            vertex = {0.5, 2.5};
+            break;
+        case GO_TO_C:
+            vertex = {0.5, 6};
+            break;
+        case GO_TO_D:
+            vertex = {-0.5, 6};
+            break;
     }
 
     planning::LinearMotionInstant target{vertex};
@@ -58,5 +64,4 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     return intent;
 }
 
-
-} // namespace strategy
+}  // namespace strategy

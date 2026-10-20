@@ -37,9 +37,8 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     } else {
         set_current_position<SmartIdle>();
     }
-    
-    return current_position_->get_task(*last_world_state_, field_dimensions_,
-                                           current_play_state_);
+
+    return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
@@ -270,7 +269,7 @@ void RobotFactoryPosition::set_default_position() {
     if (robot_id_ == 1) {
         set_current_position<Runner>();
         return;
-    } 
+    }
 
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)

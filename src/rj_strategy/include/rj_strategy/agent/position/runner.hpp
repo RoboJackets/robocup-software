@@ -7,9 +7,9 @@
 
 namespace strategy {
 
-/** 
- * Drives a robot in a rectangle 
-*/
+/**
+ * Drives a robot in a rectangle
+ */
 class Runner : public Position {
 public:
     explicit Runner(int r_id);
