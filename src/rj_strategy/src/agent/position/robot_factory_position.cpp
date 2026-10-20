@@ -20,7 +20,7 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
     } else if (robot_id_ == 1) {
-        current_position_ = std::make_unique<Runner>(robot_id_); // ohhhhhhhhhhhh
+        current_position_ = std::make_unique<Runner>(robot_id_); // ohhhhhhhhhhhh wait W cameron
     } else if (robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
@@ -36,14 +36,11 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 
-    // protect robot 1
-    // If this is Robot 1, ensure it's a Runner and directly execute its task
-    // 1. MUST BE BEFORE GOALIE CHECK:
     if (robot_id_ == 1) {
-        if (!current_position_ ||
-            current_position_->get_state_name().find("STAR") == std::string::npos) {
-            current_position_ = std::make_unique<Runner>(robot_id_);
-        }
+        // if (!current_position_ ||
+        //     current_position_->get_state_name().find("STAR") == std::string::npos) {
+        //     current_position_ = std::make_unique<Runner>(robot_id_);
+        // }
         return current_position_->get_task(*last_world_state_, field_dimensions_,
                                            current_play_state_);
     }
