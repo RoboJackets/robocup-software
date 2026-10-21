@@ -7,8 +7,6 @@
 #include <rj_common/context.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/motion_command.hpp>
-#include <rj_common/planning/motion_constraints.hpp>
-#include <rj_common/planning/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/ros_debug_drawer.hpp>
@@ -16,6 +14,9 @@
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_planning/obstacle_set.hpp>
+#include <rj_planning/planning_params.hpp>
+#include <rj_planning/primitives/motion_constraints.hpp>
+#include <rj_planning/primitives/robot_constraints.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/trajectory_collection.hpp"
@@ -33,7 +34,8 @@ struct PlanRequest {
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 std::shared_ptr<TrajectoryCollection> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, PlayState play_state,
-                const FieldDimensions* field_dimensions, int8_t priority = 0,
+                const FieldDimensions* field_dimensions,
+                std::shared_ptr<const PlanningParams> params, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float kick_speed = 0,
                 RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN,
@@ -48,6 +50,7 @@ struct PlanRequest {
           priority(priority),
           play_state(play_state),
           field_dimensions(field_dimensions),
+          params(std::move(params)),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
           min_dist_from_ball(min_dist_from_ball),
@@ -109,6 +112,11 @@ struct PlanRequest {
      * the Field Dimensions
      */
     const FieldDimensions* field_dimensions;
+
+    /**
+     * The /planner params, read once at startup by PlannerNode.
+     */
+    std::shared_ptr<const PlanningParams> params;
 
     /**
      * Allows debug drawing in the world. If this is nullptr, no debug drawing

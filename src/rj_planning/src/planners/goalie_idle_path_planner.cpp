@@ -1,5 +1,7 @@
 #include "rj_planning/planners/goalie_idle_path_planner.hpp"
 
+#include "rj_planning/primitives/replanner.hpp"
+
 namespace planning {
 
 Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
@@ -29,7 +31,8 @@ Trajectory GoalieIdlePathPlanner::plan(const PlanRequest& plan_request) {
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{plan_request.start, target, obstacles, plan_request.field_dimensions,
                               plan_request.constraints, angle_function, plan_request.shell_id,
-                              RJ::Seconds(3.0)},
+                              RJ::Seconds(3.0), plan_request.params->replanner,
+                              plan_request.params->intermediate},
         std::move(previous_));
 
     // Debug drawing
