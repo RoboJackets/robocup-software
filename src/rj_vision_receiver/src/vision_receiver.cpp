@@ -7,8 +7,8 @@
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
-#include <rj_common/topic_names.hpp>
 #include <rj_common/ros_params.hpp>
+#include <rj_common/topic_names.hpp>
 
 #include "rj_vision_receiver/vision_conversions.hpp"
 
@@ -35,7 +35,8 @@ VisionReceiver::VisionReceiver()
 
     // port number for vision receiver
     param_port_ = declare_required_param<int>(
-        *this, "port", "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
+        *this, "port",
+        "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
     // The hardware interface to use.
     this->get_parameter("vision_interface", param_vision_interface_);
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
