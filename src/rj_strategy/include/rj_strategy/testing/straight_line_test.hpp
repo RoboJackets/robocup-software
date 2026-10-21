@@ -13,7 +13,6 @@
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-// #include <rj_msgs/msg/line_test.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
