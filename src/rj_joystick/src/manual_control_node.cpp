@@ -1,29 +1,85 @@
 #include "rj_joystick/manual_control_node.hpp"
 
+#include <rj_common/ros_params.hpp>
+
 namespace joystick {
 
-DEFINE_BOOL(kJoystickModule, use_field_oriented_drive, false, "Whether to use field oriented drive")
-DEFINE_BOOL(kJoystickModule, kick_on_break_beam, false,
-            "Wait for break beam when kick button is held")
-DEFINE_BOOL(kJoystickModule, damped_translation, false, "Move slowly")
-DEFINE_BOOL(kJoystickModule, damped_rotation, false, "Turn slowly")
-DEFINE_FLOAT64(kJoystickModule, max_rotation_speed, 4.0, "Maximum rotation speed, rad/s")
-DEFINE_FLOAT64(kJoystickModule, max_damped_rotation_speed, 1.0,
-               "Maximum damped rotation speed, rad/s")
-DEFINE_FLOAT64(kJoystickModule, max_translation_speed, 2.0, "Maximum translation speed, m/s")
-DEFINE_FLOAT64(kJoystickModule, max_damped_translation_speed, 0.5,
-               "Maximum damped translation speed, m/s")
-DEFINE_FLOAT64(kJoystickModule, kick_power_increment, 0.1, "Kick power increment, 0-1")
-DEFINE_FLOAT64(kJoystickModule, dribble_power_increment, 0.1, "Dribble power increment, 0-1")
+ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
+    ManualControlParams p{};
+    p.max_rotation_speed = declare_required_param<double>(*this, "max_rotation_speed",
+                                                          "Maximum rotation speed, rad/s");
+    p.max_damped_rotation_speed = declare_required_param<double>(
+        *this, "max_damped_rotation_speed", "Maximum rotation speed while holding shift, rad/s");
+    p.max_translation_speed = declare_required_param<double>(*this, "max_translation_speed",
+                                                             "Maximum translation speed, m/s");
+    p.max_damped_translation_speed =
+        declare_required_param<double>(*this, "max_damped_translation_speed",
+                                       "Maximum translation speed while holding shift, m/s");
+    p.kick_power_increment = declare_required_param<double>(
+        *this, "kick_power_increment", "Kick power change per button press, 0-1");
+    p.dribble_power_increment = declare_required_param<double>(
+        *this, "dribble_power_increment", "Dribble power change per button press, 0-1");
+    p.kick_on_break_beam = declare_required_param<bool>(
+        *this, "kick_on_break_beam", "Wait for break beam when kick button is held");
+    p.min_kick_speed = declare_required_param<double>(*this, "min_kick_speed",
+                                                      "Kick speed at zero kick power, m/s");
+    p.max_kick_speed = declare_required_param<double>(*this, "max_kick_speed",
+                                                      "Kick speed at full kick power, m/s");
+    params_ = std::make_shared<ManualControlParams>(p);
+    param_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
 
-ManualControlNode::ManualControlNode()
-    : rclcpp::Node("manual_control"), param_provider_(this, kJoystickModule) {
+            ManualControlParams updated = *params_;
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if (name == "max_rotation_speed") {
+                    updated.max_rotation_speed = param.as_double();
+                } else if (name == "max_damped_rotation_speed") {
+                    updated.max_damped_rotation_speed = param.as_double();
+                } else if (name == "max_translation_speed") {
+                    updated.max_translation_speed = param.as_double();
+                } else if (name == "max_damped_translation_speed") {
+                    updated.max_damped_translation_speed = param.as_double();
+                } else if (name == "kick_power_increment") {
+                    updated.kick_power_increment = param.as_double();
+                } else if (name == "dribble_power_increment") {
+                    updated.dribble_power_increment = param.as_double();
+                } else if (name == "kick_on_break_beam") {
+                    updated.kick_on_break_beam = param.as_bool();
+                } else if (name == "min_kick_speed") {
+                    updated.min_kick_speed = param.as_double();
+                } else if (name == "max_kick_speed") {
+                    updated.max_kick_speed = param.as_double();
+                }
+            }
+
+            if (updated.max_rotation_speed < 0 || updated.max_damped_rotation_speed < 0 ||
+                updated.max_translation_speed < 0 || updated.max_damped_translation_speed < 0 ||
+                updated.min_kick_speed < 0 || updated.max_kick_speed < 0) {
+                result.successful = false;
+                result.reason = "manual control speeds must be nonnegative";
+                return result;
+            }
+            if (updated.kick_power_increment < 0 || updated.kick_power_increment > 1 ||
+                updated.dribble_power_increment < 0 || updated.dribble_power_increment > 1) {
+                result.successful = false;
+                result.reason = "power increments must be between 0 and 1";
+                return result;
+            }
+
+            *params_ = updated;
+            return result;
+        });
+
     auto on_connect = [this](ManualController* controller) {
         controllers_.insert({controller, std::nullopt});
     };
     auto on_disconnect = [this](ManualController* controller) { remove_controller(controller); };
 
-    providers_.push_back(std::make_unique<SDLControllerProvider>(true, on_connect, on_disconnect));
+    providers_.push_back(
+        std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
 
     using rj_msgs::srv::ListJoysticks;
     list_joysticks_ = create_service<ListJoysticks>(
@@ -105,7 +161,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
                                                     .velocity_x_mps(command.translation.x())
                                                     .velocity_y_mps(command.translation.y())
                                                     .velocity_z_radps(command.rotation));
-    uint8_t trigger_mode = PARAM_kick_on_break_beam
+    uint8_t trigger_mode = params_->kick_on_break_beam
                                ? rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
                                : rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
     uint8_t shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
@@ -117,8 +173,7 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
         trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
     }
 
-    double kick_speed = lerp(soccer::robot::PARAM_min_kick_speed,
-                             soccer::robot::PARAM_max_kick_speed, command.kick_power);
+    double kick_speed = lerp(params_->min_kick_speed, params_->max_kick_speed, command.kick_power);
     manipulator_setpoint_pubs_.at(robot_id)->publish(
         rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
             .shoot_mode(shoot_mode)
