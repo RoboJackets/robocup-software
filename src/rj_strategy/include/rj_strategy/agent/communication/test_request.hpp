@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_convert/ros_convert.hpp>
+
 #include "rj_msgs/msg/test_request.hpp"
 
 namespace strategy::communication {

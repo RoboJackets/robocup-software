@@ -20,7 +20,6 @@ find_package(rj_param_utils REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_convert REQUIRED)
 
 set(RJ_CONTROL_DEPS
   std_msgs
@@ -30,7 +29,6 @@ set(RJ_CONTROL_DEPS
   rj_common
   rj_geometry
   rj_planning
-  rj_convert
 )
 
 add_executable(motion_control_node

@@ -29,7 +29,7 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>

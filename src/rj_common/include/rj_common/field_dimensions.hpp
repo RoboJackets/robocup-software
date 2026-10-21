@@ -4,7 +4,7 @@
 #include <cmath>
 #include <memory>
 
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/composite_shape.hpp>

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>

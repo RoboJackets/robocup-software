@@ -15,7 +15,6 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
-find_package(rj_convert REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(rj_geometry REQUIRED)
@@ -28,7 +27,6 @@ set(RJ_COMMON_DEPS
   Eigen3
   rclcpp
   rclcpp_components
-  rj_convert
   rj_protos
   rj_geometry
   rj_param_utils

@@ -12,7 +12,6 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_convert REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
@@ -26,7 +25,6 @@ ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
   rclcpp
   rj_msgs
-  rj_convert
   rj_protos
   rj_geometry
 )
@@ -44,7 +42,7 @@ target_include_directories(${PROJECT_NAME}
   $<INSTALL_INTERFACE:include>
 )
 
-ament_export_dependencies(rclcpp rj_msgs rj_convert rj_protos)
+ament_export_dependencies(rclcpp rj_msgs rj_protos)
 
 install(
   DIRECTORY include/

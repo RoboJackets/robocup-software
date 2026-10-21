@@ -3,7 +3,7 @@
 #include <memory>
 #include <ostream>
 
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_msgs/msg/motion_setpoint.hpp>
 
 /**
