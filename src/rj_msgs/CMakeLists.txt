@@ -74,11 +74,11 @@ rosidl_generate_interfaces(
   msg/referee_msgs/QuickCommands.srv
 
   # Strategy
-  msg/strategy_msgs/communication/AgentState.msg
-  msg/strategy_msgs/communication/AgentRequest.msg
-  msg/strategy_msgs/communication/AgentResponse.msg
-  msg/strategy_msgs/communication/AgentResponseVariant.msg
-  msg/strategy_msgs/communication/AgentCommunication.srv
+  msg/strategy_msgs/agent/AgentState.msg
+  msg/strategy_msgs/agent/AgentRequest.msg
+  msg/strategy_msgs/agent/AgentResponse.msg
+  msg/strategy_msgs/agent/AgentResponseVariant.msg
+  msg/strategy_msgs/agent/AgentCommunication.srv
 
   # Coordinators
   msg/strategy_msgs/coordinators/KickerPicker.msg
