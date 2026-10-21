@@ -38,9 +38,7 @@ VisionReceiver::VisionReceiver()
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
     SPDLOG_INFO("VisionReceiver vision_interface: {}", param_vision_interface_);
 
-    SPDLOG_INFO("VisionReceiver port: {}", param_port_);
-
-    set_port(param_port_);
+    set_port(param_vision_interface_, param_port_);
 
     raw_packet_pub_ = create_publisher<SSL_WrapperPacket>(topics::kRawProtobufTopic, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
@@ -74,7 +72,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
-void VisionReceiver::set_port(int port) {
+void VisionReceiver::set_port(const std::string& interface, int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
     if (socket_.is_open()) {
@@ -94,7 +92,14 @@ void VisionReceiver::set_port(int port) {
                 kSharedVisionSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kSharedVisionSourceAddress).to_v4();
-    socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    if (interface.empty()) {
+        socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    } else {
+        const boost::asio::ip::address_v4 interface_address =
+            boost::asio::ip::address::from_string(interface).to_v4();
+        socket_.set_option(
+            boost::asio::ip::multicast::join_group(multicast_address, interface_address));
+    }
 
     // Bind the socket.
     boost::system::error_code bind_error;
