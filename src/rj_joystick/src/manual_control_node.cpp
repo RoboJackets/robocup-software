@@ -1,11 +1,10 @@
 #include "rj_joystick/manual_control_node.hpp"
 
-#include <rj_utils/ros_params.hpp>
+#include <rj_common/ros_params.hpp>
 
 namespace joystick {
 
 ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
-    using rj_utils::declare_required_param;
     ManualControlParams p{};
     p.max_rotation_speed = declare_required_param<double>(*this, "max_rotation_speed",
                                                           "Maximum rotation speed, rad/s");
