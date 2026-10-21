@@ -8,6 +8,9 @@ PlanningParams load_planning_params(rclcpp::Node& node) {
     PlanningParams p{};
     p.timeout = declare_required_param<double>(node, "timeout",
                                                "Timeout for vision data to reach planning (s)");
+    p.ball_decay_constant = declare_required_param<double>(
+        node, "ball_decay_constant",
+        "Ball deceleration from rolling friction (m/s^2), used for ball prediction");
     p.constraints.max_translational_speed =
         declare_required_param<double>(node, "constraints.max_translational_speed",
                                        "Maximum translational speed for planning (m/s)");
