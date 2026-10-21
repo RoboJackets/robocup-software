@@ -12,7 +12,7 @@ namespace {
 std::shared_ptr<VisionFilterParams> load_vision_filter_params(rclcpp::Node& node) {
     VisionFilterParams p{};
     auto require = [&node](auto& field, const std::string& name, const std::string& desc) {
-        field = rj_utils::declare_required_param<std::decay_t<decltype(field)>>(node, name, desc);
+        field = declare_required_param<std::decay_t<decltype(field)>>(node, name, desc);
     };
 
     require(p.vision_loop_dt, "vision_loop_dt", "1/freq of the vision loop (s)");
