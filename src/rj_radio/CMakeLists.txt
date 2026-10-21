@@ -32,7 +32,6 @@ set(RJ_RADIO_DEPS
   rj_common
   rj_msgs
   rj_protos
-  rj_param_utils
   rj_strategy
   rj_geometry
   rj_planning

@@ -137,6 +137,5 @@ int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
 
     auto radio = std::make_shared<radio::NetworkRadio>();
-    start_global_param_provider(radio.get(), kGlobalParamServerNode);
     rclcpp::spin(radio);
 }

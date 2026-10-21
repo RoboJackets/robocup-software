@@ -133,6 +133,8 @@
 /radio:
   ros__parameters:
     timeout: 0.25
+    # Only used by sim_radio_node (simulator address); real runs use network_radio_node.
+    interface: "127.0.0.1"
     use_sim_time: false
     # server_port: output port from field comp's perspective
     # IP address will auto-latch to Ubiquiti cloud key's IP per UDP v4 protocol
