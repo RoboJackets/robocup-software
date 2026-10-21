@@ -5,7 +5,6 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_config_client/config_client.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
-#include <rj_msgs/srv/quick_restart.hpp>
 
 #include "rj_referee/referee_base.hpp"
 
@@ -17,7 +16,6 @@ namespace referee {
  *
  * Exposes quick commands and restarts on @ref
  * referee::topics::kQuickCommandsSrv and @ref
- * referee::topics::kQuickRestartsSrv.
  */
 class InternalReferee : public RefereeBase {
 public:
