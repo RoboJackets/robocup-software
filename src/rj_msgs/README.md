@@ -27,7 +27,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | rj_geometry_msgs, std_msgs |
+| **Depends on** | rj_geometry_msgs |
 | **Depended on by** |rj_benchmarking, rj_common, rj_config_client, rj_config_server, rj_control, rj_joystick, rj_param_utils, rj_radio, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_reciever|
 
 
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | for each message type, I searched the codebase for references to that message and deleted it if there were none. Then I ran colcon build and ensured that the stack built without error. Then I launched the simulator and ensured that deleting these messages didn't cause any issues. |
+| **Unit testing** | N/A |
 | **Coverage gaps** | N/A |
 | **Observed outliers** | N/A |
