@@ -34,7 +34,6 @@ rosidl_generate_interfaces(
   msg/config_msgs/SetGameSettings.srv
 
   # Joystick
-  msg/joystick_msgs/ManipulatorSetpoint.msg
   msg/joystick_msgs/ListJoysticks.srv
   msg/joystick_msgs/SetManual.srv
 
@@ -49,12 +48,9 @@ rosidl_generate_interfaces(
   msg/vision_msgs/DetectionRobot.msg
   msg/vision_msgs/RawProtobuf.msg
 
-  # Motion
-  msg/motion_msgs/MotionSetpoint.msg
-  msg/motion_msgs/LinearMotionInstant.msg
-  msg/motion_msgs/MotionCommand.msg
-  msg/motion_msgs/RobotInstant.msg
-  msg/motion_msgs/Trajectory.msg
+  # Control
+  msg/control_msgs/ManipulatorSetpoint.msg
+  msg/control_msgs/MotionSetpoint.msg
 
   # Radio
   msg/radio_msgs/AliveRobots.msg
@@ -62,6 +58,10 @@ rosidl_generate_interfaces(
 
   # Planning
   msg/planning_msgs/RobotIntent.msg
+  msg/planning_msgs/LinearMotionInstant.msg
+  msg/planning_msgs/MotionCommand.msg
+  msg/planning_msgs/RobotInstant.msg
+  msg/planning_msgs/Trajectory.msg
   msg/planning_msgs/PlanHypotheticalPath.srv
 
   # Referee
