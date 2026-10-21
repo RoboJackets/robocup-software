@@ -158,7 +158,7 @@ if(BUILD_TESTING)
   # Planner tests read the real sim params file, so they also fail if the YAML
   # is missing a key the planners require.
   target_compile_definitions(planner_test PRIVATE
-    RJ_SIM_PARAMS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../rj_param_utils/config/sim_params.yaml")
+    RJ_SIM_PARAMS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../config/sim_params.yaml")
 endif()
 
 ament_export_targets(${PROJECT_NAME})
