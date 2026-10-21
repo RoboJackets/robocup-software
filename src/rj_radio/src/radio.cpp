@@ -4,7 +4,6 @@
 
 namespace radio {
 
-
 Radio::Radio() : Node{"radio"} {
     param_timeout_ = declare_required_param<double>(
         *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
