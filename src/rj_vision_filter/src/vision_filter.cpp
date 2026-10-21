@@ -1,10 +1,10 @@
 #include "rj_vision_filter/vision_filter.hpp"
 
+#include <rj_common/ros_params.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_common/ros_params.hpp>
 
 namespace vision_filter {
 namespace {
