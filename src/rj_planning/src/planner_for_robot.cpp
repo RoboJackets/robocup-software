@@ -2,7 +2,7 @@
 
 namespace planning {
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                                  std::shared_ptr<TrajectoryCollection> robot_trajectories,
                                  const GlobalState& global_state,
                                  std::shared_ptr<const PlanningParams> params)
