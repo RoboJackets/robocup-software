@@ -1,5 +1,7 @@
 #include "rj_referee/external_referee.hpp"
 
+#include <rj_common/ros_params.hpp>
+
 namespace referee {
 
 using referee_module_enums::Command;
@@ -19,7 +21,9 @@ static const int kKickVerifyTimeMs = 250;
 static const bool kCancelBallPlaceOnHalt = true;
 
 ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
-    this->get_parameter("team_name", param_team_name_);
+    // Set by soccer.launch.py from its team_name launch argument.
+    param_team_name_ = declare_required_param<std::string>(
+        *this, "team_name", "Our team name as the SSL game controller knows it");
     SPDLOG_INFO("ExternalReferee team_name: {}", param_team_name_);
     set_team_name(param_team_name_);
 
