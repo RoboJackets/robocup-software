@@ -20,7 +20,6 @@ find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_param_utils REQUIRED)
-find_package(rj_utils REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
@@ -33,7 +32,6 @@ set(RJ_RADIO_DEPS
   rj_common
   rj_msgs
   rj_protos
-  rj_utils
   rj_strategy
   rj_geometry
   rj_planning

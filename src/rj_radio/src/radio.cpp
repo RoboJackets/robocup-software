@@ -1,11 +1,11 @@
 #include "rj_radio/radio.hpp"
 
-#include <rj_utils/ros_params.hpp>
+#include <rj_common/ros_params.hpp>
 
 namespace radio {
 
 Radio::Radio() : Node{"radio"} {
-    param_timeout_ = rj_utils::declare_required_param<double>(
+    param_timeout_ = declare_required_param<double>(
         *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
 
     timeout_callback_handle_ =
