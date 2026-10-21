@@ -122,6 +122,7 @@ private:
     bool blue_team_;
     // Seconds without an update before a robot is treated as disconnected (/radio timeout)
     double param_timeout_{0};
+
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr timeout_callback_handle_;
 };
 

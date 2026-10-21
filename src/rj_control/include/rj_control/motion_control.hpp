@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <optional>
 
 #include <rclcpp/rclcpp.hpp>
@@ -15,7 +16,6 @@
 #include <rj_common/world_state.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/param.hpp>
 #include <std_msgs/msg/float64.hpp>
 
 #include "rj_control/pid.hpp"
@@ -28,6 +28,30 @@ class MotionControlTest;
 
 }  // namespace testing
 
+class MotionControlNode;
+
+/**
+ * @brief Limits shared by every robot's controller (top level of /control).
+ */
+struct MotionControlLimits {
+    double max_velocity;          // m/s
+    double max_angular_velocity;  // rad/s
+    int translation_windup;
+    int rotation_windup;
+};
+
+/**
+ * @brief PID gains for one robot (robot_N.* under /control).
+ */
+struct PidGains {
+    double translation_kp;
+    double translation_ki;
+    double translation_kd;
+    double rotation_kp;
+    double rotation_ki;
+    double rotation_kd;
+};
+
 /**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
@@ -35,7 +59,19 @@ class MotionControlTest;
  */
 class MotionControl {
 public:
-    MotionControl(int shell_id, rclcpp::Node::SharedPtr node);
+    /**
+     * @param node Node that owns this controller. robot_<shell_id>.* gains are
+     * declared on it.
+     * @param limits Limits shared by every controller.
+     */
+    MotionControl(int shell_id, rclcpp::Node* node, const MotionControlLimits& limits);
+
+    // Subscriptions capture `this`.
+    MotionControl(const MotionControl&) = delete;
+    MotionControl& operator=(const MotionControl&) = delete;
+    MotionControl(MotionControl&&) = delete;
+    MotionControl& operator=(MotionControl&&) = delete;
+    ~MotionControl() = default;
 
 protected:
     friend class testing::MotionControlTest;
@@ -49,6 +85,8 @@ protected:
              MotionSetpoint* setpoint);
 
 private:
+    friend class MotionControlNode;
+
     /**
      * Force stop the motion by setting the setpoint to zero.
      * Also resets PID controllers.
@@ -66,6 +104,8 @@ private:
      * Update PID parameters.
      */
     void update_params();
+
+    void update_gains(const std::vector<rclcpp::Parameter>& params);
 
     void set_velocity(MotionSetpoint* setpoint, rj_geometry::Twist target_vel);
 
@@ -95,24 +135,9 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_x_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_y_pub_;
     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr error_heading_pub_;
-    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
-    // Robot-specific PID gains
-    double translation_kp_;
-    double translation_ki_;
-    double translation_kd_;
-
-    double rotation_kp_;
-    double rotation_ki_;
-    double rotation_kd_;
-
-    // Shared limits
-    double max_velocity_;
-    double max_acceleration_;
-    double max_angular_velocity_;
-
-    int translation_windup_;
-    int rotation_windup_;
+    MotionControlLimits limits_;
+    PidGains gains_;
 };
 
 }  // namespace control

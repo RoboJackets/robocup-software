@@ -16,8 +16,19 @@ class MotionControlTest : public ::testing::Test {
 public:
     void SetUp() override {
         rclcpp::init(0, {});
-        node_ = std::make_shared<rclcpp::Node>("test_motion_control");
-        control_ = std::make_unique<MotionControl>(0, node_);
+        // Gains and limits match /control in sim_params.yaml.
+        node_ =
+            std::make_shared<rclcpp::Node>("control", rclcpp::NodeOptions{}.parameter_overrides({
+                                                          {"robot_0.translation_kp", 4.0},
+                                                          {"robot_0.translation_ki", 0.0},
+                                                          {"robot_0.translation_kd", 0.0},
+                                                          {"robot_0.rotation_kp", 8.0},
+                                                          {"robot_0.rotation_ki", 0.0},
+                                                          {"robot_0.rotation_kd", 0.0},
+                                                      }));
+        // max_velocity, max_angular_velocity, translation_windup, rotation_windup
+        const MotionControlLimits limits{2.0, 1.0, 0, 0};
+        control_ = std::make_unique<MotionControl>(0, node_.get(), limits);
     }
 
     void TearDown() override { rclcpp::shutdown(); }
