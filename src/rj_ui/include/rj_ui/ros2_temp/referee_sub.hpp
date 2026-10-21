@@ -7,7 +7,7 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/goalie_id.hpp>
 #include <rj_msgs/msg/match_state.hpp>
 #include <rj_msgs/msg/play_state.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
@@ -19,7 +19,7 @@ namespace ros2_temp {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
 using PlayStateMsg = rj_msgs::msg::PlayState;
 using MatchStateMsg = rj_msgs::msg::MatchState;
-using GoalieMsg = rj_msgs::msg::Goalie;
+using GoalieMsg = rj_msgs::msg::GoalieID;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 

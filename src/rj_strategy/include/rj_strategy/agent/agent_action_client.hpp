@@ -20,7 +20,7 @@
 #include <rj_msgs/msg/agent_state.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/goalie_id.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -61,7 +61,7 @@ private:
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
+    rclcpp::Subscription<rj_msgs::msg::GoalieID>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
     rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
