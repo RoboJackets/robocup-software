@@ -200,18 +200,23 @@ struct TypeAdapter<RobotState, RobotState::Msg> {
     using ros_message_type = RobotState::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
-        rj_convert::convert_to_ros(source.pose, &destination.pose);
-        rj_convert::convert_to_ros(source.velocity, &destination.velocity);
-        rj_convert::convert_to_ros(source.visible, &destination.visible);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.timestamp, destination.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_ros_message(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_ros_message(
+            source.velocity, destination.velocity);
+        destination.visible = source.visible;
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination.timestamp =
-            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp);
-        rj_convert::convert_from_ros(source.pose, &destination.pose);
-        rj_convert::convert_from_ros(source.velocity, &destination.velocity);
-        rj_convert::convert_from_ros(source.visible, &destination.visible);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, destination.timestamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_custom(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_custom(
+            source.velocity, destination.velocity);
+        destination.visible = source.visible;
     }
 };
 
@@ -222,17 +227,23 @@ struct TypeAdapter<BallState, BallState::Msg> {
     using ros_message_type = BallState::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.timestamp, &destination.stamp);
-        rj_convert::convert_to_ros(source.velocity, &destination.velocity);
-        rj_convert::convert_to_ros(source.position, &destination.position);
-        rj_convert::convert_to_ros(source.visible, &destination.visible);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.timestamp, destination.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.position, destination.position);
+        destination.visible = source.visible;
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rj_convert::convert_from_ros(source.stamp, &destination.timestamp);
-        rj_convert::convert_from_ros(source.velocity, &destination.velocity);
-        rj_convert::convert_from_ros(source.position, &destination.position);
-        rj_convert::convert_from_ros(source.visible, &destination.visible);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, destination.timestamp);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.position, destination.position);
+        destination.visible = source.visible;
     }
 };
 
@@ -243,17 +254,25 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
     using ros_message_type = WorldState::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.ball, &destination.ball);
-        rj_convert::convert_to_ros(source.our_robots, &destination.our_robots);
-        rj_convert::convert_to_ros(source.their_robots, &destination.their_robots);
-        rj_convert::convert_to_ros(source.last_updated_time, &destination.last_update_time);
+        rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_ros_message(source.ball,
+                                                                               destination.ball);
+        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::
+            convert_to_ros_message(source.our_robots, destination.our_robots);
+        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::
+            convert_to_ros_message(source.their_robots, destination.their_robots);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.last_updated_time, destination.last_update_time);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rj_convert::convert_from_ros(source.ball, &destination.ball);
-        rj_convert::convert_from_ros(source.our_robots, &destination.our_robots);
-        rj_convert::convert_from_ros(source.their_robots, &destination.their_robots);
-        rj_convert::convert_from_ros(source.last_update_time, &destination.last_updated_time);
+        rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_custom(source.ball,
+                                                                          destination.ball);
+        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::convert_to_custom(
+            source.our_robots, destination.our_robots);
+        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::convert_to_custom(
+            source.their_robots, destination.their_robots);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.last_update_time, destination.last_updated_time);
     }
 };
 

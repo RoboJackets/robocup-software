@@ -1,5 +1,7 @@
 #include "rj_geometry/geometry_conversions.hpp"
 
+#include <rj_geometry/testing/ros_convert_testing.hpp>
+
 
 
 static rj_geometry_msgs::msg::Point make_ros_point() {
@@ -65,8 +67,8 @@ TEST(ROSConvertGeometry, shape_set_convert) {
     rect.pt[0] = rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(0).y(1);
     rect.pt[1] = rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
     rj_geometry_msgs::msg::Circle circle;
-    circle.center = rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
-        rj_geometry::Point(1.0, 1.0));
+    rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+        rj_geometry::Point(1.0, 1.0), circle.center);
     circle.radius = 0.5;
 
     rj_geometry_msgs::msg::ShapeSet shapes;

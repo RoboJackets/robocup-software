@@ -124,21 +124,17 @@ struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInst
     using ros_message_type = rj_msgs::msg::LinearMotionInstant;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination.position =
-            rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
-                source.position);
-        destination.velocity =
-            rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
-                source.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.position, destination.position);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.velocity, destination.velocity);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination.position =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                source.position);
-        destination.velocity =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                source.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.position, destination.position);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.velocity, destination.velocity);
     }
 };
 
@@ -149,24 +145,21 @@ struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
     using ros_message_type = rj_msgs::msg::RobotInstant;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination.stamp =
-            rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(source.stamp);
-        destination.pose =
-            rj_convert::convert_to_ros<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>(source.pose);
-        destination.velocity =
-            rj_convert::convert_to_ros<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>(
-                source.velocity);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.stamp, destination.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_ros_message(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_ros_message(
+            source.velocity, destination.velocity);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination.pose =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Pose, rj_geometry::Pose>(
-                source.pose);
-        destination.velocity =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Twist, rj_geometry::Twist>(
-                source.velocity);
-        destination.stamp =
-            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_custom(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_custom(
+            source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, destination.stamp);
     }
 };
 

@@ -92,7 +92,6 @@ set(RJ_UI_DEPS
   rj_geometry
   rj_utils
   rj_planning
-  rj_convert
   rj_msgs
   rj_strategy
   rj_referee

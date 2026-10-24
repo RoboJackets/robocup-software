@@ -258,13 +258,17 @@ struct TypeAdapter<MatchState, rj_msgs::msg::MatchState> {
     using ros_message_type = rj_msgs::msg::MatchState;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.period, &destination.period);
-        rj_convert::convert_to_ros(source.stage_time_left, &destination.stage_time_left);
+        rclcpp::TypeAdapter<MatchState::Period, uint8_t>::convert_to_ros_message(
+            source.period, destination.period);
+        rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_ros_message(
+            source.stage_time_left, destination.stage_time_left);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rj_convert::convert_from_ros(source.period, &destination.period);
-        rj_convert::convert_from_ros(source.stage_time_left, &destination.stage_time_left);
+        rclcpp::TypeAdapter<MatchState::Period, uint8_t>::convert_to_custom(source.period,
+                                                                            destination.period);
+        rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_custom(
+            source.stage_time_left, destination.stage_time_left);
     }
 };
 
@@ -305,24 +309,27 @@ struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
     using ros_message_type = rj_msgs::msg::PlayState;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.state(), &destination.state);
-        rj_convert::convert_to_ros(source.restart(), &destination.restart);
-        rj_convert::convert_to_ros(source.is_our_restart(), &destination.our_restart);
+        rclcpp::TypeAdapter<PlayState::State, uint8_t>::convert_to_ros_message(source.state(),
+                                                                               destination.state);
+        rclcpp::TypeAdapter<PlayState::Restart, uint8_t>::convert_to_ros_message(
+            source.restart(), destination.restart);
+        destination.our_restart = source.is_our_restart();
         if (source.ball_placement_point().has_value()) {
-            rj_convert::convert_to_ros(source.ball_placement_point().value(),
-                                       &destination.placement_point);
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_ros_message(source.ball_placement_point().value(),
+                                       destination.placement_point);
         }
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         PlayState::State state = PlayState::State::Halt;
-        rj_convert::convert_from_ros(source.state, &state);
+        rclcpp::TypeAdapter<PlayState::State, uint8_t>::convert_to_custom(source.state, state);
         PlayState::Restart restart = PlayState::Restart::None;
-        rj_convert::convert_from_ros(source.restart, &restart);
-        destination = PlayState(
-            state, restart, source.our_restart,
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                source.placement_point));
+        rclcpp::TypeAdapter<PlayState::Restart, uint8_t>::convert_to_custom(source.restart, restart);
+        rj_geometry::Point placement_point;
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.placement_point, placement_point);
+        destination = PlayState(state, restart, source.our_restart, placement_point);
     }
 };
 

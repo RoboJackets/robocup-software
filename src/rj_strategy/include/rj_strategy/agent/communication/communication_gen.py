@@ -37,7 +37,7 @@ def convert_individual_hpp(msg, path, msg_type):
     hpp = (
         "#pragma once \n\n#include <mutex>\n#include <string>\n#include"
         " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
-        " <rj_convert/ros_convert.hpp>\n"
+        " <rclcpp/type_adapter.hpp>\n"
     )
     hpp += convert_msg_to_hpp_include(msg)
     hpp += "\n\n"
@@ -174,7 +174,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp = (
         "#pragma once\n\n#include <mutex>\n#include <string>\n#include"
         " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
-        " <rj_convert/ros_convert.hpp>\n\n"
+        " <rclcpp/type_adapter.hpp>\n\n"
     )
     hpp += '#include "rj_msgs/msg/agent_request.hpp"\n'
     hpp += '#include "rj_msgs/msg/agent_response.hpp"\n'
@@ -350,13 +350,15 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         hpp += (
             "\t\t\tdestination."
             + msgName
-            + ".emplace_back(rj_convert::convert_to_ros<strategy::communication::"
+            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + request[:-4]
+            + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + request[:-4]
             + ", rj_msgs::msg::"
             + request[:-4]
-            + ">(*"
+            + ">::convert_to_ros_message(*"
             + msgName
-            + "));\n"
+            + ", converted);\n\t\t\t\treturn converted;\n\t\t\t}());\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
@@ -372,13 +374,15 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         msgName = convert_msg_to_hpp_include(request)[22:-5]
         hpp += "if (!source." + msgName + ".empty()) {\n"
         hpp += (
-            "\t\t\tresult = rj_convert::convert_from_ros<rj_msgs::msg::"
+            "\t\t\tstrategy::communication::"
             + request[:-4]
-            + ", strategy::communication::"
+            + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + request[:-4]
-            + ">(source."
+            + ", rj_msgs::msg::"
+            + request[:-4]
+            + ">::convert_to_custom(source."
             + msgName
-            + ".front());\n"
+            + ".front(), converted);\n\t\t\tresult = converted;\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
@@ -402,9 +406,8 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         "\t\tdestination = ros_message_type{};\n"
     )
     hpp += (
-        "\t\tdestination.associated_request = rj_convert::convert_to_ros<"
-        "strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>"
-        "(source.associated_request);\n\t\t"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "convert_to_ros_message(source.associated_request, destination.associated_request);\n\t\t"
     )
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
@@ -418,13 +421,15 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         hpp += (
             "\t\t\tdestination.response."
             + msgName
-            + ".emplace_back(rj_convert::convert_to_ros<strategy::communication::"
+            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + response[:-4]
+            + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + response[:-4]
             + ", rj_msgs::msg::"
             + response[:-4]
-            + ">(*"
+            + ">::convert_to_ros_message(*"
             + msgName
-            + "));\n"
+            + ", converted);\n\t\t\t\treturn converted;\n\t\t\t}());\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
@@ -437,21 +442,22 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     )
     hpp += "\t\tstrategy::communication::AgentResponse result;\n"
     hpp += (
-        "\t\tresult.associated_request ="
-        " rj_convert::convert_from_ros<rj_msgs::msg::AgentRequest,"
-        " strategy::communication::AgentRequest>(source.associated_request);\n\t\t"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "convert_to_custom(source.associated_request, result.associated_request);\n\t\t"
     )
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
         hpp += "if (!source.response." + msgName + ".empty()) {\n"
         hpp += (
-            "\t\t\tresult.response = rj_convert::convert_from_ros<rj_msgs::msg::"
+            "\t\t\tstrategy::communication::"
             + response[:-4]
-            + ", strategy::communication::"
+            + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + response[:-4]
-            + ">(source.response."
+            + ", rj_msgs::msg::"
+            + response[:-4]
+            + ">::convert_to_custom(source.response."
             + msgName
-            + ".front());\n"
+            + ".front(), converted);\n\t\t\tresult.response = converted;\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"

@@ -45,9 +45,11 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 }
 
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
+    builtin_interfaces::msg::Time last_update_time;
+    rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+        world_.last_update_time(), last_update_time);
     return rj_msgs::build<WorldStateMsg>()
-        .last_update_time(rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(
-            world_.last_update_time()))
+        .last_update_time(last_update_time)
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))
         .ball(build_ball_state_msg());
@@ -57,12 +59,13 @@ VisionFilter::BallStateMsg VisionFilter::build_ball_state_msg() const {
     const WorldBall& wb = world_.get_world_ball();
 
     BallStateMsg msg{};
-    msg.stamp = rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(wb.get_time());
-    msg.position =
-        rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(wb.get_pos());
-    msg.velocity =
-        rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(wb.get_vel());
-    msg.visible = rj_convert::convert_to_ros<bool, bool>(wb.get_is_valid());
+    rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+        wb.get_time(), msg.stamp);
+    rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+        wb.get_pos(), msg.position);
+    rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+        wb.get_vel(), msg.velocity);
+    msg.visible = wb.get_is_valid();
     return msg;
 }
 
@@ -84,8 +87,8 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
             robot_state.timestamp = wr.get_time();
         }
 
-        robot_state_msgs.at(i) =
-            rj_convert::convert_to_ros<RobotState, RobotState::Msg>(robot_state);
+        rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(
+            robot_state, robot_state_msgs.at(i));
     }
     return robot_state_msgs;
 }

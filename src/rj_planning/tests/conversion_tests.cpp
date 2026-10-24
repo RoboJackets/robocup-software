@@ -2,6 +2,7 @@
 
 #include <rj_common/planning/motion_command.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include <rj_geometry/testing/ros_convert_testing.hpp>
 
 
 using rj_geometry::Point;

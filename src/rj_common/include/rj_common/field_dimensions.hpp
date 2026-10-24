@@ -372,20 +372,20 @@ struct TypeAdapter<FieldDimensions, FieldDimensions::Msg> {
     using ros_message_type = FieldDimensions::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.length(), &destination.length);
-        rj_convert::convert_to_ros(source.width(), &destination.width);
-        rj_convert::convert_to_ros(source.border(), &destination.border);
-        rj_convert::convert_to_ros(source.line_width(), &destination.line_width);
-        rj_convert::convert_to_ros(source.goal_width(), &destination.goal_width);
-        rj_convert::convert_to_ros(source.goal_depth(), &destination.goal_depth);
-        rj_convert::convert_to_ros(source.goal_height(), &destination.goal_height);
-        rj_convert::convert_to_ros(source.penalty_short_dist(), &destination.penalty_short_dist);
-        rj_convert::convert_to_ros(source.penalty_long_dist(), &destination.penalty_long_dist);
-        rj_convert::convert_to_ros(source.center_radius(), &destination.center_radius);
-        rj_convert::convert_to_ros(source.center_diameter(), &destination.center_diameter);
-        rj_convert::convert_to_ros(source.goal_flat(), &destination.goal_flat);
-        rj_convert::convert_to_ros(source.floor_length(), &destination.floor_length);
-        rj_convert::convert_to_ros(source.floor_width(), &destination.floor_width);
+        destination.length = source.length();
+        destination.width = source.width();
+        destination.border = source.border();
+        destination.line_width = source.line_width();
+        destination.goal_width = source.goal_width();
+        destination.goal_depth = source.goal_depth();
+        destination.goal_height = source.goal_height();
+        destination.penalty_short_dist = source.penalty_short_dist();
+        destination.penalty_long_dist = source.penalty_long_dist();
+        destination.center_radius = source.center_radius();
+        destination.center_diameter = source.center_diameter();
+        destination.goal_flat = source.goal_flat();
+        destination.floor_length = source.floor_length();
+        destination.floor_width = source.floor_width();
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {

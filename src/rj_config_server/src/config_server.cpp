@@ -10,8 +10,12 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
                            const GameSettingsMsg& game_settings)
     : Node{"config_server", node_options},
       game_settings_{game_settings},
-      field_dimensions_{rj_convert::convert_to_ros<FieldDimensions, FieldDimensions::Msg>(
-          FieldDimensions::kDefaultDimensions)} {
+      field_dimensions_{[] {
+          FieldDimensions::Msg message;
+          rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
+              FieldDimensions::kDefaultDimensions, message);
+          return message;
+      }()} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
     // Game Settings
     game_settings_publisher_ =

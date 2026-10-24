@@ -80,8 +80,12 @@ void RefereeBase::send() {
 
     const auto resolved_play_state = resolve_play_state(
         yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x,
-        rj_convert::convert_from_ros<FieldDimensions::Msg, FieldDimensions>(
-            config_client_.field_dimensions()));
+        [&] {
+            FieldDimensions field_dimensions;
+            rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
+                config_client_.field_dimensions(), field_dimensions);
+            return field_dimensions;
+        }());
     play_state_pub_->publish(resolved_play_state);
     match_state_pub_->publish(match_state_);
 

@@ -17,10 +17,12 @@ find_package(fmt REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
 
 set(RJ_GEOMETRY_DEPS
   Eigen3
   fmt
+  rclcpp
   rj_geometry_msgs
 )
 

@@ -23,16 +23,18 @@ void DebugDrawInterface::run() {
 
     for (const auto& [layer, debug_draw] : latest_) {
         for (const auto& shapes : debug_draw->shapes) {
-            context_->debug_drawer.draw_shape_set(
-                rj_convert::convert_from_ros<rj_geometry_msgs::msg::ShapeSet,
-                                             rj_geometry::ShapeSet>(shapes.shapes),
-                color_to_qt(shapes.color), QString::fromStdString(layer));
+            rj_geometry::ShapeSet shape_set;
+            rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
+                convert_to_custom(shapes.shapes, shape_set);
+            context_->debug_drawer.draw_shape_set(shape_set, color_to_qt(shapes.color),
+                                                  QString::fromStdString(layer));
         }
         for (const auto& segment : debug_draw->segments) {
-            context_->debug_drawer.draw_segment(
-                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Segment, rj_geometry::Segment>(
-                    segment.segment),
-                color_to_qt(segment.color), QString::fromStdString(layer));
+            rj_geometry::Segment segment_shape;
+            rclcpp::TypeAdapter<rj_geometry::Segment, rj_geometry_msgs::msg::Segment>::
+                convert_to_custom(segment.segment, segment_shape);
+            context_->debug_drawer.draw_segment(segment_shape, color_to_qt(segment.color),
+                                                QString::fromStdString(layer));
         }
         for (const auto& pose : debug_draw->poses) {
             // TODO(#1584): Handle poses
@@ -48,11 +50,11 @@ void DebugDrawInterface::run() {
             }
         }
         for (const auto& text : debug_draw->debug_text) {
-            context_->debug_drawer.draw_text(
-                QString::fromStdString(text.text),
-                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                    text.position),
-                color_to_qt(text.color), QString::fromStdString(layer));
+            rj_geometry::Point position;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                text.position, position);
+            context_->debug_drawer.draw_text(QString::fromStdString(text.text), position,
+                                             color_to_qt(text.color), QString::fromStdString(layer));
         }
     }
 }

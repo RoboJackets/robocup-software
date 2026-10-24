@@ -54,21 +54,21 @@ struct TypeAdapter<GameSettings, GameSettings::Msg> {
     using ros_message_type = GameSettings::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.simulation, &destination.simulation);
-        rj_convert::convert_to_ros(source.request_blue_team, &destination.request_blue_team);
-        rj_convert::convert_to_ros(source.request_goalie_id, &destination.request_goalie_id);
-        rj_convert::convert_to_ros(source.defend_plus_x, &destination.defend_plus_x);
-        rj_convert::convert_to_ros(source.use_our_half, &destination.use_our_half);
-        rj_convert::convert_to_ros(source.use_their_half, &destination.use_their_half);
+        destination.simulation = source.simulation;
+        destination.request_blue_team = source.request_blue_team;
+        destination.request_goalie_id = source.request_goalie_id;
+        destination.defend_plus_x = source.defend_plus_x;
+        destination.use_our_half = source.use_our_half;
+        destination.use_their_half = source.use_their_half;
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rj_convert::convert_from_ros(source.simulation, &destination.simulation);
-        rj_convert::convert_from_ros(source.request_blue_team, &destination.request_blue_team);
-        rj_convert::convert_from_ros(source.request_goalie_id, &destination.request_goalie_id);
-        rj_convert::convert_from_ros(source.defend_plus_x, &destination.defend_plus_x);
-        rj_convert::convert_from_ros(source.use_our_half, &destination.use_our_half);
-        rj_convert::convert_from_ros(source.use_their_half, &destination.use_their_half);
+        destination.simulation = source.simulation;
+        destination.request_blue_team = source.request_blue_team;
+        destination.request_goalie_id = source.request_goalie_id;
+        destination.defend_plus_x = source.defend_plus_x;
+        destination.use_our_half = source.use_our_half;
+        destination.use_their_half = source.use_their_half;
     }
 };
 

@@ -27,8 +27,10 @@ Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
     world_state_sub_ = world_state_node_->create_subscription<WorldStateMsg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldStateMsg::UniquePtr msg) {
-            rj_convert::convert_from_ros(*msg, &context_.world_state);
-            rj_convert::convert_from_ros(msg->last_update_time, &last_vision_time_);
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg,
+                                                                                context_.world_state);
+            rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+                msg->last_update_time, last_vision_time_);
         });
 
     debug_draw_sub_ =

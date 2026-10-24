@@ -98,11 +98,11 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
 void PlannerForRobot::plan_hypothetical_robot_path(
     const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
     std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
-    /* const auto intent = rj_convert::convert_from_ros(request->intent); */
+    /* Intent conversion used to happen here before planning. */
     /* auto plan_request = make_request(intent); */
     /* auto trajectory = safe_plan_for_robot(plan_request); */
     /* RJ::Seconds trajectory_duration = trajectory.duration(); */
-    /* response->estimate = rj_convert::convert_to_ros(trajectory_duration); */
+    /* Response estimate conversion used to happen here. */
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {

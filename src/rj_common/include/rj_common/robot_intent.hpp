@@ -50,12 +50,10 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
-        destination.motion_command =
-            rj_convert::convert_to_ros<planning::MotionCommand, rj_msgs::msg::MotionCommand>(
-                source.motion_command);
-        destination.local_obstacles =
-            rj_convert::convert_to_ros<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>(
-                source.local_obstacles);
+        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::
+            convert_to_ros_message(source.motion_command, destination.motion_command);
+        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
+            convert_to_ros_message(source.local_obstacles, destination.local_obstacles);
         destination.shoot_mode = static_cast<uint8_t>(source.shoot_mode);
         destination.trigger_mode = static_cast<uint8_t>(source.trigger_mode);
         destination.dribbler_mode = static_cast<uint8_t>(source.dribbler_mode);
@@ -66,12 +64,10 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
-        destination.motion_command =
-            rj_convert::convert_from_ros<rj_msgs::msg::MotionCommand, planning::MotionCommand>(
-                source.motion_command);
-        destination.local_obstacles =
-            rj_convert::convert_from_ros<rj_geometry_msgs::msg::ShapeSet, rj_geometry::ShapeSet>(
-                source.local_obstacles);
+        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::convert_to_custom(
+            source.motion_command, destination.motion_command);
+        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::convert_to_custom(
+            source.local_obstacles, destination.local_obstacles);
         destination.shoot_mode = static_cast<RobotIntent::ShootMode>(source.shoot_mode);
         destination.trigger_mode = static_cast<RobotIntent::TriggerMode>(source.trigger_mode);
         destination.dribbler_mode = static_cast<RobotIntent::DribblerMode>(source.dribbler_mode);

@@ -104,8 +104,12 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
 
         // pub Trajectory based on the RobotIntent
         my_robot_planner.execute_intent(
-            rj_convert::convert_from_ros<rj_msgs::msg::RobotIntent, RobotIntent>(
-                goal->robot_intent));
+            [&goal] {
+                RobotIntent intent;
+                rclcpp::TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent>::convert_to_custom(
+                    goal->robot_intent, intent);
+                return intent;
+            }());
 
         // when done, tell client goal is done, break loop
         // TODO(p-nayak): when done, publish empty motion command to this robot's trajectory

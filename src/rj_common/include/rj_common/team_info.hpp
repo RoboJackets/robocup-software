@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
+#include <rj_geometry/vector_type_adapter.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
@@ -75,27 +76,31 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
     using ros_message_type = rj_msgs::msg::TeamInfo;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rj_convert::convert_to_ros(source.name, &destination.name);
-        rj_convert::convert_to_ros(source.score, &destination.score);
-        rj_convert::convert_to_ros(source.red_cards, &destination.num_red_cards);
-        rj_convert::convert_to_ros(source.yellow_cards, &destination.num_yellow_cards);
-        rj_convert::convert_to_ros(source.yellow_card_times,
-                                   &destination.yellow_card_remaining_times);
-        rj_convert::convert_to_ros(source.timeouts_left, &destination.timeouts_left);
-        rj_convert::convert_to_ros(source.timeout_time, &destination.remaining_timeout_time);
-        rj_convert::convert_to_ros(source.goalie, &destination.goalie_id);
+        destination.name = source.name;
+        destination.score = source.score;
+        destination.num_red_cards = source.red_cards;
+        destination.num_yellow_cards = source.yellow_cards;
+        rclcpp::TypeAdapter<std::vector<RJ::Seconds>,
+                            std::vector<builtin_interfaces::msg::Duration>>::convert_to_ros_message(
+            source.yellow_card_times, destination.yellow_card_remaining_times);
+        destination.timeouts_left = source.timeouts_left;
+        rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_ros_message(
+            source.timeout_time, destination.remaining_timeout_time);
+        destination.goalie_id = source.goalie;
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rj_convert::convert_from_ros(source.name, &destination.name);
-        rj_convert::convert_from_ros(source.score, &destination.score);
-        rj_convert::convert_from_ros(source.num_red_cards, &destination.red_cards);
-        rj_convert::convert_from_ros(source.num_yellow_cards, &destination.yellow_cards);
-        rj_convert::convert_from_ros(source.yellow_card_remaining_times,
-                                     &destination.yellow_card_times);
-        rj_convert::convert_from_ros(source.timeouts_left, &destination.timeouts_left);
-        rj_convert::convert_from_ros(source.remaining_timeout_time, &destination.timeout_time);
-        rj_convert::convert_from_ros(source.goalie_id, &destination.goalie);
+        destination.name = source.name;
+        destination.score = source.score;
+        destination.red_cards = source.num_red_cards;
+        destination.yellow_cards = source.num_yellow_cards;
+        rclcpp::TypeAdapter<std::vector<RJ::Seconds>,
+                            std::vector<builtin_interfaces::msg::Duration>>::convert_to_custom(
+            source.yellow_card_remaining_times, destination.yellow_card_times);
+        destination.timeouts_left = source.timeouts_left;
+        rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_custom(
+            source.remaining_timeout_time, destination.timeout_time);
+        destination.goalie = source.goalie_id;
     }
 };
 

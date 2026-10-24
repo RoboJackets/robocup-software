@@ -13,6 +13,8 @@
 #include "rj_common/planning/dynamic_obstacle.hpp"
 #include "rj_common/planning/instant.hpp"
 
+#include <rj_geometry/vector_type_adapter.hpp>
+
 namespace planning {
 
 /**
@@ -475,19 +477,23 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         if (!source.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
-        destination.stamp = rj_convert::convert_to_ros<RJ::Time, builtin_interfaces::msg::Time>(
-            source.time_created().value());
-        destination.instants =
-            rj_convert::convert_to_ros<std::vector<planning::RobotInstant>,
-                                       std::vector<rj_msgs::msg::RobotInstant>>(source.instants());
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.time_created().value(), destination.stamp);
+        rclcpp::TypeAdapter<std::vector<planning::RobotInstant>,
+                            std::vector<rj_msgs::msg::RobotInstant>>::convert_to_ros_message(
+            source.instants(), destination.instants);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = planning::Trajectory{
-            rj_convert::convert_from_ros<std::vector<rj_msgs::msg::RobotInstant>,
-                                         std::vector<planning::RobotInstant>>(source.instants)};
-        destination.stamp(
-            rj_convert::convert_from_ros<builtin_interfaces::msg::Time, RJ::Time>(source.stamp));
+        std::vector<planning::RobotInstant> instants;
+        rclcpp::TypeAdapter<std::vector<planning::RobotInstant>,
+                            std::vector<rj_msgs::msg::RobotInstant>>::convert_to_custom(
+            source.instants, instants);
+        destination = planning::Trajectory{instants};
+        RJ::Time stamp;
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(source.stamp,
+                                                                                       stamp);
+        destination.stamp(stamp);
         destination.mark_angles_valid();
     }
 };

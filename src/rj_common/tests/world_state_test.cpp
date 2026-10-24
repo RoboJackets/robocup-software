@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <rj_geometry/testing/ros_convert_testing.hpp>
+
 
 
 RobotState get_random_robot_state() {

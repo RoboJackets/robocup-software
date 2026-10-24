@@ -93,17 +93,18 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // TODO(Kevin): what if these are empty?
         // convert the LinearMotionInstant target
-        destination.target.push_back(
-            rj_convert::convert_to_ros<planning::LinearMotionInstant,
-                                       rj_msgs::msg::LinearMotionInstant>(source.target));
+        rj_msgs::msg::LinearMotionInstant target;
+        rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
+            convert_to_ros_message(source.target, target);
+        destination.target.push_back(target);
 
         // convert the PathTargetFaceOptions to the angle override options
         const auto* maybe_point = std::get_if<planning::FacePoint>(&source.face_option);
         const auto* maybe_angle = std::get_if<planning::FaceAngle>(&source.face_option);
         if (maybe_point != nullptr) {
-            rj_geometry_msgs::msg::Point face_point =
-                rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
-                    maybe_point->face_point);
+            rj_geometry_msgs::msg::Point face_point;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_ros_message(maybe_point->face_point, face_point);
             destination.override_face_point.push_back(face_point);
         } else if (maybe_angle != nullptr) {
             double face_angle = maybe_angle->target;
@@ -116,9 +117,10 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         destination.ignore_ball.push_back(source.ignore_ball);
 
         // convert pivot point
-        destination.pivot_point.push_back(
-            rj_convert::convert_to_ros<rj_geometry::Point, rj_geometry_msgs::msg::Point>(
-                source.pivot_point));
+        rj_geometry_msgs::msg::Point pivot_point;
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.pivot_point, pivot_point);
+        destination.pivot_point.push_back(pivot_point);
 
         // convert the pivot radius
         destination.pivot_radius.push_back(source.pivot_radius);
@@ -132,18 +134,18 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert the LinearMotionInstant msg to cpp
         if (!source.target.empty()) {
-            result.target =
-                rj_convert::convert_from_ros<rj_msgs::msg::LinearMotionInstant,
-                                             planning::LinearMotionInstant>(source.target[0]);
+            rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
+                convert_to_custom(source.target[0], result.target);
         }
 
         // convert one of the angle overrides to PathTargetFaceOption
         if (!source.override_angle.empty()) {
             result.face_option = planning::FaceAngle{source.override_angle.front()};
         } else if (!source.override_face_point.empty()) {
-            result.face_option = planning::FacePoint{
-                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                    source.override_face_point.front())};
+            rj_geometry::Point face_point;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                source.override_face_point.front(), face_point);
+            result.face_option = planning::FacePoint{face_point};
         } else if (!source.face_ball.empty()) {
             result.face_option = planning::FaceBall{};
         } else {
@@ -158,9 +160,8 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert pivot_point
         if (!source.pivot_point.empty()) {
-            result.pivot_point =
-                rj_convert::convert_from_ros<rj_geometry_msgs::msg::Point, rj_geometry::Point>(
-                    source.pivot_point[0]);
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                source.pivot_point[0], result.pivot_point);
         }
 
         if (!source.pivot_radius.empty()) {

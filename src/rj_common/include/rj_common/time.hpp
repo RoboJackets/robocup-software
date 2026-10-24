@@ -6,6 +6,7 @@
 #include <builtin_interfaces/msg/time.hpp>
 #include <chrono>
 #include <rclcpp/time.hpp>
+#include <rclcpp/type_adapter.hpp>
 
 #include <string>
 
@@ -98,13 +99,14 @@ struct TypeAdapter<RJ::Time, builtin_interfaces::msg::Time> {
     using ros_message_type = builtin_interfaces::msg::Time;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination = static_cast<builtin_interfaces::msg::Time>(
-            rj_convert::convert_to_ros<RJ::Time, rclcpp::Time>(source));
+        rclcpp::Time ros_time;
+        rclcpp::TypeAdapter<RJ::Time, rclcpp::Time>::convert_to_ros_message(source, ros_time);
+        destination = static_cast<builtin_interfaces::msg::Time>(ros_time);
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination = rj_convert::convert_from_ros<rclcpp::Time, RJ::Time>(
-            rclcpp::Time{source.sec, source.nanosec});
+        rclcpp::TypeAdapter<RJ::Time, rclcpp::Time>::convert_to_custom(
+            rclcpp::Time{source.sec, source.nanosec}, destination);
     }
 };
 //std::chrono::duration_cast<std::chrono::nanoseconds>(value).count()
