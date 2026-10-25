@@ -17,7 +17,7 @@ namespace strategy {
 class Runner : public Position {
 public:
     explicit Runner(int r_id);
-    Runner(Position && other);
+    Runner(Position&& other);
     ~Runner() override = default;
 
     std::string get_current_state() override;
@@ -45,16 +45,15 @@ private:
     State current_state_ = State::SIDE_1;
 
     // Corners of the rectangle; SIDE_i drives to vertices_[i]
-    //std::array<rj_geometry::Point, 4> vertices_;
+    // std::array<rj_geometry::Point, 4> vertices_;
 
     // True once we've issued the motion command for the current state, so a stale
     // "done" from the previous side can't make us skip ahead.
     bool command_sent_ = false;
 
-    std::array<rj_geometry::Point, 4> vertices_{{rj_geometry::Point{-2.0, 2.0},
-                                                 rj_geometry::Point{2.0, 2.0},
-                                                 rj_geometry::Point{2.0, 5.0},
-                                                 rj_geometry::Point{-2.0, 5.0}}};
+    std::array<rj_geometry::Point, 4> vertices_{
+        {rj_geometry::Point{-2.0, 2.0}, rj_geometry::Point{2.0, 2.0}, rj_geometry::Point{2.0, 5.0},
+         rj_geometry::Point{-2.0, 5.0}}};
 };
 
 }  // namespace strategy

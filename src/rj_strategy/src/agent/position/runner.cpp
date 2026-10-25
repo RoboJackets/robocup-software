@@ -4,9 +4,7 @@ namespace strategy {
 
 Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     State new_state = next_state();

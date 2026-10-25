@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
+
 #include "rj_strategy/agent/position/runner.hpp"
 
 namespace strategy {
@@ -13,7 +14,6 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
         node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10);
     strategy_debug_drawer_ = std::make_shared<rj_drawing::RosDebugDrawer>(
         debug_draw_pub, fmt::format("strategy_{}", r_id));
-
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
@@ -51,7 +51,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     if (robot_id_ == 1) {
         set_current_position<Runner>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
-                                        current_play_state_);
+                                           current_play_state_);
     }
 
     // Update our state
@@ -274,8 +274,7 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 }
 
 void RobotFactoryPosition::set_default_position() {
-
-    if (robot_id_ != 1) { //practice
+    if (robot_id_ != 1) {  // practice
         set_current_position<SmartIdle>();
         return;
     }
