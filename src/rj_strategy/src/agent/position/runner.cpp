@@ -28,19 +28,19 @@ namespace strategy {
             }
 
             case FIRST_SIDE: {
-                return at_first_vertex() ? SECOND_SIDE : FIRST_SIDE;
+                return check_is_done() ? SECOND_SIDE : FIRST_SIDE;
             }
 
             case SECOND_SIDE: {
-               return at_second_vertex() ? THIRD_SIDE : SECOND_SIDE;
+                return check_is_done() ? THIRD_SIDE : SECOND_SIDE;
             }
 
             case THIRD_SIDE: {
-                return at_third_vertex() ? FOURTH_SIDE : THIRD_SIDE;
+                return check_is_done() ? FOURTH_SIDE : THIRD_SIDE;
             }
 
             case FOURTH_SIDE: {
-                return at_fourth_vertex() ? FIRST_SIDE : FOURTH_SIDE;
+                return check_is_done() ? FIRST_SIDE : FOURTH_SIDE;
             }
         }
 
@@ -91,25 +91,5 @@ namespace strategy {
         }
 
         return nullopt;
-    }
-
-    bool Runner::at_first_vertex() {
-        auto current_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-        return current_position.dist_to(firstVertex) < 0.5;
-    }
-
-    bool Runner::at_second_vertex() {
-        auto current_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-        return current_position.dist_to(secondVertex) < 0.5;
-    }
-
-    bool Runner::at_third_vertex() {
-        auto current_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-        return current_position.dist_to(thirdVertex) < 0.5;
-    }
-
-    bool Runner::at_fourth_vertex() {
-        auto current_position = last_world_state_->get_robot(true, robot_id_).pose.position();
-        return current_position.dist_to(fourthVertex) < 0.5;
     }
 }
