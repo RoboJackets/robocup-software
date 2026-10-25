@@ -50,6 +50,7 @@ set(RJ_STRATEGY_SRC
   src/agent/position/idle.cpp
   src/agent/position/line.cpp
   src/agent/position/offense.cpp
+  src/agent/position/runner.cpp
   src/agent/position/penalty_non_kicker.cpp
   src/agent/position/penalty_player.cpp
   src/agent/position/pivot_test.cpp
