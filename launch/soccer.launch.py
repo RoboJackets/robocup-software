@@ -160,6 +160,13 @@ def generate_launch_description():
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
+            # Tutorial node. Subscribes to the team color and publishes a fruit on /team_fruit.
+            Node(
+                package="rj_radio",
+                executable="soccer_mom_node",
+                output="screen",
+                on_exit=Shutdown(),
+            ),
             Node(
                 condition=IfCondition(PythonExpression(["not ", run_sim])),
                 package="rj_radio",

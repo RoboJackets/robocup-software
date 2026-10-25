@@ -15,6 +15,7 @@ find_package(ament_cmake REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Flann REQUIRED)
 find_package(rj_common REQUIRED)
@@ -73,6 +74,21 @@ add_executable(sim_radio_node src/sim_radio.cpp)
 target_link_libraries(network_radio_node PRIVATE ${PROJECT_NAME})
 target_link_libraries(sim_radio_node PRIVATE ${PROJECT_NAME})
 
+# Tutorial node. It does not use the radio library, so it is its own program.
+# The header lives in include/, so the compiler needs that folder on the include path.
+add_executable(soccer_mom_node src/soccer_mom.cpp)
+target_include_directories(soccer_mom_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+ament_target_dependencies(soccer_mom_node
+  rclcpp
+  std_msgs
+  rj_msgs
+  rj_constants
+)
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -86,7 +102,7 @@ install(
 )
 
 install(
-  TARGETS network_radio_node sim_radio_node
+  TARGETS network_radio_node sim_radio_node soccer_mom_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

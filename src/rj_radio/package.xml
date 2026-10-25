@@ -10,6 +10,7 @@
   <depend>spdlog</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
+  <depend>std_msgs</depend>
   <depend>boost</depend>
   <depend>flann</depend>
 
