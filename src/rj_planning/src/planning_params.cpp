@@ -43,7 +43,7 @@ PlanningParams load_planning_params(rclcpp::Node& node) {
         node, "intermediate.num_intermediates", "Number of intermediate points tried");
     p.intermediate.step_size = declare_required_param<double>(
         node, "intermediate.step_size", "Step size for testing intermediates (m)");
-    p.pivot.radius_multiplier = declare_required_param<double>(node, "pivot.radius_multiplier",
+    p.pivot_radius_multiplier = declare_required_param<double>(node, "pivot.radius_multiplier",
                                                                "Scale applied to the pivot radius");
     p.collect.ball_speed_approach_direction_cutoff = declare_required_param<double>(
         node, "collect.ball_speed_approach_direction_cutoff",
@@ -123,7 +123,7 @@ void apply_planning_params(PlanningParams& p, const std::vector<rclcpp::Paramete
         } else if (name == "intermediate.step_size") {
             p.intermediate.step_size = param.as_double();
         } else if (name == "pivot.radius_multiplier") {
-            p.pivot.radius_multiplier = param.as_double();
+            p.pivot_radius_multiplier = param.as_double();
         } else if (name == "collect.ball_speed_approach_direction_cutoff") {
             p.collect.ball_speed_approach_direction_cutoff = param.as_double();
         } else if (name == "collect.approach_accel_scale") {

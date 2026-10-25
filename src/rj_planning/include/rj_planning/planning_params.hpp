@@ -24,10 +24,6 @@ struct ReplannerParams {
     double off_path_threshold;        // m
 };
 
-struct PivotParams {
-    double radius_multiplier;
-};
-
 struct CollectParams {
     double ball_speed_approach_direction_cutoff;  // m/s
     double approach_accel_scale;
@@ -60,7 +56,7 @@ struct PlanningParams {
     ConstraintsParams constraints;
     ReplannerParams replanner;
     IntermediateParams intermediate;
-    PivotParams pivot;
+    double pivot_radius_multiplier;
     CollectParams collect;
     SettleParams settle;
 };
