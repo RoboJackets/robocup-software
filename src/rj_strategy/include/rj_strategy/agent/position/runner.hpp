@@ -44,12 +44,7 @@ private:
 
     State current_state_ = State::SIDE_1;
 
-    // Corners of the rectangle; SIDE_i drives to vertices_[i]
-    // std::array<rj_geometry::Point, 4> vertices_;
-
-    // True once we've issued the motion command for the current state, so a stale
-    // "done" from the previous side can't make us skip ahead.
-    bool command_sent_ = false;
+    static constexpr double kArriveDist{0.25};
 
     std::array<rj_geometry::Point, 4> vertices_{
         {rj_geometry::Point{-2.0, 2.0}, rj_geometry::Point{2.0, 2.0}, rj_geometry::Point{2.0, 5.0},

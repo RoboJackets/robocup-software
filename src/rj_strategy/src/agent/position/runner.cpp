@@ -7,13 +7,7 @@ Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
-    State new_state = next_state();
-
-    if (new_state != current_state_) {
-        command_sent_ = false;
-    }
-    current_state_ = new_state;
-
+    current_state_ = next_state();
     return state_to_task(std::move(intent));
 }
 
@@ -22,20 +16,24 @@ std::string Runner::get_current_state() {
 }
 
 Runner::State Runner::next_state() {
-    // Only advance once we've sent this side's command AND the planner says it's done.
-    const bool finished = command_sent_ && check_is_done();
+    const auto pos = last_world_state_->get_robot(true, robot_id_).pose.position();
+    const bool arrived = pos.dist_to(vertices_.at(static_cast<int>(current_state_))) < kArriveDist;
+
+    if (!arrived) {
+        return current_state_;
+    }
 
     switch (current_state_) {
         case SIDE_1:
-            return finished ? SIDE_2 : SIDE_1;
+            return SIDE_2;
         case SIDE_2:
-            return finished ? SIDE_3 : SIDE_2;
+            return SIDE_3;
         case SIDE_3:
-            return finished ? SIDE_4 : SIDE_3;
+            return SIDE_4;
         case SIDE_4:
-            return finished ? SIDE_1 : SIDE_4;  // wrap around to repeat the lap
+            return SIDE_1;
     }
-    return SIDE_1;  // unreachable, keeps the compiler happy
+    return SIDE_1;
 }
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
@@ -43,7 +41,6 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
     intent.motion_command = planning::MotionCommand{
         "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}};
-    command_sent_ = true;
 
     return intent;
 }
