@@ -1,6 +1,8 @@
 #pragma once
 
+#include <type_traits>
 
+#include <rclcpp/type_adapter.hpp>
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>

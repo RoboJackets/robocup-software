@@ -2,8 +2,9 @@
 
 #include <memory>
 #include <ostream>
+#include <type_traits>
 
-
+#include <rclcpp/type_adapter.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
 
 /**
