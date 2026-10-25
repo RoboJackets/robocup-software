@@ -114,7 +114,7 @@ def generate_launch_description():
                 executable="rj_benchmarking_node",
                 output="screen",
                 parameters=[param_config_filepath],
-                on_exit=Shutdown()
+                on_exit=Shutdown(),
             ),
             Node(
                 package="rj_vision_receiver",
@@ -139,7 +139,7 @@ def generate_launch_description():
                     os.path.join(
                         get_package_share_directory("rj_param_utils"),
                         "config",
-                        "sim.yaml"
+                        "sim.yaml",
                     )
                 ],
                 on_exit=Shutdown(),
@@ -197,7 +197,11 @@ def generate_launch_description():
             # spawn internal_ref/external_ref based on internal_ref
             # LaunchArgument
             Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
+                condition=IfCondition(
+                    PythonExpression(
+                        ["not ", use_manual_control, " and not ", run_line_test]
+                    )
+                ),
                 package="rj_strategy",
                 executable="agent_action_clients",
                 output="screen",
@@ -258,6 +262,6 @@ def generate_launch_description():
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
-            )
+            ),
         ]
     )

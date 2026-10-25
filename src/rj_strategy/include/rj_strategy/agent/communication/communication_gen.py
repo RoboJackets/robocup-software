@@ -2,34 +2,39 @@ import os
 import re
 
 type_map = {
-   "bool": "bool",
-   "byte": "uint8_t",
-   "char": "char",
-   "float32": "float",
-   "float64": "double",
-   "int8": "int8_t",
-   "uint8": "uint8_t",
-   "int16": "int16_t",
-   "uint16": "uint16_t",
-   "int32": "int32_t",
-   "uint32": "uint32_t",
-   "int64": "int64_t",
-   "uint64": "uint64_t",
-   "string": "std::string",
-   "wstring": "std::u16string"
+    "bool": "bool",
+    "byte": "uint8_t",
+    "char": "char",
+    "float32": "float",
+    "float64": "double",
+    "int8": "int8_t",
+    "uint8": "uint8_t",
+    "int16": "int16_t",
+    "uint16": "uint16_t",
+    "int32": "int32_t",
+    "uint32": "uint32_t",
+    "int64": "int64_t",
+    "uint64": "uint64_t",
+    "string": "std::string",
+    "wstring": "std::u16string",
 }
+
 
 def convert_msg_to_hpp_include(msg):
     words = re.findall("[A-Z][^A-Z]*", msg[:-4])
     words = list(map(lambda x: x.lower(), words))
-    return '#include <rj_msgs/msg/' + "_".join(words) + '.hpp>'
+    return "#include <rj_msgs/msg/" + "_".join(words) + ".hpp>"
 
 
 def map_message_type_to_cpp_type(msg_type):
     type_name = msg_type.strip().split()[0]
 
-    return type_map.get(type_name, type_name) + " " + msg_type[len(type_name):].strip() + ";"
-
+    return (
+        type_map.get(type_name, type_name)
+        + " "
+        + msg_type[len(type_name) :].strip()
+        + ";"
+    )
 
 
 def convert_individual_hpp(msg, path, msg_type):
