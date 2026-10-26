@@ -66,6 +66,17 @@ set(RJ_STRATEGY_SRC
   src/coordinator/kicker_picker_client.cpp
   src/coordinator/marking_client.cpp
   src/coordinator/waller_client.cpp
+
+
+  # Commands
+  src/command_scheduler.cpp 
+  src/commands/infinite_command.cpp
+  src/commands/wait_command.cpp
+  src/commands/move_command.cpp
+
+  # Strategizer
+  src/strategizer.cpp
+  src/robot.cpp
 )
 
 # rj_strategy library
@@ -178,6 +189,25 @@ ament_target_dependencies(agent_action_clients
   ${RJ_STRATEGY_DEPS}
 )
 
+# Agent Action Clients
+add_executable(strategizer
+  src/strategizer.cpp
+)
+
+target_include_directories(strategizer
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_link_libraries(strategizer
+  ${PROJECT_NAME}
+)
+
+ament_target_dependencies(strategizer
+  ${RJ_STRATEGY_DEPS}
+)
+
 install(
   DIRECTORY include/
   DESTINATION include
@@ -193,7 +223,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
+  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients strategizer
   DESTINATION lib/${PROJECT_NAME}
 )
 

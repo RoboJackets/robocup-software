@@ -196,14 +196,14 @@ def generate_launch_description():
             ),
             # spawn internal_ref/external_ref based on internal_ref
             # LaunchArgument
-            Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
-                package="rj_strategy",
-                executable="agent_action_clients",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
+            # Node(
+            #     condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
+            #     package="rj_strategy",
+            #     executable="agent_action_clients",
+            #     output="screen",
+            #     parameters=[param_config_filepath],
+            #     on_exit=Shutdown(),
+            # ),
             Node(
                 condition=IfCondition(PythonExpression([run_line_test])),
                 package="rj_strategy",
@@ -241,6 +241,13 @@ def generate_launch_description():
             Node(
                 package="rj_strategy",
                 executable="kicker_picker_node",
+                output="screen",
+                parameters=[param_config_filepath],
+                on_exit=Shutdown(),
+            ),
+            Node(
+                package="rj_strategy",
+                executable="strategizer",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),
