@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
+
 #include "rj_strategy/agent/position/runner.hpp"
 namespace strategy {
 
@@ -23,8 +24,8 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent) {
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 
