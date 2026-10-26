@@ -1,4 +1,5 @@
 #include "rj_strategy/agent/position/runner.hpp"
+
 #include <utility>
 
 namespace strategy {
@@ -6,18 +7,14 @@ namespace strategy {
 Runner::Runner(int robot_id) : Position{robot_id, "Runner"} {}
 
 // Calls the base class move constructor directly, bypassing the protected access issue
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     update_state();
     return state_to_task(intent);
 }
 
-std::string Runner::get_current_state() {
-    return "Runner";
-}
+std::string Runner::get_current_state() { return "Runner"; }
 
 void Runner::update_state() {
     if (check_is_done()) {
@@ -60,8 +57,8 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     planning::LinearMotionInstant target{target_pt};
     auto path_target = planning::MotionCommand{"path_target", target, planning::FaceTarget{}};
     intent.motion_command = path_target;
-    
+
     return intent;
 }
 
-} // namespace strategy
+}  // namespace strategy
