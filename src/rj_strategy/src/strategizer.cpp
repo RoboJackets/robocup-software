@@ -4,19 +4,17 @@
 #include <chrono>
 #include <thread>
 
+#include "rj_strategy/commands/command_groups/sequential_command.hpp"
 #include "rj_strategy/commands/move_command.hpp"
 #include "rj_strategy/commands/wait_command.hpp"
 
 namespace strategy {
 Strategizer::Strategizer() : Node("stratgizer") {
     client_ptr_ = rclcpp_action::create_client<rj_msgs::action::RobotMove>(this, "robot_move");
+    auto thread_callback = [this]() { this->thread_callback(); };
 
     scheduler = std::make_shared<commands::CommandScheduler>();
-    commands::WaitCommand wCommand(20.);
-    std::shared_ptr<commands::WaitCommand> wCommand1 =
-        std::make_shared<commands::WaitCommand>(5000);
-    // scheduler->scheduleCommand(wCommand1);
-    auto thread_callback = [this]() { this->thread_callback(); };
+
     std::thread thread(thread_callback);
 
     for (int r_id = 0; r_id < 5; r_id++) {
@@ -55,9 +53,12 @@ Strategizer::Strategizer() : Node("stratgizer") {
         "===============================================SPDLOG in Strategizer "
         "Constructor====================================");
     thread.join();
+    SPDLOG_INFO(
+        "===============================================After "
+        "thread.join()====================================");
 }
 void Strategizer::thread_callback() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     planning::MotionCommand mCommand = planning::MotionCommand{"path_target",
                                                                planning::LinearMotionInstant{
@@ -65,12 +66,27 @@ void Strategizer::thread_callback() {
                                                                    rj_geometry::Point{0, 0},
                                                                },
                                                                planning::FaceTarget(), true};
+    planning::MotionCommand mCommand2 = planning::MotionCommand{"path_target",
+                                                                planning::LinearMotionInstant{
+                                                                    rj_geometry::Point{1.5, 4.5},
+                                                                    rj_geometry::Point{0, 0},
+                                                                },
+                                                                planning::FaceTarget(), true};
+
     Robot robot1(1);
 
     std::shared_ptr<commands::MoveCommand> move_command =
         std::make_shared<commands::MoveCommand>(robot1, mCommand, client_ptr_);
+    std::shared_ptr<commands::MoveCommand> move_command2 =
+        std::make_shared<commands::MoveCommand>(robot1, mCommand2, client_ptr_);
+
+    commands::SequentialCommand sCommand({move_command, move_command2});
+    std::shared_ptr<commands::SequentialCommand> sequential_command =
+        std::make_shared<commands::SequentialCommand>(
+            std::initializer_list<std::shared_ptr<commands::Command>>{move_command, move_command2});
+    // std::make_shared<commands::SequentialCommand>(sCommand);
     SPDLOG_INFO("===============================Built Motion Command==========================");
-    if (scheduler->scheduleCommand(move_command)) {
+    if (scheduler->scheduleCommand(sequential_command)) {
         SPDLOG_INFO(
             "===============================Scheduled Motion Command==========================");
     } else {
@@ -80,7 +96,7 @@ void Strategizer::thread_callback() {
 void Strategizer::tick() {
     // SPDLOG_INFO("===============================================Strategizer
     // tick====================================");
-    scheduler.get()->tick();
+    scheduler->tick();
 }
 
 void Strategizer::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {

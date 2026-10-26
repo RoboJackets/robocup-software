@@ -18,12 +18,16 @@ public:
         this->requirements = requirements;
     };
 
+    Command(std::string name) { this->name = name; }
+
     virtual void initialize(){};
     virtual void execute() {}
     virtual bool is_done() { return true; }
     virtual void exit(bool interrupted) {}
 
     std::string get_name() { return name; }
+
+    std::vector<Robot> getRequirements() { return requirements; }
 
     bool is_scheduled() { return scheduled; }
 
@@ -48,9 +52,10 @@ public:
         return false;
     }
 
+    void addRequirements(Robot requirement) { requirements.push_back(requirement); }
+
 protected:
     std::string name;
-    std::vector<Robot> getRequirements() { return requirements; }
 
 private:
     bool interruptible = true;

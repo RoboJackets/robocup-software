@@ -14,9 +14,6 @@ class CommandScheduler {
 public:
     CommandScheduler();
     bool scheduleCommand(std::shared_ptr<Command> command);
-    // static void schedule(const std::shared_ptr<rj_msgs::srv::ScheduleCommand::Request> request,
-    //   std::shared_ptr<rj_msgs::srv::ScheduleCommand::Response>      response);
-    // rclcpp::Service<rj_msgs::srv::ScheduleCommand>::SharedPtr service;
 
     void tick();
 

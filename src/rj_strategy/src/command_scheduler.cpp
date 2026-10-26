@@ -12,22 +12,43 @@ using namespace std::chrono_literals;
 
 namespace commands {
 
-CommandScheduler::CommandScheduler() {}
+CommandScheduler::CommandScheduler() {
+    std::shared_ptr<InfiniteCommand> infinite_command = std::make_shared<InfiniteCommand>();
+    // toExecute.push_back(infinite_command);
+}
 
 bool CommandScheduler::scheduleCommand(std::shared_ptr<Command> command) {
     std::list<std::list<std::shared_ptr<Command>>::iterator> toErase;
-    // SPDLOG_INFO("===================================================Attempt
-    // std::shared_ptr<Command> command_ptr = std::make_shared<Command>(command);
+    SPDLOG_INFO(
+        "===================================================Attempt Schedule Start "
+        "=========================");
     for (auto it = toExecute.begin(); it != toExecute.end(); ++it) {
+        SPDLOG_INFO(
+            "=================================================== Start Loop "
+            "=========================");
         if (command->requirements_overlap(**it)) {
+            SPDLOG_INFO(
+                "===================================================Reqs overlap start "
+                "=========================");
             if (!(*it)->is_interruptible()) {
+                SPDLOG_INFO(
+                    "===================================================Uninterruptible "
+                    "=========================");
                 return false;
             } else {
+                SPDLOG_INFO(
+                    "===================================================Interruptible "
+                    "=========================");
                 toErase.push_back(it);
             }
+            SPDLOG_INFO(
+                "===================================================End Loop "
+                "=========================");
         }
     }
-
+    SPDLOG_INFO(
+        "=================================================== compared requirements "
+        "=========================");
     for (auto it = toExecute.begin(); it != toExecute.end();) {
         if (toErase.empty()) {
             break;
@@ -40,7 +61,13 @@ bool CommandScheduler::scheduleCommand(std::shared_ptr<Command> command) {
             ++it;
         }
     }
+    SPDLOG_INFO(
+        "===================================================Before initialize "
+        "=========================");
     command->initialize();
+    SPDLOG_INFO(
+        "===================================================After Initialize "
+        "=========================");
     toExecute.push_back(command);
 
     return true;
