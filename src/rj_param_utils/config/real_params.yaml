@@ -146,6 +146,7 @@
 
 /internal_referee:
   ros__parameters:
+    team_name: RoboJackets
     use_sim_time: false
 
 /planner:
