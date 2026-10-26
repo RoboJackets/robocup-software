@@ -1,8 +1,9 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/string.hpp>
+
 #include <rj_msgs/msg/team_color.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace tutorial {
 
