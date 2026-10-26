@@ -15,7 +15,9 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_);
+    } else if (robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -284,6 +286,12 @@ void RobotFactoryPosition::set_default_position() {
 
     // Assigning new position
     // Checking whether we have possesion or if the ball is on their half
+
+    if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return;
+    }
+
     if (our_possession_ || last_world_state_->ball.position.y() >
                                field_dimensions_.center_field_loc().y() - kBallDiameter) {
         // Offensive mode
