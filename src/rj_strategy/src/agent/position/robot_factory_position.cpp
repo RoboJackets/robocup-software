@@ -1,6 +1,5 @@
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
 
-#include "rj_strategy/agent/position/runner.hpp"
 namespace strategy {
 
 RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr node)
