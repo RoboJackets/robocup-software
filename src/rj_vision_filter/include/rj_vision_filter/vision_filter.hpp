@@ -8,17 +8,17 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_config_client/config_client.hpp>
-#include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_msgs/msg/team_color.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rj_referee_msgs/msg/team_color.hpp>
+#include <rj_referee_msgs/msg/world_state.hpp>
 #include <rj_utils/concurrent_queue.hpp>
+#include <rj_vision_msgs/msg/detection_frame.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
 #include "rj_vision_filter/camera/world.hpp"
 
 namespace vision_filter {
-using TeamColorMsg = rj_msgs::msg::TeamColor;
+using TeamColorMsg = rj_referee_msgs::msg::TeamColor;
 
 /**
  * Filters the vision measurements into a smoother velocity/position estimate for both the ball and
@@ -26,9 +26,9 @@ using TeamColorMsg = rj_msgs::msg::TeamColor;
  */
 class VisionFilter : public rclcpp::Node {
 public:
-    using WorldStateMsg = rj_msgs::msg::WorldState;
-    using RobotStateMsg = rj_msgs::msg::RobotState;
-    using BallStateMsg = rj_msgs::msg::BallState;
+    using WorldStateMsg = rj_referee_msgs::msg::WorldState;
+    using RobotStateMsg = rj_vision_msgs::msg::RobotState;
+    using BallStateMsg = rj_vision_msgs::msg::BallState;
 
     /**
      * Initialize the vision filter and all callbacks.

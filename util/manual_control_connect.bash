@@ -36,7 +36,7 @@ do
     esac
 done
 
-cmd="ros2 service call /select_manual rj_msgs/srv/SetManual \"{robot_id: $robot_id, controller_uuid: $controller_uuid, connect: $connect}\""
+cmd="ros2 service call /select_manual rj_joystick_msgs/srv/SetManual \"{robot_id: $robot_id, controller_uuid: $controller_uuid, connect: $connect}\""
 
 eval " $cmd"
 

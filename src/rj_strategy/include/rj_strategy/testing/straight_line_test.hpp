@@ -8,25 +8,25 @@
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/agent_state.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/field_dimensions.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/play_state.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
+#include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_referee_msgs/msg/game_settings.hpp>
+#include <rj_referee_msgs/msg/play_state.hpp>
+#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_strategy_msgs/msg/agent_state.hpp>
 #include <rj_utils/logging.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 #include <std_msgs/msg/bool.hpp>
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 
 // run test by using the command `make run-sim-line-test`
-// Note: The the line can be changed by running following command in another terminal window:
-// Make sure to source bash and ros in other window
-// Example command:
-// `ros2 topic pub -1 line rj_msgs/msg/LineTest "{pt: [{x: 2, y: 2}, {x: -2, y: 8}], r_id: 2}"`
+// Note: The line's endpoints and target robot come from the "straight_line_test" params
+// (start_x, start_y, end_x, end_y, robot_id), which are read once when the node starts.
+// To change the line, override those params in the file passed to soccer.launch.py via
+// `param_config_filepath` and relaunch.
 
 DECLARE_FLOAT64("straight_line_test", start_x);
 DECLARE_FLOAT64("straight_line_test", start_y);
@@ -38,8 +38,8 @@ namespace strategy {
 
 class StraightLineTest : public rclcpp::Node {
 public:
-    using AgentStateMsg = rj_msgs::msg::AgentState;
-    using RobotMove = rj_msgs::action::RobotMove;
+    using AgentStateMsg = rj_strategy_msgs::msg::AgentState;
+    using RobotMove = rj_planning_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
     StraightLineTest();
@@ -48,18 +48,18 @@ public:
 
 private:
     // ros subscriptions
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_vision_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<rj_radio_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
 
     // subscription callbacks
-    void world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg);
-    void play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg);
-    void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
-    void field_dimensions_callback(const rj_msgs::msg::FieldDimensions::SharedPtr& msg);
-    void game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg);
+    void world_state_callback(const rj_referee_msgs::msg::WorldState::SharedPtr& msg);
+    void play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg);
+    void alive_robots_callback(const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg);
+    void field_dimensions_callback(const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void game_settings_callback(const rj_referee_msgs::msg::GameSettings::SharedPtr& msg);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
 

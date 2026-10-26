@@ -10,12 +10,12 @@
 #include <rj_common/network.hpp>
 #include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/srv/sim_placement.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_protos/ssl_simulation_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_ui_msgs/srv/sim_placement.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_radio/radio.hpp"
@@ -31,8 +31,8 @@ public:
 
 protected:
     //
-    void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+    void send_control_message(uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+                              const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
                               strategy::Positions role) override;
 
     // Poll the asynchronous receiver
@@ -54,7 +54,7 @@ private:
     // Timer to publish alive robots (i.e. all robots are alive)
     rclcpp::TimerBase::SharedPtr alive_robots_timer_;
     std::array<bool, kNumShells> alive_robots_{};
-    rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
+    rclcpp::Publisher<rj_radio_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;
 
     boost::asio::io_service io_service_;
     boost::asio::ip::udp::socket socket_;
@@ -70,7 +70,7 @@ private:
 
     bool blue_team_;
 
-    rclcpp::Service<rj_msgs::srv::SimPlacement>::SharedPtr sim_placement_service_;
+    rclcpp::Service<rj_ui_msgs::srv::SimPlacement>::SharedPtr sim_placement_service_;
 };
 
 }  // namespace radio

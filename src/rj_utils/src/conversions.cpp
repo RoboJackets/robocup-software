@@ -11,7 +11,7 @@ RawProtobufMsg::UniquePtr to_ros_msg(const SSL_WrapperPacket& packet) {
 }
 
 DetectionBallMsg to_ros_msg(const SSL_DetectionBall& ball) {
-    return rj_msgs::build<DetectionBallMsg>()
+    return rj_vision_msgs::build<DetectionBallMsg>()
         .confidence(ball.confidence())
         .area(ball.area())
         .x(ball.x())
@@ -22,7 +22,7 @@ DetectionBallMsg to_ros_msg(const SSL_DetectionBall& ball) {
 }
 
 DetectionRobotMsg to_ros_msg(const SSL_DetectionRobot& robot) {
-    return rj_msgs::build<DetectionRobotMsg>()
+    return rj_vision_msgs::build<DetectionRobotMsg>()
         .confidence(robot.confidence())
         .robot_id(robot.robot_id())
         .x(robot.x())

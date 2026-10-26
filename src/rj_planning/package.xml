@@ -16,7 +16,11 @@
   <depend>rj_geometry</depend>
   <depend>rj_common</depend>
   <depend>rj_convert</depend>
-  <depend>rj_msgs</depend>
+  <depend>rj_control_msgs</depend>
+  <depend>rj_planning_msgs</depend>
+  <depend>rj_radio_msgs</depend>
+  <depend>rj_referee_msgs</depend>
+  <depend>rj_vision_msgs</depend>
   <depend>rj_param_utils</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

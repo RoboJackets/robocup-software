@@ -1,7 +1,7 @@
 #include "rj_strategy/agent/agent_action_client.hpp"
 
 namespace strategy {
-using RobotMove = rj_msgs::action::RobotMove;
+using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
 AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
@@ -19,47 +19,52 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<rj_referee_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](rj_referee_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<rj_referee_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+        [this](const rj_referee_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_->create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<rj_vision_msgs::msg::FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::FieldDimensions::SharedPtr msg) { field_dimensions_callback(msg); });
+        [this](rj_vision_msgs::msg::FieldDimensions::SharedPtr msg) {
+            field_dimensions_callback(msg);
+        });
 
-    alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
+    alive_robots_sub_ = node_->create_subscription<rj_radio_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
-        [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
+        [this](rj_radio_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_->create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<rj_referee_msgs::msg::GameSettings>(
         "config/game_settings", 1,
-        [this](rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+        [this](rj_referee_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
 
-    goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::GoalieID>(
+    goalie_id_sub_ = node_->create_subscription<rj_referee_msgs::msg::GoalieID>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::GoalieID::SharedPtr msg) { goalie_id_callback(msg->goalie_id); });
+        [this](rj_referee_msgs::msg::GoalieID::SharedPtr msg) {
+            goalie_id_callback(msg->goalie_id);
+        });
 
-    override_play_sub_ = node_->create_subscription<rj_msgs::msg::OverridePosition>(
+    override_play_sub_ = node_->create_subscription<rj_ui_msgs::msg::OverridePosition>(
         "override_position/robot_" + std::to_string(r_id), 1,
-        [this](rj_msgs::msg::OverridePosition::SharedPtr msg) {
+        [this](rj_ui_msgs::msg::OverridePosition::SharedPtr msg) {
             test_play_callback(msg);
         });  // NOLINT
 
-    robot_communication_srv_ = node_->create_service<rj_msgs::srv::AgentCommunication>(
+    robot_communication_srv_ = node_->create_service<rj_strategy_msgs::srv::AgentCommunication>(
         fmt::format("agent_{}_incoming", r_id),
-        [this](const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request> request,
-               std::shared_ptr<rj_msgs::srv::AgentCommunication::Response> response) {
+        [this](const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Request> request,
+               std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Response> response) {
             receive_communication_callback(request, response);
         });
 
     // Create clients
     for (size_t i = 0; i < kNumShells; i++) {
-        robot_communication_cli_[i] = node_->create_client<rj_msgs::srv::AgentCommunication>(
-            fmt::format("agent_{}_incoming", i));
+        robot_communication_cli_[i] =
+            node_->create_client<rj_strategy_msgs::srv::AgentCommunication>(
+                fmt::format("agent_{}_incoming", i));
     }
 
     int hz = 10;
@@ -76,7 +81,8 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
-void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+void AgentActionClient::world_state_callback(
+    const rj_referee_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -85,7 +91,7 @@ void AgentActionClient::world_state_callback(const rj_msgs::msg::WorldState::Sha
     last_world_state_ = std::move(world_state);
 }
 
-void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void AgentActionClient::play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -96,7 +102,7 @@ void AgentActionClient::play_state_callback(const rj_msgs::msg::PlayState::Share
 }
 
 void AgentActionClient::field_dimensions_callback(
-    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }
@@ -107,7 +113,7 @@ void AgentActionClient::field_dimensions_callback(
 }
 
 void AgentActionClient::test_play_callback(
-    const rj_msgs::msg::OverridePosition::SharedPtr& message) {
+    const rj_ui_msgs::msg::OverridePosition::SharedPtr& message) {
     if (current_position_) {
         current_position_->set_override_position(
             static_cast<strategy::OverridingPositions>(message->overriding_position));
@@ -122,13 +128,15 @@ void AgentActionClient::goalie_id_callback(int goalie_id) {
     goalie_id_ = goalie_id;
 }
 
-void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
+void AgentActionClient::alive_robots_callback(
+    const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
 
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void AgentActionClient::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+void AgentActionClient::game_settings_callback(
+    const rj_referee_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
 }
 
@@ -159,8 +167,9 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
-    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
-        rj_convert::convert_to_ros(current_position_->get_current_state())));
+    current_state_publisher_->publish(
+        rj_strategy_msgs::build<rj_strategy_msgs::msg::AgentState>().state(
+            rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -246,7 +255,7 @@ void AgentActionClient::get_communication() {
         // create a buffer to hold the responses and the outgoing request
         communication::AgentPosResponseWrapper buffered_response;
 
-        auto request = std::make_shared<rj_msgs::srv::AgentCommunication::Request>();
+        auto request = std::make_shared<rj_strategy_msgs::srv::AgentCommunication::Request>();
         request->agent_request = rj_convert::convert_to_ros(communication_request.request);
 
         // send communication requests
@@ -255,9 +264,10 @@ void AgentActionClient::get_communication() {
             for (u_int8_t i = 0; i < kNumShells; i++) {
                 if (i != robot_id_ && check_robot_alive(i)) {
                     robot_communication_cli_[i]->async_send_request(
-                        request, [this, i](const std::shared_future<
-                                           rj_msgs::srv::AgentCommunication::Response::SharedPtr>
-                                               response) {
+                        request,
+                        [this, i](const std::shared_future<
+                                  rj_strategy_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                      response) {
                             receive_response_callback(response, ((u_int8_t)i));
                         });
                     sent_robot_ids.push_back(i);
@@ -271,7 +281,7 @@ void AgentActionClient::get_communication() {
                     robot_communication_cli_[i]->async_send_request(
                         request,
                         [this, i](const std::shared_future<
-                                  rj_msgs::srv::AgentCommunication::Response::SharedPtr>
+                                  rj_strategy_msgs::srv::AgentCommunication::Response::SharedPtr>
                                       response) { receive_response_callback(response, i); });
                     sent_robot_ids.push_back(i);
                 }
@@ -287,8 +297,8 @@ void AgentActionClient::get_communication() {
 }
 
 void AgentActionClient::receive_communication_callback(
-    const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-    const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response) {
+    const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Request>& request,
+    const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Response>& response) {
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request =
@@ -317,7 +327,8 @@ void AgentActionClient::receive_communication_callback(
 }
 
 void AgentActionClient::receive_response_callback(
-    const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
+    const std::shared_future<rj_strategy_msgs::srv::AgentCommunication::Response::SharedPtr>&
+        response,
     u_int8_t robot_id) {
     // Convert response from other agent to c++
     communication::AgentResponse agent_response =

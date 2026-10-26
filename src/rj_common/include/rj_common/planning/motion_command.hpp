@@ -9,7 +9,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
-#include <rj_msgs/msg/motion_command.hpp>
+#include <rj_planning_msgs/msg/motion_command.hpp>
 
 #include "rj_common/planning/instant.hpp"
 #include "rj_common/planning/trajectory.hpp"
@@ -81,9 +81,9 @@ namespace rj_convert {
  * now -Kevin)
  */
 template <>
-struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
-    static rj_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
-        rj_msgs::msg::MotionCommand result;
+struct RosConverter<planning::MotionCommand, rj_planning_msgs::msg::MotionCommand> {
+    static rj_planning_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
+        rj_planning_msgs::msg::MotionCommand result;
 
         // take the name from the struct and put it in the ROS msg version
         result.name = from.name;
@@ -117,7 +117,7 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         return result;
     }
 
-    static planning::MotionCommand from_ros(const rj_msgs::msg::MotionCommand& from) {
+    static planning::MotionCommand from_ros(const rj_planning_msgs::msg::MotionCommand& from) {
         planning::MotionCommand result;
 
         // take the name from the ROS msg and put it in the struct version
@@ -159,6 +159,6 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
+ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_planning_msgs::msg::MotionCommand);
 
 }  // namespace rj_convert

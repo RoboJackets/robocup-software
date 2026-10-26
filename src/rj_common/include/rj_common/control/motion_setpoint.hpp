@@ -2,14 +2,14 @@
 
 #include <ostream>
 
+#include <rj_control_msgs/msg/motion_setpoint.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/motion_setpoint.hpp>
 
 /**
  * \brief Stores the outputs published by MotionControl
  */
 struct MotionSetpoint {
-    using Msg = rj_msgs::msg::MotionSetpoint;
+    using Msg = rj_control_msgs::msg::MotionSetpoint;
 
     double xvelocity = 0.;
     double yvelocity = 0.;
@@ -30,7 +30,7 @@ namespace rj_convert {
 template <>
 struct RosConverter<MotionSetpoint, MotionSetpoint::Msg> {
     static MotionSetpoint::Msg to_ros(const MotionSetpoint& from) {
-        return rj_msgs::build<MotionSetpoint::Msg>()
+        return rj_control_msgs::build<MotionSetpoint::Msg>()
             .velocity_x_mps(from.xvelocity)
             .velocity_y_mps(from.yvelocity)
             .velocity_z_radps(from.avelocity);

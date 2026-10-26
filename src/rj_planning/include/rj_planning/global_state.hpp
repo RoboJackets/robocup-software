@@ -10,9 +10,9 @@
 #include <rj_common/world_state.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 #include <rj_geometry/shape_set.hpp>
-#include <rj_msgs/msg/field_dimensions.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/goalie_id.hpp>
+#include <rj_referee_msgs/msg/game_settings.hpp>
+#include <rj_referee_msgs/msg/goalie_id.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 
 namespace planning {
 
@@ -35,11 +35,11 @@ public:
     [[nodiscard]] const FieldDimensions* field_dimensions() const;
 
 private:
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GoalieID>::SharedPtr goalie_sub_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::GoalieID>::SharedPtr goalie_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_vision_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_{PlayState::halt()};
     bool have_play_state_{};

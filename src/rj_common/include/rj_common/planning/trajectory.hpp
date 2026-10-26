@@ -6,7 +6,7 @@
 
 #include <rj_common/time.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/trajectory.hpp>
+#include <rj_planning_msgs/msg/trajectory.hpp>
 
 #include "rj_common/debug_drawer.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
@@ -35,7 +35,7 @@ using RobotInstantSequence = std::vector<RobotInstant>;
  */
 class Trajectory {
 public:
-    using Msg = rj_msgs::msg::Trajectory;
+    using Msg = rj_planning_msgs::msg::Trajectory;
 
     Trajectory() = default;
     ~Trajectory() = default;
@@ -463,17 +463,17 @@ bool operator==(const Trajectory& a, const Trajectory& b);
 namespace rj_convert {
 
 template <>
-struct RosConverter<planning::Trajectory, rj_msgs::msg::Trajectory> {
-    static rj_msgs::msg::Trajectory to_ros(const planning::Trajectory& from) {
+struct RosConverter<planning::Trajectory, rj_planning_msgs::msg::Trajectory> {
+    static rj_planning_msgs::msg::Trajectory to_ros(const planning::Trajectory& from) {
         if (!from.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
-        return rj_msgs::build<rj_msgs::msg::Trajectory>()
+        return rj_planning_msgs::build<rj_planning_msgs::msg::Trajectory>()
             .stamp(convert_to_ros(from.time_created().value()))
             .instants(convert_to_ros(from.instants()));
     }
 
-    static planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
+    static planning::Trajectory from_ros(const rj_planning_msgs::msg::Trajectory& from) {
         auto trajectory = planning::Trajectory{convert_from_ros(from.instants)};
         trajectory.stamp(convert_from_ros(from.stamp));
         trajectory.mark_angles_valid();

@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/test_response.hpp"
+
+#include "rj_strategy_msgs/msg/test_response.hpp"
 
 namespace strategy::communication {
 
@@ -24,15 +25,17 @@ void generate_uid(TestResponse& response);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestResponse> {
-    static rj_msgs::msg::TestResponse to_ros(const strategy::communication::TestResponse& from) {
-        rj_msgs::msg::TestResponse result;
+struct RosConverter<strategy::communication::TestResponse, rj_strategy_msgs::msg::TestResponse> {
+    static rj_strategy_msgs::msg::TestResponse to_ros(
+        const strategy::communication::TestResponse& from) {
+        rj_strategy_msgs::msg::TestResponse result;
         result.response_uid = from.response_uid;
         result.message = from.message;
         return result;
     }
 
-    static strategy::communication::TestResponse from_ros(const rj_msgs::msg::TestResponse& from) {
+    static strategy::communication::TestResponse from_ros(
+        const rj_strategy_msgs::msg::TestResponse& from) {
         return strategy::communication::TestResponse{
             from.response_uid,
             from.message,
@@ -40,6 +43,6 @@ struct RosConverter<strategy::communication::TestResponse, rj_msgs::msg::TestRes
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_msgs::msg::TestResponse);
+ASSOCIATE_CPP_ROS(strategy::communication::TestResponse, rj_strategy_msgs::msg::TestResponse);
 
 }  // namespace rj_convert

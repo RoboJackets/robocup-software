@@ -9,7 +9,7 @@
 
   <depend>qt5</depend>
   <depend>rclcpp</depend>
-  <depend>rj_msgs</depend>
+  <depend>rj_vision_msgs</depend>
   <depend>rj_protos</depend>
   <depend>rj_convert</depend>
   <depend>rj_geometry_msgs</depend>

@@ -16,9 +16,9 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_msgs/action/robot_move.hpp>
 #include <rj_param_utils/planning/planning_params.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
+#include <rj_planning_msgs/action/robot_move.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planner_for_robot.hpp"
@@ -34,7 +34,7 @@ class PlannerNode : public rclcpp::Node {
 public:
     PlannerNode();
 
-    using RobotMove = rj_msgs::action::RobotMove;
+    using RobotMove = rj_planning_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 private:

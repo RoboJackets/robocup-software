@@ -1,14 +1,14 @@
 #pragma once
 
 #include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/detection_ball.hpp>
-#include <rj_msgs/msg/detection_robot.hpp>
-#include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_protos/vision/ssl_vision_wrapper.pb.h>
+#include <rj_vision_msgs/msg/detection_ball.hpp>
+#include <rj_vision_msgs/msg/detection_robot.hpp>
+#include <rj_vision_msgs/msg/raw_protobuf.hpp>
 
-using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
-using DetectionBallMsg = rj_msgs::msg::DetectionBall;
-using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
+using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
+using DetectionBallMsg = rj_vision_msgs::msg::DetectionBall;
+using DetectionRobotMsg = rj_vision_msgs::msg::DetectionRobot;
 
 /**
  * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.

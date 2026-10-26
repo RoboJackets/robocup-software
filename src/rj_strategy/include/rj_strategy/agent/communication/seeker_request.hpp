@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/seeker_request.hpp"
+
+#include "rj_strategy_msgs/msg/seeker_request.hpp"
 
 namespace strategy::communication {
 
@@ -27,9 +28,10 @@ void generate_uid(SeekerRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::SeekerRequest, rj_msgs::msg::SeekerRequest> {
-    static rj_msgs::msg::SeekerRequest to_ros(const strategy::communication::SeekerRequest& from) {
-        rj_msgs::msg::SeekerRequest result;
+struct RosConverter<strategy::communication::SeekerRequest, rj_strategy_msgs::msg::SeekerRequest> {
+    static rj_strategy_msgs::msg::SeekerRequest to_ros(
+        const strategy::communication::SeekerRequest& from) {
+        rj_strategy_msgs::msg::SeekerRequest result;
         result.request_uid = from.request_uid;
         result.robot_id = from.robot_id;
         result.seeking_point_x = from.seeking_point_x;
@@ -39,7 +41,7 @@ struct RosConverter<strategy::communication::SeekerRequest, rj_msgs::msg::Seeker
     }
 
     static strategy::communication::SeekerRequest from_ros(
-        const rj_msgs::msg::SeekerRequest& from) {
+        const rj_strategy_msgs::msg::SeekerRequest& from) {
         return strategy::communication::SeekerRequest{
             from.request_uid,     from.robot_id, from.seeking_point_x,
             from.seeking_point_y, from.adding,
@@ -47,6 +49,6 @@ struct RosConverter<strategy::communication::SeekerRequest, rj_msgs::msg::Seeker
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::SeekerRequest, rj_msgs::msg::SeekerRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::SeekerRequest, rj_strategy_msgs::msg::SeekerRequest);
 
 }  // namespace rj_convert

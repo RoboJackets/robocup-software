@@ -29,10 +29,10 @@
 #include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/override_position.hpp>
-#include <rj_msgs/srv/quick_commands.hpp>
-#include <rj_msgs/srv/set_game_settings.hpp>
+#include <rj_referee_msgs/srv/quick_commands.hpp>
+#include <rj_referee_msgs/srv/set_game_settings.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
+#include <rj_ui_msgs/msg/override_position.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "rj_ui/battery_profile.hpp"
@@ -250,9 +250,10 @@ private:
     void send_quick_command(const PlayState& state);
 
     rclcpp::Node::SharedPtr _node;
-    rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
-    rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
-    std::vector<rclcpp::Publisher<rj_msgs::msg::OverridePosition>::SharedPtr> override_play_pubs_{};
+    rclcpp::Client<rj_referee_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
+    rclcpp::Client<rj_referee_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
+    std::vector<rclcpp::Publisher<rj_ui_msgs::msg::OverridePosition>::SharedPtr>
+        override_play_pubs_{};
     rclcpp::executors::SingleThreadedExecutor _executor;
     std::thread _executor_thread;
 
@@ -266,7 +267,7 @@ private:
      */
     std::optional<PlayState> queued_command_;
 
-    rj_msgs::msg::GameSettings _game_settings;
+    rj_referee_msgs::msg::GameSettings _game_settings;
     bool _game_settings_valid = false;
 
     std::vector<std::string> overriding_position_labels{"Auto",           "Offense",

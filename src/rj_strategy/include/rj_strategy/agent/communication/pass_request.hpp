@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/pass_request.hpp"
+
+#include "rj_strategy_msgs/msg/pass_request.hpp"
 
 namespace strategy::communication {
 
@@ -25,16 +26,18 @@ void generate_uid(PassRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest> {
-    static rj_msgs::msg::PassRequest to_ros(const strategy::communication::PassRequest& from) {
-        rj_msgs::msg::PassRequest result;
+struct RosConverter<strategy::communication::PassRequest, rj_strategy_msgs::msg::PassRequest> {
+    static rj_strategy_msgs::msg::PassRequest to_ros(
+        const strategy::communication::PassRequest& from) {
+        rj_strategy_msgs::msg::PassRequest result;
         result.request_uid = from.request_uid;
         result.direct = from.direct;
         result.from_robot_id = from.from_robot_id;
         return result;
     }
 
-    static strategy::communication::PassRequest from_ros(const rj_msgs::msg::PassRequest& from) {
+    static strategy::communication::PassRequest from_ros(
+        const rj_strategy_msgs::msg::PassRequest& from) {
         return strategy::communication::PassRequest{
             from.request_uid,
             from.direct,
@@ -43,6 +46,6 @@ struct RosConverter<strategy::communication::PassRequest, rj_msgs::msg::PassRequ
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::PassRequest, rj_msgs::msg::PassRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::PassRequest, rj_strategy_msgs::msg::PassRequest);
 
 }  // namespace rj_convert

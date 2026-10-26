@@ -8,7 +8,7 @@ DEFINE_FLOAT64("straight_line_test", robot_id, 1, "robot_id for line_test");
 
 namespace strategy {  // put code inside of namespace for extra uses
 
-using RobotMove = rj_msgs::action::RobotMove;
+using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
 StraightLineTest::StraightLineTest() : StraightLineTest(0) {}  // creates test for robot 0
@@ -26,27 +26,32 @@ StraightLineTest::StraightLineTest(int r_id)
     current_state_publisher_ = create_publisher<AgentStateMsg>(
         fmt::format("strategy/position/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = create_subscription<rj_referee_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](const rj_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](const rj_referee_msgs::msg::WorldState::SharedPtr msg) {
+            world_state_callback(msg);
+        });
 
-    play_state_sub_ = create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = create_subscription<rj_referee_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](const rj_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+        [this](const rj_referee_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = create_subscription<rj_vision_msgs::msg::FieldDimensions>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {
+        [this](const rj_vision_msgs::msg::FieldDimensions::SharedPtr msg) {
             field_dimensions_callback(msg);
         });
 
-    alive_robots_sub_ = create_subscription<rj_msgs::msg::AliveRobots>(
+    alive_robots_sub_ = create_subscription<rj_radio_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
-        [this](const rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
+        [this](const rj_radio_msgs::msg::AliveRobots::SharedPtr msg) {
+            alive_robots_callback(msg);
+        });
 
-    game_settings_sub_ = create_subscription<rj_msgs::msg::GameSettings>(
-        "config/game_settings", 1,
-        [this](const rj_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+    game_settings_sub_ = create_subscription<rj_referee_msgs::msg::GameSettings>(
+        "config/game_settings", 1, [this](const rj_referee_msgs::msg::GameSettings::SharedPtr msg) {
+            game_settings_callback(msg);
+        });
 
     int hz = 10;
     get_task_timer_ = create_wall_timer(std::chrono::milliseconds(1000 / hz),
@@ -62,20 +67,21 @@ StraightLineTest::StraightLineTest(int r_id)
     current_position_ = std::make_unique<Line>(robot_id_, start_, end_, target_robot_id_);
 }
 
-void StraightLineTest::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
+void StraightLineTest::world_state_callback(
+    const rj_referee_msgs::msg::WorldState::SharedPtr& msg) {
     WorldState world_state = rj_convert::convert_from_ros(*msg);
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);
 }
 
-void StraightLineTest::play_state_callback(const rj_msgs::msg::PlayState::SharedPtr& msg) {
+void StraightLineTest::play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg) {
     PlayState play_state = rj_convert::convert_from_ros(*msg);
     play_state_ = play_state;
     current_position_->update_play_state(play_state);
 }
 
 void StraightLineTest::field_dimensions_callback(
-    const rj_msgs::msg::FieldDimensions::SharedPtr& msg) {
+    const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg) {
     FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
     field_dimensions_ = field_dimensions;
     current_position_->update_field_dimensions(field_dimensions);
@@ -92,12 +98,14 @@ void StraightLineTest::field_dimensions_callback(
     field_dimensions_set_ = true;
 }
 
-void StraightLineTest::alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg) {
+void StraightLineTest::alive_robots_callback(
+    const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg) {
     alive_robots_ = msg->alive_robots;
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void StraightLineTest::game_settings_callback(const rj_msgs::msg::GameSettings::SharedPtr& msg) {
+void StraightLineTest::game_settings_callback(
+    const rj_referee_msgs::msg::GameSettings::SharedPtr& msg) {
     is_simulated_ = msg->simulation;
 }
 
@@ -131,8 +139,9 @@ void StraightLineTest::get_task() {
         }
     }
 
-    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
-        rj_convert::convert_to_ros(current_position_->get_current_state())));
+    current_state_publisher_->publish(
+        rj_strategy_msgs::build<rj_strategy_msgs::msg::AgentState>().state(
+            rj_convert::convert_to_ros(current_position_->get_current_state())));
 }
 
 void StraightLineTest::send_new_goal() {

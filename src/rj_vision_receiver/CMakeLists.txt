@@ -13,7 +13,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
@@ -23,7 +23,7 @@ find_package(rj_config_client REQUIRED)
 set(VISION_RECEIVER_DEPS
   rclcpp
   Boost
-  rj_msgs
+  rj_vision_msgs
   rj_common
   rj_param_utils
   rj_utils

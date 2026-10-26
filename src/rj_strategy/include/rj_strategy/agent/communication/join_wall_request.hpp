@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/join_wall_request.hpp"
+
+#include "rj_strategy_msgs/msg/join_wall_request.hpp"
 
 namespace strategy::communication {
 
@@ -24,17 +25,18 @@ void generate_uid(JoinWallRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
-    static rj_msgs::msg::JoinWallRequest to_ros(
+struct RosConverter<strategy::communication::JoinWallRequest,
+                    rj_strategy_msgs::msg::JoinWallRequest> {
+    static rj_strategy_msgs::msg::JoinWallRequest to_ros(
         const strategy::communication::JoinWallRequest& from) {
-        rj_msgs::msg::JoinWallRequest result;
+        rj_strategy_msgs::msg::JoinWallRequest result;
         result.request_uid = from.request_uid;
         result.robot_id = from.robot_id;
         return result;
     }
 
     static strategy::communication::JoinWallRequest from_ros(
-        const rj_msgs::msg::JoinWallRequest& from) {
+        const rj_strategy_msgs::msg::JoinWallRequest& from) {
         return strategy::communication::JoinWallRequest{
             from.request_uid,
             from.robot_id,
@@ -42,6 +44,6 @@ struct RosConverter<strategy::communication::JoinWallRequest, rj_msgs::msg::Join
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::JoinWallRequest, rj_strategy_msgs::msg::JoinWallRequest);
 
 }  // namespace rj_convert

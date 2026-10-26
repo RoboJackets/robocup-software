@@ -4,7 +4,7 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |rj_msgs  |
+| **Package name** | rj_control_msgs |
 | **Assigned owner(s)** | Pooja Dayaratna, Shourik Banerjee |
 | **Reviewer(s)** | Sanat, Nate |
 | **Date started revision** | 10/11/2026 |
@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | Defines message, action, and service types for the entire codebase (with the exception of messages that are specific to geometry and drawing) |
-| **Current responsibilities** | Responsible for all data transferred between nodes that is NOT specific to geometry or drawing |
-| **Out of scope** | This package should only define message, action, and service types; additionally, this package must not attempt to define message types for messages that are related to goemetry and drawing, since we have the rj_geometry_msgs and rj_drawing_msgs packages for that |
+| **Plain-language purpose** | Defines message types for low-level robot control setpoints sent to the robots |
+| **Current responsibilities** | Responsible for motion and manipulator setpoints transferred between nodes (`MotionSetpoint`, `ManipulatorSetpoint`) |
+| **Out of scope** | This package should only define message, action, and service types for control setpoints; planning-level commands and trajectories belong in rj_planning_msgs |
 
 ## 2. Dependency Rules
 
@@ -27,8 +27,8 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | rj_geometry_msgs |
-| **Depended on by** |rj_benchmarking, rj_common, rj_config_client, rj_config_server, rj_control, rj_joystick, rj_param_utils, rj_radio, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_reciever|
+| **Depends on** | None |
+| **Depended on by** | rj_common, rj_joystick, rj_planning, rj_radio |
 
 
 ## 3. Operational Expectations

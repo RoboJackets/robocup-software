@@ -6,7 +6,7 @@ using namespace boost::asio;
 namespace radio {
 
 static SimulatorCommand convert_placement_to_proto(
-    const rj_msgs::srv::SimPlacement::Request& placement) {
+    const rj_ui_msgs::srv::SimPlacement::Request& placement) {
     SimulatorCommand packet;
     auto* control = packet.mutable_control();
     if (!placement.ball.position.empty()) {
@@ -84,11 +84,11 @@ SimRadio::SimRadio(bool blue_team)
     for (uint8_t robot_id = 0; robot_id < 6; robot_id++) {
         alive_robots_[robot_id] = true;
     }
-    alive_robots_pub_ = this->create_publisher<rj_msgs::msg::AliveRobots>(topics::kAliveRobotsTopic,
-                                                                          rclcpp::QoS(1));
+    alive_robots_pub_ = this->create_publisher<rj_radio_msgs::msg::AliveRobots>(
+        topics::kAliveRobotsTopic, rclcpp::QoS(1));
 
     alive_robots_timer_ = create_wall_timer(std::chrono::milliseconds(500), [this]() {
-        rj_msgs::msg::AliveRobots alive_message{};
+        rj_radio_msgs::msg::AliveRobots alive_message{};
         alive_message.alive_robots = alive_robots_;
         publish_alive_robots(alive_message);
     });
@@ -97,17 +97,18 @@ SimRadio::SimRadio(bool blue_team)
     start_receive();
 
     const auto& placement_callback =
-        [this](const rj_msgs::srv::SimPlacement::Request::SharedPtr request,  // NOLINT
-               [[maybe_unused]] const rj_msgs::srv::SimPlacement::Response::SharedPtr
+        [this](const rj_ui_msgs::srv::SimPlacement::Request::SharedPtr request,  // NOLINT
+               [[maybe_unused]] const rj_ui_msgs::srv::SimPlacement::Response::SharedPtr
                    response) {  // NOLINT
             send_sim_command(convert_placement_to_proto(*request));
         };
-    sim_placement_service_ = create_service<rj_msgs::srv::SimPlacement>(
+    sim_placement_service_ = create_service<rj_ui_msgs::srv::SimPlacement>(
         sim::topics::kSimPlacementSrv, placement_callback);
 }
 
-void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                                    const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+void SimRadio::send_control_message(uint8_t robot_id,
+                                    const rj_control_msgs::msg::MotionSetpoint& motion,
+                                    const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
                                     strategy::Positions role) {
     RobotControl sim_packet;
 
@@ -156,7 +157,7 @@ void SimRadio::handle_receive(const std::string& data) {
     packet.ParseFromString(data);
 
     for (int pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
-        rj_msgs::msg::RobotStatus status_ros;
+        rj_radio_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
         const RobotFeedback& sim_status = packet.feedback(pkt_idx);
         ConvertRx::sim_to_status(sim_status, &status);

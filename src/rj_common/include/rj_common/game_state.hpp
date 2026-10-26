@@ -9,12 +9,12 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
-#include <rj_msgs/msg/match_state.hpp>
-#include <rj_msgs/msg/play_state.hpp>
+#include <rj_referee_msgs/msg/match_state.hpp>
+#include <rj_referee_msgs/msg/play_state.hpp>
 
 struct PlayState {
 public:
-    using Msg = rj_msgs::msg::PlayState;
+    using Msg = rj_referee_msgs::msg::PlayState;
 
     enum State {
         Halt,           // Robots must not move
@@ -197,7 +197,7 @@ public:
     }
 
 private:
-    friend struct rj_convert::RosConverter<PlayState, rj_msgs::msg::PlayState>;
+    friend struct rj_convert::RosConverter<PlayState, rj_referee_msgs::msg::PlayState>;
 
     PlayState(State state, Restart restart, bool our_restart,
               rj_geometry::Point ball_placement_point)
@@ -214,7 +214,7 @@ private:
 
 struct MatchState {
 public:
-    using Msg = rj_msgs::msg::MatchState;
+    using Msg = rj_referee_msgs::msg::MatchState;
 
     enum Period { FirstHalf, Halftime, SecondHalf, Overtime1, Overtime2, PenaltyShootout };
 
@@ -238,15 +238,15 @@ struct RosConverter<MatchState::Period, uint8_t> {
 };
 
 template <>
-struct RosConverter<MatchState, rj_msgs::msg::MatchState> {
-    static rj_msgs::msg::MatchState to_ros(const MatchState& from) {
-        rj_msgs::msg::MatchState to;
+struct RosConverter<MatchState, rj_referee_msgs::msg::MatchState> {
+    static rj_referee_msgs::msg::MatchState to_ros(const MatchState& from) {
+        rj_referee_msgs::msg::MatchState to;
         convert_to_ros(from.period, &to.period);
         convert_to_ros(from.stage_time_left, &to.stage_time_left);
         return to;
     }
 
-    static MatchState from_ros(const rj_msgs::msg::MatchState from) {
+    static MatchState from_ros(const rj_referee_msgs::msg::MatchState from) {
         MatchState to;
         convert_from_ros(from.period, &to.period);
         convert_from_ros(from.stage_time_left, &to.stage_time_left);
@@ -275,9 +275,9 @@ struct RosConverter<PlayState::Restart, uint8_t> {
 };
 
 template <>
-struct RosConverter<PlayState, rj_msgs::msg::PlayState> {
-    static rj_msgs::msg::PlayState to_ros(const PlayState& from) {
-        rj_msgs::msg::PlayState to;
+struct RosConverter<PlayState, rj_referee_msgs::msg::PlayState> {
+    static rj_referee_msgs::msg::PlayState to_ros(const PlayState& from) {
+        rj_referee_msgs::msg::PlayState to;
         convert_to_ros(from.state(), &to.state);
         convert_to_ros(from.restart(), &to.restart);
         convert_to_ros(from.is_our_restart(), &to.our_restart);
@@ -287,7 +287,7 @@ struct RosConverter<PlayState, rj_msgs::msg::PlayState> {
         return to;
     }
 
-    static PlayState from_ros(const rj_msgs::msg::PlayState& from) {
+    static PlayState from_ros(const rj_referee_msgs::msg::PlayState& from) {
         PlayState::State state = PlayState::State::Halt;
         convert_from_ros(from.state, &state);
         PlayState::Restart restart = PlayState::Restart::None;

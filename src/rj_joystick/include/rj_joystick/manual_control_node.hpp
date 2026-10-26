@@ -12,10 +12,10 @@
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/utils.hpp>
-#include <rj_msgs/msg/manipulator_setpoint.hpp>
-#include <rj_msgs/msg/motion_setpoint.hpp>
-#include <rj_msgs/srv/list_joysticks.hpp>
-#include <rj_msgs/srv/set_manual.hpp>
+#include <rj_control_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_control_msgs/msg/motion_setpoint.hpp>
+#include <rj_joystick_msgs/srv/list_joysticks.hpp>
+#include <rj_joystick_msgs/srv/set_manual.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_utils/logging.hpp>
 
@@ -48,11 +48,12 @@ private:
     std::vector<std::unique_ptr<ManualControllerProvider>> providers_;
     std::map<ManualController*, std::optional<int>> controllers_;
 
-    rclcpp::Service<rj_msgs::srv::ListJoysticks>::SharedPtr list_joysticks_;
-    rclcpp::Service<rj_msgs::srv::SetManual>::SharedPtr set_manual_;
+    rclcpp::Service<rj_joystick_msgs::srv::ListJoysticks>::SharedPtr list_joysticks_;
+    rclcpp::Service<rj_joystick_msgs::srv::SetManual>::SharedPtr set_manual_;
 
-    std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
-    std::vector<rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr>
+    std::vector<rclcpp::Publisher<rj_control_msgs::msg::MotionSetpoint>::SharedPtr>
+        motion_setpoint_pubs_;
+    std::vector<rclcpp::Publisher<rj_control_msgs::msg::ManipulatorSetpoint>::SharedPtr>
         manipulator_setpoint_pubs_;
 
     rclcpp::TimerBase::SharedPtr timer_;

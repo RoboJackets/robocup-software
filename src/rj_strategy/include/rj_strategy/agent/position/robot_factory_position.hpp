@@ -13,8 +13,8 @@
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
-#include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/override_position.hpp>
+#include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_ui_msgs/msg/override_position.hpp>
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/defense.hpp"

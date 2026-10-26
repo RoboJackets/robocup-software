@@ -8,18 +8,18 @@
 
 #include <rj_common/network.hpp>
 #include <rj_config_client/config_client.hpp>
-#include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_protos/vision/ssl_vision_wrapper.pb.h>
 #include <rj_utils/concurrent_queue.hpp>
+#include <rj_vision_msgs/msg/detection_frame.hpp>
+#include <rj_vision_msgs/msg/raw_protobuf.hpp>
 #include <rj_vision_receiver/stamped_wrapper_packet.hpp>
 
 namespace vision_receiver {
-using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
-using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
-using DetectionBallMsg = rj_msgs::msg::DetectionBall;
-using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
+using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
+using DetectionFrameMsg = rj_vision_msgs::msg::DetectionFrame;
+using DetectionBallMsg = rj_vision_msgs::msg::DetectionBall;
+using DetectionRobotMsg = rj_vision_msgs::msg::DetectionRobot;
 
 /**
  * @brief Receives vision packets over UDP and places them in a buffer until

@@ -23,8 +23,8 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_referee/external_referee.hpp>
+#include <rj_referee_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_ui/ros2_temp/autonomy_interface.hpp"
@@ -136,10 +136,10 @@ private:
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> ros_executor_;
 
     // ROS2 temporary modules
-    using WorldStateMsg = rj_msgs::msg::WorldState;
+    using WorldStateMsg = rj_referee_msgs::msg::WorldState;
 
     rclcpp::Node::SharedPtr world_state_node_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     RJ::Time last_vision_time_;
 
     std::unique_ptr<ros2_temp::SoccerConfigClient> config_client_;

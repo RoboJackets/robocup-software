@@ -1,19 +1,20 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
-#include <rj_msgs/msg/field_dimensions.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/srv/set_field_dimensions.hpp>
-#include <rj_msgs/srv/set_game_settings.hpp>
+
+#include <rj_referee_msgs/msg/game_settings.hpp>
+#include <rj_referee_msgs/srv/set_game_settings.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
+#include <rj_vision_msgs/srv/set_field_dimensions.hpp>
 
 namespace config_server {
-using GameSettingsMsg = rj_msgs::msg::GameSettings;
-using SetGameSettingsSrv = rj_msgs::srv::SetGameSettings;
+using GameSettingsMsg = rj_referee_msgs::msg::GameSettings;
+using SetGameSettingsSrv = rj_referee_msgs::srv::SetGameSettings;
 using SetGameSettingsSrvReqPtr = SetGameSettingsSrv::Request::SharedPtr;
 using SetGameSettingsSrvRespPtr = SetGameSettingsSrv::Response::SharedPtr;
 
-using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
-using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
+using FieldDimensionsMsg = rj_vision_msgs::msg::FieldDimensions;
+using SetFieldDimensionsSrv = rj_vision_msgs::srv::SetFieldDimensions;
 using SetFieldDimensionsSrvReqPtr = SetFieldDimensionsSrv::Request::SharedPtr;
 using SetFieldDimensionsSrvRespPtr = SetFieldDimensionsSrv::Response::SharedPtr;
 

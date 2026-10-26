@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/incoming_ball_request.hpp"
+
+#include "rj_strategy_msgs/msg/incoming_ball_request.hpp"
 
 namespace strategy::communication {
 
@@ -25,17 +26,17 @@ namespace rj_convert {
 
 template <>
 struct RosConverter<strategy::communication::IncomingBallRequest,
-                    rj_msgs::msg::IncomingBallRequest> {
-    static rj_msgs::msg::IncomingBallRequest to_ros(
+                    rj_strategy_msgs::msg::IncomingBallRequest> {
+    static rj_strategy_msgs::msg::IncomingBallRequest to_ros(
         const strategy::communication::IncomingBallRequest& from) {
-        rj_msgs::msg::IncomingBallRequest result;
+        rj_strategy_msgs::msg::IncomingBallRequest result;
         result.request_uid = from.request_uid;
         result.from_robot_id = from.from_robot_id;
         return result;
     }
 
     static strategy::communication::IncomingBallRequest from_ros(
-        const rj_msgs::msg::IncomingBallRequest& from) {
+        const rj_strategy_msgs::msg::IncomingBallRequest& from) {
         return strategy::communication::IncomingBallRequest{
             from.request_uid,
             from.from_robot_id,
@@ -43,6 +44,7 @@ struct RosConverter<strategy::communication::IncomingBallRequest,
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::IncomingBallRequest, rj_msgs::msg::IncomingBallRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::IncomingBallRequest,
+                  rj_strategy_msgs::msg::IncomingBallRequest);
 
 }  // namespace rj_convert

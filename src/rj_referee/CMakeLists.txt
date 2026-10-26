@@ -19,7 +19,8 @@ find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
 
@@ -33,7 +34,8 @@ set(RJ_REFEREE_DEPS
   rj_geometry
   rj_param_utils
   rj_utils
-  rj_msgs
+  rj_referee_msgs
+  rj_vision_msgs
   rj_protos
   rj_config_client
 )

@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/leave_wall_request.hpp"
+
+#include "rj_strategy_msgs/msg/leave_wall_request.hpp"
 
 namespace strategy::communication {
 
@@ -24,17 +25,18 @@ void generate_uid(LeaveWallRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest> {
-    static rj_msgs::msg::LeaveWallRequest to_ros(
+struct RosConverter<strategy::communication::LeaveWallRequest,
+                    rj_strategy_msgs::msg::LeaveWallRequest> {
+    static rj_strategy_msgs::msg::LeaveWallRequest to_ros(
         const strategy::communication::LeaveWallRequest& from) {
-        rj_msgs::msg::LeaveWallRequest result;
+        rj_strategy_msgs::msg::LeaveWallRequest result;
         result.request_uid = from.request_uid;
         result.robot_id = from.robot_id;
         return result;
     }
 
     static strategy::communication::LeaveWallRequest from_ros(
-        const rj_msgs::msg::LeaveWallRequest& from) {
+        const rj_strategy_msgs::msg::LeaveWallRequest& from) {
         return strategy::communication::LeaveWallRequest{
             from.request_uid,
             from.robot_id,
@@ -42,6 +44,7 @@ struct RosConverter<strategy::communication::LeaveWallRequest, rj_msgs::msg::Lea
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::LeaveWallRequest,
+                  rj_strategy_msgs::msg::LeaveWallRequest);
 
 }  // namespace rj_convert

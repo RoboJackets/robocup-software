@@ -10,9 +10,9 @@
 #include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/ball_placement.hpp>
-#include <rj_msgs/msg/robot_placement.hpp>
-#include <rj_msgs/srv/sim_placement.hpp>
+#include <rj_ui_msgs/msg/ball_placement.hpp>
+#include <rj_ui_msgs/msg/robot_placement.hpp>
+#include <rj_ui_msgs/srv/sim_placement.hpp>
 
 #include "rj_ui/field_view.hpp"
 
@@ -58,5 +58,5 @@ private:
     rj_geometry::Point shot_;
     Context* context_{};
     rclcpp::Node* node_ = nullptr;
-    rclcpp::Client<rj_msgs::srv::SimPlacement>::SharedPtr sim_placement_;
+    rclcpp::Client<rj_ui_msgs::srv::SimPlacement>::SharedPtr sim_placement_;
 };

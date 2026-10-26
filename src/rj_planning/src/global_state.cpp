@@ -3,9 +3,9 @@
 namespace planning {
 
 GlobalState::GlobalState(rclcpp::Node* node) {
-    play_state_sub_ = node->create_subscription<rj_msgs::msg::PlayState>(
+    play_state_sub_ = node->create_subscription<rj_referee_msgs::msg::PlayState>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1),
-        [this](rj_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
+        [this](rj_referee_msgs::msg::PlayState::SharedPtr state) {  // NOLINT
             {
                 auto lock = std::lock_guard(last_play_state_mutex_);
                 last_play_state_ = rj_convert::convert_from_ros(*state);
@@ -13,27 +13,27 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             }
             set_field_obstacles();
         });
-    game_settings_sub_ = node->create_subscription<rj_msgs::msg::GameSettings>(
+    game_settings_sub_ = node->create_subscription<rj_referee_msgs::msg::GameSettings>(
         config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
-        [this](rj_msgs::msg::GameSettings::SharedPtr settings) {  // NOLINT
+        [this](rj_referee_msgs::msg::GameSettings::SharedPtr settings) {  // NOLINT
             auto lock = std::lock_guard(last_game_settings_mutex_);
             last_game_settings_ = rj_convert::convert_from_ros(*settings);
         });
-    goalie_sub_ = node->create_subscription<rj_msgs::msg::GoalieID>(
+    goalie_sub_ = node->create_subscription<rj_referee_msgs::msg::GoalieID>(
         referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
-        [this](rj_msgs::msg::GoalieID::SharedPtr goalie) {  // NOLINT
+        [this](rj_referee_msgs::msg::GoalieID::SharedPtr goalie) {  // NOLINT
             auto lock = std::lock_guard(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
         });
-    world_state_sub_ = node->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = node->create_subscription<rj_referee_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+        [this](rj_referee_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             auto lock = std::lock_guard(last_world_state_mutex_);
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
         });
-    field_dimensions_sub_ = node->create_subscription<rj_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node->create_subscription<rj_vision_msgs::msg::FieldDimensions>(
         ::config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
-        [this](const rj_msgs::msg::FieldDimensions::SharedPtr msg) {  // NOLINT
+        [this](const rj_vision_msgs::msg::FieldDimensions::SharedPtr msg) {  // NOLINT
             {
                 auto lock = std::lock_guard(last_field_dimensions_mutex_);
                 last_field_dimensions_ = rj_convert::convert_from_ros(*msg);

@@ -17,7 +17,10 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_control_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_ui_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_utils REQUIRED)
 find_package(rj_param_utils REQUIRED)
@@ -31,7 +34,10 @@ set(RJ_RADIO_DEPS
   rclcpp_components
   Boost
   rj_common
-  rj_msgs
+  rj_control_msgs
+  rj_radio_msgs
+  rj_referee_msgs
+  rj_ui_msgs
   rj_protos
   rj_utils
   rj_param_utils

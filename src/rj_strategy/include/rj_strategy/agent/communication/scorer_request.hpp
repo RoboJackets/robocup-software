@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/scorer_request.hpp"
+
+#include "rj_strategy_msgs/msg/scorer_request.hpp"
 
 namespace strategy::communication {
 
@@ -25,9 +26,10 @@ void generate_uid(ScorerRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest> {
-    static rj_msgs::msg::ScorerRequest to_ros(const strategy::communication::ScorerRequest& from) {
-        rj_msgs::msg::ScorerRequest result;
+struct RosConverter<strategy::communication::ScorerRequest, rj_strategy_msgs::msg::ScorerRequest> {
+    static rj_strategy_msgs::msg::ScorerRequest to_ros(
+        const strategy::communication::ScorerRequest& from) {
+        rj_strategy_msgs::msg::ScorerRequest result;
         result.request_uid = from.request_uid;
         result.robot_id = from.robot_id;
         result.ball_distance = from.ball_distance;
@@ -35,7 +37,7 @@ struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::Scorer
     }
 
     static strategy::communication::ScorerRequest from_ros(
-        const rj_msgs::msg::ScorerRequest& from) {
+        const rj_strategy_msgs::msg::ScorerRequest& from) {
         return strategy::communication::ScorerRequest{
             from.request_uid,
             from.robot_id,
@@ -44,6 +46,6 @@ struct RosConverter<strategy::communication::ScorerRequest, rj_msgs::msg::Scorer
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_msgs::msg::ScorerRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::ScorerRequest, rj_strategy_msgs::msg::ScorerRequest);
 
 }  // namespace rj_convert

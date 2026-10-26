@@ -12,7 +12,8 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -26,7 +27,8 @@ find_package(rj_config_client REQUIRED)
 set(RJ_VISION_FILTER_DEPS
   rj_geometry
   rj_common
-  rj_msgs
+  rj_referee_msgs
+  rj_vision_msgs
   Boost
   Eigen3
   eigen3_cmake_module

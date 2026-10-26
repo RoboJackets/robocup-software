@@ -15,7 +15,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_utils REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
 find_package(rj_param_utils REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
@@ -25,7 +25,7 @@ find_package(rj_convert REQUIRED)
 set(RJ_CONTROL_DEPS
   std_msgs
   rj_utils
-  rj_msgs
+  rj_referee_msgs
   rj_param_utils
   rj_common
   rj_geometry

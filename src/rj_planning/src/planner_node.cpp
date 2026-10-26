@@ -2,7 +2,7 @@
 
 namespace planning {
 
-using RobotMove = rj_msgs::action::RobotMove;
+using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 PlannerNode::PlannerNode()

@@ -6,8 +6,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/kicker_picker.hpp>
-#include <rj_msgs/srv/kicker_picker.hpp>
+#include <rj_strategy_msgs/msg/kicker_picker.hpp>
+#include <rj_strategy_msgs/srv/kicker_picker.hpp>
 
 #include "rj_strategy/coordinator/kicker_picker.hpp"
 
@@ -66,8 +66,8 @@ private:
     rclcpp::Node::SharedPtr node_;
     const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
                               // isn't move/copy-able anyway
-    rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedPtr client_;
-    rclcpp::Subscription<rj_msgs::msg::KickerPicker>::SharedPtr subscription_;
+    rclcpp::Client<rj_strategy_msgs::srv::KickerPicker>::SharedPtr client_;
+    rclcpp::Subscription<rj_strategy_msgs::msg::KickerPicker>::SharedPtr subscription_;
 
     bool am_i_member_{false};
     uint8_t selected_kicker_;

@@ -30,21 +30,21 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         planning::topics::trajectory_topic(robot_id), rclcpp::QoS(1).transient_local());
 
     // publish kicker/dribbler cmds directly to radio
-    manipulator_pub_ = node->create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
+    manipulator_pub_ = node->create_publisher<rj_control_msgs::msg::ManipulatorSetpoint>(
         control::topics::manipulator_setpoint_topic(robot_id), rclcpp::QoS(10));
 
     // for ball sense and possession
-    robot_status_sub_ = node_->create_subscription<rj_msgs::msg::RobotStatus>(
+    robot_status_sub_ = node_->create_subscription<rj_radio_msgs::msg::RobotStatus>(
         radio::topics::robot_status_topic(robot_id), rclcpp::QoS(1),
-        [this](rj_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
+        [this](rj_radio_msgs::msg::RobotStatus::SharedPtr status) {  // NOLINT
             had_break_beam_ = status->has_ball_sense;
         });
 
     // For hypothetical path planning
-    hypothetical_path_service_ = node_->create_service<rj_msgs::srv::PlanHypotheticalPath>(
+    hypothetical_path_service_ = node_->create_service<rj_planning_msgs::srv::PlanHypotheticalPath>(
         fmt::format("hypothetical_trajectory_robot_{}", robot_id),
-        [this](const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request> request,
-               std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response> response) {
+        [this](const std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Request> request,
+               std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Response> response) {
             plan_hypothetical_robot_path(request, response);
         });
 }
@@ -86,18 +86,18 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         }
 
         // send the kick/dribble commands to the radio
-        manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
-                                      .shoot_mode(trajectory.shoot_mode)
-                                      .trigger_mode(trajectory.trigger_mode)
-                                      .kick_speed(intent.kick_speed)
-                                      .dribbler_speed(trajectory.dribbler_speed));
-
+        manipulator_pub_->publish(
+            rj_control_msgs::build<rj_control_msgs::msg::ManipulatorSetpoint>()
+                .shoot_mode(trajectory.shoot_mode)
+                .trigger_mode(trajectory.trigger_mode)
+                .kick_speed(intent.kick_speed)
+                .dribbler_speed(trajectory.dribbler_speed));
     }
 }
 
 void PlannerForRobot::plan_hypothetical_robot_path(
-    const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
-    std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response) {
+    const std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Request>& request,
+    std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Response>& response) {
     /* const auto intent = rj_convert::convert_from_ros(request->intent); */
     /* auto plan_request = make_request(intent); */
     /* auto trajectory = safe_plan_for_robot(plan_request); */

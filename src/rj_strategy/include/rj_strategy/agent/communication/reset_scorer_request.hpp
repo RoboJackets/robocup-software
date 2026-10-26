@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/reset_scorer_request.hpp"
+
+#include "rj_strategy_msgs/msg/reset_scorer_request.hpp"
 
 namespace strategy::communication {
 
@@ -23,22 +24,24 @@ void generate_uid(ResetScorerRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest> {
-    static rj_msgs::msg::ResetScorerRequest to_ros(
+struct RosConverter<strategy::communication::ResetScorerRequest,
+                    rj_strategy_msgs::msg::ResetScorerRequest> {
+    static rj_strategy_msgs::msg::ResetScorerRequest to_ros(
         const strategy::communication::ResetScorerRequest& from) {
-        rj_msgs::msg::ResetScorerRequest result;
+        rj_strategy_msgs::msg::ResetScorerRequest result;
         result.request_uid = from.request_uid;
         return result;
     }
 
     static strategy::communication::ResetScorerRequest from_ros(
-        const rj_msgs::msg::ResetScorerRequest& from) {
+        const rj_strategy_msgs::msg::ResetScorerRequest& from) {
         return strategy::communication::ResetScorerRequest{
             from.request_uid,
         };
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::ResetScorerRequest, rj_msgs::msg::ResetScorerRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::ResetScorerRequest,
+                  rj_strategy_msgs::msg::ResetScorerRequest);
 
 }  // namespace rj_convert

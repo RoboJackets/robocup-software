@@ -4,10 +4,10 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/ball_state.hpp>
-#include <rj_msgs/msg/robot_state.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <rj_param_utils/global_params.hpp>
+#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/ball_state.hpp>
+#include <rj_vision_msgs/msg/robot_state.hpp>
 
 #include "rj_common/game_constants.hpp"
 #include "rj_common/planning/instant.hpp"
@@ -20,7 +20,7 @@
  * what time it was last seen.
  */
 struct RobotState {
-    using Msg = rj_msgs::msg::RobotState;
+    using Msg = rj_vision_msgs::msg::RobotState;
 
     rj_geometry::Pose pose;
     rj_geometry::Twist velocity;
@@ -44,7 +44,7 @@ struct RobotState {
  * @brief Our belief about the ball's current position and velocity.
  */
 struct BallState {
-    using Msg = rj_msgs::msg::BallState;
+    using Msg = rj_vision_msgs::msg::BallState;
 
     rj_geometry::Point position;
     rj_geometry::Point velocity;
@@ -140,7 +140,7 @@ struct BallState {
 };
 
 struct WorldState {
-    using Msg = rj_msgs::msg::WorldState;
+    using Msg = rj_referee_msgs::msg::WorldState;
 
     WorldState() {
         their_robots.resize(kNumShells);

@@ -11,7 +11,11 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
-  <depend>rj_msgs</depend>
+  <depend>rj_control_msgs</depend>
+  <depend>rj_planning_msgs</depend>
+  <depend>rj_radio_msgs</depend>
+  <depend>rj_referee_msgs</depend>
+  <depend>rj_vision_msgs</depend>
   <depend>eigen3_cmake_module</depend>
   <depend>eigen</depend>
   <depend>rj_convert</depend>

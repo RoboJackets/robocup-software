@@ -1,13 +1,14 @@
 #pragma once
 
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/pose.hpp>
-#include <rj_common/time.hpp>
-#include <rj_msgs/msg/detection_robot.hpp>
 #include <vector>
 
+#include <rj_common/time.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
+#include <rj_vision_msgs/msg/detection_robot.hpp>
+
 namespace vision_filter {
-using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
+using DetectionRobotMsg = rj_vision_msgs::msg::DetectionRobot;
 
 /**
  * Wrapper for the protobuf observation

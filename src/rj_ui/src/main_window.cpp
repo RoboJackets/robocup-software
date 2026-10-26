@@ -30,10 +30,10 @@
 #include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/override_position.hpp>
-#include <rj_msgs/srv/quick_commands.hpp>
-#include <rj_msgs/srv/set_game_settings.hpp>
+#include <rj_referee_msgs/srv/quick_commands.hpp>
+#include <rj_referee_msgs/srv/set_game_settings.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
+#include <rj_ui_msgs/msg/override_position.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "rj_ui/battery_profile.hpp"
@@ -161,14 +161,14 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     //_ui.actionResetField->setEnabled(false);
     _ui.actionStopRobots->setEnabled(false);
 
-    _quick_commands_srv =
-        _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
-    _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
+    _quick_commands_srv = _node->create_client<rj_referee_msgs::srv::QuickCommands>(
+        referee::topics::kQuickCommandsSrv);
+    _set_game_settings = _node->create_client<rj_referee_msgs::srv::SetGameSettings>(
         config_server::topics::kGameSettingsSrv);
 
     // Publishers to signal when a manual position override is occurring
     for (int i = 0; i < 16; ++i) {
-        override_play_pubs_.push_back(_node->create_publisher<rj_msgs::msg::OverridePosition>(
+        override_play_pubs_.push_back(_node->create_publisher<rj_ui_msgs::msg::OverridePosition>(
             "override_position/robot_" + std::to_string(i), 1));
     }
 
@@ -462,14 +462,16 @@ void MainWindow::updateViews() {
     }
 
     if (!_game_settings_valid) {
-        auto game_settings_request = std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
+        auto game_settings_request =
+            std::make_shared<rj_referee_msgs::srv::SetGameSettings::Request>();
         game_settings_request->game_settings = _game_settings;
         _game_settings_valid = true;
 
         // If the request fails, we want to resend it, so mark game settings as invalid.
         _set_game_settings->async_send_request(
             game_settings_request,
-            [this](rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedFuture result) {  // NOLINT
+            [this](rclcpp::Client<rj_referee_msgs::srv::SetGameSettings>::SharedFuture
+                       result) {  // NOLINT
                 if (!result.get()) {
                     _game_settings_valid = false;
                 }
@@ -909,7 +911,7 @@ void MainWindow::setUseRefChecked(bool /* use_ref */) {
 }
 
 void MainWindow::send_quick_command(const PlayState& state) {
-    auto request = std::make_shared<rj_msgs::srv::QuickCommands::Request>();
+    auto request = std::make_shared<rj_referee_msgs::srv::QuickCommands::Request>();
     request->command = rj_convert::convert_to_ros(state);
     _quick_commands_srv->async_send_request(request);
     queued_command_ = std::nullopt;
@@ -1064,7 +1066,7 @@ void MainWindow::on_robotPosition_15_currentIndexChanged(int value) {
 }
 
 void MainWindow::onResetButtonClicked(int robot) {
-    rj_msgs::msg::OverridePosition message;
+    rj_ui_msgs::msg::OverridePosition message;
     message.overriding_position = 0;
 
     override_play_pubs_.at(robot)->publish(message);
@@ -1074,7 +1076,7 @@ void MainWindow::onResetButtonClicked(int robot) {
 
 void MainWindow::onPositionDropdownChanged(int robot, int position_number) {
     if (current_goalie_num_ != robot) {
-        rj_msgs::msg::OverridePosition message;
+        rj_ui_msgs::msg::OverridePosition message;
         message.overriding_position = position_number;
 
         override_play_pubs_.at(robot)->publish(message);

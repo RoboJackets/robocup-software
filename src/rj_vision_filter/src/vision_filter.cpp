@@ -3,9 +3,9 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_param_utils/vision/vision_params.hpp>
 #include <rj_utils/logging_macros.hpp>
+#include <rj_vision_msgs/msg/detection_frame.hpp>
 
 namespace vision_filter {
 DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
@@ -45,7 +45,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 }
 
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
-    return rj_msgs::build<WorldStateMsg>()
+    return rj_referee_msgs::build<WorldStateMsg>()
         .last_update_time(rj_convert::convert_to_ros(world_.last_update_time()))
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))

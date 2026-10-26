@@ -4,13 +4,13 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/team_info.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
+#include <rj_referee_msgs/msg/team_info.hpp>
 
 // Information about a single team.
 class TeamInfo {
 public:
-    using Msg = rj_msgs::msg::TeamInfo;
+    using Msg = rj_referee_msgs::msg::TeamInfo;
 
     // The team's name (empty string if operator has not typed anything).
     std::string name;
@@ -66,9 +66,9 @@ public:
 namespace rj_convert {
 
 template <>
-struct RosConverter<TeamInfo, rj_msgs::msg::TeamInfo> {
-    static rj_msgs::msg::TeamInfo to_ros(const TeamInfo& from) {
-        rj_msgs::msg::TeamInfo to;
+struct RosConverter<TeamInfo, rj_referee_msgs::msg::TeamInfo> {
+    static rj_referee_msgs::msg::TeamInfo to_ros(const TeamInfo& from) {
+        rj_referee_msgs::msg::TeamInfo to;
         convert_to_ros(from.name, &to.name);
         convert_to_ros(from.score, &to.score);
         convert_to_ros(from.red_cards, &to.num_red_cards);
@@ -80,7 +80,7 @@ struct RosConverter<TeamInfo, rj_msgs::msg::TeamInfo> {
         return to;
     }
 
-    static TeamInfo from_ros(const rj_msgs::msg::TeamInfo& from) {
+    static TeamInfo from_ros(const rj_referee_msgs::msg::TeamInfo& from) {
         TeamInfo to;
         convert_from_ros(from.name, &to.name);
         convert_from_ros(from.score, &to.score);

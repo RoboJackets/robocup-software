@@ -14,7 +14,7 @@
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_geometry/stadium_shape.hpp>
-#include <rj_msgs/msg/field_dimensions.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 
 using namespace std;
 
@@ -22,7 +22,7 @@ using namespace std;
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct FieldDimensions {
-    using Msg = rj_msgs::msg::FieldDimensions;
+    using Msg = rj_vision_msgs::msg::FieldDimensions;
 
     [[nodiscard]] float length() const { return length_; }
     [[nodiscard]] float width() const { return width_; }
@@ -369,7 +369,7 @@ struct RosConverter<FieldDimensions, FieldDimensions::Msg> {
      * sent through the ROS2 network (a Msg).
      */
     static FieldDimensions::Msg to_ros(const FieldDimensions& from) {
-        rj_msgs::msg::FieldDimensions field_message;
+        rj_vision_msgs::msg::FieldDimensions field_message;
 
         convert_to_ros(from.length(), &field_message.length);
         convert_to_ros(from.width(), &field_message.width);

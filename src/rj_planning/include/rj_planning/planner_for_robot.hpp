@@ -9,9 +9,9 @@
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/manipulator_setpoint.hpp>
-#include <rj_msgs/msg/robot_status.hpp>
-#include <rj_msgs/srv/plan_hypothetical_path.hpp>
+#include <rj_control_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_planning_msgs/srv/plan_hypothetical_path.hpp>
+#include <rj_radio_msgs/msg/robot_status.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/plan_request.hpp"
@@ -71,8 +71,8 @@ public:
      */
     // TODO(Kevin): I broke this, sorry
     void plan_hypothetical_robot_path(
-        const std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Request>& request,
-        std::shared_ptr<rj_msgs::srv::PlanHypotheticalPath::Response>& response);
+        const std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Request>& request,
+        std::shared_ptr<rj_planning_msgs::srv::PlanHypotheticalPath::Response>& response);
 
     /**
      * @return RJ::Seconds time left for the trajectory to complete
@@ -158,10 +158,11 @@ private:
     bool had_break_beam_ = false;
 
     rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
-    rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
+    rclcpp::Subscription<rj_radio_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory::Msg>::SharedPtr trajectory_topic_;
-    rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
-    rclcpp::Service<rj_msgs::srv::PlanHypotheticalPath>::SharedPtr hypothetical_path_service_;
+    rclcpp::Publisher<rj_control_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;
+    rclcpp::Service<rj_planning_msgs::srv::PlanHypotheticalPath>::SharedPtr
+        hypothetical_path_service_;
 
     rj_drawing::RosDebugDrawer debug_draw_;
 };

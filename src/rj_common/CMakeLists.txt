@@ -13,7 +13,11 @@ find_package(ament_cmake REQUIRED)
 find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_control_msgs REQUIRED)
+find_package(rj_planning_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -24,7 +28,11 @@ find_package(rj_utils REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
 
 set(RJ_COMMON_DEPS
-  rj_msgs
+  rj_control_msgs
+  rj_planning_msgs
+  rj_radio_msgs
+  rj_referee_msgs
+  rj_vision_msgs
   Eigen3
   rclcpp
   rclcpp_components

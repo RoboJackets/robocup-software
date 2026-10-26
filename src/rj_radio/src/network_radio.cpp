@@ -40,10 +40,9 @@ void NetworkRadio::start_alive_robots_receive() {
         });
 }
 
-void NetworkRadio::send_control_message(uint8_t robot_id,
-                                        const rj_msgs::msg::MotionSetpoint& motion,
-                                        const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                        strategy::Positions role) {
+void NetworkRadio::send_control_message(
+    uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+    const rj_control_msgs::msg::ManipulatorSetpoint& manipulator, strategy::Positions role) {
     // Build the control packet for this robot.
     std::array<uint8_t, sizeof(RadioMessage::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -89,7 +88,7 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
     int robot_id = msg->robot_id;
 
     // Extract the rtp to a regular struct.
-    rj_msgs::msg::RobotStatus status_ros;
+    rj_radio_msgs::msg::RobotStatus status_ros;
     RobotStatus status;
     ConvertRx::rtp_to_status(*msg, &status);
     ConvertRx::status_to_ros(status, &status_ros);
@@ -123,7 +122,7 @@ void NetworkRadio::receive_alive_robots(const boost::system::error_code& error, 
 
         alive_robots_[robot_id] = dead_ticks_[robot_id] <= kDeadTickTimeout;
     }
-    rj_msgs::msg::AliveRobots alive_message{};
+    rj_radio_msgs::msg::AliveRobots alive_message{};
     alive_message.alive_robots = alive_robots_;
     publish_alive_robots(alive_message);
 

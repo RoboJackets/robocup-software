@@ -5,9 +5,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/marking.hpp>
-#include <rj_msgs/srv/marking.hpp>
-
+#include <rj_strategy_msgs/msg/marking.hpp>
+#include <rj_strategy_msgs/srv/marking.hpp>
 
 namespace strategy {
 
@@ -61,8 +60,8 @@ private:
     rclcpp::Node::SharedPtr node_;
     const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
                               // isn't move/copy-able anyway
-    rclcpp::Client<rj_msgs::srv::Marking>::SharedPtr client_;
-    rclcpp::Subscription<rj_msgs::msg::Marking>::SharedPtr subscription_;
+    rclcpp::Client<rj_strategy_msgs::srv::Marking>::SharedPtr client_;
+    rclcpp::Subscription<rj_strategy_msgs::msg::Marking>::SharedPtr subscription_;
     bool am_i_member_{false};
     bool am_i_marking_{false};
     uint8_t selected_robot_marking_id_{kInvalidRobotId};

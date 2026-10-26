@@ -7,9 +7,9 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include <rj_msgs/msg/agent_request.hpp>
-#include <rj_msgs/msg/agent_response.hpp>
-#include <rj_msgs/msg/agent_response_variant.hpp>
+#include <rj_strategy_msgs/msg/agent_request.hpp>
+#include <rj_strategy_msgs/msg/agent_response.hpp>
+#include <rj_strategy_msgs/msg/agent_response_variant.hpp>
 
 #include "rj_strategy/agent/communication/acknowledge.hpp"
 #include "rj_strategy/agent/communication/ball_in_transit_request.hpp"
@@ -128,9 +128,10 @@ struct AgentPosResponseWrapper {
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
-    static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
-        rj_msgs::msg::AgentRequest result;
+struct RosConverter<strategy::communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest> {
+    static rj_strategy_msgs::msg::AgentRequest to_ros(
+        const strategy::communication::AgentRequest& from) {
+        rj_strategy_msgs::msg::AgentRequest result;
         if (const auto* join_wall_request =
                 std::get_if<strategy::communication::JoinWallRequest>(&from)) {
             result.join_wall_request.emplace_back(convert_to_ros(*join_wall_request));
@@ -170,7 +171,8 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
         return result;
     }
 
-    static strategy::communication::AgentRequest from_ros(const rj_msgs::msg::AgentRequest& from) {
+    static strategy::communication::AgentRequest from_ros(
+        const rj_strategy_msgs::msg::AgentRequest& from) {
         strategy::communication::AgentRequest result;
         if (!from.join_wall_request.empty()) {
             result = convert_from_ros(from.join_wall_request.front());
@@ -201,12 +203,13 @@ struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRe
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest);
 
 template <>
-struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
-    static rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {
-        rj_msgs::msg::AgentResponse result;
+struct RosConverter<strategy::communication::AgentResponse, rj_strategy_msgs::msg::AgentResponse> {
+    static rj_strategy_msgs::msg::AgentResponse to_ros(
+        const strategy::communication::AgentResponse& from) {
+        rj_strategy_msgs::msg::AgentResponse result;
         result.associated_request = convert_to_ros(from.associated_request);
         if (const auto* scorer_response =
                 std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
@@ -236,7 +239,7 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
     }
 
     static strategy::communication::AgentResponse from_ros(
-        const rj_msgs::msg::AgentResponse& from) {
+        const rj_strategy_msgs::msg::AgentResponse& from) {
         strategy::communication::AgentResponse result;
         result.associated_request = convert_from_ros(from.associated_request);
         if (!from.response.scorer_response.empty()) {
@@ -260,6 +263,6 @@ struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentR
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse);
+ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse, rj_strategy_msgs::msg::AgentResponse);
 
 }  // namespace rj_convert

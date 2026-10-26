@@ -12,7 +12,8 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_utils REQUIRED)
@@ -35,7 +36,8 @@ target_include_directories(${PROJECT_NAME}_node
 ament_target_dependencies(${PROJECT_NAME}_node
   PUBLIC
   rclcpp
-  rj_msgs
+  rj_referee_msgs
+  rj_vision_msgs
   fmt
   rj_common
   rj_utils

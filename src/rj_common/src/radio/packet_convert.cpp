@@ -69,7 +69,7 @@ void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
     status->fpga_healthy = true;
 }
 
-void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
+void status_to_ros(const RobotStatus& status, rj_radio_msgs::msg::RobotStatus* msg) {
     rj_convert::convert_to_ros(status.timestamp, &(msg->timestamp));
     msg->robot_id = status.shell_id;
     msg->battery_voltage = status.battery_voltage;
@@ -82,7 +82,7 @@ void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
     // TODO(Kyle): Handle encoders.
 }
 
-void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status) {
+void ros_to_status(const rj_radio_msgs::msg::RobotStatus& msg, RobotStatus* status) {
     rj_convert::convert_from_ros(msg.timestamp, &(status->timestamp));
     status->shell_id = msg.robot_id;
     status->battery_voltage = msg.battery_voltage;
@@ -178,8 +178,8 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
         static_cast<float>(PARAM_max_dribbler_speed *
                            (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 255.0 : 0.0)));
 }
-void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell,
+void ros_to_rtp(const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
+                const rj_control_msgs::msg::MotionSetpoint& motion, int shell,
                 RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team) {
     rtp->team = blue_team;
     rtp->robot_id = shell;
@@ -190,7 +190,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     rtp->body_w = static_cast<int16_t>(motion.velocity_z_radps *
                                        RadioMessage::ControlMessage::VELOCITY_SCALE_FACTOR);
     rtp->dribbler_speed = std::max(0.0f, std::min(manipulator.dribbler_speed, 125.0f));
-    if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
+    if (manipulator.shoot_mode == rj_control_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);
     } else {
         rtp->kick_strength = chipper_speed_to_strength(manipulator.kick_speed);
@@ -200,9 +200,8 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     rtp->role = role;
 }
 
-void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                  RobotCommand* sim) {
+void ros_to_sim(const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
+                const rj_control_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim) {
     if (sim == nullptr) {
         return;
     }

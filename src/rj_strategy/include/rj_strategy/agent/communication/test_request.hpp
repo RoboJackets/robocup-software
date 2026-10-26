@@ -7,7 +7,8 @@
 
 #include <rj_common/time.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include "rj_msgs/msg/test_request.hpp"
+
+#include "rj_strategy_msgs/msg/test_request.hpp"
 
 namespace strategy::communication {
 
@@ -23,20 +24,22 @@ void generate_uid(TestRequest& request);
 namespace rj_convert {
 
 template <>
-struct RosConverter<strategy::communication::TestRequest, rj_msgs::msg::TestRequest> {
-    static rj_msgs::msg::TestRequest to_ros(const strategy::communication::TestRequest& from) {
-        rj_msgs::msg::TestRequest result;
+struct RosConverter<strategy::communication::TestRequest, rj_strategy_msgs::msg::TestRequest> {
+    static rj_strategy_msgs::msg::TestRequest to_ros(
+        const strategy::communication::TestRequest& from) {
+        rj_strategy_msgs::msg::TestRequest result;
         result.request_uid = from.request_uid;
         return result;
     }
 
-    static strategy::communication::TestRequest from_ros(const rj_msgs::msg::TestRequest& from) {
+    static strategy::communication::TestRequest from_ros(
+        const rj_strategy_msgs::msg::TestRequest& from) {
         return strategy::communication::TestRequest{
             from.request_uid,
         };
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_msgs::msg::TestRequest);
+ASSOCIATE_CPP_ROS(strategy::communication::TestRequest, rj_strategy_msgs::msg::TestRequest);
 
 }  // namespace rj_convert

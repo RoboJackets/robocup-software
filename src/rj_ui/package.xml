@@ -22,7 +22,10 @@
   <depend>rj_utils</depend>
   <depend>rj_planning</depend>
   <depend>rj_convert</depend>
-  <depend>rj_msgs</depend>
+  <depend>rj_radio_msgs</depend>
+  <depend>rj_referee_msgs</depend>
+  <depend>rj_ui_msgs</depend>
+  <depend>rj_vision_msgs</depend>
   <depend>rj_strategy</depend>
   <depend>rj_referee</depend>
   <depend>rj_config_client</depend>

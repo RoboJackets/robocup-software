@@ -15,7 +15,12 @@ find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_planning_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_strategy_msgs REQUIRED)
+find_package(rj_ui_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_drawing_msgs REQUIRED)
@@ -29,7 +34,12 @@ set(RJ_STRATEGY_DEPS
   rclcpp_components
   spdlog
   std_msgs
-  rj_msgs
+  rj_planning_msgs
+  rj_radio_msgs
+  rj_referee_msgs
+  rj_strategy_msgs
+  rj_ui_msgs
+  rj_vision_msgs
   rj_convert
   rj_common
   rj_drawing_msgs

@@ -11,15 +11,16 @@
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
-#include <rj_msgs/msg/waller.hpp>
-#include <rj_msgs/msg/world_state.hpp>
-#include <rj_msgs/srv/waller.hpp>
+#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_strategy_msgs/msg/waller.hpp>
+#include <rj_strategy_msgs/srv/waller.hpp>
 
 #include "rj_strategy/coordinator.hpp"
 
 namespace strategy {
 
-class Waller : public Coordinator<Waller, rj_msgs::srv::Waller, rj_msgs::msg::Waller> {
+class Waller
+    : public Coordinator<Waller, rj_strategy_msgs::srv::Waller, rj_strategy_msgs::msg::Waller> {
 public:
     Waller();
     ~Waller() override = default;
