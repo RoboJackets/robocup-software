@@ -76,6 +76,8 @@ private:
 
     void tick();
 
+    void thread_callback();
+
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub;
 
     int world_state_cache_max_size = 10;

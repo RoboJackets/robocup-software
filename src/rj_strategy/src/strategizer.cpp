@@ -2,6 +2,7 @@
 #include "rj_strategy/strategizer.hpp"
 
 #include <chrono>
+#include <thread>
 
 #include "rj_strategy/commands/move_command.hpp"
 #include "rj_strategy/commands/wait_command.hpp"
@@ -15,24 +16,8 @@ Strategizer::Strategizer() : Node("stratgizer") {
     std::shared_ptr<commands::WaitCommand> wCommand1 =
         std::make_shared<commands::WaitCommand>(5000);
     // scheduler->scheduleCommand(wCommand1);
-
-    planning::MotionCommand mCommand = planning::MotionCommand{"path_target",
-                                                               planning::LinearMotionInstant{
-                                                                   rj_geometry::Point{1.33, 2.29},
-                                                                   rj_geometry::Point{0, 0},
-                                                               },
-                                                               planning::FaceTarget(), true};
-    Robot robot1(1);
-
-    std::shared_ptr<commands::MoveCommand> move_command =
-        std::make_shared<commands::MoveCommand>(robot1, mCommand, client_ptr_);
-    SPDLOG_INFO("===============================Built Motion Command==========================");
-    if (scheduler->scheduleCommand(move_command)) {
-        SPDLOG_INFO(
-            "===============================Scheduled Motion Command==========================");
-    } else {
-        SPDLOG_INFO("===============================Scheduling Failed==========================");
-    }
+    auto thread_callback = [this]() { this->thread_callback(); };
+    std::thread thread(thread_callback);
 
     for (int r_id = 0; r_id < 5; r_id++) {
         statePublishers.push_back(this->create_publisher<rj_msgs::msg::AgentState>(
@@ -69,8 +54,29 @@ Strategizer::Strategizer() : Node("stratgizer") {
     SPDLOG_INFO(
         "===============================================SPDLOG in Strategizer "
         "Constructor====================================");
+    thread.join();
 }
+void Strategizer::thread_callback() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
+    planning::MotionCommand mCommand = planning::MotionCommand{"path_target",
+                                                               planning::LinearMotionInstant{
+                                                                   rj_geometry::Point{1.33, 2.29},
+                                                                   rj_geometry::Point{0, 0},
+                                                               },
+                                                               planning::FaceTarget(), true};
+    Robot robot1(1);
+
+    std::shared_ptr<commands::MoveCommand> move_command =
+        std::make_shared<commands::MoveCommand>(robot1, mCommand, client_ptr_);
+    SPDLOG_INFO("===============================Built Motion Command==========================");
+    if (scheduler->scheduleCommand(move_command)) {
+        SPDLOG_INFO(
+            "===============================Scheduled Motion Command==========================");
+    } else {
+        SPDLOG_INFO("===============================Scheduling Failed==========================");
+    }
+}
 void Strategizer::tick() {
     // SPDLOG_INFO("===============================================Strategizer
     // tick====================================");
