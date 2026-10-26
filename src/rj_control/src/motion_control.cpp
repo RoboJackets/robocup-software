@@ -1,67 +1,27 @@
 #include "rj_control/motion_control.hpp"
 
+#include <rj_common/ros_params.hpp>
+
 namespace control {
 
 using planning::RobotInstant;
 using rj_geometry::Pose;
 using rj_geometry::Twist;
 
-MotionControl::MotionControl(int shell_id, rclcpp::Node::SharedPtr node)
+MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionControlLimits& limits)
     : shell_id_(shell_id),
       angle_controller_(0, 0, 0, 50, 0),
-      drawer_(node, fmt::format("motion_control/{}", std::to_string(shell_id))) {
-    std::string param_prefix = fmt::format("robot_{}", std::to_string(shell_id_));
-
-    // populate params
-    // robot specific
-    node->get_parameter(param_prefix + ".translation_kp", translation_kp_);
-    node->get_parameter(param_prefix + ".translation_ki", translation_ki_);
-    node->get_parameter(param_prefix + ".translation_kd", translation_kd_);
-    node->get_parameter(param_prefix + ".rotation_kp", rotation_kp_);
-    node->get_parameter(param_prefix + ".rotation_ki", rotation_ki_);
-    node->get_parameter(param_prefix + ".rotation_kd", rotation_kd_);
-
-    // shared between robots
-    node->get_parameter("translation_windup", translation_windup_);
-    node->get_parameter("rotation_windup", rotation_windup_);
-    node->get_parameter("max_velocity", max_velocity_);
-    node->get_parameter("max_acceleration", max_acceleration_);
-    node->get_parameter("max_angular_velocity", max_angular_velocity_);
-
-    param_callback_handle_ = node->add_on_set_parameters_callback(
-        [this, param_prefix](const std::vector<rclcpp::Parameter>& params) {
-            rcl_interfaces::msg::SetParametersResult result;
-            result.successful = true;
-
-            for (const auto& param : params) {
-                const auto& name = param.get_name();
-
-                if (name == param_prefix + ".translation_kp")
-                    translation_kp_ = param.as_double();
-                else if (name == param_prefix + ".translation_ki")
-                    translation_ki_ = param.as_double();
-                else if (name == param_prefix + ".translation_kd")
-                    translation_kd_ = param.as_double();
-                else if (name == param_prefix + ".rotation_kp")
-                    rotation_kp_ = param.as_double();
-                else if (name == param_prefix + ".rotation_ki")
-                    rotation_ki_ = param.as_double();
-                else if (name == param_prefix + ".rotation_kd")
-                    rotation_kd_ = param.as_double();
-                else if (name == "translation_windup")
-                    translation_windup_ = param.as_int();
-                else if (name == "rotation_windup")
-                    rotation_windup_ = param.as_int();
-                else if (name == "max_velocity")
-                    max_velocity_ = param.as_double();
-                else if (name == "max_acceleration")
-                    max_acceleration_ = param.as_double();
-                else if (name == "max_angular_velocity")
-                    max_angular_velocity_ = param.as_double();
-            }
-
-            return result;
-        });
+      drawer_(node->shared_from_this(), fmt::format("motion_control/{}", std::to_string(shell_id))),
+      limits_(limits) {
+    const std::string prefix = fmt::format("robot_{}.", shell_id_);
+    gains_ = PidGains{
+        declare_required_param<double>(*node, prefix + "translation_kp", "Translation PID P gain"),
+        declare_required_param<double>(*node, prefix + "translation_ki", "Translation PID I gain"),
+        declare_required_param<double>(*node, prefix + "translation_kd", "Translation PID D gain"),
+        declare_required_param<double>(*node, prefix + "rotation_kp", "Rotation PID P gain"),
+        declare_required_param<double>(*node, prefix + "rotation_ki", "Rotation PID I gain"),
+        declare_required_param<double>(*node, prefix + "rotation_kd", "Rotation PID D gain"),
+    };
 
     motion_setpoint_pub_ = node->create_publisher<MotionSetpoint::Msg>(
         topics::motion_setpoint_topic(shell_id_), rclcpp::QoS(1));
@@ -99,6 +59,26 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node::SharedPtr node)
         node->create_publisher<std_msgs::msg::Float64>("debug/motion_control/pose_error_y", 10);
     error_heading_pub_ = node->create_publisher<std_msgs::msg::Float64>(
         "debug/motion_control/pose_error_heading", 10);
+}
+
+void MotionControl::update_gains(const std::vector<rclcpp::Parameter>& params) {
+    const std::string prefix = fmt::format("robot_{}.", shell_id_);
+    for (const auto& param : params) {
+        const auto& name = param.get_name();
+        if (name == prefix + "translation_kp") {
+            gains_.translation_kp = param.as_double();
+        } else if (name == prefix + "translation_ki") {
+            gains_.translation_ki = param.as_double();
+        } else if (name == prefix + "translation_kd") {
+            gains_.translation_kd = param.as_double();
+        } else if (name == prefix + "rotation_kp") {
+            gains_.rotation_kp = param.as_double();
+        } else if (name == prefix + "rotation_ki") {
+            gains_.rotation_ki = param.as_double();
+        } else if (name == prefix + "rotation_kd") {
+            gains_.rotation_kd = param.as_double();
+        }
+    }
 }
 
 void MotionControl::run(const RobotState& state, const planning::Trajectory& trajectory,
@@ -216,9 +196,9 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
 
 void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
-    target_vel.linear().clamp(max_velocity_);
-    target_vel.angular() =
-        std::clamp(target_vel.angular(), -max_angular_velocity_, max_angular_velocity_);
+    target_vel.linear().clamp(limits_.max_velocity);
+    target_vel.angular() = std::clamp(target_vel.angular(), -limits_.max_angular_velocity,
+                                      limits_.max_angular_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {
@@ -240,20 +220,20 @@ void MotionControl::set_velocity(MotionSetpoint* setpoint, Twist target_vel) {
 
 void MotionControl::update_params() {
     // Update PID parameters
-    position_x_controller_.kp = static_cast<float>(translation_kp_);
-    position_x_controller_.ki = static_cast<float>(translation_ki_);
-    position_x_controller_.kd = static_cast<float>(translation_kd_);
-    position_x_controller_.setWindup(translation_windup_);
+    position_x_controller_.kp = static_cast<float>(gains_.translation_kp);
+    position_x_controller_.ki = static_cast<float>(gains_.translation_ki);
+    position_x_controller_.kd = static_cast<float>(gains_.translation_kd);
+    position_x_controller_.setWindup(limits_.translation_windup);
 
-    position_y_controller_.kp = static_cast<float>(translation_kp_);
-    position_y_controller_.ki = static_cast<float>(translation_ki_);
-    position_y_controller_.kd = static_cast<float>(translation_kd_);
-    position_y_controller_.setWindup(translation_windup_);
+    position_y_controller_.kp = static_cast<float>(gains_.translation_kp);
+    position_y_controller_.ki = static_cast<float>(gains_.translation_ki);
+    position_y_controller_.kd = static_cast<float>(gains_.translation_kd);
+    position_y_controller_.setWindup(limits_.translation_windup);
 
-    angle_controller_.kp = static_cast<float>(rotation_kp_);
-    angle_controller_.ki = static_cast<float>(rotation_ki_);
-    angle_controller_.kd = static_cast<float>(rotation_kd_);
-    angle_controller_.setWindup(rotation_windup_);
+    angle_controller_.kp = static_cast<float>(gains_.rotation_kp);
+    angle_controller_.ki = static_cast<float>(gains_.rotation_ki);
+    angle_controller_.kd = static_cast<float>(gains_.rotation_kd);
+    angle_controller_.setWindup(limits_.rotation_windup);
 }
 
 void MotionControl::reset() {
