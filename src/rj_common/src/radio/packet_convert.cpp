@@ -1,20 +1,14 @@
 #include "rj_common/radio/packet_convert.hpp"
 
-using soccer::robot::PARAM_max_chip_speed;
-using soccer::robot::PARAM_max_kick_speed;
-using soccer::robot::PARAM_min_chip_speed;
-using soccer::robot::PARAM_min_kick_speed;
-using soccer::robot::PARAM_max_dribbler_speed;
-using soccer::robot::PARAM_chip_angle;
-
 static uint8_t kicker_speed_to_strength(double kick_speed) {
     return static_cast<uint8_t>(kick_speed);
 }
 
-static uint8_t chipper_speed_to_strength(double kick_speed) {
-    return static_cast<uint8_t>(std::min(1.0, (kick_speed - PARAM_min_chip_speed) /
-                                                  (PARAM_max_chip_speed - PARAM_min_chip_speed)) *
-                                kMaxKick);
+static uint8_t chipper_speed_to_strength(double kick_speed, const RobotHardwareParams& hardware) {
+    return static_cast<uint8_t>(
+        std::min(1.0, (kick_speed - hardware.min_chip_speed) /
+                          (hardware.max_chip_speed - hardware.min_chip_speed)) *
+        kMaxKick);
 }
 
 namespace ConvertRx {
@@ -106,7 +100,8 @@ namespace ConvertTx {
 
 // NOLINT(cppcoreguidelines-pro-type-union-access)
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RadioMessage::ControlMessage* rtp_message, bool blue_team) {
+            RadioMessage::ControlMessage* rtp_message, bool blue_team,
+            const RobotHardwareParams& hardware) {
     rtp_message->team = blue_team;
     rtp_message->robot_id = shell;
 
@@ -123,7 +118,7 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
 
     if (intent.shoot_mode == RobotIntent::ShootMode::CHIP) {
         rtp_message->shoot_mode = 1;
-        rtp_message->kick_strength = chipper_speed_to_strength(intent.kick_speed);
+        rtp_message->kick_strength = chipper_speed_to_strength(intent.kick_speed, hardware);
     } else {
         rtp_message->shoot_mode = 0;
         rtp_message->kick_strength = kicker_speed_to_strength(intent.kick_speed);
@@ -144,9 +139,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     }
 }
 
-
-void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RobotCommand* sim) {
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
+            const RobotHardwareParams& hardware) {
     if (sim == nullptr) {
         return;
     }
@@ -165,7 +159,7 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
             // Chip kick
             sim->set_kick_speed(intent.kick_speed);
             // Chip angle is already in degrees
-            sim->set_kick_angle(static_cast<float>(PARAM_chip_angle));
+            sim->set_kick_angle(static_cast<float>(hardware.chip_angle));
         }
     }
 
@@ -175,12 +169,13 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
     command->set_angular(static_cast<float>(setpoint.avelocity));
 
     sim->set_dribbler_speed(
-        static_cast<float>(PARAM_max_dribbler_speed *
+        static_cast<float>(hardware.max_dribbler_speed *
                            (intent.dribbler_mode == RobotIntent::DribblerMode::ON ? 255.0 : 0.0)));
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team) {
+                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team,
+                const RobotHardwareParams& hardware) {
     rtp->team = blue_team;
     rtp->robot_id = shell;
     rtp->body_x = static_cast<int16_t>(motion.velocity_x_mps *
@@ -193,7 +188,7 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     if (manipulator.shoot_mode == rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK) {
         rtp->kick_strength = kicker_speed_to_strength(manipulator.kick_speed);
     } else {
-        rtp->kick_strength = chipper_speed_to_strength(manipulator.kick_speed);
+        rtp->kick_strength = chipper_speed_to_strength(manipulator.kick_speed, hardware);
     }
     rtp->shoot_mode = manipulator.shoot_mode;
     rtp->trigger_mode = manipulator.trigger_mode;
@@ -201,8 +196,8 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
 }
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                  const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                  RobotCommand* sim) {
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim,
+                const RobotHardwareParams& hardware) {
     if (sim == nullptr) {
         return;
     }
@@ -222,7 +217,7 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
             // Chip kick
             float speed = manipulator.kick_speed;
             sim->set_kick_speed(speed);
-            sim->set_kick_angle(static_cast<float>(PARAM_chip_angle));
+            sim->set_kick_angle(static_cast<float>(hardware.chip_angle));
         }
     }
 
@@ -231,7 +226,8 @@ void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     command->set_left(-static_cast<float>(motion.velocity_x_mps));
     command->set_angular(static_cast<float>(motion.velocity_z_radps));
 
-    sim->set_dribbler_speed(static_cast<float>(PARAM_max_dribbler_speed * manipulator.dribbler_speed));
+    sim->set_dribbler_speed(
+        static_cast<float>(hardware.max_dribbler_speed * manipulator.dribbler_speed));
 }
 
 }  // namespace ConvertTx

@@ -6,6 +6,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/strategy/positions.hpp>
@@ -78,6 +79,11 @@ protected:
     void publish_alive_robots(const rj_msgs::msg::AliveRobots& alive_robots);
 
     bool blue_team() const;
+
+    // Kicker/dribbler limits for packet conversion (robot.* in the /radio params)
+    RobotHardwareParams hardware_params_{};
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+        hardware_params_callback_handle_;
 
 private:
     /**

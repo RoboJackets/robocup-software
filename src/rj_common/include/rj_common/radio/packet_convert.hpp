@@ -8,7 +8,6 @@
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
-#include <rj_param_utils/global_params.hpp>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 
@@ -35,6 +34,20 @@
  * Tx data is split across RobotIntent and MotionSetpoint.
  */
 
+/**
+ * @brief Kicker and dribbler limits needed to convert setpoints into robot
+ * or simulator commands. The radio node reads these from its params.
+ */
+struct RobotHardwareParams {
+    // Chip speed range (m/s) that maps onto the chipper's 0..kMaxKick strength.
+    double min_chip_speed;
+    double max_chip_speed;
+    // Chip angle sent to the simulator (degrees).
+    double chip_angle;
+    // Simulator dribbler speed at full dribble (rpm).
+    double max_dribbler_speed;
+};
+
 namespace ConvertRx {
 
 void rtp_to_status(const RadioMessage::RobotStatusMessage& rtp, RobotStatus* status);
@@ -51,18 +64,18 @@ void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status);
 namespace ConvertTx {
 
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RadioMessage::ControlMessage* rtp, bool blue_team);
+            RadioMessage::ControlMessage* rtp, bool blue_team, const RobotHardwareParams& hardware);
 
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team);
+                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team,
+                const RobotHardwareParams& hardware);
 
-
-void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, RobotCommand* sim);
+void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
+            const RobotHardwareParams& hardware);
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                RobotCommand* sim);
+                const rj_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim,
+                const RobotHardwareParams& hardware);
 
 }  // namespace ConvertTx
