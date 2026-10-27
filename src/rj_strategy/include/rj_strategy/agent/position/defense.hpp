@@ -16,6 +16,7 @@
 #include <rj_msgs/action/robot_move.hpp>
 
 #include "rj_strategy/agent/position.hpp"
+#include "rj_strategy/agent/position_utils.hpp"
 #include "rj_strategy/coordinator/marking.hpp"
 #include "rj_strategy/coordinator/waller.hpp"
 
@@ -71,6 +72,8 @@ private:
         FACING,            // turning to face the passing robot
         MARKING,           // Following closely to an offense robot
         ENTERING_MARKING,  // Choosing/waiting for a robot to mark
+        STEALING,          // Fighting for a loose ball as the closest robot
+        SHOOTING,          // Shoot the ball on goal (only reachable from STEALING)
     };
 
     State update_state();
@@ -97,6 +100,10 @@ private:
                 return "ENTERING_MARKING";
             case ENTERING_MARKING:
                 return "ENTERING_MARKING";
+            case STEALING:
+                return "STEALING";
+            case SHOOTING:
+                return "SHOOTING";
         }
     }
 
@@ -104,6 +111,13 @@ private:
     RJ::Time request_time_;
 
     bool pending_marking_state_ = false;
+
+    /**
+     * @brief Check if this agent could easily steal the ball (i.e. it is the
+     * closest of our robots to a legally-accessible ball). Mirrors the stealing
+     * check used by the Offense position.
+     */
+    bool can_steal_ball() const;
 };
 
 }  // namespace strategy

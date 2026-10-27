@@ -52,7 +52,6 @@ private:
         IDLING,          // doing nothing
         BLOCKING,        // blocking the ball from reaching the goal
         CLEARING,        // clearing the ball out of the goal box
-        PREPARING_SHOT,  // pivot around ball in preparation for shot
         BALL_NOT_FOUND,  // the ball is not in play
         RECEIVING,       // physically intercepting the ball from a pass
         PASSING,         // physically kicking the ball at another robot
@@ -99,8 +98,6 @@ private:
                 return "BLOCKING";
             case CLEARING:
                 return "CLEARING";
-            case PREPARING_SHOT:
-                return "PREPARING_SHOT";
             case BALL_NOT_FOUND:
                 return "BALL_NOT_FOUND";
             case RECEIVING:

@@ -41,6 +41,7 @@
 
 #include "rj_ui/battery_profile.hpp"
 #include "rj_ui/field_view.hpp"
+#include "rj_ui/game_settings_cache.hpp"
 #include "rj_ui/processor.hpp"
 #include "rj_ui/robot_status_widget.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
@@ -64,7 +65,8 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
+MainWindow::MainWindow(Processor* processor, bool has_external_ref, bool auto_restart,
+                       QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _doubleFrameNumber(-1),
@@ -72,6 +74,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
       _processor(processor),
       context_(processor->context()),
       _has_external_ref(has_external_ref),
+      _auto_restart(auto_restart),
       _game_settings(rj_convert::convert_to_ros(context_->game_settings)) {
     context__mutex = processor->loop_mutex();
 
@@ -614,6 +617,10 @@ void MainWindow::updateViews() {
         auto game_settings_request = std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
         game_settings_request->game_settings = _game_settings;
         _game_settings_valid = true;
+
+        if (_auto_restart) {
+            game_settings_cache::save(rj_convert::convert_from_ros(_game_settings));
+        }
 
         // If the request fails, we want to resend it, so mark game settings as invalid.
         _set_game_settings->async_send_request(

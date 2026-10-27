@@ -1,10 +1,10 @@
 #include "rj_strategy/testing/straight_line_test.hpp"
 
-DEFINE_FLOAT64("straight_line_test", start_x, 1.0, "starting point x coordinate");
-DEFINE_FLOAT64("straight_line_test", start_y, 7.0, "starting point y coordinate");
+DEFINE_FLOAT64("straight_line_test", start_x, -1.0, "starting point x coordinate");
+DEFINE_FLOAT64("straight_line_test", start_y, 0.0, "starting point y coordinate");
 DEFINE_FLOAT64("straight_line_test", end_x, -1.0, "ending point x coordinate");
 DEFINE_FLOAT64("straight_line_test", end_y, 7.0, "ending point y coordinate");
-DEFINE_FLOAT64("straight_line_test", robot_id, 1, "robot_id for line_test");
+DEFINE_FLOAT64("straight_line_test", robot_id, 3, "robot_id for line_test");
 
 namespace strategy {  // put code inside of namespace for extra uses
 

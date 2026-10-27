@@ -43,6 +43,9 @@ Radio::Radio()
 }
 
 void Radio::publish_robot_status(int robot_id, const rj_msgs::msg::RobotStatus& robot_status) {
+    // Receiving a status is the ground-truth "this robot is alive" event: the
+    // physical robot only produces one when it actually responds over the radio.
+    last_status_received_.at(robot_id) = RJ::now();
     robot_status_pubs_.at(robot_id)->publish(robot_status);
 }
 

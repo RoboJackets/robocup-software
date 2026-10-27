@@ -5,42 +5,42 @@
 /control:
   ros__parameters:
     robot_0:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
     robot_1:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
     robot_2:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
     robot_3:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
     robot_4:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
       translation_ki: 0.0
       translation_kp: 4.0
     robot_5:
-      rotation_kd: 0.0
+      rotation_kd: 1.0
       rotation_ki: 0.0
       rotation_kp: 8.0
       translation_kd: 0.0
@@ -129,8 +129,8 @@
       shortcut_dist: 0.09
       target_point_gain: 0.5
     line_test:
-      start_x: 7.0
-      start_y: -1.0
+      start_x: -1.0
+      start_y: 0
       end_x: 7.0
       end_y: 1.0
       robot_id: 1

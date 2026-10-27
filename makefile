@@ -96,9 +96,19 @@ run-sim-ex: run-sim-external
 run-real:
 	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False
 
+# same as run-real, but auto-restarts the whole stack if it crashes
+run-real-auto:
+	chmod +x ./util/run_with_restart.bash
+	./util/run_with_restart.bash ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False auto_restart:=True
+
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
 	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False
+
+# same as run-real-ex, but auto-restarts the whole stack if it crashes
+run-real-ex-auto:
+	chmod +x ./util/run_with_restart.bash
+	./util/run_with_restart.bash ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False auto_restart:=True
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect

@@ -48,10 +48,8 @@ protected:
 private:
     void start_robot_status_receive();
 
-    void start_alive_robots_receive();
-
     /**
-     * @brief Parse the alive robots from a packet received via the base station.
+     * @brief Parse a robot status from a packet received via the base station.
      *
      * @param error
      * @param num_bytes
@@ -59,12 +57,11 @@ private:
     void receive_robot_status(const boost::system::error_code& error, size_t num_bytes);
 
     /**
-     * @brief Parse the alive robots from a packet received via the base station.
-     *
-     * @param error
-     * @param num_bytes
+     * @brief Publish which robots are alive, derived from recent RobotStatus
+     * reception (the same signal the UI's robot list is built from). A robot is
+     * alive iff it has reported within PARAM_timeout.
      */
-    void receive_alive_robots(const boost::system::error_code& error, size_t num_bytes);
+    void publish_alive_from_status();
 
     // Where to send control messages to
     boost::asio::ip::udp::endpoint control_message_endpoint_ = boost::asio::ip::udp::endpoint(
@@ -78,16 +75,8 @@ private:
     // Buffer for an incoming robot status from the base station
     std::array<uint8_t, sizeof(RadioMessage::RobotStatusMessage)> robot_status_buffer_{};
 
-    // Where local endpoint to expect alive robots to be received at
-    boost::asio::ip::udp::endpoint alive_robots_endpoint_ = boost::asio::ip::udp::endpoint(
-        boost::asio::ip::address::from_string("0.0.0.0"), kAliveRobotsMessageSocketPort);
-    // Buffer for an alive robots message from the base station
-    std::array<uint8_t, 2> alive_robots_buffer_{};
-    // if alive_robots_[robot_id] = true => robot[robot_id] is alive
-    std::array<bool, kNumShells> alive_robots_{};
-    std::array<uint8_t, kNumShells> dead_ticks_{};
-
-    uint8_t kDeadTickTimeout = 5;
+    // Periodically republishes alive robots derived from RobotStatus reception.
+    rclcpp::TimerBase::SharedPtr alive_robots_timer_;
 
     // Keep io_service above the socket
     // https://stackoverflow.com/questions/26243008/error-initializing-a-boost-udp-socket-with-a-boost-io-service
@@ -96,8 +85,6 @@ private:
     boost::asio::ip::udp::socket control_message_socket_;
     // The socket used to receive robot status messages from the base station
     boost::asio::ip::udp::socket robot_status_socket_;
-    // The socket used to receive alive robots messages from the base station
-    boost::asio::ip::udp::socket alive_robots_socket_;
 };
 
 }  // namespace radio

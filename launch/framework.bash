@@ -10,7 +10,7 @@ if [ -z "$binary" ]; then
 fi
 
 # Run the binary in the background
-"$binary" -g 2020B --realism RC2021 &
+"$binary" -g 2020B --realism RC2021 --localhost &
 binary_pid=$!
 
 # Ensure that pressing Ctrl+C kills all subprocesses

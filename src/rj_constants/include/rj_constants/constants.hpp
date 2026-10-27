@@ -37,7 +37,6 @@ inline constexpr float kDotsLargeOffset = 0.054772;
 inline constexpr float kDotsRadius = 0.02;
 
 /** constants for planning */
-inline constexpr double kAvoidBallDistance = 0.01;
-
+inline constexpr double kAvoidBallDistance = 0.10;
 inline const std::string kTeamNameLower = "robojackets";
 inline const std::string kTeamName = "RoboJackets";
