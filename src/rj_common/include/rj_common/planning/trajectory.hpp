@@ -8,7 +8,6 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/trajectory.hpp>
 
-#include "rj_common/debug_drawer.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
 #include "rj_common/planning/instant.hpp"
 
@@ -284,16 +283,6 @@ public:
     }
 
     /**
-     * Draw this trajectory.
-     * @param drawer The debug drawer to use.
-     * @param alt_text_position Optional position at which to draw the text in
-     * the event that the trajectory is empty.
-     */
-    void draw(DebugDrawer* drawer,
-              std::optional<rj_geometry::Point> alt_text_position =
-                  std::nullopt) const;
-
-    /**
      * Interpolate between two robot instants
      * @param prev previous robot instant
      * @param next next robot instant
@@ -305,8 +294,8 @@ public:
                                             RJ::Time time);
 
     void set_debug_text(std::string str) { debug_text_ = std::move(str); };
-    [[nodiscard]] std::string get_debug_text() const {
-        return debug_text_ ? *debug_text_ : "";
+    [[nodiscard]] std::optional<std::string> get_debug_text() const {
+        return debug_text_;
     }
 
     /**

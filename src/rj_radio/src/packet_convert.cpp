@@ -1,4 +1,4 @@
-#include "rj_common/radio/packet_convert.hpp"
+#include "rj_radio/packet_convert.hpp"
 
 static uint8_t kicker_speed_to_strength(double kick_speed) {
     return static_cast<uint8_t>(kick_speed);
@@ -61,37 +61,6 @@ void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
         status->motors_healthy[i] = true;
     }
     status->fpga_healthy = true;
-}
-
-void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
-    rj_convert::convert_to_ros(status.timestamp, &(msg->timestamp));
-    msg->robot_id = status.shell_id;
-    msg->battery_voltage = status.battery_voltage;
-    msg->motor_errors = status.motors_healthy;
-    msg->has_ball_sense = status.has_ball;
-    msg->kicker_charged = status.kicker == RobotStatus::KickerState::kCharged;
-    msg->kicker_healthy = status.kicker != RobotStatus::KickerState::kFailed;
-    msg->fpga_error = !status.fpga_healthy;
-
-    // TODO(Kyle): Handle encoders.
-}
-
-void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status) {
-    rj_convert::convert_from_ros(msg.timestamp, &(status->timestamp));
-    status->shell_id = msg.robot_id;
-    status->battery_voltage = msg.battery_voltage;
-    status->motors_healthy = msg.motor_errors;
-    status->has_ball = msg.has_ball_sense;
-    if (!msg.kicker_healthy) {
-        status->kicker = RobotStatus::KickerState::kFailed;
-    } else if (msg.kicker_charged) {
-        status->kicker = RobotStatus::KickerState::kCharged;
-    } else {
-        status->kicker = RobotStatus::KickerState::kCharging;
-    }
-    status->fpga_healthy = !msg.fpga_error;
-
-    // TODO(Kyle): Handle encoders.
 }
 
 }  // namespace ConvertRx
@@ -174,7 +143,7 @@ void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
 }
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
-                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team,
+                RadioMessage::ControlMessage* rtp, bool blue_team,
                 const RobotHardwareParams& hardware) {
     rtp->team = blue_team;
     rtp->robot_id = shell;
@@ -192,7 +161,6 @@ void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
     }
     rtp->shoot_mode = manipulator.shoot_mode;
     rtp->trigger_mode = manipulator.trigger_mode;
-    rtp->role = role;
 }
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,

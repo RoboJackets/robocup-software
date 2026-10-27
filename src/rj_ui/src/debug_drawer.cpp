@@ -1,4 +1,4 @@
-#include "rj_common/debug_drawer.hpp"
+#include "rj_ui/debug_drawer.hpp"
 
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/rect.hpp>
@@ -125,4 +125,35 @@ void DebugDrawer::draw_text(const QString& text, rj_geometry::Point pos, const Q
 void DebugDrawer::draw_segment(const rj_geometry::Segment& line, const QColor& qc,
                                const QString& layer) {
     draw_line(line, qc, layer);
+}
+
+void DebugDrawer::draw_trajectory(const planning::Trajectory& trajectory,
+                                  std::optional<rj_geometry::Point> alt_text_position) {
+    if (trajectory.num_instants() > 1) {
+        DebugRobotPath& dbg_path = add_debug_path();
+        dbg_path.layer = find_debug_layer("Motion");
+
+        for (auto it = trajectory.instants_begin(); it != trajectory.instants_end(); ++it) {
+            DebugRobotPath::DebugRobotPathPoint& pt = dbg_path.points.emplace_back();
+            pt.pos = it->pose.position();
+            pt.vel = it->velocity.linear();
+        }
+    }
+
+    std::optional<std::string> debug_text = trajectory.get_debug_text();
+    if (debug_text.has_value()) {
+        rj_geometry::Point text_pos;
+
+        // Only use the backup position if there's no trajectory.
+        if (!trajectory.empty()) {
+            text_pos = trajectory.first().pose.position() + rj_geometry::Point(0.1, 0);
+        } else if (alt_text_position.has_value()) {
+            text_pos = alt_text_position.value();
+        } else {
+            return;
+        }
+
+        draw_text(QString::fromStdString(debug_text.value()), text_pos,
+                  QColor(100, 100, 255, 100), "PlanningDebugText");
+    }
 }

@@ -50,6 +50,8 @@ set(SRC_FILES
   src/sim_field_view.cpp
   src/style_sheet_manager.cpp
 
+  src/debug_drawer.cpp
+
   src/ros2_temp/autonomy_interface.cpp
   src/ros2_temp/debug_draw_interface.cpp
   src/ros2_temp/referee_sub.cpp

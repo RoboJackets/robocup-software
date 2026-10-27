@@ -8,7 +8,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/network.hpp>
-#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/srv/sim_placement.hpp>
@@ -16,6 +15,7 @@
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 
+#include "rj_radio/packet_convert.hpp"
 #include "rj_radio/radio.hpp"
 
 namespace radio {
@@ -30,8 +30,7 @@ public:
 protected:
     //
     void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                              strategy::Positions role) override;
+                              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
 
     // Poll the asynchronous receiver
     void poll_receive() override;

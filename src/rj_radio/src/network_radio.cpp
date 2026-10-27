@@ -42,8 +42,7 @@ void NetworkRadio::start_alive_robots_receive() {
 
 void NetworkRadio::send_control_message(uint8_t robot_id,
                                         const rj_msgs::msg::MotionSetpoint& motion,
-                                        const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                        strategy::Positions role) {
+                                        const rj_msgs::msg::ManipulatorSetpoint& manipulator) {
     // Build the control packet for this robot.
     std::array<uint8_t, sizeof(RadioMessage::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];
@@ -51,7 +50,7 @@ void NetworkRadio::send_control_message(uint8_t robot_id,
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     auto* body = reinterpret_cast<RadioMessage::ControlMessage*>(&forward_packet_buffer[0]);
 
-    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, role, blue_team(), hardware_params_);
+    ConvertTx::ros_to_rtp(manipulator, motion, robot_id, body, blue_team(), hardware_params_);
 
     control_message_socket_.async_send_to(
         boost::asio::buffer(forward_packet_buffer), control_message_endpoint_,
@@ -89,12 +88,10 @@ void NetworkRadio::receive_robot_status(const boost::system::error_code& error, 
     int robot_id = msg->robot_id;
 
     // Extract the rtp to a regular struct.
-    rj_msgs::msg::RobotStatus status_ros;
     RobotStatus status;
     ConvertRx::rtp_to_status(*msg, &status);
-    ConvertRx::status_to_ros(status, &status_ros);
 
-    publish_robot_status(robot_id, status_ros);
+    publish_robot_status(robot_id, status);
 
     // Restart receiving
     start_robot_status_receive();

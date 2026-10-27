@@ -5,18 +5,16 @@
 
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
-#include "rj_common/control/motion_setpoint.hpp"
-#include "rj_common/debug_drawer.hpp"
-#include "rj_common/game_constants.hpp"
-#include "rj_common/game_settings.hpp"
-#include "rj_common/game_state.hpp"
-#include "rj_common/planning/trajectory.hpp"
-#include "rj_common/radio/robot_status.hpp"
-#include "rj_common/robot_intent.hpp"
-#include "rj_common/team_info.hpp"
-#include "rj_common/time.hpp"
-#include "rj_common/ui_frame.hpp"
-#include "rj_common/world_state.hpp"
+#include <rj_common/game_constants.hpp>
+#include <rj_common/game_settings.hpp>
+#include <rj_common/game_state.hpp>
+#include <rj_common/radio/robot_status.hpp>
+#include <rj_common/team_info.hpp>
+#include <rj_common/time.hpp>
+#include <rj_common/world_state.hpp>
+
+#include "rj_ui/debug_drawer.hpp"
+#include "rj_ui/ui_frame.hpp"
 
 constexpr size_t kMaxLogFrames = 60 * 60 * 30;
 constexpr RJ::Seconds kDropRobotThreshold = RJ::Seconds(0.5);
@@ -89,23 +87,8 @@ public:
         }
     }
 
-    // Gameplay -> Planning, Radio
-    std::array<RobotIntent, kNumShells> robot_intents;
-    // Motion control -> Radio
-    std::array<MotionSetpoint, kNumShells> motion_setpoints;
-    // Planning -> Motion control
-    std::array<planning::Trajectory, kNumShells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, kNumShells> robot_status;
-    // Coach -> Positions
-    // TODO(sid-parikh) Delete Robot_Positions UI stuff
-    std::array<uint32_t, kNumShells> robot_positions;
-    // MainWindow -> Manual control
-    std::array<bool, kNumShells> is_joystick_controlled{};
-    /** \brief Whether at least one joystick is connected */
-    bool joystick_valid = false;
-
-    rj_geometry::ShapeSet def_area_obstacles;
 
     PlayState play_state = PlayState::halt();
     MatchState match_state;

@@ -6,7 +6,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/multicast.hpp>
 #include <rj_common/ros_params.hpp>
 #include <rj_common/topic_names.hpp>
 
