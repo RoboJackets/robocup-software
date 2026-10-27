@@ -5,10 +5,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/control/motion_setpoint.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 
 #include "rj_control/motion_control.hpp"
+#include "rj_control/motion_setpoint.hpp"
 
 namespace control {
 
