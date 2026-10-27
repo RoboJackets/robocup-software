@@ -6,7 +6,6 @@
 #include <utility>
 #include <vector>
 
-#include <rj_common/control/motion_setpoint.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>

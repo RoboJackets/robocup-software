@@ -10,7 +10,6 @@
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
-#include <rj_common/control/motion_setpoint.hpp>
 #include <rj_common/game_constants.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/radio/robot_status.hpp>
@@ -30,8 +29,8 @@
  *  - RobotStatus. This is the in-memory representation used in Context.
  *
  * For Tx (soccer to robot), the structs are similar with one exception:
- * instead of a single equivalent to RobotStatus, in-memory representations of
- * Tx data is split across RobotIntent and MotionSetpoint.
+ * instead of a single equivalent to RobotStatus, Tx data arrives as separate
+ * ManipulatorSetpoint and MotionSetpoint ROS messages.
  */
 
 /**
@@ -58,16 +57,10 @@ void sim_to_status(const RobotFeedback& sim, RobotStatus* status);
 
 namespace ConvertTx {
 
-void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
-            RadioMessage::ControlMessage* rtp, bool blue_team, const RobotHardwareParams& hardware);
-
 void ros_to_rtp(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell,
                 RadioMessage::ControlMessage* rtp, bool blue_team,
                 const RobotHardwareParams& hardware);
-
-void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
-            const RobotHardwareParams& hardware);
 
 void ros_to_sim(const rj_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_msgs::msg::MotionSetpoint& motion, int shell, RobotCommand* sim,
