@@ -4,8 +4,6 @@
 
 #include <QtWidgets>
 
-#include <rj_common/qt_utils.hpp>
-
 /**
  * A static class to help manage stylesheets for soccer
  */

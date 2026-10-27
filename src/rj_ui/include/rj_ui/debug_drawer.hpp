@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QStringList>
 
+#include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/composite_shape.hpp>
 #include <rj_geometry/point.hpp>
@@ -15,7 +16,7 @@
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
 
-#include "rj_common/debug_drawings.hpp"
+#include "rj_ui/debug_drawings.hpp"
 
 class DebugDrawer {
 public:
@@ -74,6 +75,16 @@ public:
      * Helper pass-through method to create a new debug path.
      */
     DebugRobotPath& add_debug_path() { return current_.robot_paths.emplace_back(); }
+
+    /**
+     * Draws a trajectory.
+     * @param trajectory The trajectory to draw.
+     * @param alt_text_position Optional position at which to draw the text in
+     * the event that the trajectory is empty.
+     */
+    void draw_trajectory(const planning::Trajectory& trajectory,
+              std::optional<rj_geometry::Point> alt_text_position =
+                  std::nullopt);
 
     /**
      * Snapshot this cycle's drawings for the UI and start a fresh cycle.

@@ -15,11 +15,11 @@
 #include <QStyleOption>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/ui_frame.hpp>
-#include <rj_common/vision_dot_pattern.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
+
+#include "rj_ui/ui_frame.hpp"
 
 using namespace std;
 

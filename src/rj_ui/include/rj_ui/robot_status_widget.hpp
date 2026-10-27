@@ -9,10 +9,10 @@
 
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/status.hpp>
-#include <rj_common/ui_frame.hpp>
 #include <rj_common/world_state.hpp>
 
 #include "rj_ui/battery_profile.hpp"
+#include "rj_ui/ui_frame.hpp"
 #include "ui_RobotStatusWidget.h"
 
 /**

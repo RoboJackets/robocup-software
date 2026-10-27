@@ -12,7 +12,6 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <fcntl.h>
-#include <rj_common/qt_utils.hpp>
 #include <unistd.h>
 
 #include "rj_ui/main_window.hpp"

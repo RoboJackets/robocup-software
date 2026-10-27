@@ -1,5 +1,4 @@
-#ifndef VISIONDOTPATTERN_HPP
-#define VISIONDOTPATTERN_HPP
+#pragma once
 #include <QColor>
 
 /*!
@@ -25,5 +24,3 @@ const QColor kDotPatternColors[12][4] = {
     {Qt::magenta, Qt::magenta, Qt::green, Qt::green},
     {Qt::green, Qt::green, Qt::magenta, Qt::magenta},
 };
-
-#endif  // VISIONDOTPATTERN_HPP

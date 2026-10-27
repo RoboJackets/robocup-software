@@ -15,7 +15,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
-#include <rj_common/multicast.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/team_info.hpp>

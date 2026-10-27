@@ -4,21 +4,21 @@
 
 #include <rj_common/status.hpp>
 #include <rj_common/time.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_control_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_control_msgs/msg/motion_setpoint.hpp>
-#include <rj_geometry/util.hpp>
+#include <rj_radio_msgs/msg/robot_status.hpp>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
-#include <rj_radio_msgs/msg/robot_status.hpp>
+#include <rj_common/control/motion_setpoint.hpp>
+#include <rj_common/game_constants.hpp>
+#include <rj_common/planning/trajectory.hpp>
+#include <rj_common/radio/robot_status.hpp>
+#include <rj_common/robot_intent.hpp>
 
-#include "rj_common/control/motion_setpoint.hpp"
-#include "rj_common/game_constants.hpp"
-#include "rj_common/planning/trajectory.hpp"
-#include "rj_common/radio/messages/control_message.hpp"
-#include "rj_common/radio/messages/robot_status_message.hpp"
-#include "rj_common/radio/robot_status.hpp"
-#include "rj_common/robot_intent.hpp"
-#include "rj_common/strategy/positions.hpp"
+#include "rj_radio/messages/robot_status_message.hpp"
+#include "rj_radio/messages/control_message.hpp"
+
 
 /**
  * There are several different structs used throughout our code used to
@@ -54,10 +54,6 @@ void rtp_to_status(const RadioMessage::RobotStatusMessage& rtp, RobotStatus* sta
 
 void sim_to_status(const RobotFeedback& sim, RobotStatus* status);
 
-void status_to_ros(const RobotStatus& status, rj_radio_msgs::msg::RobotStatus* msg);
-
-void ros_to_status(const rj_radio_msgs::msg::RobotStatus& msg, RobotStatus* status);
-
 }  // namespace ConvertRx
 
 namespace ConvertTx {
@@ -67,7 +63,7 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell
 
 void ros_to_rtp(const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
                 const rj_control_msgs::msg::MotionSetpoint& motion, int shell,
-                RadioMessage::ControlMessage* rtp, strategy::Positions role, bool blue_team,
+                RadioMessage::ControlMessage* rtp, bool blue_team,
                 const RobotHardwareParams& hardware);
 
 void to_sim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell, RobotCommand* sim,
