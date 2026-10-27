@@ -2,10 +2,10 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_geometry/vector_type_adapter.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
 
@@ -80,9 +80,14 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
         destination.score = source.score;
         destination.num_red_cards = source.red_cards;
         destination.num_yellow_cards = source.yellow_cards;
-        rclcpp::TypeAdapter<std::vector<RJ::Seconds>,
-                            std::vector<builtin_interfaces::msg::Duration>>::convert_to_ros_message(
-            source.yellow_card_times, destination.yellow_card_remaining_times);
+        destination.yellow_card_remaining_times.clear();
+        destination.yellow_card_remaining_times.reserve(source.yellow_card_times.size());
+        for (const auto& yellow_card_time : source.yellow_card_times) {
+            builtin_interfaces::msg::Duration remaining_time;
+            rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::
+                convert_to_ros_message(yellow_card_time, remaining_time);
+            destination.yellow_card_remaining_times.push_back(std::move(remaining_time));
+        }
         destination.timeouts_left = source.timeouts_left;
         rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_ros_message(
             source.timeout_time, destination.remaining_timeout_time);
@@ -94,9 +99,14 @@ struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
         destination.score = source.score;
         destination.red_cards = source.num_red_cards;
         destination.yellow_cards = source.num_yellow_cards;
-        rclcpp::TypeAdapter<std::vector<RJ::Seconds>,
-                            std::vector<builtin_interfaces::msg::Duration>>::convert_to_custom(
-            source.yellow_card_remaining_times, destination.yellow_card_times);
+        destination.yellow_card_times.clear();
+        destination.yellow_card_times.reserve(source.yellow_card_remaining_times.size());
+        for (const auto& remaining_time : source.yellow_card_remaining_times) {
+            RJ::Seconds yellow_card_time;
+            rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_custom(
+                remaining_time, yellow_card_time);
+            destination.yellow_card_times.push_back(yellow_card_time);
+        }
         destination.timeouts_left = source.timeouts_left;
         rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_custom(
             source.remaining_timeout_time, destination.timeout_time);

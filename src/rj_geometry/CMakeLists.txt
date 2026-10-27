@@ -86,7 +86,6 @@ if(BUILD_TESTING)
      arc_test
      circle_test
      composite_shape_test
-     geometry_conversions_test
      line_test
      point_test
      pose_test

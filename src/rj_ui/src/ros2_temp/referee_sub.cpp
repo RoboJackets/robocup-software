@@ -14,17 +14,13 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
 
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
-    play_state_sub_ = node_->create_subscription<PlayState::Msg>(
-        referee::topics::kPlayStateTopic, keep_latest, [this](PlayState::Msg::UniquePtr msg) {
-            rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_custom(*msg,
-                                                                              context_->play_state);
-        });
+    play_state_sub_ = node_->create_subscription<PlayState>(
+        referee::topics::kPlayStateTopic, keep_latest,
+        [this](PlayState::ConstSharedPtr msg) { context_->play_state = *msg; });
 
-    match_state_sub_ = node_->create_subscription<MatchStateMsg>(
-        referee::topics::kMatchStateTopic, keep_latest, [this](MatchStateMsg::UniquePtr msg) {
-            rclcpp::TypeAdapter<MatchState, MatchState::Msg>::convert_to_custom(
-                *msg, context_->match_state);
-        });
+    match_state_sub_ = node_->create_subscription<MatchState>(
+        referee::topics::kMatchStateTopic, keep_latest,
+        [this](MatchState::ConstSharedPtr msg) { context_->match_state = *msg; });
 
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorTopic, keep_latest, [this](TeamColorMsg::UniquePtr msg) {
@@ -36,17 +32,13 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
             // NOP, get goalie info in the TeamInfo message
         });
 
-    our_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
-        referee::topics::kOurInfoTopic, keep_latest, [this](TeamInfoMsg::UniquePtr msg) {
-            rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_custom(*msg,
-                                                                            context_->our_info);
-        });
+    our_team_info_sub_ = node_->create_subscription<TeamInfo>(
+        referee::topics::kOurInfoTopic, keep_latest,
+        [this](TeamInfo::ConstSharedPtr msg) { context_->our_info = *msg; });
 
-    their_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
-        referee::topics::kTheirInfoTopic, keep_latest, [this](TeamInfoMsg::UniquePtr msg) {
-            rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_custom(*msg,
-                                                                            context_->their_info);
-        });
+    their_team_info_sub_ = node_->create_subscription<TeamInfo>(
+        referee::topics::kTheirInfoTopic, keep_latest,
+        [this](TeamInfo::ConstSharedPtr msg) { context_->their_info = *msg; });
 }
 
 }  // namespace ros2_temp

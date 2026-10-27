@@ -157,7 +157,6 @@ private:
 
     bool had_break_beam_ = false;
 
-    rclcpp::Subscription<RobotIntent::Msg>::SharedPtr intent_sub_;
     rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr robot_status_sub_;
     rclcpp::Publisher<Trajectory>::SharedPtr trajectory_topic_;
     rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr manipulator_pub_;

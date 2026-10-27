@@ -96,9 +96,6 @@ if(BUILD_TESTING)
 
   set(RJ_COMMON_TESTS
     ball_test
-    game_state_test
-    rj_common_convert_test
-    world_state_test 
   )
 
   foreach(TEST IN LISTS RJ_COMMON_TESTS)

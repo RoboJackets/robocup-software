@@ -13,8 +13,6 @@
 #include "rj_common/planning/dynamic_obstacle.hpp"
 #include "rj_common/planning/instant.hpp"
 
-#include <rj_geometry/vector_type_adapter.hpp>
-
 namespace planning {
 
 /**
@@ -479,16 +477,27 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         }
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
             source.time_created().value(), destination.stamp);
-        rclcpp::TypeAdapter<std::vector<planning::RobotInstant>,
-                            std::vector<rj_msgs::msg::RobotInstant>>::convert_to_ros_message(
-            source.instants(), destination.instants);
+        destination.instants.clear();
+        destination.instants.reserve(source.instants().size());
+        for (const auto& instant : source.instants()) {
+            rj_msgs::msg::RobotInstant instant_msg;
+            rclcpp::TypeAdapter<planning::RobotInstant,
+                                rj_msgs::msg::RobotInstant>::convert_to_ros_message(instant,
+                                                                                    instant_msg);
+            destination.instants.push_back(std::move(instant_msg));
+        }
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         std::vector<planning::RobotInstant> instants;
-        rclcpp::TypeAdapter<std::vector<planning::RobotInstant>,
-                            std::vector<rj_msgs::msg::RobotInstant>>::convert_to_custom(
-            source.instants, instants);
+        instants.reserve(source.instants.size());
+        for (const auto& instant_msg : source.instants) {
+            planning::RobotInstant instant;
+            rclcpp::TypeAdapter<planning::RobotInstant,
+                                rj_msgs::msg::RobotInstant>::convert_to_custom(instant_msg,
+                                                                               instant);
+            instants.push_back(std::move(instant));
+        }
         destination = planning::Trajectory{instants};
         RJ::Time stamp;
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(source.stamp,

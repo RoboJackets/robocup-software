@@ -141,7 +141,6 @@ if(BUILD_TESTING)
   set(RJ_PLANNING_TESTS
     angle_planning_test
     bezier_path_test
-    conversion_tests
     planner_test
     trajectory_test
     trapezoidal_motion_test

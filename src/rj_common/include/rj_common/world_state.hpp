@@ -256,10 +256,22 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_ros_message(source.ball,
                                                                                destination.ball);
-        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::
-            convert_to_ros_message(source.our_robots, destination.our_robots);
-        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::
-            convert_to_ros_message(source.their_robots, destination.their_robots);
+        destination.our_robots.clear();
+        destination.our_robots.reserve(source.our_robots.size());
+        for (const auto& robot : source.our_robots) {
+            RobotState::Msg robot_msg;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(robot,
+                                                                                     robot_msg);
+            destination.our_robots.push_back(std::move(robot_msg));
+        }
+        destination.their_robots.clear();
+        destination.their_robots.reserve(source.their_robots.size());
+        for (const auto& robot : source.their_robots) {
+            RobotState::Msg robot_msg;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(robot,
+                                                                                     robot_msg);
+            destination.their_robots.push_back(std::move(robot_msg));
+        }
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
             source.last_updated_time, destination.last_update_time);
     }
@@ -267,10 +279,20 @@ struct TypeAdapter<WorldState, WorldState::Msg> {
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_custom(source.ball,
                                                                           destination.ball);
-        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::convert_to_custom(
-            source.our_robots, destination.our_robots);
-        rclcpp::TypeAdapter<std::vector<RobotState>, std::vector<RobotState::Msg>>::convert_to_custom(
-            source.their_robots, destination.their_robots);
+        destination.our_robots.clear();
+        destination.our_robots.reserve(source.our_robots.size());
+        for (const auto& robot_msg : source.our_robots) {
+            RobotState robot;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_custom(robot_msg, robot);
+            destination.our_robots.push_back(std::move(robot));
+        }
+        destination.their_robots.clear();
+        destination.their_robots.reserve(source.their_robots.size());
+        for (const auto& robot_msg : source.their_robots) {
+            RobotState robot;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_custom(robot_msg, robot);
+            destination.their_robots.push_back(std::move(robot));
+        }
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
             source.last_update_time, destination.last_updated_time);
     }

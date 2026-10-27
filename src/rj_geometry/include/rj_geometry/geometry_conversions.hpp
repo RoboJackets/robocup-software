@@ -18,7 +18,6 @@
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
-#include <rj_geometry/vector_type_adapter.hpp>
 #include <rj_geometry_msgs/msg/line.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <rj_geometry_msgs/msg/polygon.hpp>
@@ -178,17 +177,26 @@ struct TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
     using ros_message_type = rj_geometry_msgs::msg::Polygon;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        std::vector<rj_geometry_msgs::msg::Point> points;
-        rclcpp::TypeAdapter<std::vector<rj_geometry::Point>,
-                            std::vector<rj_geometry_msgs::msg::Point>>::convert_to_ros_message(
-            source.vertices, points);
-        destination = rj_geometry_msgs::build<rj_geometry_msgs::msg::Polygon>().points(points);
+        destination.points.clear();
+        destination.points.reserve(source.vertices.size());
+        for (const auto& vertex : source.vertices) {
+            rj_geometry_msgs::msg::Point point;
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_ros_message(vertex,
+                                                                                      point);
+            destination.points.push_back(std::move(point));
+        }
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        rclcpp::TypeAdapter<std::vector<rj_geometry::Point>,
-                            std::vector<rj_geometry_msgs::msg::Point>>::convert_to_custom(
-            source.points, destination.vertices);
+        destination.vertices.clear();
+        destination.vertices.reserve(source.points.size());
+        for (const auto& point : source.points) {
+            rj_geometry::Point vertex;
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_custom(point, vertex);
+            destination.vertices.push_back(std::move(vertex));
+        }
     }
 };
 
