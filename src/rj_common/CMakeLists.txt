@@ -31,17 +31,13 @@ set(RJ_COMMON_DEPS
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/debug_drawer.cpp
   src/field_dimensions.cpp
-  src/multicast.cpp
-  src/qt_utils.cpp
   src/referee_enums.cpp
   src/robot_intent.cpp
   src/transforms.cpp
   src/world_state.cpp
   src/planning/motion_command.cpp
   src/planning/trajectory.cpp
-  src/radio/packet_convert.cpp
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
 

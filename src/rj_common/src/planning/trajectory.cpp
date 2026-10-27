@@ -181,36 +181,6 @@ Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
 
 Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_begin()}; }
 
-void Trajectory::draw(DebugDrawer* drawer,
-                      std::optional<rj_geometry::Point> alt_text_position) const {
-    if (instants_.size() > 1) {
-        DebugRobotPath& dbg_path = drawer->add_debug_path();
-        dbg_path.layer = drawer->find_debug_layer("Motion");
-
-        for (const RobotInstant& instant : instants_) {
-            DebugRobotPath::DebugRobotPathPoint& pt = dbg_path.points.emplace_back();
-            pt.pos = instant.pose.position();
-            pt.vel = instant.velocity.linear();
-        }
-    }
-
-    if (debug_text_) {
-        rj_geometry::Point text_pos;
-
-        // Only use the backup position if there's no trajectory.
-        if (!empty()) {
-            text_pos = first().pose.position() + rj_geometry::Point(0.1, 0);
-        } else if (alt_text_position.has_value()) {
-            text_pos = alt_text_position.value();
-        } else {
-            return;
-        }
-
-        drawer->draw_text(QString::fromStdString(debug_text_.value()), text_pos,
-                          QColor(100, 100, 255, 100), "PlanningDebugText");
-    }
-}
-
 bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b, double tolerance) {
     auto a_it = a.instants_begin();
     auto b_it = b.instants_begin();

@@ -27,7 +27,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
-#include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
@@ -642,17 +641,6 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
         _ui.radioBaseStatus->setText(label);
         _ui.radioBaseStatus->setStyleSheet(usbRadio ? QString("background-color: #00ff00")
                                                     : QString("background-color: #ff4040"));
-    }
-}
-
-void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (context_->joystick_valid) {
-        _ui.manualID->setCurrentIndex(shell + 1);
-
-#if MANUAL
-        std::lock_guard<std::mutex> lock(*context__mutex);
-        _game_settings.joystick_config.manualID = shell;
-#endif
     }
 }
 

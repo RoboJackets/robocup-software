@@ -9,7 +9,6 @@
 #include <rj_msgs/msg/linear_motion_instant.hpp>
 #include <rj_msgs/msg/robot_instant.hpp>
 
-#include "rj_common/debug_drawer.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
 
 namespace planning {

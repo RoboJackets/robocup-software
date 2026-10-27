@@ -4,7 +4,6 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/ball_placement.hpp>
@@ -12,6 +11,7 @@
 #include <rj_msgs/srv/sim_placement.hpp>
 
 #include "rj_ui/field_view.hpp"
+#include "rj_ui/context.hpp"
 
 using namespace boost;
 

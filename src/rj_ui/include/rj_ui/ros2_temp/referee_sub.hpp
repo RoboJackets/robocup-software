@@ -3,7 +3,6 @@
 #include <rclcpp/executor.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/context.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
@@ -12,6 +11,7 @@
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
 
+#include "rj_ui/context.hpp"
 namespace ros2_temp {
 
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;

@@ -6,16 +6,16 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
-#include <rj_common/strategy/positions.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/team_color.hpp>
+
+#include "rj_radio/packet_convert.hpp"
 
 namespace radio {
 
@@ -44,11 +44,9 @@ protected:
      * @param robot_id The robot to send to
      * @param motion The (x (m/s), y (m/s), z (rad/s)) velocities for the robot to move at
      * @param manipulator The Shoot Mode, Trigger Mode, Kick Speed, and Dribbler Speed for the Robot
-     * @param role The position for the robot
      */
     virtual void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                                      const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                                      strategy::Positions role) = 0;
+                                      const rj_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
 
     /**
      * @brief Poll the receiver service for Messages.
@@ -69,7 +67,7 @@ protected:
      * @param robot_id The robot id of the robot, whose status to publish
      * @param robot_status The status of the robot
      */
-    void publish_robot_status(int robot_id, const rj_msgs::msg::RobotStatus& robot_status);
+    void publish_robot_status(int robot_id, const RobotStatus& robot_status);
 
     /**
      * @brief Wrapper over the private publisher to publish a message containing alive robots
@@ -97,12 +95,10 @@ private:
     // Ros timer to trigger tick every tick_period
     rclcpp::TimerBase::SharedPtr tick_timer_;
 
-    // The position of each robot
-    std::array<strategy::Positions, kNumShells> positions_;
+    using RobotStatusAdapter = rclcpp::TypeAdapter<RobotStatus, rj_msgs::msg::RobotStatus>;
 
     // Ros publishers to send robot statuses
-    std::array<rclcpp::Publisher<rj_msgs::msg::RobotStatus>::SharedPtr, kNumShells>
-        robot_status_pubs_;
+    std::array<rclcpp::Publisher<RobotStatusAdapter>::SharedPtr, kNumShells> robot_status_pubs_;
 
     // Ros publisher to update alive robots
     rclcpp::Publisher<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_pub_;

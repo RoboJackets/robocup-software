@@ -26,7 +26,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/game_state.hpp>
-#include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_msgs/msg/override_position.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
@@ -77,7 +76,6 @@ private Q_SLOTS:
     void addLayer(int i, const QString& name, bool checked);
     void updateViews();
 
-    void on_fieldView_robotSelected(int shell);
     void on_actionCoords_toggled(bool state);
     void on_actionDotPatterns_toggled(bool state);
     void on_actionTeam_Names_toggled(bool state);

@@ -9,7 +9,6 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/context.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/robot_intent.hpp>

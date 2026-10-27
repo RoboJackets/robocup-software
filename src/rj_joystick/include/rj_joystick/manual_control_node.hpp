@@ -9,7 +9,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/context.hpp>
+#include <rj_common/game_constants.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/utils.hpp>

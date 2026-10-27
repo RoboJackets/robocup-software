@@ -10,16 +10,15 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/network.hpp>
-#include <rj_common/radio/messages/control_message.hpp>
-#include <rj_common/radio/messages/robot_status_message.hpp>
-#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/status.hpp>
-#include <rj_common/strategy/positions.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_msgs/msg/alive_robots.hpp>
 
+#include "rj_radio/messages/control_message.hpp"
+#include "rj_radio/messages/robot_status_message.hpp"
+#include "rj_radio/packet_convert.hpp"
 #include "rj_radio/radio.hpp"
 
 namespace radio {
@@ -34,8 +33,7 @@ public:
 protected:
     // Send Control Message through the Base Station to the Robots
     void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
-                              strategy::Positions role) override;
+                              const rj_msgs::msg::ManipulatorSetpoint& manipulator) override;
 
     // Poll the asynchronous boost::asio receiver
     void poll_receive() override;

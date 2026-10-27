@@ -37,6 +37,7 @@ set(RJ_RADIO_DEPS
 )
 
 add_library(${PROJECT_NAME} SHARED
+  src/packet_convert.cpp
   src/radio.cpp
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)

@@ -1,5 +1,7 @@
 #pragma once
-#include <rj_common/context.hpp>
+
+#include <memory>
+
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/segment.hpp>
