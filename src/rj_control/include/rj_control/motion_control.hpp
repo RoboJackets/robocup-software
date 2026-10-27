@@ -5,7 +5,6 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/control/motion_setpoint.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/planning/instant.hpp>
 #include <rj_common/planning/trajectory.hpp>
@@ -18,6 +17,7 @@
 #include <rj_geometry/util.hpp>
 #include <std_msgs/msg/float64.hpp>
 
+#include "rj_control/motion_setpoint.hpp"
 #include "rj_control/pid.hpp"
 
 namespace control {
