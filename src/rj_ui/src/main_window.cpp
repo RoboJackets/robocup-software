@@ -527,13 +527,20 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    for (size_t i = 0; i < kNumShells; i++) {
-        // The list starts with None so i is 1 higher than the shell id
-        QStandardItem* item = goalieModel->item(i + 1);
-        if (context_->world_state.our_robots.at(i).visible) {
-            item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
-        } else {
-            item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+    {
+        // our_robots is replaced from the processor thread. Read it under the
+        // same lock so this loop never indexes a vector that was just cleared.
+        std::lock_guard<std::mutex> lock(*context__mutex);
+        const auto& our_robots = context_->world_state.our_robots;
+        for (size_t i = 0; i < kNumShells; i++) {
+            // The list starts with None so i is 1 higher than the shell id
+            QStandardItem* item = goalieModel->item(i + 1);
+            const bool visible = i < our_robots.size() && our_robots[i].visible;
+            if (visible) {
+                item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            } else {
+                item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            }
         }
     }
 
