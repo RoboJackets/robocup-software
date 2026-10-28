@@ -28,12 +28,12 @@ private:
     std::shared_ptr<rclcpp::Node> node_;
 
     rclcpp::Subscription<RawProtobufMsg>::SharedPtr raw_sub_;
-    rclcpp::Subscription<PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<MatchState>::SharedPtr match_state_sub_;
+    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<MatchState::Msg>::SharedPtr match_state_sub_;
     rclcpp::Subscription<GoalieMsg>::SharedPtr goalie_sub_;
     rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
-    rclcpp::Subscription<TeamInfo>::SharedPtr our_team_info_sub_;
-    rclcpp::Subscription<TeamInfo>::SharedPtr their_team_info_sub_;
+    rclcpp::Subscription<TeamInfo::Msg>::SharedPtr our_team_info_sub_;
+    rclcpp::Subscription<TeamInfo::Msg>::SharedPtr their_team_info_sub_;
 
     std::thread worker_;
 

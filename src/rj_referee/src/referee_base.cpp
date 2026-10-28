@@ -12,22 +12,26 @@ RefereeBase::RefereeBase(const std::string& name)
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);
     goalie_id_pub_ = create_publisher<GoalieMsg>(referee::topics::kGoalieTopic, keep_latest);
-    our_team_info_pub_ = create_publisher<TeamInfo>(referee::topics::kOurInfoTopic, keep_latest);
+    our_team_info_pub_ =
+        create_publisher<TeamInfo::Msg>(referee::topics::kOurInfoTopic, keep_latest);
     their_team_info_pub_ =
-        create_publisher<TeamInfo>(referee::topics::kTheirInfoTopic, keep_latest);
-    play_state_pub_ = create_publisher<PlayState>(referee::topics::kPlayStateTopic, keep_latest);
-    match_state_pub_ = create_publisher<MatchState>(referee::topics::kMatchStateTopic, keep_latest);
+        create_publisher<TeamInfo::Msg>(referee::topics::kTheirInfoTopic, keep_latest);
+    play_state_pub_ =
+        create_publisher<PlayState::Msg>(referee::topics::kPlayStateTopic, keep_latest);
+    match_state_pub_ =
+        create_publisher<MatchState::Msg>(referee::topics::kMatchStateTopic, keep_latest);
 
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
-    world_state_sub_ =
-        create_subscription<WorldState>(vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-                                        [this](WorldState::ConstSharedPtr msg) {
-                                            const BallState& ball_state = msg->ball;
-                                            if (spin_kick_detector(ball_state.position)) {
-                                                send();
-                                            }
-                                        });
+    world_state_sub_ = create_subscription<WorldState::Msg>(
+        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+        [this](WorldState::Msg::ConstSharedPtr msg) {
+            WorldState world_state;
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg, world_state);
+            if (spin_kick_detector(world_state.ball.position)) {
+                send();
+            }
+        });
 }
 
 void RefereeBase::set_period(MatchState::Period period) { match_state_.period = period; }
@@ -86,13 +90,25 @@ void RefereeBase::send() {
                 config_client_.field_dimensions(), field_dimensions);
             return field_dimensions;
         }());
-    play_state_pub_->publish(resolved_play_state);
-    match_state_pub_->publish(match_state_);
+    PlayState::Msg play_state_msg;
+    rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_ros_message(resolved_play_state,
+                                                                           play_state_msg);
+    play_state_pub_->publish(play_state_msg);
+
+    MatchState::Msg match_state_msg;
+    rclcpp::TypeAdapter<MatchState, MatchState::Msg>::convert_to_ros_message(match_state_,
+                                                                             match_state_msg);
+    match_state_pub_->publish(match_state_msg);
 
     auto our_info = blue_team_ ? blue_info_ : yellow_info_;
     auto their_info = blue_team_ ? yellow_info_ : blue_info_;
-    our_team_info_pub_->publish(our_info);
-    their_team_info_pub_->publish(their_info);
+    TeamInfo::Msg our_info_msg;
+    TeamInfo::Msg their_info_msg;
+    rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_ros_message(our_info, our_info_msg);
+    rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_ros_message(their_info,
+                                                                         their_info_msg);
+    our_team_info_pub_->publish(our_info_msg);
+    their_team_info_pub_->publish(their_info_msg);
 
     TeamColorMsg team_color;
     team_color.is_blue = blue_team_;

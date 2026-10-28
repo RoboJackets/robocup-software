@@ -73,5 +73,3 @@ struct TypeAdapter<GameSettings, GameSettings::Msg> {
 };
 
 }  // namespace rclcpp
-
-RCLCPP_USING_CUSTOM_TYPE_AS_ROS_MESSAGE_TYPE(GameSettings, GameSettings::Msg);

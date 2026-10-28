@@ -19,25 +19,25 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<WorldState>(
+    world_state_sub_ = node_->create_subscription<WorldState::Msg>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](WorldState::ConstSharedPtr msg) { world_state_callback(msg); });
+        [this](WorldState::Msg::ConstSharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_->create_subscription<PlayState>(
+    play_state_sub_ = node_->create_subscription<PlayState::Msg>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](PlayState::ConstSharedPtr msg) { play_state_callback(msg); });
+        [this](PlayState::Msg::ConstSharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_->create_subscription<FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<FieldDimensions::Msg>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](FieldDimensions::ConstSharedPtr msg) { field_dimensions_callback(msg); });
+        [this](FieldDimensions::Msg::ConstSharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = node_->create_subscription<rj_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_->create_subscription<GameSettings>(
+    game_settings_sub_ = node_->create_subscription<GameSettings::Msg>(
         "config/game_settings", 1,
-        [this](GameSettings::ConstSharedPtr msg) { game_settings_callback(msg); });
+        [this](GameSettings::Msg::ConstSharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = node_->create_subscription<rj_msgs::msg::Goalie>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
@@ -76,32 +76,31 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
-void AgentActionClient::world_state_callback(WorldState::ConstSharedPtr msg) {
+void AgentActionClient::world_state_callback(WorldState::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    last_world_state_ = *msg;
+    rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg, last_world_state_);
 }
 
-void AgentActionClient::play_state_callback(PlayState::ConstSharedPtr msg) {
+void AgentActionClient::play_state_callback(PlayState::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    const PlayState& play_state = *msg;
-    play_state_ = play_state;
-    current_position_->update_play_state(play_state);
+    rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_custom(*msg, play_state_);
+    current_position_->update_play_state(play_state_);
 }
 
-void AgentActionClient::field_dimensions_callback(FieldDimensions::ConstSharedPtr msg) {
+void AgentActionClient::field_dimensions_callback(FieldDimensions::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    const FieldDimensions& field_dimensions = *msg;
-    field_dimensions_ = field_dimensions;
-    current_position_->update_field_dimensions(field_dimensions);
+    rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
+        *msg, field_dimensions_);
+    current_position_->update_field_dimensions(field_dimensions_);
 }
 
 void AgentActionClient::test_play_callback(
@@ -126,8 +125,10 @@ void AgentActionClient::alive_robots_callback(const rj_msgs::msg::AliveRobots::S
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void AgentActionClient::game_settings_callback(GameSettings::ConstSharedPtr msg) {
-    is_simulated_ = msg->simulation;
+void AgentActionClient::game_settings_callback(GameSettings::Msg::ConstSharedPtr msg) {
+    GameSettings settings;
+    rclcpp::TypeAdapter<GameSettings, GameSettings::Msg>::convert_to_custom(*msg, settings);
+    is_simulated_ = settings.simulation;
 }
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {

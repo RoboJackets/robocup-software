@@ -35,11 +35,11 @@ public:
     [[nodiscard]] const FieldDimensions* field_dimensions() const;
 
 private:
-    rclcpp::Subscription<PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
-    rclcpp::Subscription<WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_{PlayState::halt()};
     bool have_play_state_{};

@@ -5,10 +5,11 @@ namespace strategy {
 KickerPicker::KickerPicker()
     : Coordinator("kicker_picker_srv", "kicker_picker_data", "kicker_picker_node") {
     // Subscribe to world state
-    world_state_sub_ = this->create_subscription<WorldState>(
+    world_state_sub_ = this->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::ConstSharedPtr world_state) {  // NOLINT
-            last_world_state_ = *world_state;
+        [this](WorldState::Msg::ConstSharedPtr world_state) {  // NOLINT
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*world_state,
+                                                                                last_world_state_);
             publish_selected_kicker();
         });
 }

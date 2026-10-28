@@ -26,7 +26,7 @@ PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
         std::make_unique<EscapeObstaclesPathPlanner>();
 
     // publish paths to control
-    trajectory_topic_ = node_->create_publisher<Trajectory>(
+    trajectory_topic_ = node_->create_publisher<Trajectory::Msg>(
         planning::topics::trajectory_topic(robot_id), rclcpp::QoS(1).transient_local());
 
     // publish kicker/dribbler cmds directly to radio
@@ -55,7 +55,10 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto plan_request = make_request(intent);
 
         auto trajectory = safe_plan_for_robot(plan_request);
-        trajectory_topic_->publish(trajectory);
+        Trajectory::Msg trajectory_msg;
+        rclcpp::TypeAdapter<Trajectory, Trajectory::Msg>::convert_to_ros_message(trajectory,
+                                                                                 trajectory_msg);
+        trajectory_topic_->publish(trajectory_msg);
 
         if (intent.dribbler_mode != RobotIntent::DribblerMode::DEFAULT) {
             trajectory.dribbler_speed =
