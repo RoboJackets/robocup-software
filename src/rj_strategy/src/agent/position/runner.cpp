@@ -45,9 +45,9 @@ Runner::State Runner::next_state() {
 }
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
-    intent.motion_command =
-        planning::MotionCommand{"path_target", planning::LinearMotionInstant{corner(current_state_)},
-                                planning::FaceAngle{0}};
+    intent.motion_command = planning::MotionCommand{
+        "path_target", planning::LinearMotionInstant{corner(current_state_)},
+        planning::FaceAngle{0}};
     return intent;
 }
 
