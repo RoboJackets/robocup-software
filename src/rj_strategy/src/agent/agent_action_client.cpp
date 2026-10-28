@@ -5,11 +5,8 @@ using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
 AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
-    node_ =
-        std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id),
-                                       rclcpp::NodeOptions{}
-                                           .automatically_declare_parameters_from_overrides(true)
-                                           .allow_undeclared_parameters(true));
+    // Agents read no params, so nothing is declared.
+    node_ = std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id));
 
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(node_, "robot_move");
@@ -384,7 +381,6 @@ void AgentActionClient::check_communication_timeout() {
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     rclcpp::executors::MultiThreadedExecutor executor;
 
@@ -395,7 +391,6 @@ int main(int argc, char** argv) {
          ++i) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
         agents.emplace_back(i);
         auto& agent = agents.back();
-        start_global_param_provider(agent.node().get(), kGlobalParamServerNode);
         executor.add_node(agent.node());
     }
     executor.spin();

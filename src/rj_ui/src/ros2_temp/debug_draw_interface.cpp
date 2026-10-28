@@ -36,10 +36,6 @@ void DebugDrawInterface::run() {
             context_->debug_drawer.draw_segment(segment_shape, color_to_qt(segment.color),
                                                 QString::fromStdString(layer));
         }
-        for (const auto& pose : debug_draw->poses) {
-            // TODO(#1584): Handle poses
-            (void)pose;
-        }
         for (const auto& path : debug_draw->paths) {
             DebugRobotPath& debug_path = context_->debug_drawer.add_debug_path();
             debug_path.layer =

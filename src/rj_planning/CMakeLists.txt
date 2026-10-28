@@ -20,7 +20,6 @@ find_package(fmt REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
-find_package(rj_param_utils REQUIRED)
 
 set(RJ_PLANNING_DEPS
   rclcpp
@@ -31,7 +30,6 @@ set(RJ_PLANNING_DEPS
   rj_geometry
   rj_common
   rj_msgs
-  rj_param_utils
 )
 
 set(RJ_PLANNING_LIBS
@@ -44,6 +42,7 @@ set(RJ_PLANNING_SRC
   src/plan_request.cpp
   src/planner_for_robot.cpp
   src/planner_node.cpp
+  src/planning_params.cpp
   src/trajectory_collection.cpp
   src/trajectory_utils.cpp
 
@@ -152,6 +151,11 @@ if(BUILD_TESTING)
     target_include_directories(${TEST} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(${TEST} ${PROJECT_NAME})
   endforeach()
+
+  # Planner tests read the real sim params file, so they also fail if the YAML
+  # is missing a key the planners require.
+  target_compile_definitions(planner_test PRIVATE
+    RJ_SIM_PARAMS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../config/sim_params.yaml")
 endif()
 
 ament_export_targets(${PROJECT_NAME})

@@ -17,10 +17,7 @@ find_package(spdlog REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_msgs REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_drawing_msgs REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_param_utils REQUIRED)
-find_package(rj_utils REQUIRED)
 
 set(RJ_STRATEGY_DEPS
   rclcpp
@@ -30,10 +27,7 @@ set(RJ_STRATEGY_DEPS
   std_msgs
   rj_msgs
   rj_common
-  rj_drawing_msgs
   rj_geometry
-  rj_param_utils
-  rj_utils
 )
 
 set(RJ_STRATEGY_SRC
@@ -78,25 +72,6 @@ target_include_directories(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  ${RJ_STRATEGY_DEPS}
-)
-
-# Straight Line Test Node
-add_executable(straight_line_test_node
-  src/testing/straight_line_test.cpp
-)
-
-target_include_directories(straight_line_test_node
-  PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-
-target_link_libraries(straight_line_test_node
-  ${PROJECT_NAME}
-)
-
-ament_target_dependencies(straight_line_test_node
   ${RJ_STRATEGY_DEPS}
 )
 
@@ -189,7 +164,7 @@ install(
 )
 
 install(
-  TARGETS straight_line_test_node kicker_picker_node waller_node marking_node agent_action_clients
+  TARGETS kicker_picker_node waller_node marking_node agent_action_clients
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 #include <boost/asio.hpp>
@@ -10,10 +11,11 @@
 #include <rj_config_client/config_client.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_protos/vision/ssl_vision_wrapper.pb.h>
-#include <rj_utils/concurrent_queue.hpp>
-#include <rj_vision_receiver/stamped_wrapper_packet.hpp>
+
+#include "rj_vision_receiver/concurrent_queue.hpp"
+#include "rj_vision_receiver/stamped_wrapper_packet.hpp"
+#include "rj_vision_receiver/vision_conversions.hpp"
 
 namespace vision_receiver {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
@@ -120,12 +122,11 @@ private:
     std::thread network_thread_;
     std::thread publish_thread_;
 
-    rj_utils::ConcurrentQueue<StampedSSLWrapperPacket::UniquePtr> packets_;
+    vision_receiver::ConcurrentQueue<StampedSSLWrapperPacket::UniquePtr> packets_;
 
-    rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
+    rclcpp::Publisher<SSL_WrapperPacket>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
 
-    params::LocalROS2ParamProvider param_provider_;
     int param_port_;
     std::string param_vision_interface_;
 };

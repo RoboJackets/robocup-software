@@ -1,25 +1,190 @@
 #include "rj_vision_filter/vision_filter.hpp"
 
+#include <rj_common/ros_params.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-#include <rj_param_utils/vision/vision_params.hpp>
-#include <rj_utils/logging_macros.hpp>
 
 namespace vision_filter {
-DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 60.0,
-               "The rate in Hz at which VisionFilter publishes ball and robot "
-               "observations.")
+namespace {
+/// Declares every vision filter param (all required, no defaults) and reads it.
+std::shared_ptr<VisionFilterParams> load_vision_filter_params(rclcpp::Node& node) {
+    VisionFilterParams p{};
+    auto require = [&node](auto& field, const std::string& name, const std::string& desc) {
+        field = declare_required_param<std::decay_t<decltype(field)>>(node, name, desc);
+    };
+
+    require(p.vision_loop_dt, "vision_loop_dt", "1/freq of the vision loop (s)");
+    require(p.max_num_cameras, "max_num_cameras", "Max number of cameras possible on the field");
+    require(p.ball.init_covariance, "ball.init_covariance",
+            "Initial covariance of the ball filter; controls how fast it converges");
+    require(p.ball.process_noise, "ball.process_noise",
+            "How quickly the ball filter reacts to changes in acceleration");
+    require(p.ball.observation_noise, "ball.observation_noise",
+            "How much the ball filter trusts camera measurements");
+    require(p.robot.init_covariance, "robot.init_covariance",
+            "Initial covariance of the robot filter; controls how fast it converges");
+    require(p.robot.process_noise, "robot.process_noise",
+            "How quickly the robot filter reacts to changes in acceleration");
+    require(p.robot.observation_noise, "robot.observation_noise",
+            "How much the robot filter trusts camera measurements");
+    require(p.robot.orientation_scale, "robot.orientation_scale",
+            "Scales covariance and noise to radians instead of meters");
+    require(p.camera.mhkf_radius_cutoff, "camera.mhkf_radius_cutoff",
+            "Radius (m) within which measurements associate with a Kalman object");
+    require(p.camera.use_mhkf, "camera.use_mhkf", "Use MHKF (true) or AKF (false)");
+    require(p.camera.max_num_kalman_balls, "camera.max_num_kalman_balls",
+            "Max number of Kalman balls per camera");
+    require(p.camera.max_num_kalman_robots, "camera.max_num_kalman_robots",
+            "Max number of Kalman robots per robot id per camera");
+    require(p.kalman_ball.max_time_outside_vision, "kalman_ball.max_time_outside_vision",
+            "Seconds without a measurement before a ball filter is removed");
+    require(p.kalman_robot.max_time_outside_vision, "kalman_robot.max_time_outside_vision",
+            "Seconds without a measurement before a robot filter is removed");
+    require(p.filter_health.init, "filter.health.init",
+            "Initial health of a Kalman filter; must be between min and max");
+    require(p.filter_health.inc, "filter.health.inc",
+            "Health gained on each predict with a measurement");
+    require(p.filter_health.dec, "filter.health.dec",
+            "Health lost on each predict without a measurement");
+    require(p.filter_health.max, "filter.health.max", "Max health of a Kalman filter");
+    require(p.filter_health.min, "filter.health.min", "Min health of a Kalman filter");
+    require(p.kick_detector.slow_kick_hist_length, "kick.detector.slow_kick_hist_length",
+            "Frames stored for the slow kick detector");
+    require(p.kick_detector.fast_kick_hist_length, "kick.detector.fast_kick_hist_length",
+            "Frames stored for the fast kick detector");
+    require(p.kick_detector.fast_kick_timeout, "kick.detector.fast_kick_timeout",
+            "Only replace fast kick estimates after this many seconds");
+    require(p.kick_detector.slow_kick_timeout, "kick.detector.slow_kick_timeout",
+            "Only replace slow kick estimates after this many seconds");
+    require(p.kick_detector.same_kick_timeout, "kick.detector.same_kick_timeout",
+            "Replace a fast kick estimate with a slow one only within this many seconds");
+    require(p.kick_detector.fast_acceleration_trigger, "kick.detector.fast_acceleration_trigger",
+            "Acceleration (m/s^2) that triggers the fast kick detector");
+    require(p.kick_detector.slow_one_robot_within_dist, "kick.detector.slow_one_robot_within_dist",
+            "Only one ball measurement may be within this distance (m) of the robot");
+    require(p.kick_detector.slow_any_robot_past_dist, "kick.detector.slow_any_robot_past_dist",
+            "At least one ball measurement must be past this distance (m) of the robot");
+    require(p.kick_detector.slow_min_ball_speed, "kick.detector.slow_min_ball_speed",
+            "Minimum ball speed (m/s) for the slow kick detector");
+    require(p.kick_detector.slow_max_kick_angle, "kick.detector.slow_max_kick_angle",
+            "Max angle (rad) between ball velocity and robot heading");
+    require(p.bounce.robot_body_angle_dampen, "vision_filter.bounce.robot_body_angle_dampen",
+            "Fraction of the reflect angle kept when bouncing off the shell");
+    require(p.bounce.robot_mouth_angle_dampen, "vision_filter.bounce.robot_mouth_angle_dampen",
+            "Fraction of the reflect angle kept when bouncing off the mouth");
+    require(p.world_ball.ball_merger_power, "world_ball.ball_merger_power",
+            "Exponent applied to filter health when merging balls across cameras");
+    require(p.world_robot.robot_merger_power, "world_robot.robot_merger_power",
+            "Exponent applied to filter health when merging robots across cameras");
+    return std::make_shared<VisionFilterParams>(p);
+}
+}  // namespace
 
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
-      config_client_{this},
-      param_provider_{this, kVisionFilterParamModule} {
+      // Read before constructing world_: its cameras read params on construction.
+      params_{load_vision_filter_params(*this)},
+      world_{params_},
+      config_client_{this} {
     // Create a timer that calls predict on all of the Kalman filters.
-    const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
+    const std::chrono::duration<double> predict_timer_period(params_->vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
     publish_timer_ = create_wall_timer(predict_timer_period, publish_callback);
+    param_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& parameters) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+            bool update_timer_period = false;
+            bool update_camera_count = false;
+
+            for (const auto& parameter : parameters) {
+                const auto& name = parameter.get_name();
+                if (name == "vision_loop_dt") {
+                    params_->vision_loop_dt = parameter.as_double();
+                    update_timer_period = true;
+                } else if (name == "max_num_cameras") {
+                    params_->max_num_cameras = parameter.as_int();
+                    update_camera_count = true;
+                } else if (name == "ball.init_covariance") {
+                    params_->ball.init_covariance = parameter.as_double();
+                } else if (name == "ball.process_noise") {
+                    params_->ball.process_noise = parameter.as_double();
+                } else if (name == "ball.observation_noise") {
+                    params_->ball.observation_noise = parameter.as_double();
+                } else if (name == "robot.init_covariance") {
+                    params_->robot.init_covariance = parameter.as_double();
+                } else if (name == "robot.process_noise") {
+                    params_->robot.process_noise = parameter.as_double();
+                } else if (name == "robot.observation_noise") {
+                    params_->robot.observation_noise = parameter.as_double();
+                } else if (name == "robot.orientation_scale") {
+                    params_->robot.orientation_scale = parameter.as_double();
+                } else if (name == "camera.mhkf_radius_cutoff") {
+                    params_->camera.mhkf_radius_cutoff = parameter.as_double();
+                } else if (name == "camera.use_mhkf") {
+                    params_->camera.use_mhkf = parameter.as_bool();
+                } else if (name == "camera.max_num_kalman_balls") {
+                    params_->camera.max_num_kalman_balls = parameter.as_int();
+                } else if (name == "camera.max_num_kalman_robots") {
+                    params_->camera.max_num_kalman_robots = parameter.as_int();
+                } else if (name == "kalman_ball.max_time_outside_vision") {
+                    params_->kalman_ball.max_time_outside_vision = parameter.as_double();
+                } else if (name == "kalman_robot.max_time_outside_vision") {
+                    params_->kalman_robot.max_time_outside_vision = parameter.as_double();
+                } else if (name == "filter.health.init") {
+                    params_->filter_health.init = parameter.as_int();
+                } else if (name == "filter.health.inc") {
+                    params_->filter_health.inc = parameter.as_int();
+                } else if (name == "filter.health.dec") {
+                    params_->filter_health.dec = parameter.as_int();
+                } else if (name == "filter.health.max") {
+                    params_->filter_health.max = parameter.as_int();
+                } else if (name == "filter.health.min") {
+                    params_->filter_health.min = parameter.as_int();
+                } else if (name == "kick.detector.slow_kick_hist_length") {
+                    params_->kick_detector.slow_kick_hist_length = parameter.as_int();
+                } else if (name == "kick.detector.fast_kick_hist_length") {
+                    params_->kick_detector.fast_kick_hist_length = parameter.as_int();
+                } else if (name == "kick.detector.fast_kick_timeout") {
+                    params_->kick_detector.fast_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.slow_kick_timeout") {
+                    params_->kick_detector.slow_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.same_kick_timeout") {
+                    params_->kick_detector.same_kick_timeout = parameter.as_double();
+                } else if (name == "kick.detector.fast_acceleration_trigger") {
+                    params_->kick_detector.fast_acceleration_trigger = parameter.as_double();
+                } else if (name == "kick.detector.slow_one_robot_within_dist") {
+                    params_->kick_detector.slow_one_robot_within_dist = parameter.as_double();
+                } else if (name == "kick.detector.slow_any_robot_past_dist") {
+                    params_->kick_detector.slow_any_robot_past_dist = parameter.as_double();
+                } else if (name == "kick.detector.slow_min_ball_speed") {
+                    params_->kick_detector.slow_min_ball_speed = parameter.as_double();
+                } else if (name == "kick.detector.slow_max_kick_angle") {
+                    params_->kick_detector.slow_max_kick_angle = parameter.as_double();
+                } else if (name == "vision_filter.bounce.robot_body_angle_dampen") {
+                    params_->bounce.robot_body_angle_dampen = parameter.as_double();
+                } else if (name == "vision_filter.bounce.robot_mouth_angle_dampen") {
+                    params_->bounce.robot_mouth_angle_dampen = parameter.as_double();
+                } else if (name == "world_ball.ball_merger_power") {
+                    params_->world_ball.ball_merger_power = parameter.as_double();
+                } else if (name == "world_robot.robot_merger_power") {
+                    params_->world_robot.robot_merger_power = parameter.as_double();
+                }
+            }
+
+            if (update_camera_count) {
+                world_.resize_cameras();
+            }
+            if (update_timer_period) {
+                publish_timer_ =
+                    create_wall_timer(std::chrono::duration<double>(params_->vision_loop_dt),
+                                      [this]() { publish_state(); });
+            }
+
+            return result;
+        });
 
     team_color_sub_ = create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1),

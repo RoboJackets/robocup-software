@@ -17,12 +17,7 @@ binary_pid=$!
 trap 'kill $binary_pid; exit' INT
 
 # Run "make run-our-stack" in the foreground
-echo "LINE_TEST: $1"
-if [[ "$1" == "line" ]]; then
-    make run-line-test-stack
-else
-    make run-our-stack
-fi
+make run-our-stack
 
 # Wait for the background process to complete
 wait $binary_pid

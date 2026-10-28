@@ -6,6 +6,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/strategy/positions.hpp>
@@ -15,13 +16,8 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/msg/robot_status.hpp>
 #include <rj_msgs/msg/team_color.hpp>
-#include <rj_param_utils/param.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 
 namespace radio {
-
-constexpr auto kRadioParamModule = "radio";
-DECLARE_FLOAT64(kRadioParamModule, timeout);
 
 /**
  * @brief Sends and receives information to/from our robots.
@@ -84,6 +80,11 @@ protected:
 
     bool blue_team() const;
 
+    // Kicker/dribbler limits for packet conversion (robot.* in the /radio params)
+    RobotHardwareParams hardware_params_{};
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
+        hardware_params_callback_handle_;
+
 private:
     /**
      * @brief Poll the receiver and send empty motion commands to robots that software has
@@ -125,9 +126,10 @@ private:
     rclcpp::Subscription<rj_msgs::msg::TeamColor>::SharedPtr team_color_sub_;
     // Whether or not the current team color is blue
     bool blue_team_;
+    // Seconds without an update before a robot is treated as disconnected (/radio timeout)
+    double param_timeout_{0};
 
-    // Ros param provider for initializing the radio node
-    ::params::LocalROS2ParamProvider param_provider_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr timeout_callback_handle_;
 };
 
 }  // namespace radio

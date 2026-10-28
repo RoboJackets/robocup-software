@@ -1,8 +1,8 @@
 #pragma once
 
 #include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/rotation_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
+#include <rj_planning/primitives/rotation_constraints.hpp>
 
 #include "rj_planning/primitives/path_smoothing.hpp"
 #include "rj_planning/primitives/trapezoidal_motion.hpp"

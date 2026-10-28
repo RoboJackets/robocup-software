@@ -1,24 +1,22 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 
 namespace vision_filter {
 class BallBounce {
 public:
     /**
-     * These functions are wrapped into a class instead of a namespace so that
-     * the config system can be used. It requires a class with the
-     * REGISTER_CONFIGUABLE define. Additionally, this allows for the extra
-     * helper functions to be hidden.
+     * @param params Vision filter parameters, shared with the owning node.
      */
-    BallBounce() = delete;
-    ~BallBounce() = delete;
+    explicit BallBounce(std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Calculates whether the given kalman ball will bounce against another
@@ -31,10 +29,9 @@ public:
      *
      * @return Whether the ball bounces or not
      */
-    static bool calc_ball_bounce(const KalmanBall& ball,
-                               const std::vector<WorldRobot>& yellow_robots,
-                               const std::vector<WorldRobot>& blue_robots,
-                               rj_geometry::Point& out_new_vel);
+    bool calc_ball_bounce(const KalmanBall& ball, const std::vector<WorldRobot>& yellow_robots,
+                          const std::vector<WorldRobot>& blue_robots,
+                          rj_geometry::Point& out_new_vel) const;
 
 private:
     /**
@@ -45,7 +42,7 @@ private:
      * @param ball The ball we want to check for intersection with
      * @param robot The robot we what to check for intersection with
      */
-    static bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot);
+    bool ball_in_robot(const KalmanBall& ball, const WorldRobot& robot) const;
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell
@@ -58,7 +55,9 @@ private:
      * 1 means tangental intersection
      * 2 means chord based intersection
      */
-    static std::vector<rj_geometry::Point> possible_ball_intersection_pts(
-        const KalmanBall& ball, const WorldRobot& robot);
+    static std::vector<rj_geometry::Point> possible_ball_intersection_pts(const KalmanBall& ball,
+                                                                          const WorldRobot& robot);
+
+    std::shared_ptr<const VisionFilterParams> params_;
 };
 }  // namespace vision_filter

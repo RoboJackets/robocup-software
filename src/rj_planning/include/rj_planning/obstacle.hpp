@@ -1,6 +1,5 @@
 #pragma once
 #include <rj_common/context.hpp>
-#include <rj_common/planning/robot_constraints.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/segment.hpp>

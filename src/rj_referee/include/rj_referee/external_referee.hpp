@@ -24,9 +24,7 @@
 #include <rj_common/world_state.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_param_utils/param.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
-#include <rj_utils/logging_macros.hpp>
 #include <unistd.h>
 
 #include "rj_referee/referee_base.hpp"

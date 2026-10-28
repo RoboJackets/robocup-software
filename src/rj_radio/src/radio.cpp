@@ -1,15 +1,75 @@
 #include "rj_radio/radio.hpp"
 
+#include <rj_common/ros_params.hpp>
+
 namespace radio {
 
-DEFINE_FLOAT64(kRadioParamModule, timeout, 0.25,
-               "Timeout after which radio will assume a robot is disconnected. Seconds.");
+Radio::Radio() : Node{"radio"} {
+    param_timeout_ = declare_required_param<double>(
+        *this, "timeout", "Seconds without an update before a robot is treated as disconnected");
+    hardware_params_.min_chip_speed = declare_required_param<double>(
+        *this, "robot.min_chip_speed", "Chip speed (m/s) that maps to the weakest chip");
+    hardware_params_.max_chip_speed = declare_required_param<double>(
+        *this, "robot.max_chip_speed", "Chip speed (m/s) that maps to the strongest chip");
+    hardware_params_.chip_angle =
+        declare_required_param<double>(*this, "robot.chip_angle", "Simulator chip angle (degrees)");
+    hardware_params_.max_dribbler_speed = declare_required_param<double>(
+        *this, "robot.max_dribbler_speed", "Simulator dribbler speed at full dribble (rpm)");
 
-Radio::Radio()
-    : Node{"radio", rclcpp::NodeOptions{}
-                        .automatically_declare_parameters_from_overrides(true)
-                        .allow_undeclared_parameters(true)},
-      param_provider_(this, kRadioParamModule) {
+    hardware_params_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            RobotHardwareParams updated = hardware_params_;
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if (name == "robot.min_chip_speed") {
+                    updated.min_chip_speed = param.as_double();
+                } else if (name == "robot.max_chip_speed") {
+                    updated.max_chip_speed = param.as_double();
+                } else if (name == "robot.chip_angle") {
+                    updated.chip_angle = param.as_double();
+                } else if (name == "robot.max_dribbler_speed") {
+                    updated.max_dribbler_speed = param.as_double();
+                }
+            }
+
+            if (updated.min_chip_speed < 0 || updated.max_chip_speed <= updated.min_chip_speed ||
+                updated.max_dribbler_speed < 0) {
+                result.successful = false;
+                result.reason =
+                    "chip speeds must be nonnegative with max greater than min, and max "
+                    "dribbler speed must be nonnegative";
+                return result;
+            }
+
+            hardware_params_ = updated;
+            return result;
+        });
+
+    timeout_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout" && !(param.as_double() >= 0.0)) {
+                    result.successful = false;
+                    result.reason = "timeout must be nonnegative";
+                    return result;
+                }
+            }
+
+            for (const auto& param : params) {
+                if (param.get_name() == "timeout") {
+                    param_timeout_ = param.as_double();
+                }
+            }
+
+            return result;
+        });
+
     team_color_sub_ = create_subscription<rj_msgs::msg::TeamColor>(
         referee::topics::kTeamColorTopic, rclcpp::QoS(1).transient_local(),
         [this](rj_msgs::msg::TeamColor::SharedPtr color) {  // NOLINT
@@ -58,7 +118,7 @@ void Radio::tick() {
     RJ::Time update_time = RJ::now();
 
     for (size_t i = 0; i < kNumShells; i++) {
-        if (last_updates_.at(i) + RJ::Seconds(PARAM_timeout) < update_time) {
+        if (last_updates_.at(i) + RJ::Seconds(param_timeout_) < update_time) {
             // Send Alive Robots an Empty Motion Command (i.e. `STOP`)
             using rj_msgs::msg::ManipulatorSetpoint;
             using rj_msgs::msg::MotionSetpoint;

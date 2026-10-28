@@ -26,7 +26,7 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # don't add repositorie
     echo "[WARN] You are using a flavor of debian. This configuration is not officially supported..." >&2
     SYSTEM="debian"
     ADD_REPOS=false
-elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
+elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then     # We are using a version of ubuntu...
     if cat /etc/os-release | grep -iq '^VERSION=.*22.04'; then # Using Ubuntu 20.04
         echo "Ubuntu 22.04 Detected..."
         SYSTEM="ubuntu-22.04"
@@ -42,45 +42,44 @@ else
 fi
 
 # parse command line args
-for i in "$@"
-do
+for i in "$@"; do
     case $i in
-        -y|--yes)
-            YES=true
-            ;;
-        -n|--noclobber)
-            # This option omits the addition of the 3rd party repos
-            ADD_REPOS=false
-            ;;
-        -c|--clobber)
-            # This option forces addition of the custom repos
-            ADD_REPOS=true
-            ;;
-        -osl|--overwrite-sources-list)
-            # This option overwrites the sources list for faster downloads
-            OVERWRITE_SOURCES=true
-            ;;
-        -h|--help)
-            echo -e "$HELP_STR"
-            exit 1
-            ;;
-        --no-submodules)
-            # only for CI
-            NO_SUBMODULES=true
-            ;;
-        *)
-            echo "Unrecognized Option: $i"
-            echo -e "\n$HELP_STR"
-            exit 1
-            # unknown options
-            ;;
+    -y | --yes)
+        YES=true
+        ;;
+    -n | --noclobber)
+        # This option omits the addition of the 3rd party repos
+        ADD_REPOS=false
+        ;;
+    -c | --clobber)
+        # This option forces addition of the custom repos
+        ADD_REPOS=true
+        ;;
+    -osl | --overwrite-sources-list)
+        # This option overwrites the sources list for faster downloads
+        OVERWRITE_SOURCES=true
+        ;;
+    -h | --help)
+        echo -e "$HELP_STR"
+        exit 1
+        ;;
+    --no-submodules)
+        # only for CI
+        NO_SUBMODULES=true
+        ;;
+    *)
+        echo "Unrecognized Option: $i"
+        echo -e "\n$HELP_STR"
+        exit 1
+        # unknown options
+        ;;
     esac
 done
 
 # Become root
 if [ $UID -ne 0 ]; then
-	echo "-- Becoming root"
-	exec sudo $0 $@
+    echo "-- Becoming root"
+    exec sudo $0 $@
 fi
 
 # Add the llvm key
@@ -90,9 +89,9 @@ sudo apt-get update && sudo apt-get install $ARGS lsb-release wget software-prop
 if $OVERWRITE_SOURCES; then
     read -p "Do you really want to overwrite your sources.list? THIS SHOULD ONLY BE DONE ON STOCK UBUNTU [yN]: " yn
     case $yn in
-        [Yy]* ) ;;
-        [Nn]* ) exit;;
-        * ) exit ;;
+    [Yy]*) ;;
+    [Nn]*) exit ;;
+    *) exit ;;
     esac
 
     # Copy sources.list to sources.list.old if sources.list.old is empty
@@ -105,7 +104,7 @@ if $OVERWRITE_SOURCES; then
 
     # Cross our fingers...
     sed -i 's%^\s*\([^#]\S\+\)\s\+\S\+%\1 mirror://mirrors.ubuntu.com/mirrors.txt%' /etc/apt/sources.list
-EOF
+    EOF
 
 fi
 
@@ -147,7 +146,6 @@ if [[ ! $(which ros2) ]]; then
     sudo dpkg -i /tmp/ros2-apt-source.deb
 fi
 
-
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-22.04" ]; then
     sudo apt-get update && sudo apt-get install -y ros-humble-desktop ros-dev-tools
@@ -175,3 +173,7 @@ if ! $NO_SUBMODULES; then
         make -C "$BASE" update-submodules
     fi
 fi
+
+# Install commit hooks
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+git rev-parse 2>/dev/null && git config core.hooksPath "${SCRIPT_DIR}/git-hooks" || echo "Not a git repo, skipping hook installation"

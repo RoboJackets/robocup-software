@@ -1,14 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/control/motion_setpoint.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/global_params.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_utils/logging.hpp>
 
 #include "rj_control/motion_control.hpp"
 
@@ -21,10 +19,12 @@ namespace control {
 class MotionControlNode : public rclcpp::Node {
 public:
     explicit MotionControlNode();
+    void initialize_controllers();
 
 private:
-    ::params::LocalROS2ParamProvider param_provider_;
-    std::vector<MotionControl> controllers_{};
+    MotionControlLimits limits_{};
+    std::vector<std::unique_ptr<MotionControl>> controllers_{};
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 };
 
 }  // namespace control

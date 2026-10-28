@@ -1,57 +1,47 @@
+#include "rj_vision_receiver/vision_receiver.hpp"
+
 #include <cmath>
-#include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/multicast.hpp>
+#include <rj_common/ros_params.hpp>
 #include <rj_common/topic_names.hpp>
-
-#include <rj_utils/conversions.hpp>
-#include <rj_utils/logging_macros.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
-constexpr auto kVisionReceiverParamModule = "vision_receiver";
+#include "rj_vision_receiver/vision_conversions.hpp"
 
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver", rclcpp::NodeOptions{}
-                                  .automatically_declare_parameters_from_overrides(true)
-                                  .allow_undeclared_parameters(true)},
-      config_{this},
-      port_{-1},
-      socket_{io_context_},
-      param_provider_(this, kVisionReceiverParamModule) {
+    : Node{"vision_receiver"}, config_{this}, port_{-1}, socket_{io_context_} {
     recv_buffer_.resize(65536);
 
-    /* below, vision_interface should be IP where vision receiver pubs to (in
-     * scrim-2022 this was same IP as ext ref)
-     *
-     * run ifconfig to see list of interfaces on this computer
-     *
-     * port=10006 for real vision (per SSL rulebook)
+    /* port=10006 for real vision (per SSL rulebook)
      * port=10020 for ER-force sim
      *
-     * see PR #1887 for last time this file was used w/ external interface
+     * The receiver always joins kSharedVisionSourceAddress; see PR #1887 for
+     * the last time this used a configurable network interface.
      */
 
     // TODO(Kevin): since these are set on init, this does not allow us to
     // dynamic reconfigure these values, which would be nice
 
     // port number for vision receiver
-    this->get_parameter("port", param_port_);
+    param_port_ = declare_required_param<int>(
+        *this, "port",
+        "UDP port to receive SSL vision packets on (10006 real, 10020 ER-Force sim)");
     // The hardware interface to use.
-    this->get_parameter("interface", param_vision_interface_);
+    this->get_parameter("vision_interface", param_vision_interface_);
     SPDLOG_INFO("VisionReceiver port: {}", param_port_);
     SPDLOG_INFO("VisionReceiver vision_interface: {}", param_vision_interface_);
 
-    // set vision interface and port
     set_port(param_vision_interface_, param_port_);
 
-    raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufTopic, 10);
+    raw_packet_pub_ = create_publisher<SSL_WrapperPacket>(topics::kRawProtobufTopic, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
 
     // Spin off threads for the networking part and the publishing part.
@@ -83,7 +73,7 @@ void VisionReceiver::publish_thread() {
     }
 }
 
-void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int port) {
+void VisionReceiver::set_port(const std::string& interface, int port) {
     // If the socket is already open, close it to cancel any pending
     // operations before we reopen it on a new port.
     if (socket_.is_open()) {
@@ -103,13 +93,22 @@ void VisionReceiver::set_port([[maybe_unused]] const std::string& interface, int
                 kSharedVisionSourceAddress);
     const boost::asio::ip::address_v4 multicast_address =
         boost::asio::ip::address::from_string(kSharedVisionSourceAddress).to_v4();
-    socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    if (interface.empty()) {
+        socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+    } else {
+        const boost::asio::ip::address_v4 interface_address =
+            boost::asio::ip::address::from_string(interface).to_v4();
+        socket_.set_option(
+            boost::asio::ip::multicast::join_group(multicast_address, interface_address));
+    }
 
     // Bind the socket.
     boost::system::error_code bind_error;
-    socket_.bind(udp::endpoint(udp::v4(), port), bind_error);
+    socket_.bind(udp::endpoint(udp::v4(), port),
+                 bind_error);  // NOLINT(bugprone-unused-return-value)
     if (static_cast<bool>(bind_error)) {
-        EZ_ERROR_STREAM("Vision port bind failed with error: " << bind_error.message());
+        RCLCPP_ERROR_STREAM(get_logger(),
+                            "Vision port bind failed with error: " << bind_error.message());
         return;
     }
 
@@ -126,8 +125,7 @@ void VisionReceiver::process_one_packet() {
     }
 
     // Publish raw packet
-    RawProtobufMsg::UniquePtr raw_protobuf_msg = to_ros_msg(packet->wrapper);
-    raw_packet_pub_->publish(std::move(raw_protobuf_msg));
+    raw_packet_pub_->publish(packet->wrapper);
 
     // If packet has geometry data, attempt to read information and
     // update if changed.
@@ -165,7 +163,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < balls.size(); ++i) {
         const SSL_DetectionBall& ball = balls.Get(i);
         if (in_used_half(defend_plus_x, ball.x())) {
-            msg.balls.emplace_back(to_ros_msg(ball));
+            rclcpp::TypeAdapter<SSL_DetectionBall, rj_msgs::msg::DetectionBall>::
+                convert_to_ros_message(ball, msg.balls.emplace_back());
         }
     }
 
@@ -175,7 +174,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_blue.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_blue.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            msg.robots_blue.emplace_back(to_ros_msg(robot));
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+                convert_to_ros_message(robot, msg.robots_blue.emplace_back());
         }
     }
 
@@ -186,7 +186,8 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_yellow.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_yellow.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            msg.robots_yellow.emplace_back(to_ros_msg(robot));
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+                convert_to_ros_message(robot, msg.robots_yellow.emplace_back());
         }
     }
 
@@ -226,7 +227,7 @@ void VisionReceiver::start_receive() {
 void VisionReceiver::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
     // Check for error
     if (static_cast<bool>(error)) {
-        EZ_ERROR_STREAM("Vision receive failed with error: " << error.message());
+        RCLCPP_ERROR_STREAM(get_logger(), "Vision receive failed with error: " << error.message());
         return;
     }
 
@@ -234,9 +235,9 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
     StampedSSLWrapperPacket::UniquePtr stamped_packet = std::make_unique<StampedSSLWrapperPacket>();
     stamped_packet->receive_time = get_clock()->now();
     if (!stamped_packet->wrapper.ParseFromArray(&recv_buffer_[0], num_bytes)) {
-        EZ_ERROR_STREAM("Got bad packet of " << num_bytes << " bytes from "
-                                             << sender_endpoint_.address() << ":"
-                                             << sender_endpoint_.port());
+        RCLCPP_ERROR_STREAM(get_logger(), "Got bad packet of " << num_bytes << " bytes from "
+                                                               << sender_endpoint_.address() << ":"
+                                                               << sender_endpoint_.port());
         return;
     }
 
@@ -343,9 +344,8 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             return message;
         }());
     } else {
-        EZ_ERROR_STREAM(
-            "Error: failed to decode SSL geometry packet. Not resizing "
-            "field.");
+        RCLCPP_ERROR(get_logger(),
+                     "Error: failed to decode SSL geometry packet. Not resizing field.");
     }
 }
 }  // namespace vision_receiver

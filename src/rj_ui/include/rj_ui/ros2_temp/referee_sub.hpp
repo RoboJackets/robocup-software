@@ -10,7 +10,7 @@
 #include <rj_msgs/msg/goalie.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_msgs/msg/team_color.hpp>
-#include <rj_utils/logging_macros.hpp>
+#include <rj_msgs/msg/team_info.hpp>
 
 namespace ros2_temp {
 

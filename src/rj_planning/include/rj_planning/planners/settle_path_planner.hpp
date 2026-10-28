@@ -8,6 +8,9 @@
 #include <rj_common/utils.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
+#include "rj_planning/primitives/angle_planning.hpp"
+#include "rj_planning/primitives/create_path.hpp"
+#include "rj_planning/primitives/replanner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -95,5 +98,9 @@ private:
     bool path_created_for_dampen_ = false;
 
     Trajectory previous_;
+
+    // Params from the request being planned. Set at the start of
+    // plan() and read by the helpers it calls.
+    std::shared_ptr<const PlanningParams> params_;
 };
 }  // namespace planning

@@ -1,5 +1,7 @@
 #include "rj_radio/sim_radio.hpp"
 
+#include <rj_common/ros_params.hpp>
+
 using namespace std;
 using namespace boost::asio;
 
@@ -71,14 +73,30 @@ SimRadio::SimRadio(bool blue_team)
      * NOTE: on field comp, make sure this IP is "172.16.1.1" (router IP)
      * on sim, make sure this IP is "127.0.0.1" (localhost)
      */
-    // TODO(Kevin): this default shouldn't be necessary, but sim2play refuses to accept the param
-    // file probably an issue with the hacky way I got param files to dynamically load
-    std::string localhost = "127.0.0.1";
-    this->get_parameter_or("interface", param_radio_interface_, localhost);
+    param_radio_interface_ = declare_required_param<std::string>(
+        *this, "interface", "IP address of the simulator to send robot commands to");
     address_ = boost::asio::ip::make_address(param_radio_interface_).to_v4();
     robot_control_endpoint_ =
         ip::udp::endpoint(address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
     sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
+
+    interface_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                if (param.get_name() == "interface") {
+                    param_radio_interface_ = param.as_string();
+                    address_ = ip::make_address(param_radio_interface_).to_v4();
+                    robot_control_endpoint_ = ip::udp::endpoint(
+                        address_, blue_team_ ? kSimBlueCommandPort : kSimYellowCommandPort);
+                    sim_control_endpoint_ = ip::udp::endpoint(address_, kSimCommandPort);
+                }
+            }
+
+            return result;
+        });
 
     // assume robots 0-6 are always alive in sim
     for (uint8_t robot_id = 0; robot_id < 6; robot_id++) {
@@ -119,7 +137,7 @@ void SimRadio::send_control_message(uint8_t robot_id, const rj_msgs::msg::Motion
     }
     last_sent_diff_.at(robot_id) = RJ::now();
     RobotCommand* sim_robot = sim_packet.add_robot_commands();
-    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot);
+    ConvertTx::ros_to_sim(manipulator, motion, robot_id, sim_robot, hardware_params_);
 
     std::string out;
     sim_packet.SerializeToString(&out);
@@ -228,9 +246,7 @@ void SimRadio::send_sim_command(const SimulatorCommand& cmd) {
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     auto radio = std::make_shared<radio::SimRadio>();
-    start_global_param_provider(radio.get(), kGlobalParamServerNode);
     rclcpp::spin(radio);
 }

@@ -5,7 +5,7 @@
 #include <mutex>
 #include <vector>
 
-namespace rj_utils {
+namespace vision_receiver {
 /**
  * @brief A SPSC blocking queue that is unbounded in size, using std::queue
  * as the internal backing data structure.
@@ -92,4 +92,4 @@ private:
     mutable std::mutex mutex_;
     std::condition_variable cv_;
 };
-}  // namespace rj_utils
+}  // namespace vision_receiver

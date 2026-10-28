@@ -3,7 +3,6 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_config_server/config_server.hpp>
-#include <rj_utils/logging_macros.hpp>
 
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
@@ -44,7 +43,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
     broadcast_game_settings();
     broadcast_field_dimensions();
 
-    EZ_INFO("config_server is up!");
+    RCLCPP_INFO(get_logger(), "config_server is up!");
 }
 
 void ConfigServer::broadcast_game_settings() { game_settings_publisher_->publish(game_settings_); }

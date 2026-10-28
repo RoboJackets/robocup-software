@@ -1,16 +1,38 @@
 #include "rj_planning/planner_node.hpp"
 
+#include <memory>
+
 namespace planning {
 
 using RobotMove = rj_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
-PlannerNode::PlannerNode()
-    : rclcpp::Node("planner", rclcpp::NodeOptions{}
-                                  .automatically_declare_parameters_from_overrides(true)
-                                  .allow_undeclared_parameters(true)),
-      global_state_(this),
-      param_provider_{this, kPlanningParamModule} {
+PlannerNode::PlannerNode() : rclcpp::Node("planner"), global_state_(this) {
+    params_ = std::make_shared<PlanningParams>(load_planning_params(*this));
+    param_callback_handle_ =
+        add_on_set_parameters_callback([this](const std::vector<rclcpp::Parameter>& params) {
+            rcl_interfaces::msg::SetParametersResult result;
+            result.successful = true;
+
+            for (const auto& param : params) {
+                const auto& name = param.get_name();
+                if ((name == "constraints.max_translational_speed" ||
+                     name == "constraints.max_translational_accel" ||
+                     name == "constraints.max_rotational_speed" ||
+                     name == "constraints.max_rotational_accel") &&
+                    !(param.as_double() >= 0.0)) {
+                    result.successful = false;
+                    result.reason = name + " must be nonnegative";
+                    return result;
+                }
+            }
+
+            auto updated_params = *params_;
+            apply_planning_params(updated_params, params);
+            *params_ = updated_params;
+            return result;
+        });
+
     // for _1, _2 etc. below
     using namespace std::placeholders;
 
@@ -24,10 +46,13 @@ PlannerNode::PlannerNode()
 
     // set up PlannerForRobot objects
     robot_trajectories_ = std::make_shared<TrajectoryCollection>();
+}
+
+void PlannerNode::initialize_planners() {
     robot_planners_.reserve(kNumShells);
     for (size_t i = 0; i < kNumShells; i++) {
-        auto planner =
-            std::make_unique<PlannerForRobot>(i, this, robot_trajectories_, global_state_);
+        auto planner = std::make_unique<PlannerForRobot>(
+            static_cast<int>(i), shared_from_this(), robot_trajectories_, global_state_, params_);
         robot_planners_.emplace_back(std::move(planner));
     }
 }

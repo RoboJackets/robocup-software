@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -11,11 +12,10 @@
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_utils/concurrent_queue.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
 #include "rj_vision_filter/camera/world.hpp"
+#include "rj_vision_filter/params.hpp"
 
 namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
@@ -87,6 +87,13 @@ private:
     }
 
     /**
+     * @brief Vision filter parameters shared with world_ and everything it
+     * owns. Declared before world_ so they are ready when its constructor runs.
+     */
+    std::shared_ptr<VisionFilterParams> params_;
+    rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
+
+    /**
      * @brief State of the world, ie. robots and ball.
      */
     World world_;
@@ -107,7 +114,5 @@ private:
      * @brief Publisher for WorldStateMsg.
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
-
-    ::params::LocalROS2ParamProvider param_provider_;
 };
 }  // namespace vision_filter
