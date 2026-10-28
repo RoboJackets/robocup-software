@@ -3,7 +3,6 @@
 #include <QColor>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_convert/ros_convert.hpp>
 #include <rj_drawing_msgs/msg/debug_draw.hpp>
 #include <rj_drawing_msgs/msg/draw_color.hpp>
 #include <rj_drawing_msgs/msg/draw_path.hpp>
@@ -29,15 +28,21 @@ public:
 
     void draw_shapes(const rj_geometry::ShapeSet& shapes,
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
+        rj_geometry_msgs::msg::ShapeSet shapes_msg;
+        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
+            convert_to_ros_message(shapes, shapes_msg);
         frame_.shapes.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>()
-                                    .shapes(rj_convert::convert_to_ros(shapes))
+                                    .shapes(shapes_msg)
                                     .color(color_from_qt(color)));
     }
 
     void draw_circle(const rj_geometry::Circle& circle,
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.circles.push_back(rj_convert::convert_to_ros(circle));
+        rj_geometry_msgs::msg::Circle circle_msg;
+        rclcpp::TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle>::
+            convert_to_ros_message(circle, circle_msg);
+        shapes.circles.push_back(circle_msg);
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -46,7 +51,10 @@ public:
     void draw_rect(const rj_geometry::Rect& rect,
                    const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.rectangles.push_back(rj_convert::convert_to_ros(rect));
+        rj_geometry_msgs::msg::Rect rect_msg;
+        rclcpp::TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect>::convert_to_ros_message(
+            rect, rect_msg);
+        shapes.rectangles.push_back(rect_msg);
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -55,7 +63,10 @@ public:
     void draw_polygon(const rj_geometry::Polygon& polygon,
                       const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
-        shapes.polygons.push_back(rj_convert::convert_to_ros(polygon));
+        rj_geometry_msgs::msg::Polygon polygon_msg;
+        rclcpp::TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon>::
+            convert_to_ros_message(polygon, polygon_msg);
+        shapes.polygons.push_back(polygon_msg);
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
                 color_from_qt(color)));
@@ -68,24 +79,33 @@ public:
 
     void draw_segment(const rj_geometry::Segment& segment,
                       const QColor& color = QColor::fromRgb(0, 0, 0)) {
+        rj_geometry_msgs::msg::Segment segment_msg;
+        rclcpp::TypeAdapter<rj_geometry::Segment, rj_geometry_msgs::msg::Segment>::
+            convert_to_ros_message(segment, segment_msg);
         frame_.segments.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawSegment>()
-                                      .segment(rj_convert::convert_to_ros(segment))
+                                      .segment(segment_msg)
                                       .color(color_from_qt(color)));
     }
 
 
     void draw_text(const std::string& text, const rj_geometry::Point& position,
                    const QColor& color = QColor::fromRgb(0, 0, 0)) {
+        rj_geometry_msgs::msg::Point position_msg;
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            position, position_msg);
         frame_.debug_text.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawText>()
                                         .text(text)
-                                        .position(rj_convert::convert_to_ros(position))
+                                        .position(position_msg)
                                         .color(color_from_qt(color)));
     }
 
     void draw_path(const std::vector<rj_geometry::Point>& points) {
         frame_.paths.emplace_back();
         for (const auto& point : points) {
-            frame_.paths.back().points.push_back(rj_convert::convert_to_ros(point));
+            rj_geometry_msgs::msg::Point point_msg;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_ros_message(point, point_msg);
+            frame_.paths.back().points.push_back(point_msg);
         }
     }
 

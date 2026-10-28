@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <stdexcept>
 
 #include <spdlog/spdlog.h>
@@ -36,6 +37,8 @@ using RobotInstantSequence = std::vector<RobotInstant>;
 class Trajectory {
 public:
     using Msg = rj_msgs::msg::Trajectory;
+    using SharedPtr = std::shared_ptr<Trajectory>;
+    using ConstSharedPtr = std::shared_ptr<const Trajectory>;
 
     Trajectory() = default;
     ~Trajectory() = default;
@@ -460,27 +463,48 @@ bool operator==(const Trajectory& a, const Trajectory& b);
 
 }  // namespace planning
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<planning::Trajectory, rj_msgs::msg::Trajectory> {
-    static rj_msgs::msg::Trajectory to_ros(const planning::Trajectory& from) {
-        if (!from.angles_valid()) {
+struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
+    using is_specialized = std::true_type;
+    using custom_type = planning::Trajectory;
+    using ros_message_type = rj_msgs::msg::Trajectory;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        if (!source.angles_valid()) {
             throw std::invalid_argument("Cannot serialize trajectory with invalid angles");
         }
-        return rj_msgs::build<rj_msgs::msg::Trajectory>()
-            .stamp(convert_to_ros(from.time_created().value()))
-            .instants(convert_to_ros(from.instants()));
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.time_created().value(), destination.stamp);
+        destination.instants.clear();
+        destination.instants.reserve(source.instants().size());
+        for (const auto& instant : source.instants()) {
+            rj_msgs::msg::RobotInstant instant_msg;
+            rclcpp::TypeAdapter<planning::RobotInstant,
+                                rj_msgs::msg::RobotInstant>::convert_to_ros_message(instant,
+                                                                                    instant_msg);
+            destination.instants.push_back(std::move(instant_msg));
+        }
     }
 
-    static planning::Trajectory from_ros(const rj_msgs::msg::Trajectory& from) {
-        auto trajectory = planning::Trajectory{convert_from_ros(from.instants)};
-        trajectory.stamp(convert_from_ros(from.stamp));
-        trajectory.mark_angles_valid();
-        return trajectory;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        std::vector<planning::RobotInstant> instants;
+        instants.reserve(source.instants.size());
+        for (const auto& instant_msg : source.instants) {
+            planning::RobotInstant instant;
+            rclcpp::TypeAdapter<planning::RobotInstant,
+                                rj_msgs::msg::RobotInstant>::convert_to_custom(instant_msg,
+                                                                               instant);
+            instants.push_back(std::move(instant));
+        }
+        destination = planning::Trajectory{instants};
+        RJ::Time stamp;
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(source.stamp,
+                                                                                       stamp);
+        destination.stamp(stamp);
+        destination.mark_angles_valid();
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::Trajectory, planning::Trajectory::Msg);
-
-}  // namespace rj_convert
+}  // namespace rclcpp

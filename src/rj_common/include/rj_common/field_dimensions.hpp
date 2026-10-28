@@ -2,8 +2,9 @@
 
 #include <cfloat>
 #include <cmath>
+#include <memory>
 
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_geometry/arc.hpp>
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/composite_shape.hpp>
@@ -23,6 +24,8 @@ using namespace std;
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct FieldDimensions {
     using Msg = rj_msgs::msg::FieldDimensions;
+    using SharedPtr = std::shared_ptr<FieldDimensions>;
+    using ConstSharedPtr = std::shared_ptr<const FieldDimensions>;
 
     [[nodiscard]] float length() const { return length_; }
     [[nodiscard]] float width() const { return width_; }
@@ -360,53 +363,38 @@ private:
     std::vector<rj_geometry::Line> field_borders_;
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<FieldDimensions, FieldDimensions::Msg> {
-    /**
-     * Converts and returns the FieldDimensions struct into a suitable form for it to be
-     * sent through the ROS2 network (a Msg).
-     */
-    static FieldDimensions::Msg to_ros(const FieldDimensions& from) {
-        rj_msgs::msg::FieldDimensions field_message;
+struct TypeAdapter<FieldDimensions, FieldDimensions::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = FieldDimensions;
+    using ros_message_type = FieldDimensions::Msg;
 
-        convert_to_ros(from.length(), &field_message.length);
-        convert_to_ros(from.width(), &field_message.width);
-        convert_to_ros(from.border(), &field_message.border);
-
-        convert_to_ros(from.line_width(), &field_message.line_width);
-
-        convert_to_ros(from.goal_width(), &field_message.goal_width);
-        convert_to_ros(from.goal_depth(), &field_message.goal_depth);
-        convert_to_ros(from.goal_height(), &field_message.goal_height);
-
-        convert_to_ros(from.penalty_short_dist(), &field_message.penalty_short_dist);
-        convert_to_ros(from.penalty_long_dist(), &field_message.penalty_long_dist);
-
-        convert_to_ros(from.center_radius(), &field_message.center_radius);
-        convert_to_ros(from.center_diameter(), &field_message.center_diameter);
-
-        convert_to_ros(from.goal_flat(), &field_message.goal_flat);
-
-        convert_to_ros(from.floor_length(), &field_message.floor_length);
-        convert_to_ros(from.floor_width(), &field_message.floor_width);
-
-        return field_message;
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        destination.length = source.length();
+        destination.width = source.width();
+        destination.border = source.border();
+        destination.line_width = source.line_width();
+        destination.goal_width = source.goal_width();
+        destination.goal_depth = source.goal_depth();
+        destination.goal_height = source.goal_height();
+        destination.penalty_short_dist = source.penalty_short_dist();
+        destination.penalty_long_dist = source.penalty_long_dist();
+        destination.center_radius = source.center_radius();
+        destination.center_diameter = source.center_diameter();
+        destination.goal_flat = source.goal_flat();
+        destination.floor_length = source.floor_length();
+        destination.floor_width = source.floor_width();
     }
 
-    /**
-     * Converts and returns the FieldDimensions struct from msg form to the original struct
-     * form.
-     */
-    static FieldDimensions from_ros(const FieldDimensions::Msg& from) {
-        return FieldDimensions(
-            from.length, from.width, from.border, from.line_width, from.goal_width, from.goal_depth,
-            from.goal_height, from.penalty_short_dist, from.penalty_long_dist, from.center_radius,
-            from.center_diameter, from.goal_flat, from.floor_length, from.floor_width);
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        destination = FieldDimensions(source.length, source.width, source.border, source.line_width,
+                                      source.goal_width, source.goal_depth, source.goal_height,
+                                      source.penalty_short_dist, source.penalty_long_dist,
+                                      source.center_radius, source.center_diameter,
+                                      source.goal_flat, source.floor_length, source.floor_width);
     }
 };
 
-ASSOCIATE_CPP_ROS(FieldDimensions, FieldDimensions::Msg);
-
-}  // namespace rj_convert
+}  // namespace rclcpp

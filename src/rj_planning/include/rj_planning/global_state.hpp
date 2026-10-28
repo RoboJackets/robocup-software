@@ -8,7 +8,7 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_convert/testing/ros_convert_testing.hpp>
+
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
@@ -35,11 +35,11 @@ public:
     [[nodiscard]] const FieldDimensions* field_dimensions() const;
 
 private:
-    rclcpp::Subscription<rj_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_sub_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_{PlayState::halt()};
     bool have_play_state_{};

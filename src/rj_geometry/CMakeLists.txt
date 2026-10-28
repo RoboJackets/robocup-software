@@ -14,15 +14,15 @@ find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_convert REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
 
 set(RJ_GEOMETRY_DEPS
   Eigen3
   fmt
-  rj_convert
+  rclcpp
   rj_geometry_msgs
 )
 
@@ -86,7 +86,6 @@ if(BUILD_TESTING)
      arc_test
      circle_test
      composite_shape_test
-     geometry_conversions_test
      line_test
      point_test
      pose_test

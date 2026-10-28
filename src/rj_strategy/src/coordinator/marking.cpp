@@ -8,10 +8,11 @@ Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node"),
     enemy_to_friends_.fill(kInvalidRobotId);  // matches the enemy robot to who is marking them
     danger_score_.fill(
         std::numeric_limits<double>::infinity());  // everyone starts with an infinite danger score
-    world_state_sub_ = this->create_subscription<rj_msgs::msg::WorldState>(
+    world_state_sub_ = this->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](rj_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
-            last_world_state_ = rj_convert::convert_from_ros(*world_state);
+        [this](WorldState::Msg::ConstSharedPtr world_state) {  // NOLINT
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*world_state,
+                                                                                last_world_state_);
             publish_marking_list();
         });
 }

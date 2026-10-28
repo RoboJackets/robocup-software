@@ -15,7 +15,7 @@
 
   <depend>rj_geometry</depend>
   <depend>rj_common</depend>
-  <depend>rj_convert</depend>
+  
   <depend>rj_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

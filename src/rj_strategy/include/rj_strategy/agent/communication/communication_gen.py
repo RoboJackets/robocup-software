@@ -37,7 +37,7 @@ def convert_individual_hpp(msg, path, msg_type):
     hpp = (
         "#pragma once \n\n#include <mutex>\n#include <string>\n#include"
         " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
-        " <rj_convert/ros_convert.hpp>\n"
+        " <rclcpp/type_adapter.hpp>\n"
     )
     hpp += convert_msg_to_hpp_include(msg)
     hpp += "\n\n"
@@ -53,53 +53,45 @@ def convert_individual_hpp(msg, path, msg_type):
     hpp += "bool operator==(const " + msgName + "& a, const " + msgName + "& b);\n"
     hpp += "void generate_uid(" + msgName + "& " + msg_type + ");\n\n"
     hpp += "}\n\n"
-    hpp += "namespace rj_convert {\n\n"
+    hpp += "namespace rclcpp {\n\n"
     hpp += "template <>\n"
     hpp += (
-        "struct RosConverter<strategy::communication::"
+        "struct TypeAdapter<strategy::communication::"
         + msgName
         + ", rj_msgs::msg::"
         + msgName
         + "> {\n"
     )
     hpp += (
-        "\tstatic rj_msgs::msg::"
+        "\tusing is_specialized = std::true_type;\n"
+        "\tusing custom_type = strategy::communication::"
         + msgName
-        + " to_ros(const strategy::communication::"
+        + ";\n\tusing ros_message_type = rj_msgs::msg::"
         + msgName
-        + "& from) {\n"
+        + ";\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
     )
-    hpp += "\t\trj_msgs::msg::" + msgName + " result;\n"
     with open(path + "/" + msg) as f:
         for line in f:
             if "#" not in line:
                 varName = line.split(" ")[1].strip()
-                hpp += "\t\tresult." + varName + " = from." + varName + ";\n"
-    hpp += "\t\treturn result;\n"
-    hpp += "\t}\n\n"
+                hpp += "\t\tdestination." + varName + " = source." + varName + ";\n"
     hpp += (
-        "\tstatic strategy::communication::"
+        "\t}\n"
+        "\tstatic void convert_to_custom(const ros_message_type& source, custom_type& destination) {\n"
+        "\t\tdestination = strategy::communication::"
         + msgName
-        + " from_ros(const rj_msgs::msg::"
-        + msgName
-        + "& from) {\n"
+        + "{\n"
     )
-    hpp += "\t\treturn strategy::communication::" + msgName + "{\n"
     with open(path + "/" + msg) as f:
         for line in f:
             if "#" not in line:
                 varName = line.split(" ")[1].strip()
-                hpp += "\t\t\tfrom." + varName + ",\n"
+                hpp += "\t\t\tsource." + varName + ",\n"
     hpp += "\t\t};\n"
     hpp += "\t}\n\n"
     hpp += "};\n\n"
-    hpp += (
-        "ASSOCIATE_CPP_ROS(strategy::communication::"
-        + msgName
-        + ", rj_msgs::msg::"
-        + msgName
-        + ");\n\n"
-    )
+    hpp += "\n"
     hpp += "}"
     return hpp
 
@@ -182,7 +174,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp = (
         "#pragma once\n\n#include <mutex>\n#include <string>\n#include"
         " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
-        " <rj_convert/ros_convert.hpp>\n\n"
+        " <rclcpp/type_adapter.hpp>\n\n"
     )
     hpp += '#include "rj_msgs/msg/agent_request.hpp"\n'
     hpp += '#include "rj_msgs/msg/agent_response.hpp"\n'
@@ -332,17 +324,19 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "};\n\n"
     hpp += "}\n\n"
 
-    hpp += "namespace rj_convert {\n\n"
+    hpp += "namespace rclcpp {\n\n"
     hpp += "template <>\n"
     hpp += (
-        "struct RosConverter<strategy::communication::AgentRequest,"
+        "struct TypeAdapter<strategy::communication::AgentRequest,"
         " rj_msgs::msg::AgentRequest> {\n"
     )
     hpp += (
-        "\tstatic rj_msgs::msg::AgentRequest to_ros(const"
-        " strategy::communication::AgentRequest& from) {\n"
+        "\tusing is_specialized = std::true_type;\n"
+        "\tusing custom_type = strategy::communication::AgentRequest;\n"
+        "\tusing ros_message_type = rj_msgs::msg::AgentRequest;\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
+        "\t\tdestination = ros_message_type{};\n"
     )
-    hpp += "\t\trj_msgs::msg::AgentRequest result;\n"
     hpp += "\t\t"
     for request in requests_msgs:
         msgName = convert_msg_to_hpp_include(request)[22:-5]
@@ -351,55 +345,69 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
             + msgName
             + " = std::get_if<strategy::communication::"
             + request[:-4]
-            + ">(&from)) {\n"
+            + ">(&source)) {\n"
         )
         hpp += (
-            "\t\t\tresult."
+            "\t\t\tdestination."
             + msgName
-            + ".emplace_back(convert_to_ros(*"
+            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + request[:-4]
+            + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
+            + request[:-4]
+            + ", rj_msgs::msg::"
+            + request[:-4]
+            + ">::convert_to_ros_message(*"
             + msgName
-            + "));\n"
+            + ", converted);\n\t\t\t\treturn converted;\n\t\t\t}());\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += '\t\t\tthrow std::runtime_error("Invalid variant of AgentRequest");\n'
     hpp += "\t\t}\n"
-    hpp += "\t\treturn result;\n"
     hpp += "\t}\n\n"
 
     hpp += (
-        "\tstatic strategy::communication::AgentRequest from_ros(const"
-        " rj_msgs::msg::AgentRequest& from) {\n"
+        "\tstatic void convert_to_custom(const ros_message_type& source, custom_type& destination) {\n"
     )
     hpp += "\t\tstrategy::communication::AgentRequest result;\n\t\t"
     for request in requests_msgs:
         msgName = convert_msg_to_hpp_include(request)[22:-5]
-        hpp += "if (!from." + msgName + ".empty()) {\n"
-        hpp += "\t\t\tresult = convert_from_ros(from." + msgName + ".front());\n"
+        hpp += "if (!source." + msgName + ".empty()) {\n"
+        hpp += (
+            "\t\t\tstrategy::communication::"
+            + request[:-4]
+            + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
+            + request[:-4]
+            + ", rj_msgs::msg::"
+            + request[:-4]
+            + ">::convert_to_custom(source."
+            + msgName
+            + ".front(), converted);\n\t\t\tresult = converted;\n"
+        )
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += '\t\t\tthrow std::runtime_error("Invalid variant of AgentRequest");\n'
     hpp += "\t\t}\n"
-    hpp += "\t\treturn result;\n"
+    hpp += "\t\tdestination = result;\n"
     hpp += "\t}\n\n"
     hpp += "};\n\n"
-    hpp += (
-        "ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest,"
-        " rj_msgs::msg::AgentRequest);\n\n"
-    )
+    hpp += "\n"
 
     hpp += "template <>\n"
     hpp += (
-        "struct RosConverter<strategy::communication::AgentResponse,"
+        "struct TypeAdapter<strategy::communication::AgentResponse,"
         " rj_msgs::msg::AgentResponse> {\n"
     )
     hpp += (
-        "\tstatic rj_msgs::msg::AgentResponse to_ros(const"
-        " strategy::communication::AgentResponse& from) {\n"
+        "\tusing is_specialized = std::true_type;\n"
+        "\tusing custom_type = strategy::communication::AgentResponse;\n"
+        "\tusing ros_message_type = rj_msgs::msg::AgentResponse;\n"
+        "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
+        "\t\tdestination = ros_message_type{};\n"
     )
-    hpp += "\t\trj_msgs::msg::AgentResponse result;\n"
     hpp += (
-        "\t\tresult.associated_request = convert_to_ros(from.associated_request);\n\t\t"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "convert_to_ros_message(source.associated_request, destination.associated_request);\n\t\t"
     )
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
@@ -408,51 +416,58 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
             + msgName
             + " = std::get_if<strategy::communication::"
             + response[:-4]
-            + ">(&(from.response))) {\n"
+            + ">(&(source.response))) {\n"
         )
         hpp += (
-            "\t\t\tresult.response."
+            "\t\t\tdestination.response."
             + msgName
-            + ".emplace_back(convert_to_ros(*"
+            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + response[:-4]
+            + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
+            + response[:-4]
+            + ", rj_msgs::msg::"
+            + response[:-4]
+            + ">::convert_to_ros_message(*"
             + msgName
-            + "));\n"
+            + ", converted);\n\t\t\t\treturn converted;\n\t\t\t}());\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += '\t\t\tthrow std::runtime_error("Invalid variant of AgentResponse");\n'
     hpp += "\t\t}\n"
-    hpp += "\t\treturn result;\n"
     hpp += "\t}\n\n"
 
     hpp += (
-        "\tstatic strategy::communication::AgentResponse from_ros(const"
-        " rj_msgs::msg::AgentResponse& from) {\n"
+        "\tstatic void convert_to_custom(const ros_message_type& source, custom_type& destination) {\n"
     )
     hpp += "\t\tstrategy::communication::AgentResponse result;\n"
     hpp += (
-        "\t\tresult.associated_request ="
-        " convert_from_ros(from.associated_request);\n\t\t"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "convert_to_custom(source.associated_request, result.associated_request);\n\t\t"
     )
     for response in response_msgs:
         msgName = convert_msg_to_hpp_include(response)[22:-5]
-        hpp += "if (!from.response." + msgName + ".empty()) {\n"
+        hpp += "if (!source.response." + msgName + ".empty()) {\n"
         hpp += (
-            "\t\t\tresult.response = convert_from_ros(from.response."
+            "\t\t\tstrategy::communication::"
+            + response[:-4]
+            + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
+            + response[:-4]
+            + ", rj_msgs::msg::"
+            + response[:-4]
+            + ">::convert_to_custom(source.response."
             + msgName
-            + ".front());\n"
+            + ".front(), converted);\n\t\t\tresult.response = converted;\n"
         )
         hpp += "\t\t} else "
     hpp += "{\n"
     hpp += '\t\t\tthrow std::runtime_error("Invalid variant of AgentResponse");\n'
     hpp += "\t\t}\n"
-    hpp += "\t\treturn result;\n"
+    hpp += "\t\tdestination = result;\n"
     hpp += "\t}\n\n"
     hpp += "};\n\n"
 
-    hpp += (
-        "ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse,"
-        " rj_msgs::msg::AgentResponse);\n\n"
-    )
+    hpp += "\n"
     hpp += "}"
     return hpp
 

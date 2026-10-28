@@ -5,7 +5,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
@@ -64,7 +64,7 @@ bool operator==(const MotionCommand& a, const MotionCommand& b);
 
 }  // namespace planning
 
-namespace rj_convert {
+namespace rclcpp {
 
 /*
  * These methods allow conversion of ROS .msg types to standard C++ structs.
@@ -81,60 +81,72 @@ namespace rj_convert {
  * now -Kevin)
  */
 template <>
-struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
-    static rj_msgs::msg::MotionCommand to_ros(const planning::MotionCommand& from) {
-        rj_msgs::msg::MotionCommand result;
+struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
+    using is_specialized = std::true_type;
+    using custom_type = planning::MotionCommand;
+    using ros_message_type = rj_msgs::msg::MotionCommand;
 
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        destination = ros_message_type{};
         // take the name from the struct and put it in the ROS msg version
-        result.name = from.name;
+        destination.name = source.name;
 
         // TODO(Kevin): what if these are empty?
         // convert the LinearMotionInstant target
-        result.target.push_back(convert_to_ros(from.target));
+        rj_msgs::msg::LinearMotionInstant target;
+        rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
+            convert_to_ros_message(source.target, target);
+        destination.target.push_back(target);
 
         // convert the PathTargetFaceOptions to the angle override options
-        const auto* maybe_point = std::get_if<planning::FacePoint>(&from.face_option);
-        const auto* maybe_angle = std::get_if<planning::FaceAngle>(&from.face_option);
+        const auto* maybe_point = std::get_if<planning::FacePoint>(&source.face_option);
+        const auto* maybe_angle = std::get_if<planning::FaceAngle>(&source.face_option);
         if (maybe_point != nullptr) {
-            rj_geometry_msgs::msg::Point face_point = convert_to_ros(maybe_point->face_point);
-            result.override_face_point.push_back(face_point);
+            rj_geometry_msgs::msg::Point face_point;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_ros_message(maybe_point->face_point, face_point);
+            destination.override_face_point.push_back(face_point);
         } else if (maybe_angle != nullptr) {
             double face_angle = maybe_angle->target;
-            result.override_angle.push_back(face_angle);
-        } else if (std::holds_alternative<planning::FaceBall>(from.face_option)) {
-            result.face_ball.push_back(true);
+            destination.override_angle.push_back(face_angle);
+        } else if (std::holds_alternative<planning::FaceBall>(source.face_option)) {
+            destination.face_ball.push_back(true);
         }
 
         // convert the ignore_ball bool
-        result.ignore_ball.push_back(from.ignore_ball);
+        destination.ignore_ball.push_back(source.ignore_ball);
 
         // convert pivot point
-        result.pivot_point.push_back(convert_to_ros(from.pivot_point));
+        rj_geometry_msgs::msg::Point pivot_point;
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
+            source.pivot_point, pivot_point);
+        destination.pivot_point.push_back(pivot_point);
 
         // convert the pivot radius
-        result.pivot_radius.push_back(from.pivot_radius);
-
-        return result;
+        destination.pivot_radius.push_back(source.pivot_radius);
     }
 
-    static planning::MotionCommand from_ros(const rj_msgs::msg::MotionCommand& from) {
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         planning::MotionCommand result;
 
         // take the name from the ROS msg and put it in the struct version
-        result.name = from.name;
+        result.name = source.name;
 
         // convert the LinearMotionInstant msg to cpp
-        if (!from.target.empty()) {
-            result.target = convert_from_ros(from.target[0]);
+        if (!source.target.empty()) {
+            rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
+                convert_to_custom(source.target[0], result.target);
         }
 
         // convert one of the angle overrides to PathTargetFaceOption
-        if (!from.override_angle.empty()) {
-            result.face_option = planning::FaceAngle{from.override_angle.front()};
-        } else if (!from.override_face_point.empty()) {
-            result.face_option =
-                planning::FacePoint{convert_from_ros(from.override_face_point.front())};
-        } else if (!from.face_ball.empty()) {
+        if (!source.override_angle.empty()) {
+            result.face_option = planning::FaceAngle{source.override_angle.front()};
+        } else if (!source.override_face_point.empty()) {
+            rj_geometry::Point face_point;
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                source.override_face_point.front(), face_point);
+            result.face_option = planning::FacePoint{face_point};
+        } else if (!source.face_ball.empty()) {
             result.face_option = planning::FaceBall{};
         } else {
             // default to facing destination if no other FaceOption given
@@ -142,23 +154,22 @@ struct RosConverter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
         }
 
         // convert ignore_ball bool
-        if (!from.ignore_ball.empty()) {
-            result.ignore_ball = from.ignore_ball[0];
+        if (!source.ignore_ball.empty()) {
+            result.ignore_ball = source.ignore_ball[0];
         }
 
         // convert pivot_point
-        if (!from.pivot_point.empty()) {
-            result.pivot_point = convert_from_ros(from.pivot_point[0]);
+        if (!source.pivot_point.empty()) {
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                source.pivot_point[0], result.pivot_point);
         }
 
-        if (!from.pivot_radius.empty()) {
-            result.pivot_radius = from.pivot_radius[0];
+        if (!source.pivot_radius.empty()) {
+            result.pivot_radius = source.pivot_radius[0];
         }
 
-        return result;
+        destination = result;
     }
 };
 
-ASSOCIATE_CPP_ROS(planning::MotionCommand, rj_msgs::msg::MotionCommand);
-
-}  // namespace rj_convert
+}  // namespace rclcpp

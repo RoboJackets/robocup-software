@@ -7,9 +7,10 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{t
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);
     goalie_id_pub_ = create_publisher<GoalieMsg>(referee::topics::kGoalieTopic, keep_latest);
-    our_team_info_pub_ = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoTopic, keep_latest);
+    our_team_info_pub_ =
+        create_publisher<TeamInfo::Msg>(referee::topics::kOurInfoTopic, keep_latest);
     their_team_info_pub_ =
-        create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoTopic, keep_latest);
+        create_publisher<TeamInfo::Msg>(referee::topics::kTheirInfoTopic, keep_latest);
     play_state_pub_ =
         create_publisher<PlayState::Msg>(referee::topics::kPlayStateTopic, keep_latest);
     match_state_pub_ =
@@ -18,9 +19,11 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{t
     pub_timer_ = create_wall_timer(100ms, [this]() { send(); });
 
     world_state_sub_ = create_subscription<WorldState::Msg>(
-        vision_filter::topics::kWorldStateTopic, 1, [this](WorldState::Msg::SharedPtr msg) {
-            auto ball_state = rj_convert::convert_from_ros(msg->ball);
-            if (spin_kick_detector(ball_state.position)) {
+        vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
+        [this](WorldState::Msg::ConstSharedPtr msg) {
+            WorldState world_state;
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg, world_state);
+            if (spin_kick_detector(world_state.ball.position)) {
                 send();
             }
         });
@@ -76,14 +79,31 @@ void RefereeBase::send() {
 
     const auto resolved_play_state = resolve_play_state(
         yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x,
-        rj_convert::convert_from_ros(config_client_.field_dimensions()));
-    play_state_pub_->publish(rj_convert::convert_to_ros(resolved_play_state));
-    match_state_pub_->publish(rj_convert::convert_to_ros(match_state_));
+        [&] {
+            FieldDimensions field_dimensions;
+            rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
+                config_client_.field_dimensions(), field_dimensions);
+            return field_dimensions;
+        }());
+    PlayState::Msg play_state_msg;
+    rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_ros_message(resolved_play_state,
+                                                                           play_state_msg);
+    play_state_pub_->publish(play_state_msg);
+
+    MatchState::Msg match_state_msg;
+    rclcpp::TypeAdapter<MatchState, MatchState::Msg>::convert_to_ros_message(match_state_,
+                                                                             match_state_msg);
+    match_state_pub_->publish(match_state_msg);
 
     auto our_info = blue_team_ ? blue_info_ : yellow_info_;
     auto their_info = blue_team_ ? yellow_info_ : blue_info_;
-    our_team_info_pub_->publish(rj_convert::convert_to_ros(our_info));
-    their_team_info_pub_->publish(rj_convert::convert_to_ros(their_info));
+    TeamInfo::Msg our_info_msg;
+    TeamInfo::Msg their_info_msg;
+    rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_ros_message(our_info, our_info_msg);
+    rclcpp::TypeAdapter<TeamInfo, TeamInfo::Msg>::convert_to_ros_message(their_info,
+                                                                         their_info_msg);
+    our_team_info_pub_->publish(our_info_msg);
+    their_team_info_pub_->publish(their_info_msg);
 
     TeamColorMsg team_color;
     team_color.is_blue = blue_team_;

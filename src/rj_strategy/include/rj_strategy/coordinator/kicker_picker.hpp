@@ -9,7 +9,7 @@
 #include <rj_common/game_constants.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_msgs/msg/kicker_picker.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_msgs/srv/kicker_picker.hpp>
@@ -37,7 +37,7 @@ private:
 
     std::array<bool, kNumShells> wants_to_kick_by_id_{};  // Zero-initialized
     WorldState last_world_state_;
-    rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     uint8_t last_published_kicker_ = kInvalidRobotId;  // Track last published kicker
 };
 

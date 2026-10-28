@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_convert/ros_convert.hpp>
+
 #include <rj_msgs/msg/agent_request.hpp>
 #include <rj_msgs/msg/agent_response.hpp>
 #include <rj_msgs/msg/agent_response_variant.hpp>
@@ -125,141 +125,279 @@ struct AgentPosResponseWrapper {
 
 }  // namespace strategy::communication
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
-    static rj_msgs::msg::AgentRequest to_ros(const strategy::communication::AgentRequest& from) {
-        rj_msgs::msg::AgentRequest result;
+struct TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::AgentRequest;
+    using ros_message_type = rj_msgs::msg::AgentRequest;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        destination = rj_msgs::msg::AgentRequest{};
         if (const auto* join_wall_request =
-                std::get_if<strategy::communication::JoinWallRequest>(&from)) {
-            result.join_wall_request.emplace_back(convert_to_ros(*join_wall_request));
+                std::get_if<strategy::communication::JoinWallRequest>(&source)) {
+            rj_msgs::msg::JoinWallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::JoinWallRequest,
+                                rj_msgs::msg::JoinWallRequest>::convert_to_ros_message(
+                *join_wall_request, converted);
+            destination.join_wall_request.emplace_back(converted);
         } else if (const auto* test_request =
-                       std::get_if<strategy::communication::TestRequest>(&from)) {
-            result.test_request.emplace_back(convert_to_ros(*test_request));
+                       std::get_if<strategy::communication::TestRequest>(&source)) {
+            rj_msgs::msg::TestRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::TestRequest, rj_msgs::msg::TestRequest>::
+                convert_to_ros_message(*test_request, converted);
+            destination.test_request.emplace_back(converted);
         } else if (const auto* pass_request =
-                       std::get_if<strategy::communication::PassRequest>(&from)) {
-            result.pass_request.emplace_back(convert_to_ros(*pass_request));
+                       std::get_if<strategy::communication::PassRequest>(&source)) {
+            rj_msgs::msg::PassRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest>::
+                convert_to_ros_message(*pass_request, converted);
+            destination.pass_request.emplace_back(converted);
         } else if (const auto* scorer_request =
-                       std::get_if<strategy::communication::ScorerRequest>(&from)) {
-            result.scorer_request.emplace_back(convert_to_ros(*scorer_request));
+                       std::get_if<strategy::communication::ScorerRequest>(&source)) {
+            rj_msgs::msg::ScorerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::ScorerRequest,
+                                rj_msgs::msg::ScorerRequest>::convert_to_ros_message(
+                *scorer_request, converted);
+            destination.scorer_request.emplace_back(converted);
         } else if (const auto* ball_in_transit_request =
-                       std::get_if<strategy::communication::BallInTransitRequest>(&from)) {
-            result.ball_in_transit_request.emplace_back(convert_to_ros(*ball_in_transit_request));
+                       std::get_if<strategy::communication::BallInTransitRequest>(&source)) {
+            rj_msgs::msg::BallInTransitRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::BallInTransitRequest,
+                                rj_msgs::msg::BallInTransitRequest>::convert_to_ros_message(
+                *ball_in_transit_request, converted);
+            destination.ball_in_transit_request.emplace_back(converted);
         } else if (const auto* seeker_request =
-                       std::get_if<strategy::communication::SeekerRequest>(&from)) {
-            result.seeker_request.emplace_back(convert_to_ros(*seeker_request));
+                       std::get_if<strategy::communication::SeekerRequest>(&source)) {
+            rj_msgs::msg::SeekerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::SeekerRequest,
+                                rj_msgs::msg::SeekerRequest>::convert_to_ros_message(
+                *seeker_request, converted);
+            destination.seeker_request.emplace_back(converted);
         } else if (const auto* position_request =
-                       std::get_if<strategy::communication::PositionRequest>(&from)) {
-            result.position_request.emplace_back(convert_to_ros(*position_request));
+                       std::get_if<strategy::communication::PositionRequest>(&source)) {
+            rj_msgs::msg::PositionRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PositionRequest,
+                                rj_msgs::msg::PositionRequest>::convert_to_ros_message(
+                *position_request, converted);
+            destination.position_request.emplace_back(converted);
         } else if (const auto* leave_wall_request =
-                       std::get_if<strategy::communication::LeaveWallRequest>(&from)) {
-            result.leave_wall_request.emplace_back(convert_to_ros(*leave_wall_request));
+                       std::get_if<strategy::communication::LeaveWallRequest>(&source)) {
+            rj_msgs::msg::LeaveWallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::LeaveWallRequest,
+                                rj_msgs::msg::LeaveWallRequest>::convert_to_ros_message(
+                *leave_wall_request, converted);
+            destination.leave_wall_request.emplace_back(converted);
         } else if (const auto* reset_scorer_request =
-                       std::get_if<strategy::communication::ResetScorerRequest>(&from)) {
-            result.reset_scorer_request.emplace_back(convert_to_ros(*reset_scorer_request));
+                       std::get_if<strategy::communication::ResetScorerRequest>(&source)) {
+            rj_msgs::msg::ResetScorerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::ResetScorerRequest,
+                                rj_msgs::msg::ResetScorerRequest>::convert_to_ros_message(
+                *reset_scorer_request, converted);
+            destination.reset_scorer_request.emplace_back(converted);
         } else if (const auto* incoming_ball_request =
-                       std::get_if<strategy::communication::IncomingBallRequest>(&from)) {
-            result.incoming_ball_request.emplace_back(convert_to_ros(*incoming_ball_request));
+                       std::get_if<strategy::communication::IncomingBallRequest>(&source)) {
+            rj_msgs::msg::IncomingBallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::IncomingBallRequest,
+                                rj_msgs::msg::IncomingBallRequest>::convert_to_ros_message(
+                *incoming_ball_request, converted);
+            destination.incoming_ball_request.emplace_back(converted);
         } else if (const auto* pass_received_request =
-                       std::get_if<strategy::communication::PassReceivedRequest>(&from)) {
-            result.pass_received_request.emplace_back(convert_to_ros(*pass_received_request));
+                       std::get_if<strategy::communication::PassReceivedRequest>(&source)) {
+            rj_msgs::msg::PassReceivedRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PassReceivedRequest,
+                                rj_msgs::msg::PassReceivedRequest>::convert_to_ros_message(
+                *pass_received_request, converted);
+            destination.pass_received_request.emplace_back(converted);
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
-        return result;
     }
 
-    static strategy::communication::AgentRequest from_ros(const rj_msgs::msg::AgentRequest& from) {
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         strategy::communication::AgentRequest result;
-        if (!from.join_wall_request.empty()) {
-            result = convert_from_ros(from.join_wall_request.front());
-        } else if (!from.test_request.empty()) {
-            result = convert_from_ros(from.test_request.front());
-        } else if (!from.pass_request.empty()) {
-            result = convert_from_ros(from.pass_request.front());
-        } else if (!from.scorer_request.empty()) {
-            result = convert_from_ros(from.scorer_request.front());
-        } else if (!from.ball_in_transit_request.empty()) {
-            result = convert_from_ros(from.ball_in_transit_request.front());
-        } else if (!from.seeker_request.empty()) {
-            result = convert_from_ros(from.seeker_request.front());
-        } else if (!from.position_request.empty()) {
-            result = convert_from_ros(from.position_request.front());
-        } else if (!from.leave_wall_request.empty()) {
-            result = convert_from_ros(from.leave_wall_request.front());
-        } else if (!from.reset_scorer_request.empty()) {
-            result = convert_from_ros(from.reset_scorer_request.front());
-        } else if (!from.incoming_ball_request.empty()) {
-            result = convert_from_ros(from.incoming_ball_request.front());
-        } else if (!from.pass_received_request.empty()) {
-            result = convert_from_ros(from.pass_received_request.front());
+        if (!source.join_wall_request.empty()) {
+            strategy::communication::JoinWallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::JoinWallRequest,
+                                rj_msgs::msg::JoinWallRequest>::convert_to_custom(
+                source.join_wall_request.front(), converted);
+            result = converted;
+        } else if (!source.test_request.empty()) {
+            strategy::communication::TestRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::TestRequest, rj_msgs::msg::TestRequest>::
+                convert_to_custom(source.test_request.front(), converted);
+            result = converted;
+        } else if (!source.pass_request.empty()) {
+            strategy::communication::PassRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PassRequest, rj_msgs::msg::PassRequest>::
+                convert_to_custom(source.pass_request.front(), converted);
+            result = converted;
+        } else if (!source.scorer_request.empty()) {
+            strategy::communication::ScorerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::ScorerRequest,
+                                rj_msgs::msg::ScorerRequest>::convert_to_custom(
+                source.scorer_request.front(), converted);
+            result = converted;
+        } else if (!source.ball_in_transit_request.empty()) {
+            strategy::communication::BallInTransitRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::BallInTransitRequest,
+                                rj_msgs::msg::BallInTransitRequest>::convert_to_custom(
+                source.ball_in_transit_request.front(), converted);
+            result = converted;
+        } else if (!source.seeker_request.empty()) {
+            strategy::communication::SeekerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::SeekerRequest,
+                                rj_msgs::msg::SeekerRequest>::convert_to_custom(
+                source.seeker_request.front(), converted);
+            result = converted;
+        } else if (!source.position_request.empty()) {
+            strategy::communication::PositionRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PositionRequest,
+                                rj_msgs::msg::PositionRequest>::convert_to_custom(
+                source.position_request.front(), converted);
+            result = converted;
+        } else if (!source.leave_wall_request.empty()) {
+            strategy::communication::LeaveWallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::LeaveWallRequest,
+                                rj_msgs::msg::LeaveWallRequest>::convert_to_custom(
+                source.leave_wall_request.front(), converted);
+            result = converted;
+        } else if (!source.reset_scorer_request.empty()) {
+            strategy::communication::ResetScorerRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::ResetScorerRequest,
+                                rj_msgs::msg::ResetScorerRequest>::convert_to_custom(
+                source.reset_scorer_request.front(), converted);
+            result = converted;
+        } else if (!source.incoming_ball_request.empty()) {
+            strategy::communication::IncomingBallRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::IncomingBallRequest,
+                                rj_msgs::msg::IncomingBallRequest>::convert_to_custom(
+                source.incoming_ball_request.front(), converted);
+            result = converted;
+        } else if (!source.pass_received_request.empty()) {
+            strategy::communication::PassReceivedRequest converted;
+            rclcpp::TypeAdapter<strategy::communication::PassReceivedRequest,
+                                rj_msgs::msg::PassReceivedRequest>::convert_to_custom(
+                source.pass_received_request.front(), converted);
+            result = converted;
         } else {
             throw std::runtime_error("Invalid variant of AgentRequest");
         }
-        return result;
+        destination = result;
     }
 };
-
-ASSOCIATE_CPP_ROS(strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest);
 
 template <>
-struct RosConverter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
-    static rj_msgs::msg::AgentResponse to_ros(const strategy::communication::AgentResponse& from) {
-        rj_msgs::msg::AgentResponse result;
-        result.associated_request = convert_to_ros(from.associated_request);
+struct TypeAdapter<strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse> {
+    using is_specialized = std::true_type;
+    using custom_type = strategy::communication::AgentResponse;
+    using ros_message_type = rj_msgs::msg::AgentResponse;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        destination = ros_message_type{};
+        rclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::
+            convert_to_ros_message(source.associated_request, destination.associated_request);
         if (const auto* scorer_response =
-                std::get_if<strategy::communication::ScorerResponse>(&(from.response))) {
-            result.response.scorer_response.emplace_back(convert_to_ros(*scorer_response));
+                std::get_if<strategy::communication::ScorerResponse>(&(source.response))) {
+            rj_msgs::msg::ScorerResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::ScorerResponse,
+                                rj_msgs::msg::ScorerResponse>::convert_to_ros_message(
+                *scorer_response, converted);
+            destination.response.scorer_response.emplace_back(converted);
         } else if (const auto* leave_wall_response =
-                       std::get_if<strategy::communication::LeaveWallResponse>(&(from.response))) {
-            result.response.leave_wall_response.emplace_back(convert_to_ros(*leave_wall_response));
+                       std::get_if<strategy::communication::LeaveWallResponse>(
+                           &(source.response))) {
+            rj_msgs::msg::LeaveWallResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::LeaveWallResponse,
+                                rj_msgs::msg::LeaveWallResponse>::convert_to_ros_message(
+                *leave_wall_response, converted);
+            destination.response.leave_wall_response.emplace_back(converted);
         } else if (const auto* position_response =
-                       std::get_if<strategy::communication::PositionResponse>(&(from.response))) {
-            result.response.position_response.emplace_back(convert_to_ros(*position_response));
+                       std::get_if<strategy::communication::PositionResponse>(&(source.response))) {
+            rj_msgs::msg::PositionResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::PositionResponse,
+                                rj_msgs::msg::PositionResponse>::convert_to_ros_message(
+                *position_response, converted);
+            destination.response.position_response.emplace_back(converted);
         } else if (const auto* test_response =
-                       std::get_if<strategy::communication::TestResponse>(&(from.response))) {
-            result.response.test_response.emplace_back(convert_to_ros(*test_response));
+                       std::get_if<strategy::communication::TestResponse>(&(source.response))) {
+            rj_msgs::msg::TestResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::TestResponse, rj_msgs::msg::TestResponse>::
+                convert_to_ros_message(*test_response, converted);
+            destination.response.test_response.emplace_back(converted);
         } else if (const auto* pass_response =
-                       std::get_if<strategy::communication::PassResponse>(&(from.response))) {
-            result.response.pass_response.emplace_back(convert_to_ros(*pass_response));
+                       std::get_if<strategy::communication::PassResponse>(&(source.response))) {
+            rj_msgs::msg::PassResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::PassResponse, rj_msgs::msg::PassResponse>::
+                convert_to_ros_message(*pass_response, converted);
+            destination.response.pass_response.emplace_back(converted);
         } else if (const auto* acknowledge =
-                       std::get_if<strategy::communication::Acknowledge>(&(from.response))) {
-            result.response.acknowledge.emplace_back(convert_to_ros(*acknowledge));
+                       std::get_if<strategy::communication::Acknowledge>(&(source.response))) {
+            rj_msgs::msg::Acknowledge converted;
+            rclcpp::TypeAdapter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge>::
+                convert_to_ros_message(*acknowledge, converted);
+            destination.response.acknowledge.emplace_back(converted);
         } else if (const auto* join_wall_response =
-                       std::get_if<strategy::communication::JoinWallResponse>(&(from.response))) {
-            result.response.join_wall_response.emplace_back(convert_to_ros(*join_wall_response));
+                       std::get_if<strategy::communication::JoinWallResponse>(&(source.response))) {
+            rj_msgs::msg::JoinWallResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::JoinWallResponse,
+                                rj_msgs::msg::JoinWallResponse>::convert_to_ros_message(
+                *join_wall_response, converted);
+            destination.response.join_wall_response.emplace_back(converted);
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }
-        return result;
     }
 
-    static strategy::communication::AgentResponse from_ros(
-        const rj_msgs::msg::AgentResponse& from) {
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         strategy::communication::AgentResponse result;
-        result.associated_request = convert_from_ros(from.associated_request);
-        if (!from.response.scorer_response.empty()) {
-            result.response = convert_from_ros(from.response.scorer_response.front());
-        } else if (!from.response.leave_wall_response.empty()) {
-            result.response = convert_from_ros(from.response.leave_wall_response.front());
-        } else if (!from.response.position_response.empty()) {
-            result.response = convert_from_ros(from.response.position_response.front());
-        } else if (!from.response.test_response.empty()) {
-            result.response = convert_from_ros(from.response.test_response.front());
-        } else if (!from.response.pass_response.empty()) {
-            result.response = convert_from_ros(from.response.pass_response.front());
-        } else if (!from.response.acknowledge.empty()) {
-            result.response = convert_from_ros(from.response.acknowledge.front());
-        } else if (!from.response.join_wall_response.empty()) {
-            result.response = convert_from_ros(from.response.join_wall_response.front());
+        rclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::
+            convert_to_custom(source.associated_request, result.associated_request);
+        if (!source.response.scorer_response.empty()) {
+            strategy::communication::ScorerResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::ScorerResponse,
+                                rj_msgs::msg::ScorerResponse>::convert_to_custom(
+                source.response.scorer_response.front(), converted);
+            result.response = converted;
+        } else if (!source.response.leave_wall_response.empty()) {
+            strategy::communication::LeaveWallResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::LeaveWallResponse,
+                                rj_msgs::msg::LeaveWallResponse>::convert_to_custom(
+                source.response.leave_wall_response.front(), converted);
+            result.response = converted;
+        } else if (!source.response.position_response.empty()) {
+            strategy::communication::PositionResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::PositionResponse,
+                                rj_msgs::msg::PositionResponse>::convert_to_custom(
+                source.response.position_response.front(), converted);
+            result.response = converted;
+        } else if (!source.response.test_response.empty()) {
+            strategy::communication::TestResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::TestResponse, rj_msgs::msg::TestResponse>::
+                convert_to_custom(source.response.test_response.front(), converted);
+            result.response = converted;
+        } else if (!source.response.pass_response.empty()) {
+            strategy::communication::PassResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::PassResponse, rj_msgs::msg::PassResponse>::
+                convert_to_custom(source.response.pass_response.front(), converted);
+            result.response = converted;
+        } else if (!source.response.acknowledge.empty()) {
+            strategy::communication::Acknowledge converted;
+            rclcpp::TypeAdapter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge>::
+                convert_to_custom(source.response.acknowledge.front(), converted);
+            result.response = converted;
+        } else if (!source.response.join_wall_response.empty()) {
+            strategy::communication::JoinWallResponse converted;
+            rclcpp::TypeAdapter<strategy::communication::JoinWallResponse,
+                                rj_msgs::msg::JoinWallResponse>::convert_to_custom(
+                source.response.join_wall_response.front(), converted);
+            result.response = converted;
         } else {
             throw std::runtime_error("Invalid variant of AgentResponse");
         }
-        return result;
+        destination = result;
     }
 };
 
-ASSOCIATE_CPP_ROS(strategy::communication::AgentResponse, rj_msgs::msg::AgentResponse);
-
-}  // namespace rj_convert
+}  // namespace rclcpp

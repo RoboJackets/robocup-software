@@ -19,7 +19,6 @@ find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_convert REQUIRED)
 find_package(rj_msgs REQUIRED)
 
 set(RJ_PLANNING_DEPS
@@ -30,7 +29,6 @@ set(RJ_PLANNING_DEPS
   fmt
   rj_geometry
   rj_common
-  rj_convert
   rj_msgs
 )
 
@@ -142,7 +140,6 @@ if(BUILD_TESTING)
   set(RJ_PLANNING_TESTS
     angle_planning_test
     bezier_path_test
-    conversion_tests
     planner_test
     trajectory_test
     trapezoidal_motion_test

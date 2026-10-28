@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <rj_common/game_constants.hpp>
+#include <rj_common/time.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
@@ -38,10 +39,14 @@ public:
      * @brief Constructor from DetectionFrameMsg.
      * @param msg
      */
-    CameraFrame(const DetectionFrameMsg& msg,
-                const rj_geometry::TransformMatrix& world_to_team,
+    CameraFrame(const DetectionFrameMsg& msg, const rj_geometry::TransformMatrix& world_to_team,
                 double team_angle)
-        : t_capture{rj_convert::convert_from_ros(msg.t_capture)},
+        : t_capture{[](const builtin_interfaces::msg::Time& stamp) {
+              RJ::Time time;
+              rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+                  stamp, time);
+              return time;
+          }(msg.t_capture)},
           camera_id{static_cast<int>(msg.camera_id)},
           camera_balls{},
           camera_robots_yellow{},

@@ -12,8 +12,9 @@
   <depend>fmt</depend>
   <depend>eigen3</depend>
   <depend>std_msgs</depend>
+  <depend>rclcpp</depend>
 
-  <depend>rj_convert</depend>
+  
   <depend>rj_geometry_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
