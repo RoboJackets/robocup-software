@@ -15,10 +15,10 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<Idle>(robot_id_);
     }
 
     current_position_->set_client_handles(client_handles_);
@@ -256,6 +256,13 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return;
+    }
+    set_current_position<Idle>();
+    return;
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
