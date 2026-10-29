@@ -52,4 +52,4 @@ private:
 
     State current_state_ = SIDE_ONE;
 };
-}
+}  // namespace strategy

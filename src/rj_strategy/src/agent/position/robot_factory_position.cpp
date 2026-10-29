@@ -31,21 +31,17 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 }
 
-std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
-    [maybe_unused]] RobotIntent intent){
+std::optional<RobotIntent> RobotFactoryPosition::derived_get_task(
+    [[maybe_unused]] RobotIntent intent) {
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 
-    if (robot_id_==1) {
+    if (robot_id_ == 1) {
         set_current_position<Runner>();
     } else {
         set_current_position<SmartIdle>();
     }
 
-    return current_position_->get_task(
-        *last_world_state_,
-        field_dimensions_,
-        current_play_state_
-    );
+    return current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
 }
 
 // std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([

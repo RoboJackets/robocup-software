@@ -2,13 +2,11 @@
 
 #include <utility>
 
-namespace strategy{
+namespace strategy {
 
 Runner::Runner(int r_id) : Position{r_id, "Runner"} {}
 
-Runner::Runner(Position&& other) : Position{std::move(other)} {
-    position_name_ = "Runner";
-}
+Runner::Runner(Position&& other) : Position{std::move(other)} { position_name_ = "Runner"; }
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     // Get next state, and if different, reset clock
@@ -28,7 +26,7 @@ Runner::State Runner::next_state() {
     if (!check_is_done()) {
         return current_state_;
     }
-    switch(current_state_) {
+    switch (current_state_) {
         case SIDE_ONE: {
             return SIDE_TWO;
         }
@@ -64,12 +62,9 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     }
 
     intent.motion_command = planning::MotionCommand{
-        "path_target",
-        planning::LinearMotionInstant{target},
-        planning::FaceBall{}
-    };
+        "path_target", planning::LinearMotionInstant{target}, planning::FaceBall{}};
 
     return intent;
 }
 
-}
+}  // namespace strategy
