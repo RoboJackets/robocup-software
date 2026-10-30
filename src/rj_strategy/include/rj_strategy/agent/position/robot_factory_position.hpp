@@ -25,6 +25,7 @@
 #include "rj_strategy/agent/position/idle.hpp"
 #include "rj_strategy/agent/position/line.hpp"
 #include "rj_strategy/agent/position/offense.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
 #include "rj_strategy/agent/position/overriding_positions.hpp"
 #include "rj_strategy/agent/position/penalty_non_kicker.hpp"
 #include "rj_strategy/agent/position/penalty_player.hpp"

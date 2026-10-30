@@ -105,3 +105,7 @@ static inline std::string robot_status_topic(int robot_id) {
 }
 
 }  // namespace radio::topics
+
+namespace tutorial::topics {
+    constexpr auto kTeamFruitTopic{"/team_fruit"};
+}
