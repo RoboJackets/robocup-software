@@ -232,6 +232,11 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                package="rj_radio",
+                executable="soccer_mom_node",
+                output="screen",
+            ),
+            Node(
                 package="rj_vision_filter",
                 executable="rj_vision_filter_node",
                 output="screen",
