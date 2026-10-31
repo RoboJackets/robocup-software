@@ -1,6 +1,6 @@
 #include "rj_strategy/agent/position/offense.hpp"
 
-namespace strategy {
+namespace strategy { 
 
 Offense::Offense(int r_id) : Position{r_id, "Offense"}, seeker_{r_id} {}
 

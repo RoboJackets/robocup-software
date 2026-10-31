@@ -15,7 +15,9 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
 
     if (robot_id_ == 0) {
         current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
+    } else if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_);
+    } else if (robot_id_ == 2) {
         current_position_ = std::make_unique<Offense>(robot_id_);
     } else {
         current_position_ = std::make_unique<Defense>(robot_id_);
@@ -29,6 +31,12 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     [maybe_unused]] RobotIntent intent) {
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
+
+    if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return current_position_->get_task(*last_world_state_, field_dimensions_,
+                                           current_play_state_);
+    }
 
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
@@ -256,6 +264,16 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 }
 
 void RobotFactoryPosition::set_default_position() {
+    if (robot_id_ == 1) {
+        set_current_position<Runner>();
+        return;
+    }
+
+    if (robot_id_ != goalie_id_) {
+        set_current_position<SmartIdle>();
+        return;
+    }
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
