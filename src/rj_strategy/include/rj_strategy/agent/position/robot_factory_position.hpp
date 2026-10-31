@@ -29,6 +29,7 @@
 #include "rj_strategy/agent/position/penalty_non_kicker.hpp"
 #include "rj_strategy/agent/position/penalty_player.hpp"
 #include "rj_strategy/agent/position/pivot_test.hpp"
+#include "rj_strategy/agent/position/runner.hpp"
 #include "rj_strategy/agent/position/smartidling.hpp"
 #include "rj_strategy/agent/position/solo_offense.hpp"
 #include "rj_strategy/agent/position/zoner.hpp"
