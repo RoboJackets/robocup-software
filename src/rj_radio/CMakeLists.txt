@@ -26,6 +26,7 @@ find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_constants REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_executable(network_radio_node
   src/network_radio.cpp
@@ -35,6 +36,11 @@ add_executable(network_radio_node
 add_executable(sim_radio_node
   src/sim_radio.cpp
   src/radio.cpp
+)
+
+add_executable(soccer_mom_node
+  src/soccer_mom.cpp
+  src/soccer_mom_main.cpp
 )
 
 target_link_libraries(network_radio_node
@@ -58,6 +64,12 @@ target_include_directories(network_radio_node
 )
 
 target_include_directories(sim_radio_node
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_include_directories(soccer_mom_node
   PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
@@ -99,13 +111,21 @@ ament_target_dependencies(sim_radio_node
   rj_constants
 )
 
+ament_target_dependencies(soccer_mom_node
+  PUBLIC
+  rclcpp
+  rj_msgs
+  rj_constants
+  std_msgs
+)
+
 install(
   DIRECTORY include/
   DESTINATION include
 )
 
 install(
-  TARGETS network_radio_node sim_radio_node
+  TARGETS network_radio_node sim_radio_node soccer_mom_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

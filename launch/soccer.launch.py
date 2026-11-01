@@ -165,6 +165,12 @@ def generate_launch_description():
                 on_exit=Shutdown(),
             ),
             Node(
+                package="rj_radio",
+                executable="soccer_mom_node",
+                output="screen",
+                on_exit=Shutdown(),
+            ),
+            Node(
                 condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_control",
                 executable="motion_control_node",
