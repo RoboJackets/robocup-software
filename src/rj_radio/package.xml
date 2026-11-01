@@ -22,6 +22,7 @@
   <depend>rj_geometry</depend>
   <depend>rj_planning</depend>
   <depend>rj_constants</depend>
+  <depend>std_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
