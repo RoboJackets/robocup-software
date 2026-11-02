@@ -36,10 +36,10 @@ private:
     // The robot drives to these in order: SIDE_1 -> corner 0, SIDE_2 -> corner 1, ...
     // Adjust these to fit your field.
     static constexpr double kCorners[4][2] = {
-        {-2, 1.0},
-        {2, 1.0},
-        {2, 2.5},
-        {-2, 2.5},
+        {-1.5, 1.0},
+        {1.5, 1.0},
+        {1.5, 2.5},
+        {-1.5, 2.5},
     };
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
