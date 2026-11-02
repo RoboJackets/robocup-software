@@ -1,4 +1,4 @@
-GitHub Stacked PRs: Workflow
+GitHub Stacked PRs: Critical User Journey (CUJ)
 ============================
 
 Split big changes into a chain of small PRs. Each PR shows one layer, so reviews
