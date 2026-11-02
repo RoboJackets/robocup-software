@@ -224,11 +224,11 @@ def generate_doxygen_xml(app: sphinx.application.Sphinx) -> None:
     :param app: Application object representing the Sphinx process
     """
     # Define all the paths.
-    cwd = pathlib.Path().resolve()
-    project_dir = cwd.parent.parent
+    source_dir = pathlib.Path(__file__).resolve().parent
+    project_dir = source_dir.parent.parent
 
     input_dir = (project_dir / "soccer").resolve()
-    output_dir = (cwd / "build").resolve()
+    output_dir = (project_dir / "docs" / "build").resolve()
     doxyfile_dir = (project_dir / "docs").resolve()
 
     # Configure the Doxyfile.
