@@ -27,6 +27,7 @@ adblocker to support their free documentation hosting.
    introduction.rst
    tutorial.rst
    our_stack.rst
+   github_stacks.rst
    troubleshooting.rst
    contributing.rst
    faq.rst
