@@ -13,13 +13,19 @@ RobotFactoryPosition::RobotFactoryPosition(int r_id, rclcpp::Node::SharedPtr nod
     strategy_debug_drawer_ = std::make_shared<rj_drawing::RosDebugDrawer>(
         debug_draw_pub, fmt::format("strategy_{}", r_id));
 
-    if (robot_id_ == 0) {
-        current_position_ = std::make_unique<Goalie>(robot_id_);
-    } else if (robot_id_ == 1 || robot_id_ == 2) {
-        current_position_ = std::make_unique<Offense>(robot_id_);
+    // if (robot_id_ == 0) {
+    //     current_position_ = std::make_unique<Goalie>(robot_id_);
+    // }
+    if (robot_id_ == 1) {
+        current_position_ = std::make_unique<Runner>(robot_id_);
     } else {
-        current_position_ = std::make_unique<Defense>(robot_id_);
+        current_position_ = std::make_unique<SmartIdle>(robot_id_);
     }
+    // } else if (robot_id_ == 2) {
+    //     current_position_ = std::make_unique<Offense>(robot_id_);
+    // } else {
+    //     current_position_ = std::make_unique<Defense>(robot_id_);
+    // }
 
     current_position_->set_client_handles(client_handles_);
     current_position_->set_debug_drawer(strategy_debug_drawer_);
@@ -30,6 +36,7 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 
+
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
@@ -37,10 +44,10 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     }
 
     // Update our state
-    process_play_state();
+    // process_play_state();
 
-    // Every tick, update position based on PlayState
-    update_position();
+    // // Every tick, update position based on PlayState
+    // update_position();
 
     auto task =
         current_position_->get_task(*last_world_state_, field_dimensions_, current_play_state_);
@@ -59,7 +66,6 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
 void RobotFactoryPosition::process_play_state() {
     // UPDATE THIS TO INSTEAD BE LIKE IF RESTART CHANGED
     // AND THEN SEPARTE FOR IF OTHER STATE CHANGED
-
     if (last_play_state_.state() != current_play_state_.state()) {
         switch (current_play_state_.state()) {
             case PlayState::State::Playing: {
@@ -181,6 +187,7 @@ void RobotFactoryPosition::handle_ready() {
 }
 
 void RobotFactoryPosition::update_position() {
+
     bool manual_position_set = set_position_override_if_requested();
     if (manual_position_set) {
         return;
@@ -256,6 +263,7 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 }
 
 void RobotFactoryPosition::set_default_position() {
+
     // Get sorted positions of all friendly robots
     using RobotPos = std::pair<int, double>;  // (robotId, yPosition)
 
