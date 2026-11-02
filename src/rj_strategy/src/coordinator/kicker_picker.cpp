@@ -5,9 +5,9 @@ namespace strategy {
 KickerPicker::KickerPicker()
     : Coordinator("kicker_picker_srv", "kicker_picker_data", "kicker_picker_node") {
     // Subscribe to world state
-    world_state_sub_ = this->create_subscription<rj_referee_msgs::msg::WorldState>(
+    world_state_sub_ = this->create_subscription<rj_vision_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](rj_referee_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+        [this](rj_vision_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
             publish_selected_kicker();
         });

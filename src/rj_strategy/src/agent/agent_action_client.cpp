@@ -19,9 +19,9 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<rj_referee_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<rj_vision_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](rj_referee_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](rj_vision_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
 
     play_state_sub_ = node_->create_subscription<rj_referee_msgs::msg::PlayState>(
         ::referee::topics::kPlayStateTopic, 1,
@@ -82,7 +82,7 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
 void AgentActionClient::world_state_callback(
-    const rj_referee_msgs::msg::WorldState::SharedPtr& msg) {
+    const rj_vision_msgs::msg::WorldState::SharedPtr& msg) {
     if (current_position_ == nullptr) {
         return;
     }

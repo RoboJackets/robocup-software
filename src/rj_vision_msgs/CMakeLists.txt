@@ -20,6 +20,7 @@ rosidl_generate_interfaces(
   msg/FieldDimensions.msg
   msg/RawProtobuf.msg
   msg/RobotState.msg
+  msg/WorldState.msg
   srv/SetFieldDimensions.srv
   DEPENDENCIES
   builtin_interfaces

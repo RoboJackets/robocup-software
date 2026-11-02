@@ -7,7 +7,7 @@
 #include <rj_common/control/motion_setpoint.hpp>
 #include <rj_param_utils/global_params.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_utils/logging.hpp>
 
 #include "rj_control/motion_control.hpp"

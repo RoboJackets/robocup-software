@@ -9,7 +9,6 @@
 
   <depend>builtin_interfaces</depend>
   <depend>rj_geometry_msgs</depend>
-  <depend>rj_vision_msgs</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>

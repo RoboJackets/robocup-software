@@ -5,7 +5,7 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_param_utils/global_params.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_vision_msgs/msg/ball_state.hpp>
 #include <rj_vision_msgs/msg/robot_state.hpp>
 
@@ -140,7 +140,7 @@ struct BallState {
 };
 
 struct WorldState {
-    using Msg = rj_referee_msgs::msg::WorldState;
+    using Msg = rj_vision_msgs::msg::WorldState;
 
     WorldState() {
         their_robots.resize(kNumShells);

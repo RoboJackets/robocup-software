@@ -38,7 +38,7 @@ private:
     rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_referee_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_referee_msgs::msg::GoalieID>::SharedPtr goalie_sub_;
-    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_vision_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_vision_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
 
     PlayState last_play_state_{PlayState::halt()};

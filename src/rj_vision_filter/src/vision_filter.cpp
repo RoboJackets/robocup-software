@@ -45,7 +45,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 }
 
 VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) const {
-    return rj_referee_msgs::build<WorldStateMsg>()
+    return rj_vision_msgs::build<WorldStateMsg>()
         .last_update_time(rj_convert::convert_to_ros(world_.last_update_time()))
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))

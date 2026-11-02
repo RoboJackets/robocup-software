@@ -11,7 +11,7 @@
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_convert/ros_convert.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_strategy_msgs/msg/marking.hpp>
 #include <rj_strategy_msgs/srv/marking.hpp>
 
@@ -56,7 +56,7 @@ private:
     std::unordered_set<uint8_t> unassigned_markers_queue_;
     WorldState last_world_state_;
     FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
-    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_vision_msgs::msg::WorldState>::SharedPtr world_state_sub_;
 };
 
 }  // namespace strategy

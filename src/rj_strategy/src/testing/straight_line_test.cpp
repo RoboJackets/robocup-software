@@ -26,9 +26,9 @@ StraightLineTest::StraightLineTest(int r_id)
     current_state_publisher_ = create_publisher<AgentStateMsg>(
         fmt::format("strategy/position/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = create_subscription<rj_referee_msgs::msg::WorldState>(
+    world_state_sub_ = create_subscription<rj_vision_msgs::msg::WorldState>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](const rj_referee_msgs::msg::WorldState::SharedPtr msg) {
+        [this](const rj_vision_msgs::msg::WorldState::SharedPtr msg) {
             world_state_callback(msg);
         });
 
@@ -68,7 +68,7 @@ StraightLineTest::StraightLineTest(int r_id)
 }
 
 void StraightLineTest::world_state_callback(
-    const rj_referee_msgs::msg::WorldState::SharedPtr& msg) {
+    const rj_vision_msgs::msg::WorldState::SharedPtr& msg) {
     WorldState world_state = rj_convert::convert_from_ros(*msg);
     auto lock = std::lock_guard(world_state_mutex_);
     last_world_state_ = std::move(world_state);

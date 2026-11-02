@@ -21,7 +21,7 @@
 #include <rj_radio_msgs/msg/alive_robots.hpp>
 #include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_strategy_msgs/msg/agent_state.hpp>
 #include <rj_utils/logging.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -57,7 +57,7 @@ public:
 
 private:
     // ROS pub/subs
-    rclcpp::Subscription<rj_referee_msgs::msg::WorldState>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<rj_vision_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
     rclcpp::Subscription<rj_vision_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_radio_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
@@ -68,7 +68,7 @@ private:
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(const rj_referee_msgs::msg::WorldState::SharedPtr& msg);
+    void world_state_callback(const rj_vision_msgs::msg::WorldState::SharedPtr& msg);
     void play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg);
     void field_dimensions_callback(const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg);
     void alive_robots_callback(const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg);

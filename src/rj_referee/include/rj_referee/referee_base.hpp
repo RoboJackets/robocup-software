@@ -15,7 +15,7 @@
 #include <rj_referee_msgs/msg/play_state.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
 #include <rj_referee_msgs/msg/team_info.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 
 namespace referee {
 

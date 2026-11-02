@@ -25,9 +25,9 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             auto lock = std::lock_guard(last_goalie_id_mutex_);
             last_goalie_id_ = goalie->goalie_id;
         });
-    world_state_sub_ = node->create_subscription<rj_referee_msgs::msg::WorldState>(
+    world_state_sub_ = node->create_subscription<rj_vision_msgs::msg::WorldState>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](rj_referee_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
+        [this](rj_vision_msgs::msg::WorldState::SharedPtr world_state) {  // NOLINT
             auto lock = std::lock_guard(last_world_state_mutex_);
             last_world_state_ = rj_convert::convert_from_ros(*world_state);
         });

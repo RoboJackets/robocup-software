@@ -10,7 +10,6 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
-find_package(rj_vision_msgs REQUIRED)
 
 rosidl_generate_interfaces(
   ${PROJECT_NAME}
@@ -20,13 +19,11 @@ rosidl_generate_interfaces(
   msg/PlayState.msg
   msg/TeamColor.msg
   msg/TeamInfo.msg
-  msg/WorldState.msg
   srv/QuickCommands.srv
   srv/SetGameSettings.srv
   DEPENDENCIES
   builtin_interfaces
   rj_geometry_msgs
-  rj_vision_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

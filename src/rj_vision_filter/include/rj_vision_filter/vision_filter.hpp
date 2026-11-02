@@ -10,7 +10,7 @@
 #include <rj_config_client/config_client.hpp>
 #include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
-#include <rj_referee_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
 
@@ -26,7 +26,7 @@ using TeamColorMsg = rj_referee_msgs::msg::TeamColor;
  */
 class VisionFilter : public rclcpp::Node {
 public:
-    using WorldStateMsg = rj_referee_msgs::msg::WorldState;
+    using WorldStateMsg = rj_vision_msgs::msg::WorldState;
     using RobotStateMsg = rj_vision_msgs::msg::RobotState;
     using BallStateMsg = rj_vision_msgs::msg::BallState;
 
