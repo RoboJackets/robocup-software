@@ -31,10 +31,10 @@ std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
 
     // Coords of the corners
     std::array<rj_geometry::Point, 4> loopCorners{
-        center + rj_geometry::Point{-1.5, -1.5},
-        center + rj_geometry::Point{-1.5, -2.5},
-        center + rj_geometry::Point{1.5, -2.5},
-        center + rj_geometry::Point{1.5, -1.5}};
+        center + rj_geometry::Point{-1.5, 1.5},
+        center + rj_geometry::Point{-1.5, 2.5},
+        center + rj_geometry::Point{1.5, 2.5},
+        center + rj_geometry::Point{1.5, 1.5}};
 
     rj_geometry::Point robot_position =
         last_world_state_->get_robot(true, robot_id_).pose.position();
