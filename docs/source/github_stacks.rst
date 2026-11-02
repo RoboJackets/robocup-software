@@ -26,7 +26,9 @@ One-time setup
 
 .. code-block:: bash
 
-   gh stack init db-schema      # Initializes a new stack and enables rerere
+    # --base ensures that the stack is built off that branch
+    # for most use cases, use --base main
+   gh stack init --base <branch_name> db-schema      # Initializes a new stack and enables rerere
    git add .
    git commit -m "Add orders table"
 
