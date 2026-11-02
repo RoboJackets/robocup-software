@@ -89,13 +89,13 @@ rj_geometry::Point Runner::corner_for(State state) const {
 
     switch (state) {
         case SIDE_ONE:
-            return rj_geometry::Point{x_left, y_near};
+            return rj_geometry::Point{-2, 1};
         case SIDE_TWO:
-            return rj_geometry::Point{x_right, y_near};
+            return rj_geometry::Point{2, 1};
         case SIDE_THREE:
-            return rj_geometry::Point{x_right, y_far};
+            return rj_geometry::Point{2, 2};
         case SIDE_FOUR:
-            return rj_geometry::Point{x_left, y_far};
+            return rj_geometry::Point{-2, 2};
         case DEFAULT:
             break;
     }
