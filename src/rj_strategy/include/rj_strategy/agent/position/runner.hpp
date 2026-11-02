@@ -64,10 +64,10 @@ private:
     State current_state_ = RUNNING_SIDE_1;
 
     // Corners of the rectangle path
-    rj_geometry::Point corner_1_{-2.0, 2.0};
-    rj_geometry::Point corner_2_{2.0, 2.0};
-    rj_geometry::Point corner_3_{2.0, 6.0};
-    rj_geometry::Point corner_4_{-2.0, 6.0};
+    rj_geometry::Point corner_1_{-2.0, 1.5};
+    rj_geometry::Point corner_2_{2.0, 1.5};
+    rj_geometry::Point corner_3_{2.0, 2.5};
+    rj_geometry::Point corner_4_{-2.0, 2.5};
 };
 
 }  // namespace strategy
