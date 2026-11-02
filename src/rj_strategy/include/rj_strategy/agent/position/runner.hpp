@@ -47,7 +47,9 @@ private:
     State current_state_ = State::SIDE_1;
 
     static constexpr double kHalfWidth{1.5};
-    static constexpr double kHalfHeight{1.0};
+    static constexpr double kHalfHeight{0.8};
+    static constexpr double kOffsetX{0.0};
+    static constexpr double kOffsetY{2.0};
 
     static constexpr double kArrivedRadius{0.2};
 };
