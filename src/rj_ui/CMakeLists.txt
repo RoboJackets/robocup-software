@@ -28,6 +28,7 @@ find_package(rj_msgs REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_referee REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_radio_common REQUIRED)
 
 # Enable Qt's automatic processing
 set(CMAKE_AUTOMOC ON)   # Handle Q_OBJECT in headers automatically
@@ -96,6 +97,7 @@ set(RJ_UI_DEPS
   rj_strategy
   rj_referee
   rj_config_client
+  rj_radio_common
 )
 
 add_library(${PROJECT_NAME} SHARED

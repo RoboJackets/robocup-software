@@ -6,10 +6,10 @@
 #include <utility>
 #include <vector>
 
-#include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_radio_common/robot_status.hpp>
 
 #include "rj_ui/debug_drawings.hpp"
 

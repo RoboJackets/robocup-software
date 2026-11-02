@@ -8,7 +8,6 @@
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/trajectory.hpp>
 
-#include "rj_common/planning/dynamic_obstacle.hpp"
 #include "rj_common/planning/instant.hpp"
 
 namespace planning {

@@ -24,6 +24,7 @@
   <depend>rj_strategy</depend>
   <depend>rj_referee</depend>
   <depend>rj_config_client</depend>
+  <depend>rj_radio_common</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   
