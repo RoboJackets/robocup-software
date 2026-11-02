@@ -8,10 +8,10 @@ namespace strategy {
         position_name_ = "Runner";
     }
 
-    static const rj_geometry::Point firstVertex{2.0, 2.0};
-    static const rj_geometry::Point secondVertex{-2.0, 2.0};
-    static const rj_geometry::Point thirdVertex{-2.0, 6.0};
-    static const rj_geometry::Point fourthVertex{2.0, 6.0};
+    static const rj_geometry::Point firstVertex{2.0, 1.0};
+    static const rj_geometry::Point secondVertex{-2.0, 1.0};
+    static const rj_geometry::Point thirdVertex{-2.0, 2.5};
+    static const rj_geometry::Point fourthVertex{2.0, 2.5};
 
     std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
         //first get the proper state and set current state to be that
