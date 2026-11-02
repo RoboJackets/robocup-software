@@ -46,16 +46,16 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
     switch (current_state_) {
         case GO_TO_A:
-            vertex = {-0.5, 2.5};
+            vertex = {-0.5, 2};
             break;
         case GO_TO_B:
-            vertex = {0.5, 2.5};
+            vertex = {0.5, 2};
             break;
         case GO_TO_C:
-            vertex = {0.5, 6};
+            vertex = {0.5, 3};
             break;
         case GO_TO_D:
-            vertex = {-0.5, 6};
+            vertex = {-0.5, 3};
             break;
     }
 
