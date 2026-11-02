@@ -45,6 +45,9 @@ private:
     rj_geometry::Point corner(State s) const;
 
     State current_state_ = State::SIDE_1;
+    bool waiting_ = false;
+    int pause_ticks_ = 0;
+    static constexpr int kPauseTicks{30};
 
     static constexpr double kHalfWidth{1.5};
     static constexpr double kHalfHeight{0.8};

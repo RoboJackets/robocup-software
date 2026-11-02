@@ -32,12 +32,19 @@ rj_geometry::Point Runner::corner(State s) const {
 
 Runner::State Runner::next_state() {
     const bool done = check_is_done();
-
     const rj_geometry::Point pos = last_world_state_->get_robot(true, robot_id_).pose.position();
     const bool arrived = pos.dist_to(corner(current_state_)) < kArrivedRadius;
 
+    if (waiting_) {
+        if (--pause_ticks_ <= 0) {
+            waiting_ = false;
+            return static_cast<State>((static_cast<int>(current_state_) + 1) % 4);
+        }
+        return current_state_;
+    }
     if (done || arrived) {
-        return static_cast<State>((static_cast<int>(current_state_) + 1) % 4);
+        waiting_ = true;
+        pause_ticks_ = kPauseTicks;
     }
     return current_state_;
 }
