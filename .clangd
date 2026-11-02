@@ -1,2 +1,10 @@
 CompileFlags:
     CompilationDatabase: build/
+---
+# The build sets no -std and relies on g++'s default (gnu++17), but clang
+# defaults to gnu++14. Keep clangd on the standard the code is built with.
+If:
+    PathExclude: .*\.c$
+CompileFlags:
+    Remove: [-std=*]
+    Add: [-std=gnu++17]
