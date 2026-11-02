@@ -52,7 +52,7 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
     switch (current_state_) {
         case SIDE1: {
             intent.motion_command = planning::MotionCommand{"path_target", planning::LinearMotionInstant(
-                rj_geometry::Point{3.0, 0.0}
+                rj_geometry::Point{-1.5, 1}
             )};
 
             return intent;
@@ -60,7 +60,7 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
         case SIDE2: {
             intent.motion_command = planning::MotionCommand{"path_target", planning::LinearMotionInstant(
-                rj_geometry::Point{3.0, 9.0}
+                rj_geometry::Point{1.5, 1}
             )};
 
             return intent;
@@ -68,7 +68,7 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
         case SIDE3: {
             intent.motion_command = planning::MotionCommand{"path_target", planning::LinearMotionInstant(
-                rj_geometry::Point{-3.0, 9.0}
+                rj_geometry::Point{1.5, 2.5}
             )};
 
             return intent;
@@ -76,7 +76,7 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
         case SIDE4: {
             intent.motion_command = planning::MotionCommand{"path_target", planning::LinearMotionInstant(
-                rj_geometry::Point{-3.0, 0.0}
+                rj_geometry::Point{-1.5, 2.5}
             )};
 
             return intent;
