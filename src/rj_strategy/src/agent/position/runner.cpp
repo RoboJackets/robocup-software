@@ -82,10 +82,10 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 rj_geometry::Point Runner::corner_for(State state) const {
     const double margin = 0.5;
     const double y_pad = field_dimensions_.penalty_short_dist() + margin;
-    const double x_left = field_dimensions_.field_x_left_coord() + margin;
-    const double x_right = field_dimensions_.field_x_right_coord() - margin;
-    const double y_near = y_pad;
-    const double y_far = field_dimensions_.length() - y_pad;
+    const double x_left = 2;
+    const double x_right = -2;
+    const double y_near = 2;
+    const double y_far = 1;
 
     switch (state) {
         case SIDE_ONE:
