@@ -38,8 +38,8 @@ private:
     static constexpr double kCorners[4][2] = {
         {-2, 1.0},
         {2, 1.0},
-        {2, 8.0},
-        {-2, 8.0},
+        {2, 2.5},
+        {-2, 2.5},
     };
 
     std::optional<RobotIntent> derived_get_task(RobotIntent intent) override;
