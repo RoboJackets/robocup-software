@@ -12,8 +12,8 @@
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
 #include <rj_common/game_constants.hpp>
 #include <rj_common/planning/trajectory.hpp>
-#include <rj_common/radio/robot_status.hpp>
 #include <rj_common/robot_intent.hpp>
+#include <rj_radio_common/robot_status.hpp>
 
 #include "rj_radio/messages/robot_status_message.hpp"
 #include "rj_radio/messages/control_message.hpp"
