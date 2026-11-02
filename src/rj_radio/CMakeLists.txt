@@ -22,6 +22,7 @@ find_package(rj_protos REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
+find_package(rj_radio_common REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
@@ -34,6 +35,7 @@ set(RJ_RADIO_DEPS
   rj_strategy
   rj_geometry
   rj_planning
+  rj_radio_common
 )
 
 add_library(${PROJECT_NAME} SHARED

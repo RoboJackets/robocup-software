@@ -6,7 +6,6 @@
 #include <rj_msgs/msg/robot_intent.hpp>
 
 #include "rj_common/planning/motion_command.hpp"
-#include "rj_common/planning/rotation_command.hpp"
 
 struct RobotIntent {
     int8_t robot_id = 0;

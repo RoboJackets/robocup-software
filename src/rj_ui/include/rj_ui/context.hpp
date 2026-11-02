@@ -8,10 +8,10 @@
 #include <rj_common/game_constants.hpp>
 #include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
-#include <rj_common/radio/robot_status.hpp>
 #include <rj_common/team_info.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_radio_common/robot_status.hpp>
 
 #include "rj_ui/debug_drawer.hpp"
 #include "rj_ui/ui_frame.hpp"
