@@ -48,16 +48,16 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 
     switch (current_state_) {
         case SIDE_ONE:
-            target = rj_geometry::Point{-2.0, 3.0};
+            target = rj_geometry::Point{-2.0, 2.5};
             break;
         case SIDE_TWO:
-            target = rj_geometry::Point{2.0, 3.0};
+            target = rj_geometry::Point{2.0, 2.5};
             break;
         case SIDE_THREE:
-            target = rj_geometry::Point{2.0, 6.0};
+            target = rj_geometry::Point{2.0, 1.0};
             break;
         case SIDE_FOUR:
-            target = rj_geometry::Point{-2.0, 6.0};
+            target = rj_geometry::Point{-2.0, 1.0};
             break;
     }
 
