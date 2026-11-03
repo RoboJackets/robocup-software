@@ -17,9 +17,5 @@ namespace Tutorial {
 
         bool isBlue;
 
-        void timerCallback();
-
-        void subscriberCallback(const rj_msgs::msg::TeamColor::SharedPtr msg);
-
     };
 }
