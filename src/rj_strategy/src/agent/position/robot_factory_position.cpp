@@ -258,17 +258,11 @@ bool RobotFactoryPosition::another_robot_touched_ball() const {
 bool RobotFactoryPosition::ball_in_their_corner() const {
     rj_geometry::Point ball = last_world_state_->ball.position;
 
-    // variables
-    double half_width = field_dimensions_.width() / 2.0;
-    double length = field_dimensions_.length();
-
-    rj_geometry::Point left_corner{-half_width, length};
-    rj_geometry::Point right_corner{half_width, length};
-
     // how close to corner
     constexpr double kCornerRadius = 0.5;
 
-    return ball_dist_to(left_corner) < kCornerRadius || ball dist_to(right_corner) < kCornerRadius; // ensures ball is in one of the two corners
+    return ball.dist_to(field_dimensions_.their_left_corner()) < kCornerRadius || 
+    ball.dist_to(field_dimensions_.their_right_corner()) < kCornerRadius; // ensures ball is in one of the two corners
 }
 
 void RobotFactoryPosition::set_default_position() {

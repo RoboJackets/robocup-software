@@ -147,7 +147,7 @@ private:
 
     void handle_penalty_playing();
 
-    bool ball_in_their_corner();
+    bool ball_in_their_corner() const;
 
     /**
      * @brief Sets the current position to the parameterized type.
