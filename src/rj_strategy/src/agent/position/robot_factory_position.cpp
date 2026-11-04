@@ -161,7 +161,12 @@ void RobotFactoryPosition::handle_ready() {
         // There is no "Setup" stage for free kicks, so this is when we choose kicker
         client_handles_->kicker_picker->join_group([this](KickerPickerClient::Result result) {
             if (result.am_i_member && result.kicker_id == robot_id_) {
-                set_current_position<FreeKicker>();
+                // extra condition to specify what kind of kicker
+                if (ball_in_their_corner()) {
+                    set_current_position<CornerKicker>();
+                } else {
+                    set_current_position<FreeKicker>();
+                }
             } else {
                 set_default_position();
 
