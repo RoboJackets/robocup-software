@@ -32,8 +32,8 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
-#include "rj_strategy/command.hpp"
 #include "rj_strategy/command_scheduler.hpp"
+#include "rj_strategy/commands/allcommands.hpp"
 
 // Communication
 #include <rj_msgs/msg/acknowledge.hpp>

@@ -1,13 +1,7 @@
-#pragma once
 #include "rj_strategy/strategizer.hpp"
 
 #include <chrono>
 #include <thread>
-
-#include "rj_strategy/commands/command_groups/sequential_command.hpp"
-#include "rj_strategy/commands/move_command.hpp"
-#include "rj_strategy/commands/move_to_ball_command.hpp"
-#include "rj_strategy/commands/wait_command.hpp"
 
 namespace strategy {
 Strategizer::Strategizer() : Node("stratgizer") {
@@ -83,17 +77,16 @@ void Strategizer::thread_callback() {
     std::shared_ptr<commands::MoveCommand> move_command =
         std::make_shared<commands::MoveCommand>(robots.at(1), mCommand);
     std::shared_ptr<commands::MoveCommand> move_command2 =
-        std::make_shared<commands::MoveCommand>(robots.at(1), mCommand2);
+        std::make_shared<commands::MoveCommand>(robots.at(2), mCommand2);
 
-    commands::SequentialCommand sCommand({move_command, move_command2});
-    std::shared_ptr<commands::SequentialCommand> sequential_command =
-        std::make_shared<commands::SequentialCommand>(
+    std::shared_ptr<commands::ParallelCommand> parallel_command =
+        std::make_shared<commands::ParallelCommand>(
             std::initializer_list<std::shared_ptr<commands::Command>>{move_command, move_command2});
 
     auto ballCommand = std::make_shared<commands::MoveToBallCommand>(worldStateCache, robots.at(1));
     // std::make_shared<commands::SequentialCommand>(sCommand);
     SPDLOG_INFO("===============================Built Motion Command==========================");
-    if (scheduler->scheduleCommand(ballCommand)) {
+    if (scheduler->scheduleCommand(parallel_command)) {
         SPDLOG_INFO(
             "===============================Scheduled Motion Command==========================");
     } else {
@@ -103,6 +96,7 @@ void Strategizer::thread_callback() {
 void Strategizer::tick() {
     // SPDLOG_INFO("===============================================Strategizer
     // tick====================================");
+
     scheduler->tick();
 }
 

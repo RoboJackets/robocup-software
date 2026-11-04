@@ -37,12 +37,20 @@ public:
 
     bool is_interruptible() { return interruptible; }
 
-    bool requirements_overlap(Command& other) {
-        if (this->requirements.size() == 0 || other.requirements.size() == 0) return false;
+    bool requirements_overlap(std::shared_ptr<Command> other) {
+        if (this->requirements.size() == 0 || other->getRequirements().size() == 0) return false;
+        SPDLOG_INFO("=====================Comparing Command {} with Command {}=================",
+                    name, other->get_name());
         for (int i = 0; i < this->requirements.size(); i++) {
-            std::string curRobot = this->requirements[i];
-            for (int j = 0; i < other.requirements.size(); j++) {
-                if (curRobot == other.requirements[j]) {
+            SPDLOG_INFO("=====================Line 1======================");
+            std::string curReq = this->requirements.at(i);
+            SPDLOG_INFO("=====================Line 2======================");
+            for (int j = 0; j < other->getRequirements().size(); j++) {
+                SPDLOG_INFO("=====================Line 3======================");
+                if (curReq.compare(other->getRequirements().at(j)) == 0) {
+                    SPDLOG_INFO(
+                        "=======================Requirements overlap: {} AND {}============",
+                        curReq, other->getRequirements().at(j));
                     return true;
                 }
             }

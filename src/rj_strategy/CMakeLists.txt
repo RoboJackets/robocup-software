@@ -74,8 +74,9 @@ set(RJ_STRATEGY_SRC
   src/commands/wait_command.cpp
   src/commands/move_command.cpp
   src/commands/move_to_ball_command.cpp
-  
+
   src/commands/command_groups/sequential_command.cpp
+  src/commands/command_groups/parallel_command.cpp
 
   # Strategizer
   src/strategizer.cpp

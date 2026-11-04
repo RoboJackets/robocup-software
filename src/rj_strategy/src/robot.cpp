@@ -12,6 +12,8 @@ Robot::Robot(int id, rclcpp::Node* node)
     this->statusSub = node->create_subscription<rj_msgs::msg::RobotStatus>(
         "radio/robot_status/robot_" + std::to_string(id), 10,
         [this](RobotStatus::SharedPtr msg) { this->robotStatusCallback(msg); });
+
+    SPDLOG_INFO("=======================Robot {} Move Req: {}===================", id, move_Req);
     isKickFinished = false;
     isMoveFinished = false;
     isStatusInitialized = false;

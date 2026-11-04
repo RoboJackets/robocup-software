@@ -1,8 +1,10 @@
 #include "rj_strategy/commands/move_command.hpp"
 
+#include <string>
+
 namespace commands {
 MoveCommand::MoveCommand(std::shared_ptr<Robot> robot, planning::MotionCommand motion_command)
-    : commands::Command("move_command") {
+    : commands::Command("move_command" + std::to_string(robot->getId())) {
     this->robot = robot;
     addRequirements(robot->move_Req);
     this->motion_command = motion_command;

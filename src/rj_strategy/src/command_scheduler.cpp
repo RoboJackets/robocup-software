@@ -26,7 +26,7 @@ bool CommandScheduler::scheduleCommand(std::shared_ptr<Command> command) {
         // SPDLOG_INFO(
         // "=================================================== Start Loop "
         // "=========================");
-        if (command->requirements_overlap(**it)) {
+        if (command->requirements_overlap(*it)) {
             // SPDLOG_INFO(
             //     "===================================================Reqs overlap start "
             //     "=========================");
