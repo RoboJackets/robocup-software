@@ -47,7 +47,7 @@ private:
     static constexpr double kArriveDist{0.25};
 
     std::array<rj_geometry::Point, 4> vertices_{
-        {rj_geometry::Point{-2.0, 0.5}, rj_geometry::Point{2.0, 0.5}, rj_geometry::Point{2.0, 2.7},
+        {rj_geometry::Point{-2.0, 2}, rj_geometry::Point{2.0, 2}, rj_geometry::Point{2.0, 2.7},
          rj_geometry::Point{-2.0, 2.7}}};
 };
 
