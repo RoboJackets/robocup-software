@@ -28,7 +28,7 @@ namespace strategy {
         return "CornerKicker: UNKNOWN";
     }
 
-    std::optinal<RobotIntent> CornerKicker::derived_get_task(RobotIntent intent) {
+    std::optimal<RobotIntent> CornerKicker::derived_get_task(RobotIntent intent) {
         if (!last_world_state_) {
             return std::nullopt;
         }
@@ -38,9 +38,14 @@ namespace strategy {
         return state_to_task(intent);
     }
 
-    CornerKicker::State CornerKicker::update_state() {}
+    CornerKicker::State CornerKicker::update_state() {
+        return latest__state_;
+    }
+    std::optional<RobotIntent> CornerKicker::state_to_task(RobotIntent intent) {
+        return intent;
+    }
 
-    std::optional<RobotIntent> CornerKicker::state_to_task(RobotIntent intent) {}
-
-    rj_geometry::Point CornerKicker::calculate_best_pass_target() const {}
+    rj_geometry::Point CornerKicker::calculate_best_pass_target() const {
+        return rj_geometry::Point{0,0};
+    }
 }
