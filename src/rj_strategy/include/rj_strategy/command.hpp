@@ -4,8 +4,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include "rj_strategy/robot.hpp"
-
 namespace commands {
 
 /**
@@ -13,7 +11,7 @@ namespace commands {
 */
 class Command {
 public:
-    Command(std::string name, std::vector<Robot> requirements) {
+    Command(std::string name, std::vector<std::string> requirements) {
         this->name = name;
         this->requirements = requirements;
     };
@@ -27,7 +25,7 @@ public:
 
     std::string get_name() { return name; }
 
-    std::vector<Robot> getRequirements() { return requirements; }
+    std::vector<std::string> getRequirements() { return requirements; }
 
     bool is_scheduled() { return scheduled; }
 
@@ -42,9 +40,9 @@ public:
     bool requirements_overlap(Command& other) {
         if (this->requirements.size() == 0 || other.requirements.size() == 0) return false;
         for (int i = 0; i < this->requirements.size(); i++) {
-            Robot curRobot = this->requirements[i];
+            std::string curRobot = this->requirements[i];
             for (int j = 0; i < other.requirements.size(); j++) {
-                if (curRobot.equals(other.requirements[j])) {
+                if (curRobot == other.requirements[j]) {
                     return true;
                 }
             }
@@ -52,7 +50,7 @@ public:
         return false;
     }
 
-    void addRequirements(Robot requirement) { requirements.push_back(requirement); }
+    void addRequirements(std::string requirement) { requirements.push_back(requirement); }
 
 protected:
     std::string name;
@@ -60,6 +58,6 @@ protected:
 private:
     bool interruptible = true;
     bool scheduled = false;
-    std::vector<Robot> requirements;
+    std::vector<std::string> requirements;
 };
 }  // namespace commands

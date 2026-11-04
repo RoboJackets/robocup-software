@@ -41,6 +41,7 @@
 #include <rj_msgs/srv/agent_communication.hpp>
 
 #include "rj_strategy/agent/communication.hpp"
+#include "rj_strategy/robot.hpp"
 
 namespace strategy {
 class Strategizer : public rclcpp::Node {
@@ -59,6 +60,8 @@ private:
 
     // // ROS pub/subs
     rclcpp_action::Client<rj_msgs::action::RobotMove>::SharedPtr client_ptr_;
+    rclcpp_action::Client<rj_msgs::action::RobotMove>::SharedPtr manipulator_client_ptr_;
+
     rclcpp::Subscription<rj_msgs::msg::WorldState>::SharedPtr world_state_sub_;
     rclcpp::Subscription<rj_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
@@ -77,6 +80,8 @@ private:
     void tick();
 
     void thread_callback();
+
+    std::vector<std::shared_ptr<Robot>> robots;
 
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub;
 

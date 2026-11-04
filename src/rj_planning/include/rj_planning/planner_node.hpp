@@ -45,6 +45,7 @@ private:
     // setup ActionServer for RobotMove.action
     // follows the standard AS protocol, see ROS2 docs & RobotMove.action
     rclcpp_action::Server<RobotMove>::SharedPtr action_server_;
+    rclcpp_action::Server<RobotMove>::SharedPtr manipulator_server_;
     rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID& uuid,
                                             std::shared_ptr<const RobotMove::Goal> goal);
     rclcpp_action::CancelResponse handle_cancel(

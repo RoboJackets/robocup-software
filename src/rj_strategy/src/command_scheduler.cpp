@@ -19,36 +19,36 @@ CommandScheduler::CommandScheduler() {
 
 bool CommandScheduler::scheduleCommand(std::shared_ptr<Command> command) {
     std::list<std::list<std::shared_ptr<Command>>::iterator> toErase;
-    SPDLOG_INFO(
-        "===================================================Attempt Schedule Start "
-        "=========================");
+    // SPDLOG_INFO(
+    // "===================================================Attempt Schedule Start "
+    // "=========================");
     for (auto it = toExecute.begin(); it != toExecute.end(); ++it) {
-        SPDLOG_INFO(
-            "=================================================== Start Loop "
-            "=========================");
+        // SPDLOG_INFO(
+        // "=================================================== Start Loop "
+        // "=========================");
         if (command->requirements_overlap(**it)) {
-            SPDLOG_INFO(
-                "===================================================Reqs overlap start "
-                "=========================");
+            // SPDLOG_INFO(
+            //     "===================================================Reqs overlap start "
+            //     "=========================");
             if (!(*it)->is_interruptible()) {
-                SPDLOG_INFO(
-                    "===================================================Uninterruptible "
-                    "=========================");
+                // SPDLOG_INFO(
+                //     "===================================================Uninterruptible "
+                //     "=========================");
                 return false;
             } else {
-                SPDLOG_INFO(
-                    "===================================================Interruptible "
-                    "=========================");
+                // SPDLOG_INFO(
+                //     "===================================================Interruptible "
+                //     "=========================");
                 toErase.push_back(it);
             }
-            SPDLOG_INFO(
-                "===================================================End Loop "
-                "=========================");
+            // SPDLOG_INFO(
+            //     "===================================================End Loop "
+            //     "=========================");
         }
     }
-    SPDLOG_INFO(
-        "=================================================== compared requirements "
-        "=========================");
+    // SPDLOG_INFO(
+    //     "=================================================== compared requirements "
+    //     "=========================");
     for (auto it = toExecute.begin(); it != toExecute.end();) {
         if (toErase.empty()) {
             break;
@@ -56,18 +56,19 @@ bool CommandScheduler::scheduleCommand(std::shared_ptr<Command> command) {
 
         auto eraseIt = toErase.begin();
         if ((*it).get() == (**eraseIt).get()) {  // Skeptical of this line
+            (**eraseIt)->exit(true);
             toExecute.erase(it);
         } else {
             ++it;
         }
     }
-    SPDLOG_INFO(
-        "===================================================Before initialize "
-        "=========================");
+    // SPDLOG_INFO(
+    //     "===================================================Before initialize "
+    // "=========================");
     command->initialize();
-    SPDLOG_INFO(
-        "===================================================After Initialize "
-        "=========================");
+    // SPDLOG_INFO(
+    //     "===================================================After Initialize "
+    //    "=========================");
     toExecute.push_back(command);
 
     return true;

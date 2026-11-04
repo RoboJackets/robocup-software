@@ -56,6 +56,9 @@ set(RJ_PLANNING_SRC
   src/trajectory_collection.cpp
   src/trajectory_utils.cpp
 
+  src/kick_planner_node.cpp
+  src/move_planner_node.cpp
+
   # Planners
   src/planners/collect_path_planner.cpp
   src/planners/escape_obstacles_path_planner.cpp

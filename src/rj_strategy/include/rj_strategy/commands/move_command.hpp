@@ -15,24 +15,20 @@
 #include <rj_msgs/msg/motion_command.hpp>
 
 #include "rj_strategy/command.hpp"
+#include "rj_strategy/robot.hpp"
 
 namespace commands {
 
 class MoveCommand : public Command {
 public:
-    using RobotMove = rj_msgs::action::RobotMove;
-    using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
-    MoveCommand(::Robot robot, planning::MotionCommand motion_command,
-                rclcpp_action::Client<RobotMove>::SharedPtr client_ptr);
+    MoveCommand(std::shared_ptr<Robot> robot, planning::MotionCommand motion_command);
     void initialize() override;
     bool is_done() override;
 
 private:
     planning::MotionCommand motion_command;
-    rclcpp_action::Client<RobotMove>::SharedPtr client_ptr;
-    void result_callback(const GoalHandleRobotMove::WrappedResult& result);
-    void goal_response_callback(GoalHandleRobotMove::SharedPtr goal_handle);
-    bool finished;
+
+    std::shared_ptr<Robot> robot;
 };
 
 }  // namespace commands

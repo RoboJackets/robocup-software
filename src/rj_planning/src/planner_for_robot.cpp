@@ -57,6 +57,7 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto trajectory = safe_plan_for_robot(plan_request);
         trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
 
+        // ========================= manipulator =========================
         if (intent.dribbler_mode != RobotIntent::DribblerMode::DEFAULT) {
             trajectory.dribbler_speed =
                 (intent.dribbler_mode == RobotIntent::DribblerMode::ON) ? 255.0 : 0.0;
@@ -86,12 +87,11 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         }
 
         // send the kick/dribble commands to the radio
-        manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
-                                      .shoot_mode(trajectory.shoot_mode)
-                                      .trigger_mode(trajectory.trigger_mode)
-                                      .kick_speed(intent.kick_speed)
-                                      .dribbler_speed(trajectory.dribbler_speed));
-
+        // manipulator_pub_->publish(rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
+        //                               .shoot_mode(trajectory.shoot_mode)
+        //                               .trigger_mode(trajectory.trigger_mode)
+        //                               .kick_speed(intent.kick_speed)
+        //                               .dribbler_speed(trajectory.dribbler_speed));
     }
 }
 
@@ -249,7 +249,7 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
     try {
         trajectory = unsafe_plan_for_robot(request);
     } catch (std::runtime_error exception) {
-        SPDLOG_WARN("PelannerForRobot {} error caught: {}", robot_id_, exception.what());
+        SPDLOG_WARN("PlannerForRobot {} error caught: {}", robot_id_, exception.what());
         // SPDLOG_WARN("PlannerForRobot {}: Defaulting to EscapeObstaclesPathPlanner", robot_id_);
 
         current_path_planner_ = default_path_planner_.get();

@@ -6,18 +6,25 @@
 
 #include "rj_strategy/commands/command_groups/sequential_command.hpp"
 #include "rj_strategy/commands/move_command.hpp"
+#include "rj_strategy/commands/move_to_ball_command.hpp"
 #include "rj_strategy/commands/wait_command.hpp"
 
 namespace strategy {
 Strategizer::Strategizer() : Node("stratgizer") {
     client_ptr_ = rclcpp_action::create_client<rj_msgs::action::RobotMove>(this, "robot_move");
+    manipulator_client_ptr_ =
+        rclcpp_action::create_client<rj_msgs::action::RobotMove>(this, "robot_manipulator");
     auto thread_callback = [this]() { this->thread_callback(); };
 
     scheduler = std::make_shared<commands::CommandScheduler>();
 
+    for (int i = 0; i < 6; i++) {
+        robots.push_back(std::make_shared<Robot>(i, this));
+    }
+
     std::thread thread(thread_callback);
 
-    for (int r_id = 0; r_id < 5; r_id++) {
+    for (int r_id = 0; r_id < 6; r_id++) {
         statePublishers.push_back(this->create_publisher<rj_msgs::msg::AgentState>(
             fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1));
         // NOLINT
@@ -58,7 +65,7 @@ Strategizer::Strategizer() : Node("stratgizer") {
         "thread.join()====================================");
 }
 void Strategizer::thread_callback() {
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 
     planning::MotionCommand mCommand = planning::MotionCommand{"path_target",
                                                                planning::LinearMotionInstant{
@@ -73,20 +80,20 @@ void Strategizer::thread_callback() {
                                                                 },
                                                                 planning::FaceTarget(), true};
 
-    Robot robot1(1);
-
     std::shared_ptr<commands::MoveCommand> move_command =
-        std::make_shared<commands::MoveCommand>(robot1, mCommand, client_ptr_);
+        std::make_shared<commands::MoveCommand>(robots.at(1), mCommand);
     std::shared_ptr<commands::MoveCommand> move_command2 =
-        std::make_shared<commands::MoveCommand>(robot1, mCommand2, client_ptr_);
+        std::make_shared<commands::MoveCommand>(robots.at(1), mCommand2);
 
     commands::SequentialCommand sCommand({move_command, move_command2});
     std::shared_ptr<commands::SequentialCommand> sequential_command =
         std::make_shared<commands::SequentialCommand>(
             std::initializer_list<std::shared_ptr<commands::Command>>{move_command, move_command2});
+
+    auto ballCommand = std::make_shared<commands::MoveToBallCommand>(worldStateCache, robots.at(1));
     // std::make_shared<commands::SequentialCommand>(sCommand);
     SPDLOG_INFO("===============================Built Motion Command==========================");
-    if (scheduler->scheduleCommand(sequential_command)) {
+    if (scheduler->scheduleCommand(ballCommand)) {
         SPDLOG_INFO(
             "===============================Scheduled Motion Command==========================");
     } else {
@@ -101,7 +108,8 @@ void Strategizer::tick() {
 
 void Strategizer::world_state_callback(const rj_msgs::msg::WorldState::SharedPtr& msg) {
     worldStateCache.push_back(msg);
-
+    // SPDLOG_INFO("===================================World State Updated: Size {}========",
+    // worldStateCache.size());
     if (worldStateCache.size() > world_state_cache_max_size) {
         std::move(worldStateCache.front());
         worldStateCache.pop_front();
