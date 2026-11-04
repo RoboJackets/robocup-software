@@ -28,11 +28,11 @@ namespace strategy {
     }
 
     std::optional<RobotIntent> CornerKicker::derived_get_task(RobotIntent intent) {
-        if (!last_world_state_) {
-            return std::nullopt;
+        if (latest_state_ == APPROACHING) {
+            target_ = calculate_best_pass_target(); // put in here so doesnt recompute every tick
         }
 
-        target_ = calculate_best_pass_target();
+
         latest_state_ = update_state();
         return state_to_task(intent);
     }
@@ -51,11 +51,11 @@ namespace strategy {
         std::optional<rj_geometry::Point> best;
         double best_dist = std::numeric_limits<double>::max();
         
-        const auto& allies = last_world_state_->our_robots; // ERIC:::: verify name???
+        const auto& allies = last_world_state_->our_robots; 
         // LOOP THROUGH ALLIED ROBOTS
         for (size_t i = 0; i < allies.size(); i++) {
-            if (static_cast<int>(i) == robot_id_) continue;       // if id is me, skip
-            if (!allies[i].visible) continue                    // verify flag name??
+            if (static_cast<int>(i) == robot_id_) continue;       // skip self
+            if (!allies[i].visible) continue;                     // not on field
 
             rj_geometry::Point pos = allies[i].pose.position();
 
