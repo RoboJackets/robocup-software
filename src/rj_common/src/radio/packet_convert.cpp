@@ -64,7 +64,8 @@ void sim_to_status(const RobotFeedback& sim, RobotStatus* status) {
 }
 
 void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
-    rj_convert::convert_to_ros(status.timestamp, &(msg->timestamp));
+    rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+        status.timestamp, msg->timestamp);
     msg->robot_id = status.shell_id;
     msg->battery_voltage = status.battery_voltage;
     msg->motor_errors = status.motors_healthy;
@@ -77,7 +78,8 @@ void status_to_ros(const RobotStatus& status, rj_msgs::msg::RobotStatus* msg) {
 }
 
 void ros_to_status(const rj_msgs::msg::RobotStatus& msg, RobotStatus* status) {
-    rj_convert::convert_from_ros(msg.timestamp, &(status->timestamp));
+    rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+        msg.timestamp, status->timestamp);
     status->shell_id = msg.robot_id;
     status->battery_voltage = msg.battery_voltage;
     status->motors_healthy = msg.motor_errors;

@@ -169,8 +169,8 @@ private:
 
     rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
     rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
+    rclcpp::Publisher<TeamInfo::Msg>::SharedPtr our_team_info_pub_;
+    rclcpp::Publisher<TeamInfo::Msg>::SharedPtr their_team_info_pub_;
     rclcpp::Publisher<PlayState::Msg>::SharedPtr play_state_pub_;
     rclcpp::Publisher<MatchState::Msg>::SharedPtr match_state_pub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
