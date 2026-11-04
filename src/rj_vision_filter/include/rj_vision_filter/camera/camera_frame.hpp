@@ -43,8 +43,8 @@ public:
                 double team_angle)
         : t_capture{[](const builtin_interfaces::msg::Time& stamp) {
               RJ::Time time;
-              rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
-                  stamp, time);
+              rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(stamp,
+                                                                                              time);
               return time;
           }(msg.t_capture)},
           camera_id{static_cast<int>(msg.camera_id)},

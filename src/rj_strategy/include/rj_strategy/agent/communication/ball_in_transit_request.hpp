@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-
 #include <rj_msgs/msg/ball_in_transit_request.hpp>
 
 namespace strategy::communication {

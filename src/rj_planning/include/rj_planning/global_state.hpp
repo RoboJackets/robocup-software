@@ -8,7 +8,6 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <sys/time.h>
+#include <chrono>
+#include <string>
 
 #include <builtin_interfaces/msg/duration.hpp>
 #include <builtin_interfaces/msg/time.hpp>
-#include <chrono>
 #include <rclcpp/time.hpp>
 #include <rclcpp/type_adapter.hpp>
 
-#include <string>
+#include <sys/time.h>
 
 using namespace std::chrono_literals;
 

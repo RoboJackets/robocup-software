@@ -7,7 +7,6 @@
 
 #include <rj_common/time.hpp>
 
-
 #include "rj_msgs/msg/pass_received_request.hpp"
 
 namespace strategy::communication {

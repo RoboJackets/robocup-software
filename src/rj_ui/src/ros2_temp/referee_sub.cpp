@@ -15,8 +15,7 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     play_state_sub_ = node_->create_subscription<PlayState::Msg>(
-        referee::topics::kPlayStateTopic, keep_latest,
-        [this](PlayState::Msg::ConstSharedPtr msg) {
+        referee::topics::kPlayStateTopic, keep_latest, [this](PlayState::Msg::ConstSharedPtr msg) {
             rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_custom(*msg,
                                                                               context_->play_state);
         });
@@ -29,9 +28,8 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor) : context_(
         });
 
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(
-        referee::topics::kTeamColorTopic, keep_latest, [this](TeamColorMsg::UniquePtr msg) {
-            context_->blue_team = msg->is_blue;
-        });
+        referee::topics::kTeamColorTopic, keep_latest,
+        [this](TeamColorMsg::UniquePtr msg) { context_->blue_team = msg->is_blue; });
 
     goalie_sub_ = node_->create_subscription<GoalieMsg>(
         referee::topics::kGoalieTopic, keep_latest, []([[maybe_unused]] GoalieMsg::UniquePtr msg) {

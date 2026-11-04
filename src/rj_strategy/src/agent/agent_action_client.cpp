@@ -155,8 +155,8 @@ void AgentActionClient::get_task() {
             send_new_goal();
         }
     }
-    current_state_publisher_->publish(rj_msgs::build<rj_msgs::msg::AgentState>().state(
-        current_position_->get_current_state()));
+    current_state_publisher_->publish(
+        rj_msgs::build<rj_msgs::msg::AgentState>().state(current_position_->get_current_state()));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -293,8 +293,9 @@ void AgentActionClient::receive_communication_callback(
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
         communication::AgentRequest agent_request;
-        rclcpp::TypeAdapter<communication::AgentRequest, rj_msgs::msg::AgentRequest>::
-            convert_to_custom(request->agent_request, agent_request);
+        rclcpp::TypeAdapter<communication::AgentRequest,
+                            rj_msgs::msg::AgentRequest>::convert_to_custom(request->agent_request,
+                                                                           agent_request);
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
@@ -305,8 +306,9 @@ void AgentActionClient::receive_communication_callback(
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
         communication::AgentRequest received_request;
-        rclcpp::TypeAdapter<communication::AgentRequest, rj_msgs::msg::AgentRequest>::
-            convert_to_custom(request->agent_request, received_request);
+        rclcpp::TypeAdapter<communication::AgentRequest,
+                            rj_msgs::msg::AgentRequest>::convert_to_custom(request->agent_request,
+                                                                           received_request);
         agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back

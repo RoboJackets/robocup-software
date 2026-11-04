@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <vector>
 
-
 #include <rclcpp/type_adapter.hpp>
 
 #include <rj_geometry/circle.hpp>
@@ -53,8 +52,8 @@ struct TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose> {
     using ros_message_type = rj_geometry_msgs::msg::Pose;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.position(), destination.position);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.position(), destination.position);
         destination.heading = source.heading();
     }
 
@@ -72,8 +71,8 @@ struct TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist> {
     using ros_message_type = rj_geometry_msgs::msg::Twist;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.linear(), destination.linear);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.linear(), destination.linear);
         destination.angular = source.angular();
     }
 
@@ -99,8 +98,9 @@ struct TypeAdapter<rj_geometry::Line, rj_geometry_msgs::msg::Line> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.pt[i], destination.pt[i]);
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
+                                                                                 destination.pt[i]);
         }
     }
 };
@@ -120,8 +120,9 @@ struct TypeAdapter<rj_geometry::Segment, rj_geometry_msgs::msg::Segment> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.pt[i], destination.pt[i]);
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
+                                                                                 destination.pt[i]);
         }
     }
 };
@@ -141,8 +142,9 @@ struct TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         for (size_t i = 0; i < source.pt.size(); ++i) {
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.pt[i], destination.pt[i]);
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
+                                                                                 destination.pt[i]);
         }
     }
 };
@@ -155,11 +157,12 @@ struct TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_geometry_msgs::msg::Point center;
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.center, center);
-        destination = rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>()
-                          .center(center)
-                          .radius(source.radius());
+        rclcpp::TypeAdapter<rj_geometry::Point,
+                            rj_geometry_msgs::msg::Point>::convert_to_ros_message(source.center,
+                                                                                  center);
+        destination =
+            rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>().center(center).radius(
+                source.radius());
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
@@ -212,8 +215,9 @@ struct TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
         for (const auto& shape : source.shapes()) {
             if (const auto* as_rect = dynamic_cast<rj_geometry::Rect*>(shape.get())) {
                 rj_geometry_msgs::msg::Rect rect;
-                rclcpp::TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect>::
-                    convert_to_ros_message(*as_rect, rect);
+                rclcpp::TypeAdapter<rj_geometry::Rect,
+                                    rj_geometry_msgs::msg::Rect>::convert_to_ros_message(*as_rect,
+                                                                                         rect);
                 destination.rectangles.emplace_back(std::move(rect));
             } else if (const auto* as_circle = dynamic_cast<rj_geometry::Circle*>(shape.get())) {
                 rj_geometry_msgs::msg::Circle circle;
@@ -238,25 +242,29 @@ struct TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
             source.rectangles.begin(), source.rectangles.end(),
             std::back_inserter(destination.shapes()), [](const auto& rect) {
                 rj_geometry::Rect converted;
-                rclcpp::TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect>::convert_to_custom(
-                    rect, converted);
+                rclcpp::TypeAdapter<rj_geometry::Rect,
+                                    rj_geometry_msgs::msg::Rect>::convert_to_custom(rect,
+                                                                                    converted);
                 return std::make_shared<rj_geometry::Rect>(std::move(converted));
             });
-        std::transform(source.circles.begin(), source.circles.end(),
-                       std::back_inserter(destination.shapes()), [](const auto& circle) {
-                           rj_geometry::Circle converted;
-                           rclcpp::TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle>::
-                               convert_to_custom(circle, converted);
-                           return std::make_shared<rj_geometry::Circle>(std::move(converted));
-                       });
-        std::transform(source.polygons.begin(), source.polygons.end(),
-                       std::back_inserter(destination.shapes()), [](const auto& polygon) {
-                           rj_geometry::Polygon converted;
-                           rclcpp::TypeAdapter<rj_geometry::Polygon,
-                                               rj_geometry_msgs::msg::Polygon>::convert_to_custom(
-                               polygon, converted);
-                           return std::make_shared<rj_geometry::Polygon>(std::move(converted));
-                       });
+        std::transform(
+            source.circles.begin(), source.circles.end(), std::back_inserter(destination.shapes()),
+            [](const auto& circle) {
+                rj_geometry::Circle converted;
+                rclcpp::TypeAdapter<rj_geometry::Circle,
+                                    rj_geometry_msgs::msg::Circle>::convert_to_custom(circle,
+                                                                                      converted);
+                return std::make_shared<rj_geometry::Circle>(std::move(converted));
+            });
+        std::transform(
+            source.polygons.begin(), source.polygons.end(),
+            std::back_inserter(destination.shapes()), [](const auto& polygon) {
+                rj_geometry::Polygon converted;
+                rclcpp::TypeAdapter<rj_geometry::Polygon,
+                                    rj_geometry_msgs::msg::Polygon>::convert_to_custom(polygon,
+                                                                                       converted);
+                return std::make_shared<rj_geometry::Polygon>(std::move(converted));
+            });
     }
 };
 

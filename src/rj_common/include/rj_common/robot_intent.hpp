@@ -2,7 +2,6 @@
 
 #include <memory>
 
-
 #include <rj_geometry/shape_set.hpp>
 #include <rj_msgs/msg/robot_intent.hpp>
 
@@ -64,10 +63,10 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
-        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::convert_to_custom(
-            source.motion_command, destination.motion_command);
-        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::convert_to_custom(
-            source.local_obstacles, destination.local_obstacles);
+        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::
+            convert_to_custom(source.motion_command, destination.motion_command);
+        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
+            convert_to_custom(source.local_obstacles, destination.local_obstacles);
         destination.shoot_mode = static_cast<RobotIntent::ShootMode>(source.shoot_mode);
         destination.trigger_mode = static_cast<RobotIntent::TriggerMode>(source.trigger_mode);
         destination.dribbler_mode = static_cast<RobotIntent::DribblerMode>(source.dribbler_mode);

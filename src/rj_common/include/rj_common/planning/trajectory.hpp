@@ -500,8 +500,8 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         }
         destination = planning::Trajectory{instants};
         RJ::Time stamp;
-        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(source.stamp,
-                                                                                       stamp);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, stamp);
         destination.stamp(stamp);
         destination.mark_angles_valid();
     }

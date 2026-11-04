@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-
 #include <rj_msgs/msg/acknowledge.hpp>
 
 namespace strategy::communication {

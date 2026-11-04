@@ -310,8 +310,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             displacement / 1000.0f,
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
-        config_.update_field_dimensions(
-            [&new_field_dim] {
+        config_.update_field_dimensions([&new_field_dim] {
             FieldDimensions::Msg message;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
                 new_field_dim, message);
@@ -336,8 +335,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
 
-        config_.update_field_dimensions(
-            [&new_field_dim] {
+        config_.update_field_dimensions([&new_field_dim] {
             FieldDimensions::Msg message;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
                 new_field_dim, message);

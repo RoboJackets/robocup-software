@@ -7,7 +7,6 @@
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
-
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
@@ -325,7 +324,8 @@ struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
         PlayState::State state = PlayState::State::Halt;
         rclcpp::TypeAdapter<PlayState::State, uint8_t>::convert_to_custom(source.state, state);
         PlayState::Restart restart = PlayState::Restart::None;
-        rclcpp::TypeAdapter<PlayState::Restart, uint8_t>::convert_to_custom(source.restart, restart);
+        rclcpp::TypeAdapter<PlayState::Restart, uint8_t>::convert_to_custom(source.restart,
+                                                                            restart);
         rj_geometry::Point placement_point;
         rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
             source.placement_point, placement_point);

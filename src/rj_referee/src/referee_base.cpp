@@ -78,8 +78,7 @@ void RefereeBase::send() {
     goalie_id_pub_->publish(goalie_msg);
 
     const auto resolved_play_state = resolve_play_state(
-        yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x,
-        [&] {
+        yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x, [&] {
             FieldDimensions field_dimensions;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
                 config_client_.field_dimensions(), field_dimensions);

@@ -3,7 +3,6 @@
 #include <memory>
 
 #include <rj_common/time.hpp>
-
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_msgs/msg/ball_state.hpp>
@@ -217,8 +216,8 @@ struct TypeAdapter<RobotState, RobotState::Msg> {
             source.timestamp, destination.stamp);
         rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_ros_message(
             source.pose, destination.pose);
-        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_ros_message(
-            source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::
+            convert_to_ros_message(source.velocity, destination.velocity);
         destination.visible = source.visible;
     }
 
@@ -242,10 +241,10 @@ struct TypeAdapter<BallState, BallState::Msg> {
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
             source.timestamp, destination.stamp);
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.velocity, destination.velocity);
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.position, destination.position);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.position, destination.position);
         destination.visible = source.visible;
     }
 

@@ -7,9 +7,7 @@
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
                            const GameSettingsMsg& game_settings)
-    : Node{"config_server", node_options},
-      game_settings_{game_settings},
-      field_dimensions_{[] {
+    : Node{"config_server", node_options}, game_settings_{game_settings}, field_dimensions_{[] {
           FieldDimensions::Msg message;
           rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
               FieldDimensions::kDefaultDimensions, message);

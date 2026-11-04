@@ -29,8 +29,9 @@ public:
     void draw_shapes(const rj_geometry::ShapeSet& shapes,
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes_msg;
-        rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
-            convert_to_ros_message(shapes, shapes_msg);
+        rclcpp::TypeAdapter<rj_geometry::ShapeSet,
+                            rj_geometry_msgs::msg::ShapeSet>::convert_to_ros_message(shapes,
+                                                                                     shapes_msg);
         frame_.shapes.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>()
                                     .shapes(shapes_msg)
                                     .color(color_from_qt(color)));
@@ -40,8 +41,9 @@ public:
                      const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         rj_geometry_msgs::msg::Circle circle_msg;
-        rclcpp::TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle>::
-            convert_to_ros_message(circle, circle_msg);
+        rclcpp::TypeAdapter<rj_geometry::Circle,
+                            rj_geometry_msgs::msg::Circle>::convert_to_ros_message(circle,
+                                                                                   circle_msg);
         shapes.circles.push_back(circle_msg);
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
@@ -64,8 +66,9 @@ public:
                       const QColor& color = QColor::fromRgb(0, 0, 0, 0)) {
         rj_geometry_msgs::msg::ShapeSet shapes;
         rj_geometry_msgs::msg::Polygon polygon_msg;
-        rclcpp::TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon>::
-            convert_to_ros_message(polygon, polygon_msg);
+        rclcpp::TypeAdapter<rj_geometry::Polygon,
+                            rj_geometry_msgs::msg::Polygon>::convert_to_ros_message(polygon,
+                                                                                    polygon_msg);
         shapes.polygons.push_back(polygon_msg);
         frame_.shapes.push_back(
             rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawShapes>().shapes(shapes).color(
@@ -80,8 +83,9 @@ public:
     void draw_segment(const rj_geometry::Segment& segment,
                       const QColor& color = QColor::fromRgb(0, 0, 0)) {
         rj_geometry_msgs::msg::Segment segment_msg;
-        rclcpp::TypeAdapter<rj_geometry::Segment, rj_geometry_msgs::msg::Segment>::
-            convert_to_ros_message(segment, segment_msg);
+        rclcpp::TypeAdapter<rj_geometry::Segment,
+                            rj_geometry_msgs::msg::Segment>::convert_to_ros_message(segment,
+                                                                                    segment_msg);
         frame_.segments.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawSegment>()
                                       .segment(segment_msg)
                                       .color(color_from_qt(color)));
@@ -91,8 +95,9 @@ public:
     void draw_text(const std::string& text, const rj_geometry::Point& position,
                    const QColor& color = QColor::fromRgb(0, 0, 0)) {
         rj_geometry_msgs::msg::Point position_msg;
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            position, position_msg);
+        rclcpp::TypeAdapter<rj_geometry::Point,
+                            rj_geometry_msgs::msg::Point>::convert_to_ros_message(position,
+                                                                                  position_msg);
         frame_.debug_text.push_back(rj_drawing_msgs::build<rj_drawing_msgs::msg::DrawText>()
                                         .text(text)
                                         .position(position_msg)
@@ -103,8 +108,9 @@ public:
         frame_.paths.emplace_back();
         for (const auto& point : points) {
             rj_geometry_msgs::msg::Point point_msg;
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
-                convert_to_ros_message(point, point_msg);
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_ros_message(point,
+                                                                                      point_msg);
             frame_.paths.back().points.push_back(point_msg);
         }
     }

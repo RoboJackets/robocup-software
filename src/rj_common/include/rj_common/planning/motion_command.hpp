@@ -5,7 +5,6 @@
 
 #include <spdlog/spdlog.h>
 
-
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
@@ -118,8 +117,8 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert pivot point
         rj_geometry_msgs::msg::Point pivot_point;
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
-            source.pivot_point, pivot_point);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.pivot_point, pivot_point);
         destination.pivot_point.push_back(pivot_point);
 
         // convert the pivot radius
@@ -143,8 +142,8 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
             result.face_option = planning::FaceAngle{source.override_angle.front()};
         } else if (!source.override_face_point.empty()) {
             rj_geometry::Point face_point;
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.override_face_point.front(), face_point);
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_custom(source.override_face_point.front(), face_point);
             result.face_option = planning::FacePoint{face_point};
         } else if (!source.face_ball.empty()) {
             result.face_option = planning::FaceBall{};
@@ -160,8 +159,8 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert pivot_point
         if (!source.pivot_point.empty()) {
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.pivot_point[0], result.pivot_point);
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+                convert_to_custom(source.pivot_point[0], result.pivot_point);
         }
 
         if (!source.pivot_radius.empty()) {
