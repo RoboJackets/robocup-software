@@ -2,11 +2,12 @@
 
 
 namespace strategy {
-    CornerKicker::CornerKicker(int r_id) : Position(r_id) {
+    CornerKicker::CornerKicker(int r_id) : Position(r_id, "CornerKicker") {
         latest_state_ = APPROACHING;
     }
 
     CornerKicker::CornerKicker(Position&& other) : Position{std::move(other)} {
+        position_name_ = "CornerKicker";
         latest_state_ = APPROACHING;
     }
 
