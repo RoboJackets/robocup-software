@@ -38,6 +38,30 @@ namespace strategy {
     }
 
     CornerKicker::State CornerKicker::update_state() {
+        // make switch case for every state ERIC implemented
+        switch (latest_state_) {
+            case APPROACHING: {
+                // reached spot behind ball and will align
+                if (check_is_done()) {
+                    return LINE_UP;
+                }
+                break;
+            }
+            case LINE_UP: {
+                // aligned or touching ball
+                if (check_is_done() || distance_to_ball() < kOwnBallRadius) {
+                    return KICKING;
+                }
+                break;
+            }
+            case KICKING:{
+                // kick finished
+                if (check_is_done()) {
+                    return APPROACHING;
+                }
+                break;
+            }
+        }
         return latest_state_;
     }
     std::optional<RobotIntent> CornerKicker::state_to_task(RobotIntent intent) {
