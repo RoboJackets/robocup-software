@@ -65,6 +65,37 @@ namespace strategy {
         return latest_state_;
     }
     std::optional<RobotIntent> CornerKicker::state_to_task(RobotIntent intent) {
+        rj_geometry::Point ball = last_world_state_->ball.position;
+
+        // unit vector pointing from ball to preferred kick direction
+        rj_geometry::Point kick_dir = (target_ - ball).normalized(1.0);
+
+        switch(latest_state_) {
+            case APPROACHING: {
+                // go to a spot kApproachDist behind the ball, on the opposite side from target_
+                rj_geometry::Point stage_pt = ball - kick_dir * kApproachDist;
+                planning::LinearMotionInstant goal{stage_pt, rj_geometry::Point{0.0, 0.0}};
+                intent.motion_command =
+                    planning::MotionCommand{"path_target", goal, planning::FaceBall{}};
+                return intent;
+            }
+            case LINE_UP: {
+                rj_geometry::Point line_pt = ball - kick_dir * kOwnBallRadius;
+                planning::PathTargetFaceOption face_option{planning::FaceBall{}};
+                bool ignore_ball{false};  // keep avoiding the ball until we're lined up
+                planning::LinearMotionInstant goal{line_pt, rj_geometry::Point{0.0, 0.0}};
+                intent.motion_command =
+                    planning::MotionCommand{"path_target", goal, face_option, ignore_ball};
+                return intent;
+            }
+            case KICKING: {
+                intent.motion_command = planning::MotionCommand{"line_kick", planning::LinearMotionInstant{target_}};
+                intent.shoot_mode = RobotIntent::ShootMode::KICK;
+                intent.trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
+                intent.kick_speed = 4.0;
+                return intent;
+            }
+        }
         return intent;
     }
 
