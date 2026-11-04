@@ -18,6 +18,7 @@
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/defense.hpp"
+#include "rj_strategy/agent/position/corner_kicker.hpp"
 #include "rj_strategy/agent/position/free_kicker.hpp"
 #include "rj_strategy/agent/position/goal_kicker.hpp"
 #include "rj_strategy/agent/position/goalie.hpp"
@@ -145,6 +146,8 @@ private:
     void handle_setup();
 
     void handle_penalty_playing();
+
+    bool ball_in_their_corner();
 
     /**
      * @brief Sets the current position to the parameterized type.
