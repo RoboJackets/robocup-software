@@ -7,15 +7,12 @@ Runner::Runner(int r_id) : Position(r_id, "Runner") {}
 
 std::optional<RobotIntent> Runner::derived_get_task(RobotIntent intent) {
     current_state_ = next_state();
-    std::cout << intent.motion_command.target << std::endl;
     return state_to_task(intent);
 }
 
 Runner::State Runner::next_state() {
     rj_geometry::Point robot_position =
         last_world_state_->get_robot(true, robot_id_).pose.position();
-    std::cout << robot_position << std::endl;
-    std::cout << current_state_ << std::endl;
 
     if (robot_position.near_point(rj_geometry::Point{-1, 3}, 0.2)) {
         return RIGHT;

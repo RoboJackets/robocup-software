@@ -30,10 +30,6 @@ std::optional<RobotIntent> RobotFactoryPosition::derived_get_task([
     // Ensure the child position always has the debug drawer (survives position swaps)
     current_position_->set_debug_drawer(strategy_debug_drawer_);
 
-    if (robot_id_ == 1) {
-        std::cout << current_position_->get_name() << std::endl;
-    }
-
     if (robot_id_ == goalie_id_) {
         set_current_position<Goalie>();
         return current_position_->get_task(*last_world_state_, field_dimensions_,
