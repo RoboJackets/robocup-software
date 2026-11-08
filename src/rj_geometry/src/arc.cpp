@@ -23,7 +23,7 @@ vector<Point> Arc::intersects(const Line& line) const {
     const float drsq = dx * dx + dy * dy;
     const float det = x1 * y2 - x2 * y1;
 
-    const float disc = radius_sq() * drsq - det * det;
+    const float disc = radius_ * radius_ * drsq - det * det;
     if (disc < 0) {
         // No intersection
         return {};

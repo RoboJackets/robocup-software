@@ -15,6 +15,7 @@ class Segment;
 class Rect : public Shape {
 private:
     int cohen_sutherland_out_code(const Point& other) const;
+    Rect* clone_impl() const override;
     FRIEND_TEST(Rect, cohen_codes);
     FRIEND_TEST(Rect, degenerage_cohen_codes);
 
@@ -34,7 +35,7 @@ public:
     Rect& operator=(const Rect& other) = default;
     Rect& operator=(Rect&& other) = default;
 
-    Shape* clone() const override;
+    [[nodiscard]] std::unique_ptr<Rect> clone() const;
 
     bool operator==(const Rect& other) const { return pt == other.pt; }
 
@@ -67,11 +68,11 @@ public:
 
     bool contains_rect(const Rect& other) const;
 
-    bool contains_point(Point point) const override;
+    bool contains_point(const Point& point) const override;
 
-    bool hit(Point point) const override;
+    bool intersects_segment(const Segment& seg) const override;
 
-    bool hit(const Segment& seg) const override;
+    [[nodiscard]] std::vector<Point> get_segment_intersections(const Segment& seg) const override;
 
     Point center() const { return (pt[0] + pt[1]) / 2; }
 
@@ -113,8 +114,8 @@ public:
      */
     std::vector<Point> corners();
 
-    bool near_point(Point other, float threshold) const override;
-    bool near_segment(const Segment& seg, float threshold) const;
+    bool near_point(const Point& other, float threshold) const override;
+    bool near_segment(const Segment& seg, float threshold) const override;
 
     bool intersects(const Rect& other) const;
 
@@ -127,7 +128,7 @@ public:
 
     std::array<Point, 2> pt;
 
-    std::string to_string() override {
+    std::string to_string() const override {
         std::stringstream str;
         str << *this;
         return str.str();

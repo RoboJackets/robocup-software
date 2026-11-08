@@ -45,7 +45,7 @@ static RobotInstant make_initial_instant(const LinearMotionInstant& linear, cons
                                          const AngleFunction& angle_fn, double approx_angle = 0.0) {
     Eigen::Vector2d gradient;
     double angle = angle_fn(linear, approx_angle, &gradient);
-    double angular_velocity = gradient.dot(Eigen::Vector2d(linear.velocity));
+    double angular_velocity = gradient.dot(to_eigen(linear.velocity));
     return RobotInstant{Pose{linear.position, angle}, Twist{linear.velocity, angular_velocity},
                         time};
 }

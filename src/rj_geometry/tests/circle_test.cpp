@@ -1,10 +1,8 @@
-#include <algorithm>
 #include <vector>
 
 #include <gtest/gtest.h>
 
 #include "rj_geometry/circle.hpp"
-#include "rj_geometry/line.hpp"
 #include "rj_geometry/point.hpp"
 #include "rj_geometry/segment.hpp"
 
@@ -12,26 +10,22 @@ namespace rj_geometry::Testing {
 
 TEST(Circle, GetterSetter) {
     Point center(1, 1);
-    float radius = 1.1;
+    float radius = 1.1f;
 
     Circle c(center, radius);
 
-    EXPECT_NEAR(c.center.x(), center.x(), 0.001);
-    EXPECT_NEAR(c.center.y(), center.y(), 0.001);
+    EXPECT_NEAR(c.center().x(), center.x(), 0.001);
+    EXPECT_NEAR(c.center().y(), center.y(), 0.001);
     EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
 
-    radius = 2.2;
-    c.radius_sq(radius * radius);
+    center = Point(2, 3);
+    c.set_center(center);
+    radius = 2.2f;
+    c.set_radius(radius);
 
+    EXPECT_NEAR(c.center().x(), center.x(), 0.001);
+    EXPECT_NEAR(c.center().y(), center.y(), 0.001);
     EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
-
-    radius = 3.3;
-    c.radius(radius);
-
-    EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
 }
 
 TEST(Circle, ContainsPt) {
@@ -59,101 +53,21 @@ TEST(Circle, NearPoint) {
     EXPECT_FALSE(c.near_point({2.5, 0}, 1));
 }
 
-TEST(Circle, Intersects) {
+TEST(Circle, SegmentIntersection) {
     Circle c({0, 0}, 1);
 
-    Point out[2];
+    EXPECT_TRUE(c.intersects_segment(Segment({-2, 0}, {2, 0})));
+    EXPECT_TRUE(c.intersects_segment(Segment({0, 0}, {0.2, 0})));
+    EXPECT_FALSE(c.intersects_segment(Segment({2, -1}, {2, 1})));
 
-    Circle c1({1, 0}, 1);
-    Circle c2({2, 0}, 1);
-    Circle c3({3, 0}, 1);
-    Circle c4({0, 0}, 1);
+    const std::vector<Point> hits = c.get_segment_intersections(Segment({-2, 0}, {2, 0}));
+    ASSERT_EQ(hits.size(), 2u);
+    EXPECT_TRUE(hits[0].nearly_equals(Point(-1, 0)));
+    EXPECT_TRUE(hits[1].nearly_equals(Point(1, 0)));
 
-    // With nullptr
-    EXPECT_EQ(c.intersects(c1), 2);
-    EXPECT_EQ(c.intersects(c2), 1);
-    EXPECT_EQ(c.intersects(c3), 0);
-    EXPECT_EQ(c.intersects(c4), 0);
-
-    // Will return points
-    EXPECT_EQ(c.intersects(c1, out), 2);
-    EXPECT_NEAR(out[0].x(), 0.5, 0.01);
-    EXPECT_NEAR(out[1].x(), 0.5, 0.01);
-    EXPECT_NEAR(out[0].y(), -0.866, 0.1);
-    EXPECT_NEAR(out[1].y(), 0.866, 0.1);
-    EXPECT_EQ(c.intersects(c2, out), 1);
-    EXPECT_NEAR(out[0].x(), 1, 0.01);
-    EXPECT_NEAR(out[0].y(), 0, 0.01);
-    EXPECT_EQ(c.intersects(c3, out), 0);
-    EXPECT_EQ(c.intersects(c4, out), 0);
-
-    Line l1({0, -1}, {0, 1});
-    Line l2({1, -1}, {1, 1});
-    Line l3({2, -1}, {2, 1});
-
-    // With nullptr
-    EXPECT_EQ(c.intersects(l1), 2);
-    EXPECT_EQ(c.intersects(l2), 1);
-    EXPECT_EQ(c.intersects(l3), 0);
-
-    // Will return points
-    EXPECT_EQ(c.intersects(l1, out), 2);
-    EXPECT_NEAR(out[0].x(), 0, 0.01);
-    EXPECT_NEAR(out[1].x(), 0, 0.01);
-    EXPECT_NEAR(out[0].y(), 1, 0.01);
-    EXPECT_NEAR(out[1].y(), -1, 0.01);
-    EXPECT_EQ(c.intersects(l2, out), 1);
-    EXPECT_NEAR(out[0].x(), 1, 0.01);
-    EXPECT_NEAR(out[0].y(), 0, 0.01);
-    EXPECT_EQ(c.intersects(l3, out), 0);
-}
-
-TEST(Circle, TangentPoints) {
-    Circle c({0, 0}, 1);
-
-    Point out1;
-    Point out2;
-
-    Point s1(0, 0);
-    Point s2(1000000, 0);
-
-    // Nullptrs
-    EXPECT_FALSE(c.tangent_points(s1));
-
-    // Inside circle
-    EXPECT_FALSE(c.tangent_points(s1, &out1, &out2));
-
-    // Outside circle very far away
-    // Tangets are basically top and bottom
-    EXPECT_TRUE(c.tangent_points(s2, &out1, &out2));
-    EXPECT_NEAR(out1.x(), 0.01, 0.01);
-    EXPECT_NEAR(out1.y(), -0.99, 0.01);
-    EXPECT_NEAR(out2.x(), 0.01, 0.01);
-    EXPECT_NEAR(out2.y(), 0.99, 0.01);
-}
-
-TEST(Circle, NearestPoint) {
-    Circle c({0, 0}, 1);
-
-    // No solution so it returns center
-    Point out1 = c.nearest_point({0, 0});
-    EXPECT_NEAR(out1.x(), 0, 0.01);
-    EXPECT_NEAR(out1.y(), 0, 0.01);
-
-    // Inside circle
-    Point out2 = c.nearest_point({0.1, 0});
-    EXPECT_NEAR(out2.x(), 1, 0.01);
-    EXPECT_NEAR(out2.y(), 0, 0.01);
-
-    // On circle
-    Point out3 = c.nearest_point({1, 0});
-    EXPECT_NEAR(out3.x(), 1, 0.01);
-    EXPECT_NEAR(out3.y(), 0, 0.01);
-
-    // Outside circle
-    Point out4 = c.nearest_point({2, 0});
-    EXPECT_NEAR(out4.x(), 1, 0.01);
-    EXPECT_NEAR(out4.y(), 0, 0.01);
+    const std::vector<Point> tangent = c.get_segment_intersections(Segment({1, -2}, {1, 2}));
+    ASSERT_EQ(tangent.size(), 1u);
+    EXPECT_TRUE(tangent[0].nearly_equals(Point(1, 0)));
 }
 
 }  // namespace rj_geometry::Testing

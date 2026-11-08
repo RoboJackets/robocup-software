@@ -6,6 +6,7 @@
 #include <rj_common/planning/robot_constraints.hpp>
 #include <rj_common/planning/trajectory.hpp>
 #include <rj_common/utils.hpp>
+#include <rj_geometry/point_eigen.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 
 #include "rj_planning/primitives/trapezoidal_motion.hpp"
@@ -78,8 +79,7 @@ inline AngleFunction face_point(const rj_geometry::Point point) {
         if (jacobian != nullptr) {
             rj_geometry::Point displacement = point - instant.position;
             double distance_sq = displacement.magsq();
-            *jacobian =
-                Eigen::Vector2d(displacement.rotate(-M_PI / 2) / distance_sq);
+            *jacobian = rj_geometry::to_eigen(displacement.rotate(-M_PI / 2) / distance_sq);
         }
 
         return instant.position.angle_to(point);

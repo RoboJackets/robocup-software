@@ -5,6 +5,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape.hpp>
+#include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/stadium_shape.hpp>
 
 namespace planning {
@@ -20,13 +21,21 @@ public:
     Obstacle& operator=(const Obstacle& other) = default;
     Obstacle& operator=(Obstacle&& other) = default;
 
-    virtual bool obstacle_hit(rj_geometry::Point pt) { return obstacle->hit(pt); }
+    // Shape::hit is the shape itself. These add one robot radius, which is how
+    // far our robot extends past the tested point or segment.
+    virtual bool obstacle_hit(rj_geometry::Point pt) {
+        return obstacle->near_point(pt, kRobotRadius);
+    }
 
-    virtual bool obstacle_hit(const rj_geometry::Segment& seg) { return obstacle->hit(seg); }
+    virtual bool obstacle_hit(const rj_geometry::Segment& seg) {
+        return obstacle->near_segment(seg, kRobotRadius);
+    }
 
-    virtual bool padding_hit(rj_geometry::Point pt) { return padding->hit(pt); }
+    virtual bool padding_hit(rj_geometry::Point pt) { return padding->near_point(pt, kRobotRadius); }
 
-    virtual bool padding_hit(const rj_geometry::Segment& seg) { return padding->hit(seg); }
+    virtual bool padding_hit(const rj_geometry::Segment& seg) {
+        return padding->near_segment(seg, kRobotRadius);
+    }
 
     virtual bool obstacle_near(rj_geometry::Point pt, float thresh) {
         return obstacle->near_point(pt, thresh);

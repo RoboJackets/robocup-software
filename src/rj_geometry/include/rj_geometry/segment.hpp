@@ -2,6 +2,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include <rj_geometry_msgs/msg/segment.hpp>
 
 #include "circle.hpp"
@@ -53,6 +54,13 @@ public:
     Point nearest_point(const Line& l) const;
 
     bool intersects(const Segment& other, Point* intr = nullptr) const;
+
+    /**
+     * Points where this segment meets another.
+     * A crossing contributes one point. A collinear overlap contributes the
+     * endpoints of the overlapping interval.
+     */
+    [[nodiscard]] std::vector<Point> intersection_points(const Segment& other) const;
     bool intersects(const Circle& circle) const;
     bool intersects(const Line& line, Point* intr = 0) const;
 

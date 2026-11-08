@@ -1,7 +1,6 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/segment.hpp>
-#include <rj_geometry/ssl_robot_constants.hpp>
 
 using namespace std;
 
@@ -14,7 +13,9 @@ const int kRight = 0x02;   // 0010
 const int kBottom = 0x04;  // 0100
 const int kTop = 0x08;     // 1000
 
-Shape* Rect::clone() const { return new Rect(*this); }
+std::unique_ptr<Rect> Rect::clone() const { return std::unique_ptr<Rect>(clone_impl()); }
+
+Rect* Rect::clone_impl() const { return new Rect(*this); }
 
 bool Rect::intersects(const Rect& other) const {
     return !(other.maxx() < minx() || other.minx() > maxx() || other.maxy() < miny() ||
@@ -140,13 +141,43 @@ bool Rect::contains_rect(const Rect& other) const {
     return this->contains_point(other.pt[0]) && this->contains_point(other.pt[1]);
 }
 
-bool Rect::contains_point(Point point) const {
+bool Rect::contains_point(const Point& point) const {
     return point.x() >= minx() && point.x() <= maxx() && point.y() >= miny() && point.y() <= maxy();
 }
 
-bool Rect::hit(const Segment& seg) const { return near_segment(seg, kRobotRadius); }
+namespace {
 
-bool Rect::hit(Point point) const { return near_point(point, kRobotRadius); }
+void append_unique(std::vector<Point>& points, const Point& point) {
+    for (const Point& existing : points) {
+        if (existing.nearly_equals(point)) {
+            return;
+        }
+    }
+    points.push_back(point);
+}
+
+}  // namespace
+
+std::vector<Point> Rect::get_segment_intersections(const Segment& seg) const {
+    const Point corners[4] = {Point(minx(), miny()), Point(minx(), maxy()), Point(maxx(), maxy()),
+                              Point(maxx(), miny())};
+
+    std::vector<Point> points;
+    for (int i = 0; i < 4; ++i) {
+        const Segment edge(corners[i], corners[(i + 1) % 4]);
+        for (const Point& hit : seg.intersection_points(edge)) {
+            append_unique(points, hit);
+        }
+    }
+    return points;
+}
+
+bool Rect::intersects_segment(const Segment& seg) const {
+    if (contains_point(seg.pt[0]) || contains_point(seg.pt[1])) {
+        return true;
+    }
+    return !get_segment_intersections(seg).empty();
+}
 
 void Rect::expand(Point p) {
     float min_x = minx();
@@ -222,7 +253,7 @@ bool Rect::near_segment(const Segment& seg, float threshold) const {
     return false;
 }
 
-bool Rect::near_point(Point other, float threshold) const {
+bool Rect::near_point(const Point& other, float threshold) const {
     // Simpler case if this rect is degenerate
     if (pt[0] == pt[1]) {
         return pt[0].dist_to(other) <= threshold;

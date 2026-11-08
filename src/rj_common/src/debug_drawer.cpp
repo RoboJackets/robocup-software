@@ -1,5 +1,7 @@
 #include "rj_common/debug_drawer.hpp"
 
+#include <rj_geometry/point_proto.hpp>
+
 int DebugDrawer::find_debug_layer(QString layer) {
     if (layer.isNull()) {
         layer = "Debug";
@@ -22,7 +24,7 @@ void DebugDrawer::draw_polygon(const rj_geometry::Point* pts, int n, const QColo
     Packet::DebugPath* dbg = log_frame_.add_debug_polygons();
     dbg->set_layer(find_debug_layer(layer));
     for (int i = 0; i < n; ++i) {
-        *dbg->add_points() = pts[i];
+        *dbg->add_points() = rj_geometry::to_packet_point(pts[i]);
     }
     dbg->set_color(color(qc));
 }
@@ -41,7 +43,7 @@ void DebugDrawer::draw_circle(rj_geometry::Point center, float radius, const QCo
                               const QString& layer) {
     Packet::DebugCircle* dbg = log_frame_.add_debug_circles();
     dbg->set_layer(find_debug_layer(layer));
-    *dbg->mutable_center() = center;
+    *dbg->mutable_center() = rj_geometry::to_packet_point(center);
     dbg->set_radius(radius);
     dbg->set_color(color(qc));
 }
@@ -49,7 +51,7 @@ void DebugDrawer::draw_circle(rj_geometry::Point center, float radius, const QCo
 void DebugDrawer::draw_arc(const rj_geometry::Arc& arc, const QColor& qc, const QString& layer) {
     Packet::DebugArc* dbg = log_frame_.add_debug_arcs();
     dbg->set_layer(find_debug_layer(layer));
-    *dbg->mutable_center() = arc.center();
+    *dbg->mutable_center() = rj_geometry::to_packet_point(arc.center());
     dbg->set_radius(arc.radius());
     dbg->set_start(arc.start());
     dbg->set_end(arc.end());
@@ -66,7 +68,7 @@ void DebugDrawer::draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, con
         std::dynamic_pointer_cast<rj_geometry::CompositeShape>(obs);
     std::shared_ptr<rj_geometry::Rect> rect_obs = std::dynamic_pointer_cast<rj_geometry::Rect>(obs);
     if (circ_obs)
-        draw_circle(circ_obs->center, circ_obs->radius(), color, layer);
+        draw_circle(circ_obs->center(), circ_obs->radius(), color, layer);
     else if (poly_obs)
         draw_polygon(poly_obs->vertices, color, layer);
     else if (rect_obs) {
@@ -93,8 +95,8 @@ void DebugDrawer::draw_line(const rj_geometry::Segment& line, const QColor& qc,
                             const QString& layer) {
     Packet::DebugPath* dbg = log_frame_.add_debug_paths();
     dbg->set_layer(find_debug_layer(layer));
-    *dbg->add_points() = line.pt[0];
-    *dbg->add_points() = line.pt[1];
+    *dbg->add_points() = rj_geometry::to_packet_point(line.pt[0]);
+    *dbg->add_points() = rj_geometry::to_packet_point(line.pt[1]);
     dbg->set_color(color(qc));
 }
 
@@ -108,7 +110,7 @@ void DebugDrawer::draw_text(const QString& text, rj_geometry::Point pos, const Q
     Packet::DebugText* dbg = log_frame_.add_debug_texts();
     dbg->set_layer(find_debug_layer(layer));
     dbg->set_text(text.toStdString());
-    *dbg->mutable_pos() = pos;
+    *dbg->mutable_pos() = rj_geometry::to_packet_point(pos);
     dbg->set_color(color(qc));
 }
 
@@ -116,7 +118,7 @@ void DebugDrawer::draw_segment(const rj_geometry::Segment& line, const QColor& q
                                const QString& layer) {
     Packet::DebugPath* dbg = log_frame_.add_debug_paths();
     dbg->set_layer(find_debug_layer(layer));
-    *dbg->add_points() = line.pt[0];
-    *dbg->add_points() = line.pt[1];
+    *dbg->add_points() = rj_geometry::to_packet_point(line.pt[0]);
+    *dbg->add_points() = rj_geometry::to_packet_point(line.pt[1]);
     dbg->set_color(color(qc));
 }

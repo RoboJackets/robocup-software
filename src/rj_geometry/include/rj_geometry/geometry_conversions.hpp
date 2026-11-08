@@ -137,7 +137,7 @@ template <>
 struct RosConverter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
     static rj_geometry_msgs::msg::Circle to_ros(const rj_geometry::Circle& from) {
         return rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>()
-            .center(convert_to_ros(from.center))
+            .center(convert_to_ros(from.center()))
             .radius(convert_to_ros(from.radius()));
     }
 

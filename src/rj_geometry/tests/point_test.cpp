@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "rj_geometry/point.hpp"
+#include "rj_geometry/point_eigen.hpp"
 #include "rj_geometry/util.hpp"
 
 using namespace std;
@@ -26,13 +27,13 @@ TEST(Point, constructors) {
 }
 
 TEST(Point, to_eigen) {
-    Eigen::Vector2d p = Point(1.0, 2.0);
+    Eigen::Vector2d p = to_eigen(Point(1.0, 2.0));
     ASSERT_EQ(p(0), 1.0);
     ASSERT_EQ(p(1), 2.0);
 }
 
 TEST(Point, from_eigen) {
-    Point p = Eigen::Vector2d(1.0, 2.0);
+    Point p = point_from_eigen(Eigen::Vector2d(1.0, 2.0));
     ASSERT_EQ(p.x(), 1.0);
     ASSERT_EQ(p.y(), 2.0);
 }

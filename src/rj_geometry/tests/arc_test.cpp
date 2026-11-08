@@ -23,7 +23,7 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.radius(), radius, 0.001f);
     EXPECT_NEAR(a.start(), start, 0.001f);
     EXPECT_NEAR(a.end(), end, 0.001f);
-    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
+    EXPECT_NEAR(a.radius() * a.radius(), radius * radius, 0.001f);
 
     center = Point(2, 2);
     a.set_center(center);
@@ -39,7 +39,7 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.radius(), radius, 0.001f);
     EXPECT_NEAR(a.start(), start, 0.001f);
     EXPECT_NEAR(a.end(), end, 0.001f);
-    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
+    EXPECT_NEAR(a.radius() * a.radius(), radius * radius, 0.001f);
 }
 
 TEST(Arc, Intersections) {

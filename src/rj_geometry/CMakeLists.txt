@@ -12,9 +12,7 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
-find_package(Qt5 COMPONENTS Core REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_protos REQUIRED)
 find_package(rj_convert REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -23,7 +21,6 @@ find_package(rj_geometry_msgs REQUIRED)
 set(RJ_GEOMETRY_DEPS
   Eigen3
   fmt
-  rj_protos
   rj_convert
   rj_geometry_msgs
 )
@@ -50,14 +47,12 @@ target_include_directories(${PROJECT_NAME}
 
 ament_target_dependencies(${PROJECT_NAME}
   PUBLIC
-  Qt5
   ${RJ_GEOMETRY_DEPS}
 )
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
   Eigen3::Eigen
-  Qt5::Core
   fmt
   ${CMAKE_DL_LIBS}
 )
@@ -77,7 +72,6 @@ install(
 )
 
 ament_export_dependencies(
-  Qt5Core
   ${RJ_GEOMETRY_DEPS}
 )
 

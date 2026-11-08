@@ -1,5 +1,7 @@
 #include "rj_ui/strip_chart.hpp"
 
+#include <rj_geometry/point_proto.hpp>
+
 using namespace std;
 using namespace Packet;
 using namespace boost;
@@ -206,7 +208,8 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame, float* v) const
         return false;
     }
 
-    *v = static_cast<float>(rj_geometry::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
+    *v = static_cast<float>(
+        rj_geometry::point_from_packet(*dynamic_cast<const Packet::Point*>(msg)).mag());
     return true;
 }
 

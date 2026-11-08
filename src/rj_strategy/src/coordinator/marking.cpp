@@ -1,5 +1,7 @@
 #include "rj_strategy/coordinator/marking.hpp"
 
+#include <rj_geometry/ssl_robot_constants.hpp>
+
 namespace strategy {
 
 Marking::Marking() : Coordinator("marking_srv", "marking_data", "marking_node"), num_markers_{0} {
@@ -180,7 +182,7 @@ void Marking::update_danger_scores() {
         double angle_between = 0.0;  // Default to 0 (not dangerous)
         // Check if beyond midfield
 
-        if (field_dimensions_.our_half().hit(robot.pose.position())) {
+        if (field_dimensions_.our_half().near_point(robot.pose.position(), kRobotRadius)) {
             const auto& vec_goal_to_center = field_center - goal_loc;
             const auto& vec_goal_to_robot = robot.pose.position() - goal_loc;
 

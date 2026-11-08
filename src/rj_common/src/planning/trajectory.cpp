@@ -1,5 +1,7 @@
 #include "rj_common/planning/trajectory.hpp"
 
+#include <rj_geometry/point_proto.hpp>
+
 namespace planning {
 
 using rj_geometry::Pose;
@@ -189,8 +191,8 @@ void Trajectory::draw(DebugDrawer* drawer,
 
         for (const RobotInstant& instant : instants_) {
             Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbg_path->add_points();
-            *pt->mutable_pos() = instant.pose.position();
-            *pt->mutable_vel() = instant.velocity.linear();
+            *pt->mutable_pos() = rj_geometry::to_packet_point(instant.pose.position());
+            *pt->mutable_vel() = rj_geometry::to_packet_point(instant.velocity.linear());
         }
     }
 
