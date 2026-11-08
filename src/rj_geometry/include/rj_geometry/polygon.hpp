@@ -27,21 +27,21 @@ public:
 
     Polygon(const Polygon& other) : vertices(other.vertices) {}
 
-    Shape* clone() const override;
+    [[nodiscard]] std::unique_ptr<Polygon> clone() const;
 
-    bool contains_point(Point pt) const override;
+    bool contains_point(const Point& pt) const override;
 
     bool intersects(const Rect& rect) const;
     bool intersects(const Polygon& other) const;
+    bool intersects_segment(const Segment& seg) const override;
 
-    bool hit(Point pt) const override;
-    bool hit(const Segment& seg) const override;
+    [[nodiscard]] std::vector<Point> get_segment_intersections(const Segment& seg) const override;
 
     /// Returns true if this polygon contains any vertex of other.
     bool contains_vertex(const Polygon& other) const;
 
-    bool near_point(Point pt, float threshold) const override;
-    bool near_segment(const Segment& seg, float threshold) const;
+    bool near_point(const Point& pt, float threshold) const override;
+    bool near_segment(const Segment& seg, float threshold) const override;
 
     Rect bbox() const;
 
@@ -49,7 +49,7 @@ public:
 
     void add_vertex(Point pt) { vertices.push_back(pt); }
 
-    std::string to_string() override {
+    std::string to_string() const override {
         std::stringstream str;
         str << "Polygon<";
         for (auto vertex : vertices) str << vertex << ", ";
@@ -60,5 +60,7 @@ public:
 protected:
     /// Used by constructors
     void init(const Segment& seg, float r, float length);
+
+    Polygon* clone_impl() const override;
 };
 }

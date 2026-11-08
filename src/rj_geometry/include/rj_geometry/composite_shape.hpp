@@ -27,10 +27,13 @@ public:
         }
     }
 
-    [[nodiscard]] Shape* clone() const override;
+    [[nodiscard]] std::unique_ptr<CompositeShape> clone() const;
 
-    [[nodiscard]] bool contains_point(Point pt) const override;
-    [[nodiscard]] bool near_point(Point pt, float threshold) const override;
+    [[nodiscard]] bool contains_point(const Point& pt) const override;
+    [[nodiscard]] bool near_point(const Point& pt, float threshold) const override;
+    [[nodiscard]] bool intersects_segment(const Segment& seg) const override;
+    [[nodiscard]] bool near_segment(const Segment& seg, float clearance) const override;
+    [[nodiscard]] std::vector<Point> get_segment_intersections(const Segment& seg) const override;
 
     void add(const std::shared_ptr<Shape>& shape);
 
@@ -48,29 +51,6 @@ public:
 
     [[nodiscard]] unsigned int size() const { return subshapes_.size(); }
 
-    /**
-     * Checks if a given shape is in it
-     *
-     * @param obj The object to collision test
-     * @return A bool telling whether or not there were any collisions
-     */
-    template <typename T>
-    [[nodiscard]] bool hit(const T& obj) const {
-        for (const auto& it : *this) {
-            if (it->hit(obj)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    [[nodiscard]] bool hit(Point pt) const override { return hit<Point>(pt); }
-
-    [[nodiscard]] bool hit(const Segment& seg) const override {
-        return hit<Segment>(seg);
-    }
-
     // STL typedefs
     using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
     using iterator = std::vector<std::shared_ptr<Shape>>::iterator;
@@ -83,7 +63,7 @@ public:
     iterator begin() { return subshapes_.begin(); }
     iterator end() { return subshapes_.end(); }
 
-    std::string to_string() override {
+    std::string to_string() const override {
         std::stringstream str;
         str << "CompositeShape<";
         for (auto& subshape : subshapes_) {
@@ -103,6 +83,8 @@ public:
     }
 
 private:
+    CompositeShape* clone_impl() const override;
+
     std::vector<std::shared_ptr<Shape>> subshapes_;
 };
 

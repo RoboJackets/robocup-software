@@ -73,7 +73,7 @@ void DebugDrawer::draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, con
         std::dynamic_pointer_cast<rj_geometry::CompositeShape>(obs);
     std::shared_ptr<rj_geometry::Rect> rect_obs = std::dynamic_pointer_cast<rj_geometry::Rect>(obs);
     if (circ_obs) {
-        draw_circle(circ_obs->center, circ_obs->radius(), color, layer);
+        draw_circle(circ_obs->center(), circ_obs->radius(), color, layer);
     } else if (poly_obs) {
         draw_polygon(poly_obs->vertices, color, layer);
     } else if (rect_obs) {

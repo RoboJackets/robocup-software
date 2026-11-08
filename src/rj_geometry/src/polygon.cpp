@@ -1,5 +1,4 @@
 #include <rj_geometry/polygon.hpp>
-#include <rj_geometry/ssl_robot_constants.hpp>
 
 namespace rj_geometry {
 
@@ -13,7 +12,11 @@ Polygon::Polygon(const Rect& rect) {
 
 Polygon::Polygon(std::vector<Point> verts) { vertices = std::move(verts); }
 
-Shape* Polygon::clone() const { return new Polygon(*this); }
+std::unique_ptr<Polygon> Polygon::clone() const {
+    return std::unique_ptr<Polygon>(clone_impl());
+}
+
+Polygon* Polygon::clone_impl() const { return new Polygon(*this); }
 
 void Polygon::init(const Segment& seg, float r, float length) {
     Point dir;
@@ -61,7 +64,7 @@ bool Polygon::contains_vertex(const Polygon& other) const {
     return false;
 }
 
-bool Polygon::near_point(Point pt, float threshold) const {
+bool Polygon::near_point(const Point& pt, float threshold) const {
     if (contains_point(pt)) {
         return true;
     }
@@ -97,7 +100,41 @@ bool Polygon::near_segment(const Segment& seg, float threshold) const {
     return false;
 }
 
-bool Polygon::contains_point(Point pt) const {
+bool Polygon::intersects_segment(const Segment& seg) const {
+    if (vertices.empty()) {
+        return false;
+    }
+    if (contains_point(seg.pt[0]) || contains_point(seg.pt[1])) {
+        return true;
+    }
+    return !get_segment_intersections(seg).empty();
+}
+
+std::vector<Point> Polygon::get_segment_intersections(const Segment& seg) const {
+    std::vector<Point> points;
+    if (vertices.size() < 2) {
+        return points;
+    }
+
+    auto add_point = [&points](const Point& point) {
+        for (const Point& existing : points) {
+            if (existing.nearly_equals(point)) {
+                return;
+            }
+        }
+        points.push_back(point);
+    };
+
+    for (unsigned int i = 0; i < vertices.size(); ++i) {
+        const Segment edge(vertices[i], vertices[(i + 1) % vertices.size()]);
+        for (const Point& hit : seg.intersection_points(edge)) {
+            add_point(hit);
+        }
+    }
+    return points;
+}
+
+bool Polygon::contains_point(const Point& pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
     // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
@@ -152,9 +189,5 @@ bool Polygon::contains_point(Point pt) const {
 
     return count != 0;
 }
-
-bool Polygon::hit(Point pt) const { return near_point(pt, kRobotRadius); }
-
-bool Polygon::hit(const Segment& seg) const { return near_segment(seg, kRobotRadius); }
 
 }  // namespace rj_geometry

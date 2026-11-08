@@ -157,9 +157,8 @@ struct TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_geometry_msgs::msg::Point center;
-        rclcpp::TypeAdapter<rj_geometry::Point,
-                            rj_geometry_msgs::msg::Point>::convert_to_ros_message(source.center,
-                                                                                  center);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.center(), center);
         destination =
             rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>().center(center).radius(
                 source.radius());

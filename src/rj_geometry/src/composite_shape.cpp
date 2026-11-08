@@ -2,9 +2,13 @@
 
 namespace rj_geometry {
 
-Shape* CompositeShape::clone() const { return new CompositeShape(*this); }
+std::unique_ptr<CompositeShape> CompositeShape::clone() const {
+    return std::unique_ptr<CompositeShape>(clone_impl());
+}
 
-bool CompositeShape::contains_point(Point pt) const {
+CompositeShape* CompositeShape::clone_impl() const { return new CompositeShape(*this); }
+
+bool CompositeShape::contains_point(const Point& pt) const {
     for (const auto& subshape : subshapes_) {
         if (subshape->contains_point(pt)) {
             return true;
@@ -13,13 +17,40 @@ bool CompositeShape::contains_point(Point pt) const {
     return false;
 }
 
-bool CompositeShape::near_point(Point pt, float threshold) const {
+bool CompositeShape::near_point(const Point& pt, float threshold) const {
     for (const auto& subshape : subshapes_) {
         if (subshape->near_point(pt, threshold)) {
             return true;
         }
     }
     return false;
+}
+
+bool CompositeShape::intersects_segment(const Segment& seg) const {
+    for (const auto& subshape : subshapes_) {
+        if (subshape->intersects_segment(seg)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CompositeShape::near_segment(const Segment& seg, float clearance) const {
+    for (const auto& subshape : subshapes_) {
+        if (subshape->near_segment(seg, clearance)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::vector<Point> CompositeShape::get_segment_intersections(const Segment& seg) const {
+    std::vector<Point> points;
+    for (const auto& subshape : subshapes_) {
+        const std::vector<Point> hits = subshape->get_segment_intersections(seg);
+        points.insert(points.end(), hits.begin(), hits.end());
+    }
+    return points;
 }
 
 void CompositeShape::add(const std::shared_ptr<Shape>& shape) {

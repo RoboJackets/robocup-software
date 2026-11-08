@@ -73,7 +73,7 @@ void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,
         LinearMotionInstant instant = trajectory->instant_at(i).linear_motion();
         target_angles.at(i) = angle_function(instant, target_angles.at(i - 1), &gradient);
         velocity.at(i) =
-            trajectory->instant_at(i).linear_velocity().dot(rj_geometry::Point(gradient));
+            trajectory->instant_at(i).linear_velocity().dot(rj_geometry::point_from_eigen(gradient));
     }
 
     // TODO(#1506): Re-enable this. Currently the forward-tracking is disabled

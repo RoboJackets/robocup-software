@@ -62,6 +62,17 @@ public:
     [[nodiscard]] virtual std::vector<Point> get_segment_intersections(const Segment& seg) const = 0;
 
     /**
+     * Zero-clearance collision query.
+     *
+     * hit(point) asks contains_point. hit(segment) asks intersects_segment.
+     * A robot radius is not part of that question: callers that need padding,
+     * including one robot, pass the clearance to near_point or near_segment.
+     */
+    [[nodiscard]] bool hit(const Point& point) const { return contains_point(point); }
+
+    [[nodiscard]] bool hit(const Segment& segment) const { return intersects_segment(segment); }
+
+    /**
      * Converts to a printable string.
      * Currently pure virtual because I would be mad if I got a debug message saying "Shape".
      *
