@@ -3,7 +3,6 @@
 #include <memory>
 #include <optional>
 
-#include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
 

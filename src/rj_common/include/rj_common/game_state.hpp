@@ -5,7 +5,6 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>

@@ -16,7 +16,6 @@
 
 #include <rj_common/game_state.hpp>
 #include <rj_common/network.hpp>
-#include <rj_common/referee_enums.hpp>
 #include <rj_common/team_info.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/utils.hpp>
@@ -31,7 +30,8 @@
 namespace referee {
 
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
-
+using Stage = Referee_Stage;
+using Command = Referee_Command;
 /**
  * @brief The ExternalReferee listens to a port for referee packets over the
  * network.
