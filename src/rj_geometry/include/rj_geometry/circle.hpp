@@ -22,6 +22,8 @@ class Circle : public Shape {
 public:
     using Msg = rj_geometry_msgs::msg::Circle;
 
+    // --- Constructors ---
+
     /**
      * Initialize a circle with a given center and radius.
      *
@@ -36,11 +38,13 @@ public:
         radius_ = radius;
     }
 
-    /** Getters */
+    // --- Getters ---
+
     Point center() const { return center_; }
     float radius() const { return radius_; }
 
-    /** Setters */
+    // --- Setters ---
+
     void set_center(Point center) {
         center_ = center;
     }
@@ -49,7 +53,12 @@ public:
         radius_ = radius;
     }
 
-    /** Overriding virtuals from Shape */
+    // --- Operators ---
+
+    // ... none for now ...
+
+    // --- Shape virtuals ---
+
     bool contains_point(const Point& p) const override;
     bool intersects_segment(const Segment& seg) const override;
     bool near_point(const Point& p, float clearance) const override;
@@ -61,18 +70,27 @@ public:
         return str.str();
     }
 
-    /** Overriding clone utilites from Shape */
+    // --- Shape pseudovirtual clone ---
+
     std::unique_ptr<Circle> clone() const;
 
-    /** Custom utilities not from Shape */
+    // --- Custom utilities ---
+
     // ... none for now ...
 
 protected:
-    /** Overriding clone utilites from Shape */
-    Circle* clone_impl() const override;
+    // --- Hidden parameters ---
 
-    /** Hidden parameters */
     Point center_;
     float radius_;
+
+    // --- Shape virtuals
+
+    Circle* clone_impl() const override;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
 };
 }

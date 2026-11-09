@@ -1,49 +1,51 @@
-#include <rj_geometry/point.hpp>
-#include <rj_geometry/rect.hpp>
-#include <rj_geometry/segment.hpp>
+#include <algorithm>
+#include <array>
+#include <memory>
+#include <vector>
+
+#include "rj_geometry/point.hpp"
+#include "rj_geometry/rect.hpp"
+#include "rj_geometry/segment.hpp"
 
 using namespace std;
 
 namespace rj_geometry {
 
-// constants used for the rect-segment intersection
-const int kInside = 0x00;  // 0000
-const int kLeft = 0x01;    // 0001
-const int kRight = 0x02;   // 0010
-const int kBottom = 0x04;  // 0100
-const int kTop = 0x08;     // 1000
+void Rect::expand(Point p) {
+    corners_[0].x() = min(minx(), (float)p.x());
+    corners_[0].y() = min(miny(), (float)p.y());
+    corners_[1].x() = max(maxx(), (float)p.x());
+    corners_[1].y() = max(maxy(), (float)p.y());
+}
+
+void Rect::expand(const Rect& rect) {
+    std::array<Point, 2> corners = rect.corners();
+    expand(corners[0]);
+    expand(corners[1]);
+}
+
+void Rect::pad(float padding) {
+    corners_[0].x() = minx() - padding;
+    corners_[0].y() = miny() - padding;
+    corners_[1].x() = maxx() + padding;
+    corners_[1].y() = maxy() + padding;
+}
+
+bool Rect::contains_point(const Point& p) const {
+    return (p.x() >= minx()) && (p.x() <= maxx()) && (p.y() >= miny()) && (p.y() <= maxy());
+}
+
+// bool intersects_segment(const Segment& seg) const override; // TODO: use sutherland-cohen
+
+// bool near_point(const Point& p, float clearance) const override;
+
+// bool near_segment(const Segment& seg, float clearance) const override;
+
+// std::vector<Point> get_segment_intersections(const Segment& seg) const override;
 
 std::unique_ptr<Rect> Rect::clone() const { return std::unique_ptr<Rect>(clone_impl()); }
 
-Rect* Rect::clone_impl() const { return new Rect(*this); }
-
-bool Rect::intersects(const Rect& other) const {
-    return !(other.maxx() < minx() || other.minx() > maxx() || other.maxy() < miny() ||
-             other.miny() > maxy());
-}
-
-int Rect::cohen_sutherland_out_code(const Point& other) const {
-    int code;
-    double x;
-    double y;
-    x = other.x();
-    y = other.y();
-
-    code = kInside;    // initialised as being inside of [[clip window]]
-    if (x < minx()) {  // to the left of clip window
-        code |= kLeft;
-    } else if (x > maxx()) {  // to the right of clip window
-        code |= kRight;
-    }
-    if (y < miny()) {  // below the clip window
-        code |= kBottom;
-    } else if (y > maxy()) {  // above the clip window
-        code |= kTop;
-    }
-
-    return code;
-}
-
+/** DEPRECATE AND REMOVE ALL REFERENCES! Old version of what is now split into intersects_segment and get_segment_intersections */
 std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) const {
     // Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line
     // Clipping
@@ -127,23 +129,39 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
     return std::tuple<bool, std::vector<Point> >(accept, intersection_points);
 }
 
-std::vector<Point> Rect::corners() {
-    std::vector<Point> tmp;
-    tmp.emplace_back(minx(), miny());
-    tmp.emplace_back(minx(), maxy());
-    tmp.emplace_back(maxx(), maxy());
-    tmp.emplace_back(maxx(), miny());
-    return tmp;
+Rect* Rect::clone_impl() const { return new Rect(*this); }
+
+int Rect::cohen_sutherland_out_code(const Point& other) const {
+    int code;
+    double x;
+    double y;
+    x = other.x();
+    y = other.y();
+
+    code = kInside;
+    if (x < minx()) {
+        code |= kLeft;
+    } else if (x > maxx()) {
+        code |= kRight;
+    }
+    if (y < miny()) {
+        code |= kBottom;
+    } else if (y > maxy()) {
+        code |= kTop;
+    }
+
+    return code;
 }
 
-bool Rect::contains_rect(const Rect& other) const {
-    // return other.pt[0].in_rect(*this) && other.pt[1].in_rect(*this);
-    return this->contains_point(other.pt[0]) && this->contains_point(other.pt[1]);
-}
+// TODO below
 
-bool Rect::contains_point(const Point& point) const {
-    return point.x() >= minx() && point.x() <= maxx() && point.y() >= miny() && point.y() <= maxy();
-}
+
+
+
+
+
+
+
 
 namespace {
 
@@ -179,33 +197,6 @@ bool Rect::intersects_segment(const Segment& seg) const {
     return !get_segment_intersections(seg).empty();
 }
 
-void Rect::expand(Point p) {
-    float min_x = minx();
-    float min_y = miny();
-    float max_x = maxx();
-    float max_y = maxy();
-
-    pt[0].x() = min(min_x, (float)p.x());
-    pt[0].y() = min(min_y, (float)p.y());
-    pt[1].x() = max(max_x, (float)p.x());
-    pt[1].y() = max(max_y, (float)p.y());
-}
-
-void Rect::expand(const Rect& rect) {
-    expand(rect.pt[0]);
-    expand(rect.pt[1]);
-}
-
-void Rect::pad(float padding) {
-    float min_x = minx();
-    float min_y = miny();
-    float max_x = maxx();
-    float max_y = maxy();
-    pt[0].x() = min_x - padding;
-    pt[0].y() = min_y - padding;
-    pt[1].x() = max_x + padding;
-    pt[1].y() = max_y + padding;
-}
 
 bool Rect::near_segment(const Segment& seg, float threshold) const {
     Point p1 = seg.pt[0];
