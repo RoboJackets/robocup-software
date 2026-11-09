@@ -56,6 +56,9 @@ public:
      * Returns a vector containing intersection points between
      * the shape's boundary and the supplied segment.
      *
+     * NOTE: while other intersection functions consider Shape to be a filled lamina,
+     * this STRICTLY considers the boundary of Shape, as though an unfilled polygon
+     *
      * If the shape contains line segments with potentially infinite intersections,
      * this will report the start- and endpoints of the collinear region.
      */
