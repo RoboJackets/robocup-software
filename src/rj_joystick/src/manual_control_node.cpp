@@ -73,34 +73,11 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
             return result;
         });
 
-    auto on_connect = [this](ManualController* controller) {
-        controllers_.insert({controller, std::nullopt});
-    };
-    auto on_disconnect = [this](ManualController* controller) { remove_controller(controller); };
-
-    providers_.push_back(
-        std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
-
-    using rj_msgs::srv::ListJoysticks;
-    list_joysticks_ = create_service<ListJoysticks>(
-        "list_joysticks",
-        [this]([[maybe_unused]] const ListJoysticks::Request::SharedPtr request,  // NOLINT
-               ListJoysticks::Response::SharedPtr response) {                     // NOLINT
-            for (const auto& [controller, robot] : controllers_) {
-                response->descriptions.push_back(controller->get_description());
-                response->uuids.push_back(controller->get_uuid());
-                response->robots.push_back(robot.value_or(-1));
-            }
-        });
-
-    using rj_msgs::srv::SetManual;
-    set_manual_ = create_service<SetManual>(
-        "select_manual",
-        [this](const SetManual::Request::SharedPtr request,                 // NOLINT
-               [[maybe_unused]] SetManual::Response::SharedPtr response) {  // NOLINT
-            set_manual(request->controller_uuid,
-                       request->connect ? std::make_optional(request->robot_id) : std::nullopt);
-        });
+    for (unsigned int i = 0; i < kNumShells; i++) {
+        joy_subs_.push_back(create_subscription<sensor_msgs::msg::Joy>(
+            
+        ))
+    }
 
     for (unsigned int i = 0; i < kNumShells; i++) {
         motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
@@ -110,45 +87,12 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
     }
 
     timer_ = create_wall_timer(std::chrono::microseconds(1'000'000 / 60), [this]() {
-        for (const auto& provider : providers_) {
-            provider->update();
-        }
-
         for (const auto& [controller, robot] : controllers_) {
             if (robot.has_value()) {
                 publish(robot.value(), controller->get_command());
             }
         }
     });
-}
-
-void ManualControlNode::set_manual(const std::string& uuid, std::optional<int> robot_id) {
-    auto it = std::find_if(
-        controllers_.begin(), controllers_.end(),
-        [uuid](const auto& controller_pair) { return controller_pair.first->get_uuid() == uuid; });
-    if (it == controllers_.end()) {
-        SPDLOG_WARN("Requested invalid controller \"{}\"!", uuid);
-        return;
-    }
-
-    auto& [controller, robot] = *it;
-    if (robot.has_value()) {
-        stop_robot(robot.value());
-    }
-
-    robot = robot_id;
-
-    SPDLOG_INFO("Successfully connected controller \"{}\" to robot {}.", controller->get_uuid(),
-                robot_id.value());
-}
-
-void ManualControlNode::remove_controller(ManualController* controller) {
-    auto found = controllers_.find(controller);
-    if (found != controllers_.end()) {
-        controllers_.erase(found);
-    } else {
-        SPDLOG_WARN("Trying to remove non-existent controller!");
-    }
 }
 
 void ManualControlNode::stop_robot(int robot_id) {

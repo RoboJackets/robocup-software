@@ -17,6 +17,7 @@
 #include <rj_msgs/msg/motion_setpoint.hpp>
 #include <rj_msgs/srv/list_joysticks.hpp>
 #include <rj_msgs/srv/set_manual.hpp>
+#include <sensor_msgs/msg/joy.hpp>
 
 #include "rj_joystick/manual_control.hpp"
 #include "rj_joystick/sdl_manual_control.hpp"
@@ -41,18 +42,11 @@ private:
     void stop_robot(int robot_id);
     void publish(int robot_id, const ControllerCommand& command);
 
-    void set_manual(const std::string& uuid, std::optional<int> robot_id);
-    void remove_controller(ManualController* controller);
     std::shared_ptr<ManualControlParams> params_;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
-    std::vector<std::unique_ptr<ManualControllerProvider>> providers_;
-    std::map<ManualController*, std::optional<int>> controllers_;
-
-    rclcpp::Service<rj_msgs::srv::ListJoysticks>::SharedPtr list_joysticks_;
-    rclcpp::Service<rj_msgs::srv::SetManual>::SharedPtr set_manual_;
-
     std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
+    std::vector<rclcpp::Subscriber<sensor_msgs::msg::Joy>::SharedPtr> joy_subs_;
     std::vector<rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr>
         manipulator_setpoint_pubs_;
 

@@ -1,4 +1,0 @@
----
-string[] descriptions
-string[] uuids
-int32[] robots # -1 for disconnected
