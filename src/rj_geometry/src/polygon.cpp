@@ -3,6 +3,7 @@
 namespace rj_geometry {
 
 Polygon::Polygon(const Rect& rect) {
+    // Boundary order: pt[0], (pt[1].x, pt[0].y), pt[1], then (pt[0].x, pt[1].y).
     vertices.resize(4);
     vertices[0] = rect.pt[0];
     vertices[1] = Point(rect.pt[1].x(), rect.pt[0].y());
@@ -23,14 +24,16 @@ void Polygon::init(const Segment& seg, float r, float length) {
     if (length != 0.0f) {
         dir = seg.delta() / length;
     } else {
-        // Degenerate segment, so direction doesn't matter as long as it's a
-        // unit vector.
+        // Degenerate segment, so direction doesn't matter as long as it's a unit vector.
         dir = Point(1, 0);
     }
 
+    // v extends r past each endpoint. u is the perpendicular offset of length r.
     Point v = dir * r;
     Point u = v.perp_ccw();
 
+    // Four corners: the start point shifted by -v +/- u,
+    // then the end point shifted by +v +/- u.
     vertices.resize(4);
     vertices[0] = seg.pt[0] - u - v;
     vertices[1] = seg.pt[0] + u - v;
@@ -39,6 +42,7 @@ void Polygon::init(const Segment& seg, float r, float length) {
 }
 
 Rect Polygon::bbox() const {
+    // Seed the bounds with the first vertex, then expand to the rest.
     Rect rect(vertices[0]);
 
     for (unsigned int i = 1; i < vertices.size(); ++i) {
@@ -48,13 +52,18 @@ Rect Polygon::bbox() const {
     return rect;
 }
 
-bool Polygon::intersects(const Rect& rect) const { return intersects(Polygon(rect)); }
+bool Polygon::intersects(const Rect& rect) const {
+    // Use the rectangle's four-corner polygon.
+    return intersects(Polygon(rect));
+}
 
 bool Polygon::intersects(const Polygon& other) const {
+    // True when either polygon contains a vertex of the other.
     return contains_vertex(other) || other.contains_vertex(*this);
 }
 
 bool Polygon::contains_vertex(const Polygon& other) const {
+    // True if any vertex of other lies inside this polygon.
     for (auto vertice : other.vertices) {
         if (contains_point(vertice)) {
             return true;
@@ -69,6 +78,7 @@ bool Polygon::near_point(const Point& pt, float threshold) const {
         return true;
     }
 
+    // Also true when pt is within threshold of any edge, including the closing edge.
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j) {
         Segment edge(vertices[i], vertices[j]);
@@ -83,10 +93,12 @@ bool Polygon::near_point(const Point& pt, float threshold) const {
 }
 
 bool Polygon::near_segment(const Segment& seg, float threshold) const {
+    // An endpoint inside the polygon is a hit.
     if (contains_point(seg.pt[0]) || contains_point(seg.pt[1])) {
         return true;
     }
 
+    // Otherwise test each edge, including the closing edge, against seg.
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j) {
         Segment edge(vertices[i], vertices[j]);
@@ -101,21 +113,26 @@ bool Polygon::near_segment(const Segment& seg, float threshold) const {
 }
 
 bool Polygon::intersects_segment(const Segment& seg) const {
+    // An empty polygon has no interior and no edges.
     if (vertices.empty()) {
         return false;
     }
+    // Either endpoint inside the polygon is an intersection.
     if (contains_point(seg.pt[0]) || contains_point(seg.pt[1])) {
         return true;
     }
+    // Otherwise an edge must cross the segment.
     return !get_segment_intersections(seg).empty();
 }
 
 std::vector<Point> Polygon::get_segment_intersections(const Segment& seg) const {
     std::vector<Point> points;
+    // A polygon needs at least one edge.
     if (vertices.size() < 2) {
         return points;
     }
 
+    // Adjacent edges both report a hit at a shared vertex. Keep one copy.
     auto add_point = [&points](const Point& point) {
         for (const Point& existing : points) {
             if (existing.nearly_equals(point)) {
@@ -125,6 +142,7 @@ std::vector<Point> Polygon::get_segment_intersections(const Segment& seg) const 
         points.push_back(point);
     };
 
+    // Walk every edge, including the closing edge from the last vertex to the first.
     for (unsigned int i = 0; i < vertices.size(); ++i) {
         const Segment edge(vertices[i], vertices[(i + 1) % vertices.size()]);
         for (const Point& hit : seg.intersection_points(edge)) {
@@ -137,8 +155,8 @@ std::vector<Point> Polygon::get_segment_intersections(const Segment& seg) const 
 bool Polygon::contains_point(const Point& pt) const {
     // FIXME (Ben) - Replace this with the optimized wrap-number test.
 
-    // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.h
-    // tm isLeft in their description does not actually indicate if a point is
+    // http://www.geometryalgorithms.com/Archive/algorithm_0103/algorithm_0103.htm
+    // isLeft in their description does not actually indicate if a point is
     // on the -X side of a line.  It is the same as my Line::point_side.
     //
     // Simple explanation:

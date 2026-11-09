@@ -10,59 +10,79 @@
 namespace rj_geometry {
 
 /**
- * A rj_geometry::CompositeShape is a Shape that is made up of other shapes.
+ * A composite shape.
+ * Parametrized by a list of subshapes.
  */
 class CompositeShape : public Shape {
 public:
+    /**
+     * Initialize an empty composite shape.
+     */
+    CompositeShape() = default;
+
+    /**
+     * Initialize a composite shape containing a single subshape.
+     *
+     * @param shape: the subshape to store
+     */
     CompositeShape(const std::shared_ptr<Shape>& shape) {
         subshapes_.push_back(shape);
     }
-    CompositeShape() = default;
 
-    ~CompositeShape() override { clear(); }
-
+    /**
+     * Initialize a composite shape as a copy of another.
+     *
+     * @param other: the composite shape to copy
+     *
+     * @note each subshape is cloned
+     */
     CompositeShape(const CompositeShape& other) {
         for (const auto& itr : other) {
             subshapes_.push_back(std::shared_ptr<Shape>((*itr).clone()));
         }
     }
 
-    [[nodiscard]] std::unique_ptr<CompositeShape> clone() const;
+    /**
+     * Destroy this composite shape and clear its subshapes.
+     */
+    ~CompositeShape() override { clear(); }
 
+    /** Getters */
+    [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& subshapes() const {
+        return subshapes_;
+    }
+    bool empty() { return subshapes_.empty(); }
+    [[nodiscard]] unsigned int size() const { return subshapes_.size(); }
+
+    /** Setters */
+
+    /**
+     * Add a subshape.
+     *
+     * @param shape: the subshape to store
+     *
+     * @note if shape is null, it is ignored
+     */
+    void add(const std::shared_ptr<Shape>& shape);
+
+    /**
+     * Add comp_shape's subshapes to this composite shape.
+     *
+     * @param comp_shape: the composite shape whose subshapes are added
+     */
+    void add(const CompositeShape& comp_shape);
+
+    /**
+     * Remove all subshapes.
+     */
+    void clear();
+
+    /** Overriding virtuals from Shape */
     [[nodiscard]] bool contains_point(const Point& pt) const override;
     [[nodiscard]] bool near_point(const Point& pt, float threshold) const override;
     [[nodiscard]] bool intersects_segment(const Segment& seg) const override;
     [[nodiscard]] bool near_segment(const Segment& seg, float clearance) const override;
     [[nodiscard]] std::vector<Point> get_segment_intersections(const Segment& seg) const override;
-
-    void add(const std::shared_ptr<Shape>& shape);
-
-    /// adds @comp_shape's subshapes to the receiver
-    void add(const CompositeShape& comp_shape);
-
-    [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& subshapes() const {
-        return subshapes_;
-    }
-
-    /// removes all subshapes
-    void clear();
-
-    bool empty() { return subshapes_.empty(); }
-
-    [[nodiscard]] unsigned int size() const { return subshapes_.size(); }
-
-    // STL typedefs
-    using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
-    using iterator = std::vector<std::shared_ptr<Shape>>::iterator;
-    using value_type = std::shared_ptr<Shape>;
-
-    // STL Interface
-    [[nodiscard]] const_iterator begin() const { return subshapes_.begin(); }
-    [[nodiscard]] const_iterator end() const { return subshapes_.end(); }
-
-    iterator begin() { return subshapes_.begin(); }
-    iterator end() { return subshapes_.end(); }
-
     std::string to_string() const override {
         std::stringstream str;
         str << "CompositeShape<";
@@ -74,6 +94,23 @@ public:
         return str.str();
     }
 
+    /** Overriding clone utilites from Shape */
+    [[nodiscard]] std::unique_ptr<CompositeShape> clone() const;
+
+    /** Custom utilities not from Shape */
+
+    /** STL typedefs */
+    using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
+    using iterator = std::vector<std::shared_ptr<Shape>>::iterator;
+    using value_type = std::shared_ptr<Shape>;
+
+    /** STL interface */
+    [[nodiscard]] const_iterator begin() const { return subshapes_.begin(); }
+    [[nodiscard]] const_iterator end() const { return subshapes_.end(); }
+
+    iterator begin() { return subshapes_.begin(); }
+    iterator end() { return subshapes_.end(); }
+
     std::shared_ptr<Shape> operator[](unsigned int index) {
         return subshapes_[index];
     }
@@ -83,8 +120,10 @@ public:
     }
 
 private:
+    /** Overriding clone utilites from Shape */
     CompositeShape* clone_impl() const override;
 
+    /** Hidden parameters */
     std::vector<std::shared_ptr<Shape>> subshapes_;
 };
 
