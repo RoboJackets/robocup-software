@@ -51,13 +51,13 @@ public:
 
     /** Overriding virtuals from Shape */
     bool contains_point(const Point& p) const override;
-    bool near_point(const Point& p, float clearance) const override;
     bool intersects_segment(const Segment& seg) const override;
+    bool near_point(const Point& p, float clearance) const override;
     bool near_segment(const Segment& seg, float clearance) const override;
     std::vector<Point> get_segment_intersections(const Segment& seg) const override;
     std::string to_string() const override {
         std::stringstream str;
-        str << "Circle<" << center_ << ", " << radius() << ">";
+        str << "Circle<" << center() << ", " << radius() << ">";
         return str.str();
     }
 

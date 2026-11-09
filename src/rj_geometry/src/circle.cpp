@@ -14,12 +14,12 @@ bool Circle::contains_point(const Point& p) const {
     return (p - center()).mag() <= radius();
 }
 
-bool Circle::near_point(const Point& p, float clearance) const {
-    return (p - center()).mag() <= radius() + clearance;
-}
-
 bool Circle::intersects_segment(const Segment& seg) const {
     return seg.near_point(center(), radius());
+}
+
+bool Circle::near_point(const Point& p, float clearance) const {
+    return (p - center()).mag() <= radius() + clearance;
 }
 
 bool Circle::near_segment(const Segment& seg, float clearance) const {
