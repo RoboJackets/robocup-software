@@ -22,10 +22,15 @@ public:
     [[nodiscard]] virtual bool contains_point(const Point& p) const = 0;
 
     /**
+     * Returns True if any part of the given segment lies within the shape (boundary-inclusive).
+     */
+    [[nodiscard]] virtual bool intersects_segment(const Segment& seg) const = 0;
+
+    /**
      * Returns True if the given point is in the shape or
      * within the specified L2 clearance region around the shape.
      *
-     * Identical to intersects_point if clearance = 0.
+     * Identical to contains_point if clearance = 0.
      *
      * Sample usage:
      *  - set p to the robot position
@@ -33,11 +38,6 @@ public:
      *  - returns whether the robot would collide with Shape at that position
      */
     [[nodiscard]] virtual bool near_point(const Point& p, float clearance) const = 0;
-
-    /**
-     * Returns True if any part of the given segment lies within the shape (boundary-inclusive).
-     */
-    [[nodiscard]] virtual bool intersects_segment(const Segment& seg) const = 0;
 
     /**
      * Returns True if the given segment is in the shape or
@@ -62,19 +62,18 @@ public:
     [[nodiscard]] virtual std::vector<Point> get_segment_intersections(const Segment& seg) const = 0;
 
     /**
-     * Zero-clearance collision query.
-     *
-     * hit(point) asks contains_point. hit(segment) asks intersects_segment.
-     * A robot radius is not part of that question: callers that need padding,
-     * including one robot, pass the clearance to near_point or near_segment.
+     * Returns True if a robot at point would collide with this Shape.
      */
     [[nodiscard]] bool hit(const Point& point) const { return contains_point(point); }
 
+    /**
+     * Returns True if a robot moving along segment would ever collide with this Shape.
+     */
     [[nodiscard]] bool hit(const Segment& segment) const { return intersects_segment(segment); }
 
     /**
      * Converts to a printable string.
-     * Currently pure virtual because I would be mad if I got a debug message saying "Shape".
+     * Pure virtual because I would be mad if I got a debug message saying "Shape".
      *
      * Overrides should be of the format "Type<relevant parameters>"
      *  - Shape<2, 3>
