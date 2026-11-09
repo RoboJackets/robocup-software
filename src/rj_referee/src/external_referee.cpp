@@ -4,9 +4,6 @@
 
 namespace referee {
 
-using referee_module_enums::Command;
-using referee_module_enums::Stage;
-
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float kKickThreshold = kBallRadius * 3;
 
