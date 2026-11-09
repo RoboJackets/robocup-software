@@ -71,6 +71,7 @@ std::vector<Point> Circle::get_segment_intersections(const Segment& seg) const {
 }
 
 std::unique_ptr<Circle> Circle::clone() const { return std::unique_ptr<Circle>(clone_impl()); }
+
 Circle* Circle::clone_impl() const { return new Circle(*this); }
 
 }  // namespace rj_geometry
