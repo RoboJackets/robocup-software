@@ -25,8 +25,15 @@ Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
     world_state_sub_ = world_state_node_->create_subscription<WorldStateMsg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
         [this](WorldStateMsg::UniquePtr msg) {
-            rj_convert::convert_from_ros(*msg, &context_.world_state);
-            last_vision_time_ = rj_convert::convert_from_ros(msg->last_update_time);
+            // convert_to_custom clears the robot vectors, then refills them.
+            // The UI thread reads those vectors, so swap in the finished state
+            // under loop_mutex_ instead of clearing context_.world_state in place.
+            WorldState world_state;
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg, world_state);
+            rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+                msg->last_update_time, last_vision_time_);
+            std::lock_guard<std::mutex> lock(loop_mutex_);
+            context_.world_state = std::move(world_state);
         });
 
     debug_draw_sub_ =

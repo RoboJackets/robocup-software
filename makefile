@@ -70,6 +70,10 @@ perf_docker:
 # run-soccer:
 # 	ros2 launch rj_robocup soccer.launch.py
 
+# Source Humble and this install/ overlay in the recipe. A shell that only
+# sourced /opt/ros/humble cannot see packages such as rj_benchmarking.
+ROS_LAUNCH = source /opt/ros/humble/setup.bash && source install/setup.bash && ros2 launch ./launch/soccer.launch.py
+
 # run ER-Force's framework and our stack simultaneously (via bash script)
 run-sim:
 	./launch/framework.bash
@@ -77,30 +81,30 @@ run-sim:
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
-	ros2 launch ./launch/soccer.launch.py run_sim:=True
+	$(ROS_LAUNCH) run_sim:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
-	ros2 launch ./launch/soccer.launch.py run_sim:=True use_internal_ref:=False
+	$(ROS_LAUNCH) run_sim:=True use_internal_ref:=False
 
 run-sim-ex: run-sim-external
 
 # run on real field computer with real robots and internal ref (our UI)
 run-real:
-	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False
+	$(ROS_LAUNCH) run_sim:=False use_sim_radio:=False
 
 # run on real field computer with real robots and external ref (SSL GC)
 run-real-ex:
-	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False use_internal_ref:=False
+	$(ROS_LAUNCH) run_sim:=False use_sim_radio:=False use_internal_ref:=False
 
 # run on real field comp, with real robots and manual control node to override AI movement
 # use util/manual_control_connect.bash to connect
 run-manual:
-	ros2 launch ./launch/soccer.launch.py run_sim:=False use_manual_control:=True use_sim_radio:=False
+	$(ROS_LAUNCH) run_sim:=False use_manual_control:=True use_sim_radio:=False
 
 # same as run-real, with different server port
 run-alt-real:
-	ros2 launch ./launch/soccer.launch.py run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
+	$(ROS_LAUNCH) run_sim:=False use_sim_radio:=False server_port:=25564 use_internal_ref:=False team_name:=AltRoboJackets team_flag:=-b
 
 # run sim2play (requires external referee)
 run-sim2play:

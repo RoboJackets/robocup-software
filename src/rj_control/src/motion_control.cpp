@@ -30,14 +30,17 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionContr
     // Update motion control triggered on world state publish.
     trajectory_sub_ = node->create_subscription<planning::Trajectory::Msg>(
         planning::topics::trajectory_topic(shell_id), rclcpp::QoS(1),
-        [this](planning::Trajectory::Msg::SharedPtr trajectory) {  // NOLINT
-            trajectory_ = rj_convert::convert_from_ros(*trajectory);
+        [this](planning::Trajectory::Msg::ConstSharedPtr trajectory) {  // NOLINT
+            rclcpp::TypeAdapter<planning::Trajectory, planning::Trajectory::Msg>::convert_to_custom(
+                *trajectory, trajectory_);
         });
     world_state_sub_ = node->create_subscription<WorldState::Msg>(
         vision_filter::topics::kWorldStateTopic, rclcpp::QoS(1),
-        [this](WorldState::Msg::SharedPtr world_state_msg) {  // NOLINT
-            RobotState state =
-                rj_convert::convert_from_ros(world_state_msg->our_robots.at(shell_id_));
+        [this](WorldState::Msg::ConstSharedPtr world_state_msg) {  // NOLINT
+            WorldState world_state;
+            rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*world_state_msg,
+                                                                                world_state);
+            const RobotState& state = world_state.our_robots.at(shell_id_);
 
             // TODO(Kyle): Handle the joystick-controlled case here. In the long run we want to
             // convert this to an action. Should we do that now?
@@ -45,12 +48,18 @@ MotionControl::MotionControl(int shell_id, rclcpp::Node* node, const MotionContr
             bool is_joystick_controlled = false;
             MotionSetpoint setpoint;
             run(state, trajectory_, play_state_, is_joystick_controlled, &setpoint);
-            motion_setpoint_pub_->publish(rj_convert::convert_to_ros(setpoint));
+            MotionSetpoint::Msg setpoint_msg;
+            rclcpp::TypeAdapter<MotionSetpoint, MotionSetpoint::Msg>::convert_to_ros_message(
+                setpoint, setpoint_msg);
+            motion_setpoint_pub_->publish(setpoint_msg);
         });
     play_state_sub_ = node->create_subscription<PlayState::Msg>(
         referee::topics::kPlayStateTopic, rclcpp::QoS(1).transient_local(),
-        [this](PlayState::Msg::SharedPtr play_state_msg) {  // NOLINT
-            play_state_ = rj_convert::convert_from_ros(*play_state_msg).state();
+        [this](PlayState::Msg::ConstSharedPtr play_state_msg) {  // NOLINT
+            PlayState play_state;
+            rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_custom(*play_state_msg,
+                                                                              play_state);
+            play_state_ = play_state.state();
         });
 
     error_x_pub_ =
@@ -190,7 +199,10 @@ void MotionControl::run(const RobotState& state, const planning::Trajectory& tra
         desired_state.velocity = velocity_target;
         desired_state.timestamp = maybe_target->stamp;
         desired_state.visible = true;
-        target_state_pub_->publish(rj_convert::convert_to_ros(desired_state));
+        RobotState::Msg desired_state_msg;
+        rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(desired_state,
+                                                                                 desired_state_msg);
+        target_state_pub_->publish(desired_state_msg);
     }
 }
 

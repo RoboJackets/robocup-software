@@ -124,11 +124,12 @@ In general, follow these guidelines:
       msg type in C++ classes outside of ROS nodes. This will allow you to add
       functionality that the ROS msg may not have. An example of this is
       ``Trajectory.msg/trajectory.hpp``.
-    * At the bottom of your custom C++ struct/class, add a template method under
-      ``namespace rj_convert`` in order to convert to/from ROS easily. (Again, see
-      ``trajectory.hpp``.) This will generate two methods:
-      ``rj_convert::convert_to_ros()`` and ``rj_convert::convert_from_ros()`` for
-      ease of conversion.
+    * At the bottom of your custom C++ struct/class, specialize
+      ``rclcpp::TypeAdapter`` for that type and its ROS message. (Again, see
+      ``trajectory.hpp``.) Implement ``convert_to_ros_message()`` and
+      ``convert_to_custom()``. Call those methods at the conversion site.
+      When the C++ field and the message field are the same type, assign the
+      field directly.
 
 What is a .launch file?
 --------------------------------------------------
