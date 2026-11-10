@@ -3,8 +3,6 @@
 #include <cmath>
 #include <optional>
 
-#include <rj_utils/logging.hpp>
-
 namespace planning::Trapezoid {
 
 struct State {

@@ -1,13 +1,13 @@
 #pragma once
 
+#include <memory>
+
 #include <rj_common/time.hpp>
-#include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_param_utils/global_params.hpp>
-#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_vision_msgs/msg/ball_state.hpp>
 #include <rj_vision_msgs/msg/robot_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 
 #include "rj_common/game_constants.hpp"
 #include "rj_common/planning/instant.hpp"
@@ -21,6 +21,8 @@
  */
 struct RobotState {
     using Msg = rj_vision_msgs::msg::RobotState;
+    using SharedPtr = std::shared_ptr<RobotState>;
+    using ConstSharedPtr = std::shared_ptr<const RobotState>;
 
     rj_geometry::Pose pose;
     rj_geometry::Twist velocity;
@@ -45,6 +47,8 @@ struct RobotState {
  */
 struct BallState {
     using Msg = rj_vision_msgs::msg::BallState;
+    using SharedPtr = std::shared_ptr<BallState>;
+    using ConstSharedPtr = std::shared_ptr<const BallState>;
 
     rj_geometry::Point position;
     rj_geometry::Point velocity;
@@ -69,9 +73,11 @@ struct BallState {
      * @brief Predict the ball's state at a particular instance in time.
      *
      * @param Time the time at which to evaluate the ball's position.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The ball's state.
      */
-    [[nodiscard]] BallState predict_at(RJ::Time time) const;
+    [[nodiscard]] BallState predict_at(RJ::Time time, double ball_decay) const;
 
     /**
      * @brief Similar to @ref predict_at "predict_at(RJ::Time)", but for a
@@ -79,9 +85,11 @@ struct BallState {
      *
      * @param seconds The offset from this ball's sample time at which to
      * predict its motion.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The ball's motion at the specified duration after this sample.
      */
-    [[nodiscard]] BallState predict_in(RJ::Seconds seconds) const;
+    [[nodiscard]] BallState predict_in(RJ::Seconds seconds, double ball_decay) const;
 
     /**
      * @brief Estimate the instant in time at which the ball will reach the
@@ -91,56 +99,68 @@ struct BallState {
      * return the ball's endpoint and time.
      *
      * @param near_to The query point
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @param out The nearest point to `near_to` along the path.
      * @return The instant in time at which the ball is nearest to `near_to`.
      */
-    [[nodiscard]] RJ::Time query_time_near(
-        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Time query_time_near(rj_geometry::Point near_to, double ball_decay,
+                                           rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Similar to @ref predict_at "query_time_near(RJ::Time)", but for a
      * duration in the future
      */
-    [[nodiscard]] RJ::Seconds query_seconds_near(
-        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Seconds query_seconds_near(rj_geometry::Point near_to, double ball_decay,
+                                                 rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop time of the ball.
      *
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @param out will be filled with the stopping position, if it is not
      * nullptr.
      * @return The duration until the ball stops.
      */
-    [[nodiscard]] RJ::Seconds query_stop_time(
-        rj_geometry::Point* out = nullptr) const;
+    [[nodiscard]] RJ::Seconds query_stop_time(double ball_decay,
+                                              rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop position of the ball.
      *
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The point at which the ball will stop.
      */
-    [[nodiscard]] rj_geometry::Point query_stop_position() const;
+    [[nodiscard]] rj_geometry::Point query_stop_position(double ball_decay) const;
 
     /**
      * @brief Query the time before the ball goes a certain distance. Return
      * nullopt if it will stop before traveling the specified distance.
      *
      * @param distance The distance along the ball path at which to query.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return The time at which the ball will hit the specified distance, or
      * nullopt.
      */
-    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(
-        double distance) const;
+    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(double distance,
+                                                                   double ball_decay) const;
 
     /**
      * @brief Create a trajectory for the ball.
+     * @param ball_decay Ball deceleration from rolling friction (m/s^2). Read from
+     * the calling node's params (ball_decay_constant).
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
-    [[nodiscard]] planning::Trajectory make_trajectory() const;
+    [[nodiscard]] planning::Trajectory make_trajectory(double ball_decay) const;
 };
 
 struct WorldState {
     using Msg = rj_vision_msgs::msg::WorldState;
+    using SharedPtr = std::shared_ptr<WorldState>;
+    using ConstSharedPtr = std::shared_ptr<const WorldState>;
 
     WorldState() {
         their_robots.resize(kNumShells);
@@ -183,75 +203,111 @@ struct WorldState {
     BallState ball;
 };
 
-namespace rj_convert {
+namespace rclcpp {
 
 template <>
-struct RosConverter<RobotState, RobotState::Msg> {
-    static RobotState::Msg to_ros(const RobotState& value) {
-        RobotState::Msg result;
-        convert_to_ros(value.timestamp, &result.stamp);
-        convert_to_ros(value.pose, &result.pose);
-        convert_to_ros(value.velocity, &result.velocity);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+struct TypeAdapter<RobotState, RobotState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = RobotState;
+    using ros_message_type = RobotState::Msg;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.timestamp, destination.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_ros_message(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::
+            convert_to_ros_message(source.velocity, destination.velocity);
+        destination.visible = source.visible;
     }
 
-    static RobotState from_ros(const RobotState::Msg& value) {
-        RobotState result;
-        result.timestamp = convert_from_ros(value.stamp);
-        convert_from_ros(value.pose, &result.pose);
-        convert_from_ros(value.velocity, &result.velocity);
-        convert_from_ros(value.visible, &result.visible);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, destination.timestamp);
+        rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_custom(
+            source.pose, destination.pose);
+        rclcpp::TypeAdapter<rj_geometry::Twist, rj_geometry_msgs::msg::Twist>::convert_to_custom(
+            source.velocity, destination.velocity);
+        destination.visible = source.visible;
     }
 };
 
-ASSOCIATE_CPP_ROS(RobotState, RobotState::Msg);
-
 template <>
-struct RosConverter<BallState, BallState::Msg> {
-    static BallState::Msg to_ros(const BallState& value) {
-        BallState::Msg result;
-        convert_to_ros(value.timestamp, &result.stamp);
-        convert_to_ros(value.velocity, &result.velocity);
-        convert_to_ros(value.position, &result.position);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+struct TypeAdapter<BallState, BallState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = BallState;
+    using ros_message_type = BallState::Msg;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.timestamp, destination.stamp);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
+            convert_to_ros_message(source.position, destination.position);
+        destination.visible = source.visible;
     }
 
-    static BallState from_ros(const BallState::Msg& value) {
-        BallState result;
-        convert_from_ros(value.stamp, &result.timestamp);
-        convert_from_ros(value.velocity, &result.velocity);
-        convert_from_ros(value.position, &result.position);
-        convert_to_ros(value.visible, &result.visible);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.stamp, destination.timestamp);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.velocity, destination.velocity);
+        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+            source.position, destination.position);
+        destination.visible = source.visible;
     }
 };
 
-ASSOCIATE_CPP_ROS(BallState, BallState::Msg);
-
 template <>
-struct RosConverter<WorldState, WorldState::Msg> {
-    static WorldState::Msg to_ros(const WorldState& value) {
-        WorldState::Msg result;
-        convert_to_ros(value.ball, &result.ball);
-        convert_to_ros(value.our_robots, &result.our_robots);
-        convert_to_ros(value.their_robots, &result.their_robots);
-        convert_to_ros(value.last_updated_time, &result.last_update_time);
-        return result;
+struct TypeAdapter<WorldState, WorldState::Msg> {
+    using is_specialized = std::true_type;
+    using custom_type = WorldState;
+    using ros_message_type = WorldState::Msg;
+
+    static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
+        rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_ros_message(source.ball,
+                                                                               destination.ball);
+        destination.our_robots.clear();
+        destination.our_robots.reserve(source.our_robots.size());
+        for (const auto& robot : source.our_robots) {
+            RobotState::Msg robot_msg;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(robot,
+                                                                                     robot_msg);
+            destination.our_robots.push_back(std::move(robot_msg));
+        }
+        destination.their_robots.clear();
+        destination.their_robots.reserve(source.their_robots.size());
+        for (const auto& robot : source.their_robots) {
+            RobotState::Msg robot_msg;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_ros_message(robot,
+                                                                                     robot_msg);
+            destination.their_robots.push_back(std::move(robot_msg));
+        }
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            source.last_updated_time, destination.last_update_time);
     }
 
-    static WorldState from_ros(const WorldState::Msg& value) {
-        WorldState result;
-        convert_from_ros(value.ball, &result.ball);
-        convert_from_ros(value.our_robots, &result.our_robots);
-        convert_from_ros(value.their_robots, &result.their_robots);
-        convert_from_ros(value.last_update_time, &result.last_updated_time);
-        return result;
+    static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
+        rclcpp::TypeAdapter<BallState, BallState::Msg>::convert_to_custom(source.ball,
+                                                                          destination.ball);
+        destination.our_robots.clear();
+        destination.our_robots.reserve(source.our_robots.size());
+        for (const auto& robot_msg : source.our_robots) {
+            RobotState robot;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_custom(robot_msg, robot);
+            destination.our_robots.push_back(std::move(robot));
+        }
+        destination.their_robots.clear();
+        destination.their_robots.reserve(source.their_robots.size());
+        for (const auto& robot_msg : source.their_robots) {
+            RobotState robot;
+            rclcpp::TypeAdapter<RobotState, RobotState::Msg>::convert_to_custom(robot_msg, robot);
+            destination.their_robots.push_back(std::move(robot));
+        }
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            source.last_update_time, destination.last_updated_time);
     }
 };
 
-ASSOCIATE_CPP_ROS(WorldState, WorldState::Msg);
-
-}  // namespace rj_convert
+}  // namespace rclcpp

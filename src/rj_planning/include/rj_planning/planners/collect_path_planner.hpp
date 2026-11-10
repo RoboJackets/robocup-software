@@ -66,6 +66,10 @@ private:
 
     Trajectory previous_;
 
+    // Params from the request being planned. Set at the start of
+    // plan() and read by the helpers it calls.
+    std::shared_ptr<const PlanningParams> params_;
+
     CollectPathPathPlannerStates current_state_ = CollectPathPathPlannerStates::COARSE_APPROACH;
 
     // Ball Velocity Filtering Variables

@@ -5,11 +5,8 @@ using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
 
 AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
-    node_ =
-        std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id),
-                                       rclcpp::NodeOptions{}
-                                           .automatically_declare_parameters_from_overrides(true)
-                                           .allow_undeclared_parameters(true));
+    // Agents read no params, so nothing is declared.
+    node_ = std::make_shared<rclcpp::Node>(::fmt::format("agent_{}_action_client_node", r_id));
 
     // create a ptr to ActionClient
     client_ptr_ = rclcpp_action::create_client<RobotMove>(node_, "robot_move");
@@ -19,27 +16,25 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
     current_state_publisher_ = node_->create_publisher<AgentStateMsg>(
         fmt::format("strategy/positon/robot_state/robot_{}", r_id), 1);
 
-    world_state_sub_ = node_->create_subscription<rj_vision_msgs::msg::WorldState>(
+    world_state_sub_ = node_->create_subscription<WorldState::Msg>(
         ::vision_filter::topics::kWorldStateTopic, 1,
-        [this](rj_vision_msgs::msg::WorldState::SharedPtr msg) { world_state_callback(msg); });
+        [this](WorldState::Msg::ConstSharedPtr msg) { world_state_callback(msg); });
 
-    play_state_sub_ = node_->create_subscription<rj_referee_msgs::msg::PlayState>(
+    play_state_sub_ = node_->create_subscription<PlayState::Msg>(
         ::referee::topics::kPlayStateTopic, 1,
-        [this](const rj_referee_msgs::msg::PlayState::SharedPtr msg) { play_state_callback(msg); });
+        [this](PlayState::Msg::ConstSharedPtr msg) { play_state_callback(msg); });
 
-    field_dimensions_sub_ = node_->create_subscription<rj_vision_msgs::msg::FieldDimensions>(
+    field_dimensions_sub_ = node_->create_subscription<FieldDimensions::Msg>(
         "config/field_dimensions", rclcpp::QoS(1).transient_local(),
-        [this](rj_vision_msgs::msg::FieldDimensions::SharedPtr msg) {
-            field_dimensions_callback(msg);
-        });
+        [this](FieldDimensions::Msg::ConstSharedPtr msg) { field_dimensions_callback(msg); });
 
     alive_robots_sub_ = node_->create_subscription<rj_radio_msgs::msg::AliveRobots>(
         ::radio::topics::kAliveRobotsTopic, 1,
         [this](rj_radio_msgs::msg::AliveRobots::SharedPtr msg) { alive_robots_callback(msg); });
 
-    game_settings_sub_ = node_->create_subscription<rj_referee_msgs::msg::GameSettings>(
+    game_settings_sub_ = node_->create_subscription<GameSettings::Msg>(
         "config/game_settings", 1,
-        [this](rj_referee_msgs::msg::GameSettings::SharedPtr msg) { game_settings_callback(msg); });
+        [this](GameSettings::Msg::ConstSharedPtr msg) { game_settings_callback(msg); });
 
     goalie_id_sub_ = node_->create_subscription<rj_referee_msgs::msg::GoalieID>(
         ::referee::topics::kGoalieTopic, rclcpp::QoS(1).transient_local(),
@@ -81,35 +76,31 @@ AgentActionClient::AgentActionClient(int r_id) : robot_id_{r_id} {
 
 rclcpp::Node::SharedPtr AgentActionClient::node() const { return node_; }
 
-void AgentActionClient::world_state_callback(
-    const rj_vision_msgs::msg::WorldState::SharedPtr& msg) {
+void AgentActionClient::world_state_callback(WorldState::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    WorldState world_state = rj_convert::convert_from_ros(*msg);
-    last_world_state_ = std::move(world_state);
+    rclcpp::TypeAdapter<WorldState, WorldState::Msg>::convert_to_custom(*msg, last_world_state_);
 }
 
-void AgentActionClient::play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg) {
+void AgentActionClient::play_state_callback(PlayState::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    PlayState play_state = rj_convert::convert_from_ros(*msg);
-    play_state_ = play_state;
-    current_position_->update_play_state(play_state);
+    rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_custom(*msg, play_state_);
+    current_position_->update_play_state(play_state_);
 }
 
-void AgentActionClient::field_dimensions_callback(
-    const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg) {
+void AgentActionClient::field_dimensions_callback(FieldDimensions::Msg::ConstSharedPtr msg) {
     if (current_position_ == nullptr) {
         return;
     }
 
-    FieldDimensions field_dimensions = rj_convert::convert_from_ros(*msg);
-    field_dimensions_ = field_dimensions;
-    current_position_->update_field_dimensions(field_dimensions);
+    rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
+        *msg, field_dimensions_);
+    current_position_->update_field_dimensions(field_dimensions_);
 }
 
 void AgentActionClient::test_play_callback(
@@ -135,9 +126,10 @@ void AgentActionClient::alive_robots_callback(
     current_position_->update_alive_robots(alive_robots_);
 }
 
-void AgentActionClient::game_settings_callback(
-    const rj_referee_msgs::msg::GameSettings::SharedPtr& msg) {
-    is_simulated_ = msg->simulation;
+void AgentActionClient::game_settings_callback(GameSettings::Msg::ConstSharedPtr msg) {
+    GameSettings settings;
+    rclcpp::TypeAdapter<GameSettings, GameSettings::Msg>::convert_to_custom(*msg, settings);
+    is_simulated_ = settings.simulation;
 }
 
 bool AgentActionClient::check_robot_alive(u_int8_t robot_id) {
@@ -169,7 +161,7 @@ void AgentActionClient::get_task() {
     }
     current_state_publisher_->publish(
         rj_strategy_msgs::build<rj_strategy_msgs::msg::AgentState>().state(
-            rj_convert::convert_to_ros(current_position_->get_current_state())));
+            current_position_->get_current_state()));
 }
 
 void AgentActionClient::send_new_goal() {
@@ -181,7 +173,8 @@ void AgentActionClient::send_new_goal() {
     }
 
     auto goal_msg = RobotMove::Goal();
-    goal_msg.robot_intent = rj_convert::convert_to_ros(last_task_);
+    rclcpp::TypeAdapter<RobotIntent, rj_planning_msgs::msg::RobotIntent>::convert_to_ros_message(
+        last_task_, goal_msg.robot_intent);
 
     auto send_goal_options = rclcpp_action::Client<RobotMove>::SendGoalOptions();
     send_goal_options.goal_response_callback = [this](auto arg) { goal_response_callback(arg); };
@@ -204,7 +197,10 @@ void AgentActionClient::goal_response_callback(GoalHandleRobotMove::SharedPtr go
 
 void AgentActionClient::feedback_callback(
     GoalHandleRobotMove::SharedPtr, const std::shared_ptr<const RobotMove::Feedback> feedback) {
-    double time_left = rj_convert::convert_from_ros(feedback->time_left).count();
+    RJ::Seconds time_left_duration;
+    rclcpp::TypeAdapter<RJ::Seconds, builtin_interfaces::msg::Duration>::convert_to_custom(
+        feedback->time_left, time_left_duration);
+    double time_left = time_left_duration.count();
     if (current_position_ == nullptr) {
         current_position_->set_time_left(time_left);
     }
@@ -256,7 +252,8 @@ void AgentActionClient::get_communication() {
         communication::AgentPosResponseWrapper buffered_response;
 
         auto request = std::make_shared<rj_strategy_msgs::srv::AgentCommunication::Request>();
-        request->agent_request = rj_convert::convert_to_ros(communication_request.request);
+        rclcpp::TypeAdapter<communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest>::
+            convert_to_ros_message(communication_request.request, request->agent_request);
 
         // send communication requests
         std::vector<u_int8_t> sent_robot_ids = {};
@@ -301,18 +298,21 @@ void AgentActionClient::receive_communication_callback(
     const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Response>& response) {
     if (current_position_ == nullptr) {
         communication::AgentResponse agent_response;
-        communication::AgentRequest agent_request =
-            rj_convert::convert_from_ros(request->agent_request);
+        communication::AgentRequest agent_request;
+        rclcpp::TypeAdapter<communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest>::
+            convert_to_custom(request->agent_request, agent_request);
         communication::Acknowledge acknowledge{};
         communication::generate_uid(acknowledge);
         agent_response.associated_request = agent_request;
         agent_response.response = acknowledge;
-        response->agent_response = rj_convert::convert_to_ros(agent_response);
+        rclcpp::TypeAdapter<communication::AgentResponse, rj_strategy_msgs::msg::AgentResponse>::
+            convert_to_ros_message(agent_response, response->agent_response);
     } else {
         // Convert agent request into AgentToPosCommRequest
         communication::AgentPosRequestWrapper agent_request;
-        communication::AgentRequest received_request =
-            rj_convert::convert_from_ros(request->agent_request);
+        communication::AgentRequest received_request;
+        rclcpp::TypeAdapter<communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest>::
+            convert_to_custom(request->agent_request, received_request);
         agent_request.request = received_request;
 
         // Give the current position the request and receive the response to send back
@@ -322,7 +322,8 @@ void AgentActionClient::receive_communication_callback(
         // Convert PosToAgentCommResponse into AgentResponse
         communication::AgentResponse agent_response{received_request,
                                                     pos_to_agent_response.response};
-        response->agent_response = rj_convert::convert_to_ros(agent_response);
+        rclcpp::TypeAdapter<communication::AgentResponse, rj_strategy_msgs::msg::AgentResponse>::
+            convert_to_ros_message(agent_response, response->agent_response);
     }
 }
 
@@ -331,8 +332,9 @@ void AgentActionClient::receive_response_callback(
         response,
     u_int8_t robot_id) {
     // Convert response from other agent to c++
-    communication::AgentResponse agent_response =
-        rj_convert::convert_from_ros(response.get()->agent_response);
+    communication::AgentResponse agent_response;
+    rclcpp::TypeAdapter<communication::AgentResponse, rj_strategy_msgs::msg::AgentResponse>::
+        convert_to_custom(response.get()->agent_response, agent_response);
 
     for (u_int32_t i = 0; i < buffered_responses_.size(); i++) {
         if (buffered_responses_[i].associated_request == agent_response.associated_request) {
@@ -386,7 +388,6 @@ void AgentActionClient::check_communication_timeout() {
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
-    rj_utils::set_spdlog_default_ros2("processor");
 
     rclcpp::executors::MultiThreadedExecutor executor;
 
@@ -397,7 +398,6 @@ int main(int argc, char** argv) {
          ++i) {  // TODO (Kevin): make this kNumShells and brick the non-used shells
         agents.emplace_back(i);
         auto& agent = agents.back();
-        start_global_param_provider(agent.node().get(), kGlobalParamServerNode);
         executor.add_node(agent.node());
     }
     executor.spin();

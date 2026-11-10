@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <boost/circular_buffer.hpp>
 
 #include <rj_geometry/point.hpp>
@@ -7,6 +9,7 @@
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/filter/kalman_filter_2d.hpp>
+#include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 class WorldBall;
@@ -25,9 +28,11 @@ public:
      * filter at
      * @param previous_world_ball Previous prediction of ball location to
      * initialize the velocity smartly
+     * @param params Vision filter parameters, shared with the owning node.
      */
-    KalmanBall(unsigned int camera_id, RJ::Time creation_time,
-               CameraBall init_measurement, const WorldBall& previous_world_ball);
+    KalmanBall(unsigned int camera_id, RJ::Time creation_time, CameraBall init_measurement,
+               const WorldBall& previous_world_ball,
+               std::shared_ptr<const VisionFilterParams> params);
 
     /**
      * Predicts one time step forward
@@ -100,6 +105,8 @@ public:
     void set_vel(rj_geometry::Point new_vel);
 
 private:
+    std::shared_ptr<const VisionFilterParams> params_;
+
     RJ::Time last_update_time_;
     RJ::Time last_predict_time_;
 

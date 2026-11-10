@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 
 from launch import LaunchContext, LaunchDescription
@@ -48,7 +47,6 @@ def generate_launch_description():
 
     run_sim = LaunchConfiguration("run_sim")
     sim_flag = LaunchConfiguration("sim_flag")
-    run_line_test = LaunchConfiguration("run_line_test")
 
     use_internal_ref = LaunchConfiguration("use_internal_ref")
     ref_flag = LaunchConfiguration("ref_flag")
@@ -94,13 +92,12 @@ def generate_launch_description():
                 default_value=[
                     TextSubstitution(
                         text=os.path.join(
-                            get_package_share_directory("rj_param_utils"), "config", ""
+                            os.path.dirname(os.path.abspath(__file__)), "..", "config", ""
                         )
                     ),
                     param_config,
                 ],
             ),
-            DeclareLaunchArgument("run_line_test", default_value="False"),
             stdout_linebuf_envvar,
             # Node spawns all of the ROS nodes, defined in main() of various
             # cpp files, e.g. vision_receiver.cpp, planner_node_main.cpp
@@ -129,19 +126,6 @@ def generate_launch_description():
                 output="screen",
                 arguments=[team_flag, sim_flag, ref_flag, "-defend", direction_flag],
                 parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                package="rj_param_utils",
-                executable="global_param_server_node",
-                output="screen",
-                parameters=[
-                    os.path.join(
-                        get_package_share_directory("rj_param_utils"),
-                        "config",
-                        "sim.yaml"
-                    )
-                ],
                 on_exit=Shutdown(),
             ),
             Node(
@@ -192,22 +176,15 @@ def generate_launch_description():
                 package="rj_joystick",
                 executable="manual_control_node",
                 output="screen",
+                parameters=[param_config_filepath],
                 on_exit=Shutdown(),
             ),
             # spawn internal_ref/external_ref based on internal_ref
             # LaunchArgument
             Node(
-                condition=IfCondition(PythonExpression(["not ", use_manual_control, " and not ", run_line_test])),
+                condition=IfCondition(PythonExpression(["not ", use_manual_control])),
                 package="rj_strategy",
                 executable="agent_action_clients",
-                output="screen",
-                parameters=[param_config_filepath],
-                on_exit=Shutdown(),
-            ),
-            Node(
-                condition=IfCondition(PythonExpression([run_line_test])),
-                package="rj_strategy",
-                executable="straight_line_test_node",
                 output="screen",
                 parameters=[param_config_filepath],
                 on_exit=Shutdown(),

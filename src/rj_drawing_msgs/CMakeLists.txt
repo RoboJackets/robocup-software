@@ -23,7 +23,6 @@ rosidl_generate_interfaces(
   msg/DrawColor.msg
   msg/DrawShapes.msg
   msg/DrawSegment.msg
-  msg/DrawPose.msg
   msg/DrawPath.msg
   msg/DrawText.msg
 

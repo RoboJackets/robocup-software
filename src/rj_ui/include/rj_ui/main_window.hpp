@@ -28,7 +28,6 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_convert/ros_convert.hpp>
 #include <rj_referee_msgs/srv/quick_commands.hpp>
 #include <rj_referee_msgs/srv/set_game_settings.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>

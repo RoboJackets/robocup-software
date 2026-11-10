@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# pre-commit hook: runs `make pretty-lines` on the lines being committed
+# and re-stages the formatted files.
+#
+# Install:
+#   cp pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# or keep it in the repo (e.g. util/hooks/pre-commit) and run:
+#   git config core.hooksPath util/hooks
+
+set -euo pipefail
+
+# Files being committed (added, copied, modified, renamed)
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+if [ -z "$staged" ]; then
+  exit 0
+fi
+
+# If a staged file also has unstaged edits, formatting + re-staging would
+# silently pull those edits into the commit. Bail out instead.
+partial=$(comm -12 <(echo "$staged" | sort) <(git diff --name-only | sort))
+if [ -n "$partial" ]; then
+  echo "pre-commit: these files are partially staged, so they can't be auto-formatted safely:" >&2
+  echo "$partial" | sed 's/^/  /' >&2
+  echo "Stage or stash the remaining changes, or commit with --no-verify to skip." >&2
+  exit 1
+fi
+
+# DIFFBASE=--cached makes the Makefile run `git diff -U0 --no-color --cached`,
+# so only the staged lines are formatted.
+make pretty-lines DIFFBASE=--cached
+
+# Re-stage the formatted files (only the ones that were already staged).
+echo "$staged" | xargs -d '\n' git add --
+
+exit 0

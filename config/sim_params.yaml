@@ -1,0 +1,256 @@
+/config_server:
+  ros__parameters:
+    use_sim_time: false
+
+/control:
+  ros__parameters:
+    robot_0:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_1:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_2:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_3:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_4:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_5:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_6:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_7:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_8:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_9:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_10:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_11:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_12:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_13:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_14:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    robot_15:
+      rotation_kd: 0.0
+      rotation_ki: 0.0
+      rotation_kp: 8.0
+      translation_kd: 0.0
+      translation_ki: 0.0
+      translation_kp: 4.0
+    max_angular_velocity: 1.0
+    max_velocity: 2.0
+    rotation_windup: 0
+    translation_windup: 0
+    use_sim_time: false
+
+/gameplay_node:
+  ros__parameters:
+    use_sim_time: false
+
+/internal_referee:
+  ros__parameters:
+    team_name: RoboJackets
+    use_sim_time: false
+
+/manual_control:
+  ros__parameters:
+    use_sim_time: false
+    kick_on_break_beam: false
+    max_rotation_speed: 4.0
+    max_damped_rotation_speed: 1.0
+    max_translation_speed: 2.0
+    max_damped_translation_speed: 0.5
+    kick_power_increment: 0.1
+    dribble_power_increment: 0.1
+    min_kick_speed: 1.0
+    max_kick_speed: 7.0
+
+/planner:
+  ros__parameters:
+    ball_decay_constant: 0.18
+    collect:
+      approach_accel_scale: 0.7
+      approach_dist_target: 0.1
+      ball_speed_approach_direction_cutoff: 0.1
+      dist_cutoff_to_control: 0.0285
+      touch_delta_speed: 0.05
+    constraints:
+      max_rotational_accel: 3.0
+      max_rotational_speed: 3.0
+      max_translational_accel: 2.0
+      max_translational_speed: 2.0
+    intermediate:
+      max_angle: 140.0
+      max_scale: 1.5
+      min_angle: 20.0
+      min_scale: 0.5
+      num_intermediates: 5
+      step_size: 0.1
+    pivot:
+      radius_multiplier: 1.0
+    replanner:
+      off_path_threshold: 0.1
+      partial_replan_lead_time: 0.1
+      pos_change_threshold: 0.025
+      vel_change_threshold: 0.025
+    settle:
+      ball_speed_percent_for_dampen: 0.1
+      ball_vel_gain: 0.9
+      intercept_buffer_time: 0.3
+      max_ball_angle_for_reset: 20.0
+      max_ball_vel_for_path_reset: 2.0
+      max_bounce_angle: 45.0
+      search_end_dist: 6.0
+      search_inc_dist: 0.2
+      search_start_dist: 0.0
+      shortcut_dist: 0.09
+      target_point_gain: 0.5
+    timeout: 0.1
+    use_sim_time: false
+
+/radio:
+  ros__parameters:
+    robot:
+      # Kicker/dribbler limits used to build robot and simulator commands.
+      chip_angle: 40.0
+      max_chip_speed: 4.0
+      max_dribbler_speed: 2000.0
+      min_chip_speed: 0.5
+    timeout: 0.25
+    use_sim_time: false
+    interface: "127.0.0.1"
+
+/vision_receiver:
+  ros__parameters:
+    port: 10020  # ER-Force sim uses this port
+    use_sim_time: false
+
+/vision_filter:
+  ros__parameters:
+    ball:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      process_noise: 0.1
+    camera:
+      max_num_kalman_balls: 10
+      max_num_kalman_robots: 10
+      mhkf_radius_cutoff: 0.5
+      use_mhkf: true
+    filter:
+      health:
+        dec: 1
+        inc: 2
+        init: 2
+        max: 20
+        min: 1
+    kalman_ball:
+      max_time_outside_vision: 0.2
+    kalman_robot:
+      max_time_outside_vision: 0.5
+    kick:
+      detector:
+        fast_acceleration_trigger: 750.0
+        fast_kick_hist_length: 3
+        fast_kick_timeout: 1.0
+        same_kick_timeout: 0.5
+        slow_any_robot_past_dist: 0.16
+        slow_kick_hist_length: 5
+        slow_kick_timeout: 0.5
+        slow_max_kick_angle: 0.34
+        slow_min_ball_speed: 0.6
+        slow_one_robot_within_dist: 0.15
+    max_num_cameras: 12
+    robot:
+      init_covariance: 100.0
+      observation_noise: 2.0
+      orientation_scale: 1.0
+      process_noise: 0.5
+    use_sim_time: false
+    vision_filter:
+      bounce:
+        robot_body_angle_dampen: 0.0
+        robot_mouth_angle_dampen: 0.0
+    vision_loop_dt: 0.016666666666666666
+    world_ball:
+      ball_merger_power: 1.5
+    world_robot:
+      robot_merger_power: 1.5

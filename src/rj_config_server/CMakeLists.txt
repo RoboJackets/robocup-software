@@ -16,7 +16,6 @@ find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_utils REQUIRED)
 
 add_executable(${PROJECT_NAME}_node
   src/config_server.cpp
@@ -40,7 +39,6 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_vision_msgs
   fmt
   rj_common
-  rj_utils
 )
 
 install(

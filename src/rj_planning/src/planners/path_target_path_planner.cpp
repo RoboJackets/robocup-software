@@ -30,7 +30,8 @@ Trajectory PathTargetPathPlanner::plan(const PlanRequest& request) {
     Trajectory trajectory = Replanner::create_plan(
         Replanner::PlanParams{request.start, target_instant, obstacles, request.field_dimensions,
                               request.constraints, angle_function, request.shell_id,
-                              RJ::Seconds(3.0)},
+                              RJ::Seconds(3.0), request.params->replanner,
+                              request.params->intermediate},
         std::move(previous_));
 
     previous_ = trajectory;
@@ -82,7 +83,7 @@ AngleFunction PathTargetPathPlanner::get_angle_function(const PlanRequest& reque
     }
 
     // default to facing tangent to path
-    // (rj_convert in motion_command.hpp also follows this default)
+    // (motion_command.hpp also follows this default)
     return AngleFns::tangent;
 }
 

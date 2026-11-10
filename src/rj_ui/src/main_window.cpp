@@ -29,7 +29,6 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_convert/ros_convert.hpp>
 #include <rj_referee_msgs/srv/quick_commands.hpp>
 #include <rj_referee_msgs/srv/set_game_settings.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
@@ -66,7 +65,12 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
       _processor(processor),
       context_(processor->context()),
       _has_external_ref(has_external_ref),
-      _game_settings(rj_convert::convert_to_ros(context_->game_settings)) {
+      _game_settings{[this] {
+          GameSettings::Msg message;
+          rclcpp::TypeAdapter<GameSettings, GameSettings::Msg>::convert_to_ros_message(
+              context_->game_settings, message);
+          return message;
+      }()} {
     context__mutex = processor->loop_mutex();
 
     qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -523,13 +527,20 @@ void MainWindow::updateStatus() {
     // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
-    for (size_t i = 0; i < kNumShells; i++) {
-        // The list starts with None so i is 1 higher than the shell id
-        QStandardItem* item = goalieModel->item(i + 1);
-        if (context_->world_state.our_robots.at(i).visible) {
-            item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
-        } else {
-            item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+    {
+        // our_robots is replaced from the processor thread. Read it under the
+        // same lock so this loop never indexes a vector that was just cleared.
+        std::lock_guard<std::mutex> lock(*context__mutex);
+        const auto& our_robots = context_->world_state.our_robots;
+        for (size_t i = 0; i < kNumShells; i++) {
+            // The list starts with None so i is 1 higher than the shell id
+            QStandardItem* item = goalieModel->item(i + 1);
+            const bool visible = i < our_robots.size() && our_robots[i].visible;
+            if (visible) {
+                item->setFlags(item->flags() | (Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            } else {
+                item->setFlags(item->flags() & ~(Qt::ItemIsSelectable | Qt::ItemIsEnabled));
+            }
         }
     }
 
@@ -912,7 +923,7 @@ void MainWindow::setUseRefChecked(bool /* use_ref */) {
 
 void MainWindow::send_quick_command(const PlayState& state) {
     auto request = std::make_shared<rj_referee_msgs::srv::QuickCommands::Request>();
-    request->command = rj_convert::convert_to_ros(state);
+    rclcpp::TypeAdapter<PlayState, PlayState::Msg>::convert_to_ros_message(state, request->command);
     _quick_commands_srv->async_send_request(request);
     queued_command_ = std::nullopt;
 }

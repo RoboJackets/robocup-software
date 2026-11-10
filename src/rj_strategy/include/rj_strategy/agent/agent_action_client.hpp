@@ -11,19 +11,16 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
+#include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_convert/ros_convert.hpp>
-#include <rj_param_utils/global_params.hpp>
 #include <rj_planning_msgs/action/robot_move.hpp>
 #include <rj_radio_msgs/msg/alive_robots.hpp>
-#include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
-#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_strategy_msgs/msg/agent_state.hpp>
-#include <rj_utils/logging.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "rj_strategy/agent/position.hpp"
@@ -57,22 +54,22 @@ public:
 
 private:
     // ROS pub/subs
-    rclcpp::Subscription<rj_vision_msgs::msg::WorldState>::SharedPtr world_state_sub_;
-    rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
-    rclcpp::Subscription<rj_vision_msgs::msg::FieldDimensions>::SharedPtr field_dimensions_sub_;
+    rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
     rclcpp::Subscription<rj_radio_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
-    rclcpp::Subscription<rj_referee_msgs::msg::GameSettings>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
     rclcpp::Subscription<rj_referee_msgs::msg::GoalieID>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
     rclcpp::Subscription<rj_ui_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
-    void world_state_callback(const rj_vision_msgs::msg::WorldState::SharedPtr& msg);
-    void play_state_callback(const rj_referee_msgs::msg::PlayState::SharedPtr& msg);
-    void field_dimensions_callback(const rj_vision_msgs::msg::FieldDimensions::SharedPtr& msg);
+    void world_state_callback(WorldState::Msg::ConstSharedPtr msg);
+    void play_state_callback(PlayState::Msg::ConstSharedPtr msg);
+    void field_dimensions_callback(FieldDimensions::Msg::ConstSharedPtr msg);
     void alive_robots_callback(const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg);
-    void game_settings_callback(const rj_referee_msgs::msg::GameSettings::SharedPtr& msg);
+    void game_settings_callback(GameSettings::Msg::ConstSharedPtr msg);
     void test_play_callback(const rj_ui_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 

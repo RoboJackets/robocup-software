@@ -22,8 +22,6 @@ find_package(rj_radio_msgs REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_ui_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
-find_package(rj_utils REQUIRED)
-find_package(rj_param_utils REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
@@ -39,8 +37,6 @@ set(RJ_RADIO_DEPS
   rj_referee_msgs
   rj_ui_msgs
   rj_protos
-  rj_utils
-  rj_param_utils
   rj_strategy
   rj_geometry
   rj_planning

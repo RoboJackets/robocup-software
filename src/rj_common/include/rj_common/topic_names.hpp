@@ -66,10 +66,6 @@ static inline std::string robot_controlled_topic(int robot_id) {
 }
 }  // namespace control::topics
 
-namespace control::params {
-constexpr const char* kMotionControlParamModule{"/motion_control"};
-}  // namespace control::params
-
 namespace radio::topics {
 static inline std::string robot_status_topic(int robot_id) {
     return "/radio/robot_status/robot_" + std::to_string(robot_id);

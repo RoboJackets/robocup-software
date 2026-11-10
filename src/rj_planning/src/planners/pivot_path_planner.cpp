@@ -10,7 +10,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     const MotionCommand& command = request.motion_command;
 
-    double radius = pivot::PARAM_radius_multiplier * kRobotRadius;
+    double radius = request.params->pivot_radius_multiplier * kRobotRadius;
     auto pivot_point = command.pivot_point;
     auto pivot_target = command.target.position;
 

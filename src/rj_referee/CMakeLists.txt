@@ -17,8 +17,6 @@ find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_param_utils REQUIRED)
-find_package(rj_utils REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
 find_package(rj_protos REQUIRED)
@@ -32,8 +30,6 @@ set(RJ_REFEREE_DEPS
   spdlog
   rj_common
   rj_geometry
-  rj_param_utils
-  rj_utils
   rj_referee_msgs
   rj_vision_msgs
   rj_protos

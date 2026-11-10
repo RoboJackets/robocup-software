@@ -1,6 +1,7 @@
 #include <fstream>
 
 #include <gtest/gtest.h>
+#include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_state.hpp>
@@ -23,6 +24,33 @@
 using namespace planning;
 using namespace rj_geometry;
 using namespace planning::TestingUtils;
+
+namespace {
+// Loads the /planner section of sim_params.yaml the same way PlannerNode does,
+// so these tests also fail if the YAML is missing a planning param.
+struct PlannerTestParams {
+    std::shared_ptr<rclcpp::Node> node;
+    std::shared_ptr<const PlanningParams> params;
+
+    PlannerTestParams() {
+        rclcpp::init(0, nullptr);
+        node = std::make_shared<rclcpp::Node>(
+            "planner",
+            rclcpp::NodeOptions{}.arguments({"--ros-args", "--params-file", RJ_SIM_PARAMS_FILE}));
+        params = std::make_shared<const PlanningParams>(load_planning_params(*node));
+    }
+
+    ~PlannerTestParams() {
+        node.reset();
+        rclcpp::shutdown();
+    }
+};
+
+std::shared_ptr<const PlanningParams> planning_params() {
+    static PlannerTestParams test_params;
+    return test_params.params;
+}
+}  // namespace
 
 TEST(Planning, path_target_random) {
     std::mt19937 gen(1337);
@@ -59,6 +87,7 @@ TEST(Planning, path_target_random) {
                             &world_state,
                             play_state,
                             field_dimensions,
+                            planning_params(),
                             2,
                             nullptr};
         Trajectory path = planner.plan(std::move(request));
@@ -102,6 +131,7 @@ TEST(Planning, collect_basic) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -127,6 +157,7 @@ TEST(Planning, collect_obstructed) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -155,6 +186,7 @@ TEST(Planning, collect_pointless_obs) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -180,6 +212,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -205,6 +238,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -230,6 +264,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     CollectPathPlanner planner;
@@ -268,6 +303,7 @@ TEST(Planning, collect_random) {
                             &world_state,
                             play_state,
                             field_dimensions,
+                            planning_params(),
                             2,
                             nullptr};
         CollectPathPlanner planner;
@@ -302,6 +338,7 @@ TEST(Planning, settle_basic) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -329,6 +366,7 @@ TEST(Planning, settle_pointless_obs) {
                         &world_state,
                         play_state,
                         field_dimensions,
+                        planning_params(),
                         2,
                         nullptr};
     SettlePathPlanner planner;
@@ -368,6 +406,7 @@ TEST(Planning, settle_random) {
                             &world_state,
                             play_state,
                             field_dimensions,
+                            planning_params(),
                             2,
                             nullptr};
         SettlePathPlanner planner;

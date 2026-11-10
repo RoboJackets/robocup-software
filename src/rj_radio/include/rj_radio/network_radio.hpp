@@ -18,9 +18,7 @@
 #include <rj_common/strategy/positions.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_param_utils/global_params.hpp>
 #include <rj_radio_msgs/msg/alive_robots.hpp>
-#include <rj_utils/logging.hpp>
 
 #include "rj_radio/radio.hpp"
 

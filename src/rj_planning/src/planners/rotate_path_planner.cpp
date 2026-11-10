@@ -36,8 +36,6 @@ bool RotatePathPlanner::is_done() const { return current_state_ == END; }
 
 Trajectory RotatePathPlanner::pivot(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
-    const auto& linear_constraints = request.constraints.mot;
-    const auto& rotation_constraints = request.constraints.rot;
 
     const MotionCommand& command = request.motion_command;
 

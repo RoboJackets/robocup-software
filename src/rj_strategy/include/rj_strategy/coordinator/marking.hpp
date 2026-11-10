@@ -10,10 +10,9 @@
 #include <rj_common/game_constants.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_convert/ros_convert.hpp>
-#include <rj_vision_msgs/msg/world_state.hpp>
 #include <rj_strategy_msgs/msg/marking.hpp>
 #include <rj_strategy_msgs/srv/marking.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 
 #include "rj_strategy/coordinator.hpp"
 

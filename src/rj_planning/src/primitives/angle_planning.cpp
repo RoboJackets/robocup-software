@@ -238,8 +238,8 @@ double Trapezoidal::get_time(double distance, double path_length, double max_spe
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
             // TODO(1576): Handle the case of imaginary solutions.
-            rj_utils::debug_throw("TrapezoidalMotion failed. Solution is imaginary");
-            return ramp_up_time;
+            SPDLOG_DEBUG("TrapezoidalMotion failed. Solution is imaginary");
+            throw std::runtime_error("TrapezoidalMotion failed. Solution is imaginary");
         }
         if (temp1 > 0 && temp1 < ramp_up_time) {
             return temp1;
@@ -265,8 +265,8 @@ double Trapezoidal::get_time(double distance, double path_length, double max_spe
         double temp2 = (-b - root) / (2 * a);
         if (std::isnan(root)) {
             // TODO(1576) Handle imaginary solutions.
-            rj_utils::debug_throw("TrapezoidalMotion failed. Solution is imaginary");
-            return ramp_up_time + plateau_time + ramp_down_time;
+            SPDLOG_DEBUG("TrapezoidalMotion failed. Solution is imaginary");
+            throw std::runtime_error("TrapezoidalMotion failed. Solution is imaginary");
         }
         if (temp1 > 0 && temp1 < ramp_down_time) {
             return ramp_up_time + plateau_time + temp1;

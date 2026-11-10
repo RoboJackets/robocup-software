@@ -2,16 +2,16 @@
 
 namespace planning {
 
-PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node* node,
+PlannerForRobot::PlannerForRobot(int robot_id, rclcpp::Node::SharedPtr node,
                                  std::shared_ptr<TrajectoryCollection> robot_trajectories,
-                                 const GlobalState& global_state)
+                                 const GlobalState& global_state,
+                                 std::shared_ptr<const PlanningParams> params)
     : node_{node},
+      params_{std::move(params)},
       robot_id_{robot_id},
       robot_trajectories_{robot_trajectories},
       global_state_{global_state},
-      debug_draw_{
-          node->create_publisher<rj_drawing_msgs::msg::DebugDraw>(viz::topics::kDebugDrawTopic, 10),
-          fmt::format("planning_{}", robot_id)} {
+      debug_draw_{node->shared_from_this(), fmt::format("planning_{}", robot_id)} {
     // create map of {planner name -> planner}
     path_planners_[GoalieIdlePathPlanner().name()] = std::make_unique<GoalieIdlePathPlanner>();
     path_planners_[InterceptPathPlanner().name()] = std::make_unique<InterceptPathPlanner>();
@@ -55,7 +55,10 @@ void PlannerForRobot::execute_intent(const RobotIntent& intent) {
         auto plan_request = make_request(intent);
 
         auto trajectory = safe_plan_for_robot(plan_request);
-        trajectory_topic_->publish(rj_convert::convert_to_ros(trajectory));
+        Trajectory::Msg trajectory_msg;
+        rclcpp::TypeAdapter<Trajectory, Trajectory::Msg>::convert_to_ros_message(trajectory,
+                                                                                 trajectory_msg);
+        trajectory_topic_->publish(trajectory_msg);
 
         if (intent.dribbler_mode != RobotIntent::DribblerMode::DEFAULT) {
             trajectory.dribbler_speed =
@@ -102,7 +105,7 @@ void PlannerForRobot::plan_hypothetical_robot_path(
     /* auto plan_request = make_request(intent); */
     /* auto trajectory = safe_plan_for_robot(plan_request); */
     /* RJ::Seconds trajectory_duration = trajectory.duration(); */
-    /* response->estimate = rj_convert::convert_to_ros(trajectory_duration); */
+    /* Response estimate conversion used to happen here. */
 }
 
 std::optional<RJ::Seconds> PlannerForRobot::get_time_left() const {
@@ -175,7 +178,14 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
         field_obstacles.add(def_area_obstacles);
     }
 
-    RobotConstraints constraints;
+    const std::shared_ptr<const PlanningParams>& params = params_;
+    RobotConstraints constraints{MotionConstraints{params->constraints.max_translational_speed,
+                                                   params->constraints.max_translational_accel},
+                                 RotationConstraints{params->constraints.max_rotational_speed,
+                                                     params->constraints.max_rotational_accel}};
+    // NOTE: the play-state cap below replaces constraints.max_translational_speed
+    // rather than limiting it, as it always has. So max_translational_speed has
+    // no effect today; real_params.yaml sets it to 1.0 while robots run at 1.4.
     MotionCommand motion_command;
     // Attempting to create trajectories with max speeds <= 0 crashes the planner
     if (max_robot_speed == 0.0f) {
@@ -203,6 +213,7 @@ PlanRequest PlannerForRobot::make_request(const RobotIntent& intent) {
                        world_state,
                        play_state,
                        global_state_.field_dimensions(),
+                       params,
                        intent.priority,
                        &debug_draw_,
                        had_break_beam_,
@@ -280,7 +291,8 @@ Trajectory PlannerForRobot::safe_plan_for_robot(const planning::PlanRequest& req
 
 bool PlannerForRobot::robot_alive() const {
     return global_state_.world_state()->our_robots.at(robot_id_).visible &&
-           RJ::now() < global_state_.world_state()->last_updated_time + RJ::Seconds(PARAM_timeout);
+           RJ::now() <
+               global_state_.world_state()->last_updated_time + RJ::Seconds(params_->timeout);
 }
 
 bool PlannerForRobot::is_done() const {

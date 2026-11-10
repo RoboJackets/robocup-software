@@ -9,7 +9,6 @@
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_config_client/config_client.hpp>
-#include <rj_param_utils/ros2_local_param_provider.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
 #include <rj_referee_msgs/msg/match_state.hpp>
 #include <rj_referee_msgs/msg/play_state.hpp>
@@ -22,8 +21,6 @@ namespace referee {
 using GoalieMsg = rj_referee_msgs::msg::GoalieID;
 using TeamColorMsg = rj_referee_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_referee_msgs::msg::TeamInfo;
-
-constexpr auto kRefereeParamModule = "referee";
 
 /**
  * @brief Base class for both types of referee. Handles sending ROS messages to
@@ -168,14 +165,12 @@ private:
      */
     std::optional<rj_geometry::Point> last_ball_position_;
 
-    params::LocalROS2ParamProvider param_provider_;
-
     config_client::ConfigClient config_client_;
 
     rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
     rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
+    rclcpp::Publisher<TeamInfo::Msg>::SharedPtr our_team_info_pub_;
+    rclcpp::Publisher<TeamInfo::Msg>::SharedPtr their_team_info_pub_;
     rclcpp::Publisher<PlayState::Msg>::SharedPtr play_state_pub_;
     rclcpp::Publisher<MatchState::Msg>::SharedPtr match_state_pub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
