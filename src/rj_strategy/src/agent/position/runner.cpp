@@ -15,8 +15,6 @@ std::string Runner::get_current_state() { return "Runner " + get_state_name(); }
 
 std::string Runner::get_state_name() const {
     switch (current_state_) {
-        case DEFAULT:
-            return "DEFAULT";
         case SIDE_ONE:
             return "SIDE_ONE";
         case SIDE_TWO:
@@ -26,15 +24,11 @@ std::string Runner::get_state_name() const {
         case SIDE_FOUR:
             return "SIDE_FOUR";
     }
-    return "DEFAULT";
+    return "SIDE_ONE";
 }
 
 Runner::State Runner::next_state() {
     if (field_dimensions_.length() <= 0.0f) {
-        return DEFAULT;
-    }
-
-    if (current_state_ == DEFAULT) {
         return SIDE_ONE;
     }
 
@@ -52,14 +46,12 @@ Runner::State Runner::next_state() {
             return SIDE_FOUR;
         case SIDE_FOUR:
             return SIDE_ONE;
-        case DEFAULT:
-            return SIDE_ONE;
     }
     return SIDE_ONE;
 }
 
 bool Runner::reached_current_target() const {
-    if (!last_world_state_ || current_state_ == DEFAULT) {
+    if (!last_world_state_) {
         return false;
     }
     return last_world_state_->get_robot(true, robot_id_)
@@ -68,7 +60,7 @@ bool Runner::reached_current_target() const {
 }
 
 std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
-    if (current_state_ == DEFAULT || field_dimensions_.length() <= 0.0f) {
+    if (field_dimensions_.length() <= 0.0f) {
         intent.motion_command = planning::MotionCommand{"halt"};
         return intent;
     }
@@ -80,13 +72,6 @@ std::optional<RobotIntent> Runner::state_to_task(RobotIntent intent) {
 }
 
 rj_geometry::Point Runner::corner_for(State state) const {
-    const double margin = 0.5;
-    const double y_pad = field_dimensions_.penalty_short_dist() + margin;
-    const double x_left = 2;
-    const double x_right = -2;
-    const double y_near = 2;
-    const double y_far = 1;
-
     switch (state) {
         case SIDE_ONE:
             return rj_geometry::Point{-2, 1};
@@ -96,10 +81,8 @@ rj_geometry::Point Runner::corner_for(State state) const {
             return rj_geometry::Point{2, 2};
         case SIDE_FOUR:
             return rj_geometry::Point{-2, 2};
-        case DEFAULT:
-            break;
     }
-    return rj_geometry::Point{x_left, y_near};
+    return rj_geometry::Point{-2, 1};
 }
 
 }  

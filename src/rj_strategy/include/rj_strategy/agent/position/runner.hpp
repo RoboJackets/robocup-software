@@ -23,9 +23,9 @@ public:
     std::string get_state_name() const override;
 
 private:
-    enum State { DEFAULT, SIDE_ONE, SIDE_TWO, SIDE_THREE, SIDE_FOUR };
+    enum State { SIDE_ONE, SIDE_TWO, SIDE_THREE, SIDE_FOUR };
 
-    State current_state_ = DEFAULT;
+    State current_state_ = SIDE_ONE;
 
     /**
      * @brief Overriden from Position. Calls next_state and then state_to_task on each tick.
