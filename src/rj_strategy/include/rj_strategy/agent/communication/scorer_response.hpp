@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/scorer_response.hpp"
+#include "rj_strategy_msgs/msg/scorer_response.hpp"
 
 namespace strategy::communication {
 
@@ -25,10 +25,10 @@ void generate_uid(ScorerResponse& response);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::ScorerResponse, rj_msgs::msg::ScorerResponse> {
+struct TypeAdapter<strategy::communication::ScorerResponse, rj_strategy_msgs::msg::ScorerResponse> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::ScorerResponse;
-    using ros_message_type = rj_msgs::msg::ScorerResponse;
+    using ros_message_type = rj_strategy_msgs::msg::ScorerResponse;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;

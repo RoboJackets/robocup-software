@@ -11,8 +11,8 @@ namespace strategy {
  * @brief Base class for coordinators using CRTP pattern
  *
  * @tparam Derived The derived coordinator class (e.g. KickerPicker)
- * @tparam ServiceT The ROS service type (e.g. rj_msgs::srv::KickerPicker)
- * @tparam TopicT The ROS topic type (e.g. rj_msgs::msg::KickerPicker)
+ * @tparam ServiceT The ROS service type (e.g. rj_strategy_msgs::srv::KickerPicker)
+ * @tparam TopicT The ROS topic type (e.g. rj_strategy_msgs::msg::KickerPicker)
  *
  * To implement a new coordinator:
  * 1. Inherit from this class, passing your class as the Derived template parameter

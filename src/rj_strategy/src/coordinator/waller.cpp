@@ -32,8 +32,9 @@ void Waller::service_callback(RequestPtr request, ResponsePtr response) {
 
 void Waller::update_wallers() {
     std::sort(walling_robots_.begin(), walling_robots_.end());
-    publisher_->publish(
-        rj_msgs::msg::Waller().set__wall_list(walling_robots_).set__wall_size(num_wallers_));
+    publisher_->publish(rj_strategy_msgs::msg::Waller()
+                            .set__wall_list(walling_robots_)
+                            .set__wall_size(num_wallers_));
 }
 
 }  // namespace strategy

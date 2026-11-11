@@ -6,7 +6,7 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/acknowledge.hpp>
+#include <rj_strategy_msgs/msg/acknowledge.hpp>
 
 namespace strategy::communication {
 
@@ -22,10 +22,10 @@ void generate_uid(Acknowledge& response);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::Acknowledge, rj_msgs::msg::Acknowledge> {
+struct TypeAdapter<strategy::communication::Acknowledge, rj_strategy_msgs::msg::Acknowledge> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::Acknowledge;
-    using ros_message_type = rj_msgs::msg::Acknowledge;
+    using ros_message_type = rj_strategy_msgs::msg::Acknowledge;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;

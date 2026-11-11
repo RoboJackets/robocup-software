@@ -16,20 +16,20 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/agent_state.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
-#include <rj_msgs/msg/goalie.hpp>
-#include <rj_msgs/msg/world_state.hpp>
+#include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_referee_msgs/msg/goalie_id.hpp>
+#include <rj_strategy_msgs/msg/agent_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "rj_strategy/agent/position.hpp"
 #include "rj_strategy/agent/position/robot_factory_position.hpp"
 
 // Communication
-#include <rj_msgs/msg/acknowledge.hpp>
-#include <rj_msgs/msg/agent_request.hpp>
-#include <rj_msgs/srv/agent_communication.hpp>
+#include <rj_strategy_msgs/msg/acknowledge.hpp>
+#include <rj_strategy_msgs/msg/agent_request.hpp>
+#include <rj_strategy_msgs/srv/agent_communication.hpp>
 
 #include "rj_strategy/agent/communication.hpp"
 
@@ -43,9 +43,9 @@ namespace strategy {
  */
 class AgentActionClient {
 public:
-    using RobotMove = rj_msgs::action::RobotMove;
+    using RobotMove = rj_planning_msgs::action::RobotMove;
     using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;
-    using AgentStateMsg = rj_msgs::msg::AgentState;
+    using AgentStateMsg = rj_strategy_msgs::msg::AgentState;
 
     AgentActionClient(int r_id);
     ~AgentActionClient() = default;
@@ -57,20 +57,20 @@ private:
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
     rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
-    rclcpp::Subscription<rj_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
+    rclcpp::Subscription<rj_radio_msgs::msg::AliveRobots>::SharedPtr alive_robots_sub_;
     rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
-    rclcpp::Subscription<rj_msgs::msg::Goalie>::SharedPtr goalie_id_sub_;
+    rclcpp::Subscription<rj_referee_msgs::msg::GoalieID>::SharedPtr goalie_id_sub_;
     // subscription for test mode - Allows position overriding
-    rclcpp::Subscription<rj_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
+    rclcpp::Subscription<rj_ui_msgs::msg::OverridePosition>::SharedPtr override_play_sub_;
     // TODO(Kevin): communication module pub/sub here (e.g. passing)
 
     // callbacks for subs
     void world_state_callback(WorldState::Msg::ConstSharedPtr msg);
     void play_state_callback(PlayState::Msg::ConstSharedPtr msg);
     void field_dimensions_callback(FieldDimensions::Msg::ConstSharedPtr msg);
-    void alive_robots_callback(const rj_msgs::msg::AliveRobots::SharedPtr& msg);
+    void alive_robots_callback(const rj_radio_msgs::msg::AliveRobots::SharedPtr& msg);
     void game_settings_callback(GameSettings::Msg::ConstSharedPtr msg);
-    void test_play_callback(const rj_msgs::msg::OverridePosition::SharedPtr& message);
+    void test_play_callback(const rj_ui_msgs::msg::OverridePosition::SharedPtr& message);
     void goalie_id_callback(int goalie_id);
 
     rclcpp::Publisher<AgentStateMsg>::SharedPtr current_state_publisher_;
@@ -108,8 +108,8 @@ private:
      * @param response the communication to return to the other robot
      */
     void receive_communication_callback(
-        const std::shared_ptr<rj_msgs::srv::AgentCommunication::Request>& request,
-        const std::shared_ptr<rj_msgs::srv::AgentCommunication::Response>& response);
+        const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Request>& request,
+        const std::shared_ptr<rj_strategy_msgs::srv::AgentCommunication::Response>& response);
 
     /**
      * @brief the callback that handles the response from any send transmissions to other agents.
@@ -118,14 +118,15 @@ private:
      * @param robot_id the robot id of the robot this response is from
      */
     void receive_response_callback(
-        const std::shared_future<rj_msgs::srv::AgentCommunication::Response::SharedPtr>& response,
+        const std::shared_future<rj_strategy_msgs::srv::AgentCommunication::Response::SharedPtr>&
+            response,
         u_int8_t robot_id);
 
     // server for receiving instructions from other agents
-    rclcpp::Service<rj_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
+    rclcpp::Service<rj_strategy_msgs::srv::AgentCommunication>::SharedPtr robot_communication_srv_;
 
     // clients for receiving instructions from the other agents
-    std::array<rclcpp::Client<rj_msgs::srv::AgentCommunication>::SharedPtr, kNumShells>
+    std::array<rclcpp::Client<rj_strategy_msgs::srv::AgentCommunication>::SharedPtr, kNumShells>
         robot_communication_cli_;
 
     rclcpp::TimerBase::SharedPtr get_communication_timer_;

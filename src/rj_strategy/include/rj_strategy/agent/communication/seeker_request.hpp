@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/seeker_request.hpp"
+#include "rj_strategy_msgs/msg/seeker_request.hpp"
 
 namespace strategy::communication {
 
@@ -27,10 +27,10 @@ void generate_uid(SeekerRequest& request);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::SeekerRequest, rj_msgs::msg::SeekerRequest> {
+struct TypeAdapter<strategy::communication::SeekerRequest, rj_strategy_msgs::msg::SeekerRequest> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::SeekerRequest;
-    using ros_message_type = rj_msgs::msg::SeekerRequest;
+    using ros_message_type = rj_strategy_msgs::msg::SeekerRequest;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;

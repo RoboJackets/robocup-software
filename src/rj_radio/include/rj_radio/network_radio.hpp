@@ -18,7 +18,7 @@
 #include <rj_common/strategy/positions.hpp>
 #include <rj_common/time.hpp>
 #include <rj_geometry/util.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
 
 #include "rj_radio/radio.hpp"
 
@@ -33,8 +33,8 @@ public:
 
 protected:
     // Send Control Message through the Base Station to the Robots
-    void send_control_message(uint8_t robot_id, const rj_msgs::msg::MotionSetpoint& motion,
-                              const rj_msgs::msg::ManipulatorSetpoint& manipulator,
+    void send_control_message(uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+                              const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
                               strategy::Positions role) override;
 
     // Poll the asynchronous boost::asio receiver

@@ -9,18 +9,18 @@
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_config_client/config_client.hpp>
-#include <rj_msgs/msg/goalie.hpp>
-#include <rj_msgs/msg/match_state.hpp>
-#include <rj_msgs/msg/play_state.hpp>
-#include <rj_msgs/msg/team_color.hpp>
-#include <rj_msgs/msg/team_info.hpp>
-#include <rj_msgs/msg/world_state.hpp>
+#include <rj_referee_msgs/msg/goalie_id.hpp>
+#include <rj_referee_msgs/msg/match_state.hpp>
+#include <rj_referee_msgs/msg/play_state.hpp>
+#include <rj_referee_msgs/msg/team_color.hpp>
+#include <rj_referee_msgs/msg/team_info.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 
 namespace referee {
 
-using GoalieMsg = rj_msgs::msg::Goalie;
-using TeamColorMsg = rj_msgs::msg::TeamColor;
-using TeamInfoMsg = rj_msgs::msg::TeamInfo;
+using GoalieMsg = rj_referee_msgs::msg::GoalieID;
+using TeamColorMsg = rj_referee_msgs::msg::TeamColor;
+using TeamInfoMsg = rj_referee_msgs::msg::TeamInfo;
 
 /**
  * @brief Base class for both types of referee. Handles sending ROS messages to

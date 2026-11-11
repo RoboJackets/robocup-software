@@ -146,7 +146,7 @@ void Marking::publish_marking_list() {
         }
     }
 
-    publisher_->publish(rj_msgs::msg::Marking().set__mark_robot_ids(marking_list_));
+    publisher_->publish(rj_strategy_msgs::msg::Marking().set__mark_robot_ids(marking_list_));
 }
 
 void Marking::update_danger_scores() {

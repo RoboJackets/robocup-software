@@ -5,9 +5,9 @@
 #include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/ball_state.hpp>
-#include <rj_msgs/msg/robot_state.hpp>
-#include <rj_msgs/msg/world_state.hpp>
+#include <rj_vision_msgs/msg/ball_state.hpp>
+#include <rj_vision_msgs/msg/robot_state.hpp>
+#include <rj_vision_msgs/msg/world_state.hpp>
 
 #include "rj_common/game_constants.hpp"
 #include "rj_common/planning/instant.hpp"
@@ -20,7 +20,7 @@
  * what time it was last seen.
  */
 struct RobotState {
-    using Msg = rj_msgs::msg::RobotState;
+    using Msg = rj_vision_msgs::msg::RobotState;
     using SharedPtr = std::shared_ptr<RobotState>;
     using ConstSharedPtr = std::shared_ptr<const RobotState>;
 
@@ -46,7 +46,7 @@ struct RobotState {
  * @brief Our belief about the ball's current position and velocity.
  */
 struct BallState {
-    using Msg = rj_msgs::msg::BallState;
+    using Msg = rj_vision_msgs::msg::BallState;
     using SharedPtr = std::shared_ptr<BallState>;
     using ConstSharedPtr = std::shared_ptr<const BallState>;
 
@@ -158,7 +158,7 @@ struct BallState {
 };
 
 struct WorldState {
-    using Msg = rj_msgs::msg::WorldState;
+    using Msg = rj_vision_msgs::msg::WorldState;
     using SharedPtr = std::shared_ptr<WorldState>;
     using ConstSharedPtr = std::shared_ptr<const WorldState>;
 

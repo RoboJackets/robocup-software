@@ -180,7 +180,7 @@ information pertaining to robot 2's motion.
 
 Now run :sh:`ros2 topic info` on the same topic to see what message type that
 topic is publishing, and how many publishers and subscribers are listening to
-it. For this topic, the message type is a subset of ``rj_msgs/``, which means we
+it. For this topic, the message type is a subset of ``rj_planning_msgs/``, which means we
 wrote our own custom .msg file that this topic uses.
 
 Your task for this section is to find the file that defines the message type
@@ -384,9 +384,9 @@ As a brief overview to help you get started...
 
    .. code-block:: cpp
 
-      create_subscription<rj_msgs::msg::ManipulatorSetpoint>(
+      create_subscription<rj_control_msgs::msg::ManipulatorSetpoint>(
                control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1), 
-               [this, i](rj_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {
+               [this, i](rj_control_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {
                   manipulators_cached_.at(i) = *manipulator;
                });
 

@@ -28,7 +28,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | Field | Details |
 | --- | --- |
 | **Depends on** | None |
-| **Depended on by** | rj_geometry , rj_msgs , rj_utils , rj_drawing_msgs |
+| **Depended on by** | rj_geometry , rj_planning_msgs , rj_referee_msgs , rj_ui_msgs , rj_vision_msgs , rj_utils , rj_drawing_msgs |
 
 
 ## 3. Operational Expectations

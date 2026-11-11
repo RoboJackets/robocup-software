@@ -163,7 +163,7 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < balls.size(); ++i) {
         const SSL_DetectionBall& ball = balls.Get(i);
         if (in_used_half(defend_plus_x, ball.x())) {
-            rclcpp::TypeAdapter<SSL_DetectionBall, rj_msgs::msg::DetectionBall>::
+            rclcpp::TypeAdapter<SSL_DetectionBall, rj_vision_msgs::msg::DetectionBall>::
                 convert_to_ros_message(ball, msg.balls.emplace_back());
         }
     }
@@ -174,7 +174,7 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_blue.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_blue.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_vision_msgs::msg::DetectionRobot>::
                 convert_to_ros_message(robot, msg.robots_blue.emplace_back());
         }
     }
@@ -186,7 +186,7 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     for (int i = 0; i < robots_yellow.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_yellow.Get(i);
         if (in_used_half(defend_plus_x, robot.x())) {
-            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_msgs::msg::DetectionRobot>::
+            rclcpp::TypeAdapter<SSL_DetectionRobot, rj_vision_msgs::msg::DetectionRobot>::
                 convert_to_ros_message(robot, msg.robots_yellow.emplace_back());
         }
     }

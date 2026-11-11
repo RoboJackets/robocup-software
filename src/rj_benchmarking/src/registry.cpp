@@ -1,7 +1,7 @@
 #include "rj_benchmarking/registry.hpp"
 
 Registry::Registry() : rclcpp::Node{"rj_benchmarking"} {
-    subscription_ = this->create_subscription<rj_msgs::msg::Latency>(
+    subscription_ = this->create_subscription<rj_benchmarking_msgs::msg::Latency>(
         "/registry", 100, std::bind(&Registry::topic_callback, this, std::placeholders::_1));
 }
 
@@ -41,7 +41,7 @@ Registry::~Registry() {
     }
 }
 
-void Registry::topic_callback(const rj_msgs::msg::Latency& msg) {
+void Registry::topic_callback(const rj_benchmarking_msgs::msg::Latency& msg) {
     if (msg.robot_id == -1)  // robot independent; will go at end
     {
         registry_[kNumShells][msg.label].push_back(msg.duration_ns);

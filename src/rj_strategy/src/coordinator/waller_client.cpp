@@ -4,7 +4,7 @@ namespace strategy {
 
 WallerClient::WallerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
     : node_{std::move(node)}, robot_id_{robot_id} {
-    client_ = node_->create_client<rj_msgs::srv::Waller>("waller_srv");
+    client_ = node_->create_client<rj_strategy_msgs::srv::Waller>("waller_srv");
     walling_robots_.fill(std::numeric_limits<uint8_t>::max());
 }
 
@@ -21,14 +21,14 @@ void WallerClient::join_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::Waller::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::Waller::Request>();
     request->robot_id = robot_id_;
     request->joining = true;
 
     request_pending_ = true;
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::Waller>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::Waller>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             request_pending_ = false;
@@ -40,9 +40,10 @@ void WallerClient::join_group(StatusCallback callback) {
 
             am_i_member_ = true;
 
-            subscription_ = node_->create_subscription<rj_msgs::msg::Waller>(
+            subscription_ = node_->create_subscription<rj_strategy_msgs::msg::Waller>(
                 "waller_data", rclcpp::QoS(1).transient_local(),
-                [this, callback = std::move(callback)](const rj_msgs::msg::Waller::SharedPtr msg) {
+                [this, callback = std::move(callback)](
+                    const rj_strategy_msgs::msg::Waller::SharedPtr msg) {
                     walling_robots_ = msg->wall_list;
                     num_wallers_ = msg->wall_size;
                     am_i_member_ = std::find(walling_robots_.begin(), walling_robots_.end(),
@@ -64,13 +65,13 @@ void WallerClient::leave_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::Waller::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::Waller::Request>();
     request->robot_id = robot_id_;
     request->joining = false;
 
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::Waller>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::Waller>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {

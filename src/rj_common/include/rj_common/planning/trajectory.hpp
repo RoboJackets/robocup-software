@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/trajectory.hpp>
+#include <rj_planning_msgs/msg/trajectory.hpp>
 
 #include "rj_common/debug_drawer.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
@@ -36,7 +36,7 @@ using RobotInstantSequence = std::vector<RobotInstant>;
  */
 class Trajectory {
 public:
-    using Msg = rj_msgs::msg::Trajectory;
+    using Msg = rj_planning_msgs::msg::Trajectory;
     using SharedPtr = std::shared_ptr<Trajectory>;
     using ConstSharedPtr = std::shared_ptr<const Trajectory>;
 
@@ -466,10 +466,10 @@ bool operator==(const Trajectory& a, const Trajectory& b);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
+struct TypeAdapter<planning::Trajectory, rj_planning_msgs::msg::Trajectory> {
     using is_specialized = std::true_type;
     using custom_type = planning::Trajectory;
-    using ros_message_type = rj_msgs::msg::Trajectory;
+    using ros_message_type = rj_planning_msgs::msg::Trajectory;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         if (!source.angles_valid()) {
@@ -480,10 +480,9 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         destination.instants.clear();
         destination.instants.reserve(source.instants().size());
         for (const auto& instant : source.instants()) {
-            rj_msgs::msg::RobotInstant instant_msg;
-            rclcpp::TypeAdapter<planning::RobotInstant,
-                                rj_msgs::msg::RobotInstant>::convert_to_ros_message(instant,
-                                                                                    instant_msg);
+            rj_planning_msgs::msg::RobotInstant instant_msg;
+            rclcpp::TypeAdapter<planning::RobotInstant, rj_planning_msgs::msg::RobotInstant>::
+                convert_to_ros_message(instant, instant_msg);
             destination.instants.push_back(std::move(instant_msg));
         }
     }
@@ -494,8 +493,8 @@ struct TypeAdapter<planning::Trajectory, rj_msgs::msg::Trajectory> {
         for (const auto& instant_msg : source.instants) {
             planning::RobotInstant instant;
             rclcpp::TypeAdapter<planning::RobotInstant,
-                                rj_msgs::msg::RobotInstant>::convert_to_custom(instant_msg,
-                                                                               instant);
+                                rj_planning_msgs::msg::RobotInstant>::convert_to_custom(instant_msg,
+                                                                                        instant);
             instants.push_back(std::move(instant));
         }
         destination = planning::Trajectory{instants};

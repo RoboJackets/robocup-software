@@ -12,7 +12,7 @@ MarkingClient::MarkingClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
     : node_{std::move(node)},
       robot_id_{robot_id},
       selected_robot_marking_id_{MarkingClient::kInvalidRobotId} {
-    client_ = node_->create_client<rj_msgs::srv::Marking>("marking_srv");
+    client_ = node_->create_client<rj_strategy_msgs::srv::Marking>("marking_srv");
 }
 
 void MarkingClient::join_group(StatusCallback callback) {
@@ -28,13 +28,13 @@ void MarkingClient::join_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::Marking::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::Marking::Request>();
     request->robot_id = robot_id_;
     request->join = true;
 
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::Marking>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::Marking>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
@@ -47,9 +47,9 @@ void MarkingClient::join_group(StatusCallback callback) {
             am_i_member_ = true;
 
             // Create subscription to track selected kicker.
-            subscription_ = node_->create_subscription<rj_msgs::msg::Marking>(
+            subscription_ = node_->create_subscription<rj_strategy_msgs::msg::Marking>(
                 "marking_data", rclcpp::QoS(1).transient_local(),
-                [this](const rj_msgs::msg::Marking::SharedPtr msg) {
+                [this](const rj_strategy_msgs::msg::Marking::SharedPtr msg) {
                     selected_robot_marking_id_ = msg->mark_robot_ids[robot_id_];
                     am_i_marking_ = (selected_robot_marking_id_ != kInvalidRobotId);
                 });
@@ -67,13 +67,13 @@ void MarkingClient::leave_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::Marking::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::Marking::Request>();
     request->robot_id = robot_id_;
     request->join = false;
 
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::Marking>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::Marking>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {

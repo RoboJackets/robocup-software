@@ -8,7 +8,7 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
-#include <rj_msgs/msg/motion_command.hpp>
+#include <rj_planning_msgs/msg/motion_command.hpp>
 
 #include "rj_common/planning/instant.hpp"
 #include "rj_common/planning/trajectory.hpp"
@@ -80,10 +80,10 @@ namespace rclcpp {
  * now -Kevin)
  */
 template <>
-struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
+struct TypeAdapter<planning::MotionCommand, rj_planning_msgs::msg::MotionCommand> {
     using is_specialized = std::true_type;
     using custom_type = planning::MotionCommand;
-    using ros_message_type = rj_msgs::msg::MotionCommand;
+    using ros_message_type = rj_planning_msgs::msg::MotionCommand;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination = ros_message_type{};
@@ -92,9 +92,11 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // TODO(Kevin): what if these are empty?
         // convert the LinearMotionInstant target
-        rj_msgs::msg::LinearMotionInstant target;
-        rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
-            convert_to_ros_message(source.target, target);
+        rj_planning_msgs::msg::LinearMotionInstant target;
+        rclcpp::TypeAdapter<
+            planning::LinearMotionInstant,
+            rj_planning_msgs::msg::LinearMotionInstant>::convert_to_ros_message(source.target,
+                                                                                target);
         destination.target.push_back(target);
 
         // convert the PathTargetFaceOptions to the angle override options
@@ -133,8 +135,10 @@ struct TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand> {
 
         // convert the LinearMotionInstant msg to cpp
         if (!source.target.empty()) {
-            rclcpp::TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant>::
-                convert_to_custom(source.target[0], result.target);
+            rclcpp::TypeAdapter<
+                planning::LinearMotionInstant,
+                rj_planning_msgs::msg::LinearMotionInstant>::convert_to_custom(source.target[0],
+                                                                               result.target);
         }
 
         // convert one of the angle overrides to PathTargetFaceOption

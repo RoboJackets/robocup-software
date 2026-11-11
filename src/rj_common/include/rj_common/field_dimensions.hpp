@@ -14,7 +14,7 @@
 #include <rj_geometry/rect.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_geometry/stadium_shape.hpp>
-#include <rj_msgs/msg/field_dimensions.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 
 using namespace std;
 
@@ -22,7 +22,7 @@ using namespace std;
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct FieldDimensions {
-    using Msg = rj_msgs::msg::FieldDimensions;
+    using Msg = rj_vision_msgs::msg::FieldDimensions;
     using SharedPtr = std::shared_ptr<FieldDimensions>;
     using ConstSharedPtr = std::shared_ptr<const FieldDimensions>;
 

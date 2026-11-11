@@ -81,7 +81,7 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
     providers_.push_back(
         std::make_unique<SDLControllerProvider>(true, params_, on_connect, on_disconnect));
 
-    using rj_msgs::srv::ListJoysticks;
+    using rj_joystick_msgs::srv::ListJoysticks;
     list_joysticks_ = create_service<ListJoysticks>(
         "list_joysticks",
         [this]([[maybe_unused]] const ListJoysticks::Request::SharedPtr request,  // NOLINT
@@ -93,7 +93,7 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
             }
         });
 
-    using rj_msgs::srv::SetManual;
+    using rj_joystick_msgs::srv::SetManual;
     set_manual_ = create_service<SetManual>(
         "select_manual",
         [this](const SetManual::Request::SharedPtr request,                 // NOLINT
@@ -103,10 +103,11 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
         });
 
     for (unsigned int i = 0; i < kNumShells; i++) {
-        motion_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::MotionSetpoint>(
+        motion_setpoint_pubs_.push_back(create_publisher<rj_control_msgs::msg::MotionSetpoint>(
             control::topics::motion_setpoint_topic(i), 10));
-        manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
-            control::topics::manipulator_setpoint_topic(i), 10));
+        manipulator_setpoint_pubs_.push_back(
+            create_publisher<rj_control_msgs::msg::ManipulatorSetpoint>(
+                control::topics::manipulator_setpoint_topic(i), 10));
     }
 
     timer_ = create_wall_timer(std::chrono::microseconds(1'000'000 / 60), [this]() {
@@ -152,30 +153,32 @@ void ManualControlNode::remove_controller(ManualController* controller) {
 }
 
 void ManualControlNode::stop_robot(int robot_id) {
-    motion_setpoint_pubs_.at(robot_id)->publish(rj_msgs::msg::MotionSetpoint{});
-    manipulator_setpoint_pubs_.at(robot_id)->publish(rj_msgs::msg::ManipulatorSetpoint{});
+    motion_setpoint_pubs_.at(robot_id)->publish(rj_control_msgs::msg::MotionSetpoint{});
+    manipulator_setpoint_pubs_.at(robot_id)->publish(rj_control_msgs::msg::ManipulatorSetpoint{});
 }
 
 void ManualControlNode::publish(int robot_id, const ControllerCommand& command) {
-    motion_setpoint_pubs_.at(robot_id)->publish(rj_msgs::build<rj_msgs::msg::MotionSetpoint>()
-                                                    .velocity_x_mps(command.translation.x())
-                                                    .velocity_y_mps(command.translation.y())
-                                                    .velocity_z_radps(command.rotation));
-    uint8_t trigger_mode = params_->kick_on_break_beam
-                               ? rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
-                               : rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
-    uint8_t shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
+    motion_setpoint_pubs_.at(robot_id)->publish(
+        rj_control_msgs::build<rj_control_msgs::msg::MotionSetpoint>()
+            .velocity_x_mps(command.translation.x())
+            .velocity_y_mps(command.translation.y())
+            .velocity_z_radps(command.rotation));
+    uint8_t trigger_mode =
+        params_->kick_on_break_beam
+            ? rj_control_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_ON_BREAK_BEAM
+            : rj_control_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_IMMEDIATE;
+    uint8_t shoot_mode = rj_control_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
     if (command.kick) {
-        shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK;
+        shoot_mode = rj_control_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_KICK;
     } else if (command.chip) {
-        shoot_mode = rj_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
+        shoot_mode = rj_control_msgs::msg::ManipulatorSetpoint::SHOOT_MODE_CHIP;
     } else {
-        trigger_mode = rj_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
+        trigger_mode = rj_control_msgs::msg::ManipulatorSetpoint::TRIGGER_MODE_STAND_DOWN;
     }
 
     double kick_speed = lerp(params_->min_kick_speed, params_->max_kick_speed, command.kick_power);
     manipulator_setpoint_pubs_.at(robot_id)->publish(
-        rj_msgs::build<rj_msgs::msg::ManipulatorSetpoint>()
+        rj_control_msgs::build<rj_control_msgs::msg::ManipulatorSetpoint>()
             .shoot_mode(shoot_mode)
             .trigger_mode(trigger_mode)
             .kick_speed(kick_speed)

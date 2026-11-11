@@ -8,7 +8,7 @@
 #include <rj_common/radio/packet_convert.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/robot_status.hpp>
+#include <rj_radio_msgs/msg/robot_status.hpp>
 #include <std_msgs/msg/string.hpp>
 
 namespace ros2_temp {
@@ -28,7 +28,7 @@ public:
 private:
     std::shared_ptr<rclcpp::Node> node_;
     Context* context_;
-    std::vector<rclcpp::Subscription<rj_msgs::msg::RobotStatus>::SharedPtr> status_subs_;
+    std::vector<rclcpp::Subscription<rj_radio_msgs::msg::RobotStatus>::SharedPtr> status_subs_;
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr gameplay_debug_text_sub_;
 };
 

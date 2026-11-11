@@ -19,7 +19,11 @@ find_package(spdlog REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_common REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_control_msgs REQUIRED)
+find_package(rj_planning_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 
 set(RJ_PLANNING_DEPS
   rclcpp
@@ -29,7 +33,11 @@ set(RJ_PLANNING_DEPS
   fmt
   rj_geometry
   rj_common
-  rj_msgs
+  rj_control_msgs
+  rj_planning_msgs
+  rj_radio_msgs
+  rj_referee_msgs
+  rj_vision_msgs
 )
 
 set(RJ_PLANNING_LIBS

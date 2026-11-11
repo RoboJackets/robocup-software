@@ -46,7 +46,7 @@ void KickerPicker::publish_selected_kicker() {
 
     // Only publish if the selected kicker has changed
     if (selected_kicker != last_published_kicker_) {
-        publisher_->publish(rj_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
+        publisher_->publish(rj_strategy_msgs::msg::KickerPicker().set__robot_id(selected_kicker));
         last_published_kicker_ = selected_kicker;
     }
 }

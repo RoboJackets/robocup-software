@@ -23,7 +23,10 @@ find_package(fmt REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_referee_msgs REQUIRED)
+find_package(rj_ui_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_referee REQUIRED)
 find_package(rj_config_client REQUIRED)
@@ -88,7 +91,10 @@ set(RJ_UI_DEPS
   rj_common
   rj_geometry
   rj_planning
-  rj_msgs
+  rj_radio_msgs
+  rj_referee_msgs
+  rj_ui_msgs
+  rj_vision_msgs
   rj_strategy
   rj_referee
   rj_config_client

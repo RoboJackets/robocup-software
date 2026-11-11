@@ -6,13 +6,13 @@
 #include <vector>
 
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/team_info.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
+#include <rj_referee_msgs/msg/team_info.hpp>
 
 // Information about a single team.
 class TeamInfo {
 public:
-    using Msg = rj_msgs::msg::TeamInfo;
+    using Msg = rj_referee_msgs::msg::TeamInfo;
     using SharedPtr = std::shared_ptr<TeamInfo>;
     using ConstSharedPtr = std::shared_ptr<const TeamInfo>;
 
@@ -70,10 +70,10 @@ public:
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<TeamInfo, rj_msgs::msg::TeamInfo> {
+struct TypeAdapter<TeamInfo, rj_referee_msgs::msg::TeamInfo> {
     using is_specialized = std::true_type;
     using custom_type = TeamInfo;
-    using ros_message_type = rj_msgs::msg::TeamInfo;
+    using ros_message_type = rj_referee_msgs::msg::TeamInfo;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.name = source.name;

@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/position_response.hpp"
+#include "rj_strategy_msgs/msg/position_response.hpp"
 
 namespace strategy::communication {
 
@@ -24,10 +24,11 @@ void generate_uid(PositionResponse& response);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::PositionResponse, rj_msgs::msg::PositionResponse> {
+struct TypeAdapter<strategy::communication::PositionResponse,
+                   rj_strategy_msgs::msg::PositionResponse> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::PositionResponse;
-    using ros_message_type = rj_msgs::msg::PositionResponse;
+    using ros_message_type = rj_strategy_msgs::msg::PositionResponse;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.response_uid = source.response_uid;

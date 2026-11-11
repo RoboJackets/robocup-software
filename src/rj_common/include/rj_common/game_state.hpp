@@ -10,12 +10,12 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
-#include <rj_msgs/msg/match_state.hpp>
-#include <rj_msgs/msg/play_state.hpp>
+#include <rj_referee_msgs/msg/match_state.hpp>
+#include <rj_referee_msgs/msg/play_state.hpp>
 
 struct PlayState {
 public:
-    using Msg = rj_msgs::msg::PlayState;
+    using Msg = rj_referee_msgs::msg::PlayState;
     using SharedPtr = std::shared_ptr<PlayState>;
     using ConstSharedPtr = std::shared_ptr<const PlayState>;
 
@@ -202,7 +202,7 @@ public:
     }
 
 private:
-    friend struct rclcpp::TypeAdapter<PlayState, rj_msgs::msg::PlayState>;
+    friend struct rclcpp::TypeAdapter<PlayState, rj_referee_msgs::msg::PlayState>;
 
     PlayState(State state, Restart restart, bool our_restart,
               rj_geometry::Point ball_placement_point)
@@ -219,7 +219,7 @@ private:
 
 struct MatchState {
 public:
-    using Msg = rj_msgs::msg::MatchState;
+    using Msg = rj_referee_msgs::msg::MatchState;
     using SharedPtr = std::shared_ptr<MatchState>;
     using ConstSharedPtr = std::shared_ptr<const MatchState>;
 
@@ -251,10 +251,10 @@ struct TypeAdapter<MatchState::Period, uint8_t> {
 };
 
 template <>
-struct TypeAdapter<MatchState, rj_msgs::msg::MatchState> {
+struct TypeAdapter<MatchState, rj_referee_msgs::msg::MatchState> {
     using is_specialized = std::true_type;
     using custom_type = MatchState;
-    using ros_message_type = rj_msgs::msg::MatchState;
+    using ros_message_type = rj_referee_msgs::msg::MatchState;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<MatchState::Period, uint8_t>::convert_to_ros_message(
@@ -302,10 +302,10 @@ struct TypeAdapter<PlayState::Restart, uint8_t> {
 };
 
 template <>
-struct TypeAdapter<PlayState, rj_msgs::msg::PlayState> {
+struct TypeAdapter<PlayState, rj_referee_msgs::msg::PlayState> {
     using is_specialized = std::true_type;
     using custom_type = PlayState;
-    using ros_message_type = rj_msgs::msg::PlayState;
+    using ros_message_type = rj_referee_msgs::msg::PlayState;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<PlayState::State, uint8_t>::convert_to_ros_message(source.state(),

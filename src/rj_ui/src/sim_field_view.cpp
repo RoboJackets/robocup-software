@@ -7,9 +7,9 @@
 #include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/ball_placement.hpp>
-#include <rj_msgs/msg/robot_placement.hpp>
-#include <rj_msgs/srv/sim_placement.hpp>
+#include <rj_ui_msgs/msg/ball_placement.hpp>
+#include <rj_ui_msgs/msg/robot_placement.hpp>
+#include <rj_ui_msgs/srv/sim_placement.hpp>
 
 #include "rj_ui/field_view.hpp"
 
@@ -29,7 +29,7 @@ void SimFieldView::setup(Context* context, rclcpp::Node* node) {
     node_ = node;
 
     sim_placement_ =
-        node_->create_client<rj_msgs::srv::SimPlacement>(sim::topics::kSimPlacementSrv);
+        node_->create_client<rj_ui_msgs::srv::SimPlacement>(sim::topics::kSimPlacementSrv);
 }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
@@ -112,7 +112,7 @@ void SimFieldView::drag_ball(const QPoint& screen_pos) {
 }
 
 void SimFieldView::set_ball_position(const rj_geometry::Point& field_pos) {
-    auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
+    auto request = std::make_shared<rj_ui_msgs::srv::SimPlacement::Request>();
     rj_geometry_msgs::msg::Point position;
     rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
         field_pos, position);
@@ -121,7 +121,7 @@ void SimFieldView::set_ball_position(const rj_geometry::Point& field_pos) {
 }
 
 void SimFieldView::set_ball_velocity(const rj_geometry::Point& shot) {
-    auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
+    auto request = std::make_shared<rj_ui_msgs::srv::SimPlacement::Request>();
     rj_geometry_msgs::msg::Point velocity;
     rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_ros_message(
         _teamToWorld.transform_direction(shot), velocity);
@@ -134,8 +134,8 @@ void SimFieldView::drag_robot(const QPoint& screen_pos, int robot_id, bool is_bl
 }
 
 void SimFieldView::set_robot_pose(const rj_geometry::Pose& field_pose, int robot_id, bool is_blue) {
-    auto request = std::make_shared<rj_msgs::srv::SimPlacement::Request>();
-    rj_msgs::msg::RobotPlacement robot;
+    auto request = std::make_shared<rj_ui_msgs::srv::SimPlacement::Request>();
+    rj_ui_msgs::msg::RobotPlacement robot;
     rclcpp::TypeAdapter<rj_geometry::Pose, rj_geometry_msgs::msg::Pose>::convert_to_ros_message(
         field_pose, robot.pose);
     robot.robot_id = robot_id;

@@ -23,8 +23,8 @@
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
-#include <rj_msgs/action/robot_move.hpp>
-#include <rj_msgs/msg/alive_robots.hpp>
+#include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
 
 #include "rj_strategy/agent/position/overriding_positions.hpp"
 
@@ -32,18 +32,18 @@
 #include "rj_strategy/agent/communication.hpp"
 
 // Requests
-#include <rj_msgs/msg/ball_in_transit_request.hpp>
-#include <rj_msgs/msg/incoming_ball_request.hpp>
-#include <rj_msgs/msg/override_position.hpp>
-#include <rj_msgs/msg/pass_request.hpp>
-#include <rj_msgs/msg/position_request.hpp>
-#include <rj_msgs/msg/test_request.hpp>
+#include <rj_strategy_msgs/msg/ball_in_transit_request.hpp>
+#include <rj_strategy_msgs/msg/incoming_ball_request.hpp>
+#include <rj_strategy_msgs/msg/pass_request.hpp>
+#include <rj_strategy_msgs/msg/position_request.hpp>
+#include <rj_strategy_msgs/msg/test_request.hpp>
+#include <rj_ui_msgs/msg/override_position.hpp>
 
 // Responses
-#include <rj_msgs/msg/acknowledge.hpp>
-#include <rj_msgs/msg/pass_response.hpp>
-#include <rj_msgs/msg/position_request.hpp>
-#include <rj_msgs/msg/test_response.hpp>
+#include <rj_strategy_msgs/msg/acknowledge.hpp>
+#include <rj_strategy_msgs/msg/pass_response.hpp>
+#include <rj_strategy_msgs/msg/position_request.hpp>
+#include <rj_strategy_msgs/msg/test_response.hpp>
 
 // Coordinators
 #include "rj_strategy/coordinator/kicker_picker_client.hpp"

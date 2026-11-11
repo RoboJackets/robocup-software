@@ -5,14 +5,14 @@
 
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
-#include <rj_msgs/msg/game_settings.hpp>
+#include <rj_referee_msgs/msg/game_settings.hpp>
 
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the
  * soccer program. This includes playbooks and general settings.
  */
 struct GameSettings {
-    using Msg = rj_msgs::msg::GameSettings;
+    using Msg = rj_referee_msgs::msg::GameSettings;
     using SharedPtr = std::shared_ptr<GameSettings>;
     using ConstSharedPtr = std::shared_ptr<const GameSettings>;
 

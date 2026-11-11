@@ -7,16 +7,16 @@
 #include <rj_common/game_state.hpp>
 #include <rj_common/node.hpp>
 #include <rj_common/topic_names.hpp>
-#include <rj_msgs/msg/goalie.hpp>
-#include <rj_msgs/msg/raw_protobuf.hpp>
-#include <rj_msgs/msg/team_color.hpp>
-#include <rj_msgs/msg/team_info.hpp>
+#include <rj_referee_msgs/msg/goalie_id.hpp>
+#include <rj_referee_msgs/msg/team_color.hpp>
+#include <rj_referee_msgs/msg/team_info.hpp>
+#include <rj_vision_msgs/msg/raw_protobuf.hpp>
 
 namespace ros2_temp {
 
-using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
-using GoalieMsg = rj_msgs::msg::Goalie;
-using TeamColorMsg = rj_msgs::msg::TeamColor;
+using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
+using GoalieMsg = rj_referee_msgs::msg::GoalieID;
+using TeamColorMsg = rj_referee_msgs::msg::TeamColor;
 
 class RefereeSub : public Node {
 public:

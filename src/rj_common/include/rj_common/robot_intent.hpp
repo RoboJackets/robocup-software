@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <rj_geometry/shape_set.hpp>
-#include <rj_msgs/msg/robot_intent.hpp>
+#include <rj_planning_msgs/msg/robot_intent.hpp>
 
 #include "rj_common/planning/motion_command.hpp"
 #include "rj_common/planning/rotation_command.hpp"
@@ -11,7 +11,7 @@
 struct RobotIntent {
     int8_t robot_id = 0;
 
-    using Msg = rj_msgs::msg::RobotIntent;
+    using Msg = rj_planning_msgs::msg::RobotIntent;
     using SharedPtr = std::shared_ptr<RobotIntent>;
     using ConstSharedPtr = std::shared_ptr<const RobotIntent>;
     enum ShootMode { KICK, CHIP };
@@ -42,14 +42,14 @@ bool operator!=(const RobotIntent& r1, const RobotIntent& r2);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
+struct TypeAdapter<RobotIntent, rj_planning_msgs::msg::RobotIntent> {
     using is_specialized = std::true_type;
     using custom_type = RobotIntent;
-    using ros_message_type = rj_msgs::msg::RobotIntent;
+    using ros_message_type = rj_planning_msgs::msg::RobotIntent;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
-        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::
+        rclcpp::TypeAdapter<planning::MotionCommand, rj_planning_msgs::msg::MotionCommand>::
             convert_to_ros_message(source.motion_command, destination.motion_command);
         rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
             convert_to_ros_message(source.local_obstacles, destination.local_obstacles);
@@ -63,7 +63,7 @@ struct TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent> {
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         destination.robot_id = static_cast<uint8_t>(source.robot_id);
-        rclcpp::TypeAdapter<planning::MotionCommand, rj_msgs::msg::MotionCommand>::
+        rclcpp::TypeAdapter<planning::MotionCommand, rj_planning_msgs::msg::MotionCommand>::
             convert_to_custom(source.motion_command, destination.motion_command);
         rclcpp::TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet>::
             convert_to_custom(source.local_obstacles, destination.local_obstacles);

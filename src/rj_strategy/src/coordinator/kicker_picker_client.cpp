@@ -10,7 +10,7 @@ namespace strategy {
 
 KickerPickerClient::KickerPickerClient(rclcpp::Node::SharedPtr node, uint8_t robot_id)
     : node_{std::move(node)}, robot_id_{robot_id}, selected_kicker_{KickerPicker::kInvalidRobotId} {
-    client_ = node_->create_client<rj_msgs::srv::KickerPicker>("kicker_picker_srv");
+    client_ = node_->create_client<rj_strategy_msgs::srv::KickerPicker>("kicker_picker_srv");
 }
 
 void KickerPickerClient::join_group(StatusCallback callback) {
@@ -26,13 +26,13 @@ void KickerPickerClient::join_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::KickerPicker::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::KickerPicker::Request>();
     request->robot_id = robot_id_;
     request->wants_to_kick = true;
 
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::KickerPicker>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {
@@ -45,10 +45,10 @@ void KickerPickerClient::join_group(StatusCallback callback) {
             am_i_member_ = true;
 
             // Create subscription to track selected kicker.
-            subscription_ = node_->create_subscription<rj_msgs::msg::KickerPicker>(
+            subscription_ = node_->create_subscription<rj_strategy_msgs::msg::KickerPicker>(
                 "kicker_picker_data", rclcpp::QoS(1).transient_local(),
-                [this,
-                 callback = std::move(callback)](const rj_msgs::msg::KickerPicker::SharedPtr msg) {
+                [this, callback = std::move(callback)](
+                    const rj_strategy_msgs::msg::KickerPicker::SharedPtr msg) {
                     selected_kicker_ = msg->robot_id;
                     if (callback) {
                         callback(Result{true, selected_kicker_});
@@ -65,13 +65,13 @@ void KickerPickerClient::leave_group(StatusCallback callback) {
         return;
     }
 
-    auto request = std::make_shared<rj_msgs::srv::KickerPicker::Request>();
+    auto request = std::make_shared<rj_strategy_msgs::srv::KickerPicker::Request>();
     request->robot_id = robot_id_;
     request->wants_to_kick = false;
 
     client_->async_send_request(
         request, [this, callback = std::move(callback)](
-                     rclcpp::Client<rj_msgs::srv::KickerPicker>::SharedFuture
+                     rclcpp::Client<rj_strategy_msgs::srv::KickerPicker>::SharedFuture
                          future) {  // 6 NOLINT(performance-unnecessary-value-param) --
                                     //  ROS2 async callbacks require value capture.
             if (!future.valid() || !future.get()->success) {

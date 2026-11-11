@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/leave_wall_request.hpp"
+#include "rj_strategy_msgs/msg/leave_wall_request.hpp"
 
 namespace strategy::communication {
 
@@ -24,10 +24,11 @@ void generate_uid(LeaveWallRequest& request);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::LeaveWallRequest, rj_msgs::msg::LeaveWallRequest> {
+struct TypeAdapter<strategy::communication::LeaveWallRequest,
+                   rj_strategy_msgs::msg::LeaveWallRequest> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::LeaveWallRequest;
-    using ros_message_type = rj_msgs::msg::LeaveWallRequest;
+    using ros_message_type = rj_strategy_msgs::msg::LeaveWallRequest;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;

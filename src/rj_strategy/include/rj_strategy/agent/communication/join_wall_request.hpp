@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/join_wall_request.hpp"
+#include "rj_strategy_msgs/msg/join_wall_request.hpp"
 
 namespace strategy::communication {
 
@@ -24,10 +24,11 @@ void generate_uid(JoinWallRequest& request);
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<strategy::communication::JoinWallRequest, rj_msgs::msg::JoinWallRequest> {
+struct TypeAdapter<strategy::communication::JoinWallRequest,
+                   rj_strategy_msgs::msg::JoinWallRequest> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::JoinWallRequest;
-    using ros_message_type = rj_msgs::msg::JoinWallRequest;
+    using ros_message_type = rj_strategy_msgs::msg::JoinWallRequest;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;

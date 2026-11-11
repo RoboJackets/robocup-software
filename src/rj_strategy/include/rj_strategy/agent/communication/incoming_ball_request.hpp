@@ -7,7 +7,7 @@
 
 #include <rj_common/time.hpp>
 
-#include "rj_msgs/msg/incoming_ball_request.hpp"
+#include "rj_strategy_msgs/msg/incoming_ball_request.hpp"
 
 namespace strategy::communication {
 
@@ -25,10 +25,10 @@ namespace rclcpp {
 
 template <>
 struct TypeAdapter<strategy::communication::IncomingBallRequest,
-                   rj_msgs::msg::IncomingBallRequest> {
+                   rj_strategy_msgs::msg::IncomingBallRequest> {
     using is_specialized = std::true_type;
     using custom_type = strategy::communication::IncomingBallRequest;
-    using ros_message_type = rj_msgs::msg::IncomingBallRequest;
+    using ros_message_type = rj_strategy_msgs::msg::IncomingBallRequest;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.request_uid = source.request_uid;

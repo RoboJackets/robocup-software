@@ -6,13 +6,13 @@
 
 #include <rclcpp/type_adapter.hpp>
 
-#include <rj_msgs/msg/motion_setpoint.hpp>
+#include <rj_control_msgs/msg/motion_setpoint.hpp>
 
 /**
  * \brief Stores the outputs published by MotionControl
  */
 struct MotionSetpoint {
-    using Msg = rj_msgs::msg::MotionSetpoint;
+    using Msg = rj_control_msgs::msg::MotionSetpoint;
     using SharedPtr = std::shared_ptr<MotionSetpoint>;
     using ConstSharedPtr = std::shared_ptr<const MotionSetpoint>;
 
@@ -39,7 +39,7 @@ struct TypeAdapter<MotionSetpoint, MotionSetpoint::Msg> {
     using ros_message_type = MotionSetpoint::Msg;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        destination = rj_msgs::build<MotionSetpoint::Msg>()
+        destination = rj_control_msgs::build<MotionSetpoint::Msg>()
                           .velocity_x_mps(source.xvelocity)
                           .velocity_y_mps(source.yvelocity)
                           .velocity_z_radps(source.avelocity);

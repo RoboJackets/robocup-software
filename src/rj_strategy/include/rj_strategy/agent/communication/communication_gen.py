@@ -19,10 +19,19 @@ type_map = {
    "wstring": "std::u16string"
 }
 
-def convert_msg_to_hpp_include(msg):
+MSGS_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "../../../../../rj_strategy_msgs"
+)
+
+
+def convert_msg_to_snake_case(msg):
     words = re.findall("[A-Z][^A-Z]*", msg[:-4])
     words = list(map(lambda x: x.lower(), words))
-    return '#include <rj_msgs/msg/' + "_".join(words) + '.hpp>'
+    return "_".join(words)
+
+
+def convert_msg_to_hpp_include(msg):
+    return '#include <rj_strategy_msgs/msg/' + convert_msg_to_snake_case(msg) + '.hpp>'
 
 
 def map_message_type_to_cpp_type(msg_type):
@@ -58,7 +67,7 @@ def convert_individual_hpp(msg, path, msg_type):
     hpp += (
         "struct TypeAdapter<strategy::communication::"
         + msgName
-        + ", rj_msgs::msg::"
+        + ", rj_strategy_msgs::msg::"
         + msgName
         + "> {\n"
     )
@@ -66,11 +75,12 @@ def convert_individual_hpp(msg, path, msg_type):
         "\tusing is_specialized = std::true_type;\n"
         "\tusing custom_type = strategy::communication::"
         + msgName
-        + ";\n\tusing ros_message_type = rj_msgs::msg::"
+        + ";\n\tusing ros_message_type = rj_strategy_msgs::msg::"
         + msgName
         + ";\n"
         "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
     )
+    hpp += "\t\trj_strategy_msgs::msg::" + msgName + " result;\n"
     with open(path + "/" + msg) as f:
         for line in f:
             if "#" not in line:
@@ -81,7 +91,9 @@ def convert_individual_hpp(msg, path, msg_type):
         "\tstatic void convert_to_custom(const ros_message_type& source, custom_type& destination) {\n"
         "\t\tdestination = strategy::communication::"
         + msgName
-        + "{\n"
+        + " from_ros(const rj_strategy_msgs::msg::"
+        + msgName
+        + "& from) {\n"
     )
     with open(path + "/" + msg) as f:
         for line in f:
@@ -91,7 +103,13 @@ def convert_individual_hpp(msg, path, msg_type):
     hpp += "\t\t};\n"
     hpp += "\t}\n\n"
     hpp += "};\n\n"
-    hpp += "\n"
+    hpp += (
+        "ASSOCIATE_CPP_ROS(strategy::communication::"
+        + msgName
+        + ", rj_strategy_msgs::msg::"
+        + msgName
+        + ");\n\n"
+    )
     hpp += "}"
     return hpp
 
@@ -154,14 +172,14 @@ def create_cpp_file(requests, responses, hpp_names):
 def create_hpp_files(requests, requestPath, responses, responsePath):
     hpp_names = []
     for request in requests:
-        fileName = convert_msg_to_hpp_include(request)[22:-1]
+        fileName = convert_msg_to_snake_case(request) + ".hpp"
         hpp = convert_individual_hpp(request, requestPath, "request")
         hpp_names.append(fileName)
         with open(fileName, "w") as f:
             f.write(hpp)
 
     for response in responses:
-        fileName = convert_msg_to_hpp_include(response)[22:-1]
+        fileName = convert_msg_to_snake_case(response) + ".hpp"
         hpp = convert_individual_hpp(response, responsePath, "response")
         hpp_names.append(fileName)
         with open(fileName, "w") as f:
@@ -176,9 +194,9 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
         " <rclcpp/type_adapter.hpp>\n\n"
     )
-    hpp += '#include "rj_msgs/msg/agent_request.hpp"\n'
-    hpp += '#include "rj_msgs/msg/agent_response.hpp"\n'
-    hpp += '#include "rj_msgs/msg/agent_response_variant.hpp"\n'
+    hpp += '#include "rj_strategy_msgs/msg/agent_request.hpp"\n'
+    hpp += '#include "rj_strategy_msgs/msg/agent_response.hpp"\n'
+    hpp += '#include "rj_strategy_msgs/msg/agent_response_variant.hpp"\n'
 
     for name in hpp_names:
         hpp += '#include "' + name + '"\n'
@@ -328,18 +346,18 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "template <>\n"
     hpp += (
         "struct TypeAdapter<strategy::communication::AgentRequest,"
-        " rj_msgs::msg::AgentRequest> {\n"
+        " rj_strategy_msgs::msg::AgentRequest> {\n"
     )
     hpp += (
         "\tusing is_specialized = std::true_type;\n"
         "\tusing custom_type = strategy::communication::AgentRequest;\n"
-        "\tusing ros_message_type = rj_msgs::msg::AgentRequest;\n"
+        "\tusing ros_message_type = rj_strategy_msgs::msg::AgentRequest;\n"
         "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
         "\t\tdestination = ros_message_type{};\n"
     )
     hpp += "\t\t"
     for request in requests_msgs:
-        msgName = convert_msg_to_hpp_include(request)[22:-5]
+        msgName = convert_msg_to_snake_case(request)
         hpp += (
             "if (const auto* "
             + msgName
@@ -350,11 +368,11 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         hpp += (
             "\t\t\tdestination."
             + msgName
-            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + ".emplace_back([&] {\n\t\t\t\trj_strategy_msgs::msg::"
             + request[:-4]
             + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + request[:-4]
-            + ", rj_msgs::msg::"
+            + ", rj_strategy_msgs::msg::"
             + request[:-4]
             + ">::convert_to_ros_message(*"
             + msgName
@@ -378,7 +396,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
             + request[:-4]
             + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + request[:-4]
-            + ", rj_msgs::msg::"
+            + ", rj_strategy_msgs::msg::"
             + request[:-4]
             + ">::convert_to_custom(source."
             + msgName
@@ -396,21 +414,21 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp += "template <>\n"
     hpp += (
         "struct TypeAdapter<strategy::communication::AgentResponse,"
-        " rj_msgs::msg::AgentResponse> {\n"
+        " rj_strategy_msgs::msg::AgentResponse> {\n"
     )
     hpp += (
         "\tusing is_specialized = std::true_type;\n"
         "\tusing custom_type = strategy::communication::AgentResponse;\n"
-        "\tusing ros_message_type = rj_msgs::msg::AgentResponse;\n"
+        "\tusing ros_message_type = rj_strategy_msgs::msg::AgentResponse;\n"
         "\tstatic void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {\n"
         "\t\tdestination = ros_message_type{};\n"
     )
     hpp += (
-        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest>::"
         "convert_to_ros_message(source.associated_request, destination.associated_request);\n\t\t"
     )
     for response in response_msgs:
-        msgName = convert_msg_to_hpp_include(response)[22:-5]
+        msgName = convert_msg_to_snake_case(response)
         hpp += (
             "if (const auto* "
             + msgName
@@ -421,11 +439,11 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
         hpp += (
             "\t\t\tdestination.response."
             + msgName
-            + ".emplace_back([&] {\n\t\t\t\trj_msgs::msg::"
+            + ".emplace_back([&] {\n\t\t\t\trj_strategy_msgs::msg::"
             + response[:-4]
             + " converted;\n\t\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + response[:-4]
-            + ", rj_msgs::msg::"
+            + ", rj_strategy_msgs::msg::"
             + response[:-4]
             + ">::convert_to_ros_message(*"
             + msgName
@@ -442,7 +460,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     )
     hpp += "\t\tstrategy::communication::AgentResponse result;\n"
     hpp += (
-        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_msgs::msg::AgentRequest>::"
+        "\t\trclcpp::TypeAdapter<strategy::communication::AgentRequest, rj_strategy_msgs::msg::AgentRequest>::"
         "convert_to_custom(source.associated_request, result.associated_request);\n\t\t"
     )
     for response in response_msgs:
@@ -453,7 +471,7 @@ def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
             + response[:-4]
             + " converted;\n\t\t\trclcpp::TypeAdapter<strategy::communication::"
             + response[:-4]
-            + ", rj_msgs::msg::"
+            + ", rj_strategy_msgs::msg::"
             + response[:-4]
             + ">::convert_to_custom(source.response."
             + msgName
@@ -479,14 +497,14 @@ def create_main_hpp_file(requests_msgs, response_msgs, hpp_names):
 
 
 def update_cmake(requests_msgs, response_msgs):
-    with open("../../../../../../rj_msgs/CMakeLists.txt", "r") as f:
+    with open(MSGS_PATH + "/CMakeLists.txt", "r") as f:
         contents = f.read().split("\n")
 
     start = contents.index("  # Agent Request Messages")
     end = contents.index("  # Services")
 
-    requests = ["  request/" + request for request in requests_msgs]
-    responses = ["  response/" + response for response in response_msgs]
+    requests = ["  msg/request/" + request for request in requests_msgs]
+    responses = ["  msg/response/" + response for response in response_msgs]
 
     contents = (
         contents[:start]
@@ -498,37 +516,37 @@ def update_cmake(requests_msgs, response_msgs):
         + contents[end:]
     )
 
-    with open("../../../../../../rj_msgs/CMakeLists.txt", "w") as f:
+    with open(MSGS_PATH + "/CMakeLists.txt", "w") as f:
         f.write("\n".join(contents))
 
 
 def update_agent_message(requests_msgs, response_msgs):
-    with open("../../../../../../rj_msgs/msg/AgentRequest.msg", "r") as f:
+    with open(MSGS_PATH + "/msg/AgentRequest.msg", "r") as f:
         contents = f.read().split("\n")
 
     end = contents.index("# ACKNOWLEDGE REQUEST DOES NOT (AND SHOULD NOT) EXIST")
 
     requests = [
-        request[:-4] + "[<=1] " + convert_msg_to_hpp_include(request)[22:-5]
+        request[:-4] + "[<=1] " + convert_msg_to_snake_case(request)
         for request in requests_msgs
     ]
     responses = [
-        response[:-4] + "[<=1] " + convert_msg_to_hpp_include(response)[22:-5]
+        response[:-4] + "[<=1] " + convert_msg_to_snake_case(response)
         for response in response_msgs
     ]
 
     contents = contents[: end + 1] + requests
 
-    with open("../../../../../../rj_msgs/msg/AgentRequest.msg", "w") as f:
+    with open(MSGS_PATH + "/msg/AgentRequest.msg", "w") as f:
         f.write("\n".join(contents))
 
-    with open("../../../../../../rj_msgs/msg/AgentResponseVariant.msg", "w") as f:
+    with open(MSGS_PATH + "/msg/AgentResponseVariant.msg", "w") as f:
         f.write("\n".join(responses))
 
 
 if __name__ == "__main__":
-    path_request = "../../../../../../rj_msgs/request"
-    path_response = "../../../../../../rj_msgs/response"
+    path_request = MSGS_PATH + "/msg/request"
+    path_response = MSGS_PATH + "/msg/response"
 
     requests_msgs = os.listdir(path_request)
     response_msgs = os.listdir(path_response)

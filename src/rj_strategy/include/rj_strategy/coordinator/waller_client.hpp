@@ -6,8 +6,8 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_common/field_dimensions.hpp>
-#include <rj_msgs/msg/waller.hpp>
-#include <rj_msgs/srv/waller.hpp>
+#include <rj_strategy_msgs/msg/waller.hpp>
+#include <rj_strategy_msgs/srv/waller.hpp>
 
 #include "rj_strategy/coordinator/waller.hpp"
 
@@ -61,8 +61,8 @@ private:
     rclcpp::Node::SharedPtr node_;
     const uint8_t robot_id_;  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members) -- class
                               // isn't move/copy-able anyway
-    rclcpp::Client<rj_msgs::srv::Waller>::SharedPtr client_;
-    rclcpp::Subscription<rj_msgs::msg::Waller>::SharedPtr subscription_;
+    rclcpp::Client<rj_strategy_msgs::srv::Waller>::SharedPtr client_;
+    rclcpp::Subscription<rj_strategy_msgs::msg::Waller>::SharedPtr subscription_;
 
     bool am_i_member_ = false;
     bool request_pending_ = false;

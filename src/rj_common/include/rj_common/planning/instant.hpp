@@ -6,8 +6,8 @@
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
-#include <rj_msgs/msg/linear_motion_instant.hpp>
-#include <rj_msgs/msg/robot_instant.hpp>
+#include <rj_planning_msgs/msg/linear_motion_instant.hpp>
+#include <rj_planning_msgs/msg/robot_instant.hpp>
 
 #include "rj_common/debug_drawer.hpp"
 #include "rj_common/planning/dynamic_obstacle.hpp"
@@ -19,7 +19,7 @@ namespace planning {
  * including position and velocity.
  */
 struct LinearMotionInstant {
-    using Msg = rj_msgs::msg::LinearMotionInstant;
+    using Msg = rj_planning_msgs::msg::LinearMotionInstant;
 
     explicit LinearMotionInstant(rj_geometry::Point pos = {0, 0},
                                  rj_geometry::Point vel = {0, 0})
@@ -55,7 +55,7 @@ struct LinearMotionInstant {
  * @brief Represents the current state of a robot in a planned trajectory.
  */
 struct RobotInstant {
-    using Msg = rj_msgs::msg::RobotInstant;
+    using Msg = rj_planning_msgs::msg::RobotInstant;
 
     RobotInstant(rj_geometry::Pose pose, rj_geometry::Twist velocity,
                  RJ::Time stamp)
@@ -118,10 +118,10 @@ struct RobotInstant {
 namespace rclcpp {
 
 template <>
-struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInstant> {
+struct TypeAdapter<planning::LinearMotionInstant, rj_planning_msgs::msg::LinearMotionInstant> {
     using is_specialized = std::true_type;
     using custom_type = planning::LinearMotionInstant;
-    using ros_message_type = rj_msgs::msg::LinearMotionInstant;
+    using ros_message_type = rj_planning_msgs::msg::LinearMotionInstant;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
@@ -139,10 +139,10 @@ struct TypeAdapter<planning::LinearMotionInstant, rj_msgs::msg::LinearMotionInst
 };
 
 template <>
-struct TypeAdapter<planning::RobotInstant, rj_msgs::msg::RobotInstant> {
+struct TypeAdapter<planning::RobotInstant, rj_planning_msgs::msg::RobotInstant> {
     using is_specialized = std::true_type;
     using custom_type = planning::RobotInstant;
-    using ros_message_type = rj_msgs::msg::RobotInstant;
+    using ros_message_type = rj_planning_msgs::msg::RobotInstant;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(

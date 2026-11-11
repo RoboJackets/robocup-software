@@ -4,7 +4,7 @@
 
 namespace planning {
 
-using RobotMove = rj_msgs::action::RobotMove;
+using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ServerGoalHandle<RobotMove>;
 
 PlannerNode::PlannerNode() : rclcpp::Node("planner"), global_state_(this) {
@@ -130,7 +130,7 @@ void PlannerNode::execute(const std::shared_ptr<GoalHandleRobotMove> goal_handle
         // pub Trajectory based on the RobotIntent
         my_robot_planner.execute_intent([&goal] {
             RobotIntent intent;
-            rclcpp::TypeAdapter<RobotIntent, rj_msgs::msg::RobotIntent>::convert_to_custom(
+            rclcpp::TypeAdapter<RobotIntent, rj_planning_msgs::msg::RobotIntent>::convert_to_custom(
                 goal->robot_intent, intent);
             return intent;
         }());

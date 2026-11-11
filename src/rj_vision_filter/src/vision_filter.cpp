@@ -4,7 +4,7 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_msgs/msg/detection_frame.hpp>
+#include <rj_vision_msgs/msg/detection_frame.hpp>
 
 namespace vision_filter {
 namespace {
@@ -213,7 +213,7 @@ VisionFilter::WorldStateMsg VisionFilter::build_world_state_msg(bool us_blue) co
     builtin_interfaces::msg::Time last_update_time;
     rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
         world_.last_update_time(), last_update_time);
-    return rj_msgs::build<WorldStateMsg>()
+    return rj_vision_msgs::build<WorldStateMsg>()
         .last_update_time(last_update_time)
         .their_robots(build_robot_state_msgs(!us_blue))
         .our_robots(build_robot_state_msgs(us_blue))

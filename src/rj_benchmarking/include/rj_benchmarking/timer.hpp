@@ -7,7 +7,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_msgs/msg/latency.hpp>
+#include <rj_benchmarking_msgs/msg/latency.hpp>
 
 #include "rj_benchmarking/registry_publisher.hpp"
 

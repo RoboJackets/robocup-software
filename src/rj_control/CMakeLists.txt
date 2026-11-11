@@ -14,14 +14,14 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 
 set(RJ_CONTROL_DEPS
   std_msgs
-  rj_msgs
+  rj_vision_msgs
   rj_common
   rj_geometry
   rj_planning
