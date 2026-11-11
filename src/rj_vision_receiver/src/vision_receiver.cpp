@@ -265,7 +265,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     const SSL_FieldCircularArc* center = nullptr;
     float penalty_short_dist = 0;                                          // default value
     float penalty_long_dist = 0;                                           // default value
-    float displacement = FieldDimensions::kDefaultDimensions.goal_flat();  // default displacment
+    float displacement = FieldDimensions{}.goal_flat();  // default displacment
 
     // Loop through field arcs looking for needed fields
     for (const SSL_FieldCircularArc& arc : field_size.field_arcs()) {
@@ -301,7 +301,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             thickness,
             field_size.goal_width() / 1000.0f,
             field_size.goal_depth() / 1000.0f,
-            FieldDimensions::kDefaultDimensions.goal_height(),
+            FieldDimensions{}.goal_height(),
             penalty_short_dist / 1000.0f,
             penalty_long_dist / 1000.0f,
             center->radius() / 1000.0f + adj,
@@ -316,7 +316,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             return message;
         }());
     } else if (center != nullptr && thickness != 0) {
-        const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
+        const FieldDimensions default_dim{};
 
         const FieldDimensions new_field_dim{
             field_size.field_length() / 1000.0f,
@@ -325,7 +325,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             thickness,
             field_size.goal_width() / 1000.0f,
             field_size.goal_depth() / 1000.0f,
-            FieldDimensions::kDefaultDimensions.goal_height(),
+            FieldDimensions{}.goal_height(),
             default_dim.penalty_short_dist(),
             default_dim.penalty_long_dist(),
             center->radius() / 1000.0f + adj,

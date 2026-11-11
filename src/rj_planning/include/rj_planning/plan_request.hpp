@@ -33,7 +33,7 @@ struct PlanRequest {
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 std::shared_ptr<TrajectoryCollection> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, PlayState play_state,
-                const FieldDimensions* field_dimensions,
+                FieldDimensions field_dimensions,
                 std::shared_ptr<const PlanningParams> params, int8_t priority = 0,
                 rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
                 float min_dist_from_ball = 0, float kick_speed = 0,
@@ -48,7 +48,7 @@ struct PlanRequest {
           world_state(world_state),
           priority(priority),
           play_state(play_state),
-          field_dimensions(field_dimensions),
+          field_dimensions(std::move(field_dimensions)),
           params(std::move(params)),
           debug_drawer(debug_drawer),
           ball_sense(ball_sense),
@@ -110,7 +110,7 @@ struct PlanRequest {
     /**
      * the Field Dimensions
      */
-    const FieldDimensions* field_dimensions;
+    FieldDimensions field_dimensions;
 
     /**
      * The /planner params, read once at startup by PlannerNode.

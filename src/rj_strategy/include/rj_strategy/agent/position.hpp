@@ -281,7 +281,7 @@ protected:
     // TODO: this is not thread-safe, does it need to be?
     // (if so match world_state below)
     bool our_possession_{};
-    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
+    FieldDimensions field_dimensions_{};
     PlayState current_play_state_ = PlayState::halt();
 
     // Current queue of requests to return to the AAC

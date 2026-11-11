@@ -23,7 +23,7 @@ static std::unordered_map<uint8_t, std::tuple<double, double, double>> cached_in
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
+                        const ObstacleSet& obstacles, const FieldDimensions& field_dimensions,
                         unsigned int robot_id, const IntermediateParams& intermediate_params) {
     // if already on goal, no need to move
     if (start.position.dist_to(goal.position) < 1e-6) {
@@ -54,11 +54,11 @@ Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInst
              t += intermediate_params.step_size) {
             rj_geometry::Point intermediate =
                 (final_inter - start.position).normalized(t) + start.position;
-            auto offset = intermediate - field_dimensions->center_point();
+            auto offset = intermediate - field_dimensions.center_point();
 
             // Ignore out-of-bounds intermediate points
-            if (abs(offset.x()) > field_dimensions->width() / 2 ||
-                abs(offset.y()) > field_dimensions->length() / 2) {
+            if (abs(offset.x()) > field_dimensions.width() / 2 ||
+                abs(offset.y()) > field_dimensions.length() / 2) {
                 continue;
             }
             Trajectory trajectory =

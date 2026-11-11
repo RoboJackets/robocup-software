@@ -32,7 +32,7 @@ public:
         RobotInstant start;
         LinearMotionInstant goal;
         const ObstacleSet& obstacles;
-        const FieldDimensions* field_dimensions;
+        const FieldDimensions& field_dimensions;
         RobotConstraints constraints;
         const AngleFunction& angle_function;
         unsigned int robot_id;

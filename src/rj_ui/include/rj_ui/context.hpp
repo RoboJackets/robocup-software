@@ -71,6 +71,7 @@ public:
         frame->defend_plus_x = game_settings.defend_plus_x;
         frame->use_our_half = game_settings.use_our_half;
         frame->use_their_half = game_settings.use_their_half;
+        frame->field_dimensions = field_dimensions;
 
         if (blue_team) {
             frame->yellow_name = their_info.name;

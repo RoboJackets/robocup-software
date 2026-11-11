@@ -91,8 +91,6 @@ public:
      */
     void stop_robots();
 
-    void set_field_dimensions(const FieldDimensions& dims);
-
     bool is_initialized() const;
 
     Context* context() { return &context_; }

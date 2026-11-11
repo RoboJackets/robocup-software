@@ -50,6 +50,11 @@ public:
 
     void setHistory(std::vector<std::shared_ptr<rj_common::UIFrame>>&& value) {
         _history = std::move(value);
+        if (!_history.empty() && _history.back() != nullptr &&
+            _history.back()->field_dimensions != field_dimensions_) {
+            field_dimensions_ = _history.back()->field_dimensions;
+            updateGeometry();
+        }
     }
 
     void rotate(int value);
@@ -78,7 +83,7 @@ protected:
 
     void drawText(QPainter& p, QPointF pos, const QString& text,
                   bool center = true) const;
-    static void drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame);
+    void drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
@@ -117,6 +122,9 @@ protected:
 
     // Returns a pointer to the most recent frame, or null if none is available.
     std::shared_ptr<rj_common::UIFrame> currentFrame();
+
+    // Dimensions of the field being drawn, taken from the latest UIFrame.
+    FieldDimensions field_dimensions_;
 
     // Coordinate transformations
     rj_geometry::TransformMatrix _screenToWorld;
