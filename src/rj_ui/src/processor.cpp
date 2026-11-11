@@ -4,16 +4,11 @@ using namespace boost;
 using namespace rj_geometry;
 using namespace google::protobuf;
 
-// TODO: Remove this and just use the one in Context.
-FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
-
 Processor::Processor(bool /*sim*/, bool /*blue_team*/) : loop_mutex_() {
     // Set the logger to ros2.
     running_ = true;
     framerate_ = 0;
     initialized_ = false;
-
-    context_.field_dimensions = *current_dimensions;
 
     ros_executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
@@ -80,13 +75,9 @@ void Processor::run() {
         // spin_all doesn't exist yet
         // ros_executor_->spin_all();
 
-        // Updates context_->field_dimensions
+        // Updates context_.field_dimensions, which is copied into each UIFrame
         config_client_->run();
 
-        if (context_.field_dimensions != *current_dimensions) {
-            SPDLOG_INFO("Updating field geometry based off of vision packet.");
-            set_field_dimensions(context_.field_dimensions);
-        }
         cur_status.last_vision_time = last_vision_time_;
 
         autonomy_interface_->run();
@@ -130,7 +121,5 @@ void Processor::run() {
 }
 
 void Processor::stop_robots() {}
-
-void Processor::set_field_dimensions(const FieldDimensions& dims) { *current_dimensions = dims; }
 
 bool Processor::is_initialized() const { return initialized_; }

@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include <rj_common/field_dimensions.hpp>
 #include <rj_common/robot_intent.hpp>
 #include <rj_common/time.hpp>
 #include <rj_common/world_state.hpp>
@@ -64,6 +65,7 @@ struct UIFrame {
     int manual_id = -1;
     std::string blue_name;
     std::string yellow_name;
+    FieldDimensions field_dimensions;
     DebugDrawFrame debug_draw_frame;
 };
 

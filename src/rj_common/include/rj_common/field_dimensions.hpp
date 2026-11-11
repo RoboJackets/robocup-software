@@ -139,15 +139,12 @@ struct FieldDimensions {
 
     [[nodiscard]] std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
 
-    static const FieldDimensions kSingleFieldDimensions;
-
-    static const FieldDimensions kDoubleFieldDimensions;
-
-    static const FieldDimensions kDefaultDimensions;
-
-    static FieldDimensions current_dimensions;
-
-    FieldDimensions() : FieldDimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+    /**
+     * From https://robocup-ssl.github.io/ssl-rules/sslrules.pdf
+     */
+    FieldDimensions()
+        : FieldDimensions(9.000f, 6.000f, 0.700f, 0.010f, 1.000f, 0.180f, 0.160f, 1.000f, 2.000f,
+                          0.500f, 1.000f, 0.500f, 10.400f, 7.400f) {}
 
     /**
      * Parameterized constructor - creates the values and structs to be passed into the

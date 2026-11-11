@@ -53,7 +53,7 @@ private:
     std::array<uint8_t, kNumShells> enemy_to_friends_{};
     std::unordered_set<uint8_t> unassigned_markers_queue_;
     WorldState last_world_state_;
-    FieldDimensions field_dimensions_ = FieldDimensions::kDefaultDimensions;
+    FieldDimensions field_dimensions_{};
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
 };
 

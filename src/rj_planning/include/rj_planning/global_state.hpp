@@ -31,7 +31,7 @@ public:
     [[nodiscard]] int goalie_id() const;
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const;
     [[nodiscard]] const WorldState* world_state() const;
-    [[nodiscard]] const FieldDimensions* field_dimensions() const;
+    [[nodiscard]] FieldDimensions field_dimensions() const;
 
 private:
     rclcpp::Subscription<PlayState::Msg>::SharedPtr play_state_sub_;
@@ -51,7 +51,7 @@ private:
     mutable std::mutex last_def_area_obstacles_mutex_{};
     WorldState last_world_state_{};
     mutable std::mutex last_world_state_mutex_{};
-    FieldDimensions last_field_dimensions_{FieldDimensions::kDefaultDimensions};
+    FieldDimensions last_field_dimensions_{};
     bool have_field_dimensions_{};
     mutable std::mutex last_field_dimensions_mutex_{};
 

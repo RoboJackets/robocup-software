@@ -25,7 +25,7 @@ Trajectory simple(
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
+                        const ObstacleSet& obstacles, const FieldDimensions& field_dimensions,
                         unsigned int robot_id, const IntermediateParams& intermediate_params);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,

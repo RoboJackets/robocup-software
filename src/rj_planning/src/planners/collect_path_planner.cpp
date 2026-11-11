@@ -272,7 +272,7 @@ Trajectory CollectPathPlanner::intercept(const PlanRequest& plan_request,
     // where we check ever X distance along the ball velocity vector
     //
     // Disallow points outside the field
-    const Rect& field_rect = FieldDimensions::current_dimensions.field_rect();
+    const Rect& field_rect = plan_request.field_dimensions.field_rect();
 
     std::optional<Point> ball_intercept_maybe;
     RJ::Seconds best_buffer = RJ::Seconds(-1.0);

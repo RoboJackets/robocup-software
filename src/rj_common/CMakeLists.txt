@@ -31,7 +31,6 @@ set(RJ_COMMON_DEPS
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/field_dimensions.cpp
   src/robot_intent.cpp
   src/transforms.cpp
   src/world_state.cpp
