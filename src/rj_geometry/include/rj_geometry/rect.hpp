@@ -7,13 +7,9 @@
 #include <ostream>
 #include <string>
 #include <sstream>
-#include <tuple>
 #include <vector>
 #include <rj_geometry_msgs/msg/rect.hpp>
 #include <rj_geometry_msgs/msg/detail/rect__struct.hpp>
-
-#include <gtest/gtest.h>
-#include <gtest/gtest_prod.h>
 
 #include "point.hpp"
 #include "shape.hpp"
@@ -142,7 +138,7 @@ public:
     // --- Shape virtuals ---
 
     bool contains_point(const Point& p) const override;
-    bool intersects_segment(const Segment& seg) const override; // TODO: use sutherland-cohen
+    bool intersects_segment(const Segment& seg) const override;
     bool near_point(const Point& p, float clearance) const override;
     bool near_segment(const Segment& seg, float clearance) const override;
     std::vector<Point> get_segment_intersections(const Segment& seg) const override;
@@ -157,10 +153,6 @@ public:
 
     std::unique_ptr<Rect> clone() const;
 
-    // --- Custom utilities ---
-
-    /** DEPRECATE AND REMOVE ALL REFERENCES! Old version of what is now split into intersects_segment and get_segment_intersections */
-    [[nodiscard]] std::tuple<bool, std::vector<Point> > intersects(const Segment& other) const;
 protected:
     // --- Hidden parameters ---
 
@@ -169,18 +161,5 @@ protected:
     // --- Shape virtuals ---
 
     Rect* clone_impl() const override;
-
-    // --- Custom utilities ---
-
-    /** Cohen-Sutherland bit maps */
-    const int kInside = 0x00;  // 0000
-    const int kLeft = 0x01;    // 0001
-    const int kRight = 0x02;   // 0010
-    const int kBottom = 0x04;  // 0100
-    const int kTop = 0x08;     // 1000
-    int cohen_sutherland_out_code(const Point& other) const;
-    FRIEND_TEST(Rect, cohen_codes);
-    FRIEND_TEST(Rect, degenerate_cohen_codes);
-
 };
 }  // namespace rj_geometry

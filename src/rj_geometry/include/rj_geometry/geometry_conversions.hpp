@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <iterator>
 #include <memory>
@@ -134,18 +135,21 @@ struct TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
     using ros_message_type = rj_geometry_msgs::msg::Rect;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        for (size_t i = 0; i < source.pt.size(); ++i) {
+        // Rect.msg still stores the diagonal in pt. The C++ type exposes that pair through corners().
+        const std::array<rj_geometry::Point, 2> corners = source.corners();
+        for (size_t i = 0; i < corners.size(); ++i) {
             rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
-                convert_to_ros_message(source.pt[i], destination.pt[i]);
+                convert_to_ros_message(corners[i], destination.pt[i]);
         }
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        for (size_t i = 0; i < source.pt.size(); ++i) {
-            rclcpp::TypeAdapter<rj_geometry::Point,
-                                rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
-                                                                                 destination.pt[i]);
+        std::array<rj_geometry::Point, 2> corners;
+        for (size_t i = 0; i < corners.size(); ++i) {
+            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
+                source.pt[i], corners[i]);
         }
+        destination = rj_geometry::Rect(corners[0], corners[1]);
     }
 };
 
