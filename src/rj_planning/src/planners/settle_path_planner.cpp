@@ -236,14 +236,15 @@ Trajectory SettlePathPlanner::intercept(const PlanRequest& plan_request, RobotIn
     // Make sure target_robot_intersection is inside the field
     // If not, project it into the field
     if (!field_rect.contains_point(ball_vel_intercept)) {
-        auto intersect_return = field_rect.intersects(Segment(ball.position, ball_vel_intercept));
-
-        bool valid_intersect = std::get<0>(intersect_return);
-        std::vector<Point> intersect_pts = std::get<1>(intersect_return);
+        const Segment ball_to_target(ball.position, ball_vel_intercept);
+        std::vector<Point> intersect_pts;
+        if (field_rect.intersects_segment(ball_to_target)) {
+            intersect_pts = field_rect.get_segment_intersections(ball_to_target);
+        }
 
         // If the ball intersects the field at some point
         // Just get the intersect point as the new target
-        if (valid_intersect) {
+        if (!intersect_pts.empty()) {
             // Sorts based on distance to intercept target
             // The closest one is the intercept point which the ball moves
             // through leaving the field Not the one on the other side of the

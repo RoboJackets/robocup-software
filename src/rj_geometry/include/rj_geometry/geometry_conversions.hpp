@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 
 #include <rj_convert/ros_convert.hpp>
 #include <rj_geometry/line.hpp>
@@ -120,14 +121,16 @@ template <>
 struct RosConverter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
     static rj_geometry_msgs::msg::Rect to_ros(const rj_geometry::Rect& from) {
         rj_geometry_msgs::msg::Rect to;
-        convert_to_ros(from.pt, &to.pt);
+        // Rect.msg still stores the diagonal in pt. The C++ type exposes that
+        // pair through corners().
+        convert_to_ros(from.corners(), &to.pt);
         return to;
     }
 
     static rj_geometry::Rect from_ros(const rj_geometry_msgs::msg::Rect& from) {
-        rj_geometry::Rect to;
-        convert_from_ros(from.pt, &to.pt);
-        return to;
+        std::array<rj_geometry::Point, 2> corners;
+        convert_from_ros(from.pt, &corners);
+        return rj_geometry::Rect(corners[0], corners[1]);
     }
 };
 

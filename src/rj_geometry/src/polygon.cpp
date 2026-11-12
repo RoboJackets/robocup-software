@@ -3,12 +3,15 @@
 namespace rj_geometry {
 
 Polygon::Polygon(const Rect& rect) {
-    // Boundary order: pt[0], (pt[1].x, pt[0].y), pt[1], then (pt[0].x, pt[1].y).
+    // Same winding as the old public corner pair: first stored corner, the
+    // corner that shares its y, the opposite stored corner, then the corner
+    // that shares its x.
+    const std::array<Point, 2> corners = rect.corners();
     vertices.resize(4);
-    vertices[0] = rect.pt[0];
-    vertices[1] = Point(rect.pt[1].x(), rect.pt[0].y());
-    vertices[2] = rect.pt[1];
-    vertices[3] = Point(rect.pt[0].x(), rect.pt[1].y());
+    vertices[0] = corners[0];
+    vertices[1] = Point(corners[1].x(), corners[0].y());
+    vertices[2] = corners[1];
+    vertices[3] = Point(corners[0].x(), corners[1].y());
 }
 
 Polygon::Polygon(std::vector<Point> verts) { vertices = std::move(verts); }

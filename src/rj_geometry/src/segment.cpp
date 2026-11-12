@@ -11,14 +11,8 @@ using namespace std;
 namespace rj_geometry {
 
 Rect Segment::bbox() const {
-    Rect bbox;
-
-    bbox.pt[0].x() = min(pt[0].x(), pt[1].x());
-    bbox.pt[0].y() = min(pt[0].y(), pt[1].y());
-    bbox.pt[1].x() = max(pt[0].x(), pt[1].x());
-    bbox.pt[1].y() = max(pt[0].y(), pt[1].y());
-
-    return bbox;
+    return Rect(Point(min(pt[0].x(), pt[1].x()), min(pt[0].y(), pt[1].y())),
+                Point(max(pt[0].x(), pt[1].x()), max(pt[0].y(), pt[1].y())));
 }
 
 float Segment::dist_to(const Point& other) const {
