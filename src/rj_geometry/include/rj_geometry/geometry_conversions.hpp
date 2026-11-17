@@ -253,11 +253,11 @@ struct TypeAdapter<rj_geometry::ShapeSet, rj_geometry_msgs::msg::ShapeSet> {
         std::transform(
             source.circles.begin(), source.circles.end(), std::back_inserter(destination.shapes()),
             [](const auto& circle) {
-                rj_geometry::Circle converted;
-                rclcpp::TypeAdapter<rj_geometry::Circle,
-                                    rj_geometry_msgs::msg::Circle>::convert_to_custom(circle,
-                                                                                      converted);
-                return std::make_shared<rj_geometry::Circle>(std::move(converted));
+                rj_geometry::Point center;
+                rclcpp::TypeAdapter<rj_geometry::Point,
+                                    rj_geometry_msgs::msg::Point>::convert_to_custom(circle.center,
+                                                                                     center);
+                return std::make_shared<rj_geometry::Circle>(center, circle.radius);
             });
         std::transform(
             source.polygons.begin(), source.polygons.end(),
