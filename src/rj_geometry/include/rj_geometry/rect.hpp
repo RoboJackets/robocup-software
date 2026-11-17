@@ -5,11 +5,12 @@
 #include <cassert>
 #include <memory>
 #include <ostream>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
-#include <rj_geometry_msgs/msg/rect.hpp>
+
 #include <rj_geometry_msgs/msg/detail/rect__struct.hpp>
+#include <rj_geometry_msgs/msg/rect.hpp>
 
 #include "point.hpp"
 #include "shape.hpp"
@@ -59,10 +60,10 @@ public:
      */
     std::array<Point, 4> all_corners() const {
         std::array<Point, 4> tmp;
-        tmp[0] = Point(minx(), miny()); // BottomLeft
-        tmp[1] = Point(minx(), maxy()); // TopLeft
-        tmp[2] = Point(maxx(), maxy()); // TopRight
-        tmp[3] = Point(maxx(), miny()); // BottomRight
+        tmp[0] = Point(minx(), miny());  // BottomLeft
+        tmp[1] = Point(minx(), maxy());  // TopLeft
+        tmp[2] = Point(maxx(), maxy());  // TopRight
+        tmp[3] = Point(maxx(), miny());  // BottomRight
         return tmp;
     }
     Point center() const { return (corners_[0] + corners_[1]) / 2; }
@@ -75,7 +76,7 @@ public:
     }
     /**
      * This expands the rectangle such that it includes the the given point.
-     * 
+     *
      * NOTE: This will override the backing corner pair to the canon order:
      * [BottomLeft, TopRight]
      */
@@ -102,33 +103,25 @@ public:
     // --- Operators ---
 
     bool operator==(const Rect& other) const { return corners_ == other.corners_; }
-    Rect operator+(Point offset) {
-        return Rect(corners_[0] + offset, corners_[1] + offset);
-    }
+    Rect operator+(Point offset) { return Rect(corners_[0] + offset, corners_[1] + offset); }
     Rect& operator+=(Point offset) {
         corners_[0] += offset;
         corners_[1] += offset;
         return *this;
     }
-    Rect operator-(Point offset) {
-        return Rect(corners_[0] - offset, corners_[1] - offset);
-    }
+    Rect operator-(Point offset) { return Rect(corners_[0] - offset, corners_[1] - offset); }
     Rect& operator-=(Point offset) {
         corners_[0] -= offset;
         corners_[1] -= offset;
         return *this;
     }
-    Rect operator*(float s) {
-        return Rect(corners_[0] * s, corners_[1] * s);
-    }
+    Rect operator*(float s) { return Rect(corners_[0] * s, corners_[1] * s); }
     Rect& operator*=(float s) {
         corners_[0] *= s;
         corners_[1] *= s;
         return *this;
     }
-    Rect operator/(float s) {
-        return Rect(corners_[0] / s, corners_[1] / s);
-    }
+    Rect operator/(float s) { return Rect(corners_[0] / s, corners_[1] / s); }
     Rect& operator/=(float s) {
         corners_[0] /= s;
         corners_[1] /= s;

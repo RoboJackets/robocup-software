@@ -1,18 +1,16 @@
+#include "rj_geometry/circle.hpp"
+
+#include <cmath>
+#include <cstdlib>
 #include <memory>
 #include <vector>
-#include <cstdlib>
-#include <cmath>
 
-#include "rj_geometry/circle.hpp"
-#include "rj_geometry/segment.hpp"
 #include "rj_geometry/point.hpp"
-
+#include "rj_geometry/segment.hpp"
 
 namespace rj_geometry {
 
-bool Circle::contains_point(const Point& p) const {
-    return (p - center()).mag() <= radius();
-}
+bool Circle::contains_point(const Point& p) const { return (p - center()).mag() <= radius(); }
 
 bool Circle::intersects_segment(const Segment& seg) const {
     return seg.near_point(center(), radius());

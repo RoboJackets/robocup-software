@@ -30,7 +30,9 @@ public:
         return obstacle->near_segment(seg, kRobotRadius);
     }
 
-    virtual bool padding_hit(rj_geometry::Point pt) { return padding->near_point(pt, kRobotRadius); }
+    virtual bool padding_hit(rj_geometry::Point pt) {
+        return padding->near_point(pt, kRobotRadius);
+    }
 
     virtual bool padding_hit(const rj_geometry::Segment& seg) {
         return padding->near_segment(seg, kRobotRadius);

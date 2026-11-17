@@ -1,6 +1,7 @@
+#include "rj_geometry/point.hpp"
+
 #include <gtest/gtest.h>
 
-#include "rj_geometry/point.hpp"
 #include "rj_geometry/point_eigen.hpp"
 #include "rj_geometry/util.hpp"
 

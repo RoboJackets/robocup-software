@@ -2,9 +2,10 @@
 
 #include <cassert>
 #include <memory>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
+
 #include <rj_geometry_msgs/msg/circle.hpp>
 #include <rj_geometry_msgs/msg/detail/circle__struct.hpp>
 
@@ -45,9 +46,7 @@ public:
 
     // --- Setters ---
 
-    void set_center(Point center) {
-        center_ = center;
-    }
+    void set_center(Point center) { center_ = center; }
     void set_radius(float radius) {
         assert(0 <= radius);
         radius_ = radius;
@@ -91,6 +90,5 @@ protected:
     // --- Custom utilities ---
 
     // ... none for now ...
-
 };
 }

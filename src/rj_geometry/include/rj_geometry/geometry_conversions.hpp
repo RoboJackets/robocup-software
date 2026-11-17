@@ -135,7 +135,8 @@ struct TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
     using ros_message_type = rj_geometry_msgs::msg::Rect;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        // Rect.msg still stores the diagonal in pt. The C++ type exposes that pair through corners().
+        // Rect.msg still stores the diagonal in pt. The C++ type exposes that pair through
+        // corners().
         const std::array<rj_geometry::Point, 2> corners = source.corners();
         for (size_t i = 0; i < corners.size(); ++i) {
             rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
@@ -146,8 +147,9 @@ struct TypeAdapter<rj_geometry::Rect, rj_geometry_msgs::msg::Rect> {
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
         std::array<rj_geometry::Point, 2> corners;
         for (size_t i = 0; i < corners.size(); ++i) {
-            rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::convert_to_custom(
-                source.pt[i], corners[i]);
+            rclcpp::TypeAdapter<rj_geometry::Point,
+                                rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
+                                                                                 corners[i]);
         }
         destination = rj_geometry::Rect(corners[0], corners[1]);
     }
@@ -161,8 +163,9 @@ struct TypeAdapter<rj_geometry::Circle, rj_geometry_msgs::msg::Circle> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         rj_geometry_msgs::msg::Point center;
-        rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
-            convert_to_ros_message(source.center(), center);
+        rclcpp::TypeAdapter<rj_geometry::Point,
+                            rj_geometry_msgs::msg::Point>::convert_to_ros_message(source.center(),
+                                                                                  center);
         destination =
             rj_geometry_msgs::build<rj_geometry_msgs::msg::Circle>().center(center).radius(
                 source.radius());

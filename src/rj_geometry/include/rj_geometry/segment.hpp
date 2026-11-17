@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+
 #include <rj_geometry_msgs/msg/segment.hpp>
 
 #include "circle.hpp"

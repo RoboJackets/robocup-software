@@ -84,9 +84,7 @@ std::vector<Point> Segment::intersection_points(const Segment& other) const {
         return {};
     }
 
-    const auto cross = [](const Point& a, const Point& b) {
-        return a.x() * b.y() - a.y() * b.x();
-    };
+    const auto cross = [](const Point& a, const Point& b) { return a.x() * b.y() - a.y() * b.x(); };
     const double length = std::sqrt(length_sq);
     // Distance from each of the other segment's endpoints to this line.
     const double dist0 = std::abs(cross(direction, other.pt[0] - pt[0])) / length;

@@ -46,9 +46,7 @@ public:
     float end() const { return end_angle_; }
 
     /** Setters */
-    void set_center(Point center) {
-        center_ = center;
-    }
+    void set_center(Point center) { center_ = center; }
     void set_radius(float radius) {
         assert(0 <= radius);
         radius_ = radius;

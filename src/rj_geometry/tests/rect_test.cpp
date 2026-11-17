@@ -92,5 +92,4 @@ TEST(Rect, SegmentIntersectionsOnBoundary) {
     EXPECT_TRUE(points[1] == Point(-1, 1) || points[1] == Point(1, 1));
 }
 
-
 }  // namespace rj_geometry

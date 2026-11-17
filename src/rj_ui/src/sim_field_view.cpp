@@ -7,13 +7,12 @@
 #include <rj_common/context.hpp>
 #include <rj_common/network.hpp>
 #include <rj_common/topic_names.hpp>
+#include <rj_geometry/point_qt.hpp>
 #include <rj_ui_msgs/msg/ball_placement.hpp>
 #include <rj_ui_msgs/msg/robot_placement.hpp>
 #include <rj_ui_msgs/srv/sim_placement.hpp>
 
 #include "rj_ui/field_view.hpp"
-
-#include <rj_geometry/point_qt.hpp>
 
 using namespace boost;
 
@@ -93,8 +92,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
     FieldView::mouseMoveEvent(me);
     switch (drag_mode_) {
         case DRAG_SHOOT:
-            drag_point_ =
-                _worldToTeam * _screenToWorld * rj_geometry::point_from_qpoint(me->pos());
+            drag_point_ = _worldToTeam * _screenToWorld * rj_geometry::point_from_qpoint(me->pos());
             break;
 
         case DRAG_PLACE:

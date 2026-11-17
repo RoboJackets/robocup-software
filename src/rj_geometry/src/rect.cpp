@@ -1,10 +1,11 @@
+#include "rj_geometry/rect.hpp"
+
 #include <algorithm>
 #include <array>
 #include <memory>
 #include <vector>
 
 #include "rj_geometry/point.hpp"
-#include "rj_geometry/rect.hpp"
 #include "rj_geometry/segment.hpp"
 
 using namespace std;

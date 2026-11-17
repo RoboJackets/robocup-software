@@ -16,9 +16,7 @@ Polygon::Polygon(const Rect& rect) {
 
 Polygon::Polygon(std::vector<Point> verts) { vertices = std::move(verts); }
 
-std::unique_ptr<Polygon> Polygon::clone() const {
-    return std::unique_ptr<Polygon>(clone_impl());
-}
+std::unique_ptr<Polygon> Polygon::clone() const { return std::unique_ptr<Polygon>(clone_impl()); }
 
 Polygon* Polygon::clone_impl() const { return new Polygon(*this); }
 

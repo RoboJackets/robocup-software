@@ -62,7 +62,8 @@ public:
      * If the shape contains line segments with potentially infinite intersections,
      * this will report the start- and endpoints of the collinear region.
      */
-    [[nodiscard]] virtual std::vector<Point> get_segment_intersections(const Segment& seg) const = 0;
+    [[nodiscard]] virtual std::vector<Point> get_segment_intersections(
+        const Segment& seg) const = 0;
 
     /**
      * Returns True if a robot at point would collide with this Shape.
@@ -102,7 +103,8 @@ public:
      *  - Covariant return allows Circle* to override Shape* if Circle implements Shape,
      *    yet it does not allow unique_ptr<Circle> to override unique_ptr<Shape>.
      *
-     * My solution is motivated from https://www.fluentcpp.com/2017/09/08/make-polymorphic-copy-modern-cpp/
+     * My solution is motivated from
+     https://www.fluentcpp.com/2017/09/08/make-polymorphic-copy-modern-cpp/
      * 1. `clone_impl` makes a copy in heap and gives a raw pointer.
      * 2. This function casts the raw pointer to a `unique_ptr`.
      * 3. This function is fake virtual! Implementers should "override" it,
