@@ -1,116 +1,95 @@
 #pragma once
 
+#include <cstddef>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
 #include <vector>
 
+#include <rj_geometry_msgs/msg/detail/polygon__struct.hpp>
 #include <rj_geometry_msgs/msg/polygon.hpp>
 
-#include "rect.hpp"
-#include "segment.hpp"
+#include "point.hpp"
 #include "shape.hpp"
 
 namespace rj_geometry {
+class Segment;
 
 /**
  * A polygon.
  * Parametrized by an ordered list of vertices.
+ * The boundary runs through the vertices in order, closing from the last back to the first.
  */
 class Polygon : public Shape {
 public:
     using Msg = rj_geometry_msgs::msg::Polygon;
 
-    /**
-     * Initialize an empty polygon.
-     */
-    Polygon() {}
+    // --- Constructors ---
 
-    /**
-     * Initialize a polygon from the corners of an axis-aligned rectangle.
-     *
-     * @param rect: the rectangle whose corners become the polygon vertices
-     */
-    Polygon(const Rect& rect);
-
+    /** Empty (vertexless) polygon constructor */
+    Polygon() = default;
     /**
      * Initialize a polygon from an ordered list of vertices.
      *
-     * @param verts: vertices in boundary order
-     */
-    Polygon(std::vector<Point> verts);
-
-    /**
-     * Initialize a rectangle of arbitrary orientation which encloses all points
-     * within a distance r of the given segment.
+     * @param vertices: vertices in boundary order
      *
-     * @param seg: the segment to expand
-     * @param r: the distance around the segment
+     * NOTE: no assertions will be raised for degenerate polygons
      */
-    Polygon(const Segment& seg, float r) { init(seg, r, seg.length()); }
+    Polygon(std::vector<Point> vertices) : vertices_(std::move(vertices)) {}
 
-    /**
-     * Initialize a rectangle of arbitrary orientation which encloses all points
-     * within a distance r of the given segment.
-     *
-     * @param seg: the segment to expand
-     * @param r: the distance around the segment
-     * @param length: the precomputed length of seg, to avoid a square root
-     */
-    Polygon(const Segment& seg, float r, float length) { init(seg, r, length); }
+    // --- Getters ---
 
-    /**
-     * Initialize a polygon as a copy of another polygon.
-     *
-     * @param other: the polygon to copy
-     */
-    Polygon(const Polygon& other) : vertices(other.vertices) {}
+    const std::vector<Point>& vertices() const { return vertices_; }
 
-    /** Getters */
-    Rect bbox() const;
+    // --- Setters ---
 
-    /** Setters */
-    void add_vertex(Point pt) { vertices.push_back(pt); }
+    void add_vertex(Point pt) { vertices_.push_back(pt); }
 
-    /** Overriding virtuals from Shape */
-    bool contains_point(const Point& pt) const override;
-    bool near_point(const Point& pt, float threshold) const override;
+    // --- Operators ---
+
+    // ... none for now ...
+
+    // --- Shape virtuals ---
+
+    bool contains_point(const Point& p) const override;
     bool intersects_segment(const Segment& seg) const override;
-    bool near_segment(const Segment& seg, float threshold) const override;
-    [[nodiscard]] std::vector<Point> get_segment_intersections(const Segment& seg) const override;
+    bool near_point(const Point& p, float clearance) const override;
+    bool near_segment(const Segment& seg, float clearance) const override;
+    std::vector<Point> get_segment_intersections(const Segment& seg) const override;
     std::string to_string() const override {
         std::stringstream str;
         str << "Polygon<";
-        for (auto vertex : vertices) str << vertex << ", ";
+        for (size_t i = 0; i < vertices_.size(); ++i) {
+            if (i > 0) {
+                str << ", ";
+            }
+            str << vertices_[i];
+        }
         str << ">";
         return str.str();
     }
 
-    /** Overriding clone utilites from Shape */
-    [[nodiscard]] std::unique_ptr<Polygon> clone() const;
+    // --- Shape pseudovirtual clone ---
 
-    /** Custom utilities not from Shape */
-    bool intersects(const Rect& rect) const;
-    bool intersects(const Polygon& other) const;
+    std::unique_ptr<Polygon> clone() const;
 
-    /**
-     * Returns true if this polygon contains any vertex of other.
-     *
-     * @param other: the polygon whose vertices are tested
-     */
-    bool contains_vertex(const Polygon& other) const;
+    // --- Custom utilities ---
 
-    /** Parameters */
-    std::vector<Point> vertices;
+    // ... none for now ...
 
 protected:
-    /** Overriding clone utilites from Shape */
+    // --- Hidden parameters ---
+
+    std::vector<Point> vertices_;
+
+    // --- Shape virtuals ---
+
     Polygon* clone_impl() const override;
 
-    /**
-     * Used by the segment constructors.
-     *
-     * @param seg: the segment to expand
-     * @param r: the distance around the segment
-     * @param length: the length of seg
-     */
-    void init(const Segment& seg, float r, float length);
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
 };
-}
+}  // namespace rj_geometry

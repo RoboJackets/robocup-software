@@ -39,7 +39,7 @@ void DebugDrawer::draw_polygon(const std::vector<rj_geometry::Point>& pts, const
 
 void DebugDrawer::draw_polygon(const rj_geometry::Polygon& polygon, const QColor& qc,
                                const QString& layer) {
-    this->draw_polygon(polygon.vertices, qc, layer);
+    this->draw_polygon(polygon.vertices(), qc, layer);
 }
 
 void DebugDrawer::draw_circle(rj_geometry::Point center, float radius, const QColor& qc,
@@ -75,7 +75,7 @@ void DebugDrawer::draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, con
     if (circ_obs) {
         draw_circle(circ_obs->center(), circ_obs->radius(), color, layer);
     } else if (poly_obs) {
-        draw_polygon(poly_obs->vertices, color, layer);
+        draw_polygon(poly_obs->vertices(), color, layer);
     } else if (rect_obs) {
         std::vector<rj_geometry::Point> points = {
             rj_geometry::Point{rect_obs->minx(), rect_obs->miny()},

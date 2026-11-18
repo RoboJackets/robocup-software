@@ -187,8 +187,8 @@ struct TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
         destination.points.clear();
-        destination.points.reserve(source.vertices.size());
-        for (const auto& vertex : source.vertices) {
+        destination.points.reserve(source.vertices().size());
+        for (const auto& vertex : source.vertices()) {
             rj_geometry_msgs::msg::Point point;
             rclcpp::TypeAdapter<rj_geometry::Point,
                                 rj_geometry_msgs::msg::Point>::convert_to_ros_message(vertex,
@@ -198,14 +198,15 @@ struct TypeAdapter<rj_geometry::Polygon, rj_geometry_msgs::msg::Polygon> {
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        destination.vertices.clear();
-        destination.vertices.reserve(source.points.size());
+        std::vector<rj_geometry::Point> vertices;
+        vertices.reserve(source.points.size());
         for (const auto& point : source.points) {
             rj_geometry::Point vertex;
             rclcpp::TypeAdapter<rj_geometry::Point,
                                 rj_geometry_msgs::msg::Point>::convert_to_custom(point, vertex);
-            destination.vertices.push_back(std::move(vertex));
+            vertices.push_back(std::move(vertex));
         }
+        destination = rj_geometry::Polygon(std::move(vertices));
     }
 };
 
