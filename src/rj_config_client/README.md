@@ -4,10 +4,10 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
+| **Package name** | rj_config_server |
+| **Assigned owner(s)** | Pooja Dayaratna |
 | **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Date started revision** | 11/17/2026 |
 
 ## 1. Package Identity and Tier
 
@@ -15,7 +15,7 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
+| **Plain-language purpose** | This package exists so that rj_ui, rj_vision_filter, and rj_referee don't have to individually contain the code to subscribe to the field_dimension and game_settings topics. |
 | **Current responsibilities** | _List the responsibilities currently owned by this package._ |
 | **Out of scope** | _State what this package must not own or attempt to solve._ |
 
@@ -27,8 +27,8 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** | rj_common, rj_vision_msgs, rj_referee_msgs |
+| **Depended on by** | rj_referee, rj_vision_filter, and rj_ui |
 
 
 ## 3. Operational Expectations
