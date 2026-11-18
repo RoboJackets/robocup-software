@@ -2,7 +2,11 @@
 
 namespace rj_geometry {
 
-Shape* StadiumShape::clone() const { return new StadiumShape(*this); }
+std::unique_ptr<StadiumShape> StadiumShape::clone() const {
+    return std::unique_ptr<StadiumShape>(clone_impl());
+}
+
+StadiumShape* StadiumShape::clone_impl() const { return new StadiumShape(*this); }
 
 StadiumShape::StadiumShape(Point c1, Point c2, float r) {
     // Create the two circular end caps

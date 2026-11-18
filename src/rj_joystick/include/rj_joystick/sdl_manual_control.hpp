@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 #include "rj_joystick/manual_control.hpp"
 

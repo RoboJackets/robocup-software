@@ -1,89 +1,89 @@
 #pragma once
 
+#include <sstream>
+#include <string>
+#include <vector>
+#include <memory>
+
 #include "point.hpp"
 #include "shape.hpp"
 #include "segment.hpp"
-#include <vector>
-#include <memory>
-#include <set>
 
 namespace rj_geometry {
 
 /**
- * A rj_geometry::CompositeShape is a Shape that is made up of other shapes.
+ * A composite shape.
+ * Parametrized by a list of subshapes.
  */
 class CompositeShape : public Shape {
 public:
+
+    // --- Constructors ---
+
+    /**
+     * Initialize an empty composite shape.
+     */
+    CompositeShape() = default;
+    /**
+     * Initialize a composite shape containing a single subshape.
+     *
+     * @param shape: the subshape to store
+     */
     CompositeShape(const std::shared_ptr<Shape>& shape) {
         subshapes_.push_back(shape);
     }
-    CompositeShape() = default;
-
-    ~CompositeShape() override { clear(); }
-
-    CompositeShape(const CompositeShape& other) {
-        for (const auto& itr : other) {
-            subshapes_.push_back(std::shared_ptr<Shape>((*itr).clone()));
-        }
-    }
-
-    [[nodiscard]] Shape* clone() const override;
-
-    [[nodiscard]] bool contains_point(Point pt) const override;
-    [[nodiscard]] bool near_point(Point pt, float threshold) const override;
-
-    void add(const std::shared_ptr<Shape>& shape);
-
-    /// adds @comp_shape's subshapes to the receiver
-    void add(const CompositeShape& comp_shape);
-
-    [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& subshapes() const {
-        return subshapes_;
-    }
-
-    /// removes all subshapes
-    void clear();
-
-    bool empty() { return subshapes_.empty(); }
-
-    [[nodiscard]] unsigned int size() const { return subshapes_.size(); }
 
     /**
-     * Checks if a given shape is in it
-     *
-     * @param obj The object to collision test
-     * @return A bool telling whether or not there were any collisions
+     * Destroy this composite shape and clear its subshapes.
      */
-    template <typename T>
-    [[nodiscard]] bool hit(const T& obj) const {
-        for (const auto& it : *this) {
-            if (it->hit(obj)) {
-                return true;
-            }
-        }
+    ~CompositeShape() override { clear(); }
 
-        return false;
+    // --- Getters ---
+
+    const std::vector<std::shared_ptr<Shape>>& subshapes() const { return subshapes_; }
+    bool empty() { return subshapes_.empty(); }
+    unsigned int size() const { return subshapes_.size(); }
+
+    // --- Setters ---
+
+    /**
+     * Add a subshape.
+     *
+     * @param shape: the subshape to store
+     *
+     * @note if shape is null, it is ignored
+     */
+    void add(const std::shared_ptr<Shape>& shape);
+    /**
+     * Add comp_shape's subshapes to this composite shape.
+     *
+     * @param comp_shape: the composite shape whose subshapes are added
+     *
+     * @note subshape pointers are shared, not cloned; null subshapes are ignored
+     */
+    void add(const CompositeShape& comp_shape);
+    /**
+     * Remove all subshapes.
+     */
+    void clear();
+
+    // --- Operators ---
+
+    std::shared_ptr<Shape> operator[](unsigned int index) {
+        return subshapes_[index];
+    }
+    std::shared_ptr<const Shape> operator[](unsigned int index) const {
+        return subshapes_[index];
     }
 
-    [[nodiscard]] bool hit(Point pt) const override { return hit<Point>(pt); }
+    // --- Shape virtuals ---
 
-    [[nodiscard]] bool hit(const Segment& seg) const override {
-        return hit<Segment>(seg);
-    }
-
-    // STL typedefs
-    using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
-    using iterator = std::vector<std::shared_ptr<Shape>>::iterator;
-    using value_type = std::shared_ptr<Shape>;
-
-    // STL Interface
-    [[nodiscard]] const_iterator begin() const { return subshapes_.begin(); }
-    [[nodiscard]] const_iterator end() const { return subshapes_.end(); }
-
-    iterator begin() { return subshapes_.begin(); }
-    iterator end() { return subshapes_.end(); }
-
-    std::string to_string() override {
+    bool contains_point(const Point& pt) const override;
+    bool near_point(const Point& pt, float threshold) const override;
+    bool intersects_segment(const Segment& seg) const override;
+    bool near_segment(const Segment& seg, float clearance) const override;
+    std::vector<Point> get_segment_intersections(const Segment& seg) const override;
+    std::string to_string() const override {
         std::stringstream str;
         str << "CompositeShape<";
         for (auto& subshape : subshapes_) {
@@ -94,16 +94,41 @@ public:
         return str.str();
     }
 
-    std::shared_ptr<Shape> operator[](unsigned int index) {
-        return subshapes_[index];
-    }
+    // --- Shape pseudovirtual clone ---
 
-    std::shared_ptr<const Shape> operator[](unsigned int index) const {
-        return subshapes_[index];
-    }
+    std::unique_ptr<CompositeShape> clone() const;
 
-private:
+    // --- Custom utilities ---
+
+    // artificially implementing the STL interface
+    using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
+    using iterator = std::vector<std::shared_ptr<Shape>>::iterator;
+    using value_type = std::shared_ptr<Shape>;
+
+    [[nodiscard]] const_iterator begin() const { return subshapes_.begin(); }
+    [[nodiscard]] const_iterator end() const { return subshapes_.end(); }
+
+    iterator begin() { return subshapes_.begin(); }
+    iterator end() { return subshapes_.end(); }
+
+protected:
+    // --- Hidden parameters ---
+
     std::vector<std::shared_ptr<Shape>> subshapes_;
+
+    // --- Shape virtuals
+
+    CompositeShape* clone_impl() const override;
+
+    CompositeShape(const CompositeShape& other);
+    CompositeShape(CompositeShape&& other) = default;
+    CompositeShape& operator=(const CompositeShape& other);
+    CompositeShape& operator=(CompositeShape&& other) = default;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
 };
 
 }  // namespace rj_geometry

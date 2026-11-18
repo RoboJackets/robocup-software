@@ -1,3 +1,4 @@
+#include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_common/field_dimensions.hpp>

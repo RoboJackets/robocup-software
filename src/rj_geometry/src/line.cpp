@@ -62,11 +62,11 @@ Point Line::nearest_point(Point p) const {
 // Has Simple Test
 bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
-    const auto x1 = static_cast<float>(pt[0].x() - circle.center.x());
-    const auto x2 = static_cast<float>(pt[1].x() - circle.center.x());
+    const auto x1 = static_cast<float>(pt[0].x() - circle.center().x());
+    const auto x2 = static_cast<float>(pt[1].x() - circle.center().x());
 
-    const auto y1 = static_cast<float>(pt[0].y() - circle.center.y());
-    const auto y2 = static_cast<float>(pt[1].y() - circle.center.y());
+    const auto y1 = static_cast<float>(pt[0].y() - circle.center().y());
+    const auto y2 = static_cast<float>(pt[1].y() - circle.center().y());
 
     const float dx = x2 - x1;
     const float dy = y2 - y1;
@@ -98,13 +98,13 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     if (p1 != nullptr) {
         float x = x_part1 + x_part2;
         float y = y_part1 + y_part2;
-        *p1 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
+        *p1 = Point(x / dr2 + circle.center().x(), y / dr2 + circle.center().y());
     }
 
     if (p2 != nullptr) {
         float x = x_part1 - x_part2;
         float y = y_part1 - y_part2;
-        *p2 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
+        *p2 = Point(x / dr2 + circle.center().x(), y / dr2 + circle.center().y());
     }
 
     return true;

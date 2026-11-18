@@ -1,6 +1,13 @@
 #pragma once
 
+#include <cassert>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include <rj_geometry_msgs/msg/circle.hpp>
+#include <rj_geometry_msgs/msg/detail/circle__struct.hpp>
 
 #include "line.hpp"
 #include "point.hpp"
@@ -8,91 +15,82 @@
 
 namespace rj_geometry {
 
+/**
+ * A circle :^)
+ * Parametrized by a center point and a radius.
+ */
 class Circle : public Shape {
 public:
     using Msg = rj_geometry_msgs::msg::Circle;
 
-    Circle() {
-        r_ = 0;
-        rsq_ = 0;
+    // --- Constructors ---
+
+    Circle() = default;
+    /**
+     * Initialize a circle with a given center and radius.
+     *
+     * @param center: the center point of the underlying circle
+     * @param radius: the radius of the underlying circle in the range [0, infty)
+     *
+     * @note if radius < 0, an assertion will be thrown
+     */
+    Circle(Point center, float radius) {
+        assert(0 <= radius);
+        center_ = center;
+        radius_ = radius;
     }
 
-    Circle(Point c, float r) {
-        center = c;
-        r_ = r;
-        rsq_ = r_ * r_;
+    // --- Getters ---
+
+    Point center() const { return center_; }
+    float radius() const { return radius_; }
+
+    // --- Setters ---
+
+    void set_center(Point center) { center_ = center; }
+    void set_radius(float radius) {
+        assert(0 <= radius);
+        radius_ = radius;
     }
 
-    ~Circle() = default;
-    Circle(const Circle& other) = default;
-    Circle(Circle&& other) = default;
-    Circle& operator=(const Circle& other) = default;
-    Circle& operator=(Circle&& other) = default;
+    // --- Operators ---
 
-    Shape* clone() const override;
+    // ... none for now ...
 
-    // Both radius and radius-squared are stored, since some operations are more
-    // efficient with one or the other.
-    // As long as one is specified, the other is calculated lazily.
+    // --- Shape virtuals ---
 
-    // Radius squared
-    float radius_sq() const {
-        return rsq_;
-    }
-
-    void radius_sq(float value) {
-        rsq_ = value;
-        r_ = sqrtf(rsq_);
-    }
-
-    // Radius
-    float radius() const {
-        return r_;
-    }
-
-    void radius(float value) {
-        r_ = value;
-        rsq_ = r_ * r_;
-    }
-
-    bool contains_point(Point pt) const override;
-
-    bool hit(Point pt) const override;
-
-    bool hit(const Segment& seg) const override;
-
-    bool near_point(Point pt, float threshold) const override;
-
-    // Returns the number of points at which this circle intersects the given
-    // circle.
-    // i must be null or point to two points.
-    // Only the first n points in i are modified, where n is the return value.
-    int intersects(Circle& other, Point* i = nullptr) const;
-
-    // Returns the number of points at which this circle intersects the given
-    // line. i must be null or point to two points. Only the first n points in i
-    // are modified, where n is the return value.
-    int intersects(const Line& line, Point* i = nullptr) const;
-
-    bool tangent_points(Point src, Point* p1 = nullptr,
-                       Point* p2 = nullptr) const;
-
-    /// finds the point on the circle closest to @p
-    Point nearest_point(Point p) const;
-
-    Point center;
-
-    std::string to_string() override {
+    bool contains_point(const Point& p) const override;
+    bool intersects_segment(const Segment& seg) const override;
+    bool near_point(const Point& p, float clearance) const override;
+    bool near_segment(const Segment& seg, float clearance) const override;
+    std::vector<Point> get_segment_intersections(const Segment& seg) const override;
+    std::string to_string() const override {
         std::stringstream str;
-        str << "Circle<" << center << ", " << radius() << ">";
+        str << "Circle<" << center() << ", " << radius() << ">";
         return str.str();
     }
 
-protected:
-    // Radius
-    float r_;
+    // --- Shape pseudovirtual clone ---
 
-    // Radius squared
-    float rsq_;
+    std::unique_ptr<Circle> clone() const;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
+protected:
+    // --- Hidden parameters ---
+
+    Point center_;
+    float radius_;
+
+    // --- Shape virtuals ---
+
+    Circle* clone_impl() const override;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
 };
 }

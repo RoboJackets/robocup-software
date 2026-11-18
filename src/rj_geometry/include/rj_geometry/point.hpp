@@ -2,12 +2,10 @@
 
 #include <cmath>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
-#include <Eigen/Dense>
-#include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
-#include <spdlog/spdlog.h>
 
 #include <rj_geometry/util.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
@@ -33,37 +31,10 @@ public:
     */
     Point(double x = 0, double y = 0) : x_(x), y_(y) {}
 
-
-    /**
-     * Implicit constructor for creating a Point from a QPointF
-     */
-    Point(const QPointF& other) : Point(other.x(), other.y()) {}
-
-    /**
-     * Implicit constructor for creating a Point from a QPoint
-     */
-    Point(const QPoint& other) : Point(other.x(), other.y()) {}
-
     /**
      * Implicit constructor for creating a Point from a double*
      */
     Point(const double* other) : Point(other[0], other[1]) {}
-
-    /**
-     * Implicit conversion from Eigen::Vector2d
-     */
-    Point(const Eigen::Vector2d& other) : Point(other(0), other(1)) {}
-
-    /**
-     * Implicit conversion to Eigen::Vector2d
-     */
-    operator Eigen::Vector2d() const { return Eigen::Vector2d(x(), y()); }
-
-    /**
-     * to draw stuff and interface with QT
-     */
-    [[nodiscard]] QPointF to_q_point_f() const { return QPointF(x(), y()); }
-
 
     /**
      * does vector addition
