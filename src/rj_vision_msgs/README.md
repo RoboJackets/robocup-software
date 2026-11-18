@@ -28,7 +28,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | Field | Details |
 | --- | --- |
 | **Depends on** | rj_geometry_msgs |
-| **Depended on by** | rj_common, rj_config_client, rj_config_server, rj_control, rj_planning, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_receiver |
+| **Depended on by** | rj_config_client, rj_config_server, rj_control, rj_game_common, rj_motion_common, rj_planning, rj_referee, rj_strategy, rj_ui, rj_utils, rj_vision_filter, rj_vision_receiver |
 
 
 ## 3. Operational Expectations

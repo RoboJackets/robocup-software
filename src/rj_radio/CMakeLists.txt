@@ -16,32 +16,38 @@ find_package(spdlog REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
-find_package(rj_common REQUIRED)
 find_package(rj_control_msgs REQUIRED)
 find_package(rj_radio_msgs REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_ui_msgs REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(rj_protos REQUIRED)
+find_package(rj_ros_common REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_radio_common REQUIRED)
+find_package(rj_time REQUIRED)
 
 set(RJ_RADIO_DEPS
   spdlog
   rclcpp
   rclcpp_components
   Boost
-  rj_common
   rj_control_msgs
   rj_radio_msgs
   rj_referee_msgs
   rj_ui_msgs
+  rj_game_common
+  rj_motion_common
   rj_protos
+  rj_ros_common
   rj_strategy
   rj_geometry
   rj_planning
   rj_radio_common
+  rj_time
 )
 
 add_library(${PROJECT_NAME} SHARED

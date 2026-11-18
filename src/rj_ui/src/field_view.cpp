@@ -13,7 +13,7 @@
 #include <QStyle>
 #include <QStyleOption>
 
-#include <rj_common/field_dimensions.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
@@ -76,11 +76,11 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->setText(s);
 }
 
-std::shared_ptr<rj_common::UIFrame> FieldView::currentFrame() {
+std::shared_ptr<rj_ui::UIFrame> FieldView::currentFrame() {
     if (!_history.empty()) {
         return _history.back();
     }
-    return std::shared_ptr<rj_common::UIFrame>{};
+    return std::shared_ptr<rj_ui::UIFrame>{};
 }
 
 void FieldView::rotate(int value) {
@@ -122,7 +122,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
+    const std::shared_ptr<rj_ui::UIFrame> frame = currentFrame();
 
     if (!frame) {
         // No data available yet
@@ -179,7 +179,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
+    const std::shared_ptr<rj_ui::UIFrame> frame = _history.back();
 
     // Draw the field
     drawField(p, frame);
@@ -188,7 +188,7 @@ void FieldView::drawWorldSpace(QPainter& p) {
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
+    const std::shared_ptr<rj_ui::UIFrame> frame = _history.back();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -231,7 +231,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int ballTrailLength = 60;
     for (unsigned int i = _history.size() - std::min<int>(_history.size(), ballTrailLength);
          i < _history.size(); ++i) {
-        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
+        const std::shared_ptr<rj_ui::UIFrame> oldFrame = _history.at(i);
         if (oldFrame != nullptr && oldFrame->ball_state.has_value()) {
             QPointF pos = qpointf(oldFrame->ball_state->position);
 
@@ -369,9 +369,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int pastLocationCount = 40;  // number of past locations to show
     int start = std::max(0, static_cast<int>(_history.size()) - pastLocationCount);
     for (size_t i = start; i < _history.size(); i++) {
-        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
+        const std::shared_ptr<rj_ui::UIFrame> oldFrame = _history.at(i);
         if (oldFrame != nullptr) {
-            for (const rj_common::UIRobot& r : oldFrame->self) {
+            for (const rj_ui::UIRobot& r : oldFrame->self) {
                 pair<int, int> key(1, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.position);
@@ -383,7 +383,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const rj_common::UIRobot& r : oldFrame->opp) {
+            for (const rj_ui::UIRobot& r : oldFrame->opp) {
                 pair<int, int> key(2, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.position);
@@ -415,19 +415,19 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
-    for (const rj_common::UIRobot& r : frame->opp) {
+    for (const rj_ui::UIRobot& r : frame->opp) {
         drawRobot(p, !frame->blue, r.shell_id, qpointf(r.position), r.heading, r.has_ball);
     }
 
     // Our robots
     int manualID = frame->manual_id;
-    for (const rj_common::UIRobot& r : frame->self) {
+    for (const rj_ui::UIRobot& r : frame->self) {
         QPointF center = qpointf(r.position);
 
         bool faulty = false;
 
         for (int i = 0; i < r.motors.size(); ++i) {
-            if (r.motors.at(i) != rj_common::kGood) {
+            if (r.motors.at(i) != rj_ui::kGood) {
                 faulty = true;
             }
         }
@@ -505,7 +505,7 @@ void FieldView::drawCoords(QPainter& p) {
     drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame) {
+void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& frame) {
     p.save();
 
     // reset to center

@@ -6,12 +6,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/time.hpp>
 #include <rj_control_msgs/msg/manipulator_setpoint.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+#include <rj_motion_common/robot_intent.hpp>
 #include <rj_planning_msgs/srv/plan_hypothetical_path.hpp>
 #include <rj_radio_msgs/msg/robot_status.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_planning/global_state.hpp"
 #include "rj_planning/plan_request.hpp"

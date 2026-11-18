@@ -1,6 +1,6 @@
 #include "rj_radio/sim_radio.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
 
 using namespace std;
 using namespace boost::asio;

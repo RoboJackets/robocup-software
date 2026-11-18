@@ -3,12 +3,12 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/motion_command.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_geometry/pose.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/motion_command.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/collect_path_planner.hpp"

@@ -5,7 +5,7 @@
 
 #include <QtWidgets>
 
-#include <rj_common/game_constants.hpp>
+#include <rj_game_common/game_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/util.hpp>
 

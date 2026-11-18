@@ -3,8 +3,8 @@
 #include <optional>
 #include <random>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/obstacle_set.hpp>
 #include <rj_planning/primitives/motion_constraints.hpp>
 

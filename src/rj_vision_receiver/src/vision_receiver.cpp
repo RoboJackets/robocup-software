@@ -5,9 +5,9 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/ros_params.hpp>
-#include <rj_common/topic_names.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_ros_common/ros_params.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_vision_receiver/vision_receiver.hpp>
 
 #include "rj_vision_receiver/vision_conversions.hpp"

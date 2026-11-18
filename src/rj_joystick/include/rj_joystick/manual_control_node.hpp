@@ -9,14 +9,12 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/game_constants.hpp>
-#include <rj_common/node.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/utils.hpp>
 #include <rj_control_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_control_msgs/msg/motion_setpoint.hpp>
+#include <rj_game_common/game_constants.hpp>
 #include <rj_joystick_msgs/srv/list_joysticks.hpp>
 #include <rj_joystick_msgs/srv/set_manual.hpp>
+#include <rj_ros_common/topic_names.hpp>
 
 #include "rj_joystick/manual_control.hpp"
 #include "rj_joystick/sdl_manual_control.hpp"

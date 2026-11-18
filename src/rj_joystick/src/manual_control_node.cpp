@@ -1,6 +1,13 @@
 #include "rj_joystick/manual_control_node.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
+
+namespace {
+template <typename T>
+T lerp(const T& a, const T& b, double factor) {
+    return (1 - factor) * a + factor * b;
+}
+}  // namespace
 
 namespace joystick {
 

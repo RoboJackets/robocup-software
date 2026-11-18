@@ -1,6 +1,6 @@
 #include "rj_referee/external_referee.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
 
 namespace referee {
 

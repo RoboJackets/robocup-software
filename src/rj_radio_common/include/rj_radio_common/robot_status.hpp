@@ -4,9 +4,10 @@
 #include <optional>
 
 #include <rclcpp/type_adapter.hpp>
-#include <rj_common/time.hpp>
+
 #include <rj_geometry/pose.hpp>
 #include <rj_radio_msgs/msg/robot_status.hpp>
+#include <rj_ros_common/time_adapters.hpp>
 
 /**
  * \brief Struct representing data returned from the robot, possibly including
@@ -44,7 +45,8 @@ struct rclcpp::TypeAdapter<RobotStatus, rj_radio_msgs::msg::RobotStatus> {
     using custom_type = RobotStatus;
     using ros_message_type = rj_radio_msgs::msg::RobotStatus;
     static void convert_to_ros_message(const RobotStatus& status, rj_radio_msgs::msg::RobotStatus& msg) {
-        rj_convert::convert_to_ros(status.timestamp, &msg.timestamp);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
+            status.timestamp, msg.timestamp);
         msg.robot_id = status.shell_id;
         msg.battery_voltage = status.battery_voltage;
         msg.motor_errors = status.motors_healthy;
@@ -55,7 +57,8 @@ struct rclcpp::TypeAdapter<RobotStatus, rj_radio_msgs::msg::RobotStatus> {
     }
 
     static void convert_to_custom(const rj_radio_msgs::msg::RobotStatus& msg, RobotStatus& status) {
-        rj_convert::convert_from_ros(msg.timestamp, &status.timestamp);
+        rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_custom(
+            msg.timestamp, status.timestamp);
         status.shell_id = msg.robot_id;
         status.battery_voltage = msg.battery_voltage;
         status.motors_healthy = msg.motor_errors;

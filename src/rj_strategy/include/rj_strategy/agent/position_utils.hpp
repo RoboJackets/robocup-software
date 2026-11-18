@@ -12,13 +12,16 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_motion_common/world_state.hpp>
+#include <rj_time/time.hpp>
+
+// The width between generated goal line targets for shot calculation
+inline constexpr float kShotCalculationGranularity = 0.04f;
 
 /**
  * This file is just to collect a bunch of common utilities.

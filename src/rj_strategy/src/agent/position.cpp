@@ -2,6 +2,9 @@
 
 namespace strategy {
 
+// Number of playing robots on one team
+constexpr size_t kRobotsPerTeam = 6;
+
 Position::Position(int r_id) : robot_id_(r_id) {
     client_handles_ = std::make_shared<ClientHandles>();
 }

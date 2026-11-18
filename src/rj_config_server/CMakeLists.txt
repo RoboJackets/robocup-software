@@ -15,7 +15,8 @@ find_package(rclcpp_components REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 add_executable(${PROJECT_NAME}_node
   src/config_server.cpp
@@ -38,7 +39,8 @@ ament_target_dependencies(${PROJECT_NAME}_node
   rj_referee_msgs
   rj_vision_msgs
   fmt
-  rj_common
+  rj_game_common
+  rj_ros_common
 )
 
 install(

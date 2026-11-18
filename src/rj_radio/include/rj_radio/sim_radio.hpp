@@ -3,22 +3,28 @@
 #include <cmath>
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 
 #include <boost/asio.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/network.hpp>
-#include <rj_common/time.hpp>
-#include <rj_radio_msgs/msg/alive_robots.hpp>
-#include <rj_ui_msgs/srv/sim_placement.hpp>
 #include <rj_protos/ssl_simulation_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_time/time.hpp>
+#include <rj_ui_msgs/srv/sim_placement.hpp>
 
 #include "rj_radio/packet_convert.hpp"
 #include "rj_radio/radio.hpp"
 
 namespace radio {
+
+static const int kSimBlueStatusPort = 30011;
+static const int kSimYellowStatusPort = 30012;
+static const int kSimCommandPort = 10300;
+static const int kSimBlueCommandPort = 10301;
+static const int kSimYellowCommandPort = 10302;
 
 /**
  * @brief Radio IO with robots in the simulator

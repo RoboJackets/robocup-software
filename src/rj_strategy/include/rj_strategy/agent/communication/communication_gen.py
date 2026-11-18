@@ -45,8 +45,7 @@ def convert_individual_hpp(msg, path, msg_type):
     msgName = msg[:-4]  # Stripping .msg from the end
     hpp = (
         "#pragma once \n\n#include <mutex>\n#include <string>\n#include"
-        " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
-        " <rclcpp/type_adapter.hpp>\n"
+        " <variant>\n#include <vector>\n\n#include <rclcpp/type_adapter.hpp>\n"
     )
     hpp += convert_msg_to_hpp_include(msg)
     hpp += "\n\n"
@@ -191,7 +190,7 @@ def create_hpp_files(requests, requestPath, responses, responsePath):
 def convert_main_hpp_file(requests_msgs, response_msgs, hpp_names):
     hpp = (
         "#pragma once\n\n#include <mutex>\n#include <string>\n#include"
-        " <variant>\n#include <vector>\n\n#include <rj_common/time.hpp>\n#include"
+        " <variant>\n#include <vector>\n\n#include <rj_time/time.hpp>\n#include"
         " <rclcpp/type_adapter.hpp>\n\n"
     )
     hpp += '#include "rj_strategy_msgs/msg/agent_request.hpp"\n'

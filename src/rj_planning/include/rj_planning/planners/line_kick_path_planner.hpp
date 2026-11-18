@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/util.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 
 #include "rj_planning/planners/collect_path_planner.hpp"
 #include "rj_planning/planners/escape_obstacles_path_planner.hpp"

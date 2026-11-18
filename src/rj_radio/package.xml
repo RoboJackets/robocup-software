@@ -12,16 +12,19 @@
   <depend>rclcpp_components</depend>
   <depend>boost</depend>
 
-  <depend>rj_common</depend>
   <depend>rj_control_msgs</depend>
   <depend>rj_radio_msgs</depend>
   <depend>rj_referee_msgs</depend>
   <depend>rj_ui_msgs</depend>
+  <depend>rj_game_common</depend>
+  <depend>rj_motion_common</depend>
   <depend>rj_protos</depend>
+  <depend>rj_ros_common</depend>
   <depend>rj_strategy</depend>
   <depend>rj_geometry</depend>
   <depend>rj_planning</depend>
   <depend>rj_radio_common</depend>
+  <depend>rj_time</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

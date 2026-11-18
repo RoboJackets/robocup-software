@@ -1,0 +1,94 @@
+cmake_minimum_required(VERSION 3.8)
+project(rj_motion_common)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(Qt5 COMPONENTS Gui REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(eigen3_cmake_module REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(rj_drawing_msgs REQUIRED)
+find_package(rj_planning_msgs REQUIRED)
+find_package(rj_vision_msgs REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_geometry REQUIRED)
+find_package(rj_ros_common REQUIRED)
+find_package(rj_time REQUIRED)
+
+set(RJ_MOTION_COMMON_DEPS
+  Eigen3
+  rclcpp
+  spdlog
+  rj_drawing_msgs
+  rj_planning_msgs
+  rj_vision_msgs
+  rj_game_common
+  rj_geometry
+  rj_ros_common
+  rj_time
+)
+
+add_library(${PROJECT_NAME} SHARED
+  src/robot_intent.cpp
+  src/world_state.cpp
+  src/planning/motion_command.cpp
+  src/planning/trajectory.cpp
+)
+set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD ON)
+
+ament_target_dependencies(${PROJECT_NAME}
+  PUBLIC
+  ${RJ_MOTION_COMMON_DEPS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  PUBLIC
+  Qt5::Gui
+  Eigen3::Eigen
+)
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_export_dependencies(
+  Qt5Gui
+  ${RJ_MOTION_COMMON_DEPS}
+)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+
+  set(RJ_MOTION_COMMON_TESTS
+    ball_test
+  )
+
+  foreach(TEST IN LISTS RJ_MOTION_COMMON_TESTS)
+    ament_add_gtest(${TEST} tests/${TEST}.cpp)
+    target_link_libraries(${TEST} ${PROJECT_NAME})
+  endforeach()
+endif()
+
+ament_export_targets(${PROJECT_NAME})
+ament_package()

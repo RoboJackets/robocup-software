@@ -4,14 +4,13 @@
 #include <QMouseEvent>
 #include <QPainter>
 
-#include <rj_common/network.hpp>
-#include <rj_common/topic_names.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_ui_msgs/msg/ball_placement.hpp>
 #include <rj_ui_msgs/msg/robot_placement.hpp>
 #include <rj_ui_msgs/srv/sim_placement.hpp>
 
-#include "rj_ui/field_view.hpp"
 #include "rj_ui/context.hpp"
+#include "rj_ui/field_view.hpp"
 
 using namespace boost;
 
@@ -40,17 +39,17 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
     rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
-    std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
+    std::shared_ptr<rj_ui::UIFrame> frame = currentFrame();
     if (me->button() == Qt::LeftButton && frame) {
         drag_robot_ = -1;
-        for (const rj_common::UIRobot& r : frame->self) {
+        for (const rj_ui::UIRobot& r : frame->self) {
             if (pos.near_point(r.position, kRobotRadius)) {
                 drag_robot_ = r.shell_id;
                 drag_robot_blue_ = frame->blue;
                 break;
             }
         }
-        for (const rj_common::UIRobot& r : frame->opp) {
+        for (const rj_ui::UIRobot& r : frame->opp) {
             if (pos.near_point(r.position, kRobotRadius)) {
                 drag_robot_ = r.shell_id;
                 drag_robot_blue_ = !frame->blue;
@@ -157,7 +156,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     FieldView::drawTeamSpace(p);
 
     // Simulator drag-to-shoot
-    std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
+    std::shared_ptr<rj_ui::UIFrame> frame = currentFrame();
     if (drag_mode_ == DRAG_SHOOT && frame && frame->ball_state.has_value()) {
         p.setPen(QPen(Qt::white, 0.025f));
         rj_geometry::Point ball = frame->ball_state->position;

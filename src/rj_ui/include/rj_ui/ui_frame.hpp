@@ -6,15 +6,15 @@
 #include <utility>
 #include <vector>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_radio_common/robot_status.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_ui/debug_drawings.hpp"
 
-namespace rj_common {
+namespace rj_ui {
 
 enum BallSenseStatus { kNoBall = 0, kHasBall, kDazzled, kFailed };
 enum MotorStatus { kGood = 0, kFault };
@@ -30,8 +30,8 @@ struct UIRobot {
             has_ball = status->has_ball;
             motors.resize(5);
             for (int i = 0; i < 5; i++) {
-                motors.at(i) = (status->motors_healthy[i] ? rj_common::MotorStatus::kGood
-                                                          : rj_common::MotorStatus::kFault);
+                motors.at(i) = (status->motors_healthy[i] ? rj_ui::MotorStatus::kGood
+                                                          : rj_ui::MotorStatus::kFault);
             }
             kicker_ok = status->kicker != RobotStatus::KickerState::kFailed;
             battery = static_cast<float>(status->battery_voltage);
@@ -69,4 +69,4 @@ struct UIFrame {
     DebugDrawFrame debug_draw_frame;
 };
 
-}  // namespace rj_common
+}  // namespace rj_ui

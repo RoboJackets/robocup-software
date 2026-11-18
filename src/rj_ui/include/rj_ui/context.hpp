@@ -3,15 +3,16 @@
 #include <memory>
 #include <set>
 
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/game_constants.hpp>
+#include <rj_game_common/game_settings.hpp>
+#include <rj_game_common/play_state.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
-
-#include <rj_common/game_constants.hpp>
-#include <rj_common/game_settings.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/team_info.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/world_state.hpp>
 #include <rj_radio_common/robot_status.hpp>
+#include <rj_referee/match_state.hpp>
+#include <rj_referee/team_info.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_ui/debug_drawer.hpp"
 #include "rj_ui/ui_frame.hpp"
@@ -32,7 +33,7 @@ public:
     // Creates a UIFrame based on the current state of Context
     // and adds it to the frames vector.
     void create_ui_frame() {
-        auto frame = std::make_shared<rj_common::UIFrame>();
+        auto frame = std::make_shared<rj_ui::UIFrame>();
 
         frame->debug_draw_frame = debug_drawer.published_frame();
 
@@ -51,7 +52,7 @@ public:
                 continue;
             }
 
-            frame->self.push_back(rj_common::UIRobot(shell, state, status));
+            frame->self.push_back(rj_ui::UIRobot(shell, state, status));
         }
 
         for (size_t shell = 0; shell < kNumShells; shell++) {
@@ -60,7 +61,7 @@ public:
                 continue;
             }
 
-            frame->opp.push_back(rj_common::UIRobot(shell, state, std::nullopt));
+            frame->opp.push_back(rj_ui::UIRobot(shell, state, std::nullopt));
         }
 
         if (world_state.ball.visible) {
@@ -109,7 +110,7 @@ public:
 
     std::string behavior_tree;
 
-    std::vector<std::shared_ptr<rj_common::UIFrame>> frames;
+    std::vector<std::shared_ptr<rj_ui::UIFrame>> frames;
 
     RJ::Time start_time;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 
 namespace planning {
 

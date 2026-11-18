@@ -4,6 +4,7 @@
 #include <mutex>
 #include <optional>
 #include <stdexcept>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -14,20 +15,26 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/game_state.hpp>
-#include <rj_common/network.hpp>
-#include <rj_common/team_info.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/utils.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
-#include <rj_vision_msgs/msg/raw_protobuf.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_protos/state/ssl_gc_referee_message.pb.h>
+#include <rj_ros_common/topic_names.hpp>
+#include <rj_vision_msgs/msg/raw_protobuf.hpp>
 #include <unistd.h>
 
+#include "rj_referee/match_state.hpp"
 #include "rj_referee/referee_base.hpp"
+#include "rj_referee/team_info.hpp"
 
 namespace referee {
+
+/*
+ * The multicast address we expect referee packets to come from, given by the league.
+ * ExternalReferee joins this multicast group and listens for packets from it.
+ */
+static const std::string kRefereeSourceAddress = "224.5.23.1";
+static const int kProtobufRefereePort = 10003;
 
 using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
 using Stage = Referee_Stage;

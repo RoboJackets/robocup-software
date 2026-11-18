@@ -14,9 +14,11 @@ find_package(fmt REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(rj_common REQUIRED)
 find_package(rj_control_msgs REQUIRED)
+find_package(rj_geometry REQUIRED)
 find_package(rj_joystick_msgs REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 # Find sdl2
 include(FindPkgConfig)
@@ -26,9 +28,11 @@ set(RJ_JOYSTICK_DEPS
   fmt
   rclcpp
   spdlog
-  rj_common
   rj_control_msgs
+  rj_geometry
   rj_joystick_msgs
+  rj_game_common
+  rj_ros_common
   rclcpp_components
 )
 

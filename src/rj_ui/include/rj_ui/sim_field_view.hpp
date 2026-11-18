@@ -8,14 +8,13 @@
 #include <QPainter>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/network.hpp>
-#include <rj_common/topic_names.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_ui_msgs/msg/ball_placement.hpp>
 #include <rj_ui_msgs/msg/robot_placement.hpp>
 #include <rj_ui_msgs/srv/sim_placement.hpp>
 
-#include "rj_ui/field_view.hpp"
 #include "rj_ui/context.hpp"
+#include "rj_ui/field_view.hpp"
 
 class SimFieldView : public FieldView {
     Q_OBJECT

@@ -11,20 +11,20 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/game_constants.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/ros_debug_drawer.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/game_constants.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_motion_common/ros_debug_drawer.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_planning_msgs/action/robot_move.hpp>
 #include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_ros_common/topic_names.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_strategy/agent/position/overriding_positions.hpp"
 

@@ -25,10 +25,10 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/game_state.hpp>
-#include <rj_common/topic_names.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_referee_msgs/srv/quick_commands.hpp>
 #include <rj_referee_msgs/srv/set_game_settings.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
 #include <rj_ui_msgs/msg/override_position.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -184,7 +184,7 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
-    void updateDebugLayers(const rj_common::UIFrame& frame);
+    void updateDebugLayers(const rj_ui::UIFrame& frame);
     static std::string formatLabelBold(Side side, const std::string& label);
 
     enum class StatusType { Status_OK, Status_Warning, Status_Fail };

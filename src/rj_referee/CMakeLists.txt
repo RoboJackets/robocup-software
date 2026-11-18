@@ -15,12 +15,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_game_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 set(RJ_REFEREE_DEPS
   rclcpp
@@ -28,16 +30,19 @@ set(RJ_REFEREE_DEPS
   Boost
   fmt
   spdlog
-  rj_common
+  rj_game_common
   rj_geometry
   rj_referee_msgs
   rj_vision_msgs
+  rj_motion_common
   rj_protos
   rj_config_client
+  rj_ros_common
 )
 
 add_library(${PROJECT_NAME} SHARED
   src/referee_base.cpp
+  src/transforms.cpp
   src/external_referee.cpp
   src/internal_referee.cpp
 )
@@ -98,5 +103,6 @@ install(
   INCLUDES DESTINATION include
 )
 
+ament_export_dependencies(${RJ_REFEREE_DEPS})
 ament_export_targets(${PROJECT_NAME})
 ament_package()

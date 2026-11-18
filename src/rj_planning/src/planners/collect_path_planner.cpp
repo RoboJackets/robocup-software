@@ -1,5 +1,7 @@
 #include "rj_planning/planners/collect_path_planner.hpp"
 
+#include "rj_planning/utils/low_pass_filter.hpp"
+
 using namespace rj_geometry;
 
 namespace planning {

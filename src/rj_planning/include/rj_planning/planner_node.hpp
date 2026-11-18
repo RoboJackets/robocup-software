@@ -9,14 +9,14 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/ros_debug_drawer.hpp>
-#include <rj_common/time.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_motion_common/ros_debug_drawer.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_ros_common/topic_names.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planner_for_robot.hpp"

@@ -6,14 +6,14 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_radio_msgs/msg/alive_robots.hpp>
 #include <rj_control_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_control_msgs/msg/motion_setpoint.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_radio_common/robot_status.hpp>
+#include <rj_radio_msgs/msg/alive_robots.hpp>
 #include <rj_radio_msgs/msg/robot_status.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
-#include <rj_radio_common/robot_status.hpp>
+#include <rj_ros_common/topic_names.hpp>
 
 #include "rj_radio/packet_convert.hpp"
 

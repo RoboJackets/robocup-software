@@ -9,11 +9,11 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/time.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_motion_common/planning/instant.hpp>
 #include <rj_planning_msgs/action/robot_move.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_strategy/agent/position.hpp"
 

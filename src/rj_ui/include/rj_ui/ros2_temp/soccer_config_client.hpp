@@ -1,6 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_config_client/config_client_node.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 
 #include "rj_ui/context.hpp"
 

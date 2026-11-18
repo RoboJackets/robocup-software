@@ -1,8 +1,8 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/topic_names.hpp>
 #include <rj_config_server/config_server.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_ros_common/topic_names.hpp>
 
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,

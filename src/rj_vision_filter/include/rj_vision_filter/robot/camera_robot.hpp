@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include <rj_common/time.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
+#include <rj_time/time.hpp>
 #include <rj_vision_msgs/msg/detection_robot.hpp>
 
 namespace vision_filter {

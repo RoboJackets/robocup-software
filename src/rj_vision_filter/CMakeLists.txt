@@ -10,10 +10,11 @@ find_package(ament_cmake REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+find_package(rj_game_common REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_common REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(Boost REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(eigen3_cmake_module REQUIRED)
@@ -21,12 +22,15 @@ find_package(rclcpp REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_ros_common REQUIRED)
+find_package(rj_time REQUIRED)
 
 set(RJ_VISION_FILTER_DEPS
+  rj_game_common
   rj_geometry
-  rj_common
   rj_referee_msgs
   rj_vision_msgs
+  rj_motion_common
   Boost
   Eigen3
   eigen3_cmake_module
@@ -34,6 +38,8 @@ set(RJ_VISION_FILTER_DEPS
   spdlog
   rclcpp_components
   rj_config_client
+  rj_ros_common
+  rj_time
 )
 
 add_executable(${PROJECT_NAME}_node

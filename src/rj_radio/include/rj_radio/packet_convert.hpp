@@ -2,22 +2,23 @@
 
 #include <set>
 
-#include <rj_common/status.hpp>
-#include <rj_common/time.hpp>
-#include <rj_geometry/util.hpp>
 #include <rj_control_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_control_msgs/msg/motion_setpoint.hpp>
-#include <rj_radio_msgs/msg/robot_status.hpp>
+#include <rj_game_common/game_constants.hpp>
+#include <rj_geometry/util.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+#include <rj_motion_common/robot_intent.hpp>
 #include <rj_protos/ssl_simulation_robot_control.pb.h>
 #include <rj_protos/ssl_simulation_robot_feedback.pb.h>
-#include <rj_common/game_constants.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/robot_intent.hpp>
 #include <rj_radio_common/robot_status.hpp>
+#include <rj_radio_msgs/msg/robot_status.hpp>
+#include <rj_time/time.hpp>
 
-#include "rj_radio/messages/robot_status_message.hpp"
 #include "rj_radio/messages/control_message.hpp"
+#include "rj_radio/messages/robot_status_message.hpp"
 
+// Max kick strength accepted by the robots
+inline constexpr size_t kMaxKick = 15;
 
 /**
  * There are several different structs used throughout our code used to

@@ -4,14 +4,15 @@
 #include <memory>
 #include <utility>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/motion_command.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/ros_debug_drawer.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/motion_command.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+#include <rj_motion_common/robot_intent.hpp>
+#include <rj_motion_common/ros_debug_drawer.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_planning/obstacle_set.hpp>
 #include <rj_planning/planning_params.hpp>
 #include <rj_planning/primitives/motion_constraints.hpp>
@@ -21,6 +22,9 @@
 #include "rj_planning/trajectory_collection.hpp"
 
 namespace planning {
+
+// Extra clearance kept around the ball when it is an obstacle
+inline constexpr double kAvoidBallDistance = 0.01;
 
 /**
  * @brief Encapsulates information needed for planner to make a path

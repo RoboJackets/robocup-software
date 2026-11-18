@@ -1,5 +1,7 @@
 #include "rj_ui/processor.hpp"
 
+#include <rj_ros_common/time_adapters.hpp>
+
 using namespace boost;
 using namespace rj_geometry;
 using namespace google::protobuf;

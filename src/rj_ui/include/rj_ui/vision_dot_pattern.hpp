@@ -24,3 +24,11 @@ const QColor kDotPatternColors[12][4] = {
     {Qt::magenta, Qt::magenta, Qt::green, Qt::green},
     {Qt::green, Qt::green, Qt::magenta, Qt::magenta},
 };
+
+// Dot pattern geometry (meters)
+
+inline constexpr float kDotsSmallOffset = 0.035;
+
+inline constexpr float kDotsLargeOffset = 0.054772;
+
+inline constexpr float kDotsRadius = 0.02;

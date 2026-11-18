@@ -14,17 +14,19 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(Boost REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_game_common REQUIRED)
 find_package(rj_protos REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 set(VISION_RECEIVER_DEPS
   rclcpp
   Boost
   rj_vision_msgs
-  rj_common
+  rj_game_common
   rj_protos
   rj_config_client
+  rj_ros_common
 )
 
 set(VISION_RECEIVER_LIBS

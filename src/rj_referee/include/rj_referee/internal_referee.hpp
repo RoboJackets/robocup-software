@@ -2,9 +2,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/topic_names.hpp>
 #include <rj_config_client/config_client.hpp>
 #include <rj_referee_msgs/srv/quick_commands.hpp>
+#include <rj_ros_common/topic_names.hpp>
 
 #include "rj_referee/referee_base.hpp"
 

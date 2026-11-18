@@ -8,17 +8,15 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rj_common REQUIRED)
-find_package(rj_convert REQUIRED)
 find_package(rj_geometry REQUIRED)
-find_package(rj_msgs REQUIRED)
+find_package(rj_radio_msgs REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 set(RJ_RADIO_COMMON_DEPS
   rclcpp
-  rj_common
-  rj_convert
   rj_geometry
-  rj_msgs
+  rj_radio_msgs
+  rj_ros_common
 )
 
 add_library(${PROJECT_NAME} INTERFACE)

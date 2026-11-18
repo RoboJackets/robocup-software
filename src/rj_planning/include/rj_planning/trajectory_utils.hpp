@@ -2,7 +2,7 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/obstacle_set.hpp>
 
 namespace planning {

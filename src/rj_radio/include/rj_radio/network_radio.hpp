@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <string>
 
 #include <boost/asio.hpp>
 #include <boost/bimap/bimap.hpp>
@@ -9,12 +10,10 @@
 #include <fmt/ostream.h>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/network.hpp>
-#include <rj_common/robot_intent.hpp>
-#include <rj_common/status.hpp>
-#include <rj_common/time.hpp>
 #include <rj_geometry/util.hpp>
+#include <rj_motion_common/robot_intent.hpp>
 #include <rj_radio_msgs/msg/alive_robots.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_radio/messages/control_message.hpp"
 #include "rj_radio/messages/robot_status_message.hpp"
@@ -22,6 +21,15 @@
 #include "rj_radio/radio.hpp"
 
 namespace radio {
+
+// The network address of the base station
+static const std::string kBaseStationAddress = "10.42.0.248";
+// The Port (on the local machine) to bind the control message socket to
+static const int kControlMessageSocketPort = 8000;
+// The Port (on the local machine) to bind the robot status socket to
+static const int kRobotStatusMessageSocketPort = 8001;
+// The Port (on the local machine) to bind the alive robots socket to
+static const int kAliveRobotsMessageSocketPort = 8002;
 
 /**
  * @brief Interface for the radio over regular network interface
