@@ -20,7 +20,6 @@ find_package(eigen3_cmake_module REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(rj_config_client REQUIRED)
 
 set(RJ_VISION_FILTER_DEPS
   rj_geometry
@@ -33,7 +32,6 @@ set(RJ_VISION_FILTER_DEPS
   rclcpp
   spdlog
   rclcpp_components
-  rj_config_client
 )
 
 add_executable(${PROJECT_NAME}_node

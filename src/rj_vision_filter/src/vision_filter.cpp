@@ -4,6 +4,7 @@
 #include <rj_common/time.hpp>
 #include <rj_common/topic_names.hpp>
 #include <rj_common/world_state.hpp>
+#include <rj_geometry/transform_matrix.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
 
 namespace vision_filter {
@@ -86,8 +87,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       // Read before constructing world_: its cameras read params on construction.
       params_{load_vision_filter_params(*this)},
-      world_{params_},
-      config_client_{this} {
+      world_{params_} {
     // Create a timer that calls predict on all of the Kalman filters.
     const std::chrono::duration<double> predict_timer_period(params_->vision_loop_dt);
     auto publish_callback = [this]() { publish_state(); };
@@ -193,7 +193,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     // Create a subscriber for the DetectionFrameMsg
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
-        if (!config_client_.connected()) {
+        if (!has_field_dimensions_ || !has_game_settings_) {
             return;
         }
 
@@ -202,8 +202,23 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         auto frame = CameraFrame(*msg, current_world_to_team, current_team_angle);
         world_.update_single_camera(RJ::now(), frame);
     };
+
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFrameTopic, rclcpp::QoS(kQueueSize), callback);
+
+    game_settings_sub_ = create_subscription<GameSettings::Msg>(
+        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
+        [this](GameSettings::Msg::ConstSharedPtr msg) {
+            game_settings_ = *msg;
+            has_game_settings_ = true;
+        });
+
+    field_dimensions_sub_ = create_subscription<FieldDimensions::Msg>(
+        config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        [this](FieldDimensions::Msg::ConstSharedPtr msg) {
+            field_dimensions_ = *msg;
+            has_field_dimensions_ = true;
+        });
 
     // Create world state publisher
     world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStateTopic, 10);
@@ -261,6 +276,18 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
 void VisionFilter::publish_state() {
     WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>(build_world_state_msg(is_blue_));
     world_state_pub_->publish(std::move(msg));
+}
+
+double VisionFilter::team_angle() {
+    const bool defend_plus_x = game_settings_.defend_plus_x;
+    return defend_plus_x ? -M_PI_2 : M_PI_2;
+}
+
+rj_geometry::TransformMatrix VisionFilter::world_to_team() {
+    rj_geometry::TransformMatrix world_to_team =
+        rj_geometry::TransformMatrix::translate(0, field_dimensions_.length / 2.0f);
+    world_to_team *= rj_geometry::TransformMatrix::rotate(static_cast<float>(team_angle()));
+    return world_to_team;
 }
 
 }  // namespace vision_filter

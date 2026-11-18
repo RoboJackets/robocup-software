@@ -7,10 +7,15 @@
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/subscription.hpp>
 
-#include <rj_config_client/config_client.hpp>
+#include <rj_common/field_dimensions.hpp>
+#include <rj_common/game_settings.hpp>
+#include <rj_geometry/transform_matrix.hpp>
+#include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 #include <rj_vision_msgs/msg/world_state.hpp>
 
 #include "rj_vision_filter/camera/camera_frame.hpp"
@@ -70,21 +75,13 @@ private:
      * @brief Returns the team angle
      * @return The team angle.
      */
-    [[nodiscard]] double team_angle() const {
-        const bool defend_plus_x = config_client_.game_settings().defend_plus_x;
-        return defend_plus_x ? -M_PI_2 : M_PI_2;
-    }
+    double team_angle();
 
     /**
      * @brief Returns the transform from the world to the team.
      * @return The transform from the world to the team frame.
      */
-    [[nodiscard]] rj_geometry::TransformMatrix world_to_team() const {
-        rj_geometry::TransformMatrix world_to_team = rj_geometry::TransformMatrix::translate(
-            0, config_client_.field_dimensions().length / 2.0f);
-        world_to_team *= rj_geometry::TransformMatrix::rotate(static_cast<float>(team_angle()));
-        return world_to_team;
-    }
+    rj_geometry::TransformMatrix world_to_team();
 
     /**
      * @brief Vision filter parameters shared with world_ and everything it
@@ -98,10 +95,28 @@ private:
      */
     World world_;
 
-    config_client::ConfigClient config_client_;
-
     rclcpp::Subscription<TeamColorMsg>::SharedPtr team_color_sub_;
     bool is_blue_;
+
+    /**
+     * @brief The current game settings
+     */
+    GameSettings::Msg game_settings_{};
+
+    /**
+     * Whether or not we have up-to-date game settings
+     */
+    bool has_game_settings_ = false;
+
+    /**
+     * @brief The field dimensions
+     */
+    FieldDimensions::Msg field_dimensions_{};
+
+    /**
+     * Whether or not we've recieved the field dimensions from the vision filter
+     */
+    bool has_field_dimensions_ = false;
 
     /**
      * @brief Timer driving regular publication.
@@ -114,5 +129,15 @@ private:
      * @brief Publisher for WorldStateMsg.
      */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
+
+    /**
+     * @brief Subscriber for GameSettings msgs
+     */
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
+
+    /**
+     * @brief Subscriber for FieldDimensions msgs
+     */
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
 };
 }  // namespace vision_filter
