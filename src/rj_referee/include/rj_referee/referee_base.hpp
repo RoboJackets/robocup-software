@@ -2,6 +2,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/team_info.hpp>
 #include <rj_common/topic_names.hpp>
@@ -9,6 +10,7 @@
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
 #include <rj_config_client/config_client.hpp>
+#include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
 #include <rj_referee_msgs/msg/match_state.hpp>
 #include <rj_referee_msgs/msg/play_state.hpp>
@@ -165,6 +167,9 @@ private:
      */
     std::optional<rj_geometry::Point> last_ball_position_;
 
+    GameSettings::Msg game_settings_{};
+    bool has_game_settings_ = false;
+
     config_client::ConfigClient config_client_;
 
     rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
@@ -174,6 +179,7 @@ private:
     rclcpp::Publisher<PlayState::Msg>::SharedPtr play_state_pub_;
     rclcpp::Publisher<MatchState::Msg>::SharedPtr match_state_pub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
 };
 

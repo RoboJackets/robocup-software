@@ -1,5 +1,8 @@
 #include "rj_referee/referee_base.hpp"
 
+#include <rj_common/game_settings.hpp>
+#include <rj_common/topic_names.hpp>
+
 namespace referee {
 
 RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{this} {
@@ -26,6 +29,14 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{t
             if (spin_kick_detector(world_state.ball.position)) {
                 send();
             }
+        });
+
+    game_settings_sub_ = create_subscription<GameSettings::Msg>(
+        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
+        [this](GameSettings::Msg::ConstSharedPtr msg) {
+            game_settings_ = *msg;
+            has_game_settings_ = true;
+            send();
         });
 }
 
@@ -69,7 +80,7 @@ static PlayState resolve_play_state(const PlayState& yellow_vision_centric_play_
 }
 
 void RefereeBase::send() {
-    if (!has_any_info_ || !config_client_.connected()) {
+    if (!has_any_info_ || !config_client_.connected() || !has_game_settings_) {
         return;
     }
 
@@ -77,8 +88,8 @@ void RefereeBase::send() {
     goalie_msg.goalie_id = blue_team_ ? blue_info_.goalie : yellow_info_.goalie;
     goalie_id_pub_->publish(goalie_msg);
 
-    const auto resolved_play_state = resolve_play_state(
-        yellow_play_state_, blue_team_, config_client_.game_settings().defend_plus_x, [&] {
+    const auto resolved_play_state =
+        resolve_play_state(yellow_play_state_, blue_team_, game_settings_.defend_plus_x, [&] {
             FieldDimensions field_dimensions;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
                 config_client_.field_dimensions(), field_dimensions);
