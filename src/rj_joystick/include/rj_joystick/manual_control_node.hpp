@@ -45,12 +45,16 @@ private:
     std::shared_ptr<ManualControlParams> params_;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
-    std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
     std::vector<rclcpp::Subscriber<sensor_msgs::msg::Joy>::SharedPtr> joy_subs_;
+    std::vector<std::chrono::time_point<std::chrono::steady_clock>> last_command_times_;
+    std::vector<rclcpp::timer::TimerBase::SharedPtr> stop_robot_timers_;
+
+    std::vector<double> kick_power_;
+    std::vector<double> dribble_power_;
+
+    std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
     std::vector<rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr>
         manipulator_setpoint_pubs_;
-
-    rclcpp::TimerBase::SharedPtr timer_;
 };
 
 }  // namespace joystick

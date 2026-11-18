@@ -72,3 +72,9 @@ static inline std::string robot_status_topic(int robot_id) {
 }
 constexpr const char* kAliveRobotsTopic{"/radio/alive_robots"};
 }  // namespace radio::topics
+
+namespace joystick::topics {
+static inline std::string joystick_topic(int robot_id) {
+    return "/joystick/joy/robot_" + std::to_string(robot_id);
+}
+} // namespace joystick::topics

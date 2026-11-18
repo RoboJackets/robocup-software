@@ -74,9 +74,54 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
         });
 
     for (unsigned int i = 0; i < kNumShells; i++) {
+        last_command_times_.push_back(std::chrono::steady_clock::now());
+    }
+
+    for (unsigned int i = 0; i < kNumShells; i++) {
         joy_subs_.push_back(create_subscription<sensor_msgs::msg::Joy>(
-            
-        ))
+            joystick::topics::joystick_topic(i), 10,
+            [this, i](const sensor_msgs::msg::Joy::SharedPtr msg) {
+                last_command_times_.at(i) = std::chrono::steady_clock::now();
+                ControllerCommand command;
+                command.translation.x() = msg->axes.at(joystick::axis::kLeftY);
+                command.translation.y() = -msg->axes.at(joystick::axis::kLeftX);
+                command.rotation = -msg->axes.at(joystick::axis::kRightX);
+                command.kick = msg->axes.at(joystick::axis::kTriggerRight) > kTriggerCutoff;
+                command.chip = msg->buttons.at(joystick::button::kLeftShoulder) != 0;
+
+                if (msg->buttons.at(joystick::button::kDpadRight) != 0) {
+                    kick_power_.at(i) += params_->kick_power_increment;
+                } else if (msg->buttons.at(joystick::button::kDpadLeft) != 0) {
+                    kick_power_.at(i) -= params_->kick_power_increment;
+                }
+                kick_power_.at(i) = std::clamp(kick_power_.at(i), 0.0, 1.0);
+
+                if (msg->buttons.at(joystick::button::kDpadUp) != 0) {
+                    dribble_power_.at(i) += params_->dribble_power_increment;
+                } else if (msg->buttons.at(joystick::button::kDpadDown) != 0) {
+                    dribble_power_.at(i) -= params_->dribble_power_increment;
+                }
+                dribble_power_.at(i) = std::clamp(dribble_power_.at(i), 0.0, 1.0);
+
+                if (command.kick || command.chip) {
+                    command.kick_power = kick_power_.at(i);
+                }
+
+                command.dribble_power = dribble_power_.at(i);
+                publish(i, command);
+            }));
+    }
+
+    for (unsigned int i = 0; i < kNumShells; i++) {
+        stop_robot_timers_.push_back(create_wall_timer(
+            std::chrono::milliseconds(100),
+            [this, i]() {
+                auto now = std::chrono::steady_clock::now();
+                auto last_command_time = last_command_times_.at(i);
+                if (now - last_command_time > std::chrono::milliseconds(1000)) {
+                    stop_robot(i);
+                }
+            }));
     }
 
     for (unsigned int i = 0; i < kNumShells; i++) {
@@ -85,14 +130,6 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
         manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
             control::topics::manipulator_setpoint_topic(i), 10));
     }
-
-    timer_ = create_wall_timer(std::chrono::microseconds(1'000'000 / 60), [this]() {
-        for (const auto& [controller, robot] : controllers_) {
-            if (robot.has_value()) {
-                publish(robot.value(), controller->get_command());
-            }
-        }
-    });
 }
 
 void ManualControlNode::stop_robot(int robot_id) {
