@@ -1,20 +1,22 @@
 #include "rj_joystick/manual_control_node.hpp"
 
+#include <rj_common/game_constants.hpp>
 #include <rj_common/ros_params.hpp>
+#include <rj_common/topic_names.hpp>
+#include <rj_common/utils.hpp>
+
+#include "rj_joystick/input_map.hpp"
 
 namespace joystick {
 
-ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
+ManualControlNode::ManualControlNode()
+    : rclcpp::Node("manual_control"),
+      kick_power_(kNumShells, 0.5),
+      dribble_power_(kNumShells, 0.0),
+      commands_(kNumShells),
+      previous_power_buttons_(kNumShells),
+      has_command_(kNumShells, false) {
     ManualControlParams p{};
-    p.max_rotation_speed = declare_required_param<double>(*this, "max_rotation_speed",
-                                                          "Maximum rotation speed, rad/s");
-    p.max_damped_rotation_speed = declare_required_param<double>(
-        *this, "max_damped_rotation_speed", "Maximum rotation speed while holding shift, rad/s");
-    p.max_translation_speed = declare_required_param<double>(*this, "max_translation_speed",
-                                                             "Maximum translation speed, m/s");
-    p.max_damped_translation_speed =
-        declare_required_param<double>(*this, "max_damped_translation_speed",
-                                       "Maximum translation speed while holding shift, m/s");
     p.kick_power_increment = declare_required_param<double>(
         *this, "kick_power_increment", "Kick power change per button press, 0-1");
     p.dribble_power_increment = declare_required_param<double>(
@@ -34,15 +36,7 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
             ManualControlParams updated = *params_;
             for (const auto& param : params) {
                 const auto& name = param.get_name();
-                if (name == "max_rotation_speed") {
-                    updated.max_rotation_speed = param.as_double();
-                } else if (name == "max_damped_rotation_speed") {
-                    updated.max_damped_rotation_speed = param.as_double();
-                } else if (name == "max_translation_speed") {
-                    updated.max_translation_speed = param.as_double();
-                } else if (name == "max_damped_translation_speed") {
-                    updated.max_damped_translation_speed = param.as_double();
-                } else if (name == "kick_power_increment") {
+                if (name == "kick_power_increment") {
                     updated.kick_power_increment = param.as_double();
                 } else if (name == "dribble_power_increment") {
                     updated.dribble_power_increment = param.as_double();
@@ -55,9 +49,7 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
                 }
             }
 
-            if (updated.max_rotation_speed < 0 || updated.max_damped_rotation_speed < 0 ||
-                updated.max_translation_speed < 0 || updated.max_damped_translation_speed < 0 ||
-                updated.min_kick_speed < 0 || updated.max_kick_speed < 0) {
+            if (updated.min_kick_speed < 0 || updated.max_kick_speed < 0) {
                 result.successful = false;
                 result.reason = "manual control speeds must be nonnegative";
                 return result;
@@ -89,38 +81,39 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
                 command.kick = msg->axes.at(joystick::axis::kTriggerRight) > kTriggerCutoff;
                 command.chip = msg->buttons.at(joystick::button::kLeftShoulder) != 0;
 
-                if (msg->buttons.at(joystick::button::kDpadRight) != 0) {
+                const bool kick_increase =
+                    msg->buttons.at(joystick::button::kDpadRight) != 0;
+                const bool kick_decrease =
+                    msg->buttons.at(joystick::button::kDpadLeft) != 0;
+                const bool dribble_increase =
+                    msg->buttons.at(joystick::button::kDpadUp) != 0;
+                const bool dribble_decrease =
+                    msg->buttons.at(joystick::button::kDpadDown) != 0;
+                auto& previous_buttons = previous_power_buttons_.at(i);
+
+                if (kick_increase && !previous_buttons[0]) {
                     kick_power_.at(i) += params_->kick_power_increment;
-                } else if (msg->buttons.at(joystick::button::kDpadLeft) != 0) {
+                } else if (kick_decrease && !previous_buttons[1]) {
                     kick_power_.at(i) -= params_->kick_power_increment;
                 }
                 kick_power_.at(i) = std::clamp(kick_power_.at(i), 0.0, 1.0);
 
-                if (msg->buttons.at(joystick::button::kDpadUp) != 0) {
+                if (dribble_increase && !previous_buttons[2]) {
                     dribble_power_.at(i) += params_->dribble_power_increment;
-                } else if (msg->buttons.at(joystick::button::kDpadDown) != 0) {
+                } else if (dribble_decrease && !previous_buttons[3]) {
                     dribble_power_.at(i) -= params_->dribble_power_increment;
                 }
                 dribble_power_.at(i) = std::clamp(dribble_power_.at(i), 0.0, 1.0);
+                previous_buttons = {kick_increase, kick_decrease, dribble_increase,
+                                    dribble_decrease};
 
                 if (command.kick || command.chip) {
                     command.kick_power = kick_power_.at(i);
                 }
 
                 command.dribble_power = dribble_power_.at(i);
-                publish(i, command);
-            }));
-    }
-
-    for (unsigned int i = 0; i < kNumShells; i++) {
-        stop_robot_timers_.push_back(create_wall_timer(
-            std::chrono::milliseconds(100),
-            [this, i]() {
-                auto now = std::chrono::steady_clock::now();
-                auto last_command_time = last_command_times_.at(i);
-                if (now - last_command_time > std::chrono::milliseconds(1000)) {
-                    stop_robot(i);
-                }
+                commands_.at(i) = command;
+                has_command_.at(i) = true;
             }));
     }
 
@@ -129,6 +122,23 @@ ManualControlNode::ManualControlNode() : rclcpp::Node("manual_control") {
             control::topics::motion_setpoint_topic(i), 10));
         manipulator_setpoint_pubs_.push_back(create_publisher<rj_msgs::msg::ManipulatorSetpoint>(
             control::topics::manipulator_setpoint_topic(i), 10));
+    }
+
+    tick_timer_ = create_wall_timer(std::chrono::milliseconds(20), [this] { tick(); });
+}
+
+void ManualControlNode::tick() {
+    const auto now = std::chrono::steady_clock::now();
+    for (size_t i = 0; i < kNumShells; ++i) {
+        if (!has_command_.at(i)) {
+            continue;
+        }
+        if (now - last_command_times_.at(i) > std::chrono::milliseconds(1000)) {
+            stop_robot(static_cast<int>(i));
+            has_command_.at(i) = false;
+            continue;
+        }
+        publish(static_cast<int>(i), commands_.at(i));
     }
 }
 
@@ -164,3 +174,10 @@ void ManualControlNode::publish(int robot_id, const ControllerCommand& command) 
 }
 
 }  // namespace joystick
+
+int main(int argc, char** argv) {
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<joystick::ManualControlNode>());
+    rclcpp::shutdown();
+    return 0;
+}

@@ -90,14 +90,12 @@ rosidl_generate_interfaces(
   srv/KickerPicker.srv
   srv/Marking.srv
   srv/Waller.srv
-  srv/ListJoysticks.srv
   srv/PlanHypotheticalPath.srv
   srv/QuickCommands.srv
   srv/QuickRestart.srv
   srv/SetFieldDimensions.srv
   srv/SetGameSettings.srv
   srv/SimPlacement.srv
-  srv/SetManual.srv
 
   DEPENDENCIES
   std_msgs

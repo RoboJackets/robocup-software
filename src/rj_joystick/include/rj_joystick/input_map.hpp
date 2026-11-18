@@ -1,6 +1,10 @@
 #pragma once
 
+#include <cstddef>
+
 namespace joystick {
+
+inline constexpr float kTriggerCutoff = 0.9f;
 
 namespace button {
 inline constexpr size_t kA             = 0;

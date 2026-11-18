@@ -9,10 +9,6 @@ namespace joystick {
 // Read from the /manual_control section of the params YAML and shared with
 // the SDL controllers (see ManualControlNode).
 struct ManualControlParams {
-    double max_rotation_speed;            // rad/s
-    double max_damped_rotation_speed;     // rad/s
-    double max_translation_speed;         // m/s
-    double max_damped_translation_speed;  // m/s
     double kick_power_increment;          // 0-1
     double dribble_power_increment;       // 0-1
     bool kick_on_break_beam;

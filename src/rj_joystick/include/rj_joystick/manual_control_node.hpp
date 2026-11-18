@@ -1,37 +1,22 @@
 #pragma once
 
-#include <functional>
+#include <array>
+#include <chrono>
 #include <memory>
-#include <unordered_map>
+#include <vector>
 
-#include <SDL2/SDL.h>
-#include <fmt/format.h>
 #include <rclcpp/rclcpp.hpp>
-#include <spdlog/spdlog.h>
 
-#include <rj_common/context.hpp>
-#include <rj_common/node.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/utils.hpp>
 #include <rj_msgs/msg/manipulator_setpoint.hpp>
 #include <rj_msgs/msg/motion_setpoint.hpp>
-#include <rj_msgs/srv/list_joysticks.hpp>
-#include <rj_msgs/srv/set_manual.hpp>
 #include <sensor_msgs/msg/joy.hpp>
 
 #include "rj_joystick/manual_control.hpp"
-#include "rj_joystick/sdl_manual_control.hpp"
 
 namespace joystick {
 
 /**
  * Keeps track of joysticks (and other manual control methods) and assigning them to robots.
- *
- * Services:
- *  - ListJoysticks: get a list of joysticks and robots to which they are assigned
- *  - SetManual: assign a particular robot to a joystick and remove the robot previously assigned to
- * that joystick, if any
- *
  * Publishes on manipulator and motion setpoints, only for the robots being controlled.
  */
 class ManualControlNode : public rclcpp::Node {
@@ -39,18 +24,21 @@ public:
     ManualControlNode();
 
 private:
+    void tick();
     void stop_robot(int robot_id);
     void publish(int robot_id, const ControllerCommand& command);
 
     std::shared_ptr<ManualControlParams> params_;
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
-    std::vector<rclcpp::Subscriber<sensor_msgs::msg::Joy>::SharedPtr> joy_subs_;
+    std::vector<rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr> joy_subs_;
     std::vector<std::chrono::time_point<std::chrono::steady_clock>> last_command_times_;
-    std::vector<rclcpp::timer::TimerBase::SharedPtr> stop_robot_timers_;
-
     std::vector<double> kick_power_;
     std::vector<double> dribble_power_;
+    std::vector<ControllerCommand> commands_;
+    std::vector<std::array<bool, 4>> previous_power_buttons_;
+    std::vector<bool> has_command_;
+    rclcpp::TimerBase::SharedPtr tick_timer_;
 
     std::vector<rclcpp::Publisher<rj_msgs::msg::MotionSetpoint>::SharedPtr> motion_setpoint_pubs_;
     std::vector<rclcpp::Publisher<rj_msgs::msg::ManipulatorSetpoint>::SharedPtr>
@@ -58,12 +46,3 @@ private:
 };
 
 }  // namespace joystick
-
-int main(int argc, char** argv) {
-    rclcpp::init(argc, argv);
-
-    auto manual = std::make_shared<joystick::ManualControlNode>();
-    rclcpp::spin(manual);
-    rclcpp::shutdown();
-    return 0;
-}

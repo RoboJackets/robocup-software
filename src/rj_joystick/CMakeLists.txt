@@ -16,6 +16,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(rj_common REQUIRED)
 find_package(rj_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 # Find sdl2
 include(FindPkgConfig)
@@ -27,24 +28,22 @@ set(RJ_JOYSTICK_DEPS
   spdlog
   rj_common
   rj_msgs
+  sensor_msgs
   rclcpp_components
 )
 
 add_executable(manual_control_node
   src/manual_control_node.cpp
-  src/sdl_manual_control.cpp
 )
 
 target_link_libraries(manual_control_node
   PUBLIC
   spdlog
   fmt
-  ${SDL2_LIBRARIES}
 )
 
 target_include_directories(manual_control_node
   PUBLIC
-  ${SDL2_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
@@ -52,6 +51,29 @@ target_include_directories(manual_control_node
 ament_target_dependencies(manual_control_node
   PUBLIC
   ${RJ_JOYSTICK_DEPS}
+)
+
+add_executable(keyboard_joystick_node
+  src/keyboard_joystick_node.cpp
+)
+
+target_link_libraries(keyboard_joystick_node
+  PUBLIC
+  ${SDL2_LIBRARIES}
+)
+
+target_include_directories(keyboard_joystick_node
+  PUBLIC
+  ${SDL2_INCLUDE_DIRS}
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+ament_target_dependencies(keyboard_joystick_node
+  PUBLIC
+  rclcpp
+  rj_common
+  sensor_msgs
 )
 
 install(
@@ -65,7 +87,13 @@ install(
 )
 
 install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
+install(
   TARGETS manual_control_node
+          keyboard_joystick_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

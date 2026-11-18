@@ -1,10 +1,40 @@
 #include "rj_joystick/keyboard_joystick_node.hpp"
 
+#include <rj_common/game_constants.hpp>
 #include <rj_common/ros_params.hpp>
+#include <rj_common/topic_names.hpp>
 
 namespace joystick {
 
+const std::map<SDL_Scancode, KeyboardJoystickNode::AxisBinding>
+    KeyboardJoystickNode::kAxisMap = {
+        {SDL_SCANCODE_W, {axis::kLeftX, -1.0f}},
+        {SDL_SCANCODE_S, {axis::kLeftX, 1.0f}},
+        {SDL_SCANCODE_A, {axis::kLeftY, -1.0f}},
+        {SDL_SCANCODE_D, {axis::kLeftY, 1.0f}},
+        {SDL_SCANCODE_Q, {axis::kRightX, -1.0f}},
+        {SDL_SCANCODE_E, {axis::kRightX, 1.0f}},
+        {SDL_SCANCODE_K, {axis::kTriggerRight, 1.0f}},
+    };
+
+const std::map<SDL_Scancode, size_t> KeyboardJoystickNode::kButtonMap = {
+    {SDL_SCANCODE_J, button::kLeftShoulder},
+    {SDL_SCANCODE_LSHIFT, button::kLeftStick},
+    {SDL_SCANCODE_SPACE, button::kRightShoulder},
+    {SDL_SCANCODE_RSHIFT, button::kRightShoulder},
+    {SDL_SCANCODE_UP, button::kDpadUp},
+    {SDL_SCANCODE_DOWN, button::kDpadDown},
+    {SDL_SCANCODE_LEFT, button::kDpadLeft},
+    {SDL_SCANCODE_RIGHT, button::kDpadRight},
+};
+
 KeyboardJoystickNode::KeyboardJoystickNode() : rclcpp::Node("keyboard_joy") {
+    const auto robot_id = declare_required_param<int>(*this, "robot_id", "Robot ID to control");
+    if (robot_id < 0 || robot_id >= static_cast<int>(kNumShells)) {
+        throw std::runtime_error("robot_id must be in the range [0, " +
+                                 std::to_string(kNumShells - 1) + "]");
+    }
+
     const auto interval =
         declare_required_param<double>(*this, "publish_interval", "Joy publish interval, s");
 
@@ -19,7 +49,7 @@ KeyboardJoystickNode::KeyboardJoystickNode() : rclcpp::Node("keyboard_joy") {
     window_ = SDL_CreateWindow("keyboard_joy", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 300,
                                300, 0);
 
-    pub_ = create_publisher<sensor_msgs::msg::Joy>("joy", 10);
+    pub_ = create_publisher<sensor_msgs::msg::Joy>(joystick::topics::joystick_topic(robot_id), 10);
     timer_ = create_wall_timer(std::chrono::duration<double>(interval), [this] { tick(); });
 }
 

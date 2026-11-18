@@ -81,7 +81,7 @@ run-sim:
 # run our stack with default flags
 # TODO: actually name our software stack something
 run-our-stack:
-	$(ROS_LAUNCH) run_sim:=True
+	$(ROS_LAUNCH) run_sim:=True use_manual_control:=True
 
 # run sim with external referee (SSL Game Controller)
 run-sim-external:
@@ -98,7 +98,9 @@ run-real-ex:
 	$(ROS_LAUNCH) run_sim:=False use_sim_radio:=False use_internal_ref:=False
 
 # run on real field comp, with real robots and manual control node to override AI movement
-# use util/manual_control_connect.bash to connect
+# run "ros2 run joy joy_enumerate_devices" in a second terminal to find joysticks
+# To assign a joystick to a robot, run "ros2 run joy game_controller_node --ros-args -p device_name:="<device name>" -r joy:=/joystick/joy/robot_<robot_id>"
+# To assign the keyboard to a robot, run "ros2 launch rj_joystick keyboard_control.launch.py robot_id:=<robot_id>"
 run-manual:
 	$(ROS_LAUNCH) run_sim:=False use_manual_control:=True use_sim_radio:=False
 

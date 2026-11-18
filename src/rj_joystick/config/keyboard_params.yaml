@@ -1,0 +1,8 @@
+/keyboard_joy:
+  ros__parameters:
+    robot_id: 0
+    publish_interval: 0.02
+    left_joy_percent: 1.0
+    left_joy_damped_percent: 0.25
+    right_joy_percent: 1.0
+    right_joy_damped_percent: 0.25
