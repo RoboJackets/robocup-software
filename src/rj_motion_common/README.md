@@ -4,10 +4,10 @@ Reusable assessment, refactor, and verification template.
 
 | Package Details | Entry |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
-| **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Package name** | rj_motion_common |
+| **Assigned owner(s)** | Sanat Dhanyamraju |
+| **Reviewer(s)** | Nate, Cameron |
+| **Date started revision** | 11/17/2026 |
 
 ## 1. Package Identity and Tier
 
@@ -15,9 +15,9 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | _Explain what the package does so a new contributor can understand it._ |
-| **Current responsibilities** | _List the responsibilities currently owned by this package._ |
-| **Out of scope** | _State what this package must not own or attempt to solve._ |
+| **Plain-language purpose** | Motion and world-state types shared by strategy, planning, control, and radio |
+| **Current responsibilities** | `WorldState` / `RobotState` / `BallState` (including ball motion prediction), `RobotInstant` / `LinearMotionInstant`, `Trajectory`, `MotionCommand`, `RobotIntent`, and `RosDebugDrawer`, with their `rclcpp::TypeAdapter` specializations |
+| **Out of scope** | Planning algorithms (rj_planning), control loops (rj_control), and game or referee state (rj_game_common, rj_referee) |
 
 ## 2. Dependency Rules
 
@@ -27,17 +27,17 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Depends on** | _Enter the explicit dependency list from `package.xml`._ |
-| **Depended on by** | _List packages, executables, or systems that consume this package._ |
+| **Depends on** | rj_drawing_msgs, rj_game_common, rj_geometry, rj_planning_msgs, rj_ros_common, rj_time, rj_vision_msgs |
+| **Depended on by** | rj_control, rj_planning, rj_radio, rj_referee, rj_strategy, rj_ui, rj_vision_filter |
 
 
 ## 3. Operational Expectations
 
 | Field | Details |
 | --- | --- |
-| **Failure behavior** | _Describe behavior when an upstream input, sensor, network link, radio, or other dependency fails._ |
-| **Recovery behavior** | _Describe automatic recovery, retry, fallback, and operator intervention requirements._ |
-| **Configuration** | _List required parameters, defaults, validation rules, and configuration files._ |
+| **Failure behavior** | `Trajectory` throws when read while empty, when an instant is appended at or before its last instant, when splicing trajectories that do not meet, or when serializing invalid angles; other types are plain data |
+| **Recovery behavior** | N/A |
+| **Configuration** | Ball prediction takes the ball decay constant from the caller (`ball_decay_constant` in sim_params.yaml / real_params.yaml) |
 
 ## 4. Testing
 
@@ -45,6 +45,6 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 
 | Field | Details |
 | --- | --- |
-| **Unit testing** | _Describe what unit tests were used on this package and how._ |
-| **Coverage gaps** | _List untested algorithms, branches, failure paths, and outlier cases._ |
-| **Observed outliers** | _Record flaky behavior, nondeterminism, timing spikes, or unexpected results._ |
+| **Unit testing** | `ball_test` (gtest) covers `BallState` prediction; `Trajectory` is covered by `trajectory_test` in rj_planning |
+| **Coverage gaps** | `MotionCommand`, `RobotIntent`, and `WorldState` conversions to and from messages are not unit tested |
+| **Observed outliers** | N/A |
