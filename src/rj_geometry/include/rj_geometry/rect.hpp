@@ -2,9 +2,7 @@
 
 #include <algorithm>
 #include <array>
-#include <cassert>
 #include <memory>
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -27,12 +25,10 @@ class Rect : public Shape {
 public:
     using Msg = rj_geometry_msgs::msg::Rect;
 
-    // --- Constructors
+    // --- Constructors ---
 
-    /** Degerate (single point rect) constructor */
-    Rect() {}
-    /** Degenerate (single line rect) constructor */
-    Rect(Point p1) { corners_[0] = corners_[1] = p1; }
+    /** Degenerate (single point rect at the origin) constructor */
+    Rect() = default;
     /**
      * Initialize a rectangle given diagonally opposite corners.
      *
@@ -41,46 +37,27 @@ public:
      *
      * NOTE: no assertions will be raised for degenerate rectangles
      */
-    Rect(Point p1, Point p2) {
-        corners_[0] = p1;
-        corners_[1] = p2;
-    }
+    Rect(Point p1, Point p2) : corners_{p1, p2} {}
 
     // --- Getters ---
 
-    std::array<Point, 2> corners() const { return corners_; };
+    std::array<Point, 2> corners() const { return corners_; }
     float minx() const { return std::min(corners_[0].x(), corners_[1].x()); }
     float miny() const { return std::min(corners_[0].y(), corners_[1].y()); }
     float maxx() const { return std::max(corners_[0].x(), corners_[1].x()); }
     float maxy() const { return std::max(corners_[0].y(), corners_[1].y()); }
-    /**
-     * This returns the 4 corners of the rectangle in a predictable order.
-     * Works regardless of the corner pair specified in the construction.
-     * <BottomLeft, TopLeft, TopRight, BottomRight>
-     */
-    std::array<Point, 4> all_corners() const {
-        std::array<Point, 4> tmp;
-        tmp[0] = Point(minx(), miny());  // BottomLeft
-        tmp[1] = Point(minx(), maxy());  // TopLeft
-        tmp[2] = Point(maxx(), maxy());  // TopRight
-        tmp[3] = Point(maxx(), miny());  // BottomRight
-        return tmp;
-    }
     Point center() const { return (corners_[0] + corners_[1]) / 2; }
 
     // --- Setters ---
 
-    void set_corners(Point p1, Point p2) {
-        corners_[0] = p1;
-        corners_[1] = p2;
-    }
+    void set_corners(Point p1, Point p2) { corners_ = {p1, p2}; }
     /**
      * This expands the rectangle such that it includes the the given point.
      *
      * NOTE: This will override the backing corner pair to the canon order:
      * [BottomLeft, TopRight]
      */
-    void expand(Point pt);
+    void expand(Point p);
     /**
      * This expands the rectangle such that it includes the given rect.
      *
@@ -102,31 +79,7 @@ public:
 
     // --- Operators ---
 
-    bool operator==(const Rect& other) const { return corners_ == other.corners_; }
-    Rect operator+(Point offset) { return Rect(corners_[0] + offset, corners_[1] + offset); }
-    Rect& operator+=(Point offset) {
-        corners_[0] += offset;
-        corners_[1] += offset;
-        return *this;
-    }
-    Rect operator-(Point offset) { return Rect(corners_[0] - offset, corners_[1] - offset); }
-    Rect& operator-=(Point offset) {
-        corners_[0] -= offset;
-        corners_[1] -= offset;
-        return *this;
-    }
-    Rect operator*(float s) { return Rect(corners_[0] * s, corners_[1] * s); }
-    Rect& operator*=(float s) {
-        corners_[0] *= s;
-        corners_[1] *= s;
-        return *this;
-    }
-    Rect operator/(float s) { return Rect(corners_[0] / s, corners_[1] / s); }
-    Rect& operator/=(float s) {
-        corners_[0] /= s;
-        corners_[1] /= s;
-        return *this;
-    }
+    // ... none for now ...
 
     // --- Shape virtuals ---
 
@@ -137,14 +90,17 @@ public:
     std::vector<Point> get_segment_intersections(const Segment& seg) const override;
     std::string to_string() const override {
         std::stringstream str;
-        std::array<Point, 4> c = all_corners();
-        str << "Rect<" << c[0] << "," << c[2] << ">";
+        str << "Rect<" << Point(minx(), miny()) << "," << Point(maxx(), maxy()) << ">";
         return str.str();
     }
 
     // --- Shape pseudovirtual clone ---
 
     std::unique_ptr<Rect> clone() const;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
 
 protected:
     // --- Hidden parameters ---
@@ -154,5 +110,9 @@ protected:
     // --- Shape virtuals ---
 
     Rect* clone_impl() const override;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
 };
 }  // namespace rj_geometry
