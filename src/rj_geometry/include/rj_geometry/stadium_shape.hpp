@@ -24,10 +24,6 @@ public:
 
     StadiumShape(Point c1, Point c2, float r);
 
-    StadiumShape(const StadiumShape& other) : CompositeShape(other) {
-        drawshapes_ = other.drawshapes_;
-    }
-
     [[nodiscard]] std::unique_ptr<StadiumShape> clone() const;
 
     [[nodiscard]] const rj_geometry::ShapeSet drawshapes() const { return drawshapes_; }

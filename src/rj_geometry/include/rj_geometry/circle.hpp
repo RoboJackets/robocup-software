@@ -25,6 +25,7 @@ public:
 
     // --- Constructors ---
 
+    Circle() = default;
     /**
      * Initialize a circle with a given center and radius.
      *
@@ -83,12 +84,13 @@ protected:
     Point center_;
     float radius_;
 
-    // --- Shape virtuals
+    // --- Shape virtuals ---
 
     Circle* clone_impl() const override;
 
     // --- Custom utilities ---
 
     // ... none for now ...
+
 };
 }
