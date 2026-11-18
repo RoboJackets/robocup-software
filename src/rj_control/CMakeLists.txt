@@ -14,17 +14,25 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rj_control_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(rj_geometry REQUIRED)
 find_package(rj_planning REQUIRED)
+find_package(rj_ros_common REQUIRED)
+find_package(rj_time REQUIRED)
 
 set(RJ_CONTROL_DEPS
   std_msgs
+  rj_control_msgs
   rj_vision_msgs
-  rj_common
+  rj_game_common
+  rj_motion_common
   rj_geometry
   rj_planning
+  rj_ros_common
+  rj_time
 )
 
 add_executable(motion_control_node

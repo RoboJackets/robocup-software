@@ -15,14 +15,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_ros_common REQUIRED)
 
 set(RJ_CONFIG_CLIENT_DEPS
   rclcpp
   rj_referee_msgs
   rj_vision_msgs
   fmt
-  rj_common
+  rj_ros_common
 )
 
 add_library(${PROJECT_NAME} SHARED

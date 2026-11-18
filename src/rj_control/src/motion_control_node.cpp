@@ -1,6 +1,6 @@
 #include "rj_control/motion_control_node.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
 
 namespace control {
 

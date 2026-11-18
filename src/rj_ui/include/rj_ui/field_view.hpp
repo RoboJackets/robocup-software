@@ -14,16 +14,17 @@
 #include <QStyle>
 #include <QStyleOption>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/game_constants.hpp>
-#include <rj_common/ui_frame.hpp>
-#include <rj_common/vision_dot_pattern.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/game_constants.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/ssl_ball_constants.hpp>
 #include <rj_geometry/ssl_robot_constants.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
 #include <rj_planning/primitives/motion_constraints.hpp>
+
+#include "rj_ui/ui_frame.hpp"
+#include "rj_ui/vision_dot_pattern.hpp"
 
 /** class that performs drawing of log data onto the field */
 class FieldView : public QWidget {
@@ -47,8 +48,13 @@ public:
         }
     }
 
-    void setHistory(std::vector<std::shared_ptr<rj_common::UIFrame>>&& value) {
+    void setHistory(std::vector<std::shared_ptr<rj_ui::UIFrame>>&& value) {
         _history = std::move(value);
+        if (!_history.empty() && _history.back() != nullptr &&
+            _history.back()->field_dimensions != field_dimensions_) {
+            field_dimensions_ = _history.back()->field_dimensions;
+            updateGeometry();
+        }
     }
 
     void rotate(int value);
@@ -77,7 +83,7 @@ protected:
 
     void drawText(QPainter& p, QPointF pos, const QString& text,
                   bool center = true) const;
-    static void drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame);
+    void drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
@@ -115,7 +121,10 @@ protected:
     QPointF qpointf(const rj_geometry::Point& pt) const { return QPointF(pt.x(), pt.y()); }
 
     // Returns a pointer to the most recent frame, or null if none is available.
-    std::shared_ptr<rj_common::UIFrame> currentFrame();
+    std::shared_ptr<rj_ui::UIFrame> currentFrame();
+
+    // Dimensions of the field being drawn, taken from the latest UIFrame.
+    FieldDimensions field_dimensions_;
 
     // Coordinate transformations
     rj_geometry::TransformMatrix _screenToWorld;
@@ -131,7 +140,7 @@ protected:
     // How many degrees to rotate text so it shows up the right way on screen
     int _textRotation{};
 
-    std::vector<std::shared_ptr<rj_common::UIFrame>> _history;
+    std::vector<std::shared_ptr<rj_ui::UIFrame>> _history;
 
     QVector<bool> _layerVisible;
 };

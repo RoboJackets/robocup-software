@@ -1,5 +1,7 @@
 #include "rj_planning/planners/line_pivot_path_planner.hpp"
 
+#include <rj_geometry/util.hpp>
+
 namespace planning {
 using namespace rj_geometry;
 

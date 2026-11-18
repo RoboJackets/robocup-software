@@ -2,8 +2,9 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/instant.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/world_state.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"

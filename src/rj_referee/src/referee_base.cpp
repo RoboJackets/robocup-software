@@ -65,7 +65,7 @@ static PlayState resolve_play_state(const PlayState& yellow_vision_centric_play_
                                     bool blue_team, bool defend_plus_x,
                                     const FieldDimensions& dimensions) {
     return yellow_vision_centric_play_state.opposite_team(blue_team).with_transform(
-        rj_common::world_to_team(dimensions, defend_plus_x));
+        world_to_team(dimensions, defend_plus_x));
 }
 
 void RefereeBase::send() {

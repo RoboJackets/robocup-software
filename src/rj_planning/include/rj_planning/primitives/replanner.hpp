@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/primitives/robot_constraints.hpp>
 
 #include "rj_planning/obstacle_set.hpp"
@@ -32,7 +32,7 @@ public:
         RobotInstant start;
         LinearMotionInstant goal;
         const ObstacleSet& obstacles;
-        const FieldDimensions* field_dimensions;
+        const FieldDimensions& field_dimensions;
         RobotConstraints constraints;
         const AngleFunction& angle_function;
         unsigned int robot_id;

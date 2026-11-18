@@ -9,6 +9,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <rj_config_client/config_client.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
 #include <rj_vision_msgs/msg/world_state.hpp>

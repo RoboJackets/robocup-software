@@ -5,10 +5,10 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 
 #include "rj_planning/plan_request.hpp"
 #include "rj_planning/planners/path_planner.hpp"

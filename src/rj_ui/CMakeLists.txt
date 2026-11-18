@@ -20,16 +20,22 @@ find_package(Boost REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(fmt REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_drawing_msgs REQUIRED)
+find_package(rj_game_common REQUIRED)
 find_package(rj_geometry REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(rj_planning REQUIRED)
 find_package(rj_radio_msgs REQUIRED)
 find_package(rj_referee_msgs REQUIRED)
 find_package(rj_ui_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
+find_package(rj_protos REQUIRED)
+find_package(rj_ros_common REQUIRED)
 find_package(rj_strategy REQUIRED)
 find_package(rj_referee REQUIRED)
 find_package(rj_config_client REQUIRED)
+find_package(rj_radio_common REQUIRED)
+find_package(rj_time REQUIRED)
 
 # Enable Qt's automatic processing
 set(CMAKE_AUTOMOC ON)   # Handle Q_OBJECT in headers automatically
@@ -51,6 +57,8 @@ set(SRC_FILES
   src/robot_widget.cpp
   src/sim_field_view.cpp
   src/style_sheet_manager.cpp
+
+  src/debug_drawer.cpp
 
   src/ros2_temp/autonomy_interface.cpp
   src/ros2_temp/debug_draw_interface.cpp
@@ -88,16 +96,22 @@ set(RJ_UI_DEPS
   spdlog
   std_msgs
   fmt
-  rj_common
+  rj_drawing_msgs
+  rj_game_common
   rj_geometry
+  rj_motion_common
   rj_planning
   rj_radio_msgs
   rj_referee_msgs
   rj_ui_msgs
   rj_vision_msgs
+  rj_protos
+  rj_ros_common
   rj_strategy
   rj_referee
   rj_config_client
+  rj_radio_common
+  rj_time
 )
 
 add_library(${PROJECT_NAME} SHARED

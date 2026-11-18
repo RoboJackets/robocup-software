@@ -17,7 +17,7 @@
 #include <spdlog/spdlog.h>
 
 #include <rj_benchmarking_msgs/msg/latency.hpp>
-#include <rj_common/game_constants.hpp>
+#include <rj_game_common/game_constants.hpp>
 
 // Set RobotId to -1 for Global Profiling
 class Registry : public rclcpp::Node {

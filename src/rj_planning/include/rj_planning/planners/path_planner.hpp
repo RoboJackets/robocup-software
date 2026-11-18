@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/motion_command.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/motion_command.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 
 #include "rj_planning/plan_request.hpp"
 

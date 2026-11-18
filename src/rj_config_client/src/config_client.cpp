@@ -1,5 +1,5 @@
-#include <rj_common/topic_names.hpp>
 #include <rj_config_client/config_client.hpp>
+#include <rj_ros_common/topic_names.hpp>
 
 namespace config_client {
 ConfigClient::ConfigClient(rclcpp::Node* node)

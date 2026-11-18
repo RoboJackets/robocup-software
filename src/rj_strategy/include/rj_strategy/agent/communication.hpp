@@ -5,10 +5,12 @@
 #include <variant>
 #include <vector>
 
-#include <rj_common/time.hpp>
+#include <rclcpp/type_adapter.hpp>
+
 #include <rj_strategy_msgs/msg/agent_request.hpp>
 #include <rj_strategy_msgs/msg/agent_response.hpp>
 #include <rj_strategy_msgs/msg/agent_response_variant.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_strategy/agent/communication/acknowledge.hpp"
 #include "rj_strategy/agent/communication/ball_in_transit_request.hpp"

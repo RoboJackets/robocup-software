@@ -1,6 +1,6 @@
 #include "rj_radio/sim_radio.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
 
 using namespace std;
 using namespace boost::asio;
@@ -126,8 +126,7 @@ SimRadio::SimRadio(bool blue_team)
 
 void SimRadio::send_control_message(uint8_t robot_id,
                                     const rj_control_msgs::msg::MotionSetpoint& motion,
-                                    const rj_control_msgs::msg::ManipulatorSetpoint& manipulator,
-                                    strategy::Positions role) {
+                                    const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) {
     RobotControl sim_packet;
 
     // Send a sim packet with a single robot. The simulator can handle many robots, but our commands
@@ -175,13 +174,11 @@ void SimRadio::handle_receive(const std::string& data) {
     packet.ParseFromString(data);
 
     for (int pkt_idx = 0; pkt_idx < packet.feedback_size(); pkt_idx++) {
-        rj_radio_msgs::msg::RobotStatus status_ros;
         RobotStatus status;
         const RobotFeedback& sim_status = packet.feedback(pkt_idx);
         ConvertRx::sim_to_status(sim_status, &status);
-        ConvertRx::status_to_ros(status, &status_ros);
 
-        publish_robot_status(status_ros.robot_id, status_ros);
+        publish_robot_status(status.shell_id, status);
     }
 }
 

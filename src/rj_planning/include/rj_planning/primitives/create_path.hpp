@@ -3,8 +3,8 @@
 #include <optional>
 #include <random>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/obstacle_set.hpp>
 #include <rj_planning/primitives/motion_constraints.hpp>
 
@@ -25,7 +25,7 @@ Trajectory simple(
 
 Trajectory intermediate(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                         const MotionConstraints& motion_constraints, RJ::Time start_time,
-                        const ObstacleSet& obstacles, const FieldDimensions* field_dimensions,
+                        const ObstacleSet& obstacles, const FieldDimensions& field_dimensions,
                         unsigned int robot_id, const IntermediateParams& intermediate_params);
 
 std::vector<rj_geometry::Point> get_intermediates(const LinearMotionInstant& start,

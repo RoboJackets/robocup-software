@@ -3,10 +3,11 @@
 #include <memory>
 #include <vector>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_geometry/util.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
 #include "rj_planning/primitives/angle_planning.hpp"

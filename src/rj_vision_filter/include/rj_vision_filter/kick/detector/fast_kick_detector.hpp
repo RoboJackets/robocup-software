@@ -3,7 +3,6 @@
 #include <deque>
 #include <memory>
 
-#include <rj_common/utils.hpp>
 #include <rj_vision_filter/ball/world_ball.hpp>
 #include <rj_vision_filter/kick/kick_event.hpp>
 #include <rj_vision_filter/kick/vision_state.hpp>

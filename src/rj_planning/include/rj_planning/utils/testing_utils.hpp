@@ -2,8 +2,8 @@
 
 #include <random>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/primitives/robot_constraints.hpp>
 
 namespace planning::TestingUtils {

@@ -1,5 +1,7 @@
 #include "rj_strategy/agent/agent_action_client.hpp"
 
+#include <rj_ros_common/time_adapters.hpp>
+
 namespace strategy {
 using RobotMove = rj_planning_msgs::action::RobotMove;
 using GoalHandleRobotMove = rclcpp_action::ClientGoalHandle<RobotMove>;

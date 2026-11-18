@@ -7,7 +7,6 @@
 #include <boost/asio.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/network.hpp>
 #include <rj_config_client/config_client.hpp>
 #include <rj_protos/vision/ssl_vision_wrapper.pb.h>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
@@ -18,6 +17,12 @@
 #include "rj_vision_receiver/vision_conversions.hpp"
 
 namespace vision_receiver {
+
+/*
+ * The multicast address we expect shared vision packets to come from, given by the league.
+ * VisionReceiver joins this multicast group and listens for packets from it.
+ */
+static const std::string kSharedVisionSourceAddress = "224.5.23.2";
 using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
 using DetectionFrameMsg = rj_vision_msgs::msg::DetectionFrame;
 using DetectionBallMsg = rj_vision_msgs::msg::DetectionBall;

@@ -28,7 +28,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | Field | Details |
 | --- | --- |
 | **Depends on** | None |
-| **Depended on by** | `rj_common`, `rj_radio`, `rj_referee`, `rj_utils`, `rj_vision_receiver` |
+| **Depended on by** | `rj_radio`, `rj_referee`, `rj_utils`, `rj_vision_receiver` |
 
 
 ## 3. Operational Expectations

@@ -1,0 +1,126 @@
+#pragma once
+
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <QColor>
+#include <QMap>
+#include <QStringList>
+
+#include <rj_geometry/arc.hpp>
+#include <rj_geometry/composite_shape.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/polygon.hpp>
+#include <rj_geometry/segment.hpp>
+#include <rj_geometry/shape_set.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+
+#include "rj_ui/debug_drawings.hpp"
+
+class DebugDrawer {
+public:
+    DebugDrawer() : num_debug_layers_(0) {}
+
+    const QStringList& debug_layers() const { return debug_layers_; }
+
+    /// Returns the number of a debug layer given its name
+    int find_debug_layer(QString layer);
+
+    /** @ingroup drawing_functions */
+    void draw_polygon(const rj_geometry::Point* pts, int n, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_polygon(const std::vector<rj_geometry::Point>& pts, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_polygon(const rj_geometry::Polygon& pts, const QColor& qc = Qt::black,
+                      const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_circle(rj_geometry::Point center, float radius, const QColor& qc = Qt::black,
+                     const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_arc(const rj_geometry::Arc& arc, const QColor& qw = Qt::black,
+                  const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs, const QColor& qw = Qt::black,
+                    const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_shape_set(const rj_geometry::ShapeSet& shapes, const QColor& qw = Qt::black,
+                        const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_line(const rj_geometry::Segment& line, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_line(rj_geometry::Point p0, rj_geometry::Point p1, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_text(const QString& text, rj_geometry::Point pos, const QColor& qw = Qt::black,
+                   const QString& layer = QString());
+
+    /** @ingroup drawing_functions */
+    void draw_segment(const rj_geometry::Segment& line, const QColor& qw = Qt::black,
+                      const QString& layer = QString());
+
+    /**
+     * Helper pass-through method to create a new debug path.
+     */
+    DebugRobotPath& add_debug_path() { return current_.robot_paths.emplace_back(); }
+
+    /**
+     * Draws a trajectory.
+     * @param trajectory The trajectory to draw.
+     * @param alt_text_position Optional position at which to draw the text in
+     * the event that the trajectory is empty.
+     */
+    void draw_trajectory(const planning::Trajectory& trajectory,
+                         std::optional<rj_geometry::Point> alt_text_position = std::nullopt);
+
+    /**
+     * Snapshot this cycle's drawings for the UI and start a fresh cycle.
+     * Layer names are kept so the debug-layer list stays stable.
+     */
+    void commit_frame() {
+        published_ = std::move(current_);
+        current_.clear();
+        for (const QString& string : debug_layers_) {
+            current_.debug_layers.push_back(string.toStdString());
+        }
+    }
+
+    const DebugDrawFrame& published_frame() const { return published_; }
+
+private:
+    /**
+     * @brief Convert a QColor to a 32-bit color value.
+     *
+     * @param color The QColor object to convert.
+     * @return constexpr uint32_t
+     */
+    uint32_t color(const QColor& color) const {
+        return (static_cast<uint32_t>(color.alpha()) << 24) |
+               (static_cast<uint32_t>(color.red()) << 16) |
+               (static_cast<uint32_t>(color.green()) << 8) | static_cast<uint32_t>(color.blue());
+    }
+
+    /// Number of debug layers
+    int num_debug_layers_;
+
+    /// Map from debug layer name to ID
+    QMap<QString, int> debug_layer_map_;
+
+    /// Debug layers in order by ID
+    QStringList debug_layers_;
+
+    DebugDrawFrame current_;
+    DebugDrawFrame published_;
+};

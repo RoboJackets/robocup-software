@@ -21,8 +21,11 @@ find_package(rj_referee_msgs REQUIRED)
 find_package(rj_strategy_msgs REQUIRED)
 find_package(rj_ui_msgs REQUIRED)
 find_package(rj_vision_msgs REQUIRED)
-find_package(rj_common REQUIRED)
+find_package(rj_game_common REQUIRED)
+find_package(rj_motion_common REQUIRED)
 find_package(rj_geometry REQUIRED)
+find_package(rj_ros_common REQUIRED)
+find_package(rj_time REQUIRED)
 
 set(RJ_STRATEGY_DEPS
   rclcpp
@@ -36,8 +39,11 @@ set(RJ_STRATEGY_DEPS
   rj_strategy_msgs
   rj_ui_msgs
   rj_vision_msgs
-  rj_common
+  rj_game_common
+  rj_motion_common
   rj_geometry
+  rj_ros_common
+  rj_time
 )
 
 set(RJ_STRATEGY_SRC

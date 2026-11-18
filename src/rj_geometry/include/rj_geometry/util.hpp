@@ -33,6 +33,17 @@ static inline T sign(T f) {
     return 0;
 }
 
+/**
+ * @brief Restricts the given angle to be between pi and -pi
+ *
+ * @param a An angle in radians
+ * @return An equivalent angle in radians restricted to [-pi, pi]
+ */
+template <typename T>
+static inline T fix_angle_radians(T a) {
+    return remainder(a, 2 * M_PI);
+}
+
 // TODO(1485): Make this smaller once we figure out why test are failing in O3.
 /*
  * @brief Return true if doubles a and b are close enough to each other.

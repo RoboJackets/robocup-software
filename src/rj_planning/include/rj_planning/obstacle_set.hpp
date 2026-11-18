@@ -5,9 +5,9 @@
 #include <sstream>
 #include <vector>
 
-#include <rj_common/ros_debug_drawer.hpp>
 #include <rj_geometry/composite_shape.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_motion_common/ros_debug_drawer.hpp>
 
 #include "obstacle.hpp"
 

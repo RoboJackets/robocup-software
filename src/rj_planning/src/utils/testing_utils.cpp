@@ -2,10 +2,10 @@
 
 #include <gtest/gtest.h>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/utils.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_geometry/util.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
 #include <rj_planning/primitives/robot_constraints.hpp>
 
 namespace planning::TestingUtils {

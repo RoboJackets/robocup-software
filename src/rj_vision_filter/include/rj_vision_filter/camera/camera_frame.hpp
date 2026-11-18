@@ -2,8 +2,8 @@
 #include <utility>
 #include <vector>
 
-#include <rj_common/game_constants.hpp>
-#include <rj_common/time.hpp>
+#include <rj_game_common/game_constants.hpp>
+#include <rj_ros_common/time_adapters.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/robot/camera_robot.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>

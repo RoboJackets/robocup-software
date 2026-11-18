@@ -4,13 +4,14 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <rj_common/game_settings.hpp>
-#include <rj_common/game_state.hpp>
-#include <rj_common/topic_names.hpp>
-#include <rj_common/world_state.hpp>
+#include <rj_game_common/field_dimensions.hpp>
+#include <rj_game_common/game_settings.hpp>
+#include <rj_game_common/play_state.hpp>
 #include <rj_geometry/shape_set.hpp>
+#include <rj_motion_common/world_state.hpp>
 #include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_vision_msgs/msg/field_dimensions.hpp>
 
 namespace planning {
@@ -31,7 +32,7 @@ public:
     [[nodiscard]] int goalie_id() const;
     [[nodiscard]] rj_geometry::ShapeSet def_area_obstacles() const;
     [[nodiscard]] const WorldState* world_state() const;
-    [[nodiscard]] const FieldDimensions* field_dimensions() const;
+    [[nodiscard]] FieldDimensions field_dimensions() const;
 
 private:
     rclcpp::Subscription<rj_referee_msgs::msg::PlayState>::SharedPtr play_state_sub_;
@@ -51,7 +52,7 @@ private:
     mutable std::mutex last_def_area_obstacles_mutex_{};
     WorldState last_world_state_{};
     mutable std::mutex last_world_state_mutex_{};
-    FieldDimensions last_field_dimensions_{FieldDimensions::kDefaultDimensions};
+    FieldDimensions last_field_dimensions_{};
     bool have_field_dimensions_{};
     mutable std::mutex last_field_dimensions_mutex_{};
 

@@ -1,6 +1,6 @@
 #include "rj_radio/radio.hpp"
 
-#include <rj_common/ros_params.hpp>
+#include <rj_ros_common/ros_params.hpp>
 
 namespace radio {
 
@@ -80,8 +80,8 @@ Radio::Radio() : Node{"radio"} {
         });
 
     for (size_t i = 0; i < kNumShells; i++) {
-        robot_status_pubs_.at(i) = create_publisher<rj_radio_msgs::msg::RobotStatus>(
-            topics::robot_status_topic(i), rclcpp::QoS(1));
+        robot_status_pubs_.at(i) =
+            create_publisher<RobotStatusAdapter>(topics::robot_status_topic(i), rclcpp::QoS(1));
         manipulator_subs_.at(i) = create_subscription<rj_control_msgs::msg::ManipulatorSetpoint>(
             control::topics::manipulator_setpoint_topic(i), rclcpp::QoS(1),
             [this, i](rj_control_msgs::msg::ManipulatorSetpoint::SharedPtr manipulator) {  // NOLINT
@@ -92,7 +92,7 @@ Radio::Radio() : Node{"radio"} {
             [this, i](rj_control_msgs::msg::MotionSetpoint::SharedPtr motion) {  // NOLINT
                 last_updates_.at(i) = RJ::now();
                 motions_[i] = motion;
-                send_control_message(i, *motion, manipulators_cached_.at(i), positions_.at(i));
+                send_control_message(i, *motion, manipulators_cached_.at(i));
             });
     }
 
@@ -102,8 +102,7 @@ Radio::Radio() : Node{"radio"} {
     tick_timer_ = create_wall_timer(tick_period_, [this]() { tick(); });
 }
 
-void Radio::publish_robot_status(int robot_id,
-                                 const rj_radio_msgs::msg::RobotStatus& robot_status) {
+void Radio::publish_robot_status(int robot_id, const RobotStatus& robot_status) {
     robot_status_pubs_.at(robot_id)->publish(robot_status);
 }
 
@@ -135,7 +134,7 @@ void Radio::tick() {
                                          .kick_speed(0)
                                          .dribbler_speed(0);
             last_updates_.at(i) = RJ::now();
-            send_control_message(i, motion, manipulator, positions_.at(i));
+            send_control_message(i, motion, manipulator);
         }
     }
 }

@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cstdio>
 #include <memory>
-#include <set>
 
 #include <QGLWidget>
 #include <QLabel>
@@ -14,12 +13,12 @@
 #include <QStyle>
 #include <QStyleOption>
 
-#include <rj_common/field_dimensions.hpp>
-#include <rj_common/ui_frame.hpp>
-#include <rj_common/vision_dot_pattern.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
+
+#include "rj_ui/ui_frame.hpp"
 
 using namespace std;
 
@@ -77,11 +76,11 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->setText(s);
 }
 
-std::shared_ptr<rj_common::UIFrame> FieldView::currentFrame() {
+std::shared_ptr<rj_ui::UIFrame> FieldView::currentFrame() {
     if (!_history.empty()) {
         return _history.back();
     }
-    return std::shared_ptr<rj_common::UIFrame>{};
+    return std::shared_ptr<rj_ui::UIFrame>{};
 }
 
 void FieldView::rotate(int value) {
@@ -112,8 +111,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     p.translate(width() / 2.0, height() / 2.0);
     p.scale(width(), -height());
     p.rotate(_rotate * 90);
-    p.scale(1.0 / FieldDimensions::current_dimensions.floor_length(),
-            1.0 / FieldDimensions::current_dimensions.floor_width());
+    p.scale(1.0 / field_dimensions_.floor_length(), 1.0 / field_dimensions_.floor_width());
 
     // Set text rotation for world space
     _textRotation = -_rotate * 90;
@@ -123,7 +121,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = currentFrame();
+    const std::shared_ptr<rj_ui::UIFrame> frame = currentFrame();
 
     if (!frame) {
         // No data available yet
@@ -132,9 +130,8 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
     // Make coordinate transformations
     _screenToWorld = rj_geometry::TransformMatrix();
-    _screenToWorld *=
-        rj_geometry::TransformMatrix::scale(FieldDimensions::current_dimensions.floor_length(),
-                                           FieldDimensions::current_dimensions.floor_width());
+    _screenToWorld *= rj_geometry::TransformMatrix::scale(field_dimensions_.floor_length(),
+                                                          field_dimensions_.floor_width());
     _screenToWorld *=
         rj_geometry::TransformMatrix::rotate(-static_cast<float>(_rotate * M_PI / 2.0));
     _screenToWorld *= rj_geometry::TransformMatrix::scale(static_cast<float>(1.0 / width()),
@@ -143,8 +140,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
                                                              static_cast<float>(-height() / 2.0));
 
     _worldToTeam = rj_geometry::TransformMatrix();
-    _worldToTeam *= rj_geometry::TransformMatrix::translate(
-        0, FieldDimensions::current_dimensions.length() / 2.0f);
+    _worldToTeam *= rj_geometry::TransformMatrix::translate(0, field_dimensions_.length() / 2.0f);
     if (frame->defend_plus_x) {
         _worldToTeam *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
@@ -157,8 +153,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     } else {
         _teamToWorld *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     }
-    _teamToWorld *= rj_geometry::TransformMatrix::translate(
-        0, -FieldDimensions::current_dimensions.length() / 2.0f);
+    _teamToWorld *= rj_geometry::TransformMatrix::translate(0, -field_dimensions_.length() / 2.0f);
 
     // Draw world-space graphics
     drawWorldSpace(p);
@@ -170,7 +165,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     } else {
         p.rotate(-90);
     }
-    p.translate(0, -FieldDimensions::current_dimensions.length() / 2.0f);
+    p.translate(0, -field_dimensions_.length() / 2.0f);
 
     // Text has to be rotated so it is always upright on screen
     _textRotation = -_rotate * 90 + (frame->defend_plus_x ? -90 : 90);
@@ -180,7 +175,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
+    const std::shared_ptr<rj_ui::UIFrame> frame = _history.back();
 
     // Draw the field
     drawField(p, frame);
@@ -189,7 +184,7 @@ void FieldView::drawWorldSpace(QPainter& p) {
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const std::shared_ptr<rj_common::UIFrame> frame = _history.back();
+    const std::shared_ptr<rj_ui::UIFrame> frame = _history.back();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -208,16 +203,15 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Block off half the field
     if (!frame->use_our_half) {
-        const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
-        const float FY1 = -FieldDimensions::current_dimensions.border();
-        const float FY2 = FieldDimensions::current_dimensions.length() / 2;
+        const float FX = field_dimensions_.floor_width() / 2;
+        const float FY1 = -field_dimensions_.border();
+        const float FY2 = field_dimensions_.length() / 2;
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
     if (!frame->use_their_half) {
-        const float FX = FieldDimensions::current_dimensions.floor_width() / 2;
-        const float FY1 = FieldDimensions::current_dimensions.length() / 2;
-        const float FY2 = FieldDimensions::current_dimensions.length() +
-                          FieldDimensions::current_dimensions.border();
+        const float FX = field_dimensions_.floor_width() / 2;
+        const float FY1 = field_dimensions_.length() / 2;
+        const float FY2 = field_dimensions_.length() + field_dimensions_.border();
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
 
@@ -232,7 +226,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int ballTrailLength = 60;
     for (unsigned int i = _history.size() - std::min<int>(_history.size(), ballTrailLength);
          i < _history.size(); ++i) {
-        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
+        const std::shared_ptr<rj_ui::UIFrame> oldFrame = _history.at(i);
         if (oldFrame != nullptr && oldFrame->ball_state.has_value()) {
             QPointF pos = qpointf(oldFrame->ball_state->position);
 
@@ -370,9 +364,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int pastLocationCount = 40;  // number of past locations to show
     int start = std::max(0, static_cast<int>(_history.size()) - pastLocationCount);
     for (size_t i = start; i < _history.size(); i++) {
-        const std::shared_ptr<rj_common::UIFrame> oldFrame = _history.at(i);
+        const std::shared_ptr<rj_ui::UIFrame> oldFrame = _history.at(i);
         if (oldFrame != nullptr) {
-            for (const rj_common::UIRobot& r : oldFrame->self) {
+            for (const rj_ui::UIRobot& r : oldFrame->self) {
                 pair<int, int> key(1, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.position);
@@ -384,7 +378,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 }
             }
 
-            for (const rj_common::UIRobot& r : oldFrame->opp) {
+            for (const rj_ui::UIRobot& r : oldFrame->opp) {
                 pair<int, int> key(2, r.shell_id);
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.position);
@@ -416,19 +410,19 @@ void FieldView::drawTeamSpace(QPainter& p) {
     QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
-    for (const rj_common::UIRobot& r : frame->opp) {
+    for (const rj_ui::UIRobot& r : frame->opp) {
         drawRobot(p, !frame->blue, r.shell_id, qpointf(r.position), r.heading, r.has_ball);
     }
 
     // Our robots
     int manualID = frame->manual_id;
-    for (const rj_common::UIRobot& r : frame->self) {
+    for (const rj_ui::UIRobot& r : frame->self) {
         QPointF center = qpointf(r.position);
 
         bool faulty = false;
 
         for (int i = 0; i < r.motors.size(); ++i) {
-            if (r.motors.at(i) != rj_common::kGood) {
+            if (r.motors.at(i) != rj_ui::kGood) {
                 faulty = true;
             }
         }
@@ -506,88 +500,77 @@ void FieldView::drawCoords(QPainter& p) {
     drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_common::UIFrame>& frame) {
+void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& frame) {
     p.save();
 
     // reset to center
-    p.translate(-FieldDimensions::current_dimensions.floor_length() / 2.0,
-                -FieldDimensions::current_dimensions.floor_width() / 2.0);
+    p.translate(-field_dimensions_.floor_length() / 2.0, -field_dimensions_.floor_width() / 2.0);
 
-    p.translate(FieldDimensions::current_dimensions.border(),
-                FieldDimensions::current_dimensions.border());
+    p.translate(field_dimensions_.border(), field_dimensions_.border());
 
-    p.setPen(QPen(Qt::white, FieldDimensions::current_dimensions.line_width() *
-                                 2.0));  // double-width pen for visibility
-                                         //(although its less accurate)
+    p.setPen(
+        QPen(Qt::white, field_dimensions_.line_width() * 2.0));  // double-width pen for visibility
+                                                                 //(although its less accurate)
     p.setBrush(Qt::NoBrush);
-    p.drawRect(QRectF(0, 0, FieldDimensions::current_dimensions.length(),
-                      FieldDimensions::current_dimensions.width()));
+    p.drawRect(QRectF(0, 0, field_dimensions_.length(), field_dimensions_.width()));
 
     // set brush alpha to 0
     p.setBrush(QColor(0, 130, 0, 0));
 
     // reset to center
-    p.translate(FieldDimensions::current_dimensions.length() / 2.0,
-                FieldDimensions::current_dimensions.width() / 2.0);
+    p.translate(field_dimensions_.length() / 2.0, field_dimensions_.width() / 2.0);
 
     // centerline
-    p.drawLine(QLineF(0, FieldDimensions::current_dimensions.width() / 2, 0,
-                      -FieldDimensions::current_dimensions.width() / 2.0));
+    p.drawLine(QLineF(0, field_dimensions_.width() / 2, 0, -field_dimensions_.width() / 2.0));
 
     // center circle
-    p.drawEllipse(QRectF(-FieldDimensions::current_dimensions.center_radius(),
-                         -FieldDimensions::current_dimensions.center_radius(),
-                         FieldDimensions::current_dimensions.center_diameter(),
-                         FieldDimensions::current_dimensions.center_diameter()));
+    p.drawEllipse(QRectF(-field_dimensions_.center_radius(), -field_dimensions_.center_radius(),
+                         field_dimensions_.center_diameter(), field_dimensions_.center_diameter()));
 
-    p.translate(-FieldDimensions::current_dimensions.length() / 2.0, 0);
+    p.translate(-field_dimensions_.length() / 2.0, 0);
 
     // goal areas
-    p.drawLine(QLineF(0, -FieldDimensions::current_dimensions.penalty_long_dist() / 2,
-                      FieldDimensions::current_dimensions.penalty_short_dist(),
-                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
-    p.drawLine(QLineF(FieldDimensions::current_dimensions.penalty_short_dist(),
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2,
-                      FieldDimensions::current_dimensions.penalty_short_dist(),
-                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
-    p.drawLine(QLineF(FieldDimensions::current_dimensions.penalty_short_dist(),
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2, 0,
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(0, -field_dimensions_.penalty_long_dist() / 2,
+                      field_dimensions_.penalty_short_dist(),
+                      -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(
+        QLineF(field_dimensions_.penalty_short_dist(), field_dimensions_.penalty_long_dist() / 2,
+               field_dimensions_.penalty_short_dist(), -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(QLineF(field_dimensions_.penalty_short_dist(),
+                      field_dimensions_.penalty_long_dist() / 2, 0,
+                      field_dimensions_.penalty_long_dist() / 2));
 
-    p.translate(FieldDimensions::current_dimensions.length(), 0);
+    p.translate(field_dimensions_.length(), 0);
 
-    p.drawLine(QLineF(0, -FieldDimensions::current_dimensions.penalty_long_dist() / 2,
-                      -FieldDimensions::current_dimensions.penalty_short_dist(),
-                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
-    p.drawLine(QLineF(-FieldDimensions::current_dimensions.penalty_short_dist(),
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2,
-                      -FieldDimensions::current_dimensions.penalty_short_dist(),
-                      -FieldDimensions::current_dimensions.penalty_long_dist() / 2));
-    p.drawLine(QLineF(-FieldDimensions::current_dimensions.penalty_short_dist(),
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2, 0,
-                      FieldDimensions::current_dimensions.penalty_long_dist() / 2));
+    p.drawLine(QLineF(0, -field_dimensions_.penalty_long_dist() / 2,
+                      -field_dimensions_.penalty_short_dist(),
+                      -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(QLineF(
+        -field_dimensions_.penalty_short_dist(), field_dimensions_.penalty_long_dist() / 2,
+        -field_dimensions_.penalty_short_dist(), -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(QLineF(-field_dimensions_.penalty_short_dist(),
+                      field_dimensions_.penalty_long_dist() / 2, 0,
+                      field_dimensions_.penalty_long_dist() / 2));
 
     // goals
-    float x[2] = {0, FieldDimensions::current_dimensions.goal_depth()};
-    float y[2] = {FieldDimensions::current_dimensions.goal_width() / 2.0f,
-                  -FieldDimensions::current_dimensions.goal_width() / 2.0f};
+    float x[2] = {0, field_dimensions_.goal_depth()};
+    float y[2] = {field_dimensions_.goal_width() / 2.0f, -field_dimensions_.goal_width() / 2.0f};
 
     bool flip = frame->blue ^ frame->defend_plus_x;
 
     QColor goalColor = flip ? Qt::yellow : Qt::blue;
     p.setPen(QPen(goalColor,
-                  FieldDimensions::current_dimensions.line_width() *
+                  field_dimensions_.line_width() *
                       2.0));  // double-width for visibility, not real-life accuracy
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 
-    x[0] -= FieldDimensions::current_dimensions.length();
-    x[1] -= FieldDimensions::current_dimensions.length() +
-            2 * FieldDimensions::current_dimensions.goal_depth();
+    x[0] -= field_dimensions_.length();
+    x[1] -= field_dimensions_.length() + 2 * field_dimensions_.goal_depth();
 
     goalColor = flip ? Qt::blue : Qt::yellow;
-    p.setPen(QPen(goalColor, FieldDimensions::current_dimensions.line_width() * 2.0));
+    p.setPen(QPen(goalColor, field_dimensions_.line_width() * 2.0));
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -688,19 +671,19 @@ void FieldView::resizeEvent(QResizeEvent* e) {
     int needW;
     int needH;
     if ((_rotate & 1) != 0) {
-        needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            FieldDimensions::current_dimensions.floor_length() /
-                                            FieldDimensions::current_dimensions.floor_width()));
-        needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            FieldDimensions::current_dimensions.floor_width() /
-                                            FieldDimensions::current_dimensions.floor_length()));
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) * field_dimensions_.floor_length() /
+                       field_dimensions_.floor_width()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) * field_dimensions_.floor_width() /
+                       field_dimensions_.floor_length()));
     } else {
-        needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            FieldDimensions::current_dimensions.floor_width() /
-                                            FieldDimensions::current_dimensions.floor_length()));
-        needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            FieldDimensions::current_dimensions.floor_length() /
-                                            FieldDimensions::current_dimensions.floor_width()));
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) * field_dimensions_.floor_width() /
+                       field_dimensions_.floor_length()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) * field_dimensions_.floor_length() /
+                       field_dimensions_.floor_width()));
     }
 
     QSize size;

@@ -26,11 +26,11 @@
 #include <rclcpp/rclcpp.hpp>
 #include <spdlog/spdlog.h>
 
-#include <rj_common/game_state.hpp>
-#include <rj_common/qt_utils.hpp>
-#include <rj_common/topic_names.hpp>
+#include <rj_game_common/play_state.hpp>
+#include <rj_referee/match_state.hpp>
 #include <rj_referee_msgs/srv/quick_commands.hpp>
 #include <rj_referee_msgs/srv/set_game_settings.hpp>
+#include <rj_ros_common/topic_names.hpp>
 #include <rj_strategy/agent/position/overriding_positions.hpp>
 #include <rj_ui_msgs/msg/override_position.hpp>
 #include <std_msgs/msg/string.hpp>
@@ -41,6 +41,16 @@
 #include "rj_ui/robot_status_widget.hpp"
 #include "rj_ui/style_sheet_manager.hpp"
 #include "ui_MainWindow.h"
+
+namespace {
+template <typename T, typename S>
+void update_cache(T& value, const S& expected, bool* valid) {
+    if (value != expected) {
+        value = expected;
+        *valid = false;
+    }
+}
+}  // namespace
 
 using namespace std;
 using namespace boost;
@@ -317,10 +327,10 @@ void MainWindow::updateViews() {
         _procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
     }
 
-    std::shared_ptr<rj_common::UIFrame> ui_frame;
+    std::shared_ptr<rj_ui::UIFrame> ui_frame;
 
     // Grab frames
-    std::vector<std::shared_ptr<rj_common::UIFrame>> history;
+    std::vector<std::shared_ptr<rj_ui::UIFrame>> history;
     {
         std::lock_guard<std::mutex> lock(*context__mutex);
         if (context_->frames.empty()) {
@@ -403,7 +413,7 @@ void MainWindow::updateViews() {
                 return std::nullopt;
             }();
             auto maybe_robot =
-                [&]() -> std::optional<std::reference_wrapper<const rj_common::UIRobot>> {
+                [&]() -> std::optional<std::reference_wrapper<const rj_ui::UIRobot>> {
                 for (int i = 0; i < ui_frame->self.size(); i++) {
                     if (ui_frame->self.at(i).shell_id == shell) {
                         return ui_frame->self.at(i);
@@ -643,17 +653,6 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
         _ui.radioBaseStatus->setText(label);
         _ui.radioBaseStatus->setStyleSheet(usbRadio ? QString("background-color: #00ff00")
                                                     : QString("background-color: #ff4040"));
-    }
-}
-
-void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (context_->joystick_valid) {
-        _ui.manualID->setCurrentIndex(shell + 1);
-
-#if MANUAL
-        std::lock_guard<std::mutex> lock(*context__mutex);
-        _game_settings.joystick_config.manualID = shell;
-#endif
     }
 }
 
@@ -902,7 +901,7 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
     _ui.fieldView->update();
 }
 
-void MainWindow::updateDebugLayers(const rj_common::UIFrame& frame) {
+void MainWindow::updateDebugLayers(const rj_ui::UIFrame& frame) {
     if (frame.debug_draw_frame.debug_layers.size() > _ui.debugLayers->count()) {
         for (int i = _ui.debugLayers->count(); i < frame.debug_draw_frame.debug_layers.size();
              ++i) {

@@ -1,5 +1,7 @@
 #include "rj_planning/primitives/angle_planning.hpp"
 
+#include <rj_geometry/util.hpp>
+
 namespace planning {
 
 void plan_angles(Trajectory* trajectory, const RobotInstant& start_instant,

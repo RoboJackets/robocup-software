@@ -4,11 +4,12 @@
 
 #include <spdlog/spdlog.h>
 
-#include <rj_common/planning/instant.hpp>
-#include <rj_common/planning/motion_command.hpp>
-#include <rj_common/planning/trajectory.hpp>
-#include <rj_common/time.hpp>
+#include <rj_game_common/field_dimensions.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_motion_common/planning/instant.hpp>
+#include <rj_motion_common/planning/motion_command.hpp>
+#include <rj_motion_common/planning/trajectory.hpp>
+#include <rj_time/time.hpp>
 
 #include "rj_planning/planners/path_planner.hpp"
 #include "rj_planning/planners/path_target_path_planner.hpp"
@@ -38,7 +39,7 @@ public:
      * @return Point for the goalie to idle at when no shot is coming. Sweeps
      * back and forth across the goal mouth as a function of time.
      */
-    static rj_geometry::Point get_idle_pt(const FieldDimensions* field_dimensions);
+    static rj_geometry::Point get_idle_pt(const FieldDimensions& field_dimensions);
 
     double draw_radius = kRobotRadius;
     QColor draw_color = Qt::black;

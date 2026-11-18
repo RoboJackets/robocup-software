@@ -4,7 +4,6 @@
 
 #include <boost/circular_buffer.hpp>
 
-#include <rj_common/utils.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/pose.hpp>
 #include <rj_vision_filter/filter/kalman_filter3_d.hpp>
