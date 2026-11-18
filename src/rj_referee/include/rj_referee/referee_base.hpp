@@ -1,7 +1,9 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
+#include <rclcpp/subscription.hpp>
 
+#include <rj_common/field_dimensions.hpp>
 #include <rj_common/game_settings.hpp>
 #include <rj_common/game_state.hpp>
 #include <rj_common/team_info.hpp>
@@ -9,13 +11,13 @@
 #include <rj_common/transforms.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_common/world_state.hpp>
-#include <rj_config_client/config_client.hpp>
 #include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_referee_msgs/msg/goalie_id.hpp>
 #include <rj_referee_msgs/msg/match_state.hpp>
 #include <rj_referee_msgs/msg/play_state.hpp>
 #include <rj_referee_msgs/msg/team_color.hpp>
 #include <rj_referee_msgs/msg/team_info.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 #include <rj_vision_msgs/msg/world_state.hpp>
 
 namespace referee {
@@ -167,10 +169,25 @@ private:
      */
     std::optional<rj_geometry::Point> last_ball_position_;
 
+    /**
+     * @brief The current game settings
+     */
     GameSettings::Msg game_settings_{};
+
+    /**
+     * Whether or not we have up-to-date game settings
+     */
     bool has_game_settings_ = false;
 
-    config_client::ConfigClient config_client_;
+    /**
+     * @brief The field dimensions
+     */
+    FieldDimensions::Msg field_dimensions_{};
+
+    /**
+     * Whether or not we've recieved the field dimensions from the vision filter
+     */
+    bool has_field_dimensions_ = false;
 
     rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
     rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
@@ -180,6 +197,7 @@ private:
     rclcpp::Publisher<MatchState::Msg>::SharedPtr match_state_pub_;
     rclcpp::Subscription<WorldState::Msg>::SharedPtr world_state_sub_;
     rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
     rclcpp::TimerBase::SharedPtr pub_timer_;
 };
 

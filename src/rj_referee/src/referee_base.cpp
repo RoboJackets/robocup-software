@@ -1,11 +1,8 @@
 #include "rj_referee/referee_base.hpp"
 
-#include <rj_common/game_settings.hpp>
-#include <rj_common/topic_names.hpp>
-
 namespace referee {
 
-RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{this} {
+RefereeBase::RefereeBase(const std::string& name) : Node{name} {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     team_color_pub_ = create_publisher<TeamColorMsg>(referee::topics::kTeamColorTopic, keep_latest);
@@ -36,6 +33,14 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name}, config_client_{t
         [this](GameSettings::Msg::ConstSharedPtr msg) {
             game_settings_ = *msg;
             has_game_settings_ = true;
+            send();
+        });
+
+    field_dimensions_sub_ = create_subscription<FieldDimensions::Msg>(
+        config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        [this](FieldDimensions::Msg::ConstSharedPtr msg) {
+            field_dimensions_ = *msg;
+            has_field_dimensions_ = true;
             send();
         });
 }
@@ -80,7 +85,7 @@ static PlayState resolve_play_state(const PlayState& yellow_vision_centric_play_
 }
 
 void RefereeBase::send() {
-    if (!has_any_info_ || !config_client_.connected() || !has_game_settings_) {
+    if (!has_any_info_ || !has_game_settings_ || !has_field_dimensions_) {
         return;
     }
 
@@ -92,7 +97,7 @@ void RefereeBase::send() {
         resolve_play_state(yellow_play_state_, blue_team_, game_settings_.defend_plus_x, [&] {
             FieldDimensions field_dimensions;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(
-                config_client_.field_dimensions(), field_dimensions);
+                field_dimensions_, field_dimensions);
             return field_dimensions;
         }());
     PlayState::Msg play_state_msg;
