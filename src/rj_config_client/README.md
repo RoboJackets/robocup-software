@@ -15,7 +15,7 @@ Define the package's purpose and fixed architectural classification before work 
 
 | Field | Details |
 | --- | --- |
-| **Plain-language purpose** | This package exists so that rj_ui, rj_vision_filter, and rj_referee don't have to individually contain the code to subscribe to the field_dimension and game_settings topics. |
+| **Plain-language purpose** | This package exists so that rj_ui, rj_vision_filter, rj_vision_receiver, and rj_referee don't have to individually contain the code to subscribe to the field_dimension and game_settings topics. |
 | **Current responsibilities** | _List the responsibilities currently owned by this package._ |
 | **Out of scope** | _State what this package must not own or attempt to solve._ |
 
@@ -28,7 +28,7 @@ Map package relationships before adding, deleting, or moving code. Dependency di
 | Field | Details |
 | --- | --- |
 | **Depends on** | rj_common, rj_vision_msgs, rj_referee_msgs |
-| **Depended on by** | rj_referee, rj_vision_filter, and rj_ui |
+| **Depended on by** | rj_referee, rj_vision_filter, rj_vision_reciever, and rj_ui |
 
 
 ## 3. Operational Expectations
