@@ -265,7 +265,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     const SSL_FieldCircularArc* center = nullptr;
     float penalty_short_dist = 0;                                          // default value
     float penalty_long_dist = 0;                                           // default value
-    float displacement = FieldDimensions{}.goal_flat();  // default displacment
+    float displacement = FieldDimensions{}.goal_flat();                    // default displacment
 
     // Loop through field arcs looking for needed fields
     for (const SSL_FieldCircularArc& arc : field_size.field_arcs()) {

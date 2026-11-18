@@ -39,12 +39,13 @@ struct RobotStatus {
     bool fpga_healthy = false;
 };
 
-template<>
+template <>
 struct rclcpp::TypeAdapter<RobotStatus, rj_radio_msgs::msg::RobotStatus> {
     using is_specialized = std::true_type;
     using custom_type = RobotStatus;
     using ros_message_type = rj_radio_msgs::msg::RobotStatus;
-    static void convert_to_ros_message(const RobotStatus& status, rj_radio_msgs::msg::RobotStatus& msg) {
+    static void convert_to_ros_message(const RobotStatus& status,
+                                       rj_radio_msgs::msg::RobotStatus& msg) {
         rclcpp::TypeAdapter<RJ::Time, builtin_interfaces::msg::Time>::convert_to_ros_message(
             status.timestamp, msg.timestamp);
         msg.robot_id = status.shell_id;

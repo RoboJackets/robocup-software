@@ -37,10 +37,9 @@ struct PlanRequest {
                 RobotConstraints constraints, rj_geometry::ShapeSet field_obstacles,
                 std::shared_ptr<TrajectoryCollection> planned_trajectories, unsigned shell_id,
                 const WorldState* world_state, PlayState play_state,
-                FieldDimensions field_dimensions,
-                std::shared_ptr<const PlanningParams> params, int8_t priority = 0,
-                rj_drawing::RosDebugDrawer* debug_drawer = nullptr, bool ball_sense = false,
-                float min_dist_from_ball = 0, float kick_speed = 0,
+                FieldDimensions field_dimensions, std::shared_ptr<const PlanningParams> params,
+                int8_t priority = 0, rj_drawing::RosDebugDrawer* debug_drawer = nullptr,
+                bool ball_sense = false, float min_dist_from_ball = 0, float kick_speed = 0,
                 RobotIntent::TriggerMode trigger_mode = RobotIntent::TriggerMode::STAND_DOWN,
                 RobotIntent::DribblerMode dribbler_mode = RobotIntent::DribblerMode::DEFAULT)
         : start(start),

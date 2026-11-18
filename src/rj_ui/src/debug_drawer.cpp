@@ -153,7 +153,7 @@ void DebugDrawer::draw_trajectory(const planning::Trajectory& trajectory,
             return;
         }
 
-        draw_text(QString::fromStdString(debug_text.value()), text_pos,
-                  QColor(100, 100, 255, 100), "PlanningDebugText");
+        draw_text(QString::fromStdString(debug_text.value()), text_pos, QColor(100, 100, 255, 100),
+                  "PlanningDebugText");
     }
 }

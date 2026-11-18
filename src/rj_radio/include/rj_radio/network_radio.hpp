@@ -40,8 +40,9 @@ public:
 
 protected:
     // Send Control Message through the Base Station to the Robots
-    void send_control_message(uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
-                              const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) override;
+    void send_control_message(
+        uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+        const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) override;
 
     // Poll the asynchronous boost::asio receiver
     void poll_receive() override;

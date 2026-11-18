@@ -45,8 +45,9 @@ protected:
      * @param motion The (x (m/s), y (m/s), z (rad/s)) velocities for the robot to move at
      * @param manipulator The Shoot Mode, Trigger Mode, Kick Speed, and Dribbler Speed for the Robot
      */
-    virtual void send_control_message(uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
-                                      const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
+    virtual void send_control_message(
+        uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+        const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) = 0;
 
     /**
      * @brief Poll the receiver service for Messages.
@@ -113,7 +114,8 @@ private:
 
     // Ros subscribers to receive auxillary control (i.e. shoot_mode, trigger_mode, kick_speed, and
     // dribbler_speed) which are stored and sent to the robot
-    std::array<rclcpp::Subscription<rj_control_msgs::msg::ManipulatorSetpoint>::SharedPtr, kNumShells>
+    std::array<rclcpp::Subscription<rj_control_msgs::msg::ManipulatorSetpoint>::SharedPtr,
+               kNumShells>
         manipulator_subs_;
     // Cached auxillary control information
     std::array<rj_control_msgs::msg::ManipulatorSetpoint, kNumShells> manipulators_cached_;

@@ -111,8 +111,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     p.translate(width() / 2.0, height() / 2.0);
     p.scale(width(), -height());
     p.rotate(_rotate * 90);
-    p.scale(1.0 / field_dimensions_.floor_length(),
-            1.0 / field_dimensions_.floor_width());
+    p.scale(1.0 / field_dimensions_.floor_length(), 1.0 / field_dimensions_.floor_width());
 
     // Set text rotation for world space
     _textRotation = -_rotate * 90;
@@ -131,9 +130,8 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
     // Make coordinate transformations
     _screenToWorld = rj_geometry::TransformMatrix();
-    _screenToWorld *=
-        rj_geometry::TransformMatrix::scale(field_dimensions_.floor_length(),
-                                           field_dimensions_.floor_width());
+    _screenToWorld *= rj_geometry::TransformMatrix::scale(field_dimensions_.floor_length(),
+                                                          field_dimensions_.floor_width());
     _screenToWorld *=
         rj_geometry::TransformMatrix::rotate(-static_cast<float>(_rotate * M_PI / 2.0));
     _screenToWorld *= rj_geometry::TransformMatrix::scale(static_cast<float>(1.0 / width()),
@@ -142,8 +140,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
                                                              static_cast<float>(-height() / 2.0));
 
     _worldToTeam = rj_geometry::TransformMatrix();
-    _worldToTeam *= rj_geometry::TransformMatrix::translate(
-        0, field_dimensions_.length() / 2.0f);
+    _worldToTeam *= rj_geometry::TransformMatrix::translate(0, field_dimensions_.length() / 2.0f);
     if (frame->defend_plus_x) {
         _worldToTeam *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
@@ -156,8 +153,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     } else {
         _teamToWorld *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     }
-    _teamToWorld *= rj_geometry::TransformMatrix::translate(
-        0, -field_dimensions_.length() / 2.0f);
+    _teamToWorld *= rj_geometry::TransformMatrix::translate(0, -field_dimensions_.length() / 2.0f);
 
     // Draw world-space graphics
     drawWorldSpace(p);
@@ -215,8 +211,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     if (!frame->use_their_half) {
         const float FX = field_dimensions_.floor_width() / 2;
         const float FY1 = field_dimensions_.length() / 2;
-        const float FY2 = field_dimensions_.length() +
-                          field_dimensions_.border();
+        const float FY2 = field_dimensions_.length() + field_dimensions_.border();
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
     }
 
@@ -509,35 +504,28 @@ void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& fr
     p.save();
 
     // reset to center
-    p.translate(-field_dimensions_.floor_length() / 2.0,
-                -field_dimensions_.floor_width() / 2.0);
+    p.translate(-field_dimensions_.floor_length() / 2.0, -field_dimensions_.floor_width() / 2.0);
 
-    p.translate(field_dimensions_.border(),
-                field_dimensions_.border());
+    p.translate(field_dimensions_.border(), field_dimensions_.border());
 
-    p.setPen(QPen(Qt::white, field_dimensions_.line_width() *
-                                 2.0));  // double-width pen for visibility
-                                         //(although its less accurate)
+    p.setPen(
+        QPen(Qt::white, field_dimensions_.line_width() * 2.0));  // double-width pen for visibility
+                                                                 //(although its less accurate)
     p.setBrush(Qt::NoBrush);
-    p.drawRect(QRectF(0, 0, field_dimensions_.length(),
-                      field_dimensions_.width()));
+    p.drawRect(QRectF(0, 0, field_dimensions_.length(), field_dimensions_.width()));
 
     // set brush alpha to 0
     p.setBrush(QColor(0, 130, 0, 0));
 
     // reset to center
-    p.translate(field_dimensions_.length() / 2.0,
-                field_dimensions_.width() / 2.0);
+    p.translate(field_dimensions_.length() / 2.0, field_dimensions_.width() / 2.0);
 
     // centerline
-    p.drawLine(QLineF(0, field_dimensions_.width() / 2, 0,
-                      -field_dimensions_.width() / 2.0));
+    p.drawLine(QLineF(0, field_dimensions_.width() / 2, 0, -field_dimensions_.width() / 2.0));
 
     // center circle
-    p.drawEllipse(QRectF(-field_dimensions_.center_radius(),
-                         -field_dimensions_.center_radius(),
-                         field_dimensions_.center_diameter(),
-                         field_dimensions_.center_diameter()));
+    p.drawEllipse(QRectF(-field_dimensions_.center_radius(), -field_dimensions_.center_radius(),
+                         field_dimensions_.center_diameter(), field_dimensions_.center_diameter()));
 
     p.translate(-field_dimensions_.length() / 2.0, 0);
 
@@ -545,10 +533,9 @@ void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& fr
     p.drawLine(QLineF(0, -field_dimensions_.penalty_long_dist() / 2,
                       field_dimensions_.penalty_short_dist(),
                       -field_dimensions_.penalty_long_dist() / 2));
-    p.drawLine(QLineF(field_dimensions_.penalty_short_dist(),
-                      field_dimensions_.penalty_long_dist() / 2,
-                      field_dimensions_.penalty_short_dist(),
-                      -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(
+        QLineF(field_dimensions_.penalty_short_dist(), field_dimensions_.penalty_long_dist() / 2,
+               field_dimensions_.penalty_short_dist(), -field_dimensions_.penalty_long_dist() / 2));
     p.drawLine(QLineF(field_dimensions_.penalty_short_dist(),
                       field_dimensions_.penalty_long_dist() / 2, 0,
                       field_dimensions_.penalty_long_dist() / 2));
@@ -558,18 +545,16 @@ void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& fr
     p.drawLine(QLineF(0, -field_dimensions_.penalty_long_dist() / 2,
                       -field_dimensions_.penalty_short_dist(),
                       -field_dimensions_.penalty_long_dist() / 2));
-    p.drawLine(QLineF(-field_dimensions_.penalty_short_dist(),
-                      field_dimensions_.penalty_long_dist() / 2,
-                      -field_dimensions_.penalty_short_dist(),
-                      -field_dimensions_.penalty_long_dist() / 2));
+    p.drawLine(QLineF(
+        -field_dimensions_.penalty_short_dist(), field_dimensions_.penalty_long_dist() / 2,
+        -field_dimensions_.penalty_short_dist(), -field_dimensions_.penalty_long_dist() / 2));
     p.drawLine(QLineF(-field_dimensions_.penalty_short_dist(),
                       field_dimensions_.penalty_long_dist() / 2, 0,
                       field_dimensions_.penalty_long_dist() / 2));
 
     // goals
     float x[2] = {0, field_dimensions_.goal_depth()};
-    float y[2] = {field_dimensions_.goal_width() / 2.0f,
-                  -field_dimensions_.goal_width() / 2.0f};
+    float y[2] = {field_dimensions_.goal_width() / 2.0f, -field_dimensions_.goal_width() / 2.0f};
 
     bool flip = frame->blue ^ frame->defend_plus_x;
 
@@ -582,8 +567,7 @@ void FieldView::drawField(QPainter& p, const std::shared_ptr<rj_ui::UIFrame>& fr
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 
     x[0] -= field_dimensions_.length();
-    x[1] -= field_dimensions_.length() +
-            2 * field_dimensions_.goal_depth();
+    x[1] -= field_dimensions_.length() + 2 * field_dimensions_.goal_depth();
 
     goalColor = flip ? Qt::blue : Qt::yellow;
     p.setPen(QPen(goalColor, field_dimensions_.line_width() * 2.0));
@@ -687,19 +671,19 @@ void FieldView::resizeEvent(QResizeEvent* e) {
     int needW;
     int needH;
     if ((_rotate & 1) != 0) {
-        needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            field_dimensions_.floor_length() /
-                                            field_dimensions_.floor_width()));
-        needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            field_dimensions_.floor_width() /
-                                            field_dimensions_.floor_length()));
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) * field_dimensions_.floor_length() /
+                       field_dimensions_.floor_width()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) * field_dimensions_.floor_width() /
+                       field_dimensions_.floor_length()));
     } else {
-        needH = static_cast<int>(std::round(static_cast<float>(givenW) *
-                                            field_dimensions_.floor_width() /
-                                            field_dimensions_.floor_length()));
-        needW = static_cast<int>(std::round(static_cast<float>(givenH) *
-                                            field_dimensions_.floor_length() /
-                                            field_dimensions_.floor_width()));
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) * field_dimensions_.floor_width() /
+                       field_dimensions_.floor_length()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) * field_dimensions_.floor_length() /
+                       field_dimensions_.floor_width()));
     }
 
     QSize size;

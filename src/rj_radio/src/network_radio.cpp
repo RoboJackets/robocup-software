@@ -40,9 +40,9 @@ void NetworkRadio::start_alive_robots_receive() {
         });
 }
 
-void NetworkRadio::send_control_message(uint8_t robot_id,
-                                        const rj_control_msgs::msg::MotionSetpoint& motion,
-                                        const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) {
+void NetworkRadio::send_control_message(
+    uint8_t robot_id, const rj_control_msgs::msg::MotionSetpoint& motion,
+    const rj_control_msgs::msg::ManipulatorSetpoint& manipulator) {
     // Build the control packet for this robot.
     std::array<uint8_t, sizeof(RadioMessage::ControlMessage)>& forward_packet_buffer =
         send_buffers_[robot_id];

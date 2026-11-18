@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <rj_ros_common/time_adapters.hpp>
 #include <rj_referee_msgs/msg/match_state.hpp>
+#include <rj_ros_common/time_adapters.hpp>
 
 struct MatchState {
 public:

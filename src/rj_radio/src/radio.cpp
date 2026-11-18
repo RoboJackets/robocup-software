@@ -96,8 +96,8 @@ Radio::Radio() : Node{"radio"} {
             });
     }
 
-    alive_robots_pub_ =
-        create_publisher<rj_radio_msgs::msg::AliveRobots>(topics::kAliveRobotsTopic, rclcpp::QoS(1));
+    alive_robots_pub_ = create_publisher<rj_radio_msgs::msg::AliveRobots>(topics::kAliveRobotsTopic,
+                                                                          rclcpp::QoS(1));
 
     tick_timer_ = create_wall_timer(tick_period_, [this]() { tick(); });
 }

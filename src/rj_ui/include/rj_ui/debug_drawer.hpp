@@ -83,8 +83,7 @@ public:
      * the event that the trajectory is empty.
      */
     void draw_trajectory(const planning::Trajectory& trajectory,
-              std::optional<rj_geometry::Point> alt_text_position =
-                  std::nullopt);
+                         std::optional<rj_geometry::Point> alt_text_position = std::nullopt);
 
     /**
      * Snapshot this cycle's drawings for the UI and start a fresh cycle.
