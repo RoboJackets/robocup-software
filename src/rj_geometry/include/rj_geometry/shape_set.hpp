@@ -27,6 +27,9 @@ public:
         }
     }
 
+    explicit ShapeSet(const std::vector<std::shared_ptr<Shape>>& shapes)
+        : ShapeSet(shapes.begin(), shapes.end()) {}
+
     std::vector<std::shared_ptr<Shape>>& shapes() { return shapes_; }
     [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& shapes() const {
         return shapes_;
