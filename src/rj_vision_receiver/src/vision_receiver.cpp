@@ -44,21 +44,21 @@ VisionReceiver::VisionReceiver() : Node{"vision_receiver"}, port_{-1}, socket_{i
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
 
     game_settings_sub_ = create_subscription<GameSettings::Msg>(
-        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
+        referee::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
         [this](GameSettings::Msg::ConstSharedPtr msg) {
             game_settings_ = *msg;
             has_game_settings_ = true;
         });
 
     field_dimensions_sub_ = create_subscription<FieldDimensions::Msg>(
-        config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        vision_filter::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
         [this](FieldDimensions::Msg::ConstSharedPtr msg) {
             field_dimensions_ = *msg;
             has_field_dimensions_ = true;
         });
 
     field_dimensions_client_ =
-        create_client<SetFieldDimensionsSrv>(config_server::topics::kFieldDimensionsSrv);
+        create_client<SetFieldDimensionsSrv>(vision_filter::topics::kFieldDimensionsSrv);
 
     // Spin off threads for the networking part and the publishing part.
     network_thread_ = std::thread{&VisionReceiver::receive_thread, this};

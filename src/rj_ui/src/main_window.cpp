@@ -168,7 +168,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _quick_commands_srv = _node->create_client<rj_referee_msgs::srv::QuickCommands>(
         referee::topics::kQuickCommandsSrv);
     _set_game_settings = _node->create_client<rj_referee_msgs::srv::SetGameSettings>(
-        config_server::topics::kGameSettingsSrv);
+        referee::topics::kGameSettingsSrv);
 
     // Publishers to signal when a manual position override is occurring
     for (int i = 0; i < 16; ++i) {

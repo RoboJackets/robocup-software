@@ -16,7 +16,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             set_field_obstacles();
         });
     game_settings_sub_ = node->create_subscription<GameSettings::Msg>(
-        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1),
+        referee::topics::kGameSettingsTopic, rclcpp::QoS(1),
         [this](GameSettings::Msg::ConstSharedPtr settings) {  // NOLINT
             GameSettings game_settings;
             rclcpp::TypeAdapter<GameSettings, GameSettings::Msg>::convert_to_custom(*settings,
@@ -40,7 +40,7 @@ GlobalState::GlobalState(rclcpp::Node* node) {
             last_world_state_ = converted;
         });
     field_dimensions_sub_ = node->create_subscription<FieldDimensions::Msg>(
-        ::config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        ::vision_filter::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
         [this](FieldDimensions::Msg::ConstSharedPtr msg) {  // NOLINT
             FieldDimensions field_dimensions;
             rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_custom(

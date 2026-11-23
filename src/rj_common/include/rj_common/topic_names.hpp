@@ -3,10 +3,6 @@
 #include <string>
 
 namespace config_server::topics {
-constexpr const char* kGameSettingsTopic{"/config/game_settings"};
-constexpr const char* kFieldDimensionsTopic{"/config/field_dimensions"};
-constexpr const char* kGameSettingsSrv{"/config/set_game_settings"};
-constexpr const char* kFieldDimensionsSrv{"/config/set_field_dimensions"};
 }  // namespace config_server::topics
 
 namespace sim::topics {
@@ -18,6 +14,8 @@ constexpr const char* kDebugDrawTopic{"/viz/debug_draw"};
 }  // namespace viz::topics
 
 namespace referee::topics {
+constexpr const char* kGameSettingsSrv{"/referee/set_game_settings"};
+constexpr const char* kGameSettingsTopic{"/referee/game_settings"};
 constexpr const char* kPlayStateTopic{"/referee/play_state"};
 constexpr const char* kMatchStateTopic{"/referee/match_state"};
 constexpr const char* kOurInfoTopic{"/referee/our_info"};
@@ -35,6 +33,8 @@ constexpr const char* kDetectionFrameTopic{"/vision_receiver/detection_frame"};
 
 namespace vision_filter::topics {
 constexpr const char* kWorldStateTopic{"/vision_filter/world_state"};
+constexpr const char* kFieldDimensionsTopic{"/vision_filter/field_dimensions"};
+constexpr const char* kFieldDimensionsSrv{"/vision_filter/set_field_dimensions"};
 }  // namespace vision_filter::topics
 
 namespace gameplay::topics {

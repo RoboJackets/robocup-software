@@ -16,7 +16,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
     const auto latching_qos = rclcpp::QoS(1).transient_local();
     // Game Settings
     game_settings_publisher_ =
-        create_publisher<GameSettingsMsg>(topics::kGameSettingsTopic, latching_qos);
+        create_publisher<GameSettingsMsg>(referee::topics::kGameSettingsTopic, latching_qos);
 
     // NOLINTS below are to disable performance-unnecessary-value-param
     const auto game_settings_cb = [this](const SetGameSettingsSrvReqPtr request,    // NOLINT
@@ -24,19 +24,19 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options,
         set_game_settings_callback(request->game_settings);
     };
     game_settings_server_ =
-        create_service<SetGameSettingsSrv>(topics::kGameSettingsSrv, game_settings_cb);
+        create_service<SetGameSettingsSrv>(referee::topics::kGameSettingsSrv, game_settings_cb);
 
     // Field Dimensions
-    field_dimensions_publisher_ =
-        create_publisher<FieldDimensionsMsg>(topics::kFieldDimensionsTopic, latching_qos);
+    field_dimensions_publisher_ = create_publisher<FieldDimensionsMsg>(
+        vision_filter::topics::kFieldDimensionsTopic, latching_qos);
 
     // NOLINTS below are to disable performance-unnecessary-value-param
     const auto field_dimensions_cb = [this](const SetFieldDimensionsSrvReqPtr request,    // NOLINT
                                             SetFieldDimensionsSrvRespPtr /*response*/) {  // NOLINT
         set_field_dimensions_callback(request->field_dimensions);
     };
-    field_dimensions_server_ =
-        create_service<SetFieldDimensionsSrv>(topics::kFieldDimensionsSrv, field_dimensions_cb);
+    field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(
+        vision_filter::topics::kFieldDimensionsSrv, field_dimensions_cb);
 
     broadcast_game_settings();
     broadcast_field_dimensions();

@@ -29,7 +29,7 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name} {
         });
 
     game_settings_sub_ = create_subscription<GameSettings::Msg>(
-        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
+        referee::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
         [this](GameSettings::Msg::ConstSharedPtr msg) {
             game_settings_ = *msg;
             has_game_settings_ = true;
@@ -37,7 +37,7 @@ RefereeBase::RefereeBase(const std::string& name) : Node{name} {
         });
 
     field_dimensions_sub_ = create_subscription<FieldDimensions::Msg>(
-        config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        vision_filter::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
         [this](FieldDimensions::Msg::ConstSharedPtr msg) {
             field_dimensions_ = *msg;
             has_field_dimensions_ = true;

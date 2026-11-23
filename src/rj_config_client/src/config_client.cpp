@@ -11,18 +11,18 @@ ConfigClient::ConfigClient(rclcpp::Node* node)
         game_settings_ = *msg;
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
-        config_server::topics::kGameSettingsTopic, latching_qos, game_settings_cb);
+        referee::topics::kGameSettingsTopic, latching_qos, game_settings_cb);
     game_settings_client_ =
-        node->create_client<SetGameSettingsSrv>(config_server::topics::kGameSettingsSrv);
+        node->create_client<SetGameSettingsSrv>(referee::topics::kGameSettingsSrv);
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
         std::lock_guard<std::mutex> guard{mutex_};
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
-        config_server::topics::kFieldDimensionsTopic, latching_qos, field_dimensions_cb);
+        vision_filter::topics::kFieldDimensionsTopic, latching_qos, field_dimensions_cb);
     field_dimensions_client_ =
-        node->create_client<SetFieldDimensionsSrv>(config_server::topics::kFieldDimensionsSrv);
+        node->create_client<SetFieldDimensionsSrv>(vision_filter::topics::kFieldDimensionsSrv);
 }
 
 bool ConfigClient::connected() const {
