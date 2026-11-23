@@ -7,10 +7,14 @@
 #include <boost/asio.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <rj_common/field_dimensions.hpp>
+#include <rj_common/game_settings.hpp>
 #include <rj_common/network.hpp>
 #include <rj_config_client/config_client.hpp>
 #include <rj_protos/vision/ssl_vision_wrapper.pb.h>
+#include <rj_referee_msgs/msg/game_settings.hpp>
 #include <rj_vision_msgs/msg/detection_frame.hpp>
+#include <rj_vision_msgs/msg/field_dimensions.hpp>
 #include <rj_vision_msgs/msg/raw_protobuf.hpp>
 
 #include "rj_vision_receiver/concurrent_queue.hpp"
@@ -22,6 +26,8 @@ using RawProtobufMsg = rj_vision_msgs::msg::RawProtobuf;
 using DetectionFrameMsg = rj_vision_msgs::msg::DetectionFrame;
 using DetectionBallMsg = rj_vision_msgs::msg::DetectionBall;
 using DetectionRobotMsg = rj_vision_msgs::msg::DetectionRobot;
+using SetFieldDimensionsSrv = rj_vision_msgs::srv::SetFieldDimensions;
+using SetFieldDimensionsReq = SetFieldDimensionsSrv::Request;
 
 /**
  * @brief Receives vision packets over UDP and places them in a buffer until
@@ -99,6 +105,10 @@ private:
 
     void update_geometry_packet(const SSL_GeometryFieldSize& field_size);
 
+    bool wait_until_connected();
+
+    void update_field_dimensions(const FieldDimensions& msg);
+
     /**
      * @brief Converts from a SSL_WrapperPacket to a DetectionFrameMsg,
      * respecting the "exclude half" config as well as performing timestamp
@@ -111,7 +121,6 @@ private:
         const SSL_DetectionFrame& frame,
         const rclcpp::Time& received_time) const;
 
-    config_client::ConfigClient config_;
     int port_;
 
     std::vector<uint8_t> recv_buffer_{};
@@ -126,6 +135,15 @@ private:
 
     rclcpp::Publisher<SSL_WrapperPacket>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
+
+    GameSettings::Msg game_settings_{};
+    bool has_game_settings_ = false;
+    rclcpp::Subscription<GameSettings::Msg>::SharedPtr game_settings_sub_;
+
+    FieldDimensions::Msg field_dimensions_{};
+    bool has_field_dimensions_ = false;
+    rclcpp::Subscription<FieldDimensions::Msg>::SharedPtr field_dimensions_sub_;
+    rclcpp::Client<SetFieldDimensionsSrv>::SharedPtr field_dimensions_client_;
 
     int param_port_;
     std::string param_vision_interface_;

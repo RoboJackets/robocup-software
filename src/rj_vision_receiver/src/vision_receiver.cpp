@@ -16,8 +16,7 @@
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
-VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"}, config_{this}, port_{-1}, socket_{io_context_} {
+VisionReceiver::VisionReceiver() : Node{"vision_receiver"}, port_{-1}, socket_{io_context_} {
     recv_buffer_.resize(65536);
 
     /* port=10006 for real vision (per SSL rulebook)
@@ -44,6 +43,23 @@ VisionReceiver::VisionReceiver()
     raw_packet_pub_ = create_publisher<SSL_WrapperPacket>(topics::kRawProtobufTopic, 10);
     detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFrameTopic, 10);
 
+    game_settings_sub_ = create_subscription<GameSettings::Msg>(
+        config_server::topics::kGameSettingsTopic, rclcpp::QoS(1).transient_local(),
+        [this](GameSettings::Msg::ConstSharedPtr msg) {
+            game_settings_ = *msg;
+            has_game_settings_ = true;
+        });
+
+    field_dimensions_sub_ = create_subscription<FieldDimensions::Msg>(
+        config_server::topics::kFieldDimensionsTopic, rclcpp::QoS(1).transient_local(),
+        [this](FieldDimensions::Msg::ConstSharedPtr msg) {
+            field_dimensions_ = *msg;
+            has_field_dimensions_ = true;
+        });
+
+    field_dimensions_client_ =
+        create_client<SetFieldDimensionsSrv>(config_server::topics::kFieldDimensionsSrv);
+
     // Spin off threads for the networking part and the publishing part.
     network_thread_ = std::thread{&VisionReceiver::receive_thread, this};
     publish_thread_ = std::thread{&VisionReceiver::publish_thread, this};
@@ -63,7 +79,7 @@ void VisionReceiver::receive_thread() {
 void VisionReceiver::publish_thread() {
     // Block wait until either ConfigClient is connected or rclcpp::ok returns
     // false.
-    if (!config_.wait_until_connected()) {
+    if (!wait_until_connected()) {
         return;
     }
 
@@ -155,7 +171,7 @@ DetectionFrameMsg VisionReceiver::construct_ros_msg(const SSL_DetectionFrame& fr
     msg.t_received = received_time;
     msg.camera_id = frame.camera_id();
 
-    const bool defend_plus_x = config_.game_settings().defend_plus_x;
+    const bool defend_plus_x = game_settings_.defend_plus_x;
 
     // Only add balls that are in a used half
     const google::protobuf::RepeatedPtrField<SSL_DetectionBall>& balls = frame.balls();
@@ -246,8 +262,8 @@ void VisionReceiver::receive_packet(const boost::system::error_code& error, std:
 }
 
 bool VisionReceiver::in_used_half(bool defend_plus_x, double x) const {
-    const bool use_their_half = config_.game_settings().use_their_half;
-    const bool use_our_half = config_.game_settings().use_our_half;
+    const bool use_their_half = game_settings_.use_their_half;
+    const bool use_our_half = game_settings_.use_our_half;
 
     const bool in_our_half = (defend_plus_x && x > 0) || (!defend_plus_x && x < 0);
     const bool in_their_half = !in_our_half;
@@ -291,7 +307,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     // outside, so we can add this as an offset.
     float adj = field_size.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
-    float field_border = config_.field_dimensions().border;
+    float field_border = field_dimensions_.border;
 
     if (penalty_long_dist != 0 && penalty_short_dist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
@@ -310,12 +326,7 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             displacement / 1000.0f,
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
-        config_.update_field_dimensions([&new_field_dim] {
-            FieldDimensions::Msg message;
-            rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
-                new_field_dim, message);
-            return message;
-        }());
+        update_field_dimensions(new_field_dim);
     } else if (center != nullptr && thickness != 0) {
         const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
 
@@ -335,15 +346,29 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
 
-        config_.update_field_dimensions([&new_field_dim] {
-            FieldDimensions::Msg message;
-            rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
-                new_field_dim, message);
-            return message;
-        }());
+        update_field_dimensions(new_field_dim);
     } else {
         RCLCPP_ERROR(get_logger(),
                      "Error: failed to decode SSL geometry packet. Not resizing field.");
     }
 }
+
+bool VisionReceiver::wait_until_connected() {
+    constexpr std::chrono::milliseconds kSleepDuration{100};
+    while (rclcpp::ok()) {
+        if (has_game_settings_ && has_field_dimensions_) {
+            return true;
+        }
+        rclcpp::sleep_for(kSleepDuration);
+    }
+    return false;
+}
+
+void VisionReceiver::update_field_dimensions(const FieldDimensions& msg) {
+    SetFieldDimensionsReq::SharedPtr request = std::make_shared<SetFieldDimensionsReq>();
+    rclcpp::TypeAdapter<FieldDimensions, FieldDimensions::Msg>::convert_to_ros_message(
+        msg, request->field_dimensions);
+    field_dimensions_client_->async_send_request(request);
+}
+
 }  // namespace vision_receiver
