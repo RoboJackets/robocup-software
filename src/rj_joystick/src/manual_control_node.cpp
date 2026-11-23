@@ -75,9 +75,9 @@ ManualControlNode::ManualControlNode()
             [this, i](const sensor_msgs::msg::Joy::SharedPtr msg) {
                 last_command_times_.at(i) = std::chrono::steady_clock::now();
                 ControllerCommand command;
-                command.translation.x() = msg->axes.at(joystick::axis::kLeftY);
-                command.translation.y() = -msg->axes.at(joystick::axis::kLeftX);
-                command.rotation = -msg->axes.at(joystick::axis::kRightX);
+                command.translation.x() = -msg->axes.at(joystick::axis::kLeftX);
+                command.translation.y() = msg->axes.at(joystick::axis::kLeftY);
+                command.rotation = msg->axes.at(joystick::axis::kRightX);
                 command.kick = msg->axes.at(joystick::axis::kTriggerRight) > kTriggerCutoff;
                 command.chip = msg->buttons.at(joystick::button::kLeftShoulder) != 0;
 
