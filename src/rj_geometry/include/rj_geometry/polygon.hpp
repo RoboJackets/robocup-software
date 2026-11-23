@@ -79,10 +79,6 @@ public:
     // ... none for now ...
 
 protected:
-    // --- Hidden parameters ---
-
-    std::vector<Point> vertices_;
-
     // --- Shape virtuals ---
 
     Polygon* clone_impl() const override;
@@ -90,6 +86,11 @@ protected:
     // --- Custom utilities ---
 
     // ... none for now ...
+
+private:
+    // --- Hidden parameters ---
+
+    std::vector<Point> vertices_;
 
 };
 }  // namespace rj_geometry

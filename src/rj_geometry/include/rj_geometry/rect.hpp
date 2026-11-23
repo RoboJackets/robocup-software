@@ -103,10 +103,6 @@ public:
     // ... none for now ...
 
 protected:
-    // --- Hidden parameters ---
-
-    std::array<Point, 2> corners_;
-
     // --- Shape virtuals ---
 
     Rect* clone_impl() const override;
@@ -114,5 +110,11 @@ protected:
     // --- Custom utilities ---
 
     // ... none for now ...
+
+private:
+    // --- Hidden parameters ---
+
+    std::array<Point, 2> corners_;
+
 };
 }  // namespace rj_geometry

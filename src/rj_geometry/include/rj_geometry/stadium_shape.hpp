@@ -69,15 +69,16 @@ public:
     const rj_geometry::ShapeSet drawshapes() const { return ShapeSet(subshapes_); }
 
 protected:
-    // --- Hidden parameters ---
-
-    // ... none for now ...
-
     // --- Shape virtuals ---
 
     StadiumShape* clone_impl() const override;
 
     // --- Custom utilities ---
+
+    // ... none for now ...
+
+private:
+    // --- Hidden parameters ---
 
     // ... none for now ...
 

@@ -66,7 +66,7 @@ public:
     std::vector<Point> intersects(const Line& line) const;
     std::vector<Point> intersects(const Segment& segment) const;
 
-protected:
+private:
     Point center_;
     float radius_;
     float start_angle_;

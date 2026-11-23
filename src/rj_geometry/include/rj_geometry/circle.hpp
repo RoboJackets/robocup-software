@@ -79,11 +79,6 @@ public:
     // ... none for now ...
 
 protected:
-    // --- Hidden parameters ---
-
-    Point center_;
-    float radius_;
-
     // --- Shape virtuals ---
 
     Circle* clone_impl() const override;
@@ -91,6 +86,12 @@ protected:
     // --- Custom utilities ---
 
     // ... none for now ...
+
+private:
+    // --- Hidden parameters ---
+
+    Point center_;
+    float radius_;
 
 };
 }
