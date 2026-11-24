@@ -2,9 +2,6 @@
 
 #include <string>
 
-namespace config_server::topics {
-}  // namespace config_server::topics
-
 namespace sim::topics {
 constexpr const char* kSimPlacementSrv{"/sim/placement"};
 }  // namespace sim::topics
