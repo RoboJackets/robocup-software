@@ -8,7 +8,6 @@
 namespace rj_geometry {
 
 class Circle;
-class Segment;
 
 class Line {
 public:
@@ -19,8 +18,6 @@ public:
     explicit Line(Point p1, Point p2) : pt{p1, p2} {
         // assert(p1 != p2);
     }
-
-    explicit Line(const Segment& segment);
 
     Point delta() const { return pt[1] - pt[0]; }
 
@@ -51,8 +48,6 @@ public:
     @return true if the lines intersect, false otherwise
     */
     bool intersects(const Line& other, Point* intersection = nullptr) const;
-
-    bool intersects(const Segment& other, Point* intersection = nullptr) const;
 
     static bool intersects(const Line& line1, const Line& line2,
                            Point* intersection = nullptr);

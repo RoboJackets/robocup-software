@@ -8,10 +8,10 @@
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/composite_shape.hpp>
 #include <rj_geometry/geometry_conversions.hpp>
-#include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>
 #include <rj_geometry/polygon.hpp>
 #include <rj_geometry/rect.hpp>
+#include <rj_geometry/segment.hpp>
 #include <rj_geometry/shape_set.hpp>
 #include <rj_geometry/stadium_shape.hpp>
 #include <rj_vision_msgs/msg/field_dimensions.hpp>
@@ -137,7 +137,7 @@ struct FieldDimensions {
         return their_goal_walls_;
     }
 
-    [[nodiscard]] std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
+    [[nodiscard]] std::vector<rj_geometry::Segment> field_borders() const { return field_borders_; }
 
     static const FieldDimensions kSingleFieldDimensions;
 
@@ -272,14 +272,14 @@ struct FieldDimensions {
         field_rect_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2.0, 0),
                                         rj_geometry::Point(width_ / 2.0, length_));
 
-        field_borders_ = {rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, 0),
-                                            rj_geometry::Point(-width_ / 2.0, length_)),
-                          rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, length_),
-                                            rj_geometry::Point(width_ / 2.0, length_)),
-                          rj_geometry::Line(rj_geometry::Point(width_ / 2.0, length_),
-                                            rj_geometry::Point(width_ / 2.0, 0)),
-                          rj_geometry::Line(rj_geometry::Point(width_ / 2.0, 0),
-                                            rj_geometry::Point(-width_ / 2.0, 0))};
+        field_borders_ = {rj_geometry::Segment(rj_geometry::Point(-width_ / 2.0, 0),
+                                               rj_geometry::Point(-width_ / 2.0, length_)),
+                          rj_geometry::Segment(rj_geometry::Point(-width_ / 2.0, length_),
+                                               rj_geometry::Point(width_ / 2.0, length_)),
+                          rj_geometry::Segment(rj_geometry::Point(width_ / 2.0, length_),
+                                               rj_geometry::Point(width_ / 2.0, 0)),
+                          rj_geometry::Segment(rj_geometry::Point(width_ / 2.0, 0),
+                                               rj_geometry::Point(-width_ / 2.0, 0))};
 
         float physical_goal_board_width = 0.1f;
         our_goal_walls_ = rj_geometry::ShapeSet{};
@@ -359,7 +359,7 @@ private:
     rj_geometry::ShapeSet our_goal_walls_;
     rj_geometry::ShapeSet their_goal_walls_;
 
-    std::vector<rj_geometry::Line> field_borders_;
+    std::vector<rj_geometry::Segment> field_borders_;
 };
 
 namespace rclcpp {

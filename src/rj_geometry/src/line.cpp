@@ -3,11 +3,8 @@
 #include <rj_geometry/circle.hpp>
 #include <rj_geometry/line.hpp>
 #include <rj_geometry/point.hpp>
-#include <rj_geometry/segment.hpp>
 
 namespace rj_geometry {
-
-Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}
 
 // Uses Tested Function
 bool Line::intersects(const Line& other, Point* intersection) const {
@@ -108,9 +105,5 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     }
 
     return true;
-}
-
-bool Line::intersects(const Segment& other, Point* intersection) const {
-    return other.intersects(*this, intersection);
 }
 }  // namespace rj_geometry

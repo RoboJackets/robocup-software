@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 
-#include "rj_geometry/line.hpp"
 #include "rj_geometry/point.hpp"
 #include "rj_geometry/segment.hpp"
 
@@ -20,14 +19,14 @@ bool Polygon::contains_point(const Point& p) const {
         if (p1.y() <= p.y()) {
             if (p2.y() > p.y()) {
                 // Edge is going up
-                if (Line(p1, p2).point_side(p) > 0) {
+                if ((p2 - p1).cross(p - p1) > 0) {
                     ++count;
                 }
             }
         } else {
             if (p2.y() <= p.y()) {
                 // Edge is going down
-                if (Line(p1, p2).point_side(p) < 0) {
+                if ((p2 - p1).cross(p - p1) < 0) {
                     --count;
                 }
             }

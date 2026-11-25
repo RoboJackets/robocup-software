@@ -1,10 +1,12 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
+#include <ostream>
+#include <sstream>
+#include <string>
 
-#include "line.hpp"
 #include "point.hpp"
-#include "segment.hpp"
 
 namespace rj_geometry {
 
@@ -14,6 +16,8 @@ namespace rj_geometry {
  */
 class Arc {
 public:
+    // --- Constructors ---
+
     /**
      * Initialize an arc with a given center, radius, and starting and ending
      * angle (in radians).
@@ -39,13 +43,15 @@ public:
         end_angle_ = end;
     }
 
-    /** Getters */
+    // --- Getters ---
+
     Point center() const { return center_; }
     float radius() const { return radius_; }
     float start() const { return start_angle_; }
     float end() const { return end_angle_; }
 
-    /** Setters */
+    // --- Setters ---
+
     void set_center(Point center) { center_ = center; }
     void set_radius(float radius) {
         assert(0 <= radius);
@@ -62,11 +68,24 @@ public:
         end_angle_ = end;
     }
 
-    /** Geometry */
-    std::vector<Point> intersects(const Line& line) const;
-    std::vector<Point> intersects(const Segment& segment) const;
+    // --- Operators ---
+
+    // ... none for now ...
+
+    // --- Custom utilities ---
+
+    std::string to_string() const {
+        std::stringstream str;
+        str << "Arc<" << center() << ", " << radius() << ", " << start() << ", " << end() << ">";
+        return str.str();
+    }
+    friend std::ostream& operator<<(std::ostream& stream, const Arc& arc) {
+        return stream << arc.to_string();
+    }
 
 private:
+    // --- Hidden parameters ---
+
     Point center_;
     float radius_;
     float start_angle_;

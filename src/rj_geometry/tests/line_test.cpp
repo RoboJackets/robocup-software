@@ -1,3 +1,5 @@
+#include "rj_geometry/line.hpp"
+
 #include <gtest/gtest.h>
 
 #include "rj_geometry/circle.hpp"

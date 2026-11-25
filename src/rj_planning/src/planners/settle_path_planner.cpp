@@ -1,4 +1,7 @@
 #include "rj_planning/planners/settle_path_planner.hpp"
+
+#include <rj_geometry/ray.hpp>
+
 using namespace rj_geometry;
 
 namespace planning {
@@ -99,12 +102,11 @@ void SettlePathPlanner::check_solution_validity(BallState ball, RobotInstant sta
 
     // Are we too far from the ball line and the ball is still moving
     // or are we too far from a ball not moving towards us
-    Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
+    Ray ball_movement_ray(ball.position, average_ball_vel_);
     Point relative_robot_pos = start_instant.position() - delta_pos;
 
     bool robot_far = (ball.position - relative_robot_pos).mag() > 2 * kRobotRadius + kBallRadius;
-    bool robot_on_ball_line =
-        ball_movement_line.dist_to(relative_robot_pos) < kRobotMouthRadius / 2;
+    bool robot_on_ball_line = ball_movement_ray.dist_to(relative_robot_pos) < kRobotMouthRadius / 2;
     bool ball_moving = average_ball_vel_.mag() > 0.2;
     bool ball_moving_to_us = (ball.position - relative_robot_pos).mag() >
                              (ball.position + 0.01 * average_ball_vel_ - relative_robot_pos).mag();
@@ -126,12 +128,12 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
     if (!previous_.empty() && start_instant->stamp > previous_.begin_time() &&
         start_instant->stamp <= previous_.end_time()) {
-        rj_geometry::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
+        rj_geometry::Ray ball_movement_ray(ball.position, average_ball_vel_);
 
         Trajectory path_so_far =
             previous_.sub_trajectory(previous_.begin_time(), start_instant->stamp);
-        double bot_dist_to_ball_movement_line =
-            ball_movement_line.dist_to(path_so_far.last().position() - delta_pos);
+        double bot_dist_to_ball_movement_ray =
+            ball_movement_ray.dist_to(path_so_far.last().position() - delta_pos);
 
         // Intercept -> Dampen
         //  Almost intersecting the ball path and
@@ -141,7 +143,7 @@ void SettlePathPlanner::process_state_transition(BallState ball, RobotInstant* s
         // TODO(#1518): Check ball sense?
 
         // Within X seconds of the end of path
-        bool inline_with_ball = bot_dist_to_ball_movement_line < cos(angle) * kRobotMouthRadius / 2;
+        bool inline_with_ball = bot_dist_to_ball_movement_ray < cos(angle) * kRobotMouthRadius / 2;
         bool in_front_of_ball =
             average_ball_vel_.angle_between(start_instant->position() - ball.position) < 3.14 / 2;
 
@@ -422,10 +424,9 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     // to move down
     // Accounts for weird targets
     Point ball_movement_dir(average_ball_vel_.normalized());
-    Line ball_movement_line(ball.position + delta_pos,
-                            ball.position + ball_movement_dir + delta_pos);
-    Point nearest_point_to_robot = ball_movement_line.nearest_point(start_instant.position());
-    double dist_to_ball_movement_line = (start_instant.position() - nearest_point_to_robot).mag();
+    Ray ball_movement_ray(ball.position + delta_pos, ball_movement_dir);
+    Point nearest_point_to_robot = ball_movement_ray.nearest_point(start_instant.position());
+    double dist_to_ball_movement_ray = (start_instant.position() - nearest_point_to_robot).mag();
 
     // Default to just moving to the closest point on the line
     Point final_stopping_point(nearest_point_to_robot);
@@ -434,21 +435,21 @@ Trajectory SettlePathPlanner::dampen(const PlanRequest& plan_request, RobotInsta
     if (stopping_dist >= 0.01f) {
         // The closer we are to the line, the less we should move into the line
         // to stop overshoot
-        double percent_stopping_dist_to_ball_movement_line =
-            dist_to_ball_movement_line / stopping_dist;
+        double percent_stopping_dist_to_ball_movement_ray =
+            dist_to_ball_movement_ray / stopping_dist;
 
         // 0% should be just stopping at stopping_dist down the ball movement
         // line from the nearest_point_to_robot 100% or more should just be trying
         // to get to the nearest_point_to_robot (Default case)
-        if (percent_stopping_dist_to_ball_movement_line < 1) {
+        if (percent_stopping_dist_to_ball_movement_ray < 1) {
             // c^2 - a^2 = b^2
             // c is stopping dist, a is dist to ball line
             // b is dist down ball line
-            double dist_down_ball_movement_line =
+            double dist_down_ball_movement_ray =
                 std::sqrt(stopping_dist * stopping_dist -
-                          dist_to_ball_movement_line * dist_to_ball_movement_line);
+                          dist_to_ball_movement_ray * dist_to_ball_movement_ray);
             final_stopping_point =
-                nearest_point_to_robot + dist_down_ball_movement_line * ball_movement_dir;
+                nearest_point_to_robot + dist_down_ball_movement_ray * ball_movement_dir;
         }
     }
 

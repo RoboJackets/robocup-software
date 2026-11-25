@@ -26,12 +26,12 @@ set(RJ_GEOMETRY_DEPS
 )
 
 add_library(${PROJECT_NAME} SHARED
-  src/arc.cpp
   src/circle.cpp
   src/composite_shape.cpp
   src/line.cpp
   src/point.cpp
   src/polygon.cpp
+  src/ray.cpp
   src/rect.cpp
   src/segment.cpp
   src/stadium_shape.cpp
@@ -85,6 +85,7 @@ if(BUILD_TESTING)
      line_test
      point_test
      pose_test
+     ray_test
      rect_test
      segment_test
      transform_matrix_test
