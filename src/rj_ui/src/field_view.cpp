@@ -18,6 +18,7 @@
 #include <rj_common/ui_frame.hpp>
 #include <rj_common/vision_dot_pattern.hpp>
 #include <rj_geometry/point.hpp>
+#include <rj_geometry/point_qt.hpp>
 #include <rj_geometry/transform_matrix.hpp>
 #include <rj_geometry/util.hpp>
 
@@ -69,7 +70,8 @@ void FieldView::enterEvent(QEvent* /*event*/) { _posLabel->setVisible(true); }
 
 void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
-    rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    rj_geometry::Point pos =
+        _worldToTeam * _screenToWorld * rj_geometry::point_from_qpoint(me->pos());
     QString s = "X: ";
     s += QString::number(std::round(pos.x() * 100) / 100);
     s += " Y: ";
@@ -268,9 +270,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 const DebugRobotPath::DebugRobotPathPoint& from = path.points.at(i);
                 const DebugRobotPath::DebugRobotPathPoint& to = path.points.at(i + 1);
 
-                rj_geometry::Point avgVel = (rj_geometry::Point(path.points.at(i).vel) +
-                                             rj_geometry::Point(path.points.at(i + 1).vel)) /
-                                            2;
+                rj_geometry::Point avgVel = (path.points.at(i).vel + path.points.at(i + 1).vel) / 2;
                 auto pcntMaxSpd =
                     static_cast<float>(avgVel.mag() / planning::MotionConstraints{}.max_speed);
                 QColor mixedColor(std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
@@ -280,9 +280,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pen.setWidthF(0.03);
                 p.setPen(pen);
 
-                const rj_geometry::Point fromPos = rj_geometry::Point(from.pos);
-                const rj_geometry::Point toPos = rj_geometry::Point(to.pos);
-                p.drawLine(fromPos.to_q_point_f(), toPos.to_q_point_f());
+                p.drawLine(qpointf(from.pos), qpointf(to.pos));
             }
         }
     }

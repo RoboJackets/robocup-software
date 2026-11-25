@@ -1,41 +1,56 @@
 #pragma once
 
 #include <memory>
-#include <set>
-#include <vector>
+#include <sstream>
+#include <string>
 
 #include "composite_shape.hpp"
 #include "point.hpp"
-#include "polygon.hpp"
-#include "segment.hpp"
 #include "shape_set.hpp"
 
 namespace rj_geometry {
 
 /**
- * A rj_geometry::StadiumShape is a CompositeShape made up of 2 circles and a polygon.
+ * A "stadium" shape, made up of two semi-circles about a rectangle (stored as a Polygon,
+ * so the stadium may be at any angle)
  * It represents the shape of a track from track and field.
+ * Note that this class mostly inherits all functionality from CompositeShape.
  */
 class StadiumShape : public CompositeShape {
 public:
-    ~StadiumShape() = default;
+    // --- Constructors ---
 
     StadiumShape() = default;
 
     StadiumShape(Point c1, Point c2, float r);
 
-    StadiumShape(const StadiumShape& other) : CompositeShape(other) {
-        drawshapes_ = other.drawshapes_;
-    }
+    // --- Getters ---
 
-    [[nodiscard]] Shape* clone() const override;
+    // ... none for now ...
 
-    [[nodiscard]] const rj_geometry::ShapeSet drawshapes() const { return drawshapes_; }
+    // --- Setters ---
 
-    std::string to_string() override {
+    /**
+     * This enlarges the stadium outward in all directions,
+     * moving the edges by the specified amount.
+     *
+     * Note that this is L2 padding.
+     * The result will still be a StadiumShape, with larger "radius".
+     *
+     * NOTE: This WILL have bad behavior if you have reordered the shapes.
+     */
+    void pad(float padding);
+
+    // --- Operators ---
+
+    // ... none for now ...
+
+    // --- Shape virtuals ---
+
+    std::string to_string() const override {
         std::stringstream str;
         str << "StadiumShape<";
-        for (auto& subshape : subshapes()) {
+        for (auto& subshape : subshapes_) {
             str << subshape->to_string() << ", ";
         }
         str << ">";
@@ -43,8 +58,30 @@ public:
         return str.str();
     }
 
+    // --- Shape pseudovirtual clone ---
+
+    std::unique_ptr<StadiumShape> clone() const;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+    // DEPRECATE!!! CompositeShape has a getter "subshapes"
+    const rj_geometry::ShapeSet drawshapes() const { return ShapeSet(subshapes_); }
+
+protected:
+    // --- Shape virtuals ---
+
+    StadiumShape* clone_impl() const override;
+
+    // --- Custom utilities ---
+
+    // ... none for now ...
+
 private:
-    rj_geometry::ShapeSet drawshapes_;
+    // --- Hidden parameters ---
+
+    // ... none for now ...
+
 };
 
 }  // namespace rj_geometry

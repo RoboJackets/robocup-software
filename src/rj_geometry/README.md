@@ -2,12 +2,12 @@
 
 Reusable assessment, refactor, and verification template.
 
-| Package Details | Entry |
+| Package Details |  |
 | --- | --- |
-| **Package name** |  |
-| **Assigned owner(s)** |  |
+| **Package name** | rj_geometry |
+| **Assigned owner(s)** | Richard Koulen, Cameron Lyon |
 | **Reviewer(s)** |  |
-| **Date started revision** |  |
+| **Date started revision** | 9/29/2026 |
 
 ## 1. Package Identity and Tier
 

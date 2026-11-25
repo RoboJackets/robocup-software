@@ -27,6 +27,9 @@ public:
         }
     }
 
+    explicit ShapeSet(const std::vector<std::shared_ptr<Shape>>& shapes)
+        : ShapeSet(shapes.begin(), shapes.end()) {}
+
     std::vector<std::shared_ptr<Shape>>& shapes() { return shapes_; }
     [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& shapes() const {
         return shapes_;
@@ -47,7 +50,8 @@ public:
     void clear() { shapes_.clear(); }
 
     /**
-     * Get a set of which shapes "hit" the given object.
+     * Shapes whose zero-clearance hit() is true for the given object.
+     * Padding belongs at the call site, via near_point or near_segment.
      *
      * @param obj The object to collision test
      * @return A set of all shapes that collide with the given object
@@ -64,10 +68,10 @@ public:
     }
 
     /**
-     * Check if any of the shapes in this set "hit" the given object.
+     * True if any shape's zero-clearance hit() is true for the object.
      *
      * @param obj The object to collision test
-     * @return True if one of the contained shapes hits the object.
+     * @return True if one of the contained shapes meets the object.
      */
     template <typename T>
     bool hit(const T& obj) const {
