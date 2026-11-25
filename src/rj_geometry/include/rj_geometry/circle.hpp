@@ -8,7 +8,6 @@
 
 #include <rj_geometry_msgs/msg/circle.hpp>
 
-#include "line.hpp"
 #include "point.hpp"
 #include "shape.hpp"
 

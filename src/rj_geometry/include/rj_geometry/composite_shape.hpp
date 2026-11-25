@@ -1,13 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "point.hpp"
-#include "shape.hpp"
 #include "segment.hpp"
+#include "shape.hpp"
 
 namespace rj_geometry {
 
@@ -17,7 +17,6 @@ namespace rj_geometry {
  */
 class CompositeShape : public Shape {
 public:
-
     // --- Constructors ---
 
     /**

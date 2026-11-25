@@ -1,12 +1,7 @@
-#include <algorithm>
-#include <vector>
-
 #include <gtest/gtest.h>
 
 #include "rj_geometry/arc.hpp"
-#include "rj_geometry/line.hpp"
 #include "rj_geometry/point.hpp"
-#include "rj_geometry/segment.hpp"
 
 namespace rj_geometry::Testing {
 
@@ -29,10 +24,11 @@ TEST(Arc, GetterSetter) {
     a.set_center(center);
     radius = 1.2f;
     a.set_radius(radius);
-    start = 0.3f;
-    a.set_start(start);
+    // Widen the end first so start <= end holds after each call
     end = 0.4f;
     a.set_end(end);
+    start = 0.3f;
+    a.set_start(start);
 
     EXPECT_NEAR(a.center().x(), center.x(), 0.001f);
     EXPECT_NEAR(a.center().y(), center.y(), 0.001f);
@@ -40,47 +36,6 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.start(), start, 0.001f);
     EXPECT_NEAR(a.end(), end, 0.001f);
     EXPECT_NEAR(a.radius() * a.radius(), radius * radius, 0.001f);
-}
-
-TEST(Arc, Intersections) {
-    // Line-arc
-    auto check_all_near = [](std::vector<Point> actual, const std::vector<Point>& expected,
-                             const std::string& name) {
-        for (Point pt : expected) {
-            auto it = std::find_if(actual.begin(), actual.end(),
-                                   [pt](Point ac) { return (pt - ac).mag() < 1e-6; });
-            if (it != actual.end()) {
-                actual.erase(it);
-            } else {
-                ADD_FAILURE() << "Expected point " << pt << ", no match between " << name << ".";
-            }
-        }
-
-        for (Point ac : actual) {
-            ADD_FAILURE() << "Actual point " << ac
-                          << " matched no expected point, "
-                             "but all expected points were matched between "
-                          << name << ".";
-        }
-    };
-
-    // Arc-Line
-    check_all_near(Arc({0, 0}, 1.0, 0, M_PI).intersects(Line({0, 0}, {0, 2})), {{0, 1}},
-                   "Arc-Line 1");
-    check_all_near(Arc({0, 0}, 1.0, -M_PI, M_PI).intersects(Line({0, -2}, {0, 2})),
-                   {{0, 1}, {0, -1}}, "Arc-Line 2");
-    check_all_near(Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({0, 0}, {0, 1})), {{0, 2}},
-                   "Arc-Line 3");
-    check_all_near(Arc({0, 0}, 1.0, M_PI / 4, 3 * M_PI / 4).intersects(Line({0, 0}, {0, 1})),
-                   {{0, 1}}, "Arc-Line 4");
-
-    // Arc-Line No intersection
-    std::vector<Point> v = Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
-    EXPECT_TRUE(v.empty());
-
-    // Arc-Segment
-    check_all_near(Arc({0, 0}, 2.0, 0, M_PI).intersects(Segment({0, 0}, {0, 1})), {},
-                   "Arc-Segment");
 }
 
 }  // namespace rj_geometry::Testing

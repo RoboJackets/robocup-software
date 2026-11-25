@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include <rj_geometry/line.hpp>
+#include <rj_geometry/segment.hpp>
 
 namespace vision_filter {
 
@@ -98,14 +98,14 @@ bool BallBounce::calc_ball_bounce(const KalmanBall& ball,
             // line intersect point (within that angle range) then the ball is
             // moving across the mouth of the robot Note: No intersection across
             // mouth is not accounted for
-            rj_geometry::Line intersect_line =
-                rj_geometry::Line(intersect_pts.at(0), intersect_pts.at(1));
+            rj_geometry::Segment intersect_line =
+                rj_geometry::Segment(intersect_pts.at(0), intersect_pts.at(1));
             rj_geometry::Point mouth_half_unit_vec =
                 rj_geometry::Point(0, 1).rotate(robot.get_theta());
             rj_geometry::Point mouth_center_pos =
                 rj_geometry::Point(kRobotMouthRadius, 0).rotate(robot.get_theta()) +
                 robot.get_pos();
-            rj_geometry::Line mouth_line = rj_geometry::Line(
+            rj_geometry::Segment mouth_line = rj_geometry::Segment(
                 mouth_center_pos + mouth_half_unit_vec, mouth_center_pos - mouth_half_unit_vec);
 
             rj_geometry::Point mouth_intersect;

@@ -1,13 +1,16 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
+#include <ostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include <rj_geometry_msgs/msg/segment.hpp>
 
 #include "circle.hpp"
-#include "line.hpp"
 #include "point.hpp"
 #include "rect.hpp"
 
@@ -23,8 +26,6 @@ public:
     Segment() {}
 
     Segment(Point p1, Point p2) : pt{p1, p2} {}
-
-    explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
 
     Segment& operator+=(const Point& delta) {
         pt[0] += delta;
@@ -52,8 +53,6 @@ public:
     /** find the nearest point on the segment given @a p */
     Point nearest_point(const Point& p) const;
 
-    Point nearest_point(const Line& l) const;
-
     bool intersects(const Segment& other, Point* intr = nullptr) const;
 
     /**
@@ -63,7 +62,6 @@ public:
      */
     [[nodiscard]] std::vector<Point> intersection_points(const Segment& other) const;
     bool intersects(const Circle& circle) const;
-    bool intersects(const Line& line, Point* intr = 0) const;
 
     std::string to_string() const {
         std::stringstream str;

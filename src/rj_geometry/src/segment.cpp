@@ -116,18 +116,6 @@ bool Segment::intersects(const Circle& circle) const {
     return near_point(circle.center(), circle.radius());
 }
 
-bool Segment::intersects(const Line& line, Point* intr) const {
-    Point intersection_point;
-    bool res = Line::intersects(Line(*this), line, &intersection_point);
-    if (res && dist_to(intersection_point) == 0) {
-        if (intr != nullptr) {
-            *intr = intersection_point;
-        }
-        return true;
-    }
-    return false;
-}
-
 bool Segment::near_point(const Point& point, float threshold) const {
     return dist_to(point) <= threshold;
 }
@@ -151,17 +139,6 @@ Point Segment::nearest_point(const Point& p) const {
         return pt[1];
     }
     return pt[0] + delta() * t;
-}
-
-Point Segment::nearest_point(const Line& l) const {
-    Point intersection;
-    if (intersects(l, &intersection)) {
-        return intersection;
-    }
-    if (l.dist_to(pt[0]) < l.dist_to(pt[1])) {
-        return pt[0];
-    }
-    return pt[1];
 }
 
 bool Segment::near_segment(const Segment& other, float threshold) const {
