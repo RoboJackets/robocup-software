@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-#include <rj_geometry_msgs/msg/detail/rect__struct.hpp>
 #include <rj_geometry_msgs/msg/rect.hpp>
 
 #include "point.hpp"

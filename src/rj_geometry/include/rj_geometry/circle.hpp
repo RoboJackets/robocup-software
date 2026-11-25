@@ -7,7 +7,6 @@
 #include <vector>
 
 #include <rj_geometry_msgs/msg/circle.hpp>
-#include <rj_geometry_msgs/msg/detail/circle__struct.hpp>
 
 #include "line.hpp"
 #include "point.hpp"

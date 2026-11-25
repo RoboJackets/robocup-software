@@ -7,7 +7,6 @@
 #include <utility>
 #include <vector>
 
-#include <rj_geometry_msgs/msg/detail/polygon__struct.hpp>
 #include <rj_geometry_msgs/msg/polygon.hpp>
 
 #include "point.hpp"
