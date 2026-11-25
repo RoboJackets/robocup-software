@@ -91,18 +91,21 @@ struct TypeAdapter<rj_geometry::Line, rj_geometry_msgs::msg::Line> {
     using ros_message_type = rj_geometry_msgs::msg::Line;
 
     static void convert_to_ros_message(const custom_type& source, ros_message_type& destination) {
-        for (size_t i = 0; i < source.pt.size(); ++i) {
+        const std::array<rj_geometry::Point, 2> points = source.points();
+        for (size_t i = 0; i < points.size(); ++i) {
             rclcpp::TypeAdapter<rj_geometry::Point, rj_geometry_msgs::msg::Point>::
-                convert_to_ros_message(source.pt[i], destination.pt[i]);
+                convert_to_ros_message(points[i], destination.pt[i]);
         }
     }
 
     static void convert_to_custom(const ros_message_type& source, custom_type& destination) {
-        for (size_t i = 0; i < source.pt.size(); ++i) {
+        std::array<rj_geometry::Point, 2> points;
+        for (size_t i = 0; i < points.size(); ++i) {
             rclcpp::TypeAdapter<rj_geometry::Point,
                                 rj_geometry_msgs::msg::Point>::convert_to_custom(source.pt[i],
-                                                                                 destination.pt[i]);
+                                                                                 points[i]);
         }
+        destination.set_points(points[0], points[1]);
     }
 };
 
